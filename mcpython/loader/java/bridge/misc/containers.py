@@ -28,9 +28,11 @@ class EquipmentSlotType(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "HEAD": 0,
-            "CHEST": 1,
-            "LEGS": 2,
-            "FEET": 3,
-        })
+        self.exposed_attributes.update(
+            {
+                "HEAD": 0,
+                "CHEST": 1,
+                "LEGS": 2,
+                "FEET": 3,
+            }
+        )

@@ -172,7 +172,10 @@ class ClassToInstanceMap(NativeClass):
 class CharMatcher(NativeClass):
     NAME = "com/google/common/base/CharMatcher"
 
-    @native("forPredicate", "(Lcom/google/common/base/Predicate;)Lcom/google/common/base/CharMatcher;")
+    @native(
+        "forPredicate",
+        "(Lcom/google/common/base/Predicate;)Lcom/google/common/base/CharMatcher;",
+    )
     def forPredicate(self, *_):
         pass
 
@@ -180,7 +183,10 @@ class CharMatcher(NativeClass):
     def anyOf(self, *_):
         pass
 
-    @native("or", "(Lcom/google/common/base/CharMatcher;)Lcom/google/common/base/CharMatcher;")
+    @native(
+        "or",
+        "(Lcom/google/common/base/CharMatcher;)Lcom/google/common/base/CharMatcher;",
+    )
     def or_(self, *_):
         pass
 
@@ -196,12 +202,19 @@ class Strings(NativeClass):
 class ImmutableSet(NativeClass):
     NAME = "com/google/common/collect/ImmutableSet"
 
-    @native("copyOf", "(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableSet;")
+    @native(
+        "copyOf", "(Ljava/util/Collection;)Lcom/google/common/collect/ImmutableSet;"
+    )
     def copyOf(self, collection):
         obj = self.create_instance()
 
         try:
-            obj.underlying = set(collection) if not hasattr(collection, "get_class") or not hasattr(collection.get_class(), "iter_over_instance") else set(collection.get_class().iter_over_instance(collection))
+            obj.underlying = (
+                set(collection)
+                if not hasattr(collection, "get_class")
+                or not hasattr(collection.get_class(), "iter_over_instance")
+                else set(collection.get_class().iter_over_instance(collection))
+            )
         except TypeError:
             raise NotImplementedError(f"object {collection} seems not iterable!")
 

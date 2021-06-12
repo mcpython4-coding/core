@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import mcpython.common.container.ResourceStack
 from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
-import mcpython.common.container.ResourceStack
 
 
 class Blocks(NativeClass):
@@ -165,8 +165,10 @@ class AbstractBlock_Properties(NativeClass):
     def func_235861_h_(self, instance):
         return instance
 
-    @native("func_235827_a_",
-            "(Lnet/minecraft/block/AbstractBlock$IExtendedPositionPredicate;)Lnet/minecraft/block/AbstractBlock$Properties;")
+    @native(
+        "func_235827_a_",
+        "(Lnet/minecraft/block/AbstractBlock$IExtendedPositionPredicate;)Lnet/minecraft/block/AbstractBlock$Properties;",
+    )
     def func_235827_a_(self, instance, predicate):
         return instance
 
@@ -830,7 +832,8 @@ class ItemGroup(NativeClass):
 
         instance.underlying_tab = (
             mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(
-                name, mcpython.common.container.ResourceStack.ItemStack("minecraft:barrier")
+                name,
+                mcpython.common.container.ResourceStack.ItemStack("minecraft:barrier"),
             )
         )
 
@@ -968,9 +971,7 @@ class DyeColor(NativeClass):
 
         self.colors = mcpython.util.enums.COLORS
 
-        self.exposed_attributes.update({
-            color.upper(): color for color in self.colors
-        })
+        self.exposed_attributes.update({color.upper(): color for color in self.colors})
 
     @native("values", "()[Lnet/minecraft/item/DyeColor;")
     def values(self):
@@ -1031,7 +1032,9 @@ class BlockStateProperties(NativeClass):
 class BooleanProperty(NativeClass):
     NAME = "net/minecraft/state/BooleanProperty"
 
-    @native("func_177716_a", "(Ljava/lang/String;)Lnet/minecraft/state/BooleanProperty;")
+    @native(
+        "func_177716_a", "(Ljava/lang/String;)Lnet/minecraft/state/BooleanProperty;"
+    )
     def func_177716_a(self, string):
         return self.create_instance()
 
@@ -1039,7 +1042,9 @@ class BooleanProperty(NativeClass):
 class IntegerProperty(NativeClass):
     NAME = "net/minecraft/state/IntegerProperty"
 
-    @native("func_177719_a", "(Ljava/lang/String;II)Lnet/minecraft/state/IntegerProperty;")
+    @native(
+        "func_177719_a", "(Ljava/lang/String;II)Lnet/minecraft/state/IntegerProperty;"
+    )
     def func_177719_a(self, *_):
         pass
 
@@ -1180,8 +1185,10 @@ class EntityClassification(NativeClass):
 class EntityType(NativeClass):
     NAME = "net/minecraft/entity/EntityType"
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName(self, instance, name):
         return instance
 
@@ -1215,8 +1222,10 @@ class EntityType__Builder(NativeClass):
     def func_206830_a(self, instance, v):
         return instance
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName(self, instance, namespace, name):
         return instance
 
@@ -1228,7 +1237,10 @@ class EntityType__Builder(NativeClass):
     def setUpdateInterval(self, instance, interval: int):
         return instance
 
-    @native("setShouldReceiveVelocityUpdates", "(Z)Lnet/minecraft/entity/EntityType$Builder;")
+    @native(
+        "setShouldReceiveVelocityUpdates",
+        "(Z)Lnet/minecraft/entity/EntityType$Builder;",
+    )
     def setShouldReceiveVelocityUpdates(self, instance, should):
         return instance
 

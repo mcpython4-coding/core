@@ -11,8 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.loader.java.Java import NativeClass, native
 import types
+
+from mcpython.loader.java.Java import NativeClass, native
 
 
 class Object(NativeClass):
@@ -24,7 +25,11 @@ class Object(NativeClass):
 
     @native("getClass", "()Ljava/lang/Class;")
     def getClass(self, instance):
-        if isinstance(instance, (types.FunctionType, types.MethodType, types.LambdaType)):
-            return self.vm.get_class("java/lang/reflect/Method", version=self.internal_version)
+        if isinstance(
+            instance, (types.FunctionType, types.MethodType, types.LambdaType)
+        ):
+            return self.vm.get_class(
+                "java/lang/reflect/Method", version=self.internal_version
+            )
 
         return instance.get_class()

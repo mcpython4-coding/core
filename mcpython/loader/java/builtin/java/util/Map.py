@@ -37,4 +37,3 @@ class Map(NativeClass):
     @native("containsKey", "(Ljava/lang/Object;)Z")
     def containsKey(self, instance, obj):
         return obj in instance
-

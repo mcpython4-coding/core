@@ -68,7 +68,10 @@ class VoxelShapes(NativeClass):
             "net/minecraft/util/math/shapes/VoxelShape", version=self.internal_version
         ).create_instance()
 
-    @native("func_197881_a", "(Lnet/minecraft/util/math/AxisAlignedBB;)Lnet/minecraft/util/math/shapes/VoxelShape;")
+    @native(
+        "func_197881_a",
+        "(Lnet/minecraft/util/math/AxisAlignedBB;)Lnet/minecraft/util/math/shapes/VoxelShape;",
+    )
     def func_197881_a(self, *_):
         return self.vm.get_class(
             "net/minecraft/util/math/shapes/VoxelShape", version=self.internal_version
@@ -102,7 +105,10 @@ class LazyValue(NativeClass):
 class Lazy(NativeClass):
     NAME = "net/minecraftforge/common/util/Lazy"
 
-    @native("concurrentOf", "(Ljava/util/function/Supplier;)Lnet/minecraftforge/common/util/Lazy;")
+    @native(
+        "concurrentOf",
+        "(Ljava/util/function/Supplier;)Lnet/minecraftforge/common/util/Lazy;",
+    )
     def concurrentOf(self, supplier):
         return self.create_instance()
 

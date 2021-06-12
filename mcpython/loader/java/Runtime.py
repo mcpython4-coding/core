@@ -50,7 +50,9 @@ class Runtime:
         method: typing.Union[mcpython.loader.java.Java.JavaMethod, typing.Callable],
         *args,
     ):
-        if callable(method) and not isinstance(method, mcpython.loader.java.Java.JavaMethod):
+        if callable(method) and not isinstance(
+            method, mcpython.loader.java.Java.JavaMethod
+        ):
             from mcpython.common.mod.ModLoader import LoadingInterruptException
 
             try:
@@ -69,7 +71,9 @@ class Runtime:
             try:
                 code = method.attributes["Code"][0]
             except KeyError:
-                raise StackCollectingException(f"Abstract method call onto {method} with args {args}; Code attribute not found")
+                raise StackCollectingException(
+                    f"Abstract method call onto {method} with args {args}; Code attribute not found"
+                )
 
             method.code_repr = BytecodeRepr(code)
 
@@ -203,8 +207,12 @@ class Stack:
                 mcpython.loader.java.Java.warn(
                     "instruction [info before invoke] " + str((self.cp, instruction))
                 )
-                mcpython.loader.java.Java.warn(f"stack ({len(self.stack)}): " + str(self.stack)[-300:])
-                mcpython.loader.java.Java.warn(f"local ({len(self.local_vars)}: " + str(self.local_vars)[:300])
+                mcpython.loader.java.Java.warn(
+                    f"stack ({len(self.stack)}): " + str(self.stack)[-300:]
+                )
+                mcpython.loader.java.Java.warn(
+                    f"local ({len(self.local_vars)}: " + str(self.local_vars)[:300]
+                )
 
             stack_top = self.stack[:3]
 
@@ -217,7 +225,9 @@ class Stack:
                 e.add_trace(str(instruction[1])).add_trace(str(stack_top))
                 raise
             except:
-                raise StackCollectingException(f"Implementation-wise during invoking {instruction[0].__name__} in {self.method} [index: {self.cp}]").add_trace(str(instruction[1])).add_trace(str(stack_top))
+                raise StackCollectingException(
+                    f"Implementation-wise during invoking {instruction[0].__name__} in {self.method} [index: {self.cp}]"
+                ).add_trace(str(instruction[1])).add_trace(str(stack_top))
 
             if not result and self.cp != -1:
                 self.cp += instruction[2]
@@ -273,7 +283,9 @@ class CPLinkedInstruction(OpcodeInstruction, ABC):
                 3,
             )
         except IndexError:
-            raise StackCollectingException(f"during decoding instruction {cls.__name__} pointing to {pointer}").add_trace(f"current parsing index: {index}, class: {class_file.name}")
+            raise StackCollectingException(
+                f"during decoding instruction {cls.__name__} pointing to {pointer}"
+            ).add_trace(f"current parsing index: {index}, class: {class_file.name}")
 
 
 class BytecodeRepr:
@@ -312,12 +324,16 @@ class BytecodeRepr:
                 instr = self.OPCODES[tag]
                 # print(instr, code[:5])
                 try:
-                    data, size = instr.decode(code, i+1, self.code.class_file)
+                    data, size = instr.decode(code, i + 1, self.code.class_file)
                 except StackCollectingException as e:
-                    e.add_trace(f"during decoding instruction {instr} in {self.code.table.parent}").add_trace(f"index: {i}, near code: {code[max(0, i-5):i+5]}")
+                    e.add_trace(
+                        f"during decoding instruction {instr} in {self.code.table.parent}"
+                    ).add_trace(f"index: {i}, near code: {code[max(0, i-5):i+5]}")
                     raise
                 except:
-                    raise StackCollectingException(f"during decoding instruction {instr} in {self.code.table.parent}").add_trace(f"index: {i}, near code: {code[max(0, i-5):i+5]}")
+                    raise StackCollectingException(
+                        f"during decoding instruction {instr} in {self.code.table.parent}"
+                    ).add_trace(f"index: {i}, near code: {code[max(0, i-5):i+5]}")
 
                 # print(data, size, code[i:i+10], len(code))
 
@@ -335,12 +351,15 @@ class BytecodeRepr:
                 ).add_trace(str(self.decoded_code)).add_trace(str(self.code.class_file))
 
         for i, e in enumerate(self.decoded_code):
-            if e is None: continue
+            if e is None:
+                continue
 
             try:
                 e[0].validate(e[1], self)
             except StackCollectingException as e:
-                e.add_trace(f"during validating {e[0].__name__} with data {e[1]} stored at index {i} in {self.code.table.parent}")
+                e.add_trace(
+                    f"during validating {e[0].__name__} with data {e[1]} stored at index {i} in {self.code.table.parent}"
+                )
                 raise
 
     def prepare_stack(self, stack: Stack):
@@ -575,7 +594,9 @@ class Load(OpcodeInstruction):
     @classmethod
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if prepared_data >= container.code.max_locals:
-            raise StackCollectingException(f"LocalVariableIndexOutOfBounds: {prepared_data} does not fit into {container.code.max_locals}")
+            raise StackCollectingException(
+                f"LocalVariableIndexOutOfBounds: {prepared_data} does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -590,7 +611,8 @@ class Load0(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 0:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 0 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 0 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -605,7 +627,8 @@ class Load1(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 1:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 1 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 1 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -620,7 +643,8 @@ class Load2(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 2:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 2 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 2 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -635,7 +659,8 @@ class Load3(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 3:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 3 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 3 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -656,7 +681,8 @@ class Store(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if prepared_data >= container.code.max_locals:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: {prepared_data} does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: {prepared_data} does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -671,7 +697,8 @@ class Store0(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 0:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 0 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 0 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -686,7 +713,8 @@ class Store1(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 1:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 1 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 1 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -701,7 +729,8 @@ class Store2(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 2:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 2 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 2 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -716,7 +745,8 @@ class Store3(OpcodeInstruction):
     def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
         if container.code.max_locals <= 3:
             raise StackCollectingException(
-                f"LocalVariableIndexOutOfBounds: 3 does not fit into {container.code.max_locals}")
+                f"LocalVariableIndexOutOfBounds: 3 does not fit into {container.code.max_locals}"
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -1048,7 +1078,9 @@ class GetField(CPLinkedInstruction):
         try:
             stack.push(obj.fields[name])
         except (KeyError, AttributeError):
-            raise StackCollectingException(f"AttributeError: object {obj} (type {type(obj)}) has no attribute {name}") from None
+            raise StackCollectingException(
+                f"AttributeError: object {obj} (type {type(obj)}) has no attribute {name}"
+            ) from None
 
 
 @BytecodeRepr.register_instruction
@@ -1079,15 +1111,19 @@ class InvokeVirtual(CPLinkedInstruction):
         if obj is not None:
             if not hasattr(obj, "get_class"):
                 if hasattr(method, "access") and method.access & 0x0400:
-                    raise StackCollectingException("invalid abstract not-implemented non-reference-able object"+str(obj))
+                    raise StackCollectingException(
+                        "invalid abstract not-implemented non-reference-able object"
+                        + str(obj)
+                    )
             else:
-                method = obj.get_class().get_method(method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
+                method = obj.get_class().get_method(
+                    method.name if hasattr(method, "name") else method.native_name,
+                    method.signature
+                    if hasattr(method, "signature")
+                    else method.native_signature,
+                )
 
-        stack.push(
-            stack.runtime.run_method(
-                method, *args
-            )
-        )
+        stack.push(stack.runtime.run_method(method, *args))
 
 
 @BytecodeRepr.register_instruction
@@ -1396,7 +1432,10 @@ class TableSwitch(OpcodeInstruction):
         high = mcpython.loader.java.Java.pop_u4_s(data)
         index += 4
 
-        offsets = [mcpython.loader.java.Java.pop_u4_s(data[index+i*4:]) for i in range(high - low + 1)]
+        offsets = [
+            mcpython.loader.java.Java.pop_u4_s(data[index + i * 4 :])
+            for i in range(high - low + 1)
+        ]
         index += (high - low + 1) * 4
         return (default, low, high, offsets), index - initial
 
@@ -1459,7 +1498,7 @@ class LookupSwitch(OpcodeInstruction):
 
     @classmethod
     def decode(
-            cls, data: bytearray, index, class_file
+        cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
         before = index
 
@@ -1472,14 +1511,23 @@ class LookupSwitch(OpcodeInstruction):
         index += 4
 
         if npairs > 100:
-            logger.println(f"unusual high npair count {npairs}. This normally indicates an error in bytecode")
-            logger.println(data[index:40+index], index)
+            logger.println(
+                f"unusual high npair count {npairs}. This normally indicates an error in bytecode"
+            )
+            logger.println(data[index : 40 + index], index)
 
         try:
-            pairs = {mcpython.loader.java.Java.pop_u4_s(data): mcpython.loader.java.Java.pop_u4_s(data[index+i*4:]) for i in range(npairs)}
+            pairs = {
+                mcpython.loader.java.Java.pop_u4_s(
+                    data
+                ): mcpython.loader.java.Java.pop_u4_s(data[index + i * 4 :])
+                for i in range(npairs)
+            }
             index += npairs * 4
         except:
-            raise StackCollectingException(f"during decoding lookupswitch of {npairs} entries, defaulting to {default}")
+            raise StackCollectingException(
+                f"during decoding lookupswitch of {npairs} entries, defaulting to {default}"
+            )
 
         return (default, pairs), index - before + 1
 

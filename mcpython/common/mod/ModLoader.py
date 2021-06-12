@@ -190,13 +190,22 @@ class ModLoader:
                     self.active_directory = file
 
                     if resource.is_in_path("mod.json"):
-                        self.load_mods_json(resource.read_raw("mod.json").decode("utf-8"), file)
+                        self.load_mods_json(
+                            resource.read_raw("mod.json").decode("utf-8"), file
+                        )
                     elif resource.is_in_path("mod.toml"):
-                        self.load_mods_toml(resource.read_raw("mod.toml").decode("utf-8"), file)
+                        self.load_mods_toml(
+                            resource.read_raw("mod.toml").decode("utf-8"), file
+                        )
                     elif resource.is_in_path("mods.toml"):
-                        self.load_mods_toml(resource.read_raw("mods.toml").decode("utf-8"), file)
+                        self.load_mods_toml(
+                            resource.read_raw("mods.toml").decode("utf-8"), file
+                        )
                     elif resource.is_in_path("META-INF/mods.toml"):
-                        self.load_mods_toml(resource.read_raw("META-INF/mods.toml").decode("utf-8"), file)
+                        self.load_mods_toml(
+                            resource.read_raw("META-INF/mods.toml").decode("utf-8"),
+                            file,
+                        )
                     else:
                         self.error_builder.println(
                             "- could not locate mod.json/mods.toml file in mod at '{}'".format(

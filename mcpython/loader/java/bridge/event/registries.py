@@ -44,7 +44,10 @@ class IForgeRegistry(NativeClass):
         elif registry.name == "minecraft:item":
             parseItemToFactory(entry)
 
-    @native("getValue", "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "getValue",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def getValue(self, registry, name):
         return registry().get(name if isinstance(name, str) else name.name)
 
@@ -102,7 +105,10 @@ class Registry(NativeClass):
     ):
         pass
 
-    @native("func_218322_a", "(Lnet/minecraft/util/registry/Registry;Lnet/minecraft/util/ResourceLocation;Ljava/lang/Object;)Ljava/lang/Object;")
+    @native(
+        "func_218322_a",
+        "(Lnet/minecraft/util/registry/Registry;Lnet/minecraft/util/ResourceLocation;Ljava/lang/Object;)Ljava/lang/Object;",
+    )
     def func_218322_a(self, registry, name, obj):
         return obj
 
@@ -237,7 +243,9 @@ class DefaultRegistry(NativeClass):
     def func_177774_c(self, instance, obj):
         pass
 
-    @native("func_241873_b", "(Lnet/minecraft/util/ResourceLocation;)Ljava/util/Optional;")
+    @native(
+        "func_241873_b", "(Lnet/minecraft/util/ResourceLocation;)Ljava/util/Optional;"
+    )
     def func_241873_b(self, instance, obj):
         pass
 
@@ -245,8 +253,10 @@ class DefaultRegistry(NativeClass):
 class DeferredRegister(NativeClass):
     NAME = "net/minecraftforge/registries/DeferredRegister"
 
-    @native("create",
-            "(Lnet/minecraftforge/registries/IForgeRegistry;Ljava/lang/String;)Lnet/minecraftforge/registries/DeferredRegister;")
+    @native(
+        "create",
+        "(Lnet/minecraftforge/registries/IForgeRegistry;Ljava/lang/String;)Lnet/minecraftforge/registries/DeferredRegister;",
+    )
     def create(self, registry, mod_name):
         pass
 
@@ -254,7 +264,10 @@ class DeferredRegister(NativeClass):
     def register(self, instance, eventbus):
         pass
 
-    @native("register", "(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/minecraftforge/fml/RegistryObject;")
+    @native(
+        "register",
+        "(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/minecraftforge/fml/RegistryObject;",
+    )
     def register2(self, instance, name: str, supplier):
         pass
 
@@ -274,16 +287,24 @@ class RegistryBuilder(NativeClass):
     def init(self, instance):
         pass
 
-    @native("setName", "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/RegistryBuilder;")
+    @native(
+        "setName",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/RegistryBuilder;",
+    )
     def setName(self, instance, name):
         instance.name = name
         return instance
 
-    @native("setType", "(Ljava/lang/Class;)Lnet/minecraftforge/registries/RegistryBuilder;")
+    @native(
+        "setType", "(Ljava/lang/Class;)Lnet/minecraftforge/registries/RegistryBuilder;"
+    )
     def setType(self, instance, cls):
         instance.type = cls
         return instance
 
     @native("create", "()Lnet/minecraftforge/registries/IForgeRegistry;")
     def create(self, instance):
-        return self.vm.get_class("net/minecraftforge/registries/IForgeRegistry", version=self.internal_version).create_instance()
+        return self.vm.get_class(
+            "net/minecraftforge/registries/IForgeRegistry",
+            version=self.internal_version,
+        ).create_instance()

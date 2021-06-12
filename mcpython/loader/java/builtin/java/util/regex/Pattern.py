@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,9 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-from mcpython.loader.java.Java import NativeClass, native, JavaMethod
 import re
+
+from mcpython import shared
+from mcpython.loader.java.Java import JavaMethod, NativeClass, native
 
 
 class Pattern(NativeClass):
@@ -24,4 +25,3 @@ class Pattern(NativeClass):
         instance = self.create_instance()
         instance.underlying = re.compile(text)
         return instance
-

@@ -279,6 +279,7 @@ class EventBus(NativeClass):
         # todo: implement
         current_mod = shared.CURRENT_EVENT_SUB
         if cls.name == "net/minecraft/block/Block":
+
             @shared.mod_loader("minecraft", "stage:block:factory_usage")
             def load():
                 shared.CURRENT_EVENT_SUB = current_mod
@@ -355,7 +356,10 @@ class DistExecutor(NativeClass):
     def unsafeCallWhenOn(self, dist, supplier):
         pass
 
-    @native("runWhenOn", "(Lnet/minecraftforge/api/distmarker/Dist;Ljava/util/function/Supplier;)V")
+    @native(
+        "runWhenOn",
+        "(Lnet/minecraftforge/api/distmarker/Dist;Ljava/util/function/Supplier;)V",
+    )
     def runWhenOn(self, *_):
         pass
 
@@ -366,7 +370,7 @@ class FMLPaths(NativeClass):
     def __init__(self):
         super().__init__()
         config_dir = self.create_instance()
-        config_dir.dir = shared.home+"/fml_configs"
+        config_dir.dir = shared.home + "/fml_configs"
         self.exposed_attributes = {"CONFIGDIR": config_dir}
 
     @native("get", "()Ljava/nio/file/Path;")
@@ -530,10 +534,11 @@ class EventPriority(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "HIGHEST": 0,
-            "HIGH": 1,
-            "LOW": 2,
-            "LOWEST": 3,
-        })
-
+        self.exposed_attributes.update(
+            {
+                "HIGHEST": 0,
+                "HIGH": 1,
+                "LOW": 2,
+                "LOWEST": 3,
+            }
+        )

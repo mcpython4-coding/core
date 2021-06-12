@@ -19,14 +19,13 @@ import copy
 # See builtin folder for python implementations for java internals
 import ctypes
 import struct
+import sys
 import traceback
 import types
 import typing
 from abc import ABC
-import sys
 
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
-
 
 DYNAMIC_NATIVES = "--fill-unknown-natives" in sys.argv
 
@@ -116,6 +115,16 @@ class JavaVM:
             self.get_class(name, version=version)
 
     def init_builtins(self):
+        from mcpython.loader.java.builtin.java.io import (
+            BufferedWriter,
+            File,
+            FileInputStream,
+            FileOutputStream,
+            OutputStreamWriter,
+            Path,
+            PushbackInputStream,
+            Reader,
+        )
         from mcpython.loader.java.builtin.java.lang import (
             Boolean,
             Class,
@@ -124,11 +133,11 @@ class JavaVM:
             Enum,
             FunctionalInterface,
             Integer,
+            Math,
             Object,
             String,
-            ThreadLocal,
             System,
-            Math,
+            ThreadLocal,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
@@ -139,37 +148,42 @@ class JavaVM:
         )
         from mcpython.loader.java.builtin.java.lang.reflect import Method
         from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
-        from mcpython.loader.java.builtin.java.io import File, Reader, FileInputStream, PushbackInputStream, Path, FileOutputStream, BufferedWriter, OutputStreamWriter
         from mcpython.loader.java.builtin.java.util import (
             ArrayList,
             Arrays,
+            Collection,
             Collections,
+            EnumMap,
             EnumSet,
             HashMap,
             HashSet,
             IdentityHashMap,
             Iterator,
+            LinkedList,
             List,
             Map,
-            Random,
-            WeakHashMap,
             Optional,
+            Random,
             TreeMap,
-            Collection,
-            LinkedList,
-            EnumMap,
+            WeakHashMap,
         )
-        from mcpython.loader.java.builtin.java.util.function import Predicate, Supplier, Function, Consumer, BiFunction
-        from mcpython.loader.java.builtin.java.util.stream import Stream
-        from mcpython.loader.java.builtin.java.util.regex import Pattern
         from mcpython.loader.java.builtin.java.util.concurrent import ConcurrentHashMap
+        from mcpython.loader.java.builtin.java.util.function import (
+            BiFunction,
+            Consumer,
+            Function,
+            Predicate,
+            Supplier,
+        )
+        from mcpython.loader.java.builtin.java.util.regex import Pattern
+        from mcpython.loader.java.builtin.java.util.stream import Stream
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util
         from mcpython.loader.java.bridge.client import rendering
         from mcpython.loader.java.bridge.codec import builder
         from mcpython.loader.java.bridge.event import content, registries
-        from mcpython.loader.java.bridge.fml import capability, loading, network, config
+        from mcpython.loader.java.bridge.fml import capability, config, loading, network
         from mcpython.loader.java.bridge.lib import (
             apache,
             fastutil,
@@ -181,11 +195,11 @@ class JavaVM:
         )
         from mcpython.loader.java.bridge.misc import (
             containers,
+            crafting,
             dispenser,
+            enchantments,
             potions,
             tags,
-            enchantments,
-            crafting,
         )
         from mcpython.loader.java.bridge.world import biomes, collection, world
 
@@ -217,17 +231,20 @@ class JavaVM:
             bytecode = get_bytecode_of_class(name)
         except FileNotFoundError:
             if DYNAMIC_NATIVES:
+
                 class Dynamic(NativeClass):
                     NAME = name
 
-                print(f"""
+                print(
+                    f"""
 Native Dynamic Builder: Class {name} (not found)
 Add into file and add to import list in natives:
 from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 class {name.split('/')[-1].replace('$', '__')}(NativeClass):
-    NAME = \"{name}\"""")
+    NAME = \"{name}\""""
+                )
 
                 return self.shared_classes[name]
 
@@ -302,7 +319,7 @@ class AbstractJavaClass:
 
     def on_annotate(self, cls, args):
         if DYNAMIC_NATIVES:
-            print("\n"+self.name+" is missing on_annotate implementation!")
+            print("\n" + self.name + " is missing on_annotate implementation!")
             return
 
         raise RuntimeError((self, cls, args))
@@ -371,6 +388,7 @@ class NativeClass(AbstractJavaClass, ABC):
                 raise
 
         if DYNAMIC_NATIVES:
+
             def dynamic(*_):
                 pass
 
@@ -379,13 +397,15 @@ class NativeClass(AbstractJavaClass, ABC):
             dynamic.native_name = name
             dynamic.native_signature = signature
 
-            print(f"""
+            print(
+                f"""
 Native Dynamic Builder: Class {self.name}
 Method {name} with signature {signature}
 Add:
     @native(\"{name}\", \"{signature}\")
     def {name.removeprefix("<").removesuffix(">").replace("$", "__")}(self, *_):
-        pass""")
+        pass"""
+            )
 
             return dynamic
 
@@ -398,9 +418,11 @@ Add:
     def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.exposed_attributes:
             if DYNAMIC_NATIVES:
-                print(f"""
+                print(
+                    f"""
 Native Dynamic Builder: Class {self.name}
-Static attribute {name}""")
+Static attribute {name}"""
+                )
                 self.exposed_attributes[name] = None
                 return
 
@@ -773,7 +795,9 @@ class JavaMethod:
         return runtime.run_method(self, *args)
 
     def get_class(self):
-        return self.class_file.vm.get_class("java/lang/reflect/Method", version=self.class_file.internal_version)
+        return self.class_file.vm.get_class(
+            "java/lang/reflect/Method", version=self.class_file.internal_version
+        )
 
     def __call__(self, *args):
         return self.invoke(*args)

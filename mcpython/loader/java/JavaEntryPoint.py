@@ -136,7 +136,14 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
 
     @classmethod
     def load_mod_from_toml(cls, file, data):
-        loader_version = int(data["loaderVersion"].removeprefix("[").removesuffix(",)").removesuffix(",]").split(".")[0].split(",")[0])
+        loader_version = int(
+            data["loaderVersion"]
+            .removeprefix("[")
+            .removesuffix(",)")
+            .removesuffix(",]")
+            .split(".")[0]
+            .split(",")[0]
+        )
 
         mods = {}
 
@@ -153,11 +160,15 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
                 # these are error handlers, they should NOT be here... Some people produce really bad mods!
 
                 if isinstance(mod, dict):
-                    logger.println(f"[FML][SEMI FATAL] skipping dependency block {mod} as block is invalid [provided mods: {list(mod.keys())}]")
+                    logger.println(
+                        f"[FML][SEMI FATAL] skipping dependency block {mod} as block is invalid [provided mods: {list(mod.keys())}]"
+                    )
                     continue
 
                 if mod not in mods:
-                    logger.println(f"[FML][HARD WARN] reference error in dependency block to {mod} [provided: {list(mods.keys())}]")
+                    logger.println(
+                        f"[FML][HARD WARN] reference error in dependency block to {mod} [provided: {list(mods.keys())}]"
+                    )
                     continue
 
                 try:
@@ -170,4 +181,6 @@ class JavaModLoader(mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint):
                             d["modId"] if d["modId"] != "forge" else "minecraft"
                         )
                 except:
-                    logger.print_exception("decoding dependency structure", str(mod), data)
+                    logger.print_exception(
+                        "decoding dependency structure", str(mod), data
+                    )

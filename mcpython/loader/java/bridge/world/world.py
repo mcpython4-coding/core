@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -20,10 +20,11 @@ class World(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "field_234918_g_": None,
-            "field_234919_h_": None,
-            "field_234920_i_": None,
-            "field_239699_ae_": None,
-        })
-
+        self.exposed_attributes.update(
+            {
+                "field_234918_g_": None,
+                "field_234919_h_": None,
+                "field_234920_i_": None,
+                "field_239699_ae_": None,
+            }
+        )
