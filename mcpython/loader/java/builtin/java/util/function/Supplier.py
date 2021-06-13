@@ -20,4 +20,6 @@ class Supplier(NativeClass):
 
     @native("get", "()Ljava/lang/Object;")
     def get(self, instance):
-        return instance()
+        value = instance()
+        print(instance, value)
+        return value

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import mcpython.ResourceLoader
 from mcpython.loader.java.Java import NativeClass, native
 
 
@@ -36,3 +37,11 @@ class Class(NativeClass):
     @native("desiredAssertionStatus", "()Z")
     def desiredAssertionStatus(self, *_):
         return 0
+
+    @native("getSimpleName", "()Ljava/lang/String;")
+    def getSimpleName(self, instance):
+        return instance.name
+
+    @native("getResourceAsStream", "(Ljava/lang/String;)Ljava/io/InputStream;")
+    def getResourceAsStream(self, instance, path: str):
+        return mcpython.ResourceLoader.read_raw(path)

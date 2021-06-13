@@ -1707,6 +1707,8 @@ R   [uuk]: improved world serialization API
 [uuk]: <jvm> WARNING: the JVM is now starting to get natives which can DAMAGE your system!
 [uuk]: <jvm> fixed invokevirtual on abstract methods
 [uuk]. <jvm> fixed invokedynamic when passing additional parameters to the method
+[uuk]: added a continue button to the loading exception screen to continue mod loading even if an error occurred,
+       resuming where we stopped loading
 
 tasks to do [maybe moved away for later]:
 - minifier task should minify builtin & bridge library into each only one file

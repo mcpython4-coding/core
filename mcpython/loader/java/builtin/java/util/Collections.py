@@ -20,3 +20,19 @@ class Collections(NativeClass):
     @native("addAll", "(Ljava/util/Collection;[Ljava/lang/Object;)Z")
     def addAll(self, collection, objects):
         pass  # todo: implement
+
+    @native("unmodifiableList", "(Ljava/util/List;)Ljava/util/List;")
+    def unmodifiableList(self, array):
+        return tuple(array)
+
+    @native("unmodifiableSet", "(Ljava/util/Set;)Ljava/util/Set;")
+    def unmodifiableSet(self, instance):
+        return instance  # todo: make mutable
+
+    @native("emptyList", "()Ljava/util/List;")
+    def emptyList(self):
+        return []
+
+    @native("emptyMap", "()Ljava/util/Map;")
+    def emptyMap(self):
+        return {}

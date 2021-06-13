@@ -35,6 +35,10 @@ class Lists(NativeClass):
         ).create_instance()
         return instance
 
+    @native("newArrayList", "([Ljava/lang/Object;)Ljava/util/ArrayList;")
+    def newArrayList(self, array):
+        return array
+
 
 class Maps(NativeClass):
     NAME = "com/google/common/collect/Maps"
@@ -53,6 +57,10 @@ class Maps(NativeClass):
     @native("newEnumMap", "(Ljava/util/Map;)Ljava/util/EnumMap;")
     def newEnumMap(self, base_map):
         return base_map
+
+    @native("newTreeMap", "()Ljava/util/TreeMap;")
+    def newTreeMap(self):
+        return {}
 
 
 class ImmutableList(NativeClass):
@@ -85,12 +93,45 @@ class ImmutableList(NativeClass):
 class ImmutableMap(NativeClass):
     NAME = "com/google/common/collect/ImmutableMap"
 
+    @native("builder", "()Lcom/google/common/collect/ImmutableMap$Builder;")
+    def builder(self):
+        return self.vm.get_class(
+            "com/google/common/collect/ImmutableMap$Builder",
+            version=self.internal_version,
+        ).create_instance()
+
     @native(
         "of",
         "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap;",
     )
     def of(self, *stuff):
         return self.create_instance()
+
+
+class ImmutableMap__Builder(NativeClass):
+    NAME = "com/google/common/collect/ImmutableMap$Builder"
+
+    def create_instance(self):
+        return {}
+
+    @native(
+        "putAll", "(Ljava/util/Map;)Lcom/google/common/collect/ImmutableMap$Builder;"
+    )
+    def putAll(self, instance, data):
+        instance.update(data)
+        return instance
+
+    @native(
+        "put",
+        "(Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableMap$Builder;",
+    )
+    def put(self, instance, key, value):
+        instance[key] = value
+        return instance
+
+    @native("build", "()Lcom/google/common/collect/ImmutableMap;")
+    def build(self, instance):
+        return instance  # todo: make immutable
 
 
 class ImmutableMultimap(NativeClass):
@@ -219,3 +260,54 @@ class ImmutableSet(NativeClass):
             raise NotImplementedError(f"object {collection} seems not iterable!")
 
         return obj
+
+    @native(
+        "of",
+        "(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableSet;",
+    )
+    def of(self, *elements):
+        return set(elements)
+
+    @native("builder", "()Lcom/google/common/collect/ImmutableSet$Builder;")
+    def builder(self):
+        return set()
+
+
+class ImmutableSet__Builder(NativeClass):
+    NAME = "com/google/common/collect/ImmutableSet$Builder"
+
+    @native(
+        "add", "(Ljava/lang/Object;)Lcom/google/common/collect/ImmutableSet$Builder;"
+    )
+    def add(self, instance, obj):
+        instance.add(obj)
+        return instance
+
+    @native("build", "()Lcom/google/common/collect/ImmutableSet;")
+    def build(self, instance):
+        return instance  # todo: make immutable
+
+
+class BiMap(NativeClass):
+    NAME = "com/google/common/collect/BiMap"
+
+    @native("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    def put(self, instance, key, value):
+        instance[key] = value
+        return value
+
+
+class Joiner(NativeClass):
+    NAME = "com/google/common/base/Joiner"
+
+    @native("on", "(Ljava/lang/String;)Lcom/google/common/base/Joiner;")
+    def on(self, string: str):
+        return self.create_instance()
+
+
+class ArrayListMultimap(NativeClass):
+    NAME = "com/google/common/collect/ArrayListMultimap"
+
+    @native("create", "()Lcom/google/common/collect/ArrayListMultimap;")
+    def create(self):
+        return self.create_instance()

@@ -132,9 +132,11 @@ class JavaVM:
             Double,
             Enum,
             FunctionalInterface,
+            IllegalStateException,
             Integer,
             Math,
             Object,
+            RuntimeException,
             String,
             System,
             ThreadLocal,
@@ -159,15 +161,26 @@ class JavaVM:
             HashSet,
             IdentityHashMap,
             Iterator,
+            LinkedHashMap,
             LinkedList,
             List,
+            Locale,
             Map,
+            Objects,
             Optional,
             Random,
+            Set,
             TreeMap,
+            TreeSet,
             WeakHashMap,
         )
-        from mcpython.loader.java.builtin.java.util.concurrent import ConcurrentHashMap
+        from mcpython.loader.java.builtin.java.util.concurrent import (
+            ConcurrentHashMap,
+            TimeUnit,
+        )
+        from mcpython.loader.java.builtin.java.util.concurrent.atomic import (
+            AtomicInteger,
+        )
         from mcpython.loader.java.builtin.java.util.function import (
             BiFunction,
             Consumer,
@@ -176,7 +189,7 @@ class JavaVM:
             Supplier,
         )
         from mcpython.loader.java.builtin.java.util.regex import Pattern
-        from mcpython.loader.java.builtin.java.util.stream import Stream
+        from mcpython.loader.java.builtin.java.util.stream import Collectors, Stream
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util
@@ -191,13 +204,17 @@ class JavaVM:
             gson,
             logging,
             mixin,
+            netty,
             nightconfig,
         )
         from mcpython.loader.java.bridge.misc import (
+            commands,
             containers,
             crafting,
             dispenser,
             enchantments,
+            loot,
+            nbt,
             potions,
             tags,
         )
@@ -856,7 +873,7 @@ class JavaBytecodeClass(AbstractJavaClass):
             elif tag == 1:
                 size = pop_u2(data)
                 e = pop_sized(size, data)
-                d = tag, e.decode("utf-8")
+                d = tag, e.decode("utf-8", errors="ignore")
             elif tag == 15:
                 d = tag, pop_u1(data), pop_u2(data)
             else:
@@ -1050,5 +1067,5 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
-# vm.debug_method("appeng/bootstrap/FeatureFactory", "block", "(Ljava/lang/String;Ljava/util/function/Supplier;)Lappeng/bootstrap/IBlockBuilder;")
-# vm.debug_method("appeng/core/api/definitions/ApiBlocks", "<init>", "(Lappeng/bootstrap/FeatureFactory;)V")
+# vm.debug_method("appeng/bootstrap/BlockRendering", "apply", "(Lappeng/bootstrap/FeatureFactory;Lnet/minecraft/block/Block;)V")
+# vm.debug_method("appeng/bootstrap/BlockDefinitionBuilder", "build", "()Lappeng/api/definitions/IBlockDefinition;")

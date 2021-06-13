@@ -46,3 +46,24 @@ class Effect(NativeClass):
     @native("func_76403_b", "()Z")
     def func_76403_b(self, instance):
         return False
+
+    @native("<init>", "(Lnet/minecraft/potion/EffectType;I)V")
+    def init(self, *_):
+        pass
+
+
+class Potion(NativeClass):
+    NAME = "net/minecraft/potion/Potion"
+
+
+class EffectType(NativeClass):
+    NAME = "net/minecraft/potion/EffectType"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update(
+            {
+                "NEUTRAL": 0,
+                "HARMFUL": 1,
+            }
+        )

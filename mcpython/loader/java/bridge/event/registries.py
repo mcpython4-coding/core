@@ -51,6 +51,10 @@ class IForgeRegistry(NativeClass):
     def getValue(self, registry, name):
         return registry().get(name if isinstance(name, str) else name.name)
 
+    @native("getRegistrySuperType", "()Ljava/lang/Class;")
+    def getRegistrySuperType(self, *_):
+        pass
+
 
 class ForgeRegistries(NativeClass):
     """
@@ -72,6 +76,14 @@ class ForgeRegistries(NativeClass):
             "FLUIDS": None,
             "TILE_ENTITIES": None,
             "RECIPE_SERIALIZERS": None,
+            "STRUCTURE_FEATURES": None,
+            "CONTAINERS": None,
+            "ENTITIES": None,
+            "POTIONS": None,
+            "PARTICLE_TYPES": None,
+            "ENCHANTMENTS": None,
+            "POI_TYPES": None,
+            "PROFESSIONS": None,
         }
 
 
@@ -133,6 +145,14 @@ class RegistryObject(NativeClass):
     )
     def of(self, location, registry):
         return registry().get(location.name) if registry is not None else None
+
+    @native("get", "()Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def get(self, instance):
+        return instance
+
+    @native("getId", "()Lnet/minecraft/util/ResourceLocation;")
+    def getId(self, instance):
+        pass
 
 
 class ObjectHolder(NativeClass):
@@ -258,7 +278,14 @@ class DeferredRegister(NativeClass):
         "(Lnet/minecraftforge/registries/IForgeRegistry;Ljava/lang/String;)Lnet/minecraftforge/registries/DeferredRegister;",
     )
     def create(self, registry, mod_name):
-        pass
+        return self.create_instance()
+
+    @native(
+        "create",
+        "(Ljava/lang/Class;Ljava/lang/String;)Lnet/minecraftforge/registries/DeferredRegister;",
+    )
+    def create2(self, *_):
+        return self.create_instance()
 
     @native("register", "(Lnet/minecraftforge/eventbus/api/IEventBus;)V")
     def register(self, instance, eventbus):
@@ -269,6 +296,13 @@ class DeferredRegister(NativeClass):
         "(Ljava/lang/String;Ljava/util/function/Supplier;)Lnet/minecraftforge/fml/RegistryObject;",
     )
     def register2(self, instance, name: str, supplier):
+        pass
+
+    @native(
+        "makeRegistry",
+        "(Ljava/lang/String;Ljava/util/function/Supplier;)Ljava/util/function/Supplier;",
+    )
+    def makeRegistry(self, name: str, supplier):
         pass
 
 
@@ -308,3 +342,29 @@ class RegistryBuilder(NativeClass):
             "net/minecraftforge/registries/IForgeRegistry",
             version=self.internal_version,
         ).create_instance()
+
+
+class WorldGenRegistries(NativeClass):
+    NAME = "net/minecraft/util/registry/WorldGenRegistries"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update(
+            {
+                "field_243654_f": None,
+            }
+        )
+
+
+class IForgeRegistryEntry(NativeClass):
+    NAME = "net/minecraftforge/registries/IForgeRegistryEntry"
+
+    @native(
+        "setRegistryName", "(Lnet/minecraft/util/ResourceLocation;)Ljava/lang/Object;"
+    )
+    def setRegistryName(self, instance, location):
+        return instance
+
+    @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
+    def getRegistryName(self, *_):
+        pass

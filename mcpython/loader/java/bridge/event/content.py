@@ -271,6 +271,13 @@ class Block(AbstractBlock):
         instance.registry_name = namespace + ":" + name
         return instance
 
+    @native(
+        "setRegistryName",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
+    def setRegistryName3(self, instance, name):
+        return instance
+
     @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
     def getRegistryName(self, instance):
         return instance.registry_name if instance is not None else None
@@ -312,6 +319,7 @@ class Material(NativeClass):
                 "field_204868_h": None,
                 "field_203243_f": None,
                 "field_151573_f": None,
+                "field_151586_h": None,
             }
         )
 
@@ -325,6 +333,24 @@ class Material(NativeClass):
     )
     def init(self, instance, color, a, b, c, d, e, f, reaction):
         pass
+
+
+class Material__Builder(NativeClass):
+    NAME = "net/minecraft/block/material/Material$Builder"
+
+    @native("<init>", "(Lnet/minecraft/block/material/MaterialColor;)V")
+    def init(self, instance, color):
+        pass
+
+    @native("func_200502_b", "()Lnet/minecraft/block/material/Material$Builder;")
+    def func_200502_b(self, instance):
+        return instance
+
+    @native("func_200506_i", "()Lnet/minecraft/block/material/Material;")
+    def func_200506_i(self, instance):
+        return self.vm.get_class(
+            "net/minecraft/block/material/Material", version=self.internal_version
+        ).create_instance()
 
 
 class MaterialColor(NativeClass):
@@ -382,6 +408,7 @@ class MaterialPushReaction(NativeClass):
                 "NORMAL": "net/minecraft/block/material/PushReaction::NORMAL",
                 "DESTROY": "net/minecraft/block/material/PushReaction::DESTROY",
                 "PUSH_ONLY": "net/minecraft/block/material/PushReaction::DESTROY",
+                "BLOCK": "net/minecraft/block/material/PushReaction::BLOCK",
             }
         )
 
@@ -730,6 +757,10 @@ class AbstractBodyPlantBlock(Block):
         instance.properties = properties
 
 
+class StandingSignBlock(Block):
+    NAME = "net/minecraft/block/StandingSignBlock"
+
+
 class IPlantable(NativeClass):
     NAME = "net/minecraftforge/common/IPlantable"
 
@@ -775,6 +806,13 @@ class Item(NativeClass):
         instance.registry_name = name if isinstance(name, str) else name.name
         return instance
 
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
+    def setRegistryName3(self, instance, namespace, name):
+        return instance
+
     @native("func_70067_L", "()Z")
     def func_70067_L(self, instance):
         return 0
@@ -813,6 +851,10 @@ class Item_Properties(NativeClass):
     def func_200917_a(self, instance, value):
         return instance
 
+    @native("func_200918_c", "(I)Lnet/minecraft/item/Item$Properties;")
+    def func_200918_c(self, instance, level):
+        return instance
+
 
 class ItemGroup(NativeClass):
     NAME = "net/minecraft/item/ItemGroup"
@@ -822,7 +864,8 @@ class ItemGroup(NativeClass):
         self.exposed_attributes.update(
             {
                 # Exposed for a ID of the tab, as mc requires it for no reason. We don't need it
-                "field_78032_a": []
+                "field_78032_a": [],
+                "field_78040_i": None,
             }
         )
 
@@ -863,6 +906,14 @@ class ItemGroup(NativeClass):
     def init2(self, instance, name: str):
         self.init(instance, -1, name)
 
+    @native("func_78014_h", "()Lnet/minecraft/item/ItemGroup;")
+    def func_78014_h(self, instance):
+        return instance
+
+    @native("func_78025_a", "(Ljava/lang/String;)Lnet/minecraft/item/ItemGroup;")
+    def func_78025_a(self, instance, v: str):
+        return instance
+
 
 class ItemStack(NativeClass):
     NAME = "net/minecraft/item/ItemStack"
@@ -874,6 +925,26 @@ class ItemStack(NativeClass):
         instance.underlying_stack = mcpython.common.container.ResourceStack.ItemStack()
 
 
+class IItemTier(NativeClass):
+    NAME = "net/minecraft/item/IItemTier"
+
+    @native("func_200926_a", "()I")
+    def func_200926_a(self, instance):
+        return 0
+
+
+class ItemTier(IItemTier):
+    NAME = "net/minecraft/item/ItemTier"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update(
+            {
+                "STONE": 2,
+            }
+        )
+
+
 class BlockItem(Item):
     NAME = "net/minecraft/item/BlockItem"
 
@@ -881,6 +952,9 @@ class BlockItem(Item):
         "<init>", "(Lnet/minecraft/block/Block;Lnet/minecraft/item/Item$Properties;)V"
     )
     def init(self, instance, block, properties):
+        if instance is None:
+            return
+
         instance.block = block
         instance.properties = properties
 
@@ -915,6 +989,24 @@ class AxeItem(NativeClass):
     def __init__(self):
         super().__init__()
         self.exposed_attributes = {"field_203176_a": {}}
+
+
+class BucketItem(NativeClass):
+    NAME = "net/minecraft/item/BucketItem"
+
+    @native(
+        "<init>", "(Ljava/util/function/Supplier;Lnet/minecraft/item/Item$Properties;)V"
+    )
+    def init(self, *_):
+        pass
+
+    @native(
+        "setRegistryName",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
+    def setRegistryName(self, instance, name):
+        instance.registry_name = name
+        return instance
 
 
 class HoeItem(NativeClass):
@@ -959,7 +1051,12 @@ class ItemRarity(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({"RARE": "net/minecraft/item/Rarity::RARE"})
+        self.exposed_attributes.update(
+            {
+                "RARE": "net/minecraft/item/Rarity::RARE",
+                "UNCOMMON": "net/minecraft/item/Rarity::UNCOMMON",
+            }
+        )
 
 
 class DyeColor(NativeClass):
@@ -1025,6 +1122,7 @@ class BlockStateProperties(NativeClass):
                 "field_208137_al": None,
                 "field_208198_y": None,
                 "field_208155_H": None,
+                "field_208157_J": None,
             }
         )
 
@@ -1251,3 +1349,131 @@ class Entity(NativeClass):
     @native("func_70067_L", "()Z")
     def func_70067_L(self):
         return 0
+
+
+class ItemEntity(Entity):
+    NAME = "net/minecraft/entity/item/ItemEntity"
+
+
+class TranslationTextComponent(NativeClass):
+    NAME = "net/minecraft/util/text/TranslationTextComponent"
+
+    @native("<init>", "(Ljava/lang/String;)V")
+    def init(self, instance, lookup_string):
+        pass
+
+
+class TileEntityType(NativeClass):
+    NAME = "net/minecraft/tileentity/TileEntityType"
+
+
+class PaintingType(NativeClass):
+    NAME = "net/minecraft/entity/item/PaintingType"
+
+
+class Fluid(NativeClass):
+    NAME = "net/minecraft/fluid/Fluid"
+
+
+class ForgeFlowingFluid__Properties(NativeClass):
+    NAME = "net/minecraftforge/fluids/ForgeFlowingFluid$Properties"
+
+    @native(
+        "<init>",
+        "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;Lnet/minecraftforge/fluids/FluidAttributes$Builder;)V",
+    )
+    def init(self, *_):
+        pass
+
+    @native(
+        "bucket",
+        "(Ljava/util/function/Supplier;)Lnet/minecraftforge/fluids/ForgeFlowingFluid$Properties;",
+    )
+    def bucket(self, *_):
+        pass
+
+    @native(
+        "block",
+        "(Ljava/util/function/Supplier;)Lnet/minecraftforge/fluids/ForgeFlowingFluid$Properties;",
+    )
+    def block(self, *_):
+        pass
+
+
+class FluidAttributes(NativeClass):
+    NAME = "net/minecraftforge/fluids/FluidAttributes"
+
+    @native(
+        "builder",
+        "(Lnet/minecraft/util/ResourceLocation;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/fluids/FluidAttributes$Builder;",
+    )
+    def builder(self, *_):
+        pass
+
+
+class FlowingFluid(NativeClass):
+    NAME = "net/minecraft/fluid/FlowingFluid"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update(
+            {
+                "field_207210_b": None,
+            }
+        )
+
+    @native("<init>", "()V")
+    def init(self, *_):
+        pass
+
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
+    def setRegistryName(self, instance, namespace, name):
+        return instance
+
+    @native(
+        "setRegistryName",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
+    def setRegistryName2(self, instance, name):
+        return instance
+
+    @native("func_207182_e", "()Lnet/minecraft/state/StateContainer;")
+    def func_207182_e(self, *_):
+        pass
+
+
+class FlowingFluidBlock(Block):
+    NAME = "net/minecraft/block/FlowingFluidBlock"
+
+    @native(
+        "<init>",
+        "(Ljava/util/function/Supplier;Lnet/minecraft/block/AbstractBlock$Properties;)V",
+    )
+    def init(self, *_):
+        pass
+
+    @native(
+        "setRegistryName",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
+    def setRegistryName(self, instance, name):
+        instance.registry_name = name
+        return instance
+
+
+class FluidState(NativeClass):
+    NAME = "net/minecraft/fluid/FluidState"
+
+    @native(
+        "func_206870_a",
+        "(Lnet/minecraft/state/Property;Ljava/lang/Comparable;)Ljava/lang/Object;",
+    )
+    def func_206870_a(self, *_):
+        pass
+
+    @native("func_207183_f", "(Lnet/minecraft/fluid/FluidState;)V")
+    def func_207183_f(self, *_):
+        pass

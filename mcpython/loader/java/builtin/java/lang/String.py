@@ -34,9 +34,29 @@ class String(NativeClass):
     def valueOf(self, value):
         return str(value)
 
+    @native("valueOf", "(Ljava/lang/Object;)Ljava/lang/String;")
+    def valueOf(self, value):
+        return str(value)
+
     @native("toLowerCase", "()Ljava/lang/String;")
     def toLowerCase(self, instance):
         return instance.lower()
+
+    @native("toLowerCase", "(Ljava/util/Locale;)Ljava/lang/String;")
+    def toLowerCase2(self, instance, locale):
+        return instance.lower()
+
+    @native("format", "(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;")
+    def format(self, instance, items):
+        return instance % items
+
+    @native("trim", "()Ljava/lang/String;")
+    def trim(self, instance: str):
+        return instance.strip()
+
+    @native("isEmpty", "()Z")
+    def isEmpty(self, instance):
+        return int(instance == "")
 
 
 class StringBuilder(NativeClass):
@@ -60,6 +80,11 @@ class StringBuilder(NativeClass):
             raise StackCollectingException("NullPointerException: self is null")
 
         instance.underlying.append(str(value).lower())
+        return instance
+
+    @native("append", "(I)Ljava/lang/StringBuilder;")
+    def append3(self, instance, value):
+        instance.underlying.append(str(value))
         return instance
 
     @native("toString", "()Ljava/lang/String;")

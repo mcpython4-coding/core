@@ -18,6 +18,15 @@ from mcpython.loader.java.Java import NativeClass, native
 class Boolean(NativeClass):
     NAME = "java/lang/Boolean"
 
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update(
+            {
+                "TRUE": 1,
+                "FALSE": 0,
+            }
+        )
+
     @native("valueOf", "(Z)Ljava/lang/Boolean;")
     def valueOf(self, value):
         return value
@@ -29,3 +38,7 @@ class Boolean(NativeClass):
     @native("parseBoolean", "(Ljava/lang/String;)Z")
     def parseBoolean(self, text: str):
         return int(text.lower() == "true")
+
+    @native("booleanValue", "()Z")
+    def booleanValue(self, instance):
+        return instance

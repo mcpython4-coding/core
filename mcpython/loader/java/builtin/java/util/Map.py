@@ -17,6 +17,9 @@ from mcpython.loader.java.Java import NativeClass, native
 class Map(NativeClass):
     NAME = "java/util/Map"
 
+    def create_instance(self):
+        return {}
+
     @native("values", "()Ljava/util/Collection;")
     def values(self, instance):
         return list(instance.keys())
@@ -37,3 +40,7 @@ class Map(NativeClass):
     @native("containsKey", "(Ljava/lang/Object;)Z")
     def containsKey(self, instance, obj):
         return obj in instance
+
+    @native("keySet", "()Ljava/util/Set;")
+    def keySet(self, instance):
+        return set(instance.keys())

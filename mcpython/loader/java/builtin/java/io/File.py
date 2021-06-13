@@ -24,6 +24,10 @@ class File(NativeClass):
     def init(self, instance, d, path: str):
         instance.path = d.path + "/" + path.replace("\\", "/")
 
+    @native("<init>", "(Ljava/lang/String;)V")
+    def init2(self, instance, path: str):
+        pass
+
     @native("getParentFile", "()Ljava/io/File;")
     def getParentFile(self, instance):
         obj = self.create_instance()
@@ -49,4 +53,8 @@ class File(NativeClass):
 
     @native("createNewFile", "()Z")
     def createNewFile(self, instance):
+        pass
+
+    @native("toPath", "()Ljava/nio/file/Path;")
+    def toPath(self, instance):
         pass

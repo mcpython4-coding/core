@@ -11,18 +11,16 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import random
-
+from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class Random(NativeClass):
-    NAME = "java/util/Random"
+class TreeSet(NativeClass):
+    NAME = "java/util/TreeSet"
+
+    def create_instance(self):
+        return set()
 
     @native("<init>", "()V")
-    def init(self, instance):
+    def init(self, *_):
         pass
-
-    @native("nextInt", "()I")
-    def nextInt(self):
-        return int.from_bytes(random.randbytes(4), "big")

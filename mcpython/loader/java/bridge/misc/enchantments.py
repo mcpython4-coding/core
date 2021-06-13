@@ -24,3 +24,7 @@ class EnchantmentType(NativeClass):
     )
     def create(self, *_):
         return self.create_instance()
+
+
+class Enchantment(NativeClass):
+    NAME = "net/minecraft/enchantment/Enchantment"

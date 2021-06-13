@@ -37,7 +37,15 @@ class ResourceLocation(NativeClass):
 
     @native("func_110623_a", "()Ljava/lang/String;")
     def getNamespace(self, instance):
-        return (instance if isinstance(instance, str) else instance.name).split(":")[0]
+        return (
+            (instance if isinstance(instance, str) else instance.name).split(":")[0]
+            if instance is not None
+            else None
+        )
+
+    @native("func_110624_b", "()Ljava/lang/String;")
+    def func_110624_b(self, instance):
+        return instance if isinstance(instance, str) else instance.name
 
 
 class IBooleanFunction(NativeClass):
@@ -88,6 +96,13 @@ class AxisAlignedBB(NativeClass):
 
 class IStringSerializable(NativeClass):
     NAME = "net/minecraft/util/IStringSerializable"
+
+    @native(
+        "func_233023_a_",
+        "(Ljava/util/function/Supplier;Ljava/util/function/Function;)Lcom/mojang/serialization/Codec;",
+    )
+    def func_233023_a_(self, instance, supplier, function):
+        pass
 
 
 class LazyValue(NativeClass):
@@ -145,3 +160,44 @@ class DamageSource(NativeClass):
     @native("func_151518_m", "()Lnet/minecraft/util/DamageSource;")
     def func_151518_m(self, instance):
         return instance
+
+
+class NonNullList(NativeClass):
+    NAME = "net/minecraft/util/NonNullList"
+
+    @native("func_191196_a", "()Lnet/minecraft/util/NonNullList;")
+    def func_191196_a(self):
+        return []
+
+    @native("add", "(Ljava/lang/Object;)Z")
+    def add(self, instance, entry):
+        instance.append(entry)
+        return 1
+
+
+class BlockPos(NativeClass):
+    NAME = "net/minecraft/util/math/BlockPos"
+
+    @native("<init>", "(III)V")
+    def init(self, instance, x, y, z):
+        instance.pos = x, y, z
+
+
+class SoundEvent(NativeClass):
+    NAME = "net/minecraft/util/SoundEvent"
+
+
+class FolderName(NativeClass):
+    NAME = "net/minecraft/world/storage/FolderName"
+
+    @native("<init>", "(Ljava/lang/String;)V")
+    def init(self, instance, name: str):
+        pass
+
+
+class Tuple(NativeClass):
+    NAME = "net/minecraft/util/Tuple"
+
+    @native("<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V")
+    def init(self, instance, a, b):
+        instance.underlying = a, b

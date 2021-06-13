@@ -21,3 +21,11 @@ class BlockTags(NativeClass):
     @native("func_199894_a", "(Ljava/lang/String;)Lnet/minecraft/tags/ITag$INamedTag;")
     def getByName(self, name: str):
         return shared.tag_handler.get_tag_for(name, "blocks", or_else_none=True)
+
+
+class ItemTags(NativeClass):
+    NAME = "net/minecraft/tags/ItemTags"
+
+    @native("func_199901_a", "(Ljava/lang/String;)Lnet/minecraft/tags/ITag$INamedTag;")
+    def func_199901_a(self, name: str):
+        return shared.tag_handler.get_tag_for(name, "items", or_else_none=True)

@@ -31,5 +31,11 @@ class Object(NativeClass):
             return self.vm.get_class(
                 "java/lang/reflect/Method", version=self.internal_version
             )
+        elif isinstance(instance, str):
+            return self.vm.get_class("java/lang/String", version=self.internal_version)
 
         return instance.get_class()
+
+    @native("toString", "()Ljava/lang/String;")
+    def toString(self, instance):
+        return str(instance)

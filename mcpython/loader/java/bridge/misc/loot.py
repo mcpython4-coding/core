@@ -11,18 +11,27 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import random
-
+from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
-class Random(NativeClass):
-    NAME = "java/util/Random"
+class GlobalLootModifierSerializer(NativeClass):
+    NAME = "net/minecraftforge/common/loot/GlobalLootModifierSerializer"
 
     @native("<init>", "()V")
     def init(self, instance):
         pass
 
-    @native("nextInt", "()I")
-    def nextInt(self):
-        return int.from_bytes(random.randbytes(4), "big")
+    @native(
+        "setRegistryName", "(Lnet/minecraft/util/ResourceLocation;)Ljava/lang/Object;"
+    )
+    def setRegistryName(self, instance, name):
+        return instance
+
+    @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
+    def getRegistryName(self, *_):
+        pass
+
+    @native("toString", "()Ljava/lang/String;")
+    def toString(self, instance):
+        return str(instance)

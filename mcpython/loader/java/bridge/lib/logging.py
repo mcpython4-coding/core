@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
+from mcpython import logger, shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
@@ -44,6 +44,18 @@ class LoggingLevel(NativeClass):
 
 class Logger(CoreLogger):
     NAME = "org/apache/logging/log4j/Logger"
+
+    @native("debug", "(Ljava/lang/String;)V")
+    def debug(self, instance, message):
+        logger.println("[FML LOGGER][WARN]", message)
+
+    @native("info", "(Ljava/lang/String;Ljava/lang/Object;)V")
+    def info(self, instance, message, obj):
+        logger.println("[FML LOGGER][INFO]", message)
+
+    @native("info", "(Ljava/lang/String;)V")
+    def info(self, instance, message):
+        logger.println("[FML LOGGER][INFO]", message)
 
 
 class LogManager(NativeClass):

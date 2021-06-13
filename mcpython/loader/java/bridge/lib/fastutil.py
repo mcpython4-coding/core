@@ -21,3 +21,19 @@ class Object2FloatMap(NativeClass):
     @native("put", "(Ljava/lang/Object;F)F")
     def put(self, instance, key, value):
         return value
+
+
+class Byte2ObjectArrayMap(NativeClass):
+    NAME = "it/unimi/dsi/fastutil/bytes/Byte2ObjectArrayMap"
+
+    @native("<init>", "(I)V")
+    def init(self, instance, size):
+        instance.underlying = {}
+
+
+class ObjectOpenHashSet(NativeClass):
+    NAME = "it/unimi/dsi/fastutil/objects/ObjectOpenHashSet"
+
+    @native("<init>", "()V")
+    def init(self, instance):
+        instance.underlying = set()

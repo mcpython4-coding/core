@@ -17,6 +17,9 @@ from mcpython.loader.java.Java import NativeClass, native
 class HashMap(NativeClass):
     NAME = "java/util/HashMap"
 
+    def create_instance(self):
+        return {}
+
     @native("<init>", "()V")
     def init(self, instance):
         pass
@@ -28,3 +31,15 @@ class HashMap(NativeClass):
     @native("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
     def put(self, instance, key, value):
         return value
+
+    @native("containsKey", "(Ljava/lang/Object;)Z")
+    def containsKey(self, instance, key):
+        return key in instance
+
+    @native("get", "(Ljava/lang/Object;)Ljava/lang/Object;")
+    def get(self, instance, key):
+        return instance[key]
+
+    @native("keySet", "()Ljava/util/Set;")
+    def keySet(self, instance):
+        return set(instance.keys())

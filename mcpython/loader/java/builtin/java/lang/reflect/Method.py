@@ -28,4 +28,8 @@ class Method(NativeClass):
 
     @native("apply", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
     def apply(self, instance, arg1, arg2):
-        instance(arg1, arg2)
+        return instance(arg1, arg2)
+
+    @native("apply", "(Ljava/lang/Object;)Ljava/lang/Object;")
+    def apply(self, instance, arg):
+        return instance(arg)

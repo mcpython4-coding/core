@@ -125,6 +125,10 @@ class Mod_EventBusSubscriber_Bus(NativeClass):
             }
         )
 
+    @native("bus", "()Ljava/util/function/Supplier;")
+    def bus(self, instance):
+        return lambda: None
+
 
 class FMLLoadingContext(NativeClass):
     NAME = "net/minecraftforge/fml/javafmlmod/FMLJavaModLoadingContext"
@@ -165,7 +169,9 @@ class EventBus(NativeClass):
 
     @native("addListener", "(Ljava/util/function/Consumer;)V")
     def addListener(self, instance, function):
-        if function.name == "commonSetup":
+        func_name = function.name if hasattr(function, "name") else function.native_name
+
+        if func_name == "commonSetup":
             runtime = Runtime()
             try:
                 runtime.run_method(function, None)
@@ -198,7 +204,7 @@ class EventBus(NativeClass):
                     )
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
-        elif function.name == "clientSetup":
+        elif func_name == "clientSetup":
             if shared.IS_CLIENT:
                 runtime = Runtime()
                 try:
@@ -230,7 +236,7 @@ class EventBus(NativeClass):
                     )
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
-        elif function.name == "loadComplete":
+        elif func_name == "loadComplete":
 
             def run():
                 runtime = Runtime()
@@ -268,6 +274,13 @@ class EventBus(NativeClass):
 
         else:
             print("missing BRIDGE binding for", function)
+
+    @native(
+        "addListener",
+        "(Lnet/minecraftforge/eventbus/api/EventPriority;Ljava/util/function/Consumer;)V",
+    )
+    def addListener2(self, priority, consumer):
+        self.addListener(priority, consumer)
 
     @native("register", "(Ljava/lang/Object;)V")
     def register(self, instance, obj):
@@ -307,6 +320,13 @@ class EventBus(NativeClass):
                     traceback.print_exc()
                     raise mcpython.common.mod.ModLoader.LoadingInterruptException from None
 
+    @native(
+        "addGenericListener",
+        "(Ljava/lang/Class;Lnet/minecraftforge/eventbus/api/EventPriority;ZLjava/lang/Class;Ljava/util/function/Consumer;)V",
+    )
+    def addGenericListener2(self, instance, cls, priority, b, cls2, consumer):
+        pass
+
     @native("post", "(Lnet/minecraftforge/eventbus/api/Event;)Z")
     def post(self, instance, event):
         pass
@@ -317,7 +337,13 @@ class DistMarker(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({"CLIENT": "client", "SERVER": "server"})
+        self.exposed_attributes.update(
+            {
+                "CLIENT": "client",
+                "SERVER": "server",
+                "DEDICATED_SERVER": "dedicated_server",
+            }
+        )
 
     @native("isClient", "()Z")
     def isClient(self, instance):
@@ -330,6 +356,7 @@ class FMLEnvironment(NativeClass):
     def __init__(self):
         super().__init__()
         self.exposed_attributes["dist"] = "client" if shared.IS_CLIENT else "server"
+        self.exposed_attributes["production"] = 1
 
 
 class DistExecutor(NativeClass):
@@ -363,6 +390,34 @@ class DistExecutor(NativeClass):
     def runWhenOn(self, *_):
         pass
 
+    @native(
+        "unsafeRunWhenOn",
+        "(Lnet/minecraftforge/api/distmarker/Dist;Ljava/util/function/Supplier;)V",
+    )
+    def unsafeRunWhenOn(self, *_):
+        pass
+
+    @native(
+        "callWhenOn",
+        "(Lnet/minecraftforge/api/distmarker/Dist;Ljava/util/function/Supplier;)Ljava/lang/Object;",
+    )
+    def callWhenOn(self, *_):
+        pass
+
+    @native(
+        "safeRunWhenOn",
+        "(Lnet/minecraftforge/api/distmarker/Dist;Ljava/util/function/Supplier;)V",
+    )
+    def safeRunWhenOn(self, *_):
+        pass
+
+    @native(
+        "safeRunForDist",
+        "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;",
+    )
+    def safeRunForDist(self, *_):
+        pass
+
 
 class FMLPaths(NativeClass):
     NAME = "net/minecraftforge/fml/loading/FMLPaths"
@@ -371,7 +426,11 @@ class FMLPaths(NativeClass):
         super().__init__()
         config_dir = self.create_instance()
         config_dir.dir = shared.home + "/fml_configs"
-        self.exposed_attributes = {"CONFIGDIR": config_dir}
+
+        game_dir = self.create_instance()
+        game_dir.dir = shared.home
+
+        self.exposed_attributes = {"CONFIGDIR": config_dir, "GAMEDIR": game_dir}
 
     @native("get", "()Ljava/nio/file/Path;")
     def get(self, instance):
@@ -385,7 +444,7 @@ class ModConfig_Type(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes = {"COMMON": None, "CLIENT": None}
+        self.exposed_attributes = {"COMMON": 0, "CLIENT": 1, "SERVER": 2}
 
 
 class ForgeConfigSpec__Builder(NativeClass):
@@ -467,11 +526,33 @@ class ForgeConfigSpec__Builder(NativeClass):
         return instance
 
     @native(
+        "defineInRange",
+        "(Ljava/lang/String;DDD)Lnet/minecraftforge/common/ForgeConfigSpec$DoubleValue;",
+    )
+    def defineInRange2(self, instance, name: str, a, b, c):
+        pass
+
+    @native(
         "defineList",
         "(Ljava/lang/String;Ljava/util/List;Ljava/util/function/Predicate;)Lnet/minecraftforge/common/ForgeConfigSpec$ConfigValue;",
     )
     def defineList(self, instance, name, a, b):
         return instance
+
+    @native(
+        "translation",
+        "(Ljava/lang/String;)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;",
+    )
+    def translation(self, instance, key: str):
+        pass
+
+    @native("worldRestart", "()Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    def worldRestart(self, *_):
+        pass
+
+    @native("get", "()Ljava/lang/Object;")
+    def get(self, instance):
+        pass
 
 
 class FMLCommonSetupEvent(NativeClass):
@@ -538,7 +619,55 @@ class EventPriority(NativeClass):
             {
                 "HIGHEST": 0,
                 "HIGH": 1,
-                "LOW": 2,
-                "LOWEST": 3,
+                "NORMAL": 2,
+                "LOW": 3,
+                "LOWEST": 4,
             }
         )
+
+
+class IEnvironment__Keys(NativeClass):
+    NAME = "cpw/mods/modlauncher/api/IEnvironment$Keys"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({"VERSION": 1})
+
+
+class Launcher(NativeClass):
+    NAME = "cpw/mods/modlauncher/Launcher"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({"INSTANCE": self.create_instance()})
+
+    @native("environment", "()Lcpw/mods/modlauncher/Environment;")
+    def environment(self, *_):
+        pass
+
+
+class Cancelable(NativeClass):
+    NAME = "net/minecraftforge/eventbus/api/Cancelable"
+
+    def on_annotate(self, cls, args):
+        pass
+
+
+class ObfuscationReflectionHelper(NativeClass):
+    NAME = "net/minecraftforge/fml/common/ObfuscationReflectionHelper"
+
+    @native(
+        "findField", "(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/reflect/Field;"
+    )
+    def findField(self, cls, name):
+        return cls.fields[name] if hasattr(cls, name) else None
+
+
+class DeferredWorkQueue(NativeClass):
+    NAME = "net/minecraftforge/fml/DeferredWorkQueue"
+
+    @native(
+        "runLater", "(Ljava/lang/Runnable;)Ljava/util/concurrent/CompletableFuture;"
+    )
+    def runLater(self, *_):
+        pass

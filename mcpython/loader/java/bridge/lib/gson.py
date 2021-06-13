@@ -35,3 +35,10 @@ class GsonBuilder(NativeClass):
         return self.vm.get_class(
             Gson.NAME, version=self.internal_version
         ).create_instance()
+
+    @native(
+        "registerTypeAdapter",
+        "(Ljava/lang/reflect/Type;Ljava/lang/Object;)Lcom/google/gson/GsonBuilder;",
+    )
+    def registerTypeAdapter(self, *_):
+        pass

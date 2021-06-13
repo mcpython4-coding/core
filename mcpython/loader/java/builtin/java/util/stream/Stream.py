@@ -28,3 +28,22 @@ class Stream(NativeClass):
                 consumer.inner(entry)
         except TypeError:
             pass
+
+    @native("collect", "(Ljava/util/stream/Collector;)Ljava/lang/Object;")
+    def collect(self, *_):
+        pass
+
+    @native("of", "([Ljava/lang/Object;)Ljava/util/stream/Stream;")
+    def of(self, array):
+        return array
+
+    @native("map", "(Ljava/util/function/Function;)Ljava/util/stream/Stream;")
+    def map(self, instance, function):
+        return [function(e) for e in instance]
+
+    @native(
+        "concat",
+        "(Ljava/util/stream/Stream;Ljava/util/stream/Stream;)Ljava/util/stream/Stream;",
+    )
+    def concat(self, a, b):
+        return a + b

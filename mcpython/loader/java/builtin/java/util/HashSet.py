@@ -17,6 +17,14 @@ from mcpython.loader.java.Java import NativeClass, native
 class HashSet(NativeClass):
     NAME = "java/util/HashSet"
 
+    def create_instance(self):
+        return set()
+
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+    @native("addAll", "(Ljava/util/Collection;)Z")
+    def addAll(self, instance, array):
+        instance |= set(array)
+        return instance

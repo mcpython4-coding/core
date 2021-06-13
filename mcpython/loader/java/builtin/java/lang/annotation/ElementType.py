@@ -28,5 +28,7 @@ class ElementType(NativeClass):
                 "TYPE": 0,
                 "FIELD": 1,
                 "METHOD": 2,
+                "ANNOTATION_TYPE": 3,
+                "PARAMETER": 4,
             }
         )

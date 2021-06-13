@@ -16,8 +16,9 @@ import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
+from ... import logger
 from . import State
-from .ui import UIPartProgressBar
+from .ui import UIPartButton
 
 
 @onlyInClient()
@@ -52,7 +53,22 @@ class StateLoadingException(State.State):
     def get_parts(self) -> list:
         from mcpython.client.state.StateModLoading import modloading
 
-        return [modloading.parts[0], modloading.parts[3]]
+        return [
+            modloading.parts[0],
+            modloading.parts[3],
+            UIPartButton.UIPartButton(
+                (100, 20),
+                "continue",
+                (0, 100),
+                anchor_button="MM",
+                anchor_window="MN",
+                on_press=self.resume,
+            ),
+        ]
+
+    def resume(self, *_):
+        logger.println("[MOD LOADER] continuing loading")
+        shared.state_handler.switch_to("minecraft:modloading")
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
@@ -60,11 +76,12 @@ class StateLoadingException(State.State):
         self.eventbus.subscribe("gameloop:tick:end", self.on_update)
 
     def on_resize(self, w, h):
-        for part in self.parts:
+        for part in self.parts[:-1]:
             part.bboxsize = (shared.window.get_size()[0] - 40, 20)
+
         self.parts[1].position = (20, shared.window.get_size()[1] - 40)
-        for lable in self.labels:
-            lable.x = w // 2
+        for label in self.labels:
+            label.x = w // 2
 
     def on_draw_2d_pre(self):
         pyglet.gl.glClearColor(255, 255, 255, 255)

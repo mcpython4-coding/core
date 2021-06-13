@@ -315,7 +315,8 @@ class BytecodeRepr:
         code = bytearray(code.code)
         i = 0
         # print("head", self.code.class_file.name)
-        while i < len(code):
+        while 0 <= i < len(code):
+            # todo: raise error when below 0
             tag = code[i]
 
             # print("".join(hex(e)[2:] for e in code[i:i+20]))
@@ -376,7 +377,7 @@ class BytecodeRepr:
 
 @BytecodeRepr.register_instruction
 class NoOp(OpcodeInstruction):
-    OPCODES = {0x00, 0x90}
+    OPCODES = {0x00, 0x90, 0x88}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
@@ -385,12 +386,22 @@ class NoOp(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Any2Float(OpcodeInstruction):
-    OPCODES = {0x87}
+    OPCODES = {0x87, 0x86}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         v = stack.pop()
         stack.push(float(v) if v is not None else v)
+
+
+@BytecodeRepr.register_instruction
+class Any2Int(OpcodeInstruction):
+    OPCODES = {0x8E}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        v = stack.pop()
+        stack.push(int(v) if v is not None else v)
 
 
 class ConstPush(OpcodeInstruction, ABC):
@@ -418,7 +429,7 @@ class IConstM1(ConstPush):
 
 @BytecodeRepr.register_instruction
 class IConst0(ConstPush):
-    OPCODES = {0x03, 0x0E}
+    OPCODES = {0x03, 0x0E, 0x09}
     PUSHES = 0
 
 
@@ -1001,6 +1012,23 @@ class IfNEq0(OpcodeInstruction):
 
 
 @BytecodeRepr.register_instruction
+class IfLE(OpcodeInstruction):
+    OPCODES = {0x9E}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() <= 0:
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
 class Goto(OpcodeInstruction):
     OPCODES = {0xA7}
 
@@ -1092,6 +1120,10 @@ class PutField(CPLinkedInstruction):
         name = data[2][1][1]
         value = stack.pop()
         obj = stack.pop()
+
+        if obj is None:
+            raise StackCollectingException("NullPointerException: obj is null")
+
         obj.fields[name] = value
 
 
@@ -1191,7 +1223,9 @@ class InvokeInterface(CPLinkedInstruction):
                 if hasattr(method, "signature")
                 else method.native_signature,
             )
+            # print("resolved at", method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
         except StackCollectingException as e:
+            print("InterfaceMethodResolveError:")
             print(e.format_exception())
         except AttributeError:
             pass
@@ -1243,7 +1277,15 @@ class InvokeDynamic(CPLinkedInstruction):
             method = cls_file.get_method(target_nat[1][1], target_nat[2][1])
             outer_signature = boostrap[1][0][1][1]
 
-            inner_args = len(list(stack.runtime.get_arg_parts_of(method.signature)))
+            inner_args = len(
+                list(
+                    stack.runtime.get_arg_parts_of(
+                        method.signature
+                        if hasattr(method, "signature")
+                        else method.native_signature
+                    )
+                )
+            )
             outer_args = len(list(stack.runtime.get_arg_parts_of(outer_signature)))
 
             # have we args to give from the current runtime?
@@ -1412,7 +1454,7 @@ class Mul(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class TableSwitch(OpcodeInstruction):
-    # OPCODES = {0xAA}
+    OPCODES = {0xAA}
 
     @classmethod
     def decode(

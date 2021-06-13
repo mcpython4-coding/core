@@ -27,5 +27,6 @@ class RetentionPolicy(NativeClass):
             {
                 "CLASS": 0,
                 "RUNTIME": 1,
+                "SOURCE": 2,
             }
         )

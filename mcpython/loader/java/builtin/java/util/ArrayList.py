@@ -23,3 +23,11 @@ class ArrayList(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+    @native("<init>", "(Ljava/util/Collection;)V")
+    def init(self, instance, array):
+        instance += array
+
+    @native("size", "()I")
+    def size(self, instance):
+        return len(instance)

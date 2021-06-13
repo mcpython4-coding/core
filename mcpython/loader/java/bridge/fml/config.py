@@ -21,3 +21,19 @@ class ForgeConfigSpec(NativeClass):
     @native("setConfig", "(Lcom/electronwill/nightconfig/core/CommentedConfig;)V")
     def setConfig(self, instance, config_instance):
         pass
+
+
+class ForgeConfigSpec__BooleanValue(NativeClass):
+    NAME = "net/minecraftforge/common/ForgeConfigSpec$BooleanValue"
+
+    @native("get", "()Ljava/lang/Object;")
+    def get(self, instance):
+        return 0
+
+
+class ForgeConfigSpec__ConfigValue(NativeClass):
+    NAME = "net/minecraftforge/common/ForgeConfigSpec$ConfigValue"
+
+    @native("get", "()Ljava/lang/Object;")
+    def get(self, *_):
+        pass

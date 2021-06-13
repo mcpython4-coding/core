@@ -91,7 +91,7 @@ class UIPartButton(UIPart.UIPart):
         has_hovering_state=True,
     ):
         """
-        creates an new UIPartButton
+        Creates a new UIPartButton
         :param size: the size of the button
         :param text: the text of the button
         :param position: the position of the button

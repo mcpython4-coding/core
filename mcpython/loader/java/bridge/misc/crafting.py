@@ -15,6 +15,10 @@ from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
+class IRecipeSerializer(NativeClass):
+    NAME = "net/minecraft/item/crafting/IRecipeSerializer"
+
+
 class IRecipeType(NativeClass):
     NAME = "net/minecraft/item/crafting/IRecipeType"
 

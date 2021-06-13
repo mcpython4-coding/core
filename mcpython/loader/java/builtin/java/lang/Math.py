@@ -25,3 +25,7 @@ class Math(NativeClass):
     @native("min", "(DD)D")
     def min(self, a, b):
         return min(a, b)
+
+    @native("pow", "(DD)D")
+    def pow(self, a, b):
+        return a ** b

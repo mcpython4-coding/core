@@ -76,3 +76,21 @@ class NetworkRegistry__ChannelBuilder(NativeClass):
             "net/minecraftforge/fml/network/simple/SimpleChannel",
             version=self.internal_version,
         )
+
+    @native(
+        "eventNetworkChannel",
+        "()Lnet/minecraftforge/fml/network/event/EventNetworkChannel;",
+    )
+    def eventNetworkChannel(self, instance):
+        return self.vm.get_class(
+            "net/minecraftforge/fml/event/EventNetworkChannel",
+            version=self.internal_version,
+        )
+
+
+class EventNetworkChannel(NativeClass):
+    NAME = "net/minecraftforge/fml/network/event/EventNetworkChannel"
+
+    @native("registerObject", "(Ljava/lang/Object;)V")
+    def registerObject(self, obj):
+        pass

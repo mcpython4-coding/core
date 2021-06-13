@@ -11,18 +11,20 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import random
-
+from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
+from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
 
-class Random(NativeClass):
-    NAME = "java/util/Random"
+class Objects(NativeClass):
+    NAME = "java/util/Objects"
 
-    @native("<init>", "()V")
-    def init(self, instance):
-        pass
+    @native("requireNonNull", "(Ljava/lang/Object;)Ljava/lang/Object;")
+    def requireNonNull(self, obj):
+        if obj is None:
+            raise StackCollectingException("NullPointerException")
+        return obj
 
-    @native("nextInt", "()I")
-    def nextInt(self):
-        return int.from_bytes(random.randbytes(4), "big")
+    @native("nonNull", "(Ljava/lang/Object;)Z")
+    def nonNull(self, obj):
+        return int(obj is not None)

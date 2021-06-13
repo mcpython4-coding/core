@@ -36,3 +36,7 @@ class EquipmentSlotType(NativeClass):
                 "FEET": 3,
             }
         )
+
+
+class ContainerType(NativeClass):
+    NAME = "net/minecraft/inventory/container/ContainerType"
