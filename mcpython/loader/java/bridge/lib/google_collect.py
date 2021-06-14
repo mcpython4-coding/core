@@ -39,6 +39,10 @@ class Lists(NativeClass):
     def newArrayList(self, array):
         return array
 
+    @native("newLinkedList", "()Ljava/util/LinkedList;")
+    def newLinkedList(self):
+        return []
+
 
 class Maps(NativeClass):
     NAME = "com/google/common/collect/Maps"
@@ -60,6 +64,10 @@ class Maps(NativeClass):
 
     @native("newTreeMap", "()Ljava/util/TreeMap;")
     def newTreeMap(self):
+        return {}
+
+    @native("newIdentityHashMap", "()Ljava/util/IdentityHashMap;")
+    def newIdentityHashMap(self, *_):
         return {}
 
 
@@ -311,3 +319,32 @@ class ArrayListMultimap(NativeClass):
     @native("create", "()Lcom/google/common/collect/ArrayListMultimap;")
     def create(self):
         return self.create_instance()
+
+
+class Sets(NativeClass):
+    NAME = "com/google/common/collect/Sets"
+
+    @native("newHashSet", "()Ljava/util/HashSet;")
+    def newHashSet(self, *_):
+        return set()
+
+
+class Multimaps(NativeClass):
+    NAME = "com/google/common/collect/Multimaps"
+
+    @native("newListMultimap",
+            "(Ljava/util/Map;Lcom/google/common/base/Supplier;)Lcom/google/common/collect/ListMultimap;")
+    def newListMultimap(self, *_):
+        return {}
+
+
+class ImmutableBiMap(NativeClass):
+    NAME = "com/google/common/collect/ImmutableBiMap"
+
+    def create_instance(self):
+        return {}
+
+    @native("of", "()Lcom/google/common/collect/ImmutableBiMap;")
+    def of(self, *_):
+        return {}
+

@@ -22,6 +22,11 @@ class BlockTags(NativeClass):
     def getByName(self, name: str):
         return shared.tag_handler.get_tag_for(name, "blocks", or_else_none=True)
 
+    @native("createOptional",
+            "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;")
+    def createOptional(self, name: str):
+        pass
+
 
 class ItemTags(NativeClass):
     NAME = "net/minecraft/tags/ItemTags"
@@ -29,3 +34,12 @@ class ItemTags(NativeClass):
     @native("func_199901_a", "(Ljava/lang/String;)Lnet/minecraft/tags/ITag$INamedTag;")
     def func_199901_a(self, name: str):
         return shared.tag_handler.get_tag_for(name, "items", or_else_none=True)
+
+
+class ForgeTagHandler(NativeClass):
+    NAME = "net/minecraftforge/common/ForgeTagHandler"
+
+    @native("createOptionalTag",
+            "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;")
+    def createOptionalTag(self, registry, name):
+        pass

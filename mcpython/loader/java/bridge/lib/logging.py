@@ -39,7 +39,7 @@ class LoggingLevel(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({"OFF": "level:off"})
+        self.exposed_attributes.update({"OFF": 0})
 
 
 class Logger(CoreLogger):
@@ -56,6 +56,14 @@ class Logger(CoreLogger):
     @native("info", "(Ljava/lang/String;)V")
     def info(self, instance, message):
         logger.println("[FML LOGGER][INFO]", message)
+
+    @native("getLevel", "()Lorg/apache/logging/log4j/Level;")
+    def getLevel(self, instance):
+        return 1
+
+    @native("setLevel", "(Lorg/apache/logging/log4j/Level;)V")
+    def setLevel(self, instance, level):
+        pass
 
 
 class LogManager(NativeClass):

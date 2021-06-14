@@ -30,5 +30,8 @@ class ElementType(NativeClass):
                 "METHOD": 2,
                 "ANNOTATION_TYPE": 3,
                 "PARAMETER": 4,
+                "PACKAGE": 5,
+                "TYPE_PARAMETER": 6,
+                "TYPE_USE": 7,
             }
         )

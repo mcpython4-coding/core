@@ -40,5 +40,17 @@ class GsonBuilder(NativeClass):
         "registerTypeAdapter",
         "(Ljava/lang/reflect/Type;Ljava/lang/Object;)Lcom/google/gson/GsonBuilder;",
     )
-    def registerTypeAdapter(self, *_):
+    def registerTypeAdapter(self, instance, t, obj):
+        return instance
+
+    @native("disableHtmlEscaping", "()Lcom/google/gson/GsonBuilder;")
+    def disableHtmlEscaping(self, instance):
+        return instance
+
+
+class JsonAdapter(NativeClass):
+    NAME = "com/google/gson/annotations/JsonAdapter"
+
+    def on_annotate(self, cls, args):
         pass
+

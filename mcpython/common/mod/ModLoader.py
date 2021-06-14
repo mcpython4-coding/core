@@ -506,7 +506,13 @@ class ModLoader:
         :param data: the toml-representation
         :param file: the file for debugging reasons
         """
-        data = toml.loads(data)
+        try:
+            data = toml.loads(data)
+        except toml.decoder.TomlDecodeError:
+            logger.print_exception(f"error during decoding {file}")
+            logger.println(data)
+            return
+
         if "modLoader" in data:
             if data["modLoader"] != "pythonml":
                 loader = data["modLoader"]

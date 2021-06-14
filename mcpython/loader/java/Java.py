@@ -127,6 +127,7 @@ class JavaVM:
         )
         from mcpython.loader.java.builtin.java.lang import (
             Boolean,
+            Character,
             Class,
             Deprecated,
             Double,
@@ -147,6 +148,8 @@ class JavaVM:
             Retention,
             RetentionPolicy,
             Target,
+            Repeatable,
+            Inherited,
         )
         from mcpython.loader.java.builtin.java.lang.reflect import Method
         from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
@@ -173,10 +176,13 @@ class JavaVM:
             TreeMap,
             TreeSet,
             WeakHashMap,
+            UUID,
+            LinkedHashSet,
         )
         from mcpython.loader.java.builtin.java.util.concurrent import (
             ConcurrentHashMap,
             TimeUnit,
+            CopyOnWriteArrayList,
         )
         from mcpython.loader.java.builtin.java.util.concurrent.atomic import (
             AtomicInteger,
@@ -190,6 +196,11 @@ class JavaVM:
         )
         from mcpython.loader.java.builtin.java.util.regex import Pattern
         from mcpython.loader.java.builtin.java.util.stream import Collectors, Stream
+        from mcpython.loader.java.builtin.java.text import DecimalFormat
+        from mcpython.loader.java.builtin.java.awt import Color
+
+        from mcpython.loader.java.builtin.javax.annotation import Nonnull, CheckForNull
+        from mcpython.loader.java.builtin.javax.annotation.meta import TypeQualifierDefault
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util

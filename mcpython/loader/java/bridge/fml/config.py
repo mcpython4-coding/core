@@ -15,6 +15,18 @@ from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 
 
+class ModConfig_Type(NativeClass):
+    NAME = "net/minecraftforge/fml/config/ModConfig$Type"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes = {"COMMON": "common", "CLIENT": "client", "SERVER": "server"}
+
+    @native("extension", "()Ljava/lang/String;")
+    def extension(self, instance):
+        return instance
+
+
 class ForgeConfigSpec(NativeClass):
     NAME = "net/minecraftforge/common/ForgeConfigSpec"
 
@@ -37,3 +49,15 @@ class ForgeConfigSpec__ConfigValue(NativeClass):
     @native("get", "()Ljava/lang/Object;")
     def get(self, *_):
         pass
+
+
+class ConfigFileTypeHandler(NativeClass):
+    NAME = "net/minecraftforge/fml/config/ConfigFileTypeHandler"
+
+    @native("<init>", "()V")
+    def init(self, instance):
+        pass
+
+
+class ModConfig(NativeClass):
+    NAME = "net/minecraftforge/fml/config/ModConfig"

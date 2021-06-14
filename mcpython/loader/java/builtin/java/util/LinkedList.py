@@ -18,6 +18,14 @@ from mcpython.loader.java.Java import NativeClass, native
 class LinkedList(NativeClass):
     NAME = "java/util/LinkedList"
 
+    def create_instance(self):
+        return []
+
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+    @native("add", "(Ljava/lang/Object;)Z")
+    def add(self, instance, obj):
+        instance.append(obj)
+        return 1

@@ -25,9 +25,14 @@ class ArrayList(NativeClass):
         pass
 
     @native("<init>", "(Ljava/util/Collection;)V")
-    def init(self, instance, array):
+    def init2(self, instance, array):
         instance += array
 
     @native("size", "()I")
     def size(self, instance):
         return len(instance)
+
+    @native("add", "(Ljava/lang/Object;)Z")
+    def add(self, instance, obj):
+        instance.append(obj)
+        return 1

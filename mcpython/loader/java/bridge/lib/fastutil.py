@@ -37,3 +37,11 @@ class ObjectOpenHashSet(NativeClass):
     @native("<init>", "()V")
     def init(self, instance):
         instance.underlying = set()
+
+
+class Object2IntOpenHashMap(NativeClass):
+    NAME = "it/unimi/dsi/fastutil/objects/Object2IntOpenHashMap"
+
+    @native("<init>", "()V")
+    def init(self, intance):
+        pass

@@ -203,6 +203,11 @@ class Stack:
         while self.cp != -1:
             instruction = self.code.decoded_code[self.cp]
 
+            if instruction is None:
+                raise StackCollectingException("Instruction jump target was invalid").add_trace(
+                    f"during fetching {self.cp} in {self.method}"
+                )
+
             if debugging:
                 mcpython.loader.java.Java.warn(
                     "instruction [info before invoke] " + str((self.cp, instruction))
@@ -214,20 +219,17 @@ class Stack:
                     f"local ({len(self.local_vars)}: " + str(self.local_vars)[:300]
                 )
 
-            stack_top = self.stack[:3]
-
             try:
                 result = instruction[0].invoke(instruction[1], self)
             except StackCollectingException as e:
                 e.add_trace(
                     f"during invoking {instruction[0]} in {self.method} [index: {self.cp}]"
                 )
-                e.add_trace(str(instruction[1])).add_trace(str(stack_top))
                 raise
             except:
                 raise StackCollectingException(
                     f"Implementation-wise during invoking {instruction[0].__name__} in {self.method} [index: {self.cp}]"
-                ).add_trace(str(instruction[1])).add_trace(str(stack_top))
+                ).add_trace(str(instruction[1]))
 
             if not result and self.cp != -1:
                 self.cp += instruction[2]
@@ -299,7 +301,7 @@ class BytecodeRepr:
     OPCODES: typing.Dict[int, typing.Type[OpcodeInstruction]] = {}
 
     @classmethod
-    def register_instruction(cls, instr: typing.Type[OpcodeInstruction]):
+    def register_instruction(cls, instr):
         for opcode in instr.OPCODES:
             cls.OPCODES[opcode] = instr
 
@@ -1012,7 +1014,24 @@ class IfNEq0(OpcodeInstruction):
 
 
 @BytecodeRepr.register_instruction
-class IfLE(OpcodeInstruction):
+class IfLT0(OpcodeInstruction):
+    OPCODES = {0x9B}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        return mcpython.loader.java.Java.U2_S.unpack(data[index : index + 2])[0], 3
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack) -> bool:
+        if stack.pop() < 0:
+            stack.cp += data
+            return True
+
+
+@BytecodeRepr.register_instruction
+class IfLE0(OpcodeInstruction):
     OPCODES = {0x9E}
 
     @classmethod
@@ -1245,6 +1264,22 @@ class InvokeDynamic(CPLinkedInstruction):
     todo: cache method lookup
     """
 
+    class InvokeDynamicWrapper:
+        def __init__(self, method, name: str, signature: str, extra_args: typing.List):
+            self.method = method
+            self.name = name
+            self.signature = signature
+            self.extra_args = extra_args
+
+        def __call__(self, *args):
+            return self.method(*self.extra_args, *args)
+
+        def __repr__(self):
+            return f"InvokeDynamic::CallSite(wrapping={self.method},add_args={self.extra_args})"
+
+        def get_class(self):
+            return self.method.class_file.vm.get_class("java/lang/reflect/Method")
+
     OPCODES = {0xBA}
 
     @classmethod
@@ -1260,6 +1295,10 @@ class InvokeDynamic(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
+        if callable(data):
+            stack.push(data)
+            return
+
         boostrap = stack.method.class_file.attributes["BootstrapMethods"][0].entries[
             data[1]
         ]
@@ -1292,21 +1331,21 @@ class InvokeDynamic(CPLinkedInstruction):
             if inner_args > outer_args:
                 extra_args = [stack.pop() for _ in range(inner_args - outer_args)]
 
-                m = method
+                method = InvokeDynamic.InvokeDynamicWrapper(method, method.name, outer_signature, extra_args)
 
-                def method(*args):
-                    stack.runtime.run_method(m, *extra_args, *args)
-
-                method.native_name = m.name if hasattr(m, "name") else m.native_name
-                method.native_signature = outer_signature
+                # We currently cannot cache the result of this special InvokeDynamic
+                stack.push(method)
+                return
 
         except StackCollectingException as e:
+            e.add_trace("during resolving InvokeDynamic")
             e.add_trace(str(boostrap[0]))
             e.add_trace(str(boostrap[1]))
             e.add_trace(str(nat))
             raise
+
         except:
-            e = StackCollectingException("during resolving invokedynamic")
+            e = StackCollectingException("during resolving InvokeDynamic")
             e.add_trace(str(boostrap[0]))
             e.add_trace(str(boostrap[1]))
             e.add_trace(str(nat))

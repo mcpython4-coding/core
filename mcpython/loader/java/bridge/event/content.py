@@ -172,6 +172,20 @@ class AbstractBlock_Properties(NativeClass):
     def func_235827_a_(self, instance, predicate):
         return instance
 
+    @native(
+        "func_206870_a",
+        "(Lnet/minecraft/state/Property;Ljava/lang/Comparable;)Ljava/lang/Object;",
+    )
+    def func_206870_a(self, instance, prop, value):
+        pass
+
+    @native(
+        "func_222380_e",
+        "()Lnet/minecraft/block/AbstractBlock$Properties;"
+    )
+    def func_222380_e(self, instance):
+        return instance
+
 
 class SoundType(NativeClass):
     NAME = "net/minecraft/block/SoundType"
@@ -443,6 +457,16 @@ class SandBlock(Block):
     @native("<init>", "(ILnet/minecraft/block/AbstractBlock$Properties;)V")
     def init(self, instance, value, properties):
         instance.properties = properties
+
+
+class DirectionalBlock(Block):
+    NAME = "net/minecraft/block/DirectionalBlock"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_176387_N": None,
+        })
 
 
 class StairsBlock(Block):
@@ -813,6 +837,10 @@ class Item(NativeClass):
     def setRegistryName3(self, instance, namespace, name):
         return instance
 
+    @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
+    def getRegistryName(self, instance):
+        return instance.registry_name
+
     @native("func_70067_L", "()Z")
     def func_70067_L(self, instance):
         return 0
@@ -855,6 +883,46 @@ class Item_Properties(NativeClass):
     def func_200918_c(self, instance, level):
         return instance
 
+    @native("setNoRepair", "()Lnet/minecraft/item/Item$Properties;")
+    def setNoRepair(self, instance):
+        return instance
+
+    @native("func_234689_a_", "()Lnet/minecraft/item/Item$Properties;")
+    def func_234689_a_(self, instance):
+        return instance
+
+
+class Food__Builder(NativeClass):
+    NAME = "net/minecraft/item/Food$Builder"
+
+    @native("<init>", "()V")
+    def init(self, instance):
+        pass
+
+    @native("func_221456_a", "(I)Lnet/minecraft/item/Food$Builder;")
+    def func_221456_a(self, instance, v):
+        return instance
+
+    @native("func_221454_a", "(F)Lnet/minecraft/item/Food$Builder;")
+    def func_221454_a(self, instance, v):
+        return instance
+
+    @native("effect", "(Ljava/util/function/Supplier;F)Lnet/minecraft/item/Food$Builder;")
+    def effect(self, instance, supplier):
+        return instance
+
+    @native("func_221455_b", "()Lnet/minecraft/item/Food$Builder;")
+    def func_221455_b(self, instance):
+        return instance
+
+    @native("func_221453_d", "()Lnet/minecraft/item/Food;")
+    def func_221453_d(self, instance):
+        return self.vm.get_class("net/minecraft/item/Food", version=self.internal_version).create_instance()
+
+
+class Food(NativeClass):
+    NAME = "net/minecraft/item/Food"
+
 
 class ItemGroup(NativeClass):
     NAME = "net/minecraft/item/ItemGroup"
@@ -866,6 +934,7 @@ class ItemGroup(NativeClass):
                 # Exposed for a ID of the tab, as mc requires it for no reason. We don't need it
                 "field_78032_a": [],
                 "field_78040_i": None,
+                "field_78026_f": None,
             }
         )
 
@@ -914,6 +983,10 @@ class ItemGroup(NativeClass):
     def func_78025_a(self, instance, v: str):
         return instance
 
+    @native("getGroupCountSafe", "()I")
+    def getGroupCountSafe(self, *_):
+        return -1
+
 
 class ItemStack(NativeClass):
     NAME = "net/minecraft/item/ItemStack"
@@ -941,8 +1014,14 @@ class ItemTier(IItemTier):
         self.exposed_attributes.update(
             {
                 "STONE": 2,
+                "IRON": 3,
+                "DIAMOND": 4,
             }
         )
+
+    @native("func_200926_a", "()I")
+    def func_200926_a(self, instance):
+        return instance
 
 
 class BlockItem(Item):
@@ -1077,6 +1156,10 @@ class DyeColor(NativeClass):
     @native("func_176610_l", "()Ljava/lang/String;")
     def func_176610_l(self, instance):
         return instance
+
+    @native("ordinal", "()I")
+    def ordinal(self, instance):
+        return self.colors.index(instance)
 
 
 class AttachFace(NativeClass):
@@ -1355,6 +1438,10 @@ class ItemEntity(Entity):
     NAME = "net/minecraft/entity/item/ItemEntity"
 
 
+class Attribute(NativeClass):
+    NAME = "net/minecraft/entity/ai/attributes/Attribute"
+
+
 class TranslationTextComponent(NativeClass):
     NAME = "net/minecraft/util/text/TranslationTextComponent"
 
@@ -1365,6 +1452,10 @@ class TranslationTextComponent(NativeClass):
 
 class TileEntityType(NativeClass):
     NAME = "net/minecraft/tileentity/TileEntityType"
+
+
+class BeaconTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/BeaconTileEntity"
 
 
 class PaintingType(NativeClass):

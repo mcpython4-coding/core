@@ -52,6 +52,15 @@ class Structure(NativeClass):
     def init(self, *_):
         pass
 
+    @native("setRegistryName",
+            "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, name):
+        instance.registry_name = name if isinstance(name, str) else name.name
+
+    @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
+    def getRegistryName(self, instance):
+        return instance.registry_name
+
 
 class DimensionStructuresSettings(NativeClass):
     NAME = "net/minecraft/world/gen/settings/DimensionStructuresSettings"

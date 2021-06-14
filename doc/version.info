@@ -1709,6 +1709,9 @@ R   [uuk]: improved world serialization API
 [uuk]. <jvm> fixed invokedynamic when passing additional parameters to the method
 [uuk]: added a continue button to the loading exception screen to continue mod loading even if an error occurred,
        resuming where we stopped loading
+[uuk]: <jvm> fixed invokedynamic with pre-args not returning the method result correctly
+[uuk]: <jvm> instructions can now modify the data cache created during decode() during runtime
+[uuk]: <jvm> InvokeDynamic will now cache the result of its method resolving
 
 tasks to do [maybe moved away for later]:
 - minifier task should minify builtin & bridge library into each only one file
@@ -1725,4 +1728,4 @@ tasks to do [maybe moved away for later]:
 - a constant pool walker for identifying unnecessary elements in the pool and removing them
 
 Currently testing:
-AllTheMods6 [modified as two mods require scala mod loader, and one had a broken mods.toml] with 224 total mods
+AllTheMods6 version 1.6.9

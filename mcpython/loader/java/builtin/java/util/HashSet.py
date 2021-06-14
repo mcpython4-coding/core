@@ -24,6 +24,10 @@ class HashSet(NativeClass):
     def init(self, instance):
         pass
 
+    @native("<init>", "(Ljava/util/Collection;)V")
+    def init2(self, instance, array):
+        instance |= set(array)
+
     @native("addAll", "(Ljava/util/Collection;)Z")
     def addAll(self, instance, array):
         instance |= set(array)

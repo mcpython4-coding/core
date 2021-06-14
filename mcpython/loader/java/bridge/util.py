@@ -18,6 +18,12 @@ from mcpython.loader.java.Java import NativeClass, native
 class ResourceLocation(NativeClass):
     NAME = "net/minecraft/util/ResourceLocation"
 
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_240908_a_": None,
+        })
+
     def create_instance(self):
         instance = super().create_instance()
         instance.name = ""
@@ -114,7 +120,7 @@ class LazyValue(NativeClass):
 
     @native("func_179281_c", "()Ljava/lang/Object;")
     def get(self, instance):
-        return instance.supplier.invoke()
+        return instance.supplier()
 
 
 class Lazy(NativeClass):
@@ -148,6 +154,12 @@ class MethodsReturnNonnullByDefault(NativeClass):
 
 class DamageSource(NativeClass):
     NAME = "net/minecraft/util/DamageSource"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_188406_j": None,
+        })
 
     @native("<init>", "(Ljava/lang/String;)V")
     def init(self, instance, v):
@@ -183,6 +195,14 @@ class BlockPos(NativeClass):
         instance.pos = x, y, z
 
 
+class ChunkPos(NativeClass):
+    NAME = "net/minecraft/util/math/ChunkPos"
+
+    @native("func_201841_a", "()J")
+    def func_201841_a(self, *_):
+        pass
+
+
 class SoundEvent(NativeClass):
     NAME = "net/minecraft/util/SoundEvent"
 
@@ -201,3 +221,18 @@ class Tuple(NativeClass):
     @native("<init>", "(Ljava/lang/Object;Ljava/lang/Object;)V")
     def init(self, instance, a, b):
         instance.underlying = a, b
+
+
+class TextFormatting(NativeClass):
+    NAME = "net/minecraft/util/text/TextFormatting"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "GRAY": 0,
+            "YELLOW": 1,
+            "BLUE": 2,
+            "RED": 3,
+            "DARK_GREEN": 4,
+            "AQUA": 5,
+        })

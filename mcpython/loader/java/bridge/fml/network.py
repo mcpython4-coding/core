@@ -92,5 +92,5 @@ class EventNetworkChannel(NativeClass):
     NAME = "net/minecraftforge/fml/network/event/EventNetworkChannel"
 
     @native("registerObject", "(Ljava/lang/Object;)V")
-    def registerObject(self, obj):
+    def registerObject(self, instance, obj):
         pass

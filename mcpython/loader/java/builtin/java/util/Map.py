@@ -44,3 +44,7 @@ class Map(NativeClass):
     @native("keySet", "()Ljava/util/Set;")
     def keySet(self, instance):
         return set(instance.keys())
+
+    @native("getOrDefault", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    def getOrDefault(self, instance, key, default):
+        return instance[key] if key in instance else default

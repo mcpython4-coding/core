@@ -17,3 +17,7 @@ from mcpython.loader.java.Java import NativeClass, native
 
 class IllegalStateException(NativeClass):
     NAME = "java/lang/IllegalStateException"
+
+    @native("<init>", "(Ljava/lang/String;)V")
+    def init(self, instance, text):
+        instance.text = text

@@ -36,6 +36,9 @@ class File(NativeClass):
 
     @native("exists", "()Z")
     def exists(self, instance):
+        if not hasattr(instance, "path"):
+            raise ValueError(instance)
+
         return os.path.exists(instance.path)
 
     @native("canRead", "()Z")

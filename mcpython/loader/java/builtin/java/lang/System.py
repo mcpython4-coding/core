@@ -19,5 +19,9 @@ class System(NativeClass):
     NAME = "java/lang/System"
 
     @native("getProperty", "(Ljava/lang/String;)Ljava/lang/String;")
-    def getProperty(self, *_):
+    def getProperty(self, name: str):
         pass
+
+    @native("lineSeparator", "()Ljava/lang/String;")
+    def lineSeparator(self):
+        return "\n"

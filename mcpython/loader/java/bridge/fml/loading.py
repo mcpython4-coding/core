@@ -163,6 +163,22 @@ class ModLoadingContext(NativeClass):
     def registerConfig2(self, instance, config_type, config_spec):
         pass
 
+    @native("registerExtensionPoint", "(Lnet/minecraftforge/fml/ExtensionPoint;Ljava/util/function/Supplier;)V")
+    def registerExtensionPoint(self, instance, point, supplier):
+        pass
+
+    @native("getActiveContainer", "()Lnet/minecraftforge/fml/ModContainer;")
+    def getActiveContainer(self, instance):
+        return shared.mod_loader[shared.CURRENT_EVENT_SUB]
+
+
+class ModContainer(NativeClass):
+    NAME = "net/minecraftforge/fml/ModContainer"
+
+    @native("getModId", "()Ljava/lang/String;")
+    def getModId(self, instance):
+        return instance.name
+
 
 class EventBus(NativeClass):
     NAME = "net/minecraftforge/eventbus/api/IEventBus"
@@ -279,7 +295,7 @@ class EventBus(NativeClass):
         "addListener",
         "(Lnet/minecraftforge/eventbus/api/EventPriority;Ljava/util/function/Consumer;)V",
     )
-    def addListener2(self, priority, consumer):
+    def addListener2(self, instance, priority, consumer):
         self.addListener(priority, consumer)
 
     @native("register", "(Ljava/lang/Object;)V")
@@ -438,13 +454,9 @@ class FMLPaths(NativeClass):
         obj.path = instance.dir
         return obj
 
-
-class ModConfig_Type(NativeClass):
-    NAME = "net/minecraftforge/fml/config/ModConfig$Type"
-
-    def __init__(self):
-        super().__init__()
-        self.exposed_attributes = {"COMMON": 0, "CLIENT": 1, "SERVER": 2}
+    @native("getOrCreateGameRelativePath", "(Ljava/nio/file/Path;Ljava/lang/String;)Ljava/nio/file/Path;")
+    def getOrCreateGameRelativePath(self, path, sub):
+        return path  # todo: implement
 
 
 class ForgeConfigSpec__Builder(NativeClass):
@@ -573,6 +585,7 @@ class OnlyIn(NativeClass):
     NAME = "net/minecraftforge/api/distmarker/OnlyIn"
 
     def on_annotate(self, cls, args):
+        return
         logger.println(
             f"[FML][WARN] got internal @OnlyIn marker on cls {cls.name} not specified for use in mods. Things may break!"
         )
@@ -600,6 +613,34 @@ class ModList(NativeClass):
     @native("isLoaded", "(Ljava/lang/String;)Z")
     def isLoaded(self, instance, name: str):
         return int(name in shared.mod_loader.mods)
+
+    @native("getModFileById", "(Ljava/lang/String;)Lnet/minecraftforge/fml/loading/moddiscovery/ModFileInfo;")
+    def getModFileById(self, instance, name: str):
+        return shared.mod_loader.mods[name]
+
+
+class ModFileInfo(NativeClass):
+    NAME = "net/minecraftforge/fml/loading/moddiscovery/ModFileInfo"
+
+    @native("getFile", "()Lnet/minecraftforge/fml/loading/moddiscovery/ModFile;")
+    def getFile(self, instance):
+        return instance.path
+
+
+class ModFile(NativeClass):
+    NAME = "net/minecraftforge/fml/loading/moddiscovery/ModFile"
+
+    @native("getScanResult", "()Lnet/minecraftforge/forgespi/language/ModFileScanData;")
+    def getScanResult(self, instance):
+        pass
+
+
+class ModFileScanData(NativeClass):
+    NAME = "net/minecraftforge/forgespi/language/ModFileScanData"
+
+    @native("getAnnotations", "()Ljava/util/Set;")
+    def getAnnotations(self, instance):
+        return set()
 
 
 class Event(NativeClass):
@@ -671,3 +712,17 @@ class DeferredWorkQueue(NativeClass):
     )
     def runLater(self, *_):
         pass
+
+
+class ExtensionPoint(NativeClass):
+    NAME = "net/minecraftforge/fml/ExtensionPoint"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "DISPLAYTEST": 0,
+        })
+
+
+class EventNetworkChannel(NativeClass):
+    NAME = "net/minecraftforge/fml/event/EventNetworkChannel"

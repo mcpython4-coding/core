@@ -55,6 +55,10 @@ class IForgeRegistry(NativeClass):
     def getRegistrySuperType(self, *_):
         pass
 
+    @native("iterator", "()Ljava/util/Iterator;")
+    def iterator(self, instance):
+        return list(instance().entry_iterator())
+
 
 class ForgeRegistries(NativeClass):
     """
@@ -84,6 +88,8 @@ class ForgeRegistries(NativeClass):
             "ENCHANTMENTS": None,
             "POI_TYPES": None,
             "PROFESSIONS": None,
+            "LOOT_MODIFIER_SERIALIZERS": None,
+            "ATTRIBUTES": None,
         }
 
 
@@ -302,7 +308,7 @@ class DeferredRegister(NativeClass):
         "makeRegistry",
         "(Ljava/lang/String;Ljava/util/function/Supplier;)Ljava/util/function/Supplier;",
     )
-    def makeRegistry(self, name: str, supplier):
+    def makeRegistry(self, instnace, name: str, supplier):
         pass
 
 
@@ -354,6 +360,11 @@ class WorldGenRegistries(NativeClass):
                 "field_243654_f": None,
             }
         )
+
+    @native("func_243663_a",
+            "(Lnet/minecraft/util/registry/Registry;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;")
+    def func_243663_a(self, *_):
+        pass
 
 
 class IForgeRegistryEntry(NativeClass):

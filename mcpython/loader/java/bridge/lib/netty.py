@@ -21,3 +21,10 @@ class ConcurrentSet(NativeClass):
     @native("<init>", "()V")
     def init(self, *_):
         pass
+
+
+class ChannelHandler__Sharable(NativeClass):
+    NAME = "io/netty/channel/ChannelHandler$Sharable"
+
+    def on_annotate(self, cls, args):
+        pass

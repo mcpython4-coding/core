@@ -35,7 +35,7 @@ class String(NativeClass):
         return str(value)
 
     @native("valueOf", "(Ljava/lang/Object;)Ljava/lang/String;")
-    def valueOf(self, value):
+    def valueOf2(self, value):
         return str(value)
 
     @native("toLowerCase", "()Ljava/lang/String;")
@@ -57,6 +57,10 @@ class String(NativeClass):
     @native("isEmpty", "()Z")
     def isEmpty(self, instance):
         return int(instance == "")
+
+    @native("replaceAll", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;")
+    def replaceAll(self, instance, before, after):
+        return instance.replace(before, after)
 
 
 class StringBuilder(NativeClass):
