@@ -521,6 +521,7 @@ def native(name: str, signature: str):
     def setup(method):
         method.native_name = name
         method.native_signature = signature
+        method.access = 0x1001  # public synthetic
         return method
 
     return setup

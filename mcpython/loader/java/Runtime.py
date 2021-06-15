@@ -1399,10 +1399,15 @@ class LambdaInvokeDynamic(BaseInstruction):
             if inner_args > outer_args:
                 extra_args += [stack.pop() for _ in range(inner_args - outer_args)]
 
+            if not hasattr(method, "name") and not hasattr(method, "native_name"):
+                raise StackCollectingException(f"InvokeDynamic target method is no real method: {method}, and as such cannot be InvokeDynamic-linked")
+
+            method_name = method.name if hasattr(method, "name") else method.native_name
+
             # init methods are special, we need to wrap it into a special object for object creation
-            if method.name == "<init>":
+            if method_name == "<init>":
                 # print("InvokeDynamic short-path <init>", method, outer_signature, extra_args)
-                method = cls.LambdaNewInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
+                method = cls.LambdaNewInvokeDynamicWrapper(method, method_name, outer_signature, tuple(reversed(extra_args)))
                 stack.push(method)
                 return
 
@@ -1417,7 +1422,7 @@ class LambdaInvokeDynamic(BaseInstruction):
             #    adding the args before invocation & updating the outer signature of the method to match
             if len(extra_args) > 0:
                 # print("additional", len(extra_args), extra_args)
-                method = cls.LambdaInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
+                method = cls.LambdaInvokeDynamicWrapper(method, method_name, outer_signature, tuple(reversed(extra_args)))
 
                 stack.push(method)
                 return
