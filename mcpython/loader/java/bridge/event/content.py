@@ -942,12 +942,15 @@ class ItemGroup(NativeClass):
     def init(self, instance, a: int, name: str):
         import mcpython.client.gui.InventoryCreativeTab
 
-        instance.underlying_tab = (
-            mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(
-                name,
-                mcpython.common.container.ResourceStack.ItemStack("minecraft:barrier"),
+        try:
+            instance.fields["underlying_tab"] = (
+                mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(
+                    name,
+                    mcpython.common.container.ResourceStack.ItemStack("minecraft:barrier"),
+                )
             )
-        )
+        except:
+            raise StackCollectingException(f"something went wrong here in ItemGroup init working on {instance}")
 
         @shared.mod_loader("minecraft", "stage:item_groups:load")
         def add_tab():
@@ -966,9 +969,9 @@ class ItemGroup(NativeClass):
                 e.add_trace(f"during creating ItemStack for item group {name}")
                 raise
 
-            instance.underlying_tab.icon = stack.underlying_stack
+            instance.fields["underlying_tab"].icon = stack.underlying_stack
             mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.add_tab(
-                instance.underlying_tab
+                instance.fields["underlying_tab"]
             )
 
     @native("<init>", "(Ljava/lang/String;)V")
@@ -986,6 +989,9 @@ class ItemGroup(NativeClass):
     @native("getGroupCountSafe", "()I")
     def getGroupCountSafe(self, *_):
         return -1
+    
+    def get_dynamic_field_keys(self):
+        return {"underlying_tab"}
 
 
 class ItemStack(NativeClass):
