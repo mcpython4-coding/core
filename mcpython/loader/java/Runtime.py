@@ -105,22 +105,26 @@ class Runtime:
         v = signature.removeprefix("(").split(")")[0]
         i = 0
         start = 0
-        while i < len(v):
-            is_array = False
 
-            if v[i] == "[":
-                is_array = True
+        try:
+            while i < len(v):
+                is_array = False
 
-            if v[i] == "L":
-                i = v.index(";", i) + 1
-                yield v[start:i], False
-            else:
-                i += 1
+                if v[i] == "[":
+                    is_array = True
+
+                if v[i] == "L":
+                    i = v.index(";", i) + 1
+                    yield v[start:i], False
+                else:
+                    i += 1
+                    if not is_array:
+                        yield v[start:i], v[i - 1] in "DJ"
+
                 if not is_array:
-                    yield v[start:i], v[i - 1] in "DJ"
-
-            if not is_array:
-                start = i
+                    start = i
+        except:
+            raise StackCollectingException(f"cannot parse argument list {signature}")
 
     def parse_args_from_stack(self, method, stack, static=False):
         parts = tuple(self.get_arg_parts_of(method))
@@ -249,6 +253,14 @@ class BaseInstruction(ABC):
     def invoke(cls, data: typing.Any, stack: Stack) -> bool:
         raise NotImplementedError
 
+    @classmethod
+    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
+        pass
+
+    @classmethod
+    def optimiser_iteration(cls, container: "BytecodeRepr", prepared_data: typing.Any, instruction_index: int):
+        pass
+
 
 class OpcodeInstruction(BaseInstruction, ABC):
     """
@@ -262,10 +274,6 @@ class OpcodeInstruction(BaseInstruction, ABC):
         cls, data: bytearray, index, class_file
     ) -> typing.Tuple[typing.Any, int]:
         return None, 1
-
-    @classmethod
-    def validate(cls, prepared_data: typing.Any, container: "BytecodeRepr"):
-        pass
 
 
 class CPLinkedInstruction(OpcodeInstruction, ABC):
@@ -302,8 +310,9 @@ class BytecodeRepr:
 
     @classmethod
     def register_instruction(cls, instr):
-        for opcode in instr.OPCODES:
-            cls.OPCODES[opcode] = instr
+        if issubclass(instr, OpcodeInstruction):
+            for opcode in instr.OPCODES:
+                cls.OPCODES[opcode] = instr
 
         return instr
 
@@ -353,6 +362,30 @@ class BytecodeRepr:
                     + ")"
                 ).add_trace(str(self.decoded_code)).add_trace(str(self.code.class_file))
 
+        self.optimiser_iteration()
+
+    def optimiser_iteration(self):
+        """
+        Runs optimiser code on the internal bytecode
+        todo: call this more when the method gets called more often
+        """
+
+        for i, e in enumerate(self.decoded_code):
+            if e is None:
+                continue
+
+            try:
+                e[0].optimiser_iteration(self, e[1], i)
+            except StackCollectingException as e:
+                e.add_trace(
+                    f"during optimising {e[0].__name__} with data {e[1]} stored at index {i} in {self.code.table.parent}"
+                )
+                raise
+
+        # We need to validate it ones now
+        self.validate_code()
+
+    def validate_code(self):
         for i, e in enumerate(self.decoded_code):
             if e is None:
                 continue
@@ -1242,10 +1275,11 @@ class InvokeInterface(CPLinkedInstruction):
                 if hasattr(method, "signature")
                 else method.native_signature,
             )
-            # print("resolved at", method.name if hasattr(method, "name") else method.native_name, method.signature if hasattr(method, "signature") else method.native_signature)
+
         except StackCollectingException as e:
-            print("InterfaceMethodResolveError:")
-            print(e.format_exception())
+            e.add_trace(f"during resolving interface method for parent {method}")
+            raise
+
         except AttributeError:
             pass
 
@@ -1264,8 +1298,44 @@ class InvokeDynamic(CPLinkedInstruction):
     todo: cache method lookup
     """
 
-    class InvokeDynamicWrapper:
-        def __init__(self, method, name: str, signature: str, extra_args: typing.List):
+    OPCODES = {0xBA}
+
+    @classmethod
+    def decode(
+        cls, data: bytearray, index, class_file
+    ) -> typing.Tuple[typing.Any, int]:
+        cp = class_file.cp[
+            mcpython.loader.java.Java.U2.unpack(data[index : index + 2])[0] - 1
+        ]
+        boostrap = class_file.attributes["BootstrapMethods"][0].entries[
+            cp[1]
+        ]
+
+        # The type side for the execution
+        side = boostrap[0][2][1][1][1]
+        return (
+            (cp, side),
+            5,
+        )
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        raise StackCollectingException("invalid InvokeDynamic target: target not found!")
+
+    @classmethod
+    def optimiser_iteration(cls, container: "BytecodeRepr", prepared_data: typing.Tuple[typing.Any, str], instruction_index: int):
+        if prepared_data[1] == "java/lang/invoke/LambdaMetafactory":
+            container.decoded_code[instruction_index] = LambdaInvokeDynamic, prepared_data[0], 5
+
+
+@BytecodeRepr.register_instruction
+class LambdaInvokeDynamic(BaseInstruction):
+    """
+    Class representing the factory system for a lambda
+    """
+
+    class LambdaInvokeDynamicWrapper:
+        def __init__(self, method, name: str, signature: str, extra_args: typing.Iterable):
             self.method = method
             self.name = name
             self.signature = signature
@@ -1280,18 +1350,14 @@ class InvokeDynamic(CPLinkedInstruction):
         def get_class(self):
             return self.method.class_file.vm.get_class("java/lang/reflect/Method")
 
-    OPCODES = {0xBA}
+    class LambdaNewInvokeDynamicWrapper(LambdaInvokeDynamicWrapper):
+        def __call__(self, *args):
+            instance = self.method.class_file.create_instance()
+            self.method(instance, *self.extra_args, *args)
+            return instance
 
-    @classmethod
-    def decode(
-        cls, data: bytearray, index, class_file
-    ) -> typing.Tuple[typing.Any, int]:
-        return (
-            class_file.cp[
-                mcpython.loader.java.Java.U2.unpack(data[index : index + 2])[0] - 1
-            ],
-            5,
-        )
+        def __repr__(self):
+            return f"InvokeDynamic::CallSite::new(wrapping={self.method},add_args={self.extra_args})"
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -1316,6 +1382,8 @@ class InvokeDynamic(CPLinkedInstruction):
             method = cls_file.get_method(target_nat[1][1], target_nat[2][1])
             outer_signature = boostrap[1][0][1][1]
 
+            extra_args = []
+
             inner_args = len(
                 list(
                     stack.runtime.get_arg_parts_of(
@@ -1329,11 +1397,28 @@ class InvokeDynamic(CPLinkedInstruction):
 
             # have we args to give from the current runtime?
             if inner_args > outer_args:
-                extra_args = [stack.pop() for _ in range(inner_args - outer_args)]
+                extra_args += [stack.pop() for _ in range(inner_args - outer_args)]
 
-                method = InvokeDynamic.InvokeDynamicWrapper(method, method.name, outer_signature, extra_args)
+            # init methods are special, we need to wrap it into a special object for object creation
+            if method.name == "<init>":
+                print("InvokeDynamic short-path <init>", method, outer_signature, extra_args)
+                method = cls.LambdaNewInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
+                stack.push(method)
+                return
 
-                # We currently cannot cache the result of this special InvokeDynamic
+            print("long InvokeDynamic", method, outer_signature)
+
+            # for non-static methods, we need to pop the object from the stack as it might reference it
+            if not method.access & 0x0008:
+                print("dynamic InvokeDynamic")
+                extra_args.append(stack.pop())
+
+            # If we have any prepared arguments, we need to wrap it in another structure for
+            #    adding the args before invocation & updating the outer signature of the method to match
+            if len(extra_args) > 0:
+                print("additional", len(extra_args), extra_args)
+                method = cls.LambdaInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
+
                 stack.push(method)
                 return
 

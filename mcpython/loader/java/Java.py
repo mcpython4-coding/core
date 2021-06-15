@@ -27,8 +27,11 @@ from abc import ABC
 
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 
+# With this flag, the vm will do some fancy stuff when encountering unknown natives, trying to create
+# a empty method and outputting an empty method body in the log for later implementation
 DYNAMIC_NATIVES = "--fill-unknown-natives" in sys.argv
 
+# some structs used all over the place
 U1 = struct.Struct("!B")
 U1_S = struct.Struct("!b")
 U1_S_4 = struct.Struct("!bbbb")
@@ -37,12 +40,14 @@ U2_S = struct.Struct("!h")
 U4 = struct.Struct("!I")
 U4_S = struct.Struct(">i")
 
+# these are special values treated here
 INT = struct.Struct("!i")
 FLOAT = struct.Struct("!f")
 LONG = struct.Struct("!q")
 DOUBLE = struct.Struct("!d")
 
 
+# Helper functions for above structs to pop from bytearray
 def pop_u1(data: bytearray):
     e = data[:1]
     del data[0]
@@ -83,6 +88,8 @@ def pop_struct(s: struct.Struct, data: bytearray):
     return s.unpack(pop_sized(s.size, data))
 
 
+# You can override this methods from outside this file to do your own logging, but this is the way to go now...
+# (Mcpython wraps them around its internal logger)
 def warn(text: str):
     print("[JAVA][WARN]", warn)
 
@@ -91,12 +98,26 @@ def info(text: str):
     pass
 
 
+# And this can be wrapped into your own resource access (multiple directories, web download, whatever you want)
+# (Mcpython wraps it around the general resource access implementation called ResourceLoader)
 def get_bytecode_of_class(class_name: str):
     with open("./" + class_name.replace(".", "/") + ".class", mode="rb") as f:
         return f.read()
 
 
 class JavaVM:
+    """
+    The java VM, as specified by https://docs.oracle.com/javase/specs/index.html
+
+    Currently, only java bytecode below (and including) java 16 can be loaded
+
+    The JVM is capable of providing non-bytecode classes via the Native system (or for really fancy work,
+    own AbstractJavaClass implementations)
+
+    The default implementation for java bytecode is located in this file
+    It loads the bytecode as outlined by above document of oracle
+    """
+
     def __init__(self):
         self.debugged_methods = set()
         self.shared_classes: typing.Dict[
@@ -297,6 +318,7 @@ class {name.split('/')[-1].replace('$', '__')}(NativeClass):
 
         try:
             cls.bake()
+            cls.validate_class_file()
         except StackCollectingException as e:
             e.add_trace(f"baking class {name}")
             raise
@@ -325,13 +347,17 @@ class {name.split('/')[-1].replace('$', '__')}(NativeClass):
 
 
 class AbstractJavaClass:
+    """
+    Abstract base class for java classes handled by the vm
+    """
+
     def __init__(self):
-        self.name: str = None
-        self.file_source: str = None
-        self.parent = None
-        self.interfaces = []
-        self.internal_version = 0
-        self.vm = None
+        self.name: str = None   # the class name
+        self.file_source: str = None  # a path to the file this class was loaded from
+        self.parent = None  # the parent of the class
+        self.interfaces: typing.List[typing.Callable[[], typing.Optional[AbstractJavaClass]]] = []
+        self.internal_version = 0  # the internal version identifier
+        self.vm = None  # the vm instance bound to
 
     def get_method(self, name: str, signature: str, inner=False):
         raise NotImplementedError
@@ -358,7 +384,7 @@ class AbstractJavaClass:
     def is_subclass_of(self, class_name: str) -> bool:
         raise NotImplementedError
 
-    def prepare_use(self):
+    def prepare_use(self, runtime=None):
         pass
 
 
@@ -847,6 +873,16 @@ class JavaBytecodeClass(AbstractJavaClass):
 
         self.class_init_complete = False
 
+        self.is_public = True
+        self.is_final = False
+        self.is_special_super = False
+        self.is_interface = False
+        self.is_abstract = False
+        self.is_synthetic = False
+        self.is_annotation = False
+        self.is_enum = False
+        self.is_module = False
+
     def from_bytes(self, data: bytearray):
         magic = pop_u4(data)
         assert magic == 0xCAFEBABE, f"magic {magic} is invalid!"
@@ -910,10 +946,20 @@ class JavaBytecodeClass(AbstractJavaClass):
             elif tag in (15, 17, 18):
                 self.cp[i] = self.cp[i][:2] + [self.cp[self.cp[i][-1] - 1]]
 
+        # As by https://docs.oracle.com/javase/specs/jvms/se16/html/jvms-4.html#jvms-4.1-200-E.1
         self.access |= pop_u2(data)
+        self.is_public = bool(self.access & 0x0001)
+        self.is_final = bool(self.access & 0x0010)
+        self.is_special_super = bool(self.access & 0x0020)
+        self.is_interface = bool(self.access & 0x0200)
+        self.is_abstract = bool(self.access & 0x0400)
+        self.is_synthetic = bool(self.access & 0x1000)
+        self.is_annotation = bool(self.access & 0x2000)
+        self.is_enum = bool(self.access & 0x4000)
+        self.is_module = bool(self.access & 0x8000)
 
-        self.name = self.cp[pop_u2(data) - 1][1][1]
-        self.parent = vm.get_lazy_class(
+        self.name: str = self.cp[pop_u2(data) - 1][1][1]
+        self.parent: typing.Callable[[], typing.Optional[AbstractJavaClass]] = vm.get_lazy_class(
             self.cp[pop_u2(data) - 1][1][1], version=self.internal_version
         )
 
@@ -965,7 +1011,7 @@ class JavaBytecodeClass(AbstractJavaClass):
         if m is not None:
             return m
 
-        raise AttributeError(self, des)
+        raise StackCollectingException(f"class {self.name} has not method {name} with signature {signature}")
 
     def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.static_field_values:
@@ -975,18 +1021,25 @@ class JavaBytecodeClass(AbstractJavaClass):
                 except KeyError:
                     pass
 
+            # interfaces do not provide fields, don't they?
+
         try:
             return self.static_field_values[name]
         except KeyError:
-            print(self)
-            raise
+            raise StackCollectingException(f"class {self.name} has no attribute {name} (class instance: {self})") from None
 
     def set_static_attribute(self, name: str, value):
         self.static_field_values[name] = value
 
     def bake(self):
+        """
+        Helper method for setting up a class
+        Does some fancy work on annotations
+        """
+
         for method in self.on_bake:
             method(self)
+
         self.on_bake.clear()
 
         if "RuntimeVisibleAnnotations" in self.attributes.attributes:
@@ -1014,6 +1067,10 @@ class JavaBytecodeClass(AbstractJavaClass):
                         cls.on_annotate(self, args)
 
     def create_instance(self):
+        # Abstract classes cannot have instances
+        if self.is_abstract:
+            raise StackCollectingException(f"class {self.name} is abstract, so we cannot create an instance of it!")
+
         return JavaClassInstance(self)
 
     def __repr__(self):
@@ -1031,19 +1088,29 @@ class JavaBytecodeClass(AbstractJavaClass):
             )
         )
 
-    def prepare_use(self):
+    def prepare_use(self, runtime=None):
+        """
+        Method for late-init-ing some stuff
+        Can be called more than one time, only the first time will do stuff
+        :param runtime: optional, the runtime instance to use during invoking the class init method when arrival
+
+        todo: maybe load the function bytecode also here?
+        """
+
         if self.class_init_complete:
             return
+
         self.class_init_complete = True
 
         if ("<clinit>", "()V") in self.methods:
-            try:
-                import mcpython.loader.java.Runtime
-            except ImportError:
-                # If we have no way to invoke bytecode, don't do so
-                return
+            if runtime is None:
+                try:
+                    import mcpython.loader.java.Runtime
+                except ImportError:
+                    # If we have no way to invoke bytecode, don't do so
+                    return
 
-            runtime = mcpython.loader.java.Runtime.Runtime()
+                runtime = mcpython.loader.java.Runtime.Runtime()
 
             try:
                 runtime.run_method(self.get_method("<clinit>", "()V", inner=True))
@@ -1051,8 +1118,47 @@ class JavaBytecodeClass(AbstractJavaClass):
                 e.add_trace(f"during class init of {self.name}")
                 raise
 
+    def validate_class_file(self):
+        """
+        Validation script on the overall class file
+
+        Method validation happens during each method optimisation, starting at first method invocation,
+            or some script interacting with it.
+        """
+
+        # validates the access flags
+        if self.is_module:
+            return
+
+        if self.is_interface:
+            if not self.is_abstract:
+                raise RuntimeError(f"class {self.name} is interface, but not abstract")
+
+            if self.is_final:
+                raise RuntimeError(f"class {self.name} is interface and final, which is not allowed")
+
+            if self.is_special_super:
+                raise RuntimeError(f"class {self.name} is interface and special-super-handling, which is not allowed")
+
+            if self.is_enum:
+                raise RuntimeError(f"class {self.name} is interface and an enum, which is not allowed")
+
+        else:
+            if self.is_abstract and self.is_final:
+                raise RuntimeError(f"class {self.name} is abstract and final, which is not allowed")
+
 
 class JavaClassInstance:
+    """
+    An instance of a java bytecode class
+    Wires down some stuff to the underlying class and holds the dynamic field values
+
+    todo: add abstract base so natives can share the same layout
+    todo: add set/get for fields & do type validation
+    """
+    # for optimisation reasons here
+    __slots__ = ["class_file", "fields"]
+
     def __init__(self, class_file: JavaBytecodeClass):
         self.class_file = class_file
         self.fields = {name: None for name in class_file.get_dynamic_field_keys()}
@@ -1068,6 +1174,16 @@ class JavaClassInstance:
 
 
 def decode_cp_constant(const, version=0):
+    """
+    Helper code for decoding an arbitrary constant pool entry down to a "primitive"
+    Used in the instructions directly loading from the runtime constant pool and storing the stuff
+    in the runtime.
+    :param const: the const, as stored in the constant pool
+    :param version: the internal version of the class system, to use when loading a class
+    :return: the primitive
+    :raises NotImplementedError: when the constant pool entry could not be decoded with this decoded
+    """
+
     if const[0] == 7:  # Class
         return vm.get_class(const[1][1], version=version)
     elif const[0] in (1, 3, 4, 5, 6, 8):
@@ -1080,3 +1196,4 @@ vm = JavaVM()
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
 # vm.debug_method("appeng/bootstrap/BlockRendering", "apply", "(Lappeng/bootstrap/FeatureFactory;Lnet/minecraft/block/Block;)V")
 # vm.debug_method("appeng/bootstrap/BlockDefinitionBuilder", "build", "()Lappeng/api/definitions/IBlockDefinition;")
+vm.debug_method("appeng/bootstrap/FeatureFactory", "addBootstrapComponent", "(Lappeng/bootstrap/IBootstrapComponent;)V")

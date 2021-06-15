@@ -1712,6 +1712,10 @@ R   [uuk]: improved world serialization API
 [uuk]: <jvm> fixed invokedynamic with pre-args not returning the method result correctly
 [uuk]: <jvm> instructions can now modify the data cache created during decode() during runtime
 [uuk]: <jvm> InvokeDynamic will now cache the result of its method resolving
+[uuk]: <jvm> InvokeDynamic is now using the "optimiser" system to split of the variants of targets into smaller bits
+[uuk]: <jvm> hopefully fixed last InvokeDynamic miss-behaviours around binding constructors
+[uuk]: <jvm> class files can now be validated after load [as part of the bake process].
+             Validation currently does only work on the access flags which are now allowed in some cases
 
 tasks to do [maybe moved away for later]:
 - minifier task should minify builtin & bridge library into each only one file
