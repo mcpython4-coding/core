@@ -1340,6 +1340,7 @@ class LambdaInvokeDynamic(BaseInstruction):
             self.name = name
             self.signature = signature
             self.extra_args = extra_args
+            self.access = method.access  # access stays the same
 
         def __call__(self, *args):
             return self.method(*self.extra_args, *args)
@@ -1415,7 +1416,7 @@ class LambdaInvokeDynamic(BaseInstruction):
 
             # for non-static methods, we need to pop the object from the stack as it might reference it
             if not method.access & 0x0008:
-                print("dynamic InvokeDynamic")
+                # print("dynamic InvokeDynamic")
                 extra_args.append(stack.pop())
 
             # If we have any prepared arguments, we need to wrap it in another structure for
@@ -1600,7 +1601,7 @@ class TableSwitch(OpcodeInstruction):
         low = mcpython.loader.java.Java.pop_u4_s(data[index:])
         index += 4
 
-        high = mcpython.loader.java.Java.pop_u4_s(data)
+        high = mcpython.loader.java.Java.pop_u4_s(data[index:])
         index += 4
 
         offsets = [
