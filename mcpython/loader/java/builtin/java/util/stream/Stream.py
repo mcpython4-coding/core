@@ -25,7 +25,10 @@ class Stream(NativeClass):
     def forEach(self, instance, consumer):
         try:
             for entry in instance:
-                consumer.inner(entry)
+                if callable(consumer):
+                    consumer(entry)
+                else:
+                    consumer.inner(entry)
         except TypeError:
             pass
 

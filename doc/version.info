@@ -1733,3 +1733,9 @@ tasks to do [maybe moved away for later]:
 
 Currently testing:
 AllTheMods6 version 1.6.9
+
+Currently working on fixing:
+- applied energetics 2
+
+Currently implementation problems:
+- InvokeDynamic stack operations during resolving leading into inaccurate stack items
