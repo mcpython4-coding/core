@@ -1157,8 +1157,6 @@ class JavaClassInstance:
     todo: add abstract base so natives can share the same layout
     todo: add set/get for fields & do type validation
     """
-    # for optimisation reasons here
-    __slots__ = ["class_file", "fields"]
 
     def __init__(self, class_file: JavaBytecodeClass):
         self.class_file = class_file
