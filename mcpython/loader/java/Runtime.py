@@ -1401,12 +1401,12 @@ class LambdaInvokeDynamic(BaseInstruction):
 
             # init methods are special, we need to wrap it into a special object for object creation
             if method.name == "<init>":
-                print("InvokeDynamic short-path <init>", method, outer_signature, extra_args)
+                # print("InvokeDynamic short-path <init>", method, outer_signature, extra_args)
                 method = cls.LambdaNewInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
                 stack.push(method)
                 return
 
-            print("long InvokeDynamic", method, outer_signature)
+            # print("long InvokeDynamic", method, outer_signature)
 
             # for non-static methods, we need to pop the object from the stack as it might reference it
             if not method.access & 0x0008:
@@ -1416,7 +1416,7 @@ class LambdaInvokeDynamic(BaseInstruction):
             # If we have any prepared arguments, we need to wrap it in another structure for
             #    adding the args before invocation & updating the outer signature of the method to match
             if len(extra_args) > 0:
-                print("additional", len(extra_args), extra_args)
+                # print("additional", len(extra_args), extra_args)
                 method = cls.LambdaInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
 
                 stack.push(method)
