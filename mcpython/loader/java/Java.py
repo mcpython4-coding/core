@@ -162,6 +162,7 @@ class JavaVM:
             String,
             System,
             ThreadLocal,
+            IllegalArgumentException,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
@@ -205,6 +206,7 @@ class JavaVM:
             ConcurrentHashMap,
             TimeUnit,
             CopyOnWriteArrayList,
+            Executors,
         )
         from mcpython.loader.java.builtin.java.util.concurrent.atomic import (
             AtomicInteger,
@@ -251,6 +253,7 @@ class JavaVM:
             nbt,
             potions,
             tags,
+            advancements,
         )
         from mcpython.loader.java.bridge.world import biomes, collection, world
 

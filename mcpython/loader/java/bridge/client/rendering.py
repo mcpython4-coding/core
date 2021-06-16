@@ -56,3 +56,11 @@ class ModelProperty(NativeClass):
 
 class ParticleType(NativeClass):
     NAME = "net/minecraft/particles/ParticleType"
+
+
+class BlockColors(NativeClass):
+    NAME = "net/minecraft/client/renderer/color/BlockColors"
+
+    @native("func_186722_a", "(Lnet/minecraft/client/renderer/color/IBlockColor;[Lnet/minecraft/block/Block;)V")
+    def func_186722_a(self, instance, color, blocks):
+        pass

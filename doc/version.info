@@ -1718,6 +1718,7 @@ R   [uuk]: improved world serialization API
              Validation currently does only work on the access flags which are now allowed in some cases
 [uuk]: <jvm> native methods can now specify if they are static or not
 [uuk]: <jvm> fixed tableswitch instruction
+[uuk]: <jvm> fixed InvokeDynamic on abstact methods and on signature expansion
 
 tasks to do [maybe moved away for later]:
 - minifier task should minify builtin & bridge library into each only one file

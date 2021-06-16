@@ -1370,6 +1370,14 @@ class LambdaInvokeDynamic(BaseInstruction):
         def __repr__(self):
             return f"InvokeDynamic::CallSite::new(wrapping={self.method},add_args={self.extra_args})"
 
+    class LambdaAbstractInvokeDynamicWrapper(LambdaInvokeDynamicWrapper):
+        def __call__(self, *args):
+            method = args[0].get_class().get_method(self.method.name, self.method.signature)
+            return method(*self.extra_args, *args)
+
+        def __repr__(self):
+            return f"InvokeDynamic::CallSite::around_abstract(wrapping={self.method},add_args={self.extra_args})"
+
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
         if callable(data):
@@ -1424,15 +1432,39 @@ class LambdaInvokeDynamic(BaseInstruction):
 
             # print("long InvokeDynamic", method, outer_signature)
 
+            if outer_args > inner_args:
+                if method.access & 0x0400:
+                    method = cls.LambdaInvokeDynamicWrapper(cls.LambdaAbstractInvokeDynamicWrapper(method, method.name, outer_signature, []), method.name, outer_signature, tuple(reversed(extra_args)))
+                else:
+                    method = cls.LambdaInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
+
+                method.access ^= 0x0008  # if we are dynamic but we expose object, we are no longer dynamic!
+
+                stack.push(method)
+                return
+
+            if not hasattr(method, "access"):
+                raise StackCollectingException(method)
+
             # for non-static methods, we need to pop the object from the stack as it might reference it
+            # for non-static methods exposing the object attribute as first parameter
             if not method.access & 0x0008:
                 # print("dynamic InvokeDynamic")
                 extra_args.append(stack.pop())
 
+                if method.access & 0x0400:  # is the method abstract
+                    # print("lambdaAroundAbstract", len(extra_args), extra_args)
+                    # print("abstract", method)
+                    method = cls.LambdaAbstractInvokeDynamicWrapper(method, method_name, outer_signature, tuple(reversed(extra_args)))
+
+                    stack.push(method)
+                    return
+
             # If we have any prepared arguments, we need to wrap it in another structure for
             #    adding the args before invocation & updating the outer signature of the method to match
-            if len(extra_args) > 0:
+            if len(extra_args) > 0 or outer_args > inner_args:
                 # print("additional", len(extra_args), extra_args)
+                # print("exposed signature", outer_signature)
                 method = cls.LambdaInvokeDynamicWrapper(method, method_name, outer_signature, tuple(reversed(extra_args)))
 
                 stack.push(method)

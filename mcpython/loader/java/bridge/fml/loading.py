@@ -20,6 +20,22 @@ from mcpython.loader.java.JavaExceptionStack import StackCollectingException
 from mcpython.loader.java.Runtime import Runtime, UnhandledInstructionException
 
 
+class Minecraft(NativeClass):
+    NAME = "net/minecraft/client/Minecraft"
+
+    def __init__(self):
+        super().__init__()
+        self.instance = self.create_instance()
+
+    @native("func_71410_x", "()Lnet/minecraft/client/Minecraft;", static=True)
+    def func_71410_x(self):
+        return self.instance
+
+    @native("func_184125_al", "()Lnet/minecraft/client/renderer/color/BlockColors;")
+    def func_184125_al(self, instance):
+        pass
+
+
 class Mod(NativeClass):
     NAME = "net/minecraftforge/fml/common/Mod"
 

@@ -33,8 +33,22 @@ class List(NativeClass):
     @native("forEach", "(Ljava/util/function/Consumer;)V")
     def forEach(self, instance, consumer):
         pass
+        # for e in instance:
+            # consumer(e)
 
     @native("addAll", "(Ljava/util/Collection;)Z")
     def addAll(self, instance, array):
         instance += array
         return 1
+
+    @native("stream", "()Ljava/util/stream/Stream;")
+    def stream(self, instance):
+        return instance
+
+    @native("contains", "(Ljava/lang/Object;)Z")
+    def contains(self, instance, obj):
+        return int(obj in instance)
+
+    @native("get", "(I)Ljava/lang/Object;")
+    def get(self, instance, index):
+        return instance[index]

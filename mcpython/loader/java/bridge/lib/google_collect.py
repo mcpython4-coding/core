@@ -205,6 +205,12 @@ class Preconditions(NativeClass):
             raise StackCollectingException("expected non-null, got null")
         return obj
 
+    @native("checkNotNull", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    def checkNotNull2(self, obj, msg):
+        if obj is None:
+            raise StackCollectingException("expected non-null, got null, message: "+str(msg))
+        return obj
+
     @native("checkArgument", "(Z)V")
     def checkArgument(self, value):
         if not value:
@@ -362,4 +368,14 @@ class ImmutableBiMap(NativeClass):
     @native("of", "()Lcom/google/common/collect/ImmutableBiMap;")
     def of(self, *_):
         return {}
+
+
+class Verify(NativeClass):
+    NAME = "com/google/common/base/Verify"
+
+    @native("verify", "(Z)V")
+    def verify(self, value):
+        if not value:
+            raise StackCollectingException("expected true, got false")
+
 

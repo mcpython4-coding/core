@@ -261,3 +261,31 @@ class ForgeChunkManager(NativeClass):
     def setForcedChunkLoadingCallback(self, *_):
         pass
 
+
+class Stats(NativeClass):
+    NAME = "net/minecraft/stats/Stats"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_199092_j": None
+        })
+
+
+class IStatFormatter(NativeClass):
+    NAME = "net/minecraft/stats/IStatFormatter"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_223218_b_": None,
+        })
+
+
+class StatType(NativeClass):
+    NAME = "net/minecraft/stats/StatType"
+
+    @native("func_199077_a", "(Ljava/lang/Object;Lnet/minecraft/stats/IStatFormatter;)Lnet/minecraft/stats/Stat;")
+    def func_199077_a(self, instance, obj, formatter):
+        pass
+

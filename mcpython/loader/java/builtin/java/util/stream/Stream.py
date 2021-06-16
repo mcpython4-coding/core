@@ -50,3 +50,7 @@ class Stream(NativeClass):
     )
     def concat(self, a, b):
         return a + b
+
+    @native("anyMatch", "(Ljava/util/function/Predicate;)Z")
+    def anyMatch(self, instance, predicate):
+        return int(any(predicate(e) for e in instance))
