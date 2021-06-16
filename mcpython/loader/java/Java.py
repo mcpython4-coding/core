@@ -697,7 +697,7 @@ class ElementValue:
         return self
 
 
-class RuntimeVisibleAnnotationsParser(AbstractAttributeParser):
+class RuntimeAnnotationsParser(AbstractAttributeParser):
     def __init__(self):
         self.annotations = []
 
@@ -763,7 +763,8 @@ class JavaAttributeTable:
         "Code": CodeParser,
         "BootstrapMethods": BootstrapMethods,
         "StackMapTable": StackMapTableParser,
-        "RuntimeVisibleAnnotations": RuntimeVisibleAnnotationsParser,
+        "RuntimeVisibleAnnotations": RuntimeAnnotationsParser,
+        "RuntimeInvisibleAnnotations": RuntimeAnnotationsParser,
     }
 
     def __init__(self, parent):

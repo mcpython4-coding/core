@@ -1209,6 +1209,7 @@ class InvokeVirtual(CPLinkedInstruction):
                         "invalid abstract not-implemented non-reference-able object"
                         + str(obj)
                     )
+
             else:
                 method = obj.get_class().get_method(
                     method.name if hasattr(method, "name") else method.native_name,
@@ -1292,6 +1293,14 @@ class InvokeInterface(CPLinkedInstruction):
 
         except AttributeError:
             pass
+
+        if hasattr(method, "access") and method.access & 0x0400:
+            cls_file = method.class_file
+
+            # todo: move this check into method parsing
+            if "RuntimeVisibleAnnotations" in cls_file.attributes.attributes and any(any(e[0] == "java/lang/FunctionalInterface" for e in attr.annotations) for attr in cls_file.attributes.attributes["RuntimeVisibleAnnotations"]):
+                args = list(args)
+                method = args.pop(0)
 
         stack.push(stack.runtime.run_method(method, *args))
 
