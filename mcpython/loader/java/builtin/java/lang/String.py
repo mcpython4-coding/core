@@ -62,6 +62,10 @@ class String(NativeClass):
     def replaceAll(self, instance, before, after):
         return instance.replace(before, after)
 
+    @native("toCharArray", "()[C")
+    def toCharArray(self, instance):
+        return [ord(e) for e in instance]
+
 
 class StringBuilder(NativeClass):
     NAME = "java/lang/StringBuilder"
@@ -88,7 +92,26 @@ class StringBuilder(NativeClass):
 
     @native("append", "(I)Ljava/lang/StringBuilder;")
     def append3(self, instance, value):
+        if instance is None:
+            raise StackCollectingException("NullPointerException: self is null")
+
         instance.underlying.append(str(value))
+        return instance
+
+    @native("append", "(Ljava/lang/Object;)Ljava/lang/StringBuilder;")
+    def append4(self, instance, value):
+        if instance is None:
+            raise StackCollectingException("NullPointerException: self is null")
+
+        instance.underlying.append(str(value))
+        return instance
+
+    @native("append", "(C)Ljava/lang/StringBuilder;")
+    def append5(self, instance, c: int):
+        if instance is None:
+            raise StackCollectingException("NullPointerException: self is null")
+
+        instance.underlying.append(chr(c) if isinstance(c, int) else str(c))
         return instance
 
     @native("toString", "()Ljava/lang/String;")

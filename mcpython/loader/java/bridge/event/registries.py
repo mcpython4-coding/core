@@ -112,6 +112,7 @@ class Registry(NativeClass):
             "field_239690_aB_": None,
             "field_239699_ae_": None,
             "field_218367_H": None,
+            "field_243656_h": None,
         }
 
     @native(
@@ -129,6 +130,10 @@ class Registry(NativeClass):
     )
     def func_218322_a(self, registry, name, obj):
         return obj
+
+    @native("func_82594_a", "(Lnet/minecraft/util/ResourceLocation;)Ljava/lang/Object;")
+    def func_82594_a(self, *_):
+        pass
 
 
 class RegistryKey(NativeClass):
@@ -358,6 +363,7 @@ class WorldGenRegistries(NativeClass):
         self.exposed_attributes.update(
             {
                 "field_243654_f": None,
+                "field_243656_h": None,
             }
         )
 

@@ -251,8 +251,13 @@ class ToolType(NativeClass):
                 "SHOVEL": "net/minecraft/block/ToolType::SHOVEL",
                 "PICKAXE": "net/minecraft/block/ToolType::PICKAXE",
                 "AXE": "net/minecraft/block/ToolType::AXE",
+                "WRENCH": "net/minecraft/block/ToolType::WRENCH",
             }
         )
+
+    @native("get", "(Ljava/lang/String;)Lnet/minecraftforge/common/ToolType;")
+    def get(self, text: str):
+        return self.exposed_attributes[text.upper()]
 
 
 class Block(AbstractBlock):
@@ -812,7 +817,10 @@ class Item(NativeClass):
 
     @native("<init>", "(Lnet/minecraft/item/Item$Properties;)V")
     def init(self, instance, properties):
-        instance.properties = properties
+        try:
+            instance.properties = properties
+        except AttributeError:
+            raise StackCollectingException(f"It is not working! Something is wrong with {instance}")
 
     @native(
         "setRegistryName",
@@ -835,6 +843,12 @@ class Item(NativeClass):
         "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
     )
     def setRegistryName3(self, instance, namespace, name):
+        return instance
+
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName4(self, instance, namespace, name):
+        instance.registry_name = namespace + ":" + name
         return instance
 
     @native("getRegistryName", "()Lnet/minecraft/util/ResourceLocation;")
@@ -891,6 +905,10 @@ class Item_Properties(NativeClass):
     def func_234689_a_(self, instance):
         return instance
 
+    @native("addToolType", "(Lnet/minecraftforge/common/ToolType;I)Lnet/minecraft/item/Item$Properties;")
+    def addToolType(self, instance, tool_type, v):
+        return instance
+
 
 class Food__Builder(NativeClass):
     NAME = "net/minecraft/item/Food$Builder"
@@ -935,6 +953,7 @@ class ItemGroup(NativeClass):
                 "field_78032_a": [],
                 "field_78040_i": None,
                 "field_78026_f": None,
+                "field_78037_j": None,
             }
         )
 
@@ -1068,15 +1087,25 @@ class BlockItem(Item):
         return instance
 
 
-class AxeItem(NativeClass):
+class AxeItem(Item):
     NAME = "net/minecraft/item/AxeItem"
 
     def __init__(self):
         super().__init__()
         self.exposed_attributes = {"field_203176_a": {}}
 
+    @native("<init>", "(Lnet/minecraft/item/IItemTier;FFLnet/minecraft/item/Item$Properties;)V")
+    def init(self, instance, tier, a, b, properties):
+        instance.properties = properties
 
-class BucketItem(NativeClass):
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, namespace, name):
+        instance.name = namespace + ":" + name
+        return instance
+
+
+class BucketItem(Item):
     NAME = "net/minecraft/item/BucketItem"
 
     @native(
@@ -1085,16 +1114,8 @@ class BucketItem(NativeClass):
     def init(self, *_):
         pass
 
-    @native(
-        "setRegistryName",
-        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
-    )
-    def setRegistryName(self, instance, name):
-        instance.registry_name = name
-        return instance
 
-
-class HoeItem(NativeClass):
+class HoeItem(Item):
     NAME = "net/minecraft/item/HoeItem"
 
     def __init__(self):
@@ -1103,13 +1124,61 @@ class HoeItem(NativeClass):
             "field_195973_b": {},
         }
 
+    @native("<init>", "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V")
+    def init(self, instance, tier, a, b, properties):
+        instance.properties = properties
 
-class ShovelItem(NativeClass):
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, namespace, name):
+        instance.name = namespace + ":" + name
+        return instance
+
+
+class PickaxeItem(Item):
+    NAME = "net/minecraft/item/PickaxeItem"
+
+    @native("<init>", "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V")
+    def init(self, instance, tier, a, b, properties):
+        instance.properties = properties
+
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, namespace, name):
+        instance.name = namespace + ":" + name
+        return instance
+
+
+class ShovelItem(Item):
     NAME = "net/minecraft/item/ShovelItem"
 
     def __init__(self):
         super().__init__()
         self.exposed_attributes = {"field_195955_e": {}}
+
+    @native("<init>", "(Lnet/minecraft/item/IItemTier;FFLnet/minecraft/item/Item$Properties;)V")
+    def init(self, instance, tier, a, b, properties):
+        instance.properties = properties
+
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, namespace, name):
+        instance.name = namespace + ":" + name
+        return instance
+
+
+class SwordItem(Item):
+    NAME = "net/minecraft/item/SwordItem"
+
+    @native("<init>", "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V")
+    def init(self, instance, tier, a, b, properties):
+        instance.properties = properties
+
+    @native("setRegistryName",
+            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    def setRegistryName(self, instance, namespace, name):
+        instance.name = namespace + ":" + name
+        return instance
 
 
 class MusicDiscItem(Item):
@@ -1140,6 +1209,7 @@ class ItemRarity(NativeClass):
             {
                 "RARE": "net/minecraft/item/Rarity::RARE",
                 "UNCOMMON": "net/minecraft/item/Rarity::UNCOMMON",
+                "EPIC": "net/minecraft/item/Rarity::EPIC",
             }
         )
 

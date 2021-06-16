@@ -33,3 +33,7 @@ class Method(NativeClass):
     @native("apply", "(Ljava/lang/Object;)Ljava/lang/Object;")
     def apply(self, instance, arg):
         return instance(arg)
+
+    @native("getAnnotation", "(Ljava/lang/Class;)Ljava/lang/annotation/Annotation;")
+    def getAnnotation(self, *_):
+        pass

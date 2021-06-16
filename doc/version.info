@@ -1716,6 +1716,8 @@ R   [uuk]: improved world serialization API
 [uuk]: <jvm> hopefully fixed last InvokeDynamic miss-behaviours around binding constructors
 [uuk]: <jvm> class files can now be validated after load [as part of the bake process].
              Validation currently does only work on the access flags which are now allowed in some cases
+[uuk]: <jvm> native methods can now specify if they are static or not
+[uuk]: <jvm> fixed tableswitch instruction
 
 tasks to do [maybe moved away for later]:
 - minifier task should minify builtin & bridge library into each only one file

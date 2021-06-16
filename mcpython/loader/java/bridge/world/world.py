@@ -183,6 +183,10 @@ class IPlacementConfig(NativeClass):
         self.exposed_attributes.update({"field_202468_e": None})
 
 
+class Biome(NativeClass):
+    NAME = "net/minecraft/world/biome/Biome"
+
+
 class Biome__Category(NativeClass):
     NAME = "net/minecraft/world/biome/Biome$Category"
 
@@ -207,3 +211,53 @@ class Biome__Category(NativeClass):
                 "TAIGA": 14,
             }
         )
+
+
+class PlainsVillagePools(NativeClass):
+    NAME = "net/minecraft/world/gen/feature/structure/PlainsVillagePools"
+
+    @native("func_214744_a", "()V")
+    def func_214744_a(self, *_):
+        pass
+
+
+class SavannaVillagePools(NativeClass):
+    NAME = "net/minecraft/world/gen/feature/structure/SavannaVillagePools"
+
+    @native("func_214745_a", "()V")
+    def func_214745_a(self, *_):
+        pass
+
+
+class TaigaVillagePools(NativeClass):
+    NAME = "net/minecraft/world/gen/feature/structure/TaigaVillagePools"
+
+    @native("func_214806_a", "()V")
+    def func_214806_a(self, *_):
+        pass
+
+
+class DesertVillagePools(NativeClass):
+    NAME = "net/minecraft/world/gen/feature/structure/DesertVillagePools"
+
+    @native("func_222739_a", "()V")
+    def func_222739_a(self, *_):
+        pass
+
+
+class SnowyVillagePools(NativeClass):
+    NAME = "net/minecraft/world/gen/feature/structure/SnowyVillagePools"
+
+    @native("func_214746_a", "()V")
+    def func_214746_a(self, *_):
+        pass
+
+
+class ForgeChunkManager(NativeClass):
+    NAME = "net/minecraftforge/common/world/ForgeChunkManager"
+
+    @native("setForcedChunkLoadingCallback",
+            "(Ljava/lang/String;Lnet/minecraftforge/common/world/ForgeChunkManager$LoadingValidationCallback;)V")
+    def setForcedChunkLoadingCallback(self, *_):
+        pass
+

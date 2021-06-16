@@ -29,3 +29,7 @@ class Set(NativeClass):
     @native("iterator", "()Ljava/util/Iterator;")
     def iterator(self, instance):
         return list(instance)
+
+    @native("toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;")
+    def toArray(self, instance, array):
+        return list(instance)

@@ -172,7 +172,7 @@ class JavaVM:
             Repeatable,
             Inherited,
         )
-        from mcpython.loader.java.builtin.java.lang.reflect import Method
+        from mcpython.loader.java.builtin.java.lang.reflect import Method, Field
         from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
         from mcpython.loader.java.builtin.java.util import (
             ArrayList,
@@ -199,6 +199,7 @@ class JavaVM:
             WeakHashMap,
             UUID,
             LinkedHashSet,
+            ArrayDeque,
         )
         from mcpython.loader.java.builtin.java.util.concurrent import (
             ConcurrentHashMap,
@@ -217,8 +218,9 @@ class JavaVM:
         )
         from mcpython.loader.java.builtin.java.util.regex import Pattern
         from mcpython.loader.java.builtin.java.util.stream import Collectors, Stream
-        from mcpython.loader.java.builtin.java.text import DecimalFormat
+        from mcpython.loader.java.builtin.java.text import DecimalFormat, DecimalFormatSymbols
         from mcpython.loader.java.builtin.java.awt import Color
+        from mcpython.loader.java.builtin.java.math import RoundingMode
 
         from mcpython.loader.java.builtin.javax.annotation import Nonnull, CheckForNull
         from mcpython.loader.java.builtin.javax.annotation.meta import TypeQualifierDefault
@@ -517,11 +519,11 @@ class NativeClassInstance:
         return f"NativeClassInstance(of={self.native_class},id={hex(id(self))})"
 
 
-def native(name: str, signature: str):
+def native(name: str, signature: str, static=False):
     def setup(method):
         method.native_name = name
         method.native_signature = signature
-        method.access = 0x1001  # public synthetic
+        method.access = 0x1101 | (0 if not static else 0x0008)  # public native synthetic (static)
         return method
 
     return setup
@@ -865,6 +867,10 @@ class JavaBytecodeClass(AbstractJavaClass):
         self.access = 0
         self.methods = {}
         self.fields = {}
+
+        # can hold a list of fields
+        self.enum_fields: typing.Optional[typing.List[JavaField]] = None
+
         self.dynamic_field_keys = set()
         self.static_field_values = {}
         self.attributes = JavaAttributeTable(self)
@@ -971,9 +977,15 @@ class JavaBytecodeClass(AbstractJavaClass):
             for _ in range(pop_u2(data))
         ]
 
+        if self.is_enum:
+            self.enum_fields = []
+
         for _ in range(pop_u2(data)):
             field = JavaField()
             field.from_data(self, data)
+
+            if field.access & 0x4000:
+                self.enum_fields.append(field)
 
             self.fields[field.name] = field
 
@@ -1193,3 +1205,4 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
+# vm.debug_method("appeng/core/api/definitions/ApiParts", "constructColoredDefinition", "(Ljava/lang/String;Ljava/lang/Class;Ljava/util/function/Function;)Lappeng/api/util/AEColoredItemDefinition;")

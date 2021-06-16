@@ -21,3 +21,17 @@ class Enum(NativeClass):
     @native("<init>", "(Ljava/lang/String;I)V")
     def init(self, instance, name: str, value: int):
         pass
+
+    @native("ordinal", "()I")
+    def ordinal(self, instance):
+        # todo: can we optimise this?
+        if hasattr(instance, "get_class"):
+            cls = instance.get_class()
+
+            for key, value in cls.static_field_values.items():
+                if value == instance:
+                    return [i for i, e in enumerate(cls.enum_fields) if e.name == key][0]
+
+            return cls.enum_fields.index(instance)
+
+        return id(instance)

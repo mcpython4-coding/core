@@ -28,9 +28,17 @@ class EnumSet(NativeClass):
     def noneOf(self, cls):
         return self.create_instance()
 
+    @native("of", "(Ljava/lang/Enum;)Ljava/util/EnumSet;")
+    def of(self, *_):
+        return self.create_instance()
+
+    @native("of", "(Ljava/lang/Enum;Ljava/lang/Enum;)Ljava/util/EnumSet;")
+    def of2(self, *_):
+        return self.create_instance()
+
     @native("clear", "()V")
     def clear(self, instance):
-        pass
+        instance.underlying.clear()
 
     @native("addAll", "(Ljava/util/Collection;[Ljava/lang/Object;)Z")
     def addAll(self, collection, objects):
@@ -38,3 +46,11 @@ class EnumSet(NativeClass):
 
     def iter_over_instance(self, instance) -> typing.Iterable:
         return instance.underlying
+
+    @native("iterator", "()Ljava/util/Iterator;")
+    def iterator(self, instance):
+        return list(instance.underlying)
+
+    @native("toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;")
+    def toArray(self, instance, array):
+        return list(instance.underlying)

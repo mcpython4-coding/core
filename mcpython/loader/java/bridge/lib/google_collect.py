@@ -97,6 +97,16 @@ class ImmutableList(NativeClass):
         instance.underlying_tuple = stuff
         return instance
 
+    @native("of", "(Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;")
+    def of_3(self, obj):
+        return self.create_instance()
+
+    @native("copyOf", "([Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;")
+    def copyOf(self, array):
+        instance = self.create_instance()
+        instance.underlying_tuple = tuple(array)
+        return instance
+
 
 class ImmutableMap(NativeClass):
     NAME = "com/google/common/collect/ImmutableMap"
@@ -202,6 +212,11 @@ class Preconditions(NativeClass):
 
     @native("checkArgument", "(ZLjava/lang/Object;)V")
     def checkArgument2(self, value, obj):
+        if not value:
+            raise StackCollectingException(f"expected true, got false, message: {obj}")
+
+    @native("checkState", "(ZLjava/lang/Object;)V")
+    def checkState(self, value, obj):
         if not value:
             raise StackCollectingException(f"expected true, got false, message: {obj}")
 

@@ -9,3 +9,11 @@ class DecimalFormat(NativeClass):
     def init(self, instance, v: str):
         pass
 
+    @native("setDecimalFormatSymbols", "(Ljava/text/DecimalFormatSymbols;)V")
+    def setDecimalFormatSymbols(self, instance, symbols):
+        pass
+
+    @native("setRoundingMode", "(Ljava/math/RoundingMode;)V")
+    def setRoundingMode(self, instance, mode):
+        pass
+

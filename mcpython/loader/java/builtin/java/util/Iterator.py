@@ -25,3 +25,8 @@ class Iterator(NativeClass):
     @native("next", "()Ljava/lang/Object;")
     def next(self, instance):
         return instance.pop(0)
+
+    @native("forEachRemaining", "(Ljava/util/function/Consumer;)V")
+    def forEachRemaining(self, instance, consumer):
+        for e in instance:
+            consumer(e)

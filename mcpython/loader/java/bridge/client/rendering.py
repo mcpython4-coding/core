@@ -52,3 +52,7 @@ class ModelProperty(NativeClass):
     @native("<init>", "(Ljava/util/function/Predicate;)V")
     def init2(self, *_):
         pass
+
+
+class ParticleType(NativeClass):
+    NAME = "net/minecraft/particles/ParticleType"

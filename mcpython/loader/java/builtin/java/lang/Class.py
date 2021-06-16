@@ -12,7 +12,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.ResourceLoader
-from mcpython.loader.java.Java import NativeClass, native
+from mcpython.loader.java.Java import NativeClass, native, AbstractJavaClass
+from mcpython import logger
 
 
 class Class(NativeClass):
@@ -45,3 +46,27 @@ class Class(NativeClass):
     @native("getResourceAsStream", "(Ljava/lang/String;)Ljava/io/InputStream;")
     def getResourceAsStream(self, instance, path: str):
         return mcpython.ResourceLoader.read_raw(path)
+
+    @native("getDeclaredFields", "()[Ljava/lang/reflect/Field;")
+    def getDeclaredFields(self, instance):
+        if isinstance(instance, NativeClass):
+            logger.println(f"[WARN] from NativeImplementation: NativeImplementation.getDeclaredFields on {instance} is unsafe")
+            return list(instance.get_dynamic_field_keys() | set(instance.exposed_attributes.keys()))
+
+        return list(instance.fields.values())
+
+    @native("getDeclaredMethods", "()[Ljava/lang/reflect/Method;")
+    def getDeclaredMethods(self, instance):
+        if isinstance(instance, NativeClass):
+            logger.println(f"[WARN] from NativeImplementation: NativeImplementation.getDeclaredMethods on {instance} is unsafe")
+            return list(instance.exposed_methods.values())
+
+        return list(instance.methods.values())
+
+    @native("getSuperclass", "()Ljava/lang/Class;")
+    def getSuperclass(self, instance: AbstractJavaClass):
+        if isinstance(instance, NativeClass):
+            logger.println(f"[WARN] from NativeImplementation: NativeImplementation.getSuperClass on {instance} is unsafe")
+
+        # If parent is None, parent is java/lang/Object, which is listed as None
+        return instance.parent() if instance.parent is not None else None

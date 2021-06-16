@@ -431,7 +431,7 @@ class Any2Float(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Any2Int(OpcodeInstruction):
-    OPCODES = {0x8E}
+    OPCODES = {0x8E, 0x8B}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -817,7 +817,7 @@ class DUP(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class ADD(OpcodeInstruction):
-    OPCODES = {0x60, 0x63}
+    OPCODES = {0x60, 0x63, 0x62}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
@@ -853,6 +853,16 @@ class SHL(OpcodeInstruction):
     def invoke(cls, data: typing.Any, stack: Stack):
         b, a = stack.pop(), stack.pop()
         stack.push(a << b)
+
+
+@BytecodeRepr.register_instruction
+class SHR(OpcodeInstruction):
+    OPCODES = {0x7A}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        b, a = stack.pop(), stack.pop()
+        stack.push(a >> b)
 
 
 @BytecodeRepr.register_instruction
@@ -1575,7 +1585,7 @@ class IfNonNull(OpcodeInstruction):
 
 @BytecodeRepr.register_instruction
 class Mul(OpcodeInstruction):
-    OPCODES = {0x68, 0x6B}
+    OPCODES = {0x68, 0x6B, 0x6A}
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):

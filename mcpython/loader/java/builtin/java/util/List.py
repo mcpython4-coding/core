@@ -33,3 +33,8 @@ class List(NativeClass):
     @native("forEach", "(Ljava/util/function/Consumer;)V")
     def forEach(self, instance, consumer):
         pass
+
+    @native("addAll", "(Ljava/util/Collection;)Z")
+    def addAll(self, instance, array):
+        instance += array
+        return 1

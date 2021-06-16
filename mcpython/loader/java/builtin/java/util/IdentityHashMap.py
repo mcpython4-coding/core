@@ -17,6 +17,14 @@ from mcpython.loader.java.Java import NativeClass, native
 class IdentityHashMap(NativeClass):
     NAME = "java/util/IdentityHashMap"
 
+    def create_instance(self):
+        return {}
+
     @native("<init>", "()V")
     def init(self, instance):
         pass
+
+    @native("put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
+    def put(self, instance, key, value):
+        instance[key] = value
+        return value
