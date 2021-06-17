@@ -33,3 +33,8 @@ class Set(NativeClass):
     @native("toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;")
     def toArray(self, instance, array):
         return list(instance)
+
+    @native("add", "(Ljava/lang/Object;)Z")
+    def add(self, instance, obj):
+        instance.add(obj)
+        return 1

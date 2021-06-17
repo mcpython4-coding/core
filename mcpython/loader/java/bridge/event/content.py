@@ -859,6 +859,29 @@ class Item(NativeClass):
     def func_70067_L(self, instance):
         return 0
 
+    @native("func_77658_a", "()Ljava/lang/String;")
+    def func_77658_a(self, instance):
+        return "MissingImplementation"
+
+    @native("getItem", "()Lnet/minecraft/item/Item;")
+    def getItem(self, instance):
+        return instance
+
+
+class Items(NativeClass):
+    NAME = "net/minecraft/item/Items"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "field_151137_ax": None,
+            "field_222027_iT": None,
+            "field_151133_ar": None,
+            "field_151129_at": None,
+            "field_151117_aB": None,
+            "field_151131_as": None,
+        })
+
 
 class Item_Properties(NativeClass):
     NAME = "net/minecraft/item/Item$Properties"
@@ -1021,6 +1044,16 @@ class ItemStack(NativeClass):
         import mcpython.common.container.ResourceStack
 
         instance.underlying_stack = mcpython.common.container.ResourceStack.ItemStack()
+
+    @native("<init>", "(Lnet/minecraft/util/IItemProvider;I)V")
+    def init2(self, instance, item_provider, size):
+        import mcpython.common.container.ResourceStack
+
+        instance.underlying_stack = mcpython.common.container.ResourceStack.ItemStack()
+
+    @native("func_190926_b", "()Z")
+    def func_190926_b(self, instance):
+        return 0
 
 
 class IItemTier(NativeClass):
@@ -1530,8 +1563,84 @@ class TileEntityType(NativeClass):
     NAME = "net/minecraft/tileentity/TileEntityType"
 
 
-class BeaconTileEntity(NativeClass):
+class TileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/TileEntity"
+
+
+class BeaconTileEntity(TileEntity):
     NAME = "net/minecraft/tileentity/BeaconTileEntity"
+
+
+class BannerTileEntity(TileEntity):
+    NAME = "net/minecraft/tileentity/BannerTileEntity"
+
+
+class BrewingStandTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/BrewingStandTileEntity"
+
+
+class ChestTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/ChestTileEntity"
+
+
+class CommandBlockTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/CommandBlockTileEntity"
+
+
+class ComparatorTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/ComparatorTileEntity"
+
+
+class DaylightDetectorTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/DaylightDetectorTileEntity"
+
+
+class DispenserTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/DispenserTileEntity"
+
+
+class DropperTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/DropperTileEntity"
+
+
+class EnchantingTableTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/EnchantingTableTileEntity"
+
+
+class EnderChestTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/EnderChestTileEntity"
+
+
+class EndPortalTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/EndPortalTileEntity"
+
+
+class FurnaceTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/FurnaceTileEntity"
+
+
+class HopperTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/HopperTileEntity"
+
+
+class MobSpawnerTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/MobSpawnerTileEntity"
+
+
+class PistonTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/PistonTileEntity"
+
+
+class ShulkerBoxTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/ShulkerBoxTileEntity"
+
+
+class SignTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/SignTileEntity"
+
+
+class SkullTileEntity(NativeClass):
+    NAME = "net/minecraft/tileentity/SkullTileEntity"
 
 
 class PaintingType(NativeClass):

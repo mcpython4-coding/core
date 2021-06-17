@@ -399,7 +399,9 @@ class DistExecutor(NativeClass):
         "(Ljava/util/function/Supplier;Ljava/util/function/Supplier;)Ljava/lang/Object;",
     )
     def runForDist(self, left, right):
-        pass  # todo: run code when on the respective side
+        if shared.IS_CLIENT:
+            return left()
+        return right()
 
     @native(
         "unsafeRunForDist",
@@ -516,14 +518,15 @@ class ForgeConfigSpec__Builder(NativeClass):
 
     @native("build", "()Lnet/minecraftforge/common/ForgeConfigSpec;")
     def build(self, instance):
-        return
+        return self.vm.get_class("net/minecraftforge/common/ForgeConfigSpec").create_instance()
 
     @native(
         "configure",
         "(Ljava/util/function/Function;)Lorg/apache/commons/lang3/tuple/Pair;",
     )
     def configure(self, instance, function):
-        return None, None
+        o = function(instance)
+        return o, self.build(instance)
 
     @native(
         "comment",
@@ -582,6 +585,15 @@ class ForgeConfigSpec__Builder(NativeClass):
     def get(self, instance):
         pass
 
+    @native("defineEnum",
+            "(Ljava/lang/String;Ljava/lang/Enum;[Ljava/lang/Enum;)Lnet/minecraftforge/common/ForgeConfigSpec$EnumValue;")
+    def defineEnum(self, instance, name: str, enum, values):
+        pass
+
+    @native("pop", "(I)Lnet/minecraftforge/common/ForgeConfigSpec$Builder;")
+    def pop(self, instance, count: int):
+        return instance
+
 
 class FMLCommonSetupEvent(NativeClass):
     NAME = "net/minecraftforge/fml/event/lifecycle/FMLCommonSetupEvent"
@@ -633,6 +645,10 @@ class ModList(NativeClass):
     @native("getModFileById", "(Ljava/lang/String;)Lnet/minecraftforge/fml/loading/moddiscovery/ModFileInfo;")
     def getModFileById(self, instance, name: str):
         return shared.mod_loader.mods[name]
+
+    @native("getAllScanData", "()Ljava/util/List;")
+    def getAllScanData(self, *_):
+        return []
 
 
 class ModFileInfo(NativeClass):
@@ -742,3 +758,22 @@ class ExtensionPoint(NativeClass):
 
 class EventNetworkChannel(NativeClass):
     NAME = "net/minecraftforge/fml/event/EventNetworkChannel"
+
+
+class SidedThreadGroups(NativeClass):
+    NAME = "net/minecraftforge/fml/common/thread/SidedThreadGroups"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "SERVER": 0,
+            "CLIENT": 1,
+        })
+
+
+class ModFileScanData__AnnotationData(NativeClass):
+    NAME = "net/minecraftforge/forgespi/language/ModFileScanData$AnnotationData"
+
+    @native("getMemberName", "()Ljava/lang/String;")
+    def getMemberName(self, instance):
+        return "unimplemented"

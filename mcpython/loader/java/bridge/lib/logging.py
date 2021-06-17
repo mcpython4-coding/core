@@ -39,7 +39,7 @@ class LoggingLevel(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({"OFF": 0})
+        self.exposed_attributes.update({"OFF": 0, "INFO": 1, "WARN": 2, "DEBUG": 3})
 
 
 class Logger(CoreLogger):
@@ -52,6 +52,10 @@ class Logger(CoreLogger):
     @native("info", "(Ljava/lang/String;Ljava/lang/Object;)V")
     def info(self, instance, message, obj):
         logger.println("[FML LOGGER][INFO]", message)
+
+    @native("log", "(Lorg/apache/logging/log4j/Level;Ljava/lang/String;)V")
+    def log(self, instance, level, text):
+        logger.println(f"[FML LOGGER][{level}]", text)
 
     @native("info", "(Ljava/lang/String;)V")
     def info(self, instance, message):
@@ -77,6 +81,12 @@ class LogManager(NativeClass):
 
     @native("getLogger", "()Lorg/apache/logging/log4j/Logger;")
     def getLogger2(self):
+        return self.vm.get_class(
+            "org/apache/logging/log4j/Logger", version=self.internal_version
+        ).create_instance()
+
+    @native("getFormatterLogger", "(Ljava/lang/String;)Lorg/apache/logging/log4j/Logger;")
+    def getFormatterLogger(self, formatter: str):
         return self.vm.get_class(
             "org/apache/logging/log4j/Logger", version=self.internal_version
         ).create_instance()

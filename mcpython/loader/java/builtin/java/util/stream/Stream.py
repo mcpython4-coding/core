@@ -33,8 +33,8 @@ class Stream(NativeClass):
             pass
 
     @native("collect", "(Ljava/util/stream/Collector;)Ljava/lang/Object;")
-    def collect(self, *_):
-        pass
+    def collect(self, instance, collector):
+        return collector(instance)
 
     @native("of", "([Ljava/lang/Object;)Ljava/util/stream/Stream;")
     def of(self, array):
@@ -54,3 +54,7 @@ class Stream(NativeClass):
     @native("anyMatch", "(Ljava/util/function/Predicate;)Z")
     def anyMatch(self, instance, predicate):
         return int(any(predicate(e) for e in instance))
+
+    @native("flatMap", "(Ljava/util/function/Function;)Ljava/util/stream/Stream;")
+    def flatMap(self, instance, function):
+        return [function(e) for e in instance]

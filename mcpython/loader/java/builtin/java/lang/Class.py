@@ -70,3 +70,7 @@ class Class(NativeClass):
 
         # If parent is None, parent is java/lang/Object, which is listed as None
         return instance.parent() if instance.parent is not None else None
+
+    @native("getName", "()Ljava/lang/String;")
+    def getName(self, instance):
+        return instance.name

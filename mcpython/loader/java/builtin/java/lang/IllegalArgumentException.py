@@ -9,3 +9,7 @@ class IllegalArgumentException(NativeClass):
     def init(self, instance, text):
         pass
 
+    @native("<init>", "(Ljava/lang/Throwable;)V")
+    def init(self, instance, throwable):
+        pass
+

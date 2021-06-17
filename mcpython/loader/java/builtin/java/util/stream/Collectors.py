@@ -28,3 +28,13 @@ class Collectors(NativeClass):
     @native("toList", "()Ljava/util/stream/Collector;")
     def toList(self, collector):
         return collector
+
+    @native("groupingBy", "(Ljava/util/function/Function;)Ljava/util/stream/Collector;")
+    def groupingBy(self, function):
+        def work(instance):
+            data = {}
+            for e in instance:
+                data.setdefault(function(e), []).append(e)
+            return data
+
+        return work

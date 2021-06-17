@@ -24,8 +24,12 @@ class ArrayList(NativeClass):
     def init(self, instance):
         pass
 
+    @native("<init>", "(I)V")
+    def init2(self, instance, size):
+        instance += [None] * size
+
     @native("<init>", "(Ljava/util/Collection;)V")
-    def init2(self, instance, array):
+    def init3(self, instance, array):
         instance += array
 
     @native("size", "()I")

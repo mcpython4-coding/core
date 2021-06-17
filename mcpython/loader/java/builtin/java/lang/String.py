@@ -114,6 +114,14 @@ class StringBuilder(NativeClass):
         instance.underlying.append(chr(c) if isinstance(c, int) else str(c))
         return instance
 
+    @native("append", "(J)Ljava/lang/StringBuilder;")
+    def append6(self, instance, value):
+        if instance is None:
+            raise StackCollectingException("NullPointerException: self is null")
+
+        instance.underlying.append(str(value))
+        return instance
+
     @native("toString", "()Ljava/lang/String;")
     def toString(self, instance):
         return "".join(instance.underlying)

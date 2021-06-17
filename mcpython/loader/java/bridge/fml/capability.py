@@ -32,3 +32,13 @@ class CapabilityManager(NativeClass):
     )
     def register(self, instance, cls, storage, consumer):
         pass
+
+
+class CapabilityFluidHandler(NativeClass):
+    NAME = "net/minecraftforge/fluids/capability/CapabilityFluidHandler"
+
+    def __init__(self):
+        super().__init__()
+        self.exposed_attributes.update({
+            "FLUID_HANDLER_ITEM_CAPABILITY": None,
+        })

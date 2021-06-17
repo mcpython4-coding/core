@@ -163,6 +163,8 @@ class JavaVM:
             System,
             ThreadLocal,
             IllegalArgumentException,
+            Exception,
+            Thread,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
@@ -242,6 +244,7 @@ class JavaVM:
             mixin,
             netty,
             nightconfig,
+            objectweb,
         )
         from mcpython.loader.java.bridge.misc import (
             commands,
@@ -418,8 +421,13 @@ class NativeClass(AbstractJavaClass, ABC):
 
         for key, value in self.__class__.__dict__.items():
             if hasattr(value, "native_name"):
+                method = getattr(self, key)
+
+                if not callable(method):
+                    raise StackCollectingException(f"in native: {self.name}: assigned method {value.native_name} cannot be assigned to native as something dynamic overides it later")
+
                 self.exposed_methods.setdefault(
-                    (value.native_name, value.native_signature), getattr(self, key)
+                    (value.native_name, value.native_signature), method
                 )
 
     def get_method(self, name: str, signature: str, inner=False):
@@ -448,13 +456,11 @@ class NativeClass(AbstractJavaClass, ABC):
 
         if DYNAMIC_NATIVES:
 
+            @native(name, signature)
             def dynamic(*_):
                 pass
 
             self.exposed_methods[(name, signature)] = dynamic
-
-            dynamic.native_name = name
-            dynamic.native_signature = signature
 
             print(
                 f"""
@@ -1209,4 +1215,4 @@ def decode_cp_constant(const, version=0):
 vm = JavaVM()
 # this is the way how to attach a debugger to a certain method
 # vm.debug_method("com/jaquadro/minecraft/storagedrawers/block/EnumCompDrawer", "<clinit>", "()V")
-# vm.debug_method("appeng/core/api/definitions/ApiParts", "constructColoredDefinition", "(Ljava/lang/String;Ljava/lang/Class;Ljava/util/function/Function;)Lappeng/api/util/AEColoredItemDefinition;")
+# vm.debug_method("appeng/core/AEConfig$CommonConfig", "<init>", "(Lnet/minecraftforge/common/ForgeConfigSpec$Builder;)V")

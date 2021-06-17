@@ -34,6 +34,14 @@ class ForgeConfigSpec(NativeClass):
     def setConfig(self, instance, config_instance):
         pass
 
+    @native("isLoaded", "()Z")
+    def isLoaded(self, instance):
+        return 1
+
+    @native("save", "()V")
+    def save(self, instance):
+        pass
+
 
 class ForgeConfigSpec__BooleanValue(NativeClass):
     NAME = "net/minecraftforge/common/ForgeConfigSpec$BooleanValue"
@@ -41,6 +49,14 @@ class ForgeConfigSpec__BooleanValue(NativeClass):
     @native("get", "()Ljava/lang/Object;")
     def get(self, instance):
         return 0
+
+
+class ForgeConfigSpec__EnumValue(NativeClass):
+    NAME = "net/minecraftforge/common/ForgeConfigSpec$EnumValue"
+
+    @native("set", "(Ljava/lang/Object;)V")
+    def set(self, instance, v):
+        pass
 
 
 class ForgeConfigSpec__ConfigValue(NativeClass):

@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-from mcpython.loader.java.Java import NativeClass, native
+from mcpython.loader.java.Java import NativeClass, native, NativeClassInstance
 
 
 class Enum(NativeClass):
@@ -20,7 +20,8 @@ class Enum(NativeClass):
 
     @native("<init>", "(Ljava/lang/String;I)V")
     def init(self, instance, name: str, value: int):
-        pass
+        instance.name = name
+        instance.ordinal = value
 
     @native("ordinal", "()I")
     def ordinal(self, instance):
@@ -35,3 +36,19 @@ class Enum(NativeClass):
             return cls.enum_fields.index(instance)
 
         return id(instance)
+
+    @native("name", "()Ljava/lang/String;")
+    def name2(self, instance):
+        # todo: can we optimise this?
+        if hasattr(instance, "get_class"):
+            cls = instance.get_class()
+
+            for key, value in cls.static_field_values.items():
+                if value == instance:
+                    return key
+
+        return str(instance)
+
+    @native("toString", "()Ljava/lang/String;")
+    def toString(self, instance):
+        return str(instance)

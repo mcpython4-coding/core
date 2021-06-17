@@ -21,8 +21,13 @@ class Optional(NativeClass):
 
     @native("get", "()Ljava/lang/Object;")
     def get(self, instance):
-        pass
+        return instance
 
     @native("empty", "()Ljava/util/Optional;")
     def empty(self, *_):
         return self.create_instance()
+
+    @native("ifPresent", "(Ljava/util/function/Consumer;)V")
+    def ifPresent(self, instance, consumer):
+        if instance is not None:
+            consumer(instance)

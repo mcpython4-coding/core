@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import time
+
 from mcpython import shared
 from mcpython.loader.java.Java import NativeClass, native
 from mcpython.loader.java.JavaExceptionStack import StackCollectingException
@@ -268,6 +270,10 @@ class Strings(NativeClass):
     def isNullOrEmpty(self, string: str):
         return int(string is None or len(string) == 0)
 
+    @native("nullToEmpty", "(Ljava/lang/String;)Ljava/lang/String;")
+    def nullToEmpty(self, instance):
+        return instance if instance is not None else ""
+
 
 class ImmutableSet(NativeClass):
     NAME = "com/google/common/collect/ImmutableSet"
@@ -377,5 +383,19 @@ class Verify(NativeClass):
     def verify(self, value):
         if not value:
             raise StackCollectingException("expected true, got false")
+
+
+class Stopwatch(NativeClass):
+    NAME = "com/google/common/base/Stopwatch"
+
+    @native("createStarted", "()Lcom/google/common/base/Stopwatch;")
+    def createStarted(self):
+        instance = self.create_instance()
+        instance.time_started = time.time()
+        return instance
+
+    @native("elapsed", "(Ljava/util/concurrent/TimeUnit;)J")
+    def elapsed(self, instance, unit):
+        return time.time() - instance.time_started
 
 

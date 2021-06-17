@@ -102,6 +102,9 @@ class Runtime:
         else:
             raise ValueError(method)
 
+        if not signature.startswith("("):
+            raise StackCollectingException(f"invalid signature: {signature}")
+
         v = signature.removeprefix("(").split(")")[0]
         i = 0
         start = 0
@@ -127,8 +130,12 @@ class Runtime:
             raise StackCollectingException(f"cannot parse argument list {signature}")
 
     def parse_args_from_stack(self, method, stack, static=False):
-        parts = tuple(self.get_arg_parts_of(method))
-        previous_count = len(stack.stack)
+        try:
+            parts = tuple(self.get_arg_parts_of(method))
+            previous_count = len(stack.stack)
+        except StackCollectingException as e:
+            e.add_trace("during parsing args").add_trace(str(stack.stack))
+            raise
 
         try:
             args = [stack.pop() for _ in range(len(parts))]
@@ -137,8 +144,8 @@ class Runtime:
                 obj = stack.pop()
                 args.append(obj)
 
-        except IndexError:
-            print(method, stack.stack, static, previous_count, len(parts), parts)
+        except StackCollectingException as e:
+            e.add_trace(f"StackUnderflowException during preparing method execution of '{method}' (static: {static}) with stack size before data popping {previous_count}, expecting len(parts) {parts}")
             raise
 
         if isinstance(method, mcpython.loader.java.Java.JavaMethod):
@@ -816,6 +823,18 @@ class DUP(OpcodeInstruction):
 
 
 @BytecodeRepr.register_instruction
+class DUP_X1(OpcodeInstruction):
+    OPCODES = {0x5A}
+
+    @classmethod
+    def invoke(cls, data: typing.Any, stack: Stack):
+        a, b = stack.pop(), stack.pop()
+        stack.push(a)
+        stack.push(b)
+        stack.push(a)
+
+
+@BytecodeRepr.register_instruction
 class ADD(OpcodeInstruction):
     OPCODES = {0x60, 0x63, 0x62}
 
@@ -1195,6 +1214,7 @@ class InvokeVirtual(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
+        # print(data)
         method = stack.vm.get_method_of_nat(
             data, version=stack.method.class_file.internal_version
         )
@@ -1441,11 +1461,14 @@ class LambdaInvokeDynamic(BaseInstruction):
 
             # print("long InvokeDynamic", method, outer_signature)
 
+            if not hasattr(method, "name") and not hasattr(method, "native_name"):
+                raise StackCollectingException(f"InvokeDynamic target method is no real method: {method}, and as such cannot be InvokeDynamic-linked")
+
             if outer_args > inner_args:
                 if method.access & 0x0400:
-                    method = cls.LambdaInvokeDynamicWrapper(cls.LambdaAbstractInvokeDynamicWrapper(method, method.name, outer_signature, []), method.name, outer_signature, tuple(reversed(extra_args)))
+                    method = cls.LambdaInvokeDynamicWrapper(cls.LambdaAbstractInvokeDynamicWrapper(method, method.name if hasattr(method, "name") else method.native_name, outer_signature, []), method.name, outer_signature, tuple(reversed(extra_args)))
                 else:
-                    method = cls.LambdaInvokeDynamicWrapper(method, method.name, outer_signature, tuple(reversed(extra_args)))
+                    method = cls.LambdaInvokeDynamicWrapper(method, method.name if hasattr(method, "name") else method.native_name, outer_signature, tuple(reversed(extra_args)))
 
                 method.access ^= 0x0008  # if we are dynamic but we expose object, we are no longer dynamic!
 

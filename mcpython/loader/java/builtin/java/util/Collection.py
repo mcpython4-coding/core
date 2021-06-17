@@ -18,6 +18,13 @@ from mcpython.loader.java.Java import NativeClass, native
 class Collection(NativeClass):
     NAME = "java/util/Collection"
 
+    def create_instance(self):
+        return []
+
     @native("iterator", "()Ljava/util/Iterator;")
     def iterator(self, *_):
         return []
+
+    @native("stream", "()Ljava/util/stream/Stream;")
+    def stream(self, instance):
+        return instance
