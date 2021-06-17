@@ -85,7 +85,9 @@ class LogManager(NativeClass):
             "org/apache/logging/log4j/Logger", version=self.internal_version
         ).create_instance()
 
-    @native("getFormatterLogger", "(Ljava/lang/String;)Lorg/apache/logging/log4j/Logger;")
+    @native(
+        "getFormatterLogger", "(Ljava/lang/String;)Lorg/apache/logging/log4j/Logger;"
+    )
     def getFormatterLogger(self, formatter: str):
         return self.vm.get_class(
             "org/apache/logging/log4j/Logger", version=self.internal_version

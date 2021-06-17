@@ -368,8 +368,10 @@ class WorldGenRegistries(NativeClass):
             }
         )
 
-    @native("func_243663_a",
-            "(Lnet/minecraft/util/registry/Registry;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;")
+    @native(
+        "func_243663_a",
+        "(Lnet/minecraft/util/registry/Registry;Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;",
+    )
     def func_243663_a(self, *_):
         pass
 

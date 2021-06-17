@@ -20,7 +20,11 @@ class ModConfig_Type(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes = {"COMMON": "common", "CLIENT": "client", "SERVER": "server"}
+        self.exposed_attributes = {
+            "COMMON": "common",
+            "CLIENT": "client",
+            "SERVER": "server",
+        }
 
     @native("extension", "()Ljava/lang/String;")
     def extension(self, instance):

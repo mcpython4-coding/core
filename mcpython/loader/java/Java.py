@@ -136,6 +136,7 @@ class JavaVM:
             self.get_class(name, version=version)
 
     def init_builtins(self):
+        from mcpython.loader.java.builtin.java.awt import Color
         from mcpython.loader.java.builtin.java.io import (
             BufferedWriter,
             File,
@@ -153,7 +154,9 @@ class JavaVM:
             Deprecated,
             Double,
             Enum,
+            Exception,
             FunctionalInterface,
+            IllegalArgumentException,
             IllegalStateException,
             Integer,
             Math,
@@ -161,23 +164,28 @@ class JavaVM:
             RuntimeException,
             String,
             System,
-            ThreadLocal,
-            IllegalArgumentException,
-            Exception,
             Thread,
+            ThreadLocal,
         )
         from mcpython.loader.java.builtin.java.lang.annotation import (
             Documented,
             ElementType,
+            Inherited,
+            Repeatable,
             Retention,
             RetentionPolicy,
             Target,
-            Repeatable,
-            Inherited,
         )
-        from mcpython.loader.java.builtin.java.lang.reflect import Method, Field
+        from mcpython.loader.java.builtin.java.lang.reflect import Field, Method
+        from mcpython.loader.java.builtin.java.math import RoundingMode
         from mcpython.loader.java.builtin.java.nio.file import Files, Path, Paths
+        from mcpython.loader.java.builtin.java.text import (
+            DecimalFormat,
+            DecimalFormatSymbols,
+        )
         from mcpython.loader.java.builtin.java.util import (
+            UUID,
+            ArrayDeque,
             ArrayList,
             Arrays,
             Collection,
@@ -189,6 +197,7 @@ class JavaVM:
             IdentityHashMap,
             Iterator,
             LinkedHashMap,
+            LinkedHashSet,
             LinkedList,
             List,
             Locale,
@@ -200,15 +209,12 @@ class JavaVM:
             TreeMap,
             TreeSet,
             WeakHashMap,
-            UUID,
-            LinkedHashSet,
-            ArrayDeque,
         )
         from mcpython.loader.java.builtin.java.util.concurrent import (
             ConcurrentHashMap,
-            TimeUnit,
             CopyOnWriteArrayList,
             Executors,
+            TimeUnit,
         )
         from mcpython.loader.java.builtin.java.util.concurrent.atomic import (
             AtomicInteger,
@@ -222,12 +228,10 @@ class JavaVM:
         )
         from mcpython.loader.java.builtin.java.util.regex import Pattern
         from mcpython.loader.java.builtin.java.util.stream import Collectors, Stream
-        from mcpython.loader.java.builtin.java.text import DecimalFormat, DecimalFormatSymbols
-        from mcpython.loader.java.builtin.java.awt import Color
-        from mcpython.loader.java.builtin.java.math import RoundingMode
-
-        from mcpython.loader.java.builtin.javax.annotation import Nonnull, CheckForNull
-        from mcpython.loader.java.builtin.javax.annotation.meta import TypeQualifierDefault
+        from mcpython.loader.java.builtin.javax.annotation import CheckForNull, Nonnull
+        from mcpython.loader.java.builtin.javax.annotation.meta import (
+            TypeQualifierDefault,
+        )
 
     def init_bridge(self):
         from mcpython.loader.java.bridge import util
@@ -247,6 +251,7 @@ class JavaVM:
             objectweb,
         )
         from mcpython.loader.java.bridge.misc import (
+            advancements,
             commands,
             containers,
             crafting,
@@ -256,7 +261,6 @@ class JavaVM:
             nbt,
             potions,
             tags,
-            advancements,
         )
         from mcpython.loader.java.bridge.world import biomes, collection, world
 
@@ -360,10 +364,12 @@ class AbstractJavaClass:
     """
 
     def __init__(self):
-        self.name: str = None   # the class name
+        self.name: str = None  # the class name
         self.file_source: str = None  # a path to the file this class was loaded from
         self.parent = None  # the parent of the class
-        self.interfaces: typing.List[typing.Callable[[], typing.Optional[AbstractJavaClass]]] = []
+        self.interfaces: typing.List[
+            typing.Callable[[], typing.Optional[AbstractJavaClass]]
+        ] = []
         self.internal_version = 0  # the internal version identifier
         self.vm = None  # the vm instance bound to
 
@@ -424,7 +430,9 @@ class NativeClass(AbstractJavaClass, ABC):
                 method = getattr(self, key)
 
                 if not callable(method):
-                    raise StackCollectingException(f"in native: {self.name}: assigned method {value.native_name} cannot be assigned to native as something dynamic overides it later")
+                    raise StackCollectingException(
+                        f"in native: {self.name}: assigned method {value.native_name} cannot be assigned to native as something dynamic overides it later"
+                    )
 
                 self.exposed_methods.setdefault(
                     (value.native_name, value.native_signature), method
@@ -532,7 +540,9 @@ def native(name: str, signature: str, static=False):
     def setup(method):
         method.native_name = name
         method.native_signature = signature
-        method.access = 0x1101 | (0 if not static else 0x0008)  # public native synthetic (static)
+        method.access = 0x1101 | (
+            0 if not static else 0x0008
+        )  # public native synthetic (static)
         return method
 
     return setup
@@ -976,7 +986,9 @@ class JavaBytecodeClass(AbstractJavaClass):
         self.is_module = bool(self.access & 0x8000)
 
         self.name: str = self.cp[pop_u2(data) - 1][1][1]
-        self.parent: typing.Callable[[], typing.Optional[AbstractJavaClass]] = vm.get_lazy_class(
+        self.parent: typing.Callable[
+            [], typing.Optional[AbstractJavaClass]
+        ] = vm.get_lazy_class(
             self.cp[pop_u2(data) - 1][1][1], version=self.internal_version
         )
 
@@ -1034,7 +1046,9 @@ class JavaBytecodeClass(AbstractJavaClass):
         if m is not None:
             return m
 
-        raise StackCollectingException(f"class {self.name} has not method {name} with signature {signature}")
+        raise StackCollectingException(
+            f"class {self.name} has not method {name} with signature {signature}"
+        )
 
     def get_static_attribute(self, name: str, expected_type=None):
         if name not in self.static_field_values:
@@ -1049,7 +1063,9 @@ class JavaBytecodeClass(AbstractJavaClass):
         try:
             return self.static_field_values[name]
         except KeyError:
-            raise StackCollectingException(f"class {self.name} has no attribute {name} (class instance: {self})") from None
+            raise StackCollectingException(
+                f"class {self.name} has no attribute {name} (class instance: {self})"
+            ) from None
 
     def set_static_attribute(self, name: str, value):
         self.static_field_values[name] = value
@@ -1092,7 +1108,9 @@ class JavaBytecodeClass(AbstractJavaClass):
     def create_instance(self):
         # Abstract classes cannot have instances
         if self.is_abstract:
-            raise StackCollectingException(f"class {self.name} is abstract, so we cannot create an instance of it!")
+            raise StackCollectingException(
+                f"class {self.name} is abstract, so we cannot create an instance of it!"
+            )
 
         return JavaClassInstance(self)
 
@@ -1158,17 +1176,25 @@ class JavaBytecodeClass(AbstractJavaClass):
                 raise RuntimeError(f"class {self.name} is interface, but not abstract")
 
             if self.is_final:
-                raise RuntimeError(f"class {self.name} is interface and final, which is not allowed")
+                raise RuntimeError(
+                    f"class {self.name} is interface and final, which is not allowed"
+                )
 
             if self.is_special_super:
-                raise RuntimeError(f"class {self.name} is interface and special-super-handling, which is not allowed")
+                raise RuntimeError(
+                    f"class {self.name} is interface and special-super-handling, which is not allowed"
+                )
 
             if self.is_enum:
-                raise RuntimeError(f"class {self.name} is interface and an enum, which is not allowed")
+                raise RuntimeError(
+                    f"class {self.name} is interface and an enum, which is not allowed"
+                )
 
         else:
             if self.is_abstract and self.is_final:
-                raise RuntimeError(f"class {self.name} is abstract and final, which is not allowed")
+                raise RuntimeError(
+                    f"class {self.name} is abstract and final, which is not allowed"
+                )
 
 
 class JavaClassInstance:

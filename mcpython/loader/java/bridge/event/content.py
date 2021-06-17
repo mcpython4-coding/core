@@ -179,10 +179,7 @@ class AbstractBlock_Properties(NativeClass):
     def func_206870_a(self, instance, prop, value):
         pass
 
-    @native(
-        "func_222380_e",
-        "()Lnet/minecraft/block/AbstractBlock$Properties;"
-    )
+    @native("func_222380_e", "()Lnet/minecraft/block/AbstractBlock$Properties;")
     def func_222380_e(self, instance):
         return instance
 
@@ -469,9 +466,11 @@ class DirectionalBlock(Block):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "field_176387_N": None,
-        })
+        self.exposed_attributes.update(
+            {
+                "field_176387_N": None,
+            }
+        )
 
 
 class StairsBlock(Block):
@@ -820,7 +819,9 @@ class Item(NativeClass):
         try:
             instance.properties = properties
         except AttributeError:
-            raise StackCollectingException(f"It is not working! Something is wrong with {instance}")
+            raise StackCollectingException(
+                f"It is not working! Something is wrong with {instance}"
+            )
 
     @native(
         "setRegistryName",
@@ -845,8 +846,10 @@ class Item(NativeClass):
     def setRegistryName3(self, instance, namespace, name):
         return instance
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName4(self, instance, namespace, name):
         instance.registry_name = namespace + ":" + name
         return instance
@@ -873,14 +876,16 @@ class Items(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "field_151137_ax": None,
-            "field_222027_iT": None,
-            "field_151133_ar": None,
-            "field_151129_at": None,
-            "field_151117_aB": None,
-            "field_151131_as": None,
-        })
+        self.exposed_attributes.update(
+            {
+                "field_151137_ax": None,
+                "field_222027_iT": None,
+                "field_151133_ar": None,
+                "field_151129_at": None,
+                "field_151117_aB": None,
+                "field_151131_as": None,
+            }
+        )
 
 
 class Item_Properties(NativeClass):
@@ -928,7 +933,10 @@ class Item_Properties(NativeClass):
     def func_234689_a_(self, instance):
         return instance
 
-    @native("addToolType", "(Lnet/minecraftforge/common/ToolType;I)Lnet/minecraft/item/Item$Properties;")
+    @native(
+        "addToolType",
+        "(Lnet/minecraftforge/common/ToolType;I)Lnet/minecraft/item/Item$Properties;",
+    )
     def addToolType(self, instance, tool_type, v):
         return instance
 
@@ -948,7 +956,9 @@ class Food__Builder(NativeClass):
     def func_221454_a(self, instance, v):
         return instance
 
-    @native("effect", "(Ljava/util/function/Supplier;F)Lnet/minecraft/item/Food$Builder;")
+    @native(
+        "effect", "(Ljava/util/function/Supplier;F)Lnet/minecraft/item/Food$Builder;"
+    )
     def effect(self, instance, supplier):
         return instance
 
@@ -958,7 +968,9 @@ class Food__Builder(NativeClass):
 
     @native("func_221453_d", "()Lnet/minecraft/item/Food;")
     def func_221453_d(self, instance):
-        return self.vm.get_class("net/minecraft/item/Food", version=self.internal_version).create_instance()
+        return self.vm.get_class(
+            "net/minecraft/item/Food", version=self.internal_version
+        ).create_instance()
 
 
 class Food(NativeClass):
@@ -985,14 +997,16 @@ class ItemGroup(NativeClass):
         import mcpython.client.gui.InventoryCreativeTab
 
         try:
-            instance.fields["underlying_tab"] = (
-                mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(
-                    name,
-                    mcpython.common.container.ResourceStack.ItemStack("minecraft:barrier"),
-                )
+            instance.fields[
+                "underlying_tab"
+            ] = mcpython.client.gui.InventoryCreativeTab.CreativeItemTab(
+                name,
+                mcpython.common.container.ResourceStack.ItemStack("minecraft:barrier"),
             )
         except:
-            raise StackCollectingException(f"something went wrong here in ItemGroup init working on {instance}")
+            raise StackCollectingException(
+                f"something went wrong here in ItemGroup init working on {instance}"
+            )
 
         @shared.mod_loader("minecraft", "stage:item_groups:load")
         def add_tab():
@@ -1031,7 +1045,7 @@ class ItemGroup(NativeClass):
     @native("getGroupCountSafe", "()I")
     def getGroupCountSafe(self, *_):
         return -1
-    
+
     def get_dynamic_field_keys(self):
         return {"underlying_tab"}
 
@@ -1127,12 +1141,17 @@ class AxeItem(Item):
         super().__init__()
         self.exposed_attributes = {"field_203176_a": {}}
 
-    @native("<init>", "(Lnet/minecraft/item/IItemTier;FFLnet/minecraft/item/Item$Properties;)V")
+    @native(
+        "<init>",
+        "(Lnet/minecraft/item/IItemTier;FFLnet/minecraft/item/Item$Properties;)V",
+    )
     def init(self, instance, tier, a, b, properties):
         instance.properties = properties
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName(self, instance, namespace, name):
         instance.name = namespace + ":" + name
         return instance
@@ -1157,12 +1176,17 @@ class HoeItem(Item):
             "field_195973_b": {},
         }
 
-    @native("<init>", "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V")
+    @native(
+        "<init>",
+        "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V",
+    )
     def init(self, instance, tier, a, b, properties):
         instance.properties = properties
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName(self, instance, namespace, name):
         instance.name = namespace + ":" + name
         return instance
@@ -1171,12 +1195,17 @@ class HoeItem(Item):
 class PickaxeItem(Item):
     NAME = "net/minecraft/item/PickaxeItem"
 
-    @native("<init>", "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V")
+    @native(
+        "<init>",
+        "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V",
+    )
     def init(self, instance, tier, a, b, properties):
         instance.properties = properties
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName(self, instance, namespace, name):
         instance.name = namespace + ":" + name
         return instance
@@ -1189,12 +1218,17 @@ class ShovelItem(Item):
         super().__init__()
         self.exposed_attributes = {"field_195955_e": {}}
 
-    @native("<init>", "(Lnet/minecraft/item/IItemTier;FFLnet/minecraft/item/Item$Properties;)V")
+    @native(
+        "<init>",
+        "(Lnet/minecraft/item/IItemTier;FFLnet/minecraft/item/Item$Properties;)V",
+    )
     def init(self, instance, tier, a, b, properties):
         instance.properties = properties
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName(self, instance, namespace, name):
         instance.name = namespace + ":" + name
         return instance
@@ -1203,12 +1237,17 @@ class ShovelItem(Item):
 class SwordItem(Item):
     NAME = "net/minecraft/item/SwordItem"
 
-    @native("<init>", "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V")
+    @native(
+        "<init>",
+        "(Lnet/minecraft/item/IItemTier;IFLnet/minecraft/item/Item$Properties;)V",
+    )
     def init(self, instance, tier, a, b, properties):
         instance.properties = properties
 
-    @native("setRegistryName",
-            "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;")
+    @native(
+        "setRegistryName",
+        "(Ljava/lang/String;Ljava/lang/String;)Lnet/minecraftforge/registries/IForgeRegistryEntry;",
+    )
     def setRegistryName(self, instance, namespace, name):
         instance.name = namespace + ":" + name
         return instance

@@ -53,4 +53,3 @@ class JsonAdapter(NativeClass):
 
     def on_annotate(self, cls, args):
         pass
-

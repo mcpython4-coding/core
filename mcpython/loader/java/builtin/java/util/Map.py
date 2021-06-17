@@ -49,7 +49,10 @@ class Map(NativeClass):
     def getOrDefault(self, instance, key, default):
         return instance[key] if key in instance else default
 
-    @native("computeIfAbsent", "(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;")
+    @native(
+        "computeIfAbsent",
+        "(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
+    )
     def computeIfAbsent(self, instance, key, supplier):
         if key not in instance:
             instance[key] = supplier()

@@ -28,21 +28,30 @@ class Codec(NativeClass):
 
     @native("fieldOf", "(Ljava/lang/String;)Lcom/mojang/serialization/MapCodec;")
     def fieldOf(self, instance, name: str):
-        return self.vm.get_class("com/mojang/serialization/MapCodec", version=self.internal_version).create_instance()
+        return self.vm.get_class(
+            "com/mojang/serialization/MapCodec", version=self.internal_version
+        ).create_instance()
 
     @native("listOf", "()Lcom/mojang/serialization/Codec;")
     def listOf(self, instance):
         return instance
 
-    @native("pair",
-            "(Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)Lcom/mojang/serialization/Codec;")
+    @native(
+        "pair",
+        "(Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)Lcom/mojang/serialization/Codec;",
+    )
     def pair(self, instance, a, b):
         return instance
 
-    @native("unboundedMap",
-            "(Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)Lcom/mojang/serialization/codecs/UnboundedMapCodec;")
+    @native(
+        "unboundedMap",
+        "(Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)Lcom/mojang/serialization/codecs/UnboundedMapCodec;",
+    )
     def unboundedMap(self, instance, codec_key, codec_value):
-        return self.vm.get_class("com/mojang/serialization/codecs/UnboundedMapCodec", version=self.internal_version).create_instance()
+        return self.vm.get_class(
+            "com/mojang/serialization/codecs/UnboundedMapCodec",
+            version=self.internal_version,
+        ).create_instance()
 
 
 class MapCodec(Codec):

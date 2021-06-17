@@ -210,7 +210,9 @@ class Preconditions(NativeClass):
     @native("checkNotNull", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;")
     def checkNotNull2(self, obj, msg):
         if obj is None:
-            raise StackCollectingException("expected non-null, got null, message: "+str(msg))
+            raise StackCollectingException(
+                "expected non-null, got null, message: " + str(msg)
+            )
         return obj
 
     @native("checkArgument", "(Z)V")
@@ -359,8 +361,10 @@ class Sets(NativeClass):
 class Multimaps(NativeClass):
     NAME = "com/google/common/collect/Multimaps"
 
-    @native("newListMultimap",
-            "(Ljava/util/Map;Lcom/google/common/base/Supplier;)Lcom/google/common/collect/ListMultimap;")
+    @native(
+        "newListMultimap",
+        "(Ljava/util/Map;Lcom/google/common/base/Supplier;)Lcom/google/common/collect/ListMultimap;",
+    )
     def newListMultimap(self, *_):
         return {}
 
@@ -397,5 +401,3 @@ class Stopwatch(NativeClass):
     @native("elapsed", "(Ljava/util/concurrent/TimeUnit;)J")
     def elapsed(self, instance, unit):
         return time.time() - instance.time_started
-
-

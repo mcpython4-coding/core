@@ -34,7 +34,7 @@ class List(NativeClass):
     def forEach(self, instance, consumer):
         pass
         # for e in instance:
-            # consumer(e)
+        # consumer(e)
 
     @native("addAll", "(Ljava/util/Collection;)Z")
     def addAll(self, instance, array):

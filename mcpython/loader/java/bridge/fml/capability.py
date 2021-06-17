@@ -39,6 +39,8 @@ class CapabilityFluidHandler(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "FLUID_HANDLER_ITEM_CAPABILITY": None,
-        })
+        self.exposed_attributes.update(
+            {
+                "FLUID_HANDLER_ITEM_CAPABILITY": None,
+            }
+        )

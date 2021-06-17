@@ -179,7 +179,10 @@ class ModLoadingContext(NativeClass):
     def registerConfig2(self, instance, config_type, config_spec):
         pass
 
-    @native("registerExtensionPoint", "(Lnet/minecraftforge/fml/ExtensionPoint;Ljava/util/function/Supplier;)V")
+    @native(
+        "registerExtensionPoint",
+        "(Lnet/minecraftforge/fml/ExtensionPoint;Ljava/util/function/Supplier;)V",
+    )
     def registerExtensionPoint(self, instance, point, supplier):
         pass
 
@@ -472,7 +475,10 @@ class FMLPaths(NativeClass):
         obj.path = instance.dir
         return obj
 
-    @native("getOrCreateGameRelativePath", "(Ljava/nio/file/Path;Ljava/lang/String;)Ljava/nio/file/Path;")
+    @native(
+        "getOrCreateGameRelativePath",
+        "(Ljava/nio/file/Path;Ljava/lang/String;)Ljava/nio/file/Path;",
+    )
     def getOrCreateGameRelativePath(self, path, sub):
         return path  # todo: implement
 
@@ -518,7 +524,9 @@ class ForgeConfigSpec__Builder(NativeClass):
 
     @native("build", "()Lnet/minecraftforge/common/ForgeConfigSpec;")
     def build(self, instance):
-        return self.vm.get_class("net/minecraftforge/common/ForgeConfigSpec").create_instance()
+        return self.vm.get_class(
+            "net/minecraftforge/common/ForgeConfigSpec"
+        ).create_instance()
 
     @native(
         "configure",
@@ -585,8 +593,10 @@ class ForgeConfigSpec__Builder(NativeClass):
     def get(self, instance):
         pass
 
-    @native("defineEnum",
-            "(Ljava/lang/String;Ljava/lang/Enum;[Ljava/lang/Enum;)Lnet/minecraftforge/common/ForgeConfigSpec$EnumValue;")
+    @native(
+        "defineEnum",
+        "(Ljava/lang/String;Ljava/lang/Enum;[Ljava/lang/Enum;)Lnet/minecraftforge/common/ForgeConfigSpec$EnumValue;",
+    )
     def defineEnum(self, instance, name: str, enum, values):
         pass
 
@@ -642,7 +652,10 @@ class ModList(NativeClass):
     def isLoaded(self, instance, name: str):
         return int(name in shared.mod_loader.mods)
 
-    @native("getModFileById", "(Ljava/lang/String;)Lnet/minecraftforge/fml/loading/moddiscovery/ModFileInfo;")
+    @native(
+        "getModFileById",
+        "(Ljava/lang/String;)Lnet/minecraftforge/fml/loading/moddiscovery/ModFileInfo;",
+    )
     def getModFileById(self, instance, name: str):
         return shared.mod_loader.mods[name]
 
@@ -751,9 +764,11 @@ class ExtensionPoint(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "DISPLAYTEST": 0,
-        })
+        self.exposed_attributes.update(
+            {
+                "DISPLAYTEST": 0,
+            }
+        )
 
 
 class EventNetworkChannel(NativeClass):
@@ -765,10 +780,12 @@ class SidedThreadGroups(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "SERVER": 0,
-            "CLIENT": 1,
-        })
+        self.exposed_attributes.update(
+            {
+                "SERVER": 0,
+                "CLIENT": 1,
+            }
+        )
 
 
 class ModFileScanData__AnnotationData(NativeClass):

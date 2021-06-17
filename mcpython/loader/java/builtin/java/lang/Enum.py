@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-from mcpython.loader.java.Java import NativeClass, native, NativeClassInstance
+from mcpython.loader.java.Java import NativeClass, NativeClassInstance, native
 
 
 class Enum(NativeClass):
@@ -31,7 +31,9 @@ class Enum(NativeClass):
 
             for key, value in cls.static_field_values.items():
                 if value == instance:
-                    return [i for i, e in enumerate(cls.enum_fields) if e.name == key][0]
+                    return [i for i, e in enumerate(cls.enum_fields) if e.name == key][
+                        0
+                    ]
 
             return cls.enum_fields.index(instance)
 

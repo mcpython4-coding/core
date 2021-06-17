@@ -20,9 +20,11 @@ class ResourceLocation(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "field_240908_a_": None,
-        })
+        self.exposed_attributes.update(
+            {
+                "field_240908_a_": None,
+            }
+        )
 
     def create_instance(self):
         instance = super().create_instance()
@@ -157,9 +159,11 @@ class DamageSource(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "field_188406_j": None,
-        })
+        self.exposed_attributes.update(
+            {
+                "field_188406_j": None,
+            }
+        )
 
     @native("<init>", "(Ljava/lang/String;)V")
     def init(self, instance, v):
@@ -228,11 +232,13 @@ class TextFormatting(NativeClass):
 
     def __init__(self):
         super().__init__()
-        self.exposed_attributes.update({
-            "GRAY": 0,
-            "YELLOW": 1,
-            "BLUE": 2,
-            "RED": 3,
-            "DARK_GREEN": 4,
-            "AQUA": 5,
-        })
+        self.exposed_attributes.update(
+            {
+                "GRAY": 0,
+                "YELLOW": 1,
+                "BLUE": 2,
+                "RED": 3,
+                "DARK_GREEN": 4,
+                "AQUA": 5,
+            }
+        )

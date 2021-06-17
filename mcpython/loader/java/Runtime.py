@@ -145,7 +145,9 @@ class Runtime:
                 args.append(obj)
 
         except StackCollectingException as e:
-            e.add_trace(f"StackUnderflowException during preparing method execution of '{method}' (static: {static}) with stack size before data popping {previous_count}, expecting len(parts) {parts}")
+            e.add_trace(
+                f"StackUnderflowException during preparing method execution of '{method}' (static: {static}) with stack size before data popping {previous_count}, expecting len(parts) {parts}"
+            )
             raise
 
         if isinstance(method, mcpython.loader.java.Java.JavaMethod):
@@ -215,9 +217,9 @@ class Stack:
             instruction = self.code.decoded_code[self.cp]
 
             if instruction is None:
-                raise StackCollectingException("Instruction jump target was invalid").add_trace(
-                    f"during fetching {self.cp} in {self.method}"
-                )
+                raise StackCollectingException(
+                    "Instruction jump target was invalid"
+                ).add_trace(f"during fetching {self.cp} in {self.method}")
 
             if debugging:
                 mcpython.loader.java.Java.warn(
@@ -265,7 +267,12 @@ class BaseInstruction(ABC):
         pass
 
     @classmethod
-    def optimiser_iteration(cls, container: "BytecodeRepr", prepared_data: typing.Any, instruction_index: int):
+    def optimiser_iteration(
+        cls,
+        container: "BytecodeRepr",
+        prepared_data: typing.Any,
+        instruction_index: int,
+    ):
         pass
 
 
@@ -1318,7 +1325,10 @@ class InvokeInterface(CPLinkedInstruction):
             cls_file = method.class_file
 
             # todo: move this check into method parsing
-            if "RuntimeVisibleAnnotations" in cls_file.attributes.attributes and any(any(e[0] == "java/lang/FunctionalInterface" for e in attr.annotations) for attr in cls_file.attributes.attributes["RuntimeVisibleAnnotations"]):
+            if "RuntimeVisibleAnnotations" in cls_file.attributes.attributes and any(
+                any(e[0] == "java/lang/FunctionalInterface" for e in attr.annotations)
+                for attr in cls_file.attributes.attributes["RuntimeVisibleAnnotations"]
+            ):
                 args = list(args)
                 method = args.pop(0)
 
@@ -1346,9 +1356,7 @@ class InvokeDynamic(CPLinkedInstruction):
         cp = class_file.cp[
             mcpython.loader.java.Java.U2.unpack(data[index : index + 2])[0] - 1
         ]
-        boostrap = class_file.attributes["BootstrapMethods"][0].entries[
-            cp[1]
-        ]
+        boostrap = class_file.attributes["BootstrapMethods"][0].entries[cp[1]]
 
         # The type side for the execution
         side = boostrap[0][2][1][1][1]
@@ -1359,12 +1367,23 @@ class InvokeDynamic(CPLinkedInstruction):
 
     @classmethod
     def invoke(cls, data: typing.Any, stack: Stack):
-        raise StackCollectingException("invalid InvokeDynamic target: target not found!")
+        raise StackCollectingException(
+            "invalid InvokeDynamic target: target not found!"
+        )
 
     @classmethod
-    def optimiser_iteration(cls, container: "BytecodeRepr", prepared_data: typing.Tuple[typing.Any, str], instruction_index: int):
+    def optimiser_iteration(
+        cls,
+        container: "BytecodeRepr",
+        prepared_data: typing.Tuple[typing.Any, str],
+        instruction_index: int,
+    ):
         if prepared_data[1] == "java/lang/invoke/LambdaMetafactory":
-            container.decoded_code[instruction_index] = LambdaInvokeDynamic, prepared_data[0], 5
+            container.decoded_code[instruction_index] = (
+                LambdaInvokeDynamic,
+                prepared_data[0],
+                5,
+            )
 
 
 @BytecodeRepr.register_instruction
@@ -1374,7 +1393,9 @@ class LambdaInvokeDynamic(BaseInstruction):
     """
 
     class LambdaInvokeDynamicWrapper:
-        def __init__(self, method, name: str, signature: str, extra_args: typing.Iterable):
+        def __init__(
+            self, method, name: str, signature: str, extra_args: typing.Iterable
+        ):
             self.method = method
             self.name = name
             self.signature = signature
@@ -1401,7 +1422,9 @@ class LambdaInvokeDynamic(BaseInstruction):
 
     class LambdaAbstractInvokeDynamicWrapper(LambdaInvokeDynamicWrapper):
         def __call__(self, *args):
-            method = args[0].get_class().get_method(self.method.name, self.method.signature)
+            method = (
+                args[0].get_class().get_method(self.method.name, self.method.signature)
+            )
             return method(*self.extra_args, *args)
 
         def __repr__(self):
@@ -1448,27 +1471,50 @@ class LambdaInvokeDynamic(BaseInstruction):
                 extra_args += [stack.pop() for _ in range(inner_args - outer_args)]
 
             if not hasattr(method, "name") and not hasattr(method, "native_name"):
-                raise StackCollectingException(f"InvokeDynamic target method is no real method: {method}, and as such cannot be InvokeDynamic-linked")
+                raise StackCollectingException(
+                    f"InvokeDynamic target method is no real method: {method}, and as such cannot be InvokeDynamic-linked"
+                )
 
             method_name = method.name if hasattr(method, "name") else method.native_name
 
             # init methods are special, we need to wrap it into a special object for object creation
             if method_name == "<init>":
                 # print("InvokeDynamic short-path <init>", method, outer_signature, extra_args)
-                method = cls.LambdaNewInvokeDynamicWrapper(method, method_name, outer_signature, tuple(reversed(extra_args)))
+                method = cls.LambdaNewInvokeDynamicWrapper(
+                    method, method_name, outer_signature, tuple(reversed(extra_args))
+                )
                 stack.push(method)
                 return
 
             # print("long InvokeDynamic", method, outer_signature)
 
             if not hasattr(method, "name") and not hasattr(method, "native_name"):
-                raise StackCollectingException(f"InvokeDynamic target method is no real method: {method}, and as such cannot be InvokeDynamic-linked")
+                raise StackCollectingException(
+                    f"InvokeDynamic target method is no real method: {method}, and as such cannot be InvokeDynamic-linked"
+                )
 
             if outer_args > inner_args:
                 if method.access & 0x0400:
-                    method = cls.LambdaInvokeDynamicWrapper(cls.LambdaAbstractInvokeDynamicWrapper(method, method.name if hasattr(method, "name") else method.native_name, outer_signature, []), method.name, outer_signature, tuple(reversed(extra_args)))
+                    method = cls.LambdaInvokeDynamicWrapper(
+                        cls.LambdaAbstractInvokeDynamicWrapper(
+                            method,
+                            method.name
+                            if hasattr(method, "name")
+                            else method.native_name,
+                            outer_signature,
+                            [],
+                        ),
+                        method.name,
+                        outer_signature,
+                        tuple(reversed(extra_args)),
+                    )
                 else:
-                    method = cls.LambdaInvokeDynamicWrapper(method, method.name if hasattr(method, "name") else method.native_name, outer_signature, tuple(reversed(extra_args)))
+                    method = cls.LambdaInvokeDynamicWrapper(
+                        method,
+                        method.name if hasattr(method, "name") else method.native_name,
+                        outer_signature,
+                        tuple(reversed(extra_args)),
+                    )
 
                 method.access ^= 0x0008  # if we are dynamic but we expose object, we are no longer dynamic!
 
@@ -1487,7 +1533,12 @@ class LambdaInvokeDynamic(BaseInstruction):
                 if method.access & 0x0400:  # is the method abstract
                     # print("lambdaAroundAbstract", len(extra_args), extra_args)
                     # print("abstract", method)
-                    method = cls.LambdaAbstractInvokeDynamicWrapper(method, method_name, outer_signature, tuple(reversed(extra_args)))
+                    method = cls.LambdaAbstractInvokeDynamicWrapper(
+                        method,
+                        method_name,
+                        outer_signature,
+                        tuple(reversed(extra_args)),
+                    )
 
                     stack.push(method)
                     return
@@ -1497,7 +1548,9 @@ class LambdaInvokeDynamic(BaseInstruction):
             if len(extra_args) > 0 or outer_args > inner_args:
                 # print("additional", len(extra_args), extra_args)
                 # print("exposed signature", outer_signature)
-                method = cls.LambdaInvokeDynamicWrapper(method, method_name, outer_signature, tuple(reversed(extra_args)))
+                method = cls.LambdaInvokeDynamicWrapper(
+                    method, method_name, outer_signature, tuple(reversed(extra_args))
+                )
 
                 stack.push(method)
                 return

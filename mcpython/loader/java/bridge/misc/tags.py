@@ -22,8 +22,10 @@ class BlockTags(NativeClass):
     def getByName(self, name: str):
         return shared.tag_handler.get_tag_for(name, "blocks", or_else_none=True)
 
-    @native("createOptional",
-            "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;")
+    @native(
+        "createOptional",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;",
+    )
     def createOptional(self, name: str):
         pass
 
@@ -35,8 +37,10 @@ class ItemTags(NativeClass):
     def func_199901_a(self, name: str):
         return shared.tag_handler.get_tag_for(name, "items", or_else_none=True)
 
-    @native("createOptional",
-            "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;")
+    @native(
+        "createOptional",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;",
+    )
     def createOptional(self, name: str):
         pass
 
@@ -44,8 +48,10 @@ class ItemTags(NativeClass):
 class FluidTags(NativeClass):
     NAME = "net/minecraft/tags/FluidTags"
 
-    @native("createOptional",
-            "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;")
+    @native(
+        "createOptional",
+        "(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;",
+    )
     def createOptional(self, *_):
         pass
 
@@ -53,7 +59,9 @@ class FluidTags(NativeClass):
 class ForgeTagHandler(NativeClass):
     NAME = "net/minecraftforge/common/ForgeTagHandler"
 
-    @native("createOptionalTag",
-            "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;")
+    @native(
+        "createOptionalTag",
+        "(Lnet/minecraftforge/registries/IForgeRegistry;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraftforge/common/Tags$IOptionalNamedTag;",
+    )
     def createOptionalTag(self, registry, name):
         pass
