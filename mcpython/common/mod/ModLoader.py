@@ -27,7 +27,12 @@ import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
-import mcpython.loader.java.JavaEntryPoint
+
+try:
+    import jvm.JavaEntryPoint
+except ImportError:
+    pass
+
 import mcpython.ResourceLoader
 import mcpython.util.math
 import toml
