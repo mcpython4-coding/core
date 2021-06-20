@@ -159,6 +159,7 @@ class LaunchWrapper:
 
             pyglet.app.exit()
 
+            print("closing due to event stage")
             sys.exit(-1)
 
         import mcpython.common.event.Registry

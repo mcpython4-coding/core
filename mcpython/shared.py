@@ -47,6 +47,7 @@ IS_TEST_ENV = False
 
 # used by fml to store which mod is currently working
 CURRENT_EVENT_SUB = None
+CURRENT_REF_MAP = None
 
 STORAGE_VERSION = None  # the version of the storage format
 
