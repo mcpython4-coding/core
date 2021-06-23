@@ -697,6 +697,7 @@ class ModLoader:
             logger.println()
 
             self.error_builder.finish()
+            print("closing")
             sys.exit(-1)
 
         self.mod_loading_order = list(
@@ -743,6 +744,7 @@ class ModLoader:
                 print("stopping loading cycle")
                 return
             except:
+                logger.print_exception()
                 sys.exit(-1)
 
         # if shared.IS_CLIENT:

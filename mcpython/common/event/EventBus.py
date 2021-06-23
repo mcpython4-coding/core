@@ -120,6 +120,7 @@ class EventBus:
             except MemoryError:  # Memory error is something fatal
                 shared.window.close()
                 pyglet.app.exit()
+                print("closing due to missing memory")
                 sys.exit(-1)
             except:
                 exception_occ = True
@@ -208,6 +209,7 @@ class EventBus:
             except MemoryError:
                 shared.window.close()
                 pyglet.app.exit()
+                print("closing due to missing memory")
                 sys.exit(-1)
             except SystemExit:
                 raise

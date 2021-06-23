@@ -56,9 +56,10 @@ if __name__ == "__main__":
         wrapper.setup()  # do setup stuff
         wrapper.launch()  # and start mainloop
     except SystemExit:
-        sys.exit(-1)
+        raise
     except:
         wrapper.error_clean()
+        print("closing")
         sys.exit(-1)
 
     wrapper.clean()

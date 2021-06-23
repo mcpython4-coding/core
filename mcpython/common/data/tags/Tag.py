@@ -48,9 +48,12 @@ class Tag:
         :return the list
         """
         dep = []
-        for entry in self.entries:
-            if entry.startswith("#") and entry in self.master.tags:
+        for entry in self.entries[:]:
+            if isinstance(entry, str) and entry.startswith("#") and entry in self.master.tags:
                 dep.append(entry)
+            else:
+                # todo: implement
+                self.entries.remove(entry)
         return dep
 
     def build(self):

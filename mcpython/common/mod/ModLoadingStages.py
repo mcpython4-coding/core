@@ -208,6 +208,8 @@ class LoadingStage:
         ):
             self.prepare_next_stage(astate)
 
+        # print(self.active_event)
+
         modname = shared.mod_loader.mod_loading_order[self.active_mod_index]
         mod_instance = shared.mod_loader.mods[modname]
 
