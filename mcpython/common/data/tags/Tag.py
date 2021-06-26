@@ -12,40 +12,33 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import logger, shared
+import typing
 
 
 class Tag:
     """
-    class holding an single tag
+    Class holding a single tag
+    Simply is an intelligent list/set structure
+
+    At its own does nothing, loading occurs from the tag handler
     """
 
-    @staticmethod
-    def from_data(master, tagname: str, data: dict):
+    def __init__(self, master, name: str, entries: typing.List[str] = None):
         """
-        will create an new tag from data
-        :param master: the group to use
-        :param tagname: the name of the tag
-        :param data: the data to use
-        :return the tag instance
-        """
-        return Tag(master, tagname, data["values"])
-
-    def __init__(self, master, name: str, entries: list):
-        """
-        will create an new tag instance from an list of entries
-        :param master: the tag group to use
+        Will create a new tag instance from an list of entries
+        :param master: the tag group to use; Use None if not used
         :param name: the name of the tag
-        :param entries: the entries to use
+        :param entries: the entries to use, or None if empty
         """
-        self.entries = entries
+        self.entries = entries if entries is not None else []
         self.master = master
         self.name = name
         self.load_tries = 0
 
-    def get_dependencies(self) -> list:
+    def get_dependencies(self) -> typing.List[str]:
         """
-        will return an list of tags these tag links to
-        :return the list
+        Will return a list of tags these tag links to
+        todo: use some dependency resolving for the order of inits
         """
         dep = []
         for entry in self.entries[:]:
@@ -58,7 +51,7 @@ class Tag:
 
     def build(self):
         """
-        will build the tag
+        Will build the tag
         """
         raw = self.entries.copy()
         old_entries = self.entries.copy()
@@ -75,12 +68,15 @@ class Tag:
                         self.load_tries = 0
                         old_entries.remove(entry)
                         continue
+
                     self.entries = old_entries
                     shared.mod_loader["minecraft"].eventbus.subscribe(
                         "stage:tag:load", self.build
                     )
                     self.load_tries += 1
                     return
+
                 self.entries += self.master.tags[entry].entries
+
             elif entry not in self.entries:
                 self.entries.append(entry)

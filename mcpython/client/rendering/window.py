@@ -81,14 +81,15 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
     def __init__(self, *args, **kwargs):
         """
-        creates an new window-instance
+        Creates a new window-instance
         :param args: args send to pyglet.window.Window-constructor
         :param kwargs: kwargs send to pyglet.window.Window-constructor
         """
 
         super(Window, self).__init__(*args, **kwargs)
 
-        shared.window = self  # write window instance to globals.py for sharing
+        # write window instance to globals.py for sharing
+        shared.window = self
 
         # Whether or not the window exclusively captures the mouse.
         self.exclusive = False
@@ -152,9 +153,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             color=(0, 0, 0, 255),
         )
 
-        # todo: move to separated class
+        # todo: move both to separated class
         self.cpu_usage = psutil.cpu_percent(interval=None)
-        self.cpu_usage_timer = 0  # todo: move to separated class
+        self.cpu_usage_timer = 0
 
         # storing mouse information todo: use pyglet's mouse handler
         self.mouse_pressing = {
@@ -177,7 +178,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         pyglet.clock.schedule_interval(self.update, 0.05)
         pyglet.clock.schedule_interval(self.print_profiler, 10)
 
-        mcpython.client.state.StateHandler.load()  # load the state system
+        mcpython.client.state.StateHandler.load_states()
 
         self.push_handlers(self.keys)
 
@@ -218,7 +219,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             "mcpython 4 - {}".format(mcpython.common.config.FULL_VERSION_NAME)
         )
 
-    def set_exclusive_mouse(self, exclusive):
+    def set_exclusive_mouse(self, exclusive: bool):
         """
         If `exclusive` is True, the game will capture the mouse and not display it. Otherwise,
         the mouse is free to move
@@ -231,7 +232,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         """
         Returns the current line of sight vector indicating the direction
         the player is looking.
-        todo: move to player
+        todo: move to player or some util system
         """
         x, y, _ = shared.world.get_active_player().rotation
         # y ranges from -90 to 90, or -pi/2 to pi/2, so m ranges from 0 to 1 and
@@ -264,6 +265,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             dy = 0.0
             dx = 0.0
             dz = 0.0
+
         return dx, dy, dz
 
     def update(self, dt: float):
@@ -288,7 +290,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         # todo: change to attribute in State-class
         if dt > 3 and shared.state_handler.active_state.NAME not in [
-            "minecraft:modloading"
+            "minecraft:mod_loading"
         ]:
             logger.println(
                 "[warning] running behind normal tick, did you overload game? missing "
@@ -352,6 +354,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 d = (p[i] - np[i]) * face[i]
                 if d < pad:
                     continue
+
                 for dy in range(height):  # check each height
                     op = list(np)
                     op[1] -= dy
@@ -361,11 +364,14 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                     )
                     block = chunk.get_block(tuple(op))
                     blockstate = block is not None
+
                     if not chunk.generated:
                         if shared.world.config["enable_world_barrier"]:
                             blockstate = True
+
                     if not blockstate:
                         continue
+
                     if (
                         block is not None
                         and type(block) != str
@@ -376,11 +382,13 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                             block.position in previous_positions,
                         )
                         continue
+
                     p[i] -= (d - pad) * face[i]
                     if face == (0, -1, 0) or face == (0, 1, 0):
                         # You are colliding with the ground or ceiling, so stop
                         # falling / rising.
                         self.dy = 0
+
                     if face == (0, -1, 0):
                         shared.world.get_active_player().flying = False
                         if (
@@ -393,6 +401,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                                 - shared.world.get_active_player().position[1]
                                 - 3
                             )
+
                             if (
                                 dy > 0
                                 and shared.world.gamerule_handler.table[
@@ -400,8 +409,10 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                                 ].status.status
                             ):
                                 shared.world.get_active_player().damage(dy)
+
                             shared.world.get_active_player().fallen_since_y = None
                     break
+
         return tuple(p)
 
     def get_colliding_blocks(self, position: tuple, height: int) -> tuple:
@@ -416,14 +427,17 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         pad = 0.1
         p = list(position)
         np = normalize(position)
+
         for face in ADVANCED_FACES:  # check all surrounding blocks
             for i in range(3):  # check each dimension independently
                 if not face[i]:
                     continue
+
                 # How much overlap you have with this dimension.
                 d = (p[i] - np[i]) * face[i]
                 if d < pad:
                     continue
+
                 for dy in range(height):  # check each height
                     op = list(np)
                     op[1] -= dy
@@ -434,12 +448,15 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                     block = chunk.get_block(tuple(op))
                     if block is None:
                         continue
+
                     if type(block) != str and block.NO_ENTITY_COLLISION:
                         positions_no_colliding.append(block.position)
                         continue
+
                     p[i] -= (d - pad) * face[i]
                     positions_colliding.append(block.position)
                     break
+
         return positions_colliding, positions_no_colliding
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
@@ -457,7 +474,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
     def on_mouse_release(self, x, y, button, modifiers):
         """
-        called when an button is released with the same argument as on_mouse_press
+        Called when an button is released with the same argument as on_mouse_press
         """
         self.mouse_pressing[button] = False
         shared.event_handler.call("user:mouse:release", x, y, button, modifiers)
@@ -466,7 +483,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int
     ):
         """
-        called when the mouse moves over the screen while one or more buttons are pressed
+        Called when the mouse moves over the screen while one or more buttons are pressed
         :param x: the new x position
         :param y: the new y position
         :param dx: the delta x
@@ -481,11 +498,11 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
     def on_mouse_scroll(self, x: int, y: int, scroll_x: int, scroll_y: int):
         """
-        called by pyglet when the mouse wheel is spinned
+        Called by pyglet when the mouse wheel is spun
         :param x: the new x scroll
         :param y: the new y scroll
         :param scroll_x: the delta x
-        :param scroll_y: the detla y
+        :param scroll_y: the delta y
         """
         shared.event_handler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
 
@@ -493,8 +510,8 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         """
         Called when the player moves the mouse.
 
-        :param x, y: The coordinates of the mouse click. Always center of the screen if the mouse is captured.
-        :param dx, dy : The movement of the mouse.
+        :param x y: The coordinates of the mouse click. Always center of the screen if the mouse is captured.
+        :param dx dy: The movement of the mouse.
 
         todo: use pyglet's MouseHandler for tracking the mouse position and buttons
         """

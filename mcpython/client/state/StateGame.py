@@ -65,7 +65,7 @@ class StateGame(State.State):
             return
 
         if symbol == key.ESCAPE and shared.window.exclusive:
-            shared.state_handler.switch_to("minecraft:escape_state")
+            shared.state_handler.change_state("minecraft:escape_state")
         elif symbol == key.R:
             shared.inventory_handler.reload_config()
         elif symbol == key.E:

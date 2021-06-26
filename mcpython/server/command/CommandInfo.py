@@ -51,7 +51,7 @@ def print_item_info(itemstack, text: str):
         )
         logger.println("- max stack size: {}".format(itemstack.item.STACK_SIZE))
         tags = []
-        for tag in shared.tag_handler.taggroups["items"].tags.values():
+        for tag in shared.tag_handler.tag_groups["items"].tags.values():
             if itemstack.item.NAME in tag.entries:
                 tags.append(tag.name)
         logger.println("- tags: {}".format(tags))

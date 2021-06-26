@@ -22,7 +22,7 @@ from .ui import UIPartProgressBar
 
 @onlyInClient()
 class StateModLoading(State.State):
-    NAME = "minecraft:modloading"
+    NAME = "minecraft:mod_loading"
 
     def __init__(self):
         State.State.__init__(self)

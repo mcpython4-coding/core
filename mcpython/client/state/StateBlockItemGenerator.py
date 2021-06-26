@@ -242,7 +242,7 @@ class StateBlockItemGenerator(State.State):
         player.dimension.remove_block((0, 0, 0))
         self.last_image = None
 
-        shared.state_handler.switch_to("minecraft:startmenu")
+        shared.state_handler.change_state("minecraft:startmenu")
 
     def add_new_screen(self, *args):
         self.block_index += 1

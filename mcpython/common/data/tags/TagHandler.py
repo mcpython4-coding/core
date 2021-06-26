@@ -17,128 +17,134 @@ import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 from mcpython import logger, shared
 
+import typing
+
 
 class TagHandler:
     """
-    handler for handling tags
+    Handler for handling tags
     """
 
     def __init__(self):
         """
-        creates an new TagHandler instance
+        Creates an new TagHandler instance
         """
-        self.taggroups = {}  # name -> taggroup
-        self.taglocations = []
+        self.tag_groups = {}  # name -> tag group
+        self.tag_locations = []
         shared.mod_loader("minecraft", "stage:tag:load", info="loading tag-groups")(
             self.load_tags
         )
 
-    def from_data(self, taggroup: str, tagname: str, data: dict, replace=True):
+    def from_data(self, tag_group: str, tag_name: str, data: dict, replace=True):
         """
-        will inject certain data
-        :param taggroup: the group to use
-        :param tagname: the name of the tag
+        Will inject certain data
+        :param tag_group: the group to use
+        :param tag_name: the name of the tag
         :param data: the data to inject
         :param replace: if data should be replaced or not
         :return:
         """
-        self.taggroups.setdefault(
-            taggroup, mcpython.common.data.tags.TagGroup.TagGroup(taggroup)
-        ).add_from_data(tagname, data, replace)
+        self.tag_groups.setdefault(
+            tag_group, mcpython.common.data.tags.TagGroup.TagGroup(tag_group)
+        ).add_from_data(tag_name, data, replace)
 
     def add_locations(self, locations: list):
         """
-        will add possible tag locations for later loading
+        Will add possible tag locations for later loading
         :param locations: the locations to add
         """
-        self.taglocations += locations
+        self.tag_locations += locations
 
     def reload(self):
         """
-        will reload all tag-related data
+        Will reload all tag-related data
         """
-        self.taggroups.clear()
+        self.tag_groups.clear()
         self.load_tags(direct_call=True)
 
     def load_tags(self, direct_call=False):
         """
-        will load the tags
+        Will load the tags
         :param direct_call: if build now or in the loading stage for it
         """
         for row in [
-            mcpython.ResourceLoader.get_all_entries(x) for x in self.taglocations
+            mcpython.ResourceLoader.get_all_entries(x) for x in self.tag_locations
         ]:
             for address in row:
                 if address.endswith("/"):
                     continue
+
                 data = mcpython.ResourceLoader.read_json(address)
                 s = address.split("/")
                 modname = s[s.index("data") + 1]
                 name = "#{}:{}".format(
                     modname, "/".join(s[s.index("tags") + 2 :]).split(".")[0]
                 )
-                shared.tag_handler.from_data(
+
+                self.from_data(
                     s[s.index("tags") + 1],
                     name,
                     data,
                     data["replace"] if "replace" in data else True,
                 )
-        for taggroup in shared.tag_handler.taggroups.values():
+
+        for tag_group in shared.tag_handler.tag_groups.values():
             if direct_call:
-                # logger.println("loading tag-group {}".format(taggroup.name))
-                taggroup.build()
+                tag_group.build()
             else:
                 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                     "stage:tag:load",
-                    taggroup.build,
-                    info="loading tag-group '{}'".format(taggroup.name),
+                    tag_group.build,
+                    info="loading tag-group '{}'".format(tag_group.name),
                 )
 
     def get_tag_for(
         self, name: str, group: str, or_else_none=False
-    ) -> mcpython.common.data.tags.Tag.Tag:
+    ) -> typing.Optional[mcpython.common.data.tags.Tag.Tag]:
         """
-        will return the tag by name and group
+        Will return the tag by name and group
         :param name: the name to use
         :param group: the group to use
         :param or_else_none: return None if tag not found?
         :return: the tag instance
         :raises ValueError: when the tag is not found
         """
-        if group not in self.taggroups or name not in self.taggroups[group].tags:
+        if group not in self.tag_groups or name not in self.tag_groups[group].tags:
             if or_else_none:
                 return
             raise ValueError("unknown tag '{}' in group '{}'".format(name, group))
-        return self.taggroups[group].tags[name]
+        return self.tag_groups[group].tags[name]
 
-    def get_entries_for(self, name: str, group: str) -> list:
+    def get_entries_for(self, name: str, group: str) -> typing.List[str]:
         """
-        will return the tag by name and group
+        Will return the tag by name and group
         :param name: the name to use
         :param group: the group to use
         :return: the tag instance
         """
-        if group not in self.taggroups or name not in self.taggroups[group].tags:
+        if group not in self.tag_groups or name not in self.tag_groups[group].tags:
             logger.println("unknown tag '{}' in group '{}'".format(name, group))
             return []
-        return self.taggroups[group].tags[name].entries
 
-    def get_tags_for_entry(self, identifier: str, group: str) -> list:
+        return self.tag_groups[group].tags[name].entries
+
+    def get_tags_for_entry(self, identifier: str, group: str) -> typing.List[mcpython.common.data.tags.Tag.Tag]:
         """
-        will return an list of all tag instances these instance does occure in
+        Will return an list of all tag instances these instance does occur in
         :param identifier: the identifier to search for
         :param group: the group to search in
         :return: an list of Tag-instances
         """
         taglist = []
-        for tag in self.taggroups[group].tags.values():
+        for tag in self.tag_groups[group].tags.values():
             if identifier in tag.entries:
                 taglist.append(tag)
+
         return taglist
 
     def has_entry_tag(self, identifier: str, group: str, tag_name: str) -> bool:
         """
-        check if an given tag has an entry in it
+        Check if an given tag has an entry in it
         :param identifier: the entry to check
         :param group: the group to check for
         :param tag_name: the tag name to check for
@@ -152,11 +158,11 @@ shared.tag_handler = TagHandler()
 
 def add_from_location(loc: str):
     """
-    adds tags from an given scope for an given namespace where loc is the name of the namespace
+    Adds tags from an given scope for an given namespace where loc is the name of the namespace
     :param loc: the namespace
     WARNING: when adding outside normal build period, errors may occur
     """
-    shared.tag_handler.taglocations += [
+    shared.tag_handler.tag_locations += [
         x.format(loc)
         for x in [
             "data/{}/tags/items",
@@ -169,6 +175,6 @@ def add_from_location(loc: str):
 
 
 @shared.mod_loader("minecraft", "stage:tag:group", info="adding tag group locations")
-def on_group_add():
+def load_default_tags():
     add_from_location("minecraft")
     add_from_location("forge")

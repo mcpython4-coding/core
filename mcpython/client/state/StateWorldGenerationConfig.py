@@ -154,7 +154,7 @@ class StateWorldGenerationConfig(State.State):
         return self.parts[5].text
 
     def on_back_press(self, x, y):
-        shared.state_handler.switch_to("minecraft:startmenu")
+        shared.state_handler.change_state("minecraft:startmenu")
 
     def on_generate_press(self, x, y):
         filename = self.parts[11].entered_text

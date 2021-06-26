@@ -68,11 +68,11 @@ class StateGameInfo(mcpython.client.state.State.State):
     @staticmethod
     def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE or symbol == key.E:
-            shared.state_handler.switch_to("minecraft:game", immediate=False)
+            shared.state_handler.change_state("minecraft:game", immediate=False)
 
     @staticmethod
     def on_mouse_press(x, y, button, modifiers):
-        shared.state_handler.switch_to("minecraft:game", immediate=False)
+        shared.state_handler.change_state("minecraft:game", immediate=False)
 
 
 game_info = None

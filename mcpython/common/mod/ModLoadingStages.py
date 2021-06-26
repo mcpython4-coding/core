@@ -146,7 +146,7 @@ class LoadingStage:
             shared.event_handler.call("mod_loader:load_finished")
 
             if shared.IS_CLIENT:
-                shared.state_handler.switch_to("minecraft:block_item_generator")
+                shared.state_handler.change_state("minecraft:block_item_generator")
             else:
                 player = shared.world.get_active_player()
                 player.position = (0, 10, 0)

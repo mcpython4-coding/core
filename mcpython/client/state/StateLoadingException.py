@@ -68,7 +68,7 @@ class StateLoadingException(State.State):
 
     def resume(self, *_):
         logger.println("[MOD LOADER] continuing loading")
-        shared.state_handler.switch_to("minecraft:modloading")
+        shared.state_handler.change_state("minecraft:mod_loading")
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
@@ -113,4 +113,4 @@ loadingexception = StateLoadingException()
 
 def error_occur(text: str):
     loadingexception.set_text(text)
-    shared.state_handler.switch_to(loadingexception.NAME)
+    shared.state_handler.change_state(loadingexception.NAME)

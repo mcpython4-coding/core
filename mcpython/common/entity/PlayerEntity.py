@@ -371,7 +371,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             not shared.world.gamerule_handler.table["doImmediateRespawn"].status.status
             and not internal
         ):
-            shared.state_handler.switch_to(
+            shared.state_handler.change_state(
                 "minecraft:escape_state"
             )  # todo: add special state [see above]
 

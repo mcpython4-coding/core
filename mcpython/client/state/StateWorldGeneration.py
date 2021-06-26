@@ -61,7 +61,7 @@ class StateWorldGeneration(State.State):
             config = DEFAULT_GENERATION_CONFIG
             config["seed"] = random.randint(-1000000, 10000000)
         self.world_gen_config.update(config)
-        shared.state_handler.switch_to(self.NAME)
+        shared.state_handler.change_state(self.NAME)
 
     def generate_from_user_input(self, state=None):
         if state is None:
@@ -111,7 +111,7 @@ class StateWorldGeneration(State.State):
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
 
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
-            shared.state_handler.switch_to("minecraft:game")
+            shared.state_handler.change_state("minecraft:game")
             import mcpython.common.data.ResourcePipe
 
             mcpython.common.data.ResourcePipe.handler.reload_content()
@@ -258,7 +258,7 @@ class StateWorldGeneration(State.State):
                 dimension=shared.world.get_active_dimension()
             ),
         )
-        shared.state_handler.switch_to("minecraft:gameinfo", immediate=False)
+        shared.state_handler.change_state("minecraft:gameinfo", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
@@ -268,7 +268,7 @@ class StateWorldGeneration(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
             shared.tick_handler.schedule_once(shared.world.cleanup)
             logger.println("interrupted world generation by user")
 

@@ -272,10 +272,10 @@ class StateWorldSelection(State.State):
         self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
 
     def on_back_press(self, *_):
-        shared.state_handler.switch_to("minecraft:startmenu")
+        shared.state_handler.change_state("minecraft:startmenu")
 
     def on_new_world_press(self, *_):
-        shared.state_handler.switch_to("minecraft:world_generation_config")
+        shared.state_handler.change_state("minecraft:world_generation_config")
 
     def on_delete_press(self, *_):
         if self.selected_world is None:

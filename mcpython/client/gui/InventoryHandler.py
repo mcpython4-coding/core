@@ -71,7 +71,7 @@ class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
                 0
             ].activate_keyboard = False
         else:
-            shared.state_handler.update_exclusive()
+            shared.state_handler.update_mouse_exclusive_state()
             shared.state_handler.states["minecraft:game"].parts[
                 0
             ].activate_keyboard = True

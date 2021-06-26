@@ -303,7 +303,7 @@ RESOURCE_LOCATIONS = []  # an list of all resource locations in the system
 
 def load_resource_packs():
     """
-    will load the resource packs found in the paths for it
+    Will load the resource packs found in the paths for it
     """
     close_all_resources()
 

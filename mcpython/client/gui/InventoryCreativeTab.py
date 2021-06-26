@@ -270,9 +270,8 @@ class CreativeItemTab(ICreativeView):
         Helper method for reloading the content from the underlying tag
         Use only when self.linked_tag is set, otherwise, this will crash
         """
-        assert (
-            self.linked_tag is not None
-        ), "linked tag shouldn't be None when calling this method..."
+        if self.linked_tag is None:
+            raise RuntimeError("tag must be set for reloading")
 
         tag = shared.tag_handler.get_entries_for(self.linked_tag, "items")
         self.group.entries.clear()

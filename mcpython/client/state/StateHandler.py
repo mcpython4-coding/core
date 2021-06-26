@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import sys
 import time
+import typing
 
 import mcpython.client.state.StateConfigFile
 import mcpython.common.event.TickHandler
@@ -24,23 +25,36 @@ from . import State
 
 @onlyInClient()
 class StateHandler:
+    """
+    Manager for states of the game.
+
+    The game is a state machine, so we need somebody to keep track of it...
+    Seems to be this class
+
+    How does it work?
+    - One instance per game, more will break stuff
+    - stored @ shared.state_handler
+    """
+
     def __init__(self):
-        self.active_state: State.State or None = None
-        self.states = {}
-        self.CANCEL_SWITCH_STATE = False
+        self.active_state: typing.Optional[State.State] = None
+        self.states: typing.Dict[str, State] = {}
         self.global_key_bind_toggle = False
 
-    def switch_to(self, state_name: str, immediate=True):
-        assert state_name is not None
-
+    def change_state(self, state_name: str, immediate=True):
+        """
+        Will change the current state of the "machine"
+        :param state_name: the name to switch to
+        :param immediate: now or next scheduled event cycle (so afterwards), defaults to True
+        """
         if immediate:
-            self._switch_to(state_name)
+            self.inner_change_state(state_name)
         else:
             mcpython.common.event.TickHandler.handler.schedule_once(
-                self._switch_to, state_name
+                self.inner_change_state, state_name
             )
 
-    def _switch_to(self, state_name: str):
+    def inner_change_state(self, state_name: str):
         if state_name not in self.states:
             logger.print_stack("state '{}' does not exists".format(state_name))
             sys.exit(-10)
@@ -64,20 +78,20 @@ class StateHandler:
 
     def add_state(self, state_instance: State.State):
         self.states[state_instance.NAME] = state_instance
+
         if state_instance.CONFIG_LOCATION is not None:
             mcpython.client.state.StateConfigFile.get_config(
                 state_instance.CONFIG_LOCATION
             ).inject(state_instance)
 
-    def update_exclusive(self):
+    def update_mouse_exclusive_state(self):
         shared.window.set_exclusive_mouse(self.active_state.is_mouse_exclusive())
 
 
 handler = shared.state_handler = StateHandler()
 
 
-@onlyInClient()
-def load():
+def load_states():    
     import mcpython.client.gui.InventoryHandler
 
     from . import (
@@ -90,8 +104,5 @@ def load():
         StateWorldGenerationConfig,
     )
 
-    # todo: add client-check
-
-    handler.switch_to(
-        "minecraft:modloading"
-    )  # this is the first state todo: make config for it
+    # this is the first state, so initial init for it
+    handler.change_state("minecraft:mod_loading")

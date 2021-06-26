@@ -44,12 +44,12 @@ class StateWorldLoading(State.State):
         if not os.path.exists(save_file.directory):
             shared.state_handler.states["minecraft:world_generation"].generate_world()
         else:
-            shared.state_handler.switch_to("minecraft:world_loading")
+            shared.state_handler.change_state("minecraft:world_loading")
 
     def load_world_from(self, name: str):
         shared.world.cleanup()
         shared.world.setup_by_filename(name)
-        shared.state_handler.switch_to("minecraft:world_loading")
+        shared.state_handler.change_state("minecraft:world_loading")
 
     def get_parts(self) -> list:
         return [
@@ -79,7 +79,7 @@ class StateWorldLoading(State.State):
             self.status_table[chunk] = 1 / c if c > 0 else -1
 
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
-            shared.state_handler.switch_to("minecraft:game")
+            shared.state_handler.change_state("minecraft:game")
             shared.world.world_loaded = True
             if (
                 mcpython.common.config.SHUFFLE_DATA
@@ -109,12 +109,12 @@ class StateWorldLoading(State.State):
                 "failed to load world. data-fixer failed with NoDataFixerFoundException"
             )
             shared.world.cleanup()
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
             return
         except:
             logger.print_exception("failed to load world")
             shared.world.cleanup()
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
             return
         for cx in range(-3, 4):
             for cz in range(-3, 4):
@@ -137,7 +137,7 @@ class StateWorldLoading(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
             shared.tick_handler.schedule_once(shared.world.cleanup)
             logger.println("interrupted world loading by user")
 

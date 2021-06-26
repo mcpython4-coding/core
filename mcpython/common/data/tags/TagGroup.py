@@ -46,8 +46,8 @@ class TagGroup:
         :return:
         """
         if replace:
-            self.tags[name] = mcpython.common.data.tags.Tag.Tag.from_data(
-                self, name, data
+            self.tags[name] = mcpython.common.data.tags.Tag.Tag(
+                self, name, data["values"]
             )
         else:
             self.tags.setdefault(

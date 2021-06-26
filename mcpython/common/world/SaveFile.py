@@ -165,7 +165,7 @@ class SaveFile:
                         )
                     )
                     shared.world.cleanup()
-                    shared.state_handler.switch_to("minecraft:startmenu")
+                    shared.state_handler.change_state("minecraft:startmenu")
                     return
 
                 fixers = self.storage_version_fixers[self.version]
@@ -192,12 +192,12 @@ class SaveFile:
                 )
             )
             shared.world.cleanup()
-            shared.state_handler.switch_to("minecraft:world_selection")
+            shared.state_handler.change_state("minecraft:world_selection")
             return
 
         except:
             shared.world.cleanup()
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
             logger.print_exception(
                 "exception during loading world. falling back to start menu..."
             )
@@ -243,7 +243,7 @@ class SaveFile:
                 "Exception during saving world. Falling back to start menu"
             )
             shared.world.cleanup()
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
 
     def apply_storage_fixer(self, name: str, *args, **kwargs):
         """
@@ -268,7 +268,7 @@ class SaveFile:
             logger.print_exception(
                 "during data-fixing storage version '{}'".format(name)
             )
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
 
     def apply_group_fixer(self, name: str, *args, **kwargs):
         """
@@ -295,7 +295,7 @@ class SaveFile:
                 "During data-fixing group fixer '{}' (FATAL)".format(name)
             )
             shared.world.cleanup()
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
 
     def apply_part_fixer(self, name: str, *args, **kwargs):
         """
@@ -317,7 +317,7 @@ class SaveFile:
         except:
             logger.print_exception("During data-fixing part '{}' (fatal)".format(name))
             shared.world.cleanup()
-            shared.state_handler.switch_to("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:startmenu")
 
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
         """
@@ -375,7 +375,7 @@ class SaveFile:
                     )
                 )
                 shared.world.cleanup()
-                shared.state_handler.switch_to("minecraft:startmenu")
+                shared.state_handler.change_state("minecraft:startmenu")
                 return
 
             source_version = fixer.FIXES_TO
