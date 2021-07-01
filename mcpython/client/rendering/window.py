@@ -29,7 +29,10 @@ import pyglet
 from mcpython.common.config import *  # todo: remove
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.math import *  # todo: remove
-from pyglet.gl import *
+
+if shared.IS_CLIENT:
+    from pyglet.gl import *
+
 from pyglet.window import key, mouse
 
 

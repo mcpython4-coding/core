@@ -421,7 +421,7 @@ def transform_name(file: str, raise_on_error=True) -> str:
 
 def exists(file: str, transform=True):
     """
-    checks if an given file exists in the system
+    Checks if a given file exists in the system
     :param file: the file to check
     :param transform: if it should be transformed for check
     :return: if it exists or not
@@ -435,9 +435,11 @@ def exists(file: str, transform=True):
         data = file.split("|")
         resource = data[0][1:]
         file = "|".join(data[1:])
+
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
                 return x.is_in_path(file)
+
         return False
 
     for x in RESOURCE_LOCATIONS:
@@ -455,7 +457,7 @@ def exists(file: str, transform=True):
 
 def read_raw(file: str):
     """
-    will read the content of an file in binary mode
+    Will read the content of a file in binary mode
     :param file: the file to load
     :return: the content
     """

@@ -28,7 +28,7 @@ mcpython.add_load_default_resources()
 
 
 def init():
-    import mcpython.common.data.loot.LootTable
+    import mcpython.common.data.serializer.loot.LootTable
     import mcpython.common.entity.EntityManager
 
 

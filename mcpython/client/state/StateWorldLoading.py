@@ -16,7 +16,7 @@ import os
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.ui.UIPartLabel
 import mcpython.common.config
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.util.math
 import mcpython.util.opengl

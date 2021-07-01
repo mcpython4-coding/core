@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.data.tags.Tag
-import mcpython.common.data.tags.TagGroup
+import mcpython.common.data.serializer.tags.Tag
+import mcpython.common.data.serializer.tags.TagGroup
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 from mcpython import logger, shared
@@ -45,7 +45,7 @@ class TagHandler:
         :return:
         """
         self.tag_groups.setdefault(
-            tag_group, mcpython.common.data.tags.TagGroup.TagGroup(tag_group)
+            tag_group, mcpython.common.data.serializer.tags.TagGroup.TagGroup(tag_group)
         ).add_from_data(tag_name, data, replace)
 
     def add_locations(self, locations: list):
@@ -100,7 +100,7 @@ class TagHandler:
 
     def get_tag_for(
         self, name: str, group: str, or_else_none=False
-    ) -> typing.Optional[mcpython.common.data.tags.Tag.Tag]:
+    ) -> typing.Optional[mcpython.common.data.serializer.tags.Tag.Tag]:
         """
         Will return the tag by name and group
         :param name: the name to use
@@ -128,7 +128,7 @@ class TagHandler:
 
         return self.tag_groups[group].tags[name].entries
 
-    def get_tags_for_entry(self, identifier: str, group: str) -> typing.List[mcpython.common.data.tags.Tag.Tag]:
+    def get_tags_for_entry(self, identifier: str, group: str) -> typing.List[mcpython.common.data.serializer.tags.Tag.Tag]:
         """
         Will return an list of all tag instances these instance does occur in
         :param identifier: the identifier to search for

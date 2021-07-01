@@ -20,7 +20,7 @@ import mcpython.client.rendering.RenderingGroups
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.StateWorldGeneration
 import mcpython.client.state.StateWorldLoading
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.SaveFile
 import mcpython.ResourceLoader

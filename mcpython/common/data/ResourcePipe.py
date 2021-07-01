@@ -17,7 +17,7 @@ import typing
 import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.client.rendering.util
 import mcpython.common.config
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 from mcpython import shared
 
 
@@ -56,11 +56,11 @@ def model_bake():
 
 
 def tag_mapper(modname, pathname):
-    import mcpython.common.data.tags.TagHandler
+    import mcpython.common.data.serializer.tags.TagHandler
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:tag:group",
-        lambda: mcpython.common.data.tags.TagHandler.add_from_location(pathname),
+        lambda: mcpython.common.data.serializer.tags.TagHandler.add_from_location(pathname),
         info="adding tag groups for mod {}".format(modname),
     )
 
@@ -72,7 +72,7 @@ def language_mapper(modname, pathname):
 
 
 def loot_table_mapper(modname, pathname):
-    from mcpython.common.data.loot import (
+    from mcpython.common.data.serializer.loot import (
         LootTable,
         LootTableCondition,
         LootTableFunction,
@@ -137,11 +137,11 @@ class ResourcePipeHandler:
         if not shared.event_handler.call_cancelable("data:reload:cancel"):
             return
 
-        mcpython.common.DataPacks.datapack_handler.reload()  # reloads all data packs
+        mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
         shared.tag_handler.reload()  # reloads all tags
         shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
 
-        import mcpython.common.data.loot.LootTable as LootTable
+        import mcpython.common.data.serializer.loot.LootTable as LootTable
 
         LootTable.handler.reload()
 
@@ -191,7 +191,7 @@ if shared.IS_CLIENT:
 
 
 def load():
-    from mcpython.common.data.worldgen import (
+    from mcpython.common.data.serializer.worldgen import (
         Biome,
         WorldGenerationMode,
         WorldGenerationModeModifier,

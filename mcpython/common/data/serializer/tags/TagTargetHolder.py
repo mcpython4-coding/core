@@ -20,9 +20,9 @@ class TagTargetHolder:
         self.classes = []
 
         if not shared.IS_TEST_ENV:
-            import mcpython.common.data.tags.TagGroup
+            import mcpython.common.data.serializer.tags.TagGroup
 
-            mcpython.common.data.tags.TagGroup.TagGroup.TAG_HOLDERS.setdefault(
+            mcpython.common.data.serializer.tags.TagGroup.TagGroup.TAG_HOLDERS.setdefault(
                 name, []
             ).append(self)
 

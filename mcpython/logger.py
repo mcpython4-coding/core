@@ -26,6 +26,7 @@ from mcpython import shared
 
 # adapted from mc version 1.15.2, decompiled with mc-forge located under net.minecraft.crash.CrashReport
 # added some extra entries
+# todo: export to some other file
 FUNNY_STRINGS = [
     "Who set us up the TNT?",
     "Everything's going to plan. No, really, that was supposed to happen.",

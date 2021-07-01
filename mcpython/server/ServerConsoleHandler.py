@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import threading
 
-from mcpython import logger, shared
+from mcpython import shared
 
 
 class ServerConsoleHandler:
@@ -27,7 +27,7 @@ class ServerConsoleHandler:
             if command.startswith("/"):
                 shared.command_parser.run(command)
             else:
-                logger.println("[SERVER]", command)
+                shared.chat.print_ln("<SERVER>", command)
 
     def run(self):
         self.thread.start()

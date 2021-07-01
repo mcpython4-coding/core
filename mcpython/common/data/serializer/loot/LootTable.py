@@ -16,8 +16,8 @@ import random
 import typing
 
 import mcpython.common.container.ResourceStack
-import mcpython.common.data.loot.LootTableCondition
-import mcpython.common.data.loot.LootTableFunction
+import mcpython.common.data.serializer.loot.LootTableCondition
+import mcpython.common.data.serializer.loot.LootTableFunction
 import mcpython.common.event.EventHandler
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
@@ -143,13 +143,13 @@ class LootTableHandler:
     @classmethod
     def parse_function(
         cls, data: dict
-    ) -> mcpython.common.data.loot.LootTableFunction.ILootTableFunction:
+    ) -> mcpython.common.data.serializer.loot.LootTableFunction.ILootTableFunction:
         name = data["function"]
         if (
             name
-            in mcpython.common.data.loot.LootTableFunction.loot_table_function_registry.entries
+            in mcpython.common.data.serializer.loot.LootTableFunction.loot_table_function_registry.entries
         ):
-            return mcpython.common.data.loot.LootTableFunction.loot_table_function_registry.entries[
+            return mcpython.common.data.serializer.loot.LootTableFunction.loot_table_function_registry.entries[
                 name
             ](
                 data
@@ -159,13 +159,13 @@ class LootTableHandler:
     @classmethod
     def parse_condition(
         cls, data: dict
-    ) -> mcpython.common.data.loot.LootTableCondition.ILootTableCondition:
+    ) -> mcpython.common.data.serializer.loot.LootTableCondition.ILootTableCondition:
         name = data["condition"]
         if (
             name
-            in mcpython.common.data.loot.LootTableCondition.loot_table_condition_registry.entries
+            in mcpython.common.data.serializer.loot.LootTableCondition.loot_table_condition_registry.entries
         ):
-            return mcpython.common.data.loot.LootTableCondition.loot_table_condition_registry.entries[
+            return mcpython.common.data.serializer.loot.LootTableCondition.loot_table_condition_registry.entries[
                 name
             ](
                 data

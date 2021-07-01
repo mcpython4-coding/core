@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 import mcpython.server.command.Builder
 from mcpython import logger, shared
 from mcpython.common.world.AbstractInterface import IDimension
@@ -96,7 +96,7 @@ class CommandParser:
 
     def run_function(self, name: str, info=None):
         # todo: move here
-        mcpython.common.DataPacks.datapack_handler.try_call_function(name, info)
+        mcpython.common.data.DataPacks.datapack_handler.try_call_function(name, info)
 
     def parse(self, string: str):
         tracker = mcpython.server.command.Builder.CommandExecutionTracker.from_string(

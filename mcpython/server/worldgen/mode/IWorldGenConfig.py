@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.data.DataSerializerHandler
-import mcpython.common.data.worldgen.WorldGenerationMode
+import mcpython.common.data.serializer.DataSerializerHandler
+import mcpython.common.data.serializer.worldgen.WorldGenerationMode
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.layer.DefaultBiomeLayer
 import mcpython.server.worldgen.WorldGenerationTaskArrays
@@ -83,9 +83,9 @@ class DefaultBiomeSource(IBiomeSource):
         return tuple()
 
 
-class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble):
+class IWorldGenConfig(mcpython.common.data.serializer.DataSerializerHandler.ISerializeAble):
     SERIALIZER = (
-        mcpython.common.data.worldgen.WorldGenerationMode.WorldGenerationModeSerializer
+        mcpython.common.data.serializer.worldgen.WorldGenerationMode.WorldGenerationModeSerializer
     )
 
     NAME = None
@@ -121,7 +121,7 @@ class IWorldGenConfig(mcpython.common.data.DataSerializerHandler.ISerializeAble)
         pass
 
 
-mcpython.common.data.worldgen.WorldGenerationMode.WorldGenerationModeSerializer.BIOME_SOURCES.update(
+mcpython.common.data.serializer.worldgen.WorldGenerationMode.WorldGenerationModeSerializer.BIOME_SOURCES.update(
     {
         "minecraft:single_biome": SingleBiomeSource,
         "minecraft:default_biome": DefaultBiomeSource,

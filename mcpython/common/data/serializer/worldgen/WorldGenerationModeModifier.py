@@ -13,14 +13,14 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.data.DataSerializerHandler
+import mcpython.common.data.serializer.DataSerializerHandler
 import mcpython.util.data
 from mcpython import logger, shared
-from mcpython.common.data.DataSerializerHandler import ISerializeAble
+from mcpython.common.data.serializer.DataSerializerHandler import ISerializeAble
 
 
 class WorldGenerationModeModifier(
-    mcpython.common.data.DataSerializerHandler.ISerializer
+    mcpython.common.data.serializer.DataSerializerHandler.ISerializer
 ):
     BIOME_SOURCES: typing.Dict[str, typing.Type] = {}
 
@@ -88,7 +88,7 @@ class WorldGenerationModeModifier(
         pass
 
 
-instance = mcpython.common.data.DataSerializerHandler.DatapackSerializationHelper(
+instance = mcpython.common.data.serializer.DataSerializerHandler.DatapackSerializationHelper(
     "minecraft:world_gen_mode_modifiers",
     "data/{pathname}/worldgen/mode_modifiers",
     data_formatter=mcpython.util.data.bytes_to_json,

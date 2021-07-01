@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 from mcpython import shared
 from mcpython.server.command.Builder import (
     AnyString,
@@ -28,7 +28,7 @@ datapack = (
             .of_name("datapack")
             .info("enables the specified datapack")
             .on_execution(
-                lambda env, data: mcpython.common.DataPacks.datapack_handler.enable_pack(
+                lambda env, data: mcpython.common.data.DataPacks.datapack_handler.enable_pack(
                     data[2]
                 )
             )
@@ -40,7 +40,7 @@ datapack = (
             .of_name("datapack")
             .info("disables the specified datapack")
             .on_execution(
-                lambda env, data: mcpython.common.DataPacks.datapack_handler.disable_pack(
+                lambda env, data: mcpython.common.data.DataPacks.datapack_handler.disable_pack(
                     data[2]
                 )
             )
@@ -50,13 +50,13 @@ datapack = (
         CommandNode(DefinedString("list")).on_execution(
             lambda env, data: [
                 env.chat.print_ln(f"- {pack.name}: {pack.status.name.lower()}")
-                for pack in mcpython.common.DataPacks.datapack_handler.loaded_data_packs
+                for pack in mcpython.common.data.DataPacks.datapack_handler.loaded_data_packs
             ]
         )
     )
     .than(
         CommandNode(DefinedString("release")).on_execution(
-            lambda env, data: mcpython.common.DataPacks.datapack_handler.cleanup()
+            lambda env, data: mcpython.common.data.DataPacks.datapack_handler.cleanup()
         )
     )
 )

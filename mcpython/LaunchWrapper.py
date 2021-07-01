@@ -173,7 +173,7 @@ class LaunchWrapper:
         import mcpython.server.worldgen.feature
 
         import mcpython.client.rendering.model.ModelHandler
-        import mcpython.common.data.tags.TagHandler
+        import mcpython.common.data.serializer.tags.TagHandler
 
         import mcpython.client.rendering.model.ItemModel
 
@@ -273,8 +273,6 @@ class LaunchWrapper:
         import mcpython.common.world.World
 
         shared.world = mcpython.common.world.World.World()
-
-        import pyglet
 
         if shared.window is not None:
             shared.window.load()

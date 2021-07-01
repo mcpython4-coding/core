@@ -14,13 +14,13 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.common.data.tags.ITagTarget
+import mcpython.common.data.serializer.tags.ITagTarget
 import mcpython.common.event.EventHandler
 import mcpython.logger
 from mcpython import logger, shared
 
 
-class IRegistryContent(mcpython.common.data.tags.ITagTarget.ITagTarget):
+class IRegistryContent(mcpython.common.data.serializer.tags.ITagTarget.ITagTarget):
     NAME = "minecraft:unknown_registry_content"
     TYPE = "minecraft:unknown_registry_content_type"
 
@@ -137,7 +137,9 @@ class Registry:
     def is_valid_key(self, key: str):
         return key in self.full_entries
 
-    def get(self, key: str):
+    def get(self, key: str, default=False):
+        if default is not False and key not in self.full_entries:
+            return default
         return self.full_entries[key]
 
 

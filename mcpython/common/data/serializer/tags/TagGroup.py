@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.common.data.tags.ITagTarget
-import mcpython.common.data.tags.Tag
+import mcpython.common.data.serializer.tags.ITagTarget
+import mcpython.common.data.serializer.tags.Tag
 import mcpython.util.math
 
 from .TagTargetHolder import TagTargetHolder
@@ -46,12 +46,12 @@ class TagGroup:
         :return:
         """
         if replace:
-            self.tags[name] = mcpython.common.data.tags.Tag.Tag(
+            self.tags[name] = mcpython.common.data.serializer.tags.Tag.Tag(
                 self, name, data["values"]
             )
         else:
             self.tags.setdefault(
-                name, mcpython.common.data.tags.Tag.Tag(self, name, [])
+                name, mcpython.common.data.serializer.tags.Tag.Tag(self, name, [])
             ).entries.extend(data["values"])
 
     def build(self):

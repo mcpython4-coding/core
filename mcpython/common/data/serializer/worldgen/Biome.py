@@ -14,11 +14,11 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.common.data.DataSerializerHandler
+import mcpython.common.data.serializer.DataSerializerHandler
 import mcpython.common.world.AbstractInterface
 import mcpython.util.data
 from mcpython import shared
-from mcpython.common.data.DataSerializerHandler import ISerializeAble
+from mcpython.common.data.serializer.DataSerializerHandler import ISerializeAble
 
 
 class ITopLayerConfigurator(ABC):
@@ -84,7 +84,7 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
         return data
 
 
-class BiomeSerializer(mcpython.common.data.DataSerializerHandler.ISerializer):
+class BiomeSerializer(mcpython.common.data.serializer.DataSerializerHandler.ISerializer):
     COLLECTED = []
     TOP_LAYER_CONFIGURATORS = {}
 
@@ -190,7 +190,7 @@ class BiomeSerializer(mcpython.common.data.DataSerializerHandler.ISerializer):
 
 
 # todo: add modifier system
-instance = mcpython.common.data.DataSerializerHandler.DatapackSerializationHelper(
+instance = mcpython.common.data.serializer.DataSerializerHandler.DatapackSerializationHelper(
     "minecraft:biomes",
     "data/{pathname}/worldgen/biomes",
     data_formatter=mcpython.util.data.bytes_to_json,

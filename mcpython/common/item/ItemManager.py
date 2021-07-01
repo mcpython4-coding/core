@@ -15,14 +15,14 @@ import json
 import os
 
 import mcpython.client.gui.HoveringItemBox
-import mcpython.common.data.tags.TagTargetHolder
+import mcpython.common.data.serializer.tags.TagTargetHolder
 import mcpython.common.event.Registry
 import mcpython.common.factory.ItemFactory
 import mcpython.ResourceLoader
 from mcpython import logger, shared
 
 COLLECTED_ITEMS = []
-tag_holder = mcpython.common.data.tags.TagTargetHolder.TagTargetHolder("items")
+tag_holder = mcpython.common.data.serializer.tags.TagTargetHolder.TagTargetHolder("items")
 
 
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:

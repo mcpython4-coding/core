@@ -15,7 +15,7 @@ import random
 
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.StateWorldGeneration
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.math

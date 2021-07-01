@@ -12,13 +12,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
-import mcpython.common.data.tags.TagGroup
+import mcpython.common.data.serializer.tags.TagGroup
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 from mcpython import logger, shared
 from mcpython.common.block.AbstractBlock import AbstractBlock
 
-tag_holder = mcpython.common.data.tags.TagGroup.TagTargetHolder("blocks")
+tag_holder = mcpython.common.data.serializer.tags.TagGroup.TagTargetHolder("blocks")
 
 
 def register_block(registry, cls):

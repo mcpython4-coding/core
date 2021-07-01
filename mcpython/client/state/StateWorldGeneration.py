@@ -21,7 +21,7 @@ import typing
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.ui.UIPartLabel
 import mcpython.common.config
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
@@ -251,8 +251,8 @@ class StateWorldGeneration(State.State):
             self.profiler.clear()
 
         # reload all the data-packs
-        mcpython.common.DataPacks.datapack_handler.reload()
-        mcpython.common.DataPacks.datapack_handler.try_call_function(
+        mcpython.common.data.DataPacks.datapack_handler.reload()
+        mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:load",
             mcpython.server.command.CommandParser.CommandExecutionEnvironment(
                 dimension=shared.world.get_active_dimension()

@@ -15,7 +15,7 @@ import random
 
 import mcpython.client.state.StatePartGame
 import mcpython.common.config
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 import mcpython.util.math
 import pyglet
 from mcpython import logger, shared
@@ -64,7 +64,7 @@ class TickHandler:
         shared.inventory_handler.tick(dt)
         shared.world.tick()
         # todo: include command info here!
-        mcpython.common.DataPacks.datapack_handler.try_call_function(
+        mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:tick", None
         )
         if self.enable_random_ticks:

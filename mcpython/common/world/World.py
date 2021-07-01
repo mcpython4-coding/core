@@ -16,7 +16,7 @@ import typing
 
 import mcpython.client.state.StatePartGame
 import mcpython.common.config
-import mcpython.common.DataPacks
+import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
 import mcpython.common.world.AbstractInterface
 import mcpython.common.world.Chunk
@@ -424,7 +424,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.players.clear()
         if filename is not None:
             self.setup_by_filename(filename)
-        mcpython.common.DataPacks.datapack_handler.cleanup()
+        mcpython.common.data.DataPacks.datapack_handler.cleanup()
         shared.event_handler.call("world:clean")
 
     def setup_by_filename(self, filename: str):
