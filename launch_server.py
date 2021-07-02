@@ -25,7 +25,9 @@ if sys.version_info.major != 3 or sys.version_info.minor < 9:
     sys.exit(-1)
 
 if sys.version_info.minor >= 10:
-    print(f"[VERSION DETECTOR][WARN] Detected python version 3.{sys.version_info.minor}, which is >= 10, which may break at any point")
+    print(
+        f"[VERSION DETECTOR][WARN] Detected python version 3.{sys.version_info.minor}, which is >= 10, which may break at any point"
+    )
 
 # the LaunchWrapper which launches all stuff
 import mcpython.LaunchWrapper

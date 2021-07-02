@@ -73,7 +73,9 @@ class DataSerializationService(
             mcpython.common.data.ResourcePipe.handler.register_listener(self)
 
     def register_serializer(self, serializer: typing.Type[ISerializer]):
-        logger.println(f"[SERIALIZER][INFO] got serializer of wrapper {self.NAME}: {serializer}")
+        logger.println(
+            f"[SERIALIZER][INFO] got serializer of wrapper {self.NAME}: {serializer}"
+        )
 
         self.serializer.append(serializer)
         return self

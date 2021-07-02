@@ -14,8 +14,6 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-from pyglet.graphics.vertexdomain import VertexList
-
 import mcpython.common.config
 import mcpython.ResourceLoader
 import mcpython.util.enums
@@ -23,6 +21,7 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
+from pyglet.graphics.vertexdomain import VertexList
 
 UV_ORDER = [
     mcpython.util.enums.EnumSide.UP,
@@ -294,7 +293,11 @@ class BoxModel(AbstractBoxModel):
 
         return collected_data
 
-    def add_prepared_data_to_batch(self, collected_data: typing.Tuple[typing.List[float], typing.List[float]], batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]]) -> typing.Iterable[VertexList]:
+    def add_prepared_data_to_batch(
+        self,
+        collected_data: typing.Tuple[typing.List[float], typing.List[float]],
+        batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]],
+    ) -> typing.Iterable[VertexList]:
         # Here we have nothing to do
         if len(collected_data[0]) == 0:
             return tuple()
@@ -350,7 +353,9 @@ class BoxModel(AbstractBoxModel):
         )
         return self.add_prepared_data_to_batch(collected_data, batch)
 
-    def draw_prepared_data(self, collected_data: typing.Tuple[typing.List[float], typing.List[float]]):
+    def draw_prepared_data(
+        self, collected_data: typing.Tuple[typing.List[float], typing.List[float]]
+    ):
         """
         Draws prepared data to the screen
         WARNING: the invoker is required to set up OpenGL for rendering the stuff, including linking the textures
@@ -588,7 +593,8 @@ class RawBoxModel(AbstractBoxModel):
         pyglet.graphics.draw(
             4 * 6,
             pyglet.gl.GL_QUADS,
-            ("v3f/static", vertices), ("t2f/static", self.texture_cache)
+            ("v3f/static", vertices),
+            ("t2f/static", self.texture_cache),
         )
 
         if self.texture is not None:

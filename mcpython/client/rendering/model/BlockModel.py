@@ -18,6 +18,7 @@ import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.util.enums
 import pyglet
 from mcpython import logger, shared
+from pyglet.graphics.vertexdomain import VertexList
 
 
 class Model:
@@ -34,6 +35,7 @@ class Model:
         self.texture_names = {}
         self.drawable = True
 
+        # do some parent copying stuff
         if self.parent is not None:
             if ":" not in self.parent:
                 self.parent = "minecraft:" + self.parent
@@ -49,6 +51,7 @@ class Model:
             self.used_textures = self.parent.used_textures.copy()
             self.texture_names = self.parent.texture_names.copy()
 
+        # check out assigned textures
         if "textures" in data:
             for name in data["textures"].keys():
                 texture = data["textures"][name]
@@ -58,6 +61,7 @@ class Model:
                     self.drawable = False
                     self.texture_names[name] = texture
 
+        # inform the texture bake system about our new textures we want to be in there
         to_add = []
         for name in self.used_textures:
             to_add.append((name, self.used_textures[name]))
@@ -68,25 +72,42 @@ class Model:
             self.texture_addresses[name] = add[i][0]
             self.texture_atlas = add[i][1]
 
+        # prepare the box models from parent
         self.box_models = (
             []
-            if not self.parent
+            if not self.parent or "elements" not in data
             else [x.copy(new_model=self) for x in self.parent.box_models]
         )
 
+        # load local elements
         if "elements" in data:
-            self.box_models.clear()
             for element in data["elements"]:
                 self.box_models.append(
                     mcpython.client.rendering.model.BoxModel.BoxModel(element, self)
                 )
 
-    def get_prepared_data_for(self, position, config, face, previous=None):
+    def get_prepared_data_for(
+        self,
+        position: typing.Tuple[float, float, float],
+        config: dict,
+        face: mcpython.util.enums.EnumSide,
+        previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
+    ) -> typing.Tuple[typing.Tuple[typing.List[float], typing.List[float]], typing.Any]:
+        """
+        Collects the vertex and texture data for a block at the given position with given configuration
+        :param position: the offset position
+        :param config: the configuration
+        :param face: the face
+        :param previous: previous collected data, as a tuple of vertices, texture coords
+        :return: a tuple of vertices and texture coords, and an underlying BoxModel for some identification stuff
+        """
+
+        # If this is true, we cannot render this model as stuff is not fully linked
         if not self.drawable:
             logger.println(
-                f"[BLOCK MODEL][FATAL] can't draw an model '{self.name}' which has not defined textures"
+                f"[BLOCK MODEL][FATAL] can't draw an model '{self.name}' which has not defined textures at {position}"
             )
-            return [], None
+            return ([], []), None
 
         rotation = config["rotation"]
         if rotation == (90, 90, 0):
@@ -94,6 +115,7 @@ class Model:
 
         collected_data = ([], []) if previous is None else previous
         box_model = None
+
         for box_model in self.box_models:
             box_model.get_prepared_box_data(
                 position,
@@ -103,6 +125,7 @@ class Model:
                 else face.rotate((0, 90, 0)),
                 previous=collected_data,
             )
+
         return collected_data, box_model
 
     def add_face_to_batch(
@@ -111,10 +134,15 @@ class Model:
         batch: pyglet.graphics.Batch,
         config: dict,
         face: mcpython.util.enums.EnumSide,
-    ):
+    ) -> typing.Iterable[VertexList]:
+        """
+        Adds a given face to the batch
+        Simply wraps a get_prepared_data_for call around the box_model.add_prepared_data_to_batch-call
+        """
         collected_data, box_model = self.get_prepared_data_for(position, config, face)
         if box_model is None:
             return tuple()
+
         return box_model.add_prepared_data_to_batch(collected_data, batch)
 
     def draw_face(
@@ -123,14 +151,24 @@ class Model:
         config: dict,
         face: mcpython.util.enums.EnumSide,
     ):
+        """
+        Similar to add_face_to_batch, but does it in-place without a batches
+        Use batches wherever possible!
+        """
         collected_data, box_model = self.get_prepared_data_for(position, config, face)
         if box_model is None:
             return
+
         box_model.draw_prepared_data(collected_data)
 
     def get_texture_position(
         self, name: str
     ) -> typing.Optional[typing.Tuple[int, int]]:
+        """
+        Helper method resolving a texture name to texture coords
+        :param name: the name of the texture
+        :return: a tuple of x, y of the texture location, defaults to 0, 0 in case of an error
+        """
         if not self.drawable:
             return 0, 0
 
@@ -147,3 +185,5 @@ class Model:
 
             if n in self.texture_names:
                 return self.get_texture_position(self.texture_names[n])
+
+        return 0, 0

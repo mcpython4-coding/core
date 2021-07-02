@@ -1723,3 +1723,5 @@ R   [uuk]: improved world serialization API
 [uuk]: refactored the complete resource serialization system
 [uuk]: resource system lookup uses now regex instead of some bad handling, preparing for better times
 [uuk]: reworked some rendering bits, hopefully optimising them
+[uuk]: when a child model overrides parent elements, the elements are not copied over and then discarded directly again,
+       improving some loading performance
