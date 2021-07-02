@@ -159,7 +159,7 @@ class CraftingManager:
 
             if not load_direct:
                 shared.mod_loader.mods[modname].eventbus.subscribe(
-                    "stage:recipe:bake",
+                    "stage:recipe:on_bake",
                     self.add_recipe_from_file,
                     file,
                     info="loading crafting recipe from {}".format(file),

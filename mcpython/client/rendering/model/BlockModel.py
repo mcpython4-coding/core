@@ -81,7 +81,7 @@ class Model:
                     mcpython.client.rendering.model.BoxModel.BoxModel(element, self)
                 )
 
-    def get_prepared_data_for(self, position, config, face):
+    def get_prepared_data_for(self, position, config, face, previous=None):
         if not self.drawable:
             logger.println(
                 f"[BLOCK MODEL][FATAL] can't draw an model '{self.name}' which has not defined textures"
@@ -92,18 +92,17 @@ class Model:
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
 
-        collected_data = [], []
+        collected_data = ([], []) if previous is None else previous
         box_model = None
         for box_model in self.box_models:
-            a, b = box_model.get_prepared_box_data(
+            box_model.get_prepared_box_data(
                 position,
                 rotation,
                 face.rotate((0, -90, 0))
                 if rotation[1] % 180 != 90
                 else face.rotate((0, 90, 0)),
+                previous=collected_data,
             )
-            collected_data[0].extend(a)
-            collected_data[1].extend(b)
         return collected_data, box_model
 
     def add_face_to_batch(

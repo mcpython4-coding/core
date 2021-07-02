@@ -11,14 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import re
 import typing
 from abc import ABC
 
-import mcpython.common.data.serializer.DataSerializerHandler
+import mcpython.common.data.serializer.DataSerializationManager
 import mcpython.common.world.AbstractInterface
 import mcpython.util.data
 from mcpython import shared
-from mcpython.common.data.serializer.DataSerializerHandler import ISerializeAble
+from mcpython.common.data.serializer.DataSerializationManager import ISerializeAble
 
 
 class ITopLayerConfigurator(ABC):
@@ -84,7 +85,9 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
         return data
 
 
-class BiomeSerializer(mcpython.common.data.serializer.DataSerializerHandler.ISerializer):
+class BiomeSerializer(
+    mcpython.common.data.serializer.DataSerializationManager.ISerializer
+):
     COLLECTED = []
     TOP_LAYER_CONFIGURATORS = {}
 
@@ -190,14 +193,16 @@ class BiomeSerializer(mcpython.common.data.serializer.DataSerializerHandler.ISer
 
 
 # todo: add modifier system
-instance = mcpython.common.data.serializer.DataSerializerHandler.DatapackSerializationHelper(
-    "minecraft:biomes",
-    "data/{pathname}/worldgen/biomes",
-    data_formatter=mcpython.util.data.bytes_to_json,
-    data_un_formatter=mcpython.util.data.json_to_bytes,
-    re_run_on_reload=True,
-    load_on_stage="stage:worldgen:serializer:biomes:load",
-).register_serializer(BiomeSerializer)
+instance = (
+    mcpython.common.data.serializer.DataSerializationManager.DataSerializationService(
+        "minecraft:biomes",
+        re.compile("data/[A-Za-z0-9-_]+/worldgen/biomes/[A-Za-z0-9-_/]+.json"),
+        data_deserializer=mcpython.util.data.bytes_to_json,
+        data_serializer=mcpython.util.data.json_to_bytes,
+        re_run_on_reload=True,
+    ).register_serializer(BiomeSerializer)
+)
 instance.on_deserialize = BiomeSerializer.register
-instance.on_clear = BiomeSerializer.clear
+instance.on_unload = BiomeSerializer.clear
 BiomeSerializer.register_helper(DefaultTopLayerConfiguration)
+instance.register_listener()

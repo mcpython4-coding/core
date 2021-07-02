@@ -114,7 +114,7 @@ class EntityRenderer:
                 ]
             self.box_models[
                 box_name
-            ] = mcpython.client.rendering.model.BoxModel.BaseBoxModel(
+            ] = mcpython.client.rendering.model.BoxModel.RawBoxModel(
                 box["position"] if "position" in box else (0, 0, 0),
                 tuple([e / 16 for e in box["size"]]),
                 group,

@@ -422,7 +422,7 @@ manager.add_stage(
     )
     .add_event_stage("stage:recipes")
     .add_event_stage("stage:recipe:groups", "stage:recipes")
-    .add_event_stage("stage:recipe:bake", "stage:recipe:groups")
+    .add_event_stage("stage:recipe:on_bake", "stage:recipe:groups")
     .update_order()
 )
 manager.add_stage(
@@ -476,16 +476,16 @@ if shared.IS_CLIENT:
         )
         .add_event_stage("stage:model:model_bake", "stage:model:model_bake:prepare")
         .add_event_stage("stage:model:item:search")
-        .add_event_stage("stage:model:item:bake", "stage:model:item:search")
+        .add_event_stage("stage:model:item:on_bake", "stage:model:item:search")
         .update_order()
     )
     manager.add_stage(
         LoadingStage(
             "minecraft:textures", "preparing texture atlases", "minecraft:models"
         )
-        .add_event_stage("stage:textureatlas:bake")
-        .add_event_stage("stage:boxmodel:bake", "stage:textureatlas:bake")
-        .add_event_stage("stage:block_boundingbox_get", "stage:boxmodel:bake")
+        .add_event_stage("stage:textureatlas:on_bake")
+        .add_event_stage("stage:boxmodel:on_bake", "stage:textureatlas:on_bake")
+        .add_event_stage("stage:block_boundingbox_get", "stage:boxmodel:on_bake")
         .update_order()
     )
     manager.add_stage(

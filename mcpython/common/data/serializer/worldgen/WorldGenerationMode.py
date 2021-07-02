@@ -11,16 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import re
 import typing
 
-import mcpython.common.data.serializer.DataSerializerHandler
+import mcpython.common.data.serializer.DataSerializationManager
 import mcpython.util.data
 from mcpython import shared
-from mcpython.common.data.serializer.DataSerializerHandler import ISerializeAble
+from mcpython.common.data.serializer.DataSerializationManager import ISerializeAble
 
 
 class WorldGenerationModeSerializer(
-    mcpython.common.data.serializer.DataSerializerHandler.ISerializer
+    mcpython.common.data.serializer.DataSerializationManager.ISerializer
 ):
     COLLECTED = []
     BIOME_SOURCES: typing.Dict[str, typing.Type] = {}
@@ -126,13 +127,15 @@ class WorldGenerationModeSerializer(
         cls.COLLECTED.clear()
 
 
-instance = mcpython.common.data.serializer.DataSerializerHandler.DatapackSerializationHelper(
-    "minecraft:world_gen_modes",
-    "data/{pathname}/worldgen/modes",
-    data_formatter=mcpython.util.data.bytes_to_json,
-    data_un_formatter=mcpython.util.data.json_to_bytes,
-    re_run_on_reload=True,
-    load_on_stage="stage:worldgen:serializer:mode:load",
-).register_serializer(WorldGenerationModeSerializer)
+instance = (
+    mcpython.common.data.serializer.DataSerializationManager.DataSerializationService(
+        "minecraft:world_gen_modes",
+        re.compile("data/[A-Za-z0-9-_]+/worldgen/modes/[A-Za-z0-9/-_]+.json"),
+        data_deserializer=mcpython.util.data.bytes_to_json,
+        data_serializer=mcpython.util.data.json_to_bytes,
+        re_run_on_reload=True,
+    ).register_serializer(WorldGenerationModeSerializer)
+)
 instance.on_deserialize = WorldGenerationModeSerializer.register
-instance.on_clear = WorldGenerationModeSerializer.clear
+instance.on_unload = WorldGenerationModeSerializer.clear
+instance.register_listener()

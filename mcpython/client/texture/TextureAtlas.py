@@ -177,4 +177,4 @@ class TextureAtlas:
 
 handler = TextureAtlasGenerator()
 
-shared.mod_loader("minecraft", "stage:textureatlas:bake")(handler.output)
+shared.mod_loader("minecraft", "stage:textureatlas:on_bake")(handler.output)

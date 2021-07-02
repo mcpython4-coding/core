@@ -11,8 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import logger, shared
 import typing
+
+from mcpython import logger, shared
 
 
 class Tag:
@@ -42,7 +43,11 @@ class Tag:
         """
         dep = []
         for entry in self.entries[:]:
-            if isinstance(entry, str) and entry.startswith("#") and entry in self.master.tags:
+            if (
+                isinstance(entry, str)
+                and entry.startswith("#")
+                and entry in self.master.tags
+            ):
                 dep.append(entry)
             else:
                 # todo: implement

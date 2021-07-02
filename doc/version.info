@@ -1721,3 +1721,5 @@ R   [uuk]: improved world serialization API
 [uuk]: <jvm> fixed InvokeDynamic on abstact methods and on signature expansion
 [uuk]: exported java jvm with bridge and built-ins into separate repository
 [uuk]: refactored the complete resource serialization system
+[uuk]: resource system lookup uses now regex instead of some bad handling, preparing for better times
+[uuk]: reworked some rendering bits, hopefully optimising them

@@ -24,7 +24,9 @@ class TagTargetHolder:
 
             mcpython.common.data.serializer.tags.TagGroup.TagGroup.TAG_HOLDERS.setdefault(
                 name, []
-            ).append(self)
+            ).append(
+                self
+            )
 
     def register_class(self, cls):
         self.classes.append(cls)

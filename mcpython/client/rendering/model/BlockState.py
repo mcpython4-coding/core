@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import copy
 import random
 import typing
+from abc import ABC
 
 import mcpython.client.rendering.model.api
 import mcpython.common.block.BoundingBox
@@ -29,7 +30,7 @@ class BlockStateNotNeeded(Exception):
     pass
 
 
-class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
+class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent, ABC):
     """
     Abstract base class for block state decoders
 
@@ -42,7 +43,7 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent):
         __init__(data, BlockStateDefinition) -> Instance
 
     Baking:
-        bake() is called to bake references and do similar stuff, returning success or not
+        bake() is called to on_bake references and do similar stuff, returning success or not
 
     Drawing:
         add_face_to_batch() should add the given face to the batches given
@@ -182,9 +183,10 @@ class MultiPartDecoder(IBlockStateDecoder):
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
         batch: pyglet.graphics.Batch,
         face: mcpython.util.enums.EnumSide,
+        previous=None,
     ):
         state = instance.get_model_state()
-        prepared_vertex, prepared_texture, boxmodel = [], [], None
+        prepared_vertex, prepared_texture, box_model = ([], [], None) if previous is None else (*previous, None)
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
@@ -192,11 +194,9 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model, config, _ = BlockState.decode_entry(data)
                     if model not in shared.model_handler.models:
                         continue
-                    (a, b), boxmodel = shared.model_handler.models[
+                    _, box_model = shared.model_handler.models[
                         model
-                    ].get_prepared_data_for(instance.position, config, face)
-                    prepared_vertex.extend(a)
-                    prepared_texture.extend(b)
+                    ].get_prepared_data_for(instance.position, config, face, previous=(prepared_vertex, prepared_texture))
                 else:
                     if instance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
@@ -208,15 +208,13 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[instance.block_state]
                         )
-                    (a, b), boxmodel = shared.model_handler.models[
+                    _, box_model = shared.model_handler.models[
                         model
-                    ].get_prepared_data_for(instance.position, config, face)
-                    prepared_vertex.extend(a)
-                    prepared_texture.extend(b)
+                    ].get_prepared_data_for(instance.position, config, face, previous=(prepared_vertex, prepared_texture))
         return (
             tuple()
-            if boxmodel is None
-            else boxmodel.add_prepared_data_to_batch(
+            if box_model is None
+            else box_model.add_prepared_data_to_batch(
                 (prepared_vertex, prepared_texture), batch
             )
         )
@@ -303,6 +301,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
         face: mcpython.util.enums.EnumSide,
+        previous=None,
     ):
         state = instance.get_model_state()
         prepared_vertex, prepared_texture, boxmodel = [], [], None
@@ -313,11 +312,9 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model, config, _ = BlockState.decode_entry(data)
                     if model not in shared.model_handler.models:
                         continue
-                    (a, b), boxmodel = shared.model_handler.models[
+                    _, boxmodel = shared.model_handler.models[
                         model
-                    ].get_prepared_data_for(instance.position, config, face)
-                    prepared_vertex.extend(a)
-                    prepared_texture.extend(b)
+                    ].get_prepared_data_for(instance.position, config, face, previous=(prepared_vertex, prepared_texture))
                 else:
                     if instance.block_state is None:
                         entries = [BlockState.decode_entry(e) for e in data]
@@ -329,11 +326,9 @@ class MultiPartDecoder(IBlockStateDecoder):
                         model, config, _ = BlockState.decode_entry(
                             data[instance.block_state]
                         )
-                    (a, b), boxmodel = shared.model_handler.models[
+                    _, boxmodel = shared.model_handler.models[
                         model
-                    ].get_prepared_data_for(instance.position, config, face)
-                    prepared_vertex.extend(a)
-                    prepared_texture.extend(b)
+                    ].get_prepared_data_for(instance.position, config, face, previous=(prepared_vertex, prepared_texture))
         if boxmodel is not None:
             boxmodel.draw_prepared_data((prepared_vertex, prepared_texture))
 

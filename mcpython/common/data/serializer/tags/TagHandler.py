@@ -11,13 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.data.serializer.tags.Tag
 import mcpython.common.data.serializer.tags.TagGroup
 import mcpython.common.mod.ModMcpython
 import mcpython.ResourceLoader
 from mcpython import logger, shared
-
-import typing
 
 
 class TagHandler:
@@ -128,7 +128,9 @@ class TagHandler:
 
         return self.tag_groups[group].tags[name].entries
 
-    def get_tags_for_entry(self, identifier: str, group: str) -> typing.List[mcpython.common.data.serializer.tags.Tag.Tag]:
+    def get_tags_for_entry(
+        self, identifier: str, group: str
+    ) -> typing.List[mcpython.common.data.serializer.tags.Tag.Tag]:
         """
         Will return an list of all tag instances these instance does occur in
         :param identifier: the identifier to search for

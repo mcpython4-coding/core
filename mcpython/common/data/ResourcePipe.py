@@ -20,6 +20,8 @@ import mcpython.common.config
 import mcpython.common.data.DataPacks
 from mcpython import shared
 
+from .abstract import AbstractReloadListener
+
 
 def recipe_mapper(modname, pathname):
     import mcpython.common.container.crafting.CraftingManager
@@ -60,7 +62,9 @@ def tag_mapper(modname, pathname):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:tag:group",
-        lambda: mcpython.common.data.serializer.tags.TagHandler.add_from_location(pathname),
+        lambda: mcpython.common.data.serializer.tags.TagHandler.add_from_location(
+            pathname
+        ),
         info="adding tag groups for mod {}".format(modname),
     )
 
@@ -92,6 +96,20 @@ class ResourcePipeHandler:
         self.reload_handlers = []
         self.bake_handlers = []
         self.data_processors = []
+
+        self.listeners: typing.List[typing.Type[AbstractReloadListener]] = []
+
+        shared.mod_loader("minecraft", "stage:post")(self.reload_content)
+
+    def register_listener(self, listener: typing.Type[AbstractReloadListener]):
+        self.listeners.append(listener)
+
+        def l():
+            listener.on_reload(True)
+
+        shared.mod_loader("minecraft", "stage:post")(l)
+
+        return self
 
     def register_for_mod(self, providing_mod: str, namespace: str = None):
         """
@@ -167,8 +185,15 @@ class ResourcePipeHandler:
         for function in self.reload_handlers:
             function()
 
+        for listener in self.listeners:
+            listener.on_unload()
+            listener.on_reload()
+
         for function in self.bake_handlers:
             function()
+
+        for listener in self.listeners:
+            listener.on_bake()
 
         shared.event_handler.call("data:reload:work")
 

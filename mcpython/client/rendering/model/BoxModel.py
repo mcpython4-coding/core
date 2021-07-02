@@ -12,6 +12,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
+from abc import ABC
+
+from pyglet.graphics.vertexdomain import VertexList
 
 import mcpython.common.config
 import mcpython.ResourceLoader
@@ -43,8 +46,13 @@ UV_INDICES = [(0, 3, 2, 1), (1, 0, 3, 2)] + [
 SIMILAR_VERTEX = {}
 
 
+class AbstractBoxModel(ABC):
+    def copy(self) -> "AbstractBoxModel":
+        raise NotImplementedError
+
+
 @onlyInClient()
-class BoxModel:
+class BoxModel(AbstractBoxModel):
     @classmethod
     def new(cls, data: dict, model=None):
         return cls(data, model)
@@ -143,18 +151,10 @@ class BoxModel:
             SIMILAR_VERTEX[status] = self
 
         self.tex_data = None
-        self.un_active = None
+        self.inactive = None
 
         if model is not None and model.drawable and self.model.texture_atlas:
-            # todo: add additional flag for this
-            if shared.mod_loader.finished:
-                self.build()
-
-            else:
-                # todo: can we extract data if needed?
-                shared.mod_loader["minecraft"].eventbus.subscribe(
-                    "stage:boxmodel:bake", self.build
-                )
+            self.build()
 
         self.raw_vertices = mcpython.util.math.cube_vertices_better(
             0,
@@ -193,7 +193,7 @@ class BoxModel:
             rotation=self.texture_region_rotate,
         )
 
-        self.un_active = {
+        self.inactive = {
             face: array[i] == (0, 0) or array[i] is None
             for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
         }
@@ -256,10 +256,10 @@ class BoxModel:
         return [sum(e, tuple()) for e in vertex_r]
 
     def get_prepared_box_data(
-        self, position, rotation, active_faces=None, uv_lock=False
+        self, position, rotation, active_faces=None, uv_lock=False, previous=None
     ):
         vertex = self.get_vertex_variant(rotation, position)
-        collected_data = [], []
+        collected_data = ([], []) if previous is None else previous
         for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:
                 face = face.rotate(rotation)
@@ -285,7 +285,7 @@ class BoxModel:
             ):
                 if (
                     not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-                    and self.un_active[face.rotate(rotation)]
+                    and self.inactive[face.rotate(rotation)]
                 ):
                     continue
 
@@ -294,10 +294,12 @@ class BoxModel:
 
         return collected_data
 
-    def add_prepared_data_to_batch(self, collected_data, batch):
+    def add_prepared_data_to_batch(self, collected_data: typing.Tuple[typing.List[float], typing.List[float]], batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]]) -> typing.Iterable[VertexList]:
+        # Here we have nothing to do
         if len(collected_data[0]) == 0:
             return tuple()
 
+        # select a batch when multiple are provided
         if type(batch) == list:
             batch = (
                 batch[0]
@@ -308,6 +310,9 @@ class BoxModel:
                 else batch[1]
             )
 
+        # pyglet-2 thing: shader here
+        # todo: export to somewhere where it is easier to exchange
+        # todo: add option to make mutable
         return (
             batch.add(
                 len(collected_data[0]) // 3,
@@ -321,13 +326,17 @@ class BoxModel:
     def add_to_batch(
         self,
         position: typing.Tuple[float, float, float],
-        batch,
-        rotation,
+        batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]],
+        rotation: typing.Tuple[float, float, float],
         active_faces=None,
         uv_lock=False,
     ):
         """
         Adds the box model to the batch
+
+        Internally wraps a get_prepared_box_data call around the add_prepared_data_to_batch method
+
+        Use combined data where possible
         :param position: the position based on
         :param batch: the batches to select from
         :param rotation: the rotation to use
@@ -341,7 +350,14 @@ class BoxModel:
         )
         return self.add_prepared_data_to_batch(collected_data, batch)
 
-    def draw_prepared_data(self, collected_data):
+    def draw_prepared_data(self, collected_data: typing.Tuple[typing.List[float], typing.List[float]]):
+        """
+        Draws prepared data to the screen
+        WARNING: the invoker is required to set up OpenGL for rendering the stuff, including linking the textures
+
+        Use batches when possible
+        :param collected_data: the data
+        """
         if len(collected_data[0]) != 0:
             self.atlas.group.set_state()
             pyglet.graphics.draw(
@@ -355,12 +371,12 @@ class BoxModel:
     def draw(
         self,
         position: typing.Tuple[float, float, float],
-        rotation,
-        active_faces=None,
-        uv_lock=False,
+        rotation: typing.Tuple[float, float, float],
+        active_faces: typing.List[bool] = None,
+        uv_lock: bool = False,
     ):
         """
-        draws the BoxModel direct into the world
+        Draws the BoxModel direct into the world
         WARNING: use batches for better performance
         :param position: the position to draw on
         :param rotation: the rotation to draw with
@@ -400,34 +416,37 @@ class BoxModel:
 
 
 @onlyInClient()
-class BaseBoxModel:
+class RawBoxModel(AbstractBoxModel):
     """
-    An non-model-bound boxmodel class
+    A non-model-bound BoxModel class
     """
 
     def __init__(
         self,
-        relative_position: tuple,
-        size: tuple,
-        texture,
-        texture_region=None,
-        rotation=(0, 0, 0),
-        rotation_center=None,
+        relative_position: typing.Tuple[float, float, float],
+        size: typing.Tuple[float, float, float],
+        texture: typing.Union[str, pyglet.graphics.TextureGroup],
+        texture_region: typing.List[typing.Tuple[float, float, float, float]] = None,
+        rotation: typing.Tuple[float, float, float] = (0, 0, 0),
+        rotation_center: typing.Tuple[float, float, float] = None,
     ):
         """
-        Creates an new renderer for the box-model
-        :param relative_position: where to position the box relative to draw position
+        Creates a new renderer for the box-model
+        :param relative_position: where to draw the box, used in calculations of vertex coordinates
         :param size: the size of the box
         :param texture: which texture to use. May be str or pyglet.graphics.TextureGroup
         :param texture_region: which tex region to use, from (0, 0) to (1, 1)
-        :param rotation: how to rotate the bbox
+        :param rotation: how to rotate the box around rotation_center
         :param rotation_center: where to rotate the box around
         """
+        # default texture region is all texture
         if texture_region is None:
             texture_region = [(0, 0, 1, 1)] * 6
+
         self.relative_position = relative_position
         self.size = size
         self.raw_texture = texture if type(texture) == str else None
+
         self.texture = (
             texture
             if type(texture) == pyglet.graphics.TextureGroup
@@ -435,6 +454,7 @@ class BaseBoxModel:
                 mcpython.ResourceLoader.read_pyglet_image(texture).get_texture()
             )
         )
+
         self.__texture_region = texture_region
         self.__rotation = rotation
         self.vertex_cache = []
@@ -464,12 +484,14 @@ class BaseBoxModel:
         return self
 
     def recalculate_cache(self):
+        # todo: I think we can do better here
         vertices = sum(
             mcpython.util.math.cube_vertices_better(
                 *self.relative_position, *[self.size[i] / 2 for i in range(3)]
             ),
             [],
         )
+
         self.vertex_cache.clear()
         for i in range(len(vertices) // 3):
             self.vertex_cache.append(
@@ -477,6 +499,8 @@ class BaseBoxModel:
                     vertices[i * 3 : i * 3 + 3], self.rotation_center, self.__rotation
                 )
             )
+
+        # todo: this seems odd
         self.texture_cache = sum(
             mcpython.util.math.tex_coordinates_better(
                 *[(0, 0)] * 6, size=(1, 1), tex_region=self.__texture_region
@@ -502,64 +526,48 @@ class BaseBoxModel:
 
     texture_region = property(get_texture_region, set_texture_region)
 
-    def add_to_batch(
-        self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)
-    ):
-        vertex = []
+    def get_vertices(self, position, rotation, rotation_center):
         x, y, z = position
+
         if rotation in self.rotated_vertex_cache:
-            vertex = [
+            return [
                 e + position[i % 3]
                 for i, e in enumerate(self.rotated_vertex_cache[rotation])
             ]
         else:
+            self.rotated_vertex_cache[rotation] = []
+            vertices = []
             for dx, dy, dz in self.vertex_cache:
-                vertex.extend(
-                    mcpython.util.math.rotate_point(
-                        (x + dx, y + dy, z + dz), rotation_center, rotation
-                    )
+                dx, dy, dz = mcpython.util.math.rotate_point(
+                    (dx, dy, dz), rotation_center, rotation
                 )
-            self.rotated_vertex_cache[rotation] = vertex
-        result = []
-        for i in range(6):
-            t = self.texture_cache[i * 8 : i * 8 + 8]
-            v = vertex[i * 12 : i * 12 + 12]
-            result.append(
-                batch.add(
-                    4,
-                    pyglet.gl.GL_QUADS,
-                    self.texture,
-                    ("v3f/static", v),
-                    ("t2f/static", t),
-                )
-            )
-        return result
+                vertices.extend((x + dx, y + dy, z + dz))
+                self.rotated_vertex_cache[rotation].extend((x, y, z))
+            return vertices
+
+    def add_to_batch(
+        self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        return batch.add(
+            4 * 6,
+            pyglet.gl.GL_QUADS,
+            self.texture,
+            ("v3f/static", vertices),
+            ("t2f/static", self.texture_cache),
+        )
 
     def add_face_to_batch(
         self, batch, position, face, rotation=(0, 0, 0), rotation_center=(0, 0, 0)
     ):
-        vertex = []
-        x, y, z = position
-        if rotation in self.rotated_vertex_cache:
-            vertex = [
-                e + position[i % 3]
-                for i, e in enumerate(self.rotated_vertex_cache[rotation])
-            ]
-        else:
-            for dx, dy, dz in self.vertex_cache:
-                vertex.extend(
-                    mcpython.util.math.rotate_point(
-                        (x + dx, y + dy, z + dz), rotation_center, rotation
-                    )
-                )
-            self.rotated_vertex_cache[rotation] = vertex
+        vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
             if not i ** 2 & face:
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
-            v = vertex[i * 12 : i * 12 + 12]
+            v = vertices[i * 12 : i * 12 + 12]
             result.append(
                 batch.add(
                     4,
@@ -572,26 +580,16 @@ class BaseBoxModel:
         return result
 
     def draw(self, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
-        vertex = []
-        x, y, z = position
-        if rotation in self.rotated_vertex_cache:
-            vertex = [
-                e + position[i % 3]
-                for i, e in enumerate(self.rotated_vertex_cache[rotation])
-            ]
-        else:
-            self.rotated_vertex_cache[rotation] = []
-            for dx, dy, dz in self.vertex_cache:
-                dx, dy, dz = mcpython.util.math.rotate_point(
-                    (dx, dy, dz), rotation_center, rotation
-                )
-                self.rotated_vertex_cache[rotation].extend((dx, dy, dz))
-                vertex.extend((x + dx, y + dy, z + dz))
-        self.texture.set_state()
-        for i in range(6):
-            t = self.texture_cache[i * 8 : i * 8 + 8]
-            v = vertex[i * 12 : i * 12 + 12]
-            pyglet.graphics.draw(
-                4, pyglet.gl.GL_QUADS, ("v3f/static", v), ("t2f/static", t)
-            )
-        self.texture.unset_state()
+        vertices = self.get_vertices(position, rotation, rotation_center)
+
+        if self.texture is not None:
+            self.texture.set_state()
+
+        pyglet.graphics.draw(
+            4 * 6,
+            pyglet.gl.GL_QUADS,
+            ("v3f/static", vertices), ("t2f/static", self.texture_cache)
+        )
+
+        if self.texture is not None:
+            self.texture.unset_state()
