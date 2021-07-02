@@ -17,12 +17,15 @@ This project is not official by mojang and does not relate to it.
 import sys
 
 # everything lower than python 3.9 is not supported, we are using python 3.9 features!
-if sys.version_info.major < 3 or sys.version_info.minor < 9:
+if sys.version_info.major != 3 or sys.version_info.minor < 9:
     print(
-        "[FATAL] you are using an not supported version of python. "
+        "[VERSION DETECTOR][FATAL] you are using an not supported version of python. "
         "You need at least python 3.9 in order to run the game!"
     )
     sys.exit(-1)
+
+if sys.version_info.minor >= 10:
+    print(f"[VERSION DETECTOR][WARN] Detected python version 3.{sys.version_info.minor}, which is >= 10, which may break at any point")
 
 # the LaunchWrapper which launches all stuff
 import mcpython.LaunchWrapper
