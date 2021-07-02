@@ -22,7 +22,9 @@ import mcpython.ResourceLoader
 from mcpython import logger, shared
 
 COLLECTED_ITEMS = []
-tag_holder = mcpython.common.data.serializer.tags.TagTargetHolder.TagTargetHolder("items")
+tag_holder = mcpython.common.data.serializer.tags.TagTargetHolder.TagTargetHolder(
+    "items"
+)
 
 
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:

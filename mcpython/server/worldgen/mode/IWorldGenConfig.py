@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.data.serializer.DataSerializerHandler
+import mcpython.common.data.serializer.DataSerializationManager
 import mcpython.common.data.serializer.worldgen.WorldGenerationMode
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.layer.DefaultBiomeLayer
@@ -83,7 +83,9 @@ class DefaultBiomeSource(IBiomeSource):
         return tuple()
 
 
-class IWorldGenConfig(mcpython.common.data.serializer.DataSerializerHandler.ISerializeAble):
+class IWorldGenConfig(
+    mcpython.common.data.serializer.DataSerializationManager.ISerializeAble
+):
     SERIALIZER = (
         mcpython.common.data.serializer.worldgen.WorldGenerationMode.WorldGenerationModeSerializer
     )

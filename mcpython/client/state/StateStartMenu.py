@@ -50,7 +50,9 @@ class StateStartMenu(mcpython.client.state.State.State):
     @staticmethod
     def on_key_press(key, modifier):
         if key == pyglet.window.key.ENTER:
-            shared.state_handler.change_state("minecraft:world_selection", immediate=False)
+            shared.state_handler.change_state(
+                "minecraft:world_selection", immediate=False
+            )
 
 
 start_menu = None

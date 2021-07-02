@@ -1720,3 +1720,4 @@ R   [uuk]: improved world serialization API
 [uuk]: <jvm> fixed tableswitch instruction
 [uuk]: <jvm> fixed InvokeDynamic on abstact methods and on signature expansion
 [uuk]: exported java jvm with bridge and built-ins into separate repository
+[uuk]: refactored the complete resource serialization system

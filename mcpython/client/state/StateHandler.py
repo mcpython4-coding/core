@@ -91,7 +91,7 @@ class StateHandler:
 handler = shared.state_handler = StateHandler()
 
 
-def load_states():    
+def load_states():
     import mcpython.client.gui.InventoryHandler
 
     from . import (
