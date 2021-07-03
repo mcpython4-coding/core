@@ -39,13 +39,16 @@ if __name__ == "__main__":
     from mcpython import logger
 
     try:
-        wrapper.prepare_client()
-        logger.println("client side")
-        wrapper.print_header()
-        wrapper.inject_sys_argv(sys.argv)  # load sys.argv
-        logger.println("[INFO] setup complete")
-        wrapper.setup()  # do setup stuff
-        wrapper.launch()  # and start mainloop
+        wrapper.set_client()
+        wrapper.full_launch()
+
+        # wrapper.prepare_client()
+        # logger.println("client side")
+        # wrapper.print_header()
+        # wrapper.inject_sys_argv(sys.argv)  # load sys.argv
+        # logger.println("[INFO] setup complete")
+        # wrapper.setup()  # do setup stuff
+        # wrapper.launch()  # and start mainloop
     except SystemExit:
         # this is here to fix some cleanup problems
         # os._exit(-1)

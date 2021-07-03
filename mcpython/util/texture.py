@@ -14,9 +14,7 @@ This project is not official by mojang and does not relate to it.
 # util functions from manipulating image data and converting between different formats
 import typing
 
-import mcpython.util.math
 import PIL.Image
-import pyglet
 from mcpython import shared
 
 
@@ -64,33 +62,36 @@ def layer_with_alpha(base: PIL.Image.Image, top: PIL.Image.Image):
     return new_image
 
 
-def to_pyglet_image(image: PIL.Image.Image) -> pyglet.image.AbstractImage:
+def to_pyglet_image(image: PIL.Image.Image):
     """
     Will transform the image into an pyglet image
     :param image: the image to transform
     :return: the transformed one
     todo: can we do this in-memory? (less time consumed)
     """
+    import pyglet
     image.save(shared.tmp.name + "/image_helper_to_pyglet.png")
     return pyglet.image.load(shared.tmp.name + "/image_helper_to_pyglet.png")
 
 
-def to_pyglet_sprite(image: PIL.Image.Image) -> pyglet.sprite.Sprite:
+def to_pyglet_sprite(image: PIL.Image.Image):
     """
     Will transform the pillow image into an pyglet sprite
     :param image: the image
     :return: the sprite
     """
+    import pyglet
     return pyglet.sprite.Sprite(to_pyglet_image(image))
 
 
-def to_pillow_image(image: pyglet.image.AbstractImage) -> PIL.Image.Image:
+def to_pillow_image(image) -> PIL.Image.Image:
     """
     Will transform the pyglet image into an pillow one
     :param image: the image to transform
     :return: the transformed one
     todo: can we do this in-memory? (less time consumed)
     """
+    import pyglet
     image.save(shared.tmp.name + "/image_helper_to_pillow.png")
     return PIL.Image.open(shared.tmp.name + "/image_helper_to_pillow.png")
 
@@ -108,6 +109,6 @@ def int_hex_to_color(color: int) -> typing.Tuple[int, int, int]:
 
 
 def resize_image_pyglet(
-    image: pyglet.image.AbstractImage, size: typing.Tuple[int, int]
-) -> pyglet.image.AbstractImage:
+    image, size: typing.Tuple[int, int]
+):
     return to_pyglet_image(to_pillow_image(image).resize(size, PIL.Image.NEAREST))

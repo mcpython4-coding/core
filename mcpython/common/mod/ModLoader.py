@@ -20,18 +20,16 @@ import traceback
 import typing
 import zipfile
 
-import mcpython.client.state.StateLoadingException
-import mcpython.client.state.StateModLoading
+# import mcpython.client.state.StateLoadingException
+# import mcpython.client.state.StateModLoading
+from abc import ABC
+
 import mcpython.common.config
-import mcpython.common.event.EventHandler
+# import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
 
-try:
-    import jvm.JavaEntryPoint
-except ImportError:
-    pass
 
 import mcpython.ResourceLoader
 import mcpython.util.math
@@ -41,6 +39,275 @@ from mcpython import logger, shared
 
 class LoadingInterruptException(Exception):
     pass
+
+
+def cast_dependency(depend: dict):
+    """
+    Will cast an dict-structure to the depend
+    :param depend: the depend dict
+    :return: the parsed mod.Mod.ModDependency-object
+    """
+    config = {}
+
+    if "version" in depend:
+        config["version_min"] = depend["version"]
+
+    if "upper_version" in depend:
+        config["version_max"] = depend["upper_version"]
+
+    if "versions" in depend:
+        config["versions"] = depend["versions"]
+
+    return mcpython.common.mod.Mod.ModDependency(depend["name"], **config)
+
+
+def parse_provider_json(container: "ModContainer", data: dict):
+    if "importDirect" in data:
+        for module in data["importDirect"]:
+            try:
+                importlib.import_module(module)
+            except:
+                logger.println(f"[MOD DISCOVERY][ERROR] failed to load module {module} for container {container} in early loading phase")
+
+
+class ModContainer:
+    """
+    Class holding information about a mod file
+    """
+
+    def __init__(self, path: str):
+        self.path = path
+        self.assigned_mod_loader: typing.Optional[AbstractModLoaderInstance] = None
+
+        if zipfile.is_zipfile(path):
+            self.resource_access = mcpython.ResourceLoader.ResourceZipFile(path)
+            sys.path.append(path)
+        elif os.path.isdir(path):
+            self.resource_access = mcpython.ResourceLoader.ResourceDirectory(path)
+            sys.path.append(path)
+        elif os.path.isfile(path):
+            # In this case, it is a file, so we know what mod loader to use
+            self.resource_access = mcpython.ResourceLoader.SimulatedResourceLoader()
+            self.assigned_mod_loader = PyFileModLoader(self)
+            self.assigned_mod_loader.on_select()
+        else:
+            raise RuntimeError(f"Invalid mod source file: {path}")
+        
+        self.loaded_mods = []
+
+    def try_identify_mod_loader(self):
+        """
+        Does some clever lookup for identifying the mod loader
+        """
+        if self.assigned_mod_loader is not None: return
+        
+        for loader in ModLoader.KNOWN_MOD_LOADERS:
+            if loader.match_container_loader(self):
+                self.assigned_mod_loader = loader(self)
+                break
+        else:
+            return
+        
+        self.assigned_mod_loader.on_select()
+
+    def load_meta_files(self):
+        """
+        Looks out for some meta files
+        """
+        # this file allows some special stuff to happen before real loading stuff
+        if self.resource_access.is_in_path("provider.json"):
+            parse_provider_json(self, json.loads(self.resource_access.read_raw("provider.json").decode("utf-8")))
+
+    def __repr__(self):
+        return f"ModContainer(path='{self.path}',loader={self.assigned_mod_loader})"
+
+
+class AbstractModLoaderInstance(ABC):
+    @classmethod
+    def match_container_loader(cls, container: ModContainer) -> bool:
+        return False
+
+    def __init__(self, container: ModContainer):
+        self.container = container
+        self.parent = None
+        self.raw_data = None
+
+    def on_select(self):
+        """
+        Informal method called sometime after construction
+        """
+
+
+class PyFileModLoader(AbstractModLoaderInstance):
+    pass
+
+
+class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
+    @classmethod
+    def match_container_loader(cls, container: ModContainer) -> bool:
+        return container.resource_access.is_in_path("mods.json")
+
+    def on_select(self):
+        data = json.loads(self.container.resource_access.read_raw("mods.json").decode("utf-8"))
+
+        self.raw_data = data
+        self.load_from_data(data)
+
+    def load_from_data(self, data):
+
+        version = data["version"]
+        if version == "1.2.0":  # latest
+            for entry in data["entries"]:
+                if "name" not in entry:
+                    shared.mod_loader.error_builder.println(
+                        "- invalid entry in '{}' (entry: {}): missing entry-tag".format(
+                            self.container, entry
+                        )
+                    )
+                    continue
+
+                modname = entry["name"]
+                loader = entry["loader"] if "loader" in entry else "python:default"
+                if loader == "python:default":
+                    if "version" not in entry:
+                        shared.mod_loader.error_builder.println(
+                            "- invalid entry found in '{}' (mod: {]): missing 'version'-entry".format(
+                                self.container, modname
+                            )
+                        )
+                        continue
+
+                    version = tuple([int(e) for e in entry["version"].split(".")])
+                    instance = mcpython.common.mod.Mod.Mod(modname, version)
+
+                    if "depends" in entry:
+                        for depend in entry["depends"]:
+                            t = None if "type" not in depend else depend["type"]
+                            if t is None or t == "depend":
+                                instance.add_dependency(cast_dependency(depend))
+                            elif t == "depend_not_load_order":
+                                instance.add_not_load_dependency(
+                                    cast_dependency(depend)
+                                )
+                            elif t == "not_compatible":
+                                instance.add_not_compatible(
+                                    cast_dependency(depend)
+                                )
+                            elif t == "load_before":
+                                instance.add_load_before_if_arrival(
+                                    cast_dependency(depend)
+                                )
+                            elif t == "load_after":
+                                instance.add_load_after_if_arrival(
+                                    cast_dependency(depend)
+                                )
+                            elif t == "only_if":
+                                instance.add_load_only_when_arrival(
+                                    cast_dependency(depend)
+                                )
+                            elif t == "only_if_not":
+                                instance.add_load_only_when_not_arrival(
+                                    cast_dependency(depend)
+                                )
+
+                    if "load_resources" in entry and entry["load_resources"]:
+                        instance.add_load_default_resources()
+
+                    for location in entry["load_files"]:
+                        try:
+                            importlib.import_module(
+                                location.replace("/", ".").replace("\\", ".")
+                            )
+                        except ModuleNotFoundError:
+                            shared.mod_loader.error_builder.println(
+                                "- can't load mod file {}".format(location)
+                            )
+                            return
+                elif loader in ModLoader.JSON_LOADERS:
+                    mod_loader = ModLoader.JSON_LOADERS[loader](self.container)
+                    mod_loader.parent = self
+                    mod_loader.on_select()
+                else:
+                    shared.mod_loader.error_builder.println(
+                        f"mod version file {self.container} specified dependency on mod loader {loader}, which is not arrival!"
+                    )
+        else:
+            raise IOError("invalid version: {}".format(version))
+
+
+class TomlModLoader(DefaultModJsonBasedLoader):
+    @classmethod
+    def match_container_loader(cls, container: ModContainer) -> bool:
+        return container.resource_access.is_in_path("mods.toml") or container.resource_access.is_in_path("META-INF/mods.toml")
+
+    def on_select(self):
+        if self.container.resource_access.is_in_path("mods.toml"):
+            data = self.container.resource_access.read_raw("mods.toml")
+        else:
+            data = self.container.resource_access.read_raw("META-INF/mods.toml")
+
+        data = toml.loads(data.decode("utf-8"))
+        self.raw_data = data
+        self.load_from_data(data)
+
+    def load_from_data(self, data):
+        if "modLoader" in data:
+            if data["modLoader"] != "pythonml":
+                loader = data["modLoader"]
+
+                if loader in ModLoader.TOML_LOADERS:
+                    mod_loader = ModLoader.TOML_LOADERS[loader](self.container)
+                    mod_loader.parent = self
+                    try:
+                        mod_loader.on_select()
+                    except:
+                        logger.print_exception(f"during decoding container {self.container}")
+                    else:
+                        self.container.assigned_mod_loader = mod_loader
+                else:
+                    shared.mod_loader.error_builder.println(
+                        "- found mod-loader requirement '{}' in {}, which is not supported in this env".format(
+                            loader, self.container
+                        )
+                    )
+                return
+
+        if "loaderVersion" in data:
+            if data["loaderVersion"].startswith("["):
+                shared.mod_loader.error_builder.println(
+                    "- found forge-version indicator in mod from {}, which is currently unsupported".format(
+                        self.container
+                    )
+                )
+                return
+
+            version = data["loaderVersion"]
+
+            if version.endswith("["):
+                mc_version = 0  # todo: implement
+            elif version.count("[") == version.count("]") == 0:
+                mc_version = version.split("|")
+            else:
+                shared.mod_loader.error_builder.println(
+                    "[SOURCE][FATAL] can't decode version id '{}' in container {]".format(version, self.container)
+                )
+                return
+        else:
+            mc_version = None
+
+        super().load_from_data({"main files": [e["importable"] for e in data["main_files"]]})
+
+        for instance in shared.mod_loader.located_mod_instances:
+            instance.add_dependency(
+                mcpython.common.mod.Mod.ModDependency("minecraft", mc_version)
+            )
+
+        for modname in data["dependencies"]:
+            for dependency in data["dependencies"][modname]:
+                name = dependency["modId"]
+                if name != "forge":
+                    shared.mod_loader.mods[modname].add_dependency(name)
+                    # todo: add version of mod
 
 
 class ModLoader:
@@ -57,12 +324,23 @@ class ModLoader:
         damage on the end user pc and/or direct or indirect stealing of valuable information about the user, including
         the download of programs to do so.
     """
+    KNOWN_MOD_LOADERS: typing.List[typing.Type[AbstractModLoaderInstance]] = [
+        PyFileModLoader,
+        DefaultModJsonBasedLoader,
+        TomlModLoader,
+    ]
+
+    JSON_LOADERS: typing.Dict[str, typing.Type[AbstractModLoaderInstance]] = {}
+    TOML_LOADERS: typing.Dict[str, typing.Type[AbstractModLoaderInstance]] = {}
 
     def __init__(self):
         """
         Creates a new mod-loader-instance
         WARNING: only ONE instance should be present, otherwise, bad things might happen
         """
+        self.found_mod_files: typing.Set[str] = set()
+        self.mod_containers: typing.List[ModContainer] = []
+
         # the list of located mods
         self.located_mods: typing.List[mcpython.common.mod.Mod.Mod] = []
 
@@ -126,57 +404,42 @@ class ModLoader:
     def __iter__(self):
         return self.mods.values()
 
-    def get_locations(self) -> list:
-        """
-        Will return a list of mod locations found for loading
-        Will parse sys.argv input
-        %home%/mods is searched by default
-        todo: add a way to disable the default location
-        """
-        locations = []
+    def look_for_mod_files(self):
         folders = [shared.home + "/mods"]
-        i = 0
 
-        while i < len(sys.argv):
-            element = sys.argv[i]
-            if element == "--add-mod-dir":
-                folders.append(sys.argv[i + 1])
-                for _ in range(2):
-                    sys.argv.pop(i)
-                sys.path.append(folders[-1])
-            elif element == "--add-mod-file":
-                locations.append(sys.argv[i + 1])
-                for _ in range(2):
-                    sys.argv.pop(i)
-            else:
-                i += 1
+        for entry in shared.launch_wrapper.get_flag_status("add-mod-dir", default=[]):
+            folders += entry
 
-        for loc in folders:
-            locations += [os.path.join(loc, x) for x in os.listdir(loc)]
+        files = set(sum([[os.path.join(loc, file) for file in os.listdir(loc)] for loc in folders], []))
+        for entry in shared.launch_wrapper.get_flag_status("add-mod-file", default=[]):
+            files |= set(entry)
 
-        i = 0
-        while i < len(sys.argv):
-            element = sys.argv[i]
-            if element == "--remove-mod-file":
-                file = sys.argv[i + 1]
-                if file in locations:
-                    locations.remove(file)
-                else:
-                    self.error_builder.println(
-                        "- attempted to remove mod file '{}' which is not found".format(
-                            file
-                        )
-                    )
-                for _ in range(2):
-                    sys.argv.pop(i)
-            else:
-                i += 1
+        for entry in shared.launch_wrapper.get_flag_status("remove-mod-file", default=[]):
+            files.difference_update(set(entry))
 
-        for i, location in enumerate(locations):
-            # todo: use name here
-            logger.ESCAPE[location.replace("\\", "/")] = "%MOD:{}%".format(i + 1)
+        # todo: escape logging here
 
-        return locations
+        self.found_mod_files |= files
+
+    def parse_mod_files(self):
+        containers = [ModContainer(path) for path in self.found_mod_files]
+        self.mod_containers += containers
+
+        for container in containers:
+            container.try_identify_mod_loader()
+
+        for container in containers:
+            container.load_meta_files()
+
+    def check_errors(self):
+        if self.error_builder.areas[-1]:
+            self.error_builder.finish()
+            raise RuntimeError()
+
+    def load_missing_mods(self):
+        for container in self.mod_containers:
+            if container.assigned_mod_loader is None:
+                container.try_identify_mod_loader()
 
     def load_mod_json_from_locations(self, locations: typing.List[str]):
         """
@@ -366,221 +629,6 @@ class ModLoader:
             m = {instance.name: instance.version for instance in self.mods.values()}
             json.dump(m, f)
         return self
-
-    def load_mods_json(self, data: str, file: str):
-        """
-        Will parse the data to the correct system
-        :param data: the data to load
-        :param file: the file located under
-        """
-        self.load_from_decoded_json(json.loads(data), file)
-        return self
-
-    def load_from_decoded_json(self, data: dict, file: str):
-        """
-        Will parse the decoded json-data to the correct system
-        :param data: the data of the mod
-        :param file: the file allocated (used for warning messages)
-        todo: maybe a better format?
-        """
-        version = data["version"]
-        if version == "1.2.0":  # latest
-            """
-            example:
-            {
-                "version": "1.2.0",
-                "entries": [
-                    {
-                        "name": "TestMod",
-                        "version": "Some.Version",
-                        "load_resources": true,
-                        "load_files": ["some.package.to.load"]
-                    }
-                ]
-            }
-            """
-            for entry in data["entries"]:
-                if "name" not in entry:
-                    self.error_builder.println(
-                        "- invalid entry in '{}' (entry: {}): missing entry-tag".format(
-                            file, entry
-                        )
-                    )
-                    continue
-
-                modname = entry["name"]
-                loader = entry["loader"] if "loader" in entry else "python:default"
-                if loader == "python:default":
-                    if "version" not in entry:
-                        self.error_builder.println(
-                            "- invalid entry found in '{}': missing 'version'-entry".format(
-                                file
-                            )
-                        )
-                        continue
-
-                    version = tuple([int(e) for e in entry["version"].split(".")])
-                    instance = mcpython.common.mod.Mod.Mod(modname, version)
-
-                    if "depends" in entry:
-                        for depend in entry["depends"]:
-                            t = None if "type" not in depend else depend["type"]
-                            if t is None or t == "depend":
-                                instance.add_dependency(self.cast_dependency(depend))
-                            elif t == "depend_not_load_order":
-                                instance.add_not_load_dependency(
-                                    self.cast_dependency(depend)
-                                )
-                            elif t == "not_compatible":
-                                instance.add_not_compatible(
-                                    self.cast_dependency(depend)
-                                )
-                            elif t == "load_before":
-                                instance.add_load_before_if_arrival(
-                                    self.cast_dependency(depend)
-                                )
-                            elif t == "load_after":
-                                instance.add_load_after_if_arrival(
-                                    self.cast_dependency(depend)
-                                )
-                            elif t == "only_if":
-                                instance.add_load_only_when_arrival(
-                                    self.cast_dependency(depend)
-                                )
-                            elif t == "only_if_not":
-                                instance.add_load_only_when_not_arrival(
-                                    self.cast_dependency(depend)
-                                )
-
-                    if "load_resources" in entry and entry["load_resources"]:
-                        instance.add_load_default_resources()
-
-                    for location in entry["load_files"]:
-                        try:
-                            importlib.import_module(
-                                location.replace("/", ".").replace("\\", ".")
-                            )
-                        except ModuleNotFoundError:
-                            self.error_builder.println(
-                                "- can't load mod file {}".format(location)
-                            )
-                            return
-                elif (
-                    loader
-                    in mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
-                        0
-                    ]
-                ):
-                    mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
-                        0
-                    ][
-                        loader
-                    ].load_mod_from_json(
-                        file, entry
-                    )
-                else:
-                    self.error_builder.println(
-                        f"mod version file {file} specified dependency on mod loader {loader}, which is not arrival!"
-                    )
-        else:
-            raise IOError("invalid version: {}".format(version))
-
-    @classmethod
-    def cast_dependency(cls, depend: dict):
-        """
-        will cast an dict-structure to the depend
-        :param depend: the depend dict
-        :return: the parsed mod.Mod.ModDependency-object
-        """
-        config = {}
-
-        if "version" in depend:
-            config["version_min"] = depend["version"]
-
-        if "upper_version" in depend:
-            config["version_max"] = depend["upper_version"]
-
-        if "versions" in depend:
-            config["versions"] = depend["versions"]
-
-        return mcpython.common.mod.Mod.ModDependency(depend["name"], **config)
-
-    def load_mods_toml(self, data: str, file: str):
-        """
-        Will load a toml-data-object
-        :param data: the toml-representation
-        :param file: the file for debugging reasons
-        """
-        try:
-            data = toml.loads(data)
-        except toml.decoder.TomlDecodeError:
-            logger.print_exception(f"error during decoding {file}")
-            logger.println(data)
-            return
-
-        if "modLoader" in data:
-            if data["modLoader"] != "pythonml":
-                loader = data["modLoader"]
-
-                if (
-                    loader
-                    in mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
-                        1
-                    ]
-                ):
-                    mcpython.common.mod.ExtensionPoint.ModLoaderExtensionPoint.EXTENSION_POINTS[
-                        1
-                    ][
-                        loader
-                    ].load_mod_from_toml(
-                        file, data
-                    )
-                else:
-                    self.error_builder.println(
-                        "- found {} in file {}. As an mod-author, please upgrade to python (pythonml) or install a loader extension mod".format(
-                            loader, file
-                        )
-                    )
-                return
-
-        if "loaderVersion" in data:
-            if data["loaderVersion"].startswith("["):
-                self.error_builder.println(
-                    "- found forge-version indicator in mod from file {}, which is currently unsupported".format(
-                        file
-                    )
-                )
-                return
-
-            version = data["loaderVersion"]
-
-            if version.endswith("["):
-                mc_version = 0  # todo: implement
-            elif version.count("[") == version.count("]") == 0:
-                mc_version = version.split("|")
-            else:
-                self.error_builder.println(
-                    "[SOURCE][FATAL] can't decode version id '{}'".format(version)
-                )
-                return
-        else:
-            mc_version = None
-
-        self.load_from_decoded_json(
-            {"main files": [e["importable"] for e in data["main_files"]]}, file
-        )
-
-        for instance in self.located_mod_instances:
-            instance.add_dependency(
-                mcpython.common.mod.Mod.ModDependency("minecraft", mc_version)
-            )
-
-        for modname in data["dependencies"]:
-            for dependency in data["dependencies"][modname]:
-                name = dependency["modId"]
-                if name != "forge":
-                    self.mods[modname].add_dependency(name)
-                    # todo: add version loader
 
     def add_to_add(self, instance: mcpython.common.mod.Mod.Mod):
         """

@@ -1725,3 +1725,5 @@ R   [uuk]: improved world serialization API
 [uuk]: reworked some rendering bits, hopefully optimising them
 [uuk]: when a child model overrides parent elements, the elements are not copied over and then discarded directly again,
        improving some loading performance
+[uuk]: reworked sys.argv parsing
+[uuk]: reworked how mods are discovered

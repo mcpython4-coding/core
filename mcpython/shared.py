@@ -15,6 +15,8 @@ import os
 import sys
 import tempfile
 
+launch_wrapper = None
+
 # todo: create MCPYTHON-class (as main game class) replacing this mess
 
 invalidate_cache = "--invalidate-cache" in sys.argv

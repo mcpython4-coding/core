@@ -16,8 +16,6 @@ import sys
 import traceback
 import typing
 
-import pyglet.app
-
 import mcpython.ResourceLoader
 import mcpython.common.config
 from mcpython import shared, logger
@@ -30,95 +28,125 @@ class LaunchWrapper:
     """
 
     def __init__(self):
+        self.is_client = -1
+
+        self.launch_config: typing.Dict[str, typing.Union[typing.List[typing.Tuple[str]], bool]] = {}
+
+        shared.launch_wrapper = self
+
+    def set_client(self):
         self.is_client = True
-        self.__side_prepared = False
 
-    def prepare_client(self):
+    def set_server(self):
+        self.is_client = False
+
+    def full_launch(self):
         """
-        Prepares a client setup
+        Method to launch everything at ones
 
-        Sets up the OpenGL driver backend
-        Spawns a window
+        General layout:
+        - logger & header
+        - argv
+        - modloader file lookup
+        - modloader file information lookup
+        - modloader loader lookup
+        - modloader mixin parse
         """
+        logger.println("[LAUNCH WRAPPER][INFO] starting loading cycle")
+        self.print_header()
+        self.parse_argv()
 
-        assert not self.__side_prepared, "can only prepare ones"
+        shared.IS_CLIENT = self.is_client
 
-        # init OpenGL
-        import pyglet
+        import mcpython.common.mod.ModLoader
 
-        self.__side_prepared = True
-        shared.IS_CLIENT = self.is_client = True
-        shared.NO_WINDOW = "--no-window" in sys.argv
+        try:
+            import jvm.JavaEntryPoint
+        except ImportError:
+            pass
 
-        import mcpython.client.rendering.window
+        shared.mod_loader.look_for_mod_files()
+        shared.mod_loader.parse_mod_files()
 
-        # todo: move size & screen to config files / sys.argv
-        # screen = pyglet.canvas.get_display().get_screens()[-1]
-        mcpython.client.rendering.window.Window(width=800, height=600, resizable=True)
-        # shared.window.set_location(screen.x+20, screen.y+60)
-        shared.window.set_caption("mcpython 4 early loading stage")
+        shared.mod_loader.check_errors()
 
-        import mcpython.common.network.Backend
+        shared.mod_loader.load_missing_mods()
 
-        shared.CLIENT_NETWORK_HANDLER = mcpython.common.network.Backend.ClientBackend()
+        # todo: parse mixins
 
-        return self
+        if self.is_client:
+            import mcpython.client.rendering.window
 
-    def prepare_server(self):
-        """
-        Prepares a sever
-        Spawns a fake "window"
-        WARNING: currently, also initializes the OpenGL driver
-        """
+            # todo: move size & screen to config files / sys.argv
+            # screen = pyglet.canvas.get_display().get_screens()[-1]
+            mcpython.client.rendering.window.Window(width=800, height=600, resizable=True)
+            # shared.window.set_location(screen.x+20, screen.y+60)
+            shared.window.set_caption("mcpython 4 early loading stage")
 
-        assert not self.__side_prepared, "can only prepare ones"
+            import mcpython.common.network.Backend
 
-        self.__side_prepared = True
-        shared.IS_CLIENT = self.is_client = False
-        shared.NO_WINDOW = True
+            shared.CLIENT_NETWORK_HANDLER = mcpython.common.network.Backend.ClientBackend()
 
-        # todo: fake-window here!
-        import mcpython.client.rendering.window
+        else:
+            import mcpython.common.network.Backend
 
-        mcpython.client.rendering.window.Window()
+            shared.SERVER_NETWORK_HANDLER = mcpython.common.network.Backend.ServerBackend()
 
-        import mcpython.common.network.Backend
+        self.setup()
+        self.launch()
 
-        shared.SERVER_NETWORK_HANDLER = mcpython.common.network.Backend.ServerBackend()
+    def parse_argv(self):
+        args = sys.argv[1:]
 
-        return self
+        if "--console" in args:
+            import mcpython.server.ServerConsoleHandler
 
-    def inject_sys_argv(self, argv: typing.List[str]):
-        """
-        Helper function for loading the sys.argv config into the game
-        todo: all sys.argv parsing belongs here, with a general parser for options not specified
-        """
-        if not self.is_client:
-            if "--console" in argv:
-                import mcpython.server.ServerConsoleHandler
+            mcpython.server.ServerConsoleHandler.handler.run()
 
-                mcpython.server.ServerConsoleHandler.handler.run()
+        if "--no-mods" in args:
+            shared.ENABLE_MOD_LOADER = False
 
-            if "--no-mods" in sys.argv:
-                shared.ENABLE_MOD_LOADER = False
+        if "--no-data-packs" in args:
+            shared.ENABLE_DATAPACK_LOADER = False
 
-            if "--no-data-packs" in sys.argv:
-                shared.ENABLE_DATAPACK_LOADER = False
+        if "--no-resource-packs" in args:
+            shared.ENABLE_RESOURCE_PACK_LOADER = False
 
-            if "--no-resource-packs" in sys.argv:
-                shared.ENABLE_RESOURCE_PACK_LOADER = False
+        current_arg: typing.Optional[str] = None
+        arg_collector: typing.List[str] = []
 
-        return self
+        for e in args:
+            if e.startswith("-"):
+                if current_arg is not None:
+                    self.launch_config.setdefault(current_arg, []).append(tuple(arg_collector))
+                elif arg_collector:
+                    logger.println("[LAUNCH WRAPPER][WARN] got arg values before arg config")
+                arg_collector.clear()
+
+            if e.startswith("--"):
+                current_arg = e.removeprefix("--")
+            elif e.startswith("-"):
+                self.launch_config[e.removeprefix("-")] = True
+                current_arg = None
+            else:
+                arg_collector.append(e)
+
+        if current_arg is not None:
+            self.launch_config.setdefault(current_arg, []).append(tuple(arg_collector))
+        elif arg_collector:
+            logger.println("[LAUNCH WRAPPER][WARN] got arg values before arg config")
+
+    def is_flag_arrival(self, flag: str):
+        return flag in self.launch_config
+
+    def get_flag_status(self, flag: str, default=None):
+        return default if flag not in self.launch_config else self.launch_config[flag]
 
     def setup(self):
         """
         Setup general stuff which does not take long to complete
         Loads first modules into memory and launches registry setup
         """
-
-        if not self.__side_prepared:
-            logger.println("[WARN] no side was set up. Falling back to client...")
-            self.prepare_client()
 
         import mcpython.ResourceLoader
         import mcpython.common.event.EventHandler
@@ -157,6 +185,7 @@ class LaunchWrapper:
 
             shared.window.close()
 
+            import pyglet.app
             pyglet.app.exit()
 
             print("closing due to event stage")
@@ -265,7 +294,6 @@ class LaunchWrapper:
 
         todo: move state selection here
         """
-        self.load_mods()
 
         import mcpython.common.container.crafting.CraftingManager
 
@@ -291,6 +319,7 @@ class LaunchWrapper:
                 sys.exit(-1)
 
         try:
+            import pyglet.app
             pyglet.app.run()
         except SystemExit:
             # sys.exit() should not be handled
