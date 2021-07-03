@@ -215,16 +215,18 @@ class ResourceDirectory(IResourceLoader):
                 for e in os.listdir(directory)
             )
 
+        # iterator os.walk is the best we have in this case
         for root, dirs, files in os.walk(self.path + "/" + directory):
             for name in files:
                 file = os.path.join(root, name).replace("\\", "/")
                 yield "/".join(file.split("/")[self.path.count("/") + 1 :])
+
             for name in dirs:
                 file = os.path.join(root, name).replace("\\", "/")
                 yield "/".join(file.split("/")[self.path.count("/") + 1 :]) + "/"
 
     def __repr__(self):
-        return "ResourceDirectoryOf({})".format(self.path)
+        return "ResourceDirectory({})".format(self.path)
 
 
 class SimulatedResourceLoader(IResourceLoader):
@@ -248,7 +250,7 @@ class SimulatedResourceLoader(IResourceLoader):
 
     @staticmethod
     def is_valid(path: str) -> bool:
-        return True
+        return False
 
     def get_path_info(self) -> str:
         return "simulated:{}".format(self.id)
@@ -266,6 +268,7 @@ class SimulatedResourceLoader(IResourceLoader):
             with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
                 f.write(self.raw[path])
             return PIL_Image.open(shared.tmp.name + "/resource_output.png")
+
         return self.images[path]
 
     def close(self):
@@ -293,10 +296,11 @@ class SimulatedResourceLoader(IResourceLoader):
                         yield d + "/"
 
 
+# data loaders for the resource locations, SimulatedResourceLoader is not a default loader
 RESOURCE_PACK_LOADERS = [
     ResourceZipFile,
     ResourceDirectory,
-]  # data loaders for the resource locations
+]
 RESOURCE_LOCATIONS = []  # an list of all resource locations in the system
 # todo: add manager class for this
 
@@ -305,6 +309,7 @@ def load_resource_packs():
     """
     Will load the resource packs found in the paths for it
     """
+
     close_all_resources()
 
     if not os.path.exists(shared.home + "/resourcepacks"):
@@ -344,7 +349,7 @@ def load_resource_packs():
             i += 1
 
     # for local accessing the various directories used by the game
-    # todo: this might need tweaks for builded executeables
+    # todo: this might need tweaks for build executables
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local))
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.home))
     RESOURCE_LOCATIONS.append(ResourceDirectory(shared.build))
@@ -364,7 +369,8 @@ def load_resource_packs():
 
 def close_all_resources():
     """
-    will close all opened resource locations
+    Will close all opened resource locations using <locator>.close()
+    Will call the resource:close event in the process
     """
     for item in RESOURCE_LOCATIONS:
         item.close()
@@ -375,21 +381,22 @@ def close_all_resources():
         shared.event_handler.call("resources:close")
 
 
+# how mc locations look like
 MC_IMAGE_LOCATIONS = [
     "block",
     "gui",
     "item",
     "entity",
     "model",
-]  # how mc locations look like
+]
 
 
 def transform_name(file: str, raise_on_error=True) -> str:
     """
-    will transform an MC-ResourceLocation string into an local path
+    Will transform an MC-ResourceLocation string into a local path
     :param file: the thing to use
     :return: the transformed
-    :param raise_on_error: will raise downer exception, otherwise return the file iself
+    :param raise_on_error: will raise downer exception, otherwise return the file name
     :raises NotImplementedError: when the data is invalid
     """
     f = file.split(":")
@@ -540,7 +547,10 @@ def read_image(file: str):
     raise ValueError("can't find resource '{}' in any path".format(file))
 
 
-def read_json(file):
+def read_json(file: str):
+    """
+    Reads a .json file from the system
+    """
     try:
         return json.loads(read_raw(file).decode("utf-8"))
     except:
