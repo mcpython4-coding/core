@@ -65,12 +65,19 @@ class LaunchWrapper:
         except ImportError:
             pass
 
+        import mcpython.common.mod.ModMcpython
+
         shared.mod_loader.look_for_mod_files()
         shared.mod_loader.parse_mod_files()
 
         shared.mod_loader.check_errors()
 
         shared.mod_loader.load_missing_mods()
+
+        shared.mod_loader.check_for_updates()
+        shared.mod_loader.write_mod_info()
+
+        shared.mod_loader.sort_mods()
 
         # todo: parse mixins
 
@@ -272,17 +279,6 @@ class LaunchWrapper:
             except:
                 logger.print_exception("[FATAL] failed to load default skin")
                 sys.exit(-1)
-
-        return self
-
-    def load_mods(self):
-        """
-        Do ModLoader initial stuff
-        Looks for mods in the path only when shared.ENABLE_MOD_LOADER is True
-        """
-        shared.mod_loader.look_out(from_files=shared.ENABLE_MOD_LOADER)
-        shared.mod_loader.sort_mods()
-        shared.mod_loader.write_mod_info()
 
         return self
 

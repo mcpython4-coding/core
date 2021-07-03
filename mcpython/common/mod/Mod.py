@@ -140,9 +140,9 @@ class Mod:
         version_name: str = None,
     ):
         """
-        creates an new mod
+        Creates a new mod
         :param name: the name of the mod
-        :param version: an tuple of CONSTANT length across ALL versions representing the version of the mod
+        :param version: a tuple of CONSTANT length across ALL versions representing the version of the mod
         """
         if type(version) != tuple:
             if type(version) == str:
@@ -168,10 +168,12 @@ class Mod:
         # need, possible, not possible, before, after, only with, only without
         self.depend_info = [[] for _ in range(7)]
         self.path = None
+        self.container = None
         self.version = version  # the version of the mod, as an tuple
         self.version_name = version_name
         self.package = None  # the package where the mod-file was found
         self.resource_access = None  # where to load resources from
+
         shared.mod_loader.add_to_add(self)
 
     def mod_string(self):

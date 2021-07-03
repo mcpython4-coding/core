@@ -80,7 +80,7 @@ class ModContainer:
         self.assigned_mod_loader: typing.Optional[AbstractModLoaderInstance] = None
 
         if zipfile.is_zipfile(path):
-            self.resource_access = mcpython.ResourceLoader.ResourceZipFile(path)
+            self.resource_access = mcpython.ResourceLoader.ResourceZipFile(path, close_when_scheduled=False)
             sys.path.append(path)
         elif os.path.isdir(path):
             self.resource_access = mcpython.ResourceLoader.ResourceDirectory(path)
@@ -92,8 +92,16 @@ class ModContainer:
             self.assigned_mod_loader.on_select()
         else:
             raise RuntimeError(f"Invalid mod source file: {path}")
+
+        import mcpython.common.event.EventHandler as EventHandler
+
+        EventHandler.PUBLIC_EVENT_BUS.subscribe("resources:load", self.add_resources)
+        self.add_resources()
         
         self.loaded_mods = []
+
+    def add_resources(self):
+        mcpython.ResourceLoader.RESOURCE_LOCATIONS.append(self.resource_access)
 
     def try_identify_mod_loader(self):
         """
@@ -136,6 +144,9 @@ class AbstractModLoaderInstance(ABC):
         """
         Informal method called sometime after construction
         """
+
+    def on_instance_bake(self, mod: mcpython.common.mod.Mod):
+        pass
 
 
 class PyFileModLoader(AbstractModLoaderInstance):
@@ -352,7 +363,7 @@ class ModLoader:
 
         # the directory currently loading from
         self.active_directory: typing.Optional[str] = None
-        self.current_resource_access = None
+        self.current_container: typing.Optional[ModContainer] = None
 
         # which stage we are in
         self.active_loading_stage: int = 0
@@ -426,9 +437,11 @@ class ModLoader:
         self.mod_containers += containers
 
         for container in containers:
+            self.current_container = container
             container.try_identify_mod_loader()
 
         for container in containers:
+            self.current_container = container
             container.load_meta_files()
 
     def check_errors(self):
@@ -439,134 +452,8 @@ class ModLoader:
     def load_missing_mods(self):
         for container in self.mod_containers:
             if container.assigned_mod_loader is None:
+                self.current_container = container
                 container.try_identify_mod_loader()
-
-    def load_mod_json_from_locations(self, locations: typing.List[str]):
-        """
-        Will load the mod description files for the given locations and parse their content
-        :param locations: the locations found
-        """
-        self.located_mod_instances.clear()
-
-        for file in locations:
-            if os.path.isfile(file):
-                if zipfile.is_zipfile(file):  # compressed file
-                    sys.path.append(file)
-                    resource = mcpython.ResourceLoader.ResourceZipFile(file)
-                    self.current_resource_access = resource
-                    mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(0, resource)
-                    self.active_directory = file
-
-                    if resource.is_in_path("mod.json"):
-                        self.load_mods_json(
-                            resource.read_raw("mod.json").decode("utf-8"), file
-                        )
-                    elif resource.is_in_path("mod.toml"):
-                        self.load_mods_toml(
-                            resource.read_raw("mod.toml").decode("utf-8"), file
-                        )
-                    elif resource.is_in_path("mods.toml"):
-                        self.load_mods_toml(
-                            resource.read_raw("mods.toml").decode("utf-8"), file
-                        )
-                    elif resource.is_in_path("META-INF/mods.toml"):
-                        self.load_mods_toml(
-                            resource.read_raw("META-INF/mods.toml").decode("utf-8"),
-                            file,
-                        )
-                    else:
-                        self.error_builder.println(
-                            "- could not locate mod.json/mods.toml file in mod at '{}'".format(
-                                file
-                            )
-                        )
-
-                elif file.endswith(".py"):  # python script file
-                    self.active_directory = file
-                    self.current_resource_access = None
-                    try:
-                        data = importlib.import_module(
-                            "mods." + file.split("/")[-1].split("\\")[-1].split(".")[0]
-                        )
-                    except ModuleNotFoundError:
-                        data = importlib.import_module(
-                            file.split("/")[-1].split("\\")[-1].split(".")[0]
-                        )
-                    for instance in self.located_mod_instances:
-                        instance.package = data
-
-            elif os.path.isdir(file) and "__pycache__" not in file:  # source directory
-                sys.path.append(file)
-                resource = mcpython.ResourceLoader.ResourceDirectory(file)
-                self.current_resource_access = resource
-                mcpython.ResourceLoader.RESOURCE_LOCATIONS.insert(0, resource)
-                self.active_directory = file
-                if os.path.exists(file + "/mod.json"):
-                    with open(file + "/mod.json") as sf:
-                        content = sf.read()
-                    try:
-                        self.load_mods_json(content, file + "/mod.json")
-                    except:
-                        logger.print_exception(
-                            f"during loading mod.json file from '{file}'"
-                        )
-
-                elif os.path.exists(file + "/mods.toml"):
-                    with open(file + "/mods.toml") as sf:
-                        self.load_mods_toml(sf.read(), file + "/mods.toml")
-
-                elif os.path.exists(file + "/META-INF/mods.toml"):
-                    with open(file + "/META-INF/mods.toml") as sf:
-                        self.load_mods_toml(sf.read(), file + "/META-INF/mods.toml")
-
-                else:
-                    self.error_builder.println(
-                        "- could not locate mod.json/mods.toml file for mod for mod-directory '{}'".format(
-                            file
-                        )
-                    )
-
-            for mod in self.located_mod_instances:
-                mod.path = file
-            self.located_mod_instances.clear()
-
-    def look_out(self, from_files=True):
-        """
-        Will load all mods arrival
-        """
-        if from_files:
-            locations = self.get_locations()
-
-            shared.event_handler.call(
-                "minecraft:modloader:location_lookup_complete", self, locations
-            )
-
-            self.load_mod_json_from_locations(locations)
-
-        # this is special, as it is not loaded from files...
-        import mcpython.common.mod.ModMcpython
-
-        i = 0
-        while i < len(sys.argv):
-            element = sys.argv[i]
-
-            if element == "--remove-mod":
-                name = sys.argv[i + 1]
-
-                if name in self.mods:
-                    del self.mods[name]
-                else:
-                    self.error_builder.println(
-                        "- attempted to remove mod '{}' which is not arrival".format(
-                            name
-                        )
-                    )
-
-                for _ in range(2):
-                    sys.argv.pop(i)
-
-            else:
-                i += 1
 
         logger.println(
             "found mod{}: {}".format(
@@ -574,13 +461,7 @@ class ModLoader:
             )
         )
 
-        shared.event_handler.call(
-            "minecraft:modloader:mod_selection_complete", self, self.mods
-        )
-
-        self.check_for_update()
-
-    def check_for_update(self):
+    def check_for_updates(self):
         """
         Will check for changes between versions between this session and the one before
         """
@@ -645,9 +526,10 @@ class ModLoader:
         self.located_mods.append(instance)
 
         if instance.path is not None:
-            instance.path = self.active_directory
-
-        instance.resource_access = self.current_resource_access
+            instance.container = self.current_container
+            instance.resource_access = self.current_container.resource_access
+            instance.path = self.current_container.path
+            self.current_container.assigned_mod_loader.on_instance_bake(instance)
 
         self.located_mod_instances.append(instance)
 

@@ -133,10 +133,11 @@ class ResourceZipFile(IResourceLoader):
     def is_valid(path: str) -> bool:
         return zipfile.is_zipfile(path)
 
-    def __init__(self, path: str):
+    def __init__(self, path: str, close_when_scheduled=True):
         self.archive = zipfile.ZipFile(path)
         self.path = path
         self.namelist_cache = self.archive.namelist()
+        self.close_when_scheduled = close_when_scheduled
 
     def get_path_info(self) -> str:
         return self.path
@@ -153,7 +154,8 @@ class ResourceZipFile(IResourceLoader):
         return PIL_Image.open(shared.tmp.name + "/resource_output.png")
 
     def close(self):
-        self.archive.close()
+        if self.close_when_scheduled:
+            self.archive.close()
 
     def get_all_entries_in_directory(
         self, directory: str, go_sub=True

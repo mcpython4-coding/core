@@ -52,14 +52,8 @@ if __name__ == "__main__":
     )
 
     try:
-        wrapper.prepare_server()
-        mcpython.logger.println("server side")
-
-        wrapper.print_header()
-        wrapper.inject_sys_argv(sys.argv)  # load sys.argv
-        mcpython.logger.println("[INFO] setup complete")
-        wrapper.setup()  # do setup stuff
-        wrapper.launch()  # and start mainloop
+        wrapper.set_server()
+        wrapper.full_launch()
     except SystemExit:
         raise
     except:
