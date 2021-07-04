@@ -1727,3 +1727,4 @@ R   [uuk]: improved world serialization API
        improving some loading performance
 [uuk]: reworked sys.argv parsing
 [uuk]: reworked how mods are discovered
+[uuk]: fixed a rendering optimisation leading into elements of BlockModels not beeing created in some cases

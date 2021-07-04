@@ -75,7 +75,7 @@ class Model:
         # prepare the box models from parent
         self.box_models = (
             []
-            if not self.parent or "elements" not in data
+            if not self.parent or "elements" in data
             else [x.copy(new_model=self) for x in self.parent.box_models]
         )
 
