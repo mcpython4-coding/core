@@ -346,6 +346,7 @@ def load_features():
         PillagerOutpostDefinition,
         PlantFeature,
         SpruceTreeFeature,
+        SurfaceLake,
     )
     from .feature.village import VillageFeatureDefinition
 

@@ -1,0 +1,116 @@
+{
+  "name": "minecraft:dessert_lakes",
+  "mass": "land",
+  "passive_spawns": {
+    "minecraft:rabbit": [
+      4,
+      [
+        2,
+        3
+      ]
+    ]
+  },
+  "hostile_spawns": {
+    "minecraft:spider": [
+      100,
+      4
+    ],
+    "minecraft:skeleton": [
+      100,
+      4
+    ],
+    "minecraft:creeper": [
+      100,
+      4
+    ],
+    "minecraft:slime": [
+      100,
+      4
+    ],
+    "minecraft:enderman": [
+      10,
+      [
+        1,
+        4
+      ]
+    ],
+    "minecraft:witch": [
+      5,
+      1
+    ],
+    "minecraft:zombie": [
+      19,
+      4
+    ],
+    "minecraft:zombie_villager": [
+      1,
+      1
+    ],
+    "minecraft:husk": [
+      80,
+      4
+    ]
+  },
+  "ambient_spawns": {
+    "minecraft:bat": [
+      10,
+      8
+    ]
+  },
+  "grass_color": "bfb755",
+  "water_color": "32a598",
+  "weight": 10,
+  "height_range": [
+    10,
+    38
+  ],
+  "top_layer": {
+    "type": "minecraft:default_top_layer_config",
+    "blocks": {
+      "base": "minecraft:sand",
+      "bottom_extension": ["minecraft:sandstone", 3]
+    },
+    "height_range": [5, 9]
+  },
+  "features": [
+    {
+      "type": "minecraft:dessert_well_feature",
+      "weight": 10,
+      "group": "dessert_well",
+      "group_spawn_count": [-150, 1]
+    },
+    {
+      "type": "minecraft:overworld_fossile_feature",
+      "weight": 10,
+      "group": "fossiles",
+      "group_spawn_count": [-100, 1]
+    },
+    {
+      "type": "minecraft:plant_feature",
+      "weight": 10,
+      "group": "plants",
+      "group_spawn_count": [10, 20],
+      "custom_config": {
+        "minecraft:dead_bush": 10
+      }
+    },
+    {
+      "type": "minecraft:cactus_feature",
+      "weight": 5,
+      "group": "plants",
+      "group_spawn_count": [10, 20]
+    },
+    {
+      "type": "minecraft:default_ore_feature",
+      "weight": 10,
+      "group": "ores",
+      "group_spawn_count": [1, 10]
+    },
+    {
+      "type": "minecraft:surface_lake",
+      "weight": 10,
+      "group": "lakes",
+      "group_spawn_count": [-10, 1]
+    }
+  ]
+}

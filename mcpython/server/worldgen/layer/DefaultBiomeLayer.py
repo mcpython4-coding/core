@@ -13,9 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.event.EventHandler
-import mcpython.common.world.AbstractInterface
-import mcpython.common.world.Chunk
 import mcpython.server.worldgen.noise.NoiseManager
 from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig

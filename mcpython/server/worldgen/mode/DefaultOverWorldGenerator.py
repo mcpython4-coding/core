@@ -34,7 +34,11 @@ class DefaultOverworldGenerator(
 
     BIOMES = {
         "land": {
-            2.0: ["minecraft:dessert"],
+            2.0: [
+                "minecraft:dessert",
+                "minecraft:dessert_hills",
+                "minecraft:dessert_lakes",
+            ],
             0.8: ["minecraft:plains", "minecraft:sunflower_plains"],
             0.2: ["minecraft:mountains"],
         }
