@@ -70,6 +70,7 @@ def to_pyglet_image(image: PIL.Image.Image):
     todo: can we do this in-memory? (less time consumed)
     """
     import pyglet
+
     image.save(shared.tmp.name + "/image_helper_to_pyglet.png")
     return pyglet.image.load(shared.tmp.name + "/image_helper_to_pyglet.png")
 
@@ -81,6 +82,7 @@ def to_pyglet_sprite(image: PIL.Image.Image):
     :return: the sprite
     """
     import pyglet
+
     return pyglet.sprite.Sprite(to_pyglet_image(image))
 
 
@@ -92,6 +94,7 @@ def to_pillow_image(image) -> PIL.Image.Image:
     todo: can we do this in-memory? (less time consumed)
     """
     import pyglet
+
     image.save(shared.tmp.name + "/image_helper_to_pillow.png")
     return PIL.Image.open(shared.tmp.name + "/image_helper_to_pillow.png")
 
@@ -108,7 +111,5 @@ def int_hex_to_color(color: int) -> typing.Tuple[int, int, int]:
     return hex_to_color("0" * (6 - len(v)) + v)
 
 
-def resize_image_pyglet(
-    image, size: typing.Tuple[int, int]
-):
+def resize_image_pyglet(image, size: typing.Tuple[int, int]):
     return to_pyglet_image(to_pillow_image(image).resize(size, PIL.Image.NEAREST))

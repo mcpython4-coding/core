@@ -1691,34 +1691,13 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed chat history index not resetting after entering a command
 [uuk]: fixed latest biomesoplenty build [1.16.5-13.1.0.471]
 [uuk]: fixed uv horizontal rendering of blocks
-[uuk]: <fml>: fixed StairsBlocks not correctly getting resolved
 [uuk]: bumped target mc version to 1.17
 [uuk]: improved memory usage / block instance
 [uuk]: item-registry's entries attribute will now contain every item only ones, it is replaced by the full_entries attribute
 [uuk]: fixed naming of AbstractFluidContainer item base class
 
-[github]: start of development cycle for 21w25a
-[uuk]: <fml> fixed factory transformer not using fence and fence gate base classes correctly
-[uuk]: <fml> fixed calling func_200948_a breaking blocks [wrong property setting]
-[uuk]: added debug flag --fill-unknown-natives for auto-filling native methods in-memory
-[uuk]: <fml> added some more debug info
+[github]: start of development cycle for 21w27a
 [uuk]: mod loader is now more efficient at loading mod info files from archives
-[uuk]: <jvm> instructions can now be validated
-[uuk]: <jvm> WARNING: the JVM is now starting to get natives which can DAMAGE your system!
-[uuk]: <jvm> fixed invokevirtual on abstract methods
-[uuk]. <jvm> fixed invokedynamic when passing additional parameters to the method
-[uuk]: added a continue button to the loading exception screen to continue mod loading even if an error occurred,
-       resuming where we stopped loading
-[uuk]: <jvm> fixed invokedynamic with pre-args not returning the method result correctly
-[uuk]: <jvm> instructions can now modify the data cache created during decode() during runtime
-[uuk]: <jvm> InvokeDynamic will now cache the result of its method resolving
-[uuk]: <jvm> InvokeDynamic is now using the "optimiser" system to split of the variants of targets into smaller bits
-[uuk]: <jvm> hopefully fixed last InvokeDynamic miss-behaviours around binding constructors
-[uuk]: <jvm> class files can now be validated after load [as part of the bake process].
-             Validation currently does only work on the access flags which are now allowed in some cases
-[uuk]: <jvm> native methods can now specify if they are static or not
-[uuk]: <jvm> fixed tableswitch instruction
-[uuk]: <jvm> fixed InvokeDynamic on abstact methods and on signature expansion
 [uuk]: exported java jvm with bridge and built-ins into separate repository
 [uuk]: refactored the complete resource serialization system
 [uuk]: resource system lookup uses now regex instead of some bad handling, preparing for better times
@@ -1727,4 +1706,6 @@ R   [uuk]: improved world serialization API
        improving some loading performance
 [uuk]: reworked sys.argv parsing
 [uuk]: reworked how mods are discovered
-[uuk]: fixed a rendering optimisation leading into elements of BlockModels not beeing created in some cases
+[uuk]: fixed a rendering optimisation leading into elements of BlockModels not being created in some cases
+[uuk]: mod loading order is now not longer stable and may change in bounds of the dependency-relations
+[uuk]: added codeql-analysis for code analysis to the github

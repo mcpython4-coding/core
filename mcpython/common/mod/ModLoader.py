@@ -25,12 +25,11 @@ import zipfile
 from abc import ABC
 
 import mcpython.common.config
+
 # import mcpython.common.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
-
-
 import mcpython.ResourceLoader
 import mcpython.util.math
 import toml
@@ -67,7 +66,9 @@ def parse_provider_json(container: "ModContainer", data: dict):
             try:
                 importlib.import_module(module)
             except:
-                logger.println(f"[MOD DISCOVERY][ERROR] failed to load module {module} for container {container} in early loading phase")
+                logger.println(
+                    f"[MOD DISCOVERY][ERROR] failed to load module {module} for container {container} in early loading phase"
+                )
 
 
 class ModContainer:
@@ -80,7 +81,9 @@ class ModContainer:
         self.assigned_mod_loader: typing.Optional[AbstractModLoaderInstance] = None
 
         if zipfile.is_zipfile(path):
-            self.resource_access = mcpython.ResourceLoader.ResourceZipFile(path, close_when_scheduled=False)
+            self.resource_access = mcpython.ResourceLoader.ResourceZipFile(
+                path, close_when_scheduled=False
+            )
             sys.path.append(path)
         elif os.path.isdir(path):
             self.resource_access = mcpython.ResourceLoader.ResourceDirectory(path)
@@ -97,7 +100,7 @@ class ModContainer:
 
         EventHandler.PUBLIC_EVENT_BUS.subscribe("resources:load", self.add_resources)
         self.add_resources()
-        
+
         self.loaded_mods = []
 
     def add_resources(self):
@@ -107,15 +110,16 @@ class ModContainer:
         """
         Does some clever lookup for identifying the mod loader
         """
-        if self.assigned_mod_loader is not None: return
-        
+        if self.assigned_mod_loader is not None:
+            return
+
         for loader in ModLoader.KNOWN_MOD_LOADERS:
             if loader.match_container_loader(self):
                 self.assigned_mod_loader = loader(self)
                 break
         else:
             return
-        
+
         self.assigned_mod_loader.on_select()
 
     def load_meta_files(self):
@@ -124,7 +128,12 @@ class ModContainer:
         """
         # this file allows some special stuff to happen before real loading stuff
         if self.resource_access.is_in_path("provider.json"):
-            parse_provider_json(self, json.loads(self.resource_access.read_raw("provider.json").decode("utf-8")))
+            parse_provider_json(
+                self,
+                json.loads(
+                    self.resource_access.read_raw("provider.json").decode("utf-8")
+                ),
+            )
 
     def __repr__(self):
         return f"ModContainer(path='{self.path}',loader={self.assigned_mod_loader})"
@@ -159,7 +168,9 @@ class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
         return container.resource_access.is_in_path("mods.json")
 
     def on_select(self):
-        data = json.loads(self.container.resource_access.read_raw("mods.json").decode("utf-8"))
+        data = json.loads(
+            self.container.resource_access.read_raw("mods.json").decode("utf-8")
+        )
 
         self.raw_data = data
         self.load_from_data(data)
@@ -201,9 +212,7 @@ class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
                                     cast_dependency(depend)
                                 )
                             elif t == "not_compatible":
-                                instance.add_not_compatible(
-                                    cast_dependency(depend)
-                                )
+                                instance.add_not_compatible(cast_dependency(depend))
                             elif t == "load_before":
                                 instance.add_load_before_if_arrival(
                                     cast_dependency(depend)
@@ -249,7 +258,9 @@ class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
 class TomlModLoader(DefaultModJsonBasedLoader):
     @classmethod
     def match_container_loader(cls, container: ModContainer) -> bool:
-        return container.resource_access.is_in_path("mods.toml") or container.resource_access.is_in_path("META-INF/mods.toml")
+        return container.resource_access.is_in_path(
+            "mods.toml"
+        ) or container.resource_access.is_in_path("META-INF/mods.toml")
 
     def on_select(self):
         if self.container.resource_access.is_in_path("mods.toml"):
@@ -272,7 +283,9 @@ class TomlModLoader(DefaultModJsonBasedLoader):
                     try:
                         mod_loader.on_select()
                     except:
-                        logger.print_exception(f"during decoding container {self.container}")
+                        logger.print_exception(
+                            f"during decoding container {self.container}"
+                        )
                     else:
                         self.container.assigned_mod_loader = mod_loader
                 else:
@@ -300,13 +313,17 @@ class TomlModLoader(DefaultModJsonBasedLoader):
                 mc_version = version.split("|")
             else:
                 shared.mod_loader.error_builder.println(
-                    "[SOURCE][FATAL] can't decode version id '{}' in container {]".format(version, self.container)
+                    "[SOURCE][FATAL] can't decode version id '{}' in container {]".format(
+                        version, self.container
+                    )
                 )
                 return
         else:
             mc_version = None
 
-        super().load_from_data({"main files": [e["importable"] for e in data["main_files"]]})
+        super().load_from_data(
+            {"main files": [e["importable"] for e in data["main_files"]]}
+        )
 
         for instance in shared.mod_loader.located_mod_instances:
             instance.add_dependency(
@@ -335,6 +352,7 @@ class ModLoader:
         damage on the end user pc and/or direct or indirect stealing of valuable information about the user, including
         the download of programs to do so.
     """
+
     KNOWN_MOD_LOADERS: typing.List[typing.Type[AbstractModLoaderInstance]] = [
         PyFileModLoader,
         DefaultModJsonBasedLoader,
@@ -421,11 +439,21 @@ class ModLoader:
         for entry in shared.launch_wrapper.get_flag_status("add-mod-dir", default=[]):
             folders += entry
 
-        files = set(sum([[os.path.join(loc, file) for file in os.listdir(loc)] for loc in folders], []))
+        files = set(
+            sum(
+                [
+                    [os.path.join(loc, file) for file in os.listdir(loc)]
+                    for loc in folders
+                ],
+                [],
+            )
+        )
         for entry in shared.launch_wrapper.get_flag_status("add-mod-file", default=[]):
             files |= set(entry)
 
-        for entry in shared.launch_wrapper.get_flag_status("remove-mod-file", default=[]):
+        for entry in shared.launch_wrapper.get_flag_status(
+            "remove-mod-file", default=[]
+        ):
             files.difference_update(set(entry))
 
         # todo: escape logging here

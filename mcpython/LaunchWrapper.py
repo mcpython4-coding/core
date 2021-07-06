@@ -30,7 +30,9 @@ class LaunchWrapper:
     def __init__(self):
         self.is_client = -1
 
-        self.launch_config: typing.Dict[str, typing.Union[typing.List[typing.Tuple[str]], bool]] = {}
+        self.launch_config: typing.Dict[
+            str, typing.Union[typing.List[typing.Tuple[str]], bool]
+        ] = {}
 
         shared.launch_wrapper = self
 
@@ -86,18 +88,24 @@ class LaunchWrapper:
 
             # todo: move size & screen to config files / sys.argv
             # screen = pyglet.canvas.get_display().get_screens()[-1]
-            mcpython.client.rendering.window.Window(width=800, height=600, resizable=True)
+            mcpython.client.rendering.window.Window(
+                width=800, height=600, resizable=True
+            )
             # shared.window.set_location(screen.x+20, screen.y+60)
             shared.window.set_caption("mcpython 4 early loading stage")
 
             import mcpython.common.network.Backend
 
-            shared.CLIENT_NETWORK_HANDLER = mcpython.common.network.Backend.ClientBackend()
+            shared.CLIENT_NETWORK_HANDLER = (
+                mcpython.common.network.Backend.ClientBackend()
+            )
 
         else:
             import mcpython.common.network.Backend
 
-            shared.SERVER_NETWORK_HANDLER = mcpython.common.network.Backend.ServerBackend()
+            shared.SERVER_NETWORK_HANDLER = (
+                mcpython.common.network.Backend.ServerBackend()
+            )
 
         self.setup()
         self.launch()
@@ -125,9 +133,13 @@ class LaunchWrapper:
         for e in args:
             if e.startswith("-"):
                 if current_arg is not None:
-                    self.launch_config.setdefault(current_arg, []).append(tuple(arg_collector))
+                    self.launch_config.setdefault(current_arg, []).append(
+                        tuple(arg_collector)
+                    )
                 elif arg_collector:
-                    logger.println("[LAUNCH WRAPPER][WARN] got arg values before arg config")
+                    logger.println(
+                        "[LAUNCH WRAPPER][WARN] got arg values before arg config"
+                    )
                 arg_collector.clear()
 
             if e.startswith("--"):
@@ -193,6 +205,7 @@ class LaunchWrapper:
             shared.window.close()
 
             import pyglet.app
+
             pyglet.app.exit()
 
             print("closing due to event stage")
@@ -316,6 +329,7 @@ class LaunchWrapper:
 
         try:
             import pyglet.app
+
             pyglet.app.run()
         except SystemExit:
             # sys.exit() should not be handled
