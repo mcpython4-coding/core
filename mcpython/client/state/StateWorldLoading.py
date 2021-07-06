@@ -138,7 +138,7 @@ class StateWorldLoading(State.State):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             shared.state_handler.change_state("minecraft:startmenu")
-            shared.tick_handler.schedule_once(shared.world.cleanup)
+            shared.world.cleanup()
             logger.println("interrupted world loading by user")
 
     def calculate_percentage_of_progress(self):

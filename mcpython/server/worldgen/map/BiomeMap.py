@@ -32,8 +32,11 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     def load_from_saves(self, data):
         x, z = self.chunk.get_position()
         sx, sz = x * 16, z * 16
-        for dx in range(0, 16, 4):
-            for dz in range(0, 16, 4):
+
+        steps = 4 if len(data[0]) == 256 else 1
+
+        for dx in range(0, 16, steps):
+            for dz in range(0, 16, steps):
                 previous_column = None
 
                 for y in range(0, 256, 4):
@@ -48,8 +51,8 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         sx, sz = x * 16, z * 16
         data = ([], [])
 
-        for dx in range(0, 16, 4):
-            for dz in range(0, 16, 4):
+        for dx in range(0, 16):
+            for dz in range(0, 16):
                 previous_column = None
                 for y in range(0, 256, 4):
                     biome = self.get_at_xyz(sx + dx, y, sz + dz)
@@ -66,17 +69,17 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         return data
 
     def get_at_xz(self, x: int, z: int) -> str:
-        return self.biome_map.setdefault((x // 4, 0, z // 4), None)
+        return self.biome_map.setdefault((x, 0, z), None)
 
     def get_at_xyz(self, x: int, y: int, z: int) -> str:
-        return self.biome_map.setdefault((x // 4, y // 4, z // 4), None)
+        return self.biome_map.setdefault((x, y, z), None)
 
     def set_at_xz(self, x: int, z: int, biome: str):
         for y in range(0, 256, 4):
-            self.biome_map[x // 4, y, z // 4] = biome
+            self.biome_map[x, y, z] = biome
 
     def set_at_xyz(self, x: int, y: int, z: int, biome: str):
-        self.biome_map[x // 4, y // 4, z // 4] = biome
+        self.biome_map[x, y, z] = biome
 
     def dump_debug_info(self, file: str):
         biome2color = {}

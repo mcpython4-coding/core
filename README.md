@@ -1,5 +1,5 @@
 # mcpython-4
-This is the revision of a minecraft-like, python-written game based on forgleman's code.
+This is the revision of a minecraft-like, python-written game based on fogleman's code (https://github.com/fogleman/Minecraft).
 
 **Like it?**
 
@@ -11,7 +11,7 @@ to automatically download and set up the latest version of mcpython4
 
 How to set up?
 -----------------------------------------------------------------------------------------------------
-Install python 3.9 or higher [currently, only 3.9 works as some dependencies we use are not arrival for python 3.10]
+Install python 3.9 or higher (currently, only 3.9 works as some dependencies we use are not arrival for python 3.10)
 
 Download this project, unzip it, open a console in its directory and type:
 
@@ -19,7 +19,7 @@ Download this project, unzip it, open a console in its directory and type:
 python tools/installer.py
 ```
 
-This will set up all required libraries and download resources needed not shipped with the main part.
+This will set up all required libraries and download resources needed.
 It will take some time depending on your internet connection speed. We plan on optimizing some parts,
 but it is WIP.
 
