@@ -194,13 +194,13 @@ def tex_coordinates_better(
     rotation=(0, 0, 0, 0, 0, 0)
 ) -> list:
     """
-    This is an better implementation of above tex_coords function. It will return an list of coords instead
-        of an list where you have to manually find entries for drawing
+    This is a better implementation of above tex_coords function. It will return a list of coords instead
+        of a list where you have to manually find entries for drawing
     :param args: for each face to calculate, the uv's as a tuple of size 2
     :param size: the size of the texture group, as specified by the texture atlas
     :param tex_region: the region in the texture, where 0 is one end and 1 the other
     :param rotation: the rotation of the whole thing
-    :return: an list of lists of texture coords
+    :return: a list of lists of texture coords
     """
     if tex_region is None:
         tex_region = [(0, 0, 1, 1)] * len(args)
@@ -227,7 +227,6 @@ def normalize(position: typing.Tuple[float, float, float]):
     :return: the rounded position
     """
     try:
-        assert len(position) == 3, "expected size is 3"
         return tuple(round(e) for e in position)
     except:
         logger.println("[FATAL] error during parsing position {}".format(position))
@@ -241,7 +240,6 @@ def normalize_ceil(position: typing.Tuple[float, float, float]):
     :return: the ceil-ed position
     """
     try:
-        assert len(position) == 3, "expected size is 3"
         return tuple(math.ceil(e) for e in position)
     except:
         logger.println(position)
@@ -360,4 +358,13 @@ def vector_negate(vector: typing.Tuple[float, ...]) -> typing.Tuple[float, ...]:
 
 
 def sort_components(a: typing.Tuple[float, ...], b: typing.Tuple[float, ...]):
-    return tuple(zip(*map(lambda a: (min(a), max(a)), zip(a, b))))
+    """
+    Util method for sorting two vectors
+    :return: two tuples, one with the smallest x, y, z and one with the biggest x, y, z coordinate
+
+    Example:
+    sort_components((-1, 5, -7), (5, -10, 4)) == ((-1, -10, -7), (5, 5, 4))
+
+    Useful when user inputs two coordinates and usage requires this special order (for example, for range()-ing over them)
+    """
+    return tuple(zip(*map(lambda e: (min(e), max(e)), zip(a, b))))

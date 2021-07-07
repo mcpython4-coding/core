@@ -37,4 +37,4 @@ def lists_to_tuples(data, levels=-1):
     elif isinstance(data, set) or type(data) in (int, float, str, complex):
         return data
     else:
-        raise ValueError("could not convert data {}".format(data))
+        raise ValueError("could not convert data {} by list-to-tuple".format(data))
