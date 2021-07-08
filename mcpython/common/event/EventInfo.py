@@ -11,11 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+# TODO: export this to the client backend
+# CallbackHelper removed as functools.partial is the same
 
 
 class IEventInfo:
     """
-    base class for every event info
+    Base class for every event info declared here
     """
 
     def equals(self, *args):
@@ -39,7 +41,7 @@ class KeyPressEventInfo(IEventInfo):
 
 class MousePressEventInfo(IEventInfo):
     """
-    info for mouse press
+    Info for mouse press
     """
 
     def __init__(self, mouse: int, modifier=None, area=None):
@@ -63,40 +65,3 @@ class MousePressEventInfo(IEventInfo):
             )
         )
 
-
-class CallbackHelper:
-    def __init__(
-        self,
-        function,
-        args=None,
-        kwargs=None,
-        extra_arg_filter=None,
-        enable_extra_args=True,
-    ):
-        """
-        creates an new object
-        :param function: the function to call
-        :param args: the args given
-        :param kwargs: the kwargs given
-        :param extra_arg_filter: an function(args, kwargs) -> args, kwargs which filters them
-        :param enable_extra_args: weither args given by __call__ should be included
-        """
-        if kwargs is None:
-            kwargs = {}
-        if args is None:
-            args = []
-        self.function = function
-        self.args = args
-        self.kwargs = kwargs
-        self.filter = extra_arg_filter
-        self.enable_extra_args = enable_extra_args
-
-    def __call__(self, *args, **kwargs):
-        if self.enable_extra_args:
-            if self.filter:
-                args, kwargs = self.filter(args, kwargs)
-            return self.function(
-                *list(args) + list(self.args), **{**kwargs, **self.kwargs}
-            )
-        else:
-            return self.function(*self.args, **self.kwargs)

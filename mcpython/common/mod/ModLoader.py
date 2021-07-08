@@ -353,12 +353,14 @@ class ModLoader:
         the download of programs to do so.
     """
 
+    # This stores a list of valid mod loader classes used during discovery
     KNOWN_MOD_LOADERS: typing.List[typing.Type[AbstractModLoaderInstance]] = [
         PyFileModLoader,
         DefaultModJsonBasedLoader,
         TomlModLoader,
     ]
 
+    # The real LOADER-extensions,
     JSON_LOADERS: typing.Dict[str, typing.Type[AbstractModLoaderInstance]] = {}
     TOML_LOADERS: typing.Dict[str, typing.Type[AbstractModLoaderInstance]] = {}
 
@@ -434,6 +436,12 @@ class ModLoader:
         return self.mods.values()
 
     def look_for_mod_files(self):
+        """
+        Scanner for mod files, parsing the parsed sys.argv stuff
+
+        Stores the resuolt in the found_mod_files attribute of this
+        """
+
         folders = [shared.home + "/mods"]
 
         for entry in shared.launch_wrapper.get_flag_status("add-mod-dir", default=[]):
@@ -492,7 +500,10 @@ class ModLoader:
     def check_for_updates(self):
         """
         Will check for changes between versions between this session and the one before
+
+        In case of a change, rebuild mode is entered
         """
+
         for modname in self.previous_mod_list.keys():
             if modname not in self.mods or self.mods[modname].version != tuple(
                 self.previous_mod_list[modname]
@@ -505,13 +516,7 @@ class ModLoader:
                         modname,
                     )
                 )
-                if shared.event_handler.call_cancelable(
-                    "minecraft:modloader:mod_change",
-                    self,
-                    modname,
-                    self.mods[modname] if modname in self.mods else None,
-                ):
-                    shared.invalidate_cache = True
+                shared.invalidate_cache = True
 
         for modname in self.mods.keys():
             if modname not in self.previous_mod_list:  # any new mods?
@@ -520,13 +525,7 @@ class ModLoader:
                 logger.println(
                     "rebuild mode due to mod change (addition) of '{}'".format(modname)
                 )
-                if shared.event_handler.call_cancelable(
-                    "minecraft:modloader:mod_addition",
-                    self,
-                    modname,
-                    self.mods[modname],
-                ):
-                    shared.invalidate_cache = True
+                shared.invalidate_cache = True
 
     def write_mod_info(self):
         """
@@ -543,7 +542,8 @@ class ModLoader:
         """
         Will add a mod-instance into the inner system
         :param instance: the mod instance to add
-        Use only when really needed. The system is designed for beeing data-driven!
+        Use only when really needed. The system is designed for being data-driven, and things might go wrong
+            when manually doing this
         """
         if not shared.event_handler.call_cancelable(
             "modloader:mod_registered", instance
@@ -567,7 +567,7 @@ class ModLoader:
         """
         Will check for mod duplicates
         :return an tuple of errors as string and collected mod-info's as dict
-        todo: add config option for strategy: fail, load newest, load oldest, load all, load none
+        todo: add config option for strategy: fail, load newest, load oldest, [load all}, load none
         """
         errors = False
         mod_info = {}
@@ -664,7 +664,7 @@ class ModLoader:
             )
         )
 
-        self.error_builder.finish()
+        self.check_errors()
         logger.write_into_container(
             [
                 " - {}".format(self.mods[name].mod_string())

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import functools
 import time
 
 import mcpython.client.state.StateGame
@@ -54,10 +55,9 @@ class StateEscape(State.State):
                 (0, 150),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=mcpython.common.event.EventInfo.CallbackHelper(
+                on_press=functools.partial(
                     shared.state_handler.change_state,
-                    ["minecraft:game"],
-                    enable_extra_args=False,
+                    "minecraft:game",
                 ),
             ),
             UIPartButton.UIPartButton(
@@ -74,8 +74,8 @@ class StateEscape(State.State):
                 (0, 90),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=mcpython.common.event.EventInfo.CallbackHelper(
-                    mcpython.util.callbacks.open_github_project, enable_extra_args=False
+                on_press=functools.partial(
+                    mcpython.util.callbacks.open_github_project
                 ),
             ),
             mcpython.client.state.StateGame.game.parts[1],
