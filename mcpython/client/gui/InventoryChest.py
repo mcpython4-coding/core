@@ -16,8 +16,8 @@ import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
@@ -35,7 +35,7 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.ResourceLoader.read_image(
+        texture = mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/shulker_box"
         )
         size = texture.size
@@ -56,13 +56,13 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     def on_activate(self):
         super().on_activate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
 
     def on_deactivate(self):
         super().on_deactivate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
 
@@ -92,6 +92,6 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         shared.inventory_handler.shift_container.container_B = self.slots
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", InventoryChest.update_texture
 )

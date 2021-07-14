@@ -16,9 +16,10 @@ import typing
 
 import mcpython.common.data.abstract
 import mcpython.common.data.ResourcePipe
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
-from mcpython import ResourceLoader, logger, shared
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
+from mcpython.engine import ResourceLoader, logger
+from mcpython import shared
 
 from .abstract import ISerializeAble, ISerializer
 
@@ -88,7 +89,7 @@ class DataSerializationService(
 
     def load_file(self, file: str, is_first_load=False):
         try:
-            data = mcpython.ResourceLoader.read_raw(file)
+            data = mcpython.engine.ResourceLoader.read_raw(file)
 
             if callable(self.data_deserializer):
                 data = self.data_deserializer(data)

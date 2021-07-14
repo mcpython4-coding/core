@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.event.EventBus
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventBus
+import mcpython.engine.event.EventHandler
 from mcpython import shared
 
 
@@ -160,8 +160,8 @@ class Mod:
                     )
                 )
         self.name = name
-        self.eventbus: mcpython.common.event.EventBus.EventBus = (
-            mcpython.common.event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
+        self.eventbus: mcpython.engine.event.EventBus.EventBus = (
+            mcpython.engine.event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
                 crash_on_error=True
             )
         )

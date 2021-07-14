@@ -17,7 +17,8 @@ import typing
 
 import mcpython.client.state.StateConfigFile
 import mcpython.common.event.TickHandler
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
 from . import State

@@ -17,10 +17,11 @@ import sys
 
 import mcpython.client.gui.InventoryRecipeView
 import mcpython.common.container.crafting.IRecipe
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import mcpython.common.item.ItemManager
-import mcpython.ResourceLoader
-from mcpython import logger, shared
+import mcpython.engine.ResourceLoader
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class CraftingManager:
@@ -43,7 +44,7 @@ class CraftingManager:
 
         self.loaded_mod_dirs = set()
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "data:shuffle:all", self.shuffle_data
         )
 
@@ -110,7 +111,7 @@ class CraftingManager:
 
     def add_recipe_from_file(self, file: str):
         try:
-            data = mcpython.ResourceLoader.read_raw(file).decode("utf-8")
+            data = mcpython.engine.ResourceLoader.read_raw(file).decode("utf-8")
         except:
             logger.print_exception("during loading recipe file '{}'".format(file))
             return
@@ -151,7 +152,7 @@ class CraftingManager:
             return  # make sure to load only ones!
 
         self.loaded_mod_dirs.add(modname)
-        for file in mcpython.ResourceLoader.get_all_entries(
+        for file in mcpython.engine.ResourceLoader.get_all_entries(
             "data/{}/recipes".format(modname)
         ):
             if file.endswith("/"):

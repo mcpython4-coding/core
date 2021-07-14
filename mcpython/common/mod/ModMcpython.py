@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.config
 import mcpython.common.mod.Mod
-from mcpython import logger
+from mcpython.engine import logger
 
 VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 

@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import os
 import typing
 
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 from mcpython import shared
@@ -76,7 +76,7 @@ class CombinedFactoryInstance:
             os.makedirs(shared.build + "/colorized_images")
 
         if isinstance(texture, str):
-            texture = mcpython.ResourceLoader.read_image(texture)
+            texture = mcpython.engine.ResourceLoader.read_image(texture)
 
         file = shared.build + "/colorized_images/{}.png".format(
             CombinedFactoryInstance.FILE_COUNTER

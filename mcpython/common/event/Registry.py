@@ -15,9 +15,9 @@ import typing
 from abc import ABC
 
 import mcpython.common.data.serializer.tags.ITagTarget
-import mcpython.common.event.EventHandler
-import mcpython.logger
-from mcpython import logger, shared
+import mcpython.engine.event.EventHandler
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class IRegistryContent(mcpython.common.data.serializer.tags.ITagTarget.ITagTarget):
@@ -60,7 +60,7 @@ class Registry:
         shared.registry.registries[name] = self
         self.dump_content_in_saves = dump_content_in_saves
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "mod_loader:load_finished", self.lock
         )
 

@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.client.rendering.util
+import mcpython.engine.rendering.util
 import mcpython.util.math
 
 
@@ -99,7 +99,7 @@ class BoundingBox(AbstractBoundingBox):
                 vertex_data_ur[i * 3 : i * 3 + 3], (0, 0, 0), rot
             )
             vertex_data.extend([nx + rx, ny + ry, nz + rz])
-        mcpython.client.rendering.util.draw_line_box(("v3f/static", vertex_data))
+        mcpython.engine.rendering.util.draw_line_box(("v3f/static", vertex_data))
 
 
 class BoundingArea(AbstractBoundingBox):

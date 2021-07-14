@@ -19,7 +19,8 @@ import mcpython.common.entity.DamageSource
 import mcpython.common.entity.EntityManager
 import mcpython.common.event.Registry
 import mcpython.util.math
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):

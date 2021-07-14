@@ -19,18 +19,19 @@ import typing
 import mcpython.client.gui.HoveringItemBox
 import mcpython.client.rendering.model.ItemModel
 import mcpython.client.state.StateModLoading
-import mcpython.common.event.EventInfo
+import mcpython.engine.event.EventInfo
 import mcpython.common.event.TickHandler
 import mcpython.common.factory.ItemFactory
 import mcpython.common.item.AbstractItem
 import mcpython.common.item.ItemManager
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import PIL.Image
 import PIL.ImageDraw
 import psutil
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
 from . import State, StatePartGame
@@ -300,7 +301,7 @@ class StateBlockItemGenerator(State.State):
             self._error_counter(None, blockname)
             return
 
-        image: PIL.Image.Image = mcpython.ResourceLoader.read_image(file)
+        image: PIL.Image.Image = mcpython.engine.ResourceLoader.read_image(file)
         if image.getbbox() is None or len(image.histogram()) <= 1:
             pyglet.clock.schedule_once(self.take_image, 0.05)
             # event.TickHandler.handler.bind(self.take_image, 1)

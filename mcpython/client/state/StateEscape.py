@@ -15,7 +15,7 @@ import functools
 import time
 
 import mcpython.client.state.StateGame
-import mcpython.common.event.EventInfo
+import mcpython.engine.event.EventInfo
 import mcpython.common.mod.ModMcpython
 import mcpython.util.callbacks
 import pyglet

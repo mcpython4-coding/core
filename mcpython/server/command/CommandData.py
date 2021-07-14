@@ -13,7 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import importlib
 
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.server.command.Builder import (
     AnyString,
     Command,

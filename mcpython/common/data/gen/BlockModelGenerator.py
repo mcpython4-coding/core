@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.util.enums
-from mcpython import logger
+from mcpython.engine import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
     DataGeneratorInstance,
     IDataGenerator,

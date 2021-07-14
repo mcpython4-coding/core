@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.EventInfo
+import mcpython.engine.event.EventInfo
 import mcpython.common.Language
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.opengl
 import pyglet
 from mcpython.util.annotation import onlyInClient
@@ -22,7 +22,7 @@ from pyglet.window import mouse
 
 from . import UIPart
 
-image = mcpython.ResourceLoader.read_pyglet_image("gui/widgets")
+image = mcpython.engine.ResourceLoader.read_pyglet_image("gui/widgets")
 disabled = image.get_region(2, 256 - 46 - 17, 196, 14)
 enabled = image.get_region(2, 256 - 66 - 17, 196, 14)
 hovering = image.get_region(2, 256 - 86 - 17, 196, 14)
@@ -79,7 +79,7 @@ class UIPartButton(UIPart.UIPart):
         size,
         text,
         position,
-        press=mcpython.common.event.EventInfo.MousePressEventInfo(
+        press=mcpython.engine.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.LEFT
         ),
         anchor_button="WS",
@@ -108,7 +108,7 @@ class UIPartButton(UIPart.UIPart):
             position, size, anchor_element=anchor_button, anchor_window=anchor_window
         )
         self.text = text
-        self.press: mcpython.common.event.EventInfo.MousePressEventInfo = press
+        self.press: mcpython.engine.event.EventInfo.MousePressEventInfo = press
 
         self.on_press = on_press
         self.on_hover = on_hover
@@ -178,10 +178,10 @@ class UIPartToggleButton(UIPartButton):
         size,
         text_possibilities,
         position,
-        toggle=mcpython.common.event.EventInfo.MousePressEventInfo(
+        toggle=mcpython.engine.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.LEFT
         ),
-        retoggle=mcpython.common.event.EventInfo.MousePressEventInfo(
+        retoggle=mcpython.engine.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.RIGHT
         ),
         anchor_button="WS",
@@ -222,8 +222,8 @@ class UIPartToggleButton(UIPartButton):
         self.text_constructor = text_constructor
         self.index = start
         self.text = ""
-        self.toggle: mcpython.common.event.EventInfo.MousePressEventInfo = toggle
-        self.retoggle: mcpython.common.event.EventInfo.MousePressEventInfo = retoggle
+        self.toggle: mcpython.engine.event.EventInfo.MousePressEventInfo = toggle
+        self.retoggle: mcpython.engine.event.EventInfo.MousePressEventInfo = retoggle
 
         self.on_toggle = on_toggle
         self.on_hover = on_hover

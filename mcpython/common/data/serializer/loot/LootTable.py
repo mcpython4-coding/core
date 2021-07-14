@@ -18,10 +18,11 @@ import typing
 import mcpython.common.container.ResourceStack
 import mcpython.common.data.serializer.loot.LootTableCondition
 import mcpython.common.data.serializer.loot.LootTableFunction
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLoader
-from mcpython import logger, shared
+import mcpython.engine.ResourceLoader
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class LootTableTypes(enum.Enum):
@@ -54,7 +55,7 @@ class LootTableHandler:
         self.loot_tables = {}
 
         self.relink_table = {}
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "data:shuffle:all", self.shuffle_data
         )
 
@@ -119,7 +120,7 @@ class LootTableHandler:
             if modname in shared.mod_loader.mods
             else shared.mod_loader.mods["minecraft"]
         )
-        for path in mcpython.ResourceLoader.get_all_entries(
+        for path in mcpython.engine.ResourceLoader.get_all_entries(
             "data/{}/loot_tables".format(path_name)
         ):
             if path.endswith("/"):
@@ -333,7 +334,7 @@ class LootTable:
                 s[s.index("data") + 3],
                 "/".join(s[s.index("data") + 4 :]).split(".")[0],
             )
-        return cls.from_data(mcpython.ResourceLoader.read_json(file), name)
+        return cls.from_data(mcpython.engine.ResourceLoader.read_json(file), name)
 
     @classmethod
     def from_data(cls, data: dict, name: str):

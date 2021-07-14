@@ -15,7 +15,8 @@ import math
 import time
 
 import mcpython.common.block.AbstractBlock
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):

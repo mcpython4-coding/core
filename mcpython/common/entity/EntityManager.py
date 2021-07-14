@@ -14,7 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.event.Registry
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class EntityManager:

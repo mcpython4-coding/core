@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.ResourceLoader as ResourceLoader
+import mcpython.engine.ResourceLoader as ResourceLoader
 import mcpython.util.texture
 import PIL.Image
-from mcpython import logger
+from mcpython.engine import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
     DataGeneratorInstance,
     IDataGenerator,

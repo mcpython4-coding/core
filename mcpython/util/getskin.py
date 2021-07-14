@@ -22,7 +22,8 @@ from base64 import b64decode
 
 import PIL.Image
 import requests
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 # file licensed under the licence in licenses/LICENSE_mcskinview
 # modified for this project to match the overall system

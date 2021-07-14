@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import enum
 import math
 
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import PIL.Image
 import pyglet
 from mcpython import shared
@@ -76,7 +76,7 @@ DefaultButtonTexture = None
 def reload():
     global WIDGETS, DefaultButtonTexture
 
-    WIDGETS = mcpython.ResourceLoader.read_image(
+    WIDGETS = mcpython.engine.ResourceLoader.read_image(
         "assets/minecraft/textures/gui/widgets.png"
     )
 

@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import importlib
 import typing
 
-from mcpython import logger
+from mcpython.engine import logger
 from mcpython.server.worldgen.noise.INoiseImplementation import (
     EQUAL_MERGER,
     INoiseImplementation,

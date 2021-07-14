@@ -17,15 +17,16 @@ from abc import ABC
 
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemManager
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 SLOT_WIDTH = 32
 
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
     PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
-        mcpython.ResourceLoader.read_pyglet_image(
+        mcpython.engine.ResourceLoader.read_pyglet_image(
             "assets/minecraft/textures/gui/hotbar_selected.png"
         )
     )

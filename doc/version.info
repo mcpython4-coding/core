@@ -1690,3 +1690,4 @@ R   [uuk]: improved world serialization API
 [uuk]: mod loading order is now not longer stable and may change in bounds of the dependency-relations
 [uuk]: added codeql-analysis for code analysis to the github
 [uuk]: added dessert hills and lakes biomes
+[uuk]: major refactoring: moved code to mcpython/engine module

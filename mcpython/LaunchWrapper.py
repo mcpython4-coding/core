@@ -16,9 +16,10 @@ import sys
 import traceback
 import typing
 
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.common.config
-from mcpython import shared, logger
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class LaunchWrapper:
@@ -84,27 +85,27 @@ class LaunchWrapper:
         # todo: parse mixins
 
         if self.is_client:
-            import mcpython.client.rendering.window
+            import mcpython.engine.rendering.window
 
             # todo: move size & screen to config files / sys.argv
             # screen = pyglet.canvas.get_display().get_screens()[-1]
-            mcpython.client.rendering.window.Window(
+            mcpython.engine.rendering.window.Window(
                 width=800, height=600, resizable=True
             )
             # shared.window.set_location(screen.x+20, screen.y+60)
             shared.window.set_caption("mcpython 4 early loading stage")
 
-            import mcpython.common.network.Backend
+            import mcpython.engine.network.Backend
 
             shared.CLIENT_NETWORK_HANDLER = (
-                mcpython.common.network.Backend.ClientBackend()
+                mcpython.engine.network.Backend.ClientBackend()
             )
 
         else:
-            import mcpython.common.network.Backend
+            import mcpython.engine.network.Backend
 
             shared.SERVER_NETWORK_HANDLER = (
-                mcpython.common.network.Backend.ServerBackend()
+                mcpython.engine.network.Backend.ServerBackend()
             )
 
         self.setup()
@@ -167,10 +168,10 @@ class LaunchWrapper:
         Loads first modules into memory and launches registry setup
         """
 
-        import mcpython.ResourceLoader
-        import mcpython.common.event.EventHandler
+        import mcpython.engine.ResourceLoader
+        import mcpython.engine.event.EventHandler
 
-        mcpython.ResourceLoader.load_resource_packs()
+        mcpython.engine.ResourceLoader.load_resource_packs()
 
         self.setup_files()
 
@@ -246,9 +247,9 @@ class LaunchWrapper:
             shared.IS_CLIENT
         ), "can only setup on client, this is set up for being a dedicated server"
 
-        import mcpython.client.rendering.util
+        import mcpython.engine.rendering.util
 
-        mcpython.client.rendering.util.setup()
+        mcpython.engine.rendering.util.setup()
 
         return self
 
@@ -286,7 +287,7 @@ class LaunchWrapper:
 
         if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:
-                mcpython.ResourceLoader.read_image(
+                mcpython.engine.ResourceLoader.read_image(
                     "assets/minecraft/textures/entity/steve.png"
                 ).save(shared.build + "/skin.png")
             except:
@@ -319,8 +320,8 @@ class LaunchWrapper:
             try:
                 # todo: sometimes, this does not work correctly
                 shared.window.set_icon(
-                    mcpython.ResourceLoader.read_pyglet_image("icon_16x16.png"),
-                    mcpython.ResourceLoader.read_pyglet_image("icon_32x32.png"),
+                    mcpython.engine.ResourceLoader.read_pyglet_image("icon_16x16.png"),
+                    mcpython.engine.ResourceLoader.read_pyglet_image("icon_32x32.png"),
                 )
                 shared.event_handler.call("game:gameloop_startup")
             except:
@@ -355,10 +356,10 @@ class LaunchWrapper:
             "[WARN] Closing the game in a bad way, please make sure that nothing broke..."
         )
 
-        import mcpython.ResourceLoader
+        import mcpython.engine.ResourceLoader
 
         try:
-            mcpython.ResourceLoader.close_all_resources()
+            mcpython.engine.ResourceLoader.close_all_resources()
             logger.print_exception("general uncaught exception during running the game")
         except:
             logger.print_exception("failed to close resources, skipping")
@@ -379,8 +380,8 @@ class LaunchWrapper:
         Also invokes the event for closing the game, stops the world generation process, ...
         """
         shared.world.world_generation_process.stop()
-        import mcpython.ResourceLoader
+        import mcpython.engine.ResourceLoader
 
-        mcpython.ResourceLoader.close_all_resources()
+        mcpython.engine.ResourceLoader.close_all_resources()
         shared.event_handler.call("game:close")
         shared.tmp.cleanup()

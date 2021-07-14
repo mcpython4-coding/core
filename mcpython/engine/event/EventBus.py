@@ -17,7 +17,8 @@ import traceback
 import typing
 
 import pyglet.app
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class CancelAbleEvent:

@@ -26,14 +26,15 @@ from abc import ABC
 
 import mcpython.common.config
 
-# import mcpython.common.event.EventHandler
+# import mcpython.engine.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import toml
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class LoadingInterruptException(Exception):
@@ -81,22 +82,22 @@ class ModContainer:
         self.assigned_mod_loader: typing.Optional[AbstractModLoaderInstance] = None
 
         if zipfile.is_zipfile(path):
-            self.resource_access = mcpython.ResourceLoader.ResourceZipFile(
+            self.resource_access = mcpython.engine.ResourceLoader.ResourceZipFile(
                 path, close_when_scheduled=False
             )
             sys.path.append(path)
         elif os.path.isdir(path):
-            self.resource_access = mcpython.ResourceLoader.ResourceDirectory(path)
+            self.resource_access = mcpython.engine.ResourceLoader.ResourceDirectory(path)
             sys.path.append(path)
         elif os.path.isfile(path):
             # In this case, it is a file, so we know what mod loader to use
-            self.resource_access = mcpython.ResourceLoader.SimulatedResourceLoader()
+            self.resource_access = mcpython.engine.ResourceLoader.SimulatedResourceLoader()
             self.assigned_mod_loader = PyFileModLoader(self)
             self.assigned_mod_loader.on_select()
         else:
             raise RuntimeError(f"Invalid mod source file: {path}")
 
-        import mcpython.common.event.EventHandler as EventHandler
+        import mcpython.engine.event.EventHandler as EventHandler
 
         EventHandler.PUBLIC_EVENT_BUS.subscribe("resources:load", self.add_resources)
         self.add_resources()
@@ -104,7 +105,7 @@ class ModContainer:
         self.loaded_mods = []
 
     def add_resources(self):
-        mcpython.ResourceLoader.RESOURCE_LOCATIONS.append(self.resource_access)
+        mcpython.engine.ResourceLoader.RESOURCE_LOCATIONS.append(self.resource_access)
 
     def try_identify_mod_loader(self):
         """

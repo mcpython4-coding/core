@@ -16,14 +16,14 @@ import json
 import os
 import shutil
 
-import mcpython.client.rendering.RenderingGroups
+import mcpython.engine.rendering.RenderingGroups
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.StateWorldGeneration
 import mcpython.client.state.StateWorldLoading
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.SaveFile
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import mcpython.util.opengl
 import mcpython.util.texture
@@ -37,11 +37,11 @@ from . import State
 from .ui import UIPartButton, UIPartScrollBar
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
-    mcpython.ResourceLoader.read_image("assets/missing_texture.png").resize(
+    mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png").resize(
         (50, 50), PIL.Image.NEAREST
     )
 )
-WORLD_SELECTION = mcpython.ResourceLoader.read_image("minecraft:gui/world_selection")
+WORLD_SELECTION = mcpython.engine.ResourceLoader.read_image("minecraft:gui/world_selection")
 WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
     WORLD_SELECTION.crop((0, 0, 32, 32))
 )
@@ -68,7 +68,7 @@ class StateWorldSelection(State.State):
             ]  # StateParts get an list of steps to get to them as an list
             statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
         self.bind_to_eventbus()
-        self.scissor_group = mcpython.client.rendering.RenderingGroups.ScissorGroup(
+        self.scissor_group = mcpython.engine.rendering.RenderingGroups.ScissorGroup(
             0, 0, 10, 10
         )
 

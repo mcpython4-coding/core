@@ -15,7 +15,7 @@ import typing
 from abc import ABC
 
 import mcpython.common.config
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import mcpython.util.math
 import pyglet
@@ -456,7 +456,7 @@ class RawBoxModel(AbstractBoxModel):
             texture
             if type(texture) == pyglet.graphics.TextureGroup
             else pyglet.graphics.TextureGroup(
-                mcpython.ResourceLoader.read_pyglet_image(texture).get_texture()
+                mcpython.engine.ResourceLoader.read_pyglet_image(texture).get_texture()
             )
         )
 

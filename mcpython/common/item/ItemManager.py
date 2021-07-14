@@ -18,8 +18,9 @@ import mcpython.client.gui.HoveringItemBox
 import mcpython.common.data.serializer.tags.TagTargetHolder
 import mcpython.common.event.Registry
 import mcpython.common.factory.ItemFactory
-import mcpython.ResourceLoader
-from mcpython import logger, shared
+import mcpython.engine.ResourceLoader
+from mcpython import shared
+from mcpython.engine import logger
 
 COLLECTED_ITEMS = []
 tag_holder = mcpython.common.data.serializer.tags.TagTargetHolder.TagTargetHolder(

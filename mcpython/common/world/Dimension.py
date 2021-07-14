@@ -16,7 +16,7 @@ import sys
 import typing
 
 import deprecation
-import mcpython.client.rendering.util
+import mcpython.engine.rendering.util
 import mcpython.common.block.AbstractBlock
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.AbstractInterface

@@ -12,7 +12,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.world.serializer.IDataSerializer
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 @shared.registry

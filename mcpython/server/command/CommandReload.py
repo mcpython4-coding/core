@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 from mcpython import shared
 from mcpython.server.command.Builder import Command
 
@@ -34,10 +34,10 @@ def reload_chunks():
     shared.window.set_caption("finished!")
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "hotkey:chunk_reload", reload_chunks
 )
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "hotkey:reload_textures", reload_func
 )
 

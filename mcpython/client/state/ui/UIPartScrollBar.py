@@ -11,14 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
 
-IMAGE = mcpython.ResourceLoader.read_image(
+IMAGE = mcpython.engine.ResourceLoader.read_image(
     "assets/minecraft/textures/gui/container/creative_inventory/tabs.png"
 )
 scroll_active = mcpython.util.texture.to_pyglet_image(

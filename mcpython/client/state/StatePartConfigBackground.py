@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
@@ -23,7 +23,7 @@ from mcpython.util.annotation import onlyInClient
 class BackgroundHandler:
     batch = pyglet.graphics.Batch()
     objects = []
-    background_raw: PIL.Image.Image = mcpython.ResourceLoader.read_image(
+    background_raw: PIL.Image.Image = mcpython.engine.ResourceLoader.read_image(
         "assets/minecraft/textures/gui/options_background.png"
     )
     background_size = (32, 32)

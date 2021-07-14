@@ -16,12 +16,13 @@ import time
 
 import clipboard
 import mcpython.client.gui.ContainerRenderer
-import mcpython.common.event.EventBus
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventBus
+import mcpython.engine.event.EventHandler
 import mcpython.server.command.CommandParser
 import mcpython.util.opengl
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
@@ -102,7 +103,7 @@ class Chat:
         self.history_index = -1
         self.active_index = -1
         self.CANCEL_INPUT = False
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:clear_chat", self.clear
         )
         self.executing_command_info = None

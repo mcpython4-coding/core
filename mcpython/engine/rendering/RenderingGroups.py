@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.rendering.MatrixStack
+import mcpython.engine.rendering.MatrixStack
 import pyglet
 from mcpython.util.annotation import onlyInClient
 
@@ -39,7 +39,7 @@ class MatrixStackGroup(pyglet.graphics.Group):
     Group for holding an custom MatrixStack-instance
     """
 
-    def __init__(self, stack: mcpython.client.rendering.MatrixStack.MatrixStack):
+    def __init__(self, stack: mcpython.engine.rendering.MatrixStack.MatrixStack):
         super().__init__()
         self.stack = stack
 

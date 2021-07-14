@@ -16,10 +16,11 @@ import mcpython.common.entity.PlayerEntity
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.SaveFile
 import mcpython.common.world.serializer.IDataSerializer
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.getskin
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class WorldConfigFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
@@ -90,7 +91,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     player_name
                 )
             )
-            mcpython.ResourceLoader.read_image(
+            mcpython.engine.ResourceLoader.read_image(
                 "assets/minecraft/textures/entity/steve.png"
             ).save(shared.build + "/skin.png")
 

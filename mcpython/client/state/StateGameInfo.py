@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.client.state.State
 import mcpython.client.state.StatePartGame
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 from mcpython import shared
 from mcpython.client.state.ui import UIPartImage, UIPartLabel
@@ -23,7 +23,7 @@ from pyglet.window import key
 
 # todo: use pyglet.image.Image.get_region(area)
 sprite = mcpython.util.texture.to_pyglet_sprite(
-    mcpython.ResourceLoader.read_image("gui/demo_background").crop((0, 0, 248, 166))
+    mcpython.engine.ResourceLoader.read_image("gui/demo_background").crop((0, 0, 248, 166))
 )
 
 

@@ -27,7 +27,8 @@ import mcpython.common.world.SaveFile
 import mcpython.server.worldgen.WorldGenerationHandler
 import mcpython.util.math
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class World(mcpython.common.world.AbstractInterface.IWorld):

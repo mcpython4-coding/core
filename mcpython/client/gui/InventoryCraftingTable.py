@@ -16,8 +16,8 @@ import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
@@ -34,7 +34,7 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.ResourceLoader.read_image(
+        texture = mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/crafting_table"
         )
         size = texture.size
@@ -65,7 +65,7 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
 
     def on_activate(self):
         super().on_activate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
 
@@ -77,7 +77,7 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
         self.slots[-1].itemstack.clean()
         self.slots[-1].get_itemstack().clean()
         shared.world.get_active_player().reset_moving_slot()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
 
@@ -104,6 +104,6 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
         shared.inventory_handler.shift_container.container_B = self.slots
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", InventoryCraftingTable.update_texture
 )

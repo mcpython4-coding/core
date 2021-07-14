@@ -19,7 +19,8 @@ import random
 import typing
 from abc import ABC
 
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class CommandExecutionTracker:

@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.EventInfo
+import mcpython.engine.event.EventInfo
 import pyglet
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
@@ -27,7 +27,7 @@ class UIPartImage(UIPart.UIPart):
         position,
         anchor_window="WS",
         on_press=None,
-        press=mcpython.common.event.EventInfo.MousePressEventInfo(
+        press=mcpython.engine.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.LEFT
         ),
         anchor_image="WS",
@@ -46,7 +46,7 @@ class UIPartImage(UIPart.UIPart):
             anchor_window=anchor_window,
         )
         self.image = image
-        self.press: mcpython.common.event.EventInfo.MousePressEventInfo = press
+        self.press: mcpython.engine.event.EventInfo.MousePressEventInfo = press
 
         self.on_press = on_press
         self.active = False

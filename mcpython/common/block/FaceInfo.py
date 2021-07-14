@@ -15,7 +15,7 @@ import copy
 import typing
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import mcpython.util.enums
 from mcpython import shared
 
@@ -76,7 +76,7 @@ class FaceInfo:
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
             ):
                 if not self.subscribed_renderer:
-                    mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+                    mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
                         "render:draw:3d", self._draw_custom_render
                     )
                     self.subscribed_renderer = True
@@ -122,7 +122,7 @@ class FaceInfo:
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
             ):
                 if self.subscribed_renderer and not any(self.faces.values()):
-                    mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+                    mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                         "render:draw:3d", self._draw_custom_render
                     )
                     self.subscribed_renderer = False
@@ -142,7 +142,7 @@ class FaceInfo:
         Will inherit the custom renderer
         """
         if not self.subscribed_renderer:
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                 "render:draw:3d", self._draw_custom_render
             )
             return
@@ -187,7 +187,7 @@ class FaceInfo:
             )
             and self.subscribed_renderer
         ):
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                 "render:draw:3d", self._draw_custom_render
             )
             self.subscribed_renderer = False

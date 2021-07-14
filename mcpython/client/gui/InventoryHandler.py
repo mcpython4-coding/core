@@ -18,7 +18,8 @@ import mcpython.client.gui.HoveringItemBox
 import mcpython.client.gui.ShiftContainer
 import mcpython.client.gui.Slot
 import mcpython.client.state.StatePart
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from pyglet.window import key, mouse
 
 

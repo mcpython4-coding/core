@@ -20,10 +20,11 @@ import mcpython.client.rendering.model.api
 import mcpython.common.block.BoundingBox
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class BlockStateNotNeeded(Exception):
@@ -526,7 +527,7 @@ class BlockStateDefinition:
 
     @classmethod
     def from_directory(cls, directory: str, modname: str, immediate=False):
-        for file in mcpython.ResourceLoader.get_all_entries(directory):
+        for file in mcpython.engine.ResourceLoader.get_all_entries(directory):
             if not file.endswith("/"):
                 cls.from_file(file, modname, immediate=immediate)
         cls.LOOKUP_DIRECTORIES.add((directory, modname))
@@ -551,7 +552,7 @@ class BlockStateDefinition:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
             return BlockStateDefinition(
-                mcpython.ResourceLoader.read_json(file),
+                mcpython.engine.ResourceLoader.read_json(file),
                 "{}:{}".format(modname, s[-1].split(".")[0]),
             )
         except BlockStateNotNeeded:
@@ -607,10 +608,10 @@ class BlockStateDefinition:
             return shared.model_handler.blockstates[name]
 
         file = "assets/{}/blockstates/{}.json".format(*name.split(":"))
-        if not mcpython.ResourceLoader.exists(file):
+        if not mcpython.engine.ResourceLoader.exists(file):
             raise FileNotFoundError("for blockstate '{}'".format(name))
 
-        data = mcpython.ResourceLoader.read_json(file)
+        data = mcpython.engine.ResourceLoader.read_json(file)
         return cls.unsafe_from_data(name, data, immediate=True, force=True)
 
     def __init__(self, data: dict, name: str, immediate=False, force=False):

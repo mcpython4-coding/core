@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.rendering.model.BoxModel
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython.util.annotation import onlyInClient
 
@@ -65,7 +65,7 @@ class EntityRenderer:
             }
         }
         """
-        self.data = mcpython.ResourceLoader.read_json(self.path)
+        self.data = mcpython.engine.ResourceLoader.read_json(self.path)
         self.box_models.clear()
         self.states.clear()
         reloaded = []
@@ -76,13 +76,13 @@ class EntityRenderer:
             if texture in TEXTURES and texture in reloaded:
                 group = TEXTURES[texture]
             else:
-                if mcpython.ResourceLoader.exists(texture):
+                if mcpython.engine.ResourceLoader.exists(texture):
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.ResourceLoader.read_pyglet_image(texture).get_texture()
+                        mcpython.engine.ResourceLoader.read_pyglet_image(texture).get_texture()
                     )
                 else:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.ResourceLoader.read_pyglet_image(
+                        mcpython.engine.ResourceLoader.read_pyglet_image(
                             "assets/missing_texture.png"
                         ).get_texture()
                     )

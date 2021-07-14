@@ -17,7 +17,8 @@ import mcpython.common.block.AbstractBlock
 import mcpython.common.block.BoundingBox
 import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.util.enums
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 
 

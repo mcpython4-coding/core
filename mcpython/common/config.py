@@ -374,7 +374,7 @@ def load():
             import pyglet
 
             def on_shuffle(dt):
-                from mcpython import logger
+                from mcpython.engine import logger
 
                 if shared.world.world_loaded:
                     logger.println("shuffling data...")

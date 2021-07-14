@@ -11,11 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.rendering.BatchHelper
+import mcpython.engine.rendering.BatchHelper
 import mcpython.client.rendering.model.BoxModel
 import mcpython.common.item.ItemTextureAtlas
-import mcpython.ResourceLoader
-from mcpython import logger, shared
+import mcpython.engine.ResourceLoader
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class IItemModelLoader:
@@ -81,7 +82,7 @@ LOADERS = [DefaultLoader]
 class ItemModel:
     @classmethod
     def from_file(cls, file: str, item: str):
-        data = mcpython.ResourceLoader.read_json(file)
+        data = mcpython.engine.ResourceLoader.read_json(file)
         return cls.from_data(data, item)
 
     @classmethod
@@ -131,7 +132,7 @@ class ItemModel:
 
     def add_to_batch(
         self, position: tuple, batch, context: str, state: dict
-    ) -> mcpython.client.rendering.BatchHelper.BatchReference:
+    ) -> mcpython.engine.rendering.BatchHelper.BatchReference:
         pass
 
     def draw(self, position: tuple, context: str, state: dict):
@@ -163,7 +164,7 @@ class ItemModelHandler:
         self.models[name] = ItemModel.from_data(data, name)
 
     def from_folder(self, folder: str, modname: str):
-        for file in mcpython.ResourceLoader.get_all_entries(folder):
+        for file in mcpython.engine.ResourceLoader.get_all_entries(folder):
             if file.endswith("/"):
                 continue
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])
@@ -185,7 +186,7 @@ class ItemModelHandler:
 
     def add_to_batch(
         self, item_name, *args, **kwargs
-    ) -> mcpython.client.rendering.BatchHelper.BatchReference:
+    ) -> mcpython.engine.rendering.BatchHelper.BatchReference:
         return self.models[item_name].add_to_batch(*args, **kwargs)
 
     def draw(self, item_name, *args, **kwargs):

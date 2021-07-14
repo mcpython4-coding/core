@@ -15,12 +15,13 @@ import os
 import typing
 
 import mcpython.client.texture.TextureAtlas
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader as ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader as ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 LATEST_INFO_VERSION = 3
 

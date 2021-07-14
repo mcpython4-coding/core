@@ -18,7 +18,8 @@ import time
 import typing
 
 import mcpython.common.world.AbstractInterface
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class WorldGenerationTaskHandler:

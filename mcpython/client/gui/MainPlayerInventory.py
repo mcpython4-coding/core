@@ -19,9 +19,9 @@ import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import mcpython.common.item.AbstractArmorItem
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 from mcpython import shared
@@ -46,7 +46,7 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.ResourceLoader.read_image(
+        texture = mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/inventory"
         )
         size = texture.size
@@ -141,6 +141,6 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
         MainPlayerInventory.INSTANCES.append(self)
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", MainPlayerInventory.update_texture
 )

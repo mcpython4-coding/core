@@ -14,13 +14,13 @@ This project is not official by mojang and does not relate to it.
 import os
 
 import mcpython.common.config
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import PIL.Image
 import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
-MISSING_TEXTURE = mcpython.ResourceLoader.read_image(
+MISSING_TEXTURE = mcpython.engine.ResourceLoader.read_image(
     "assets/missing_texture.png"
 ).resize((16, 16), PIL.Image.NEAREST)
 
@@ -45,7 +45,7 @@ class TextureAtlasGenerator:
         return self.atlases[modname][-1].add_image(image), self.atlases[-1]
 
     def add_image_file(self, file: str, modname: str) -> tuple:
-        return self.add_image(mcpython.ResourceLoader.read_image(file), modname)
+        return self.add_image(mcpython.engine.ResourceLoader.read_image(file), modname)
 
     def add_images(self, images: list, modname, one_atlased=True) -> list:
         if len(images) == 0:
@@ -65,7 +65,7 @@ class TextureAtlasGenerator:
 
     def add_image_files(self, files: list, modname: str, one_atlased=True) -> list:
         return self.add_images(
-            [mcpython.ResourceLoader.read_image(x) for x in files],
+            [mcpython.engine.ResourceLoader.read_image(x) for x in files],
             modname,
             one_atlased=one_atlased,
         )

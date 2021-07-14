@@ -15,7 +15,7 @@ import gc
 import typing
 
 import mcpython.client.rendering.entities.EntityRenderer
-import mcpython.client.rendering.util
+import mcpython.engine.rendering.util
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 from mcpython import shared
@@ -173,7 +173,7 @@ class ResourcePipeHandler:
 
         shared.inventory_handler.reload_config()  # reloads inventory configuration
         shared.model_handler.reload_models()
-        mcpython.client.rendering.util.setup()
+        mcpython.engine.rendering.util.setup()
         # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files

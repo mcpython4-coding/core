@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.event.EventBus
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventBus
+import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython import shared
 from mcpython.client.rendering.ui.ButtonBackgroundBuilder import (
@@ -45,7 +45,7 @@ class ImageOverlayButtonRenderer:
         self.position = 0, 0
         self.size = button_size
 
-        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = (
+        self.underlying_event_bus: mcpython.engine.event.EventBus.EventBus = (
             shared.event_handler.create_bus(active=False)
         )
         self.underlying_event_bus.subscribe("user:mouse:motion", self.on_mouse_move)
@@ -103,7 +103,7 @@ LEFT_ARROW = None
 # todo: add to reload handler
 def reload():
     global ARROW_TEXTURE_SHEET, RIGHT_ARROW, LEFT_ARROW
-    ARROW_TEXTURE_SHEET = mcpython.ResourceLoader.read_pyglet_image(
+    ARROW_TEXTURE_SHEET = mcpython.engine.ResourceLoader.read_pyglet_image(
         "minecraft:gui/recipe_book"
     )
     RIGHT_ARROW = ARROW_TEXTURE_SHEET.get_region(0, 32, 12, 17)

@@ -16,7 +16,8 @@ from abc import ABC
 
 import mcpython.client.rendering.gui.CraftingGridRecipeRenderer
 import mcpython.common.container.crafting.IRecipe
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.common.container.ResourceStack import ItemStack
 
 

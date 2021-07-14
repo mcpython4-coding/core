@@ -14,13 +14,13 @@ This project is not official by mojang and does not relate to it.
 
 import cProfile
 
-import mcpython.client.rendering.util
+import mcpython.engine.rendering.util
 import mcpython.client.state.StateHandler
 import mcpython.client.state.StatePartGame
 import mcpython.common.config
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import mcpython.common.event.TickHandler
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import mcpython.util.texture
 import PIL.Image
@@ -186,15 +186,15 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self.push_handlers(self.keys)
 
         self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
-            mcpython.ResourceLoader.read_image("gui/icons")
+            mcpython.engine.ResourceLoader.read_image("gui/icons")
             .crop((0, 0, 15, 15))
             .resize((30, 30), PIL.Image.NEAREST)
         )
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:game_crash", self.close
         )
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:copy_block_or_entity_data", self.get_block_entity_info
         )
 
@@ -552,7 +552,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         # todo: move to RenderingHelper
         width, height = self.get_size()
         viewport = self.get_viewport_size()
-        mcpython.client.rendering.util.set_2d(
+        mcpython.engine.rendering.util.set_2d(
             (max(1, viewport[0]), max(1, viewport[1])), max(1, width), max(1, height)
         )
         pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)

@@ -19,7 +19,8 @@ import mcpython.common.world.Chunk
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
 import mcpython.util.enums
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 def chunk2region(cx, cz):

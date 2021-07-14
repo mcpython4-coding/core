@@ -15,7 +15,8 @@ import itertools
 import os
 
 import mcpython.util.math
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.server.command.Builder import Command, CommandNode, DefinedString, Int
 
 chunk = (

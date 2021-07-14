@@ -15,7 +15,8 @@ import typing
 from abc import ABC
 
 import mcpython.common.item.AbstractItem
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class AbstractResourceStack(ABC):

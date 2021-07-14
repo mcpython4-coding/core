@@ -16,7 +16,7 @@ import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
-from ... import logger
+from mcpython.engine import logger
 from . import State
 from .ui import UIPartButton
 

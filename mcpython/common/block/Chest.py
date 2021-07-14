@@ -19,7 +19,8 @@ import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.common.item.AbstractToolItem
 import mcpython.util.enums
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from pyglet.window import key, mouse
 
 from . import AbstractBlock

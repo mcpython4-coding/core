@@ -20,13 +20,14 @@ import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.client.rendering.ui.Buttons
 import mcpython.client.rendering.ui.SearchBar
-import mcpython.common.event.EventBus
+import mcpython.engine.event.EventBus
 import mcpython.common.event.TickHandler
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
 from mcpython.util.opengl import draw_line_rectangle
@@ -35,7 +36,7 @@ from pyglet.window import key, mouse
 TAB_TEXTURE = (
     None
     if shared.IS_TEST_ENV
-    else mcpython.ResourceLoader.read_pyglet_image(
+    else mcpython.engine.ResourceLoader.read_pyglet_image(
         "minecraft:gui/container/creative_inventory/tabs"
     )
 )
@@ -68,7 +69,7 @@ class CreativeTabScrollbar:
         self.callback = callback
         self.scroll_until = scroll_until
         self.currently_scrolling = 1
-        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = (
+        self.underlying_event_bus: mcpython.engine.event.EventBus.EventBus = (
             shared.event_handler.create_bus(active=False)
         )
 
@@ -233,7 +234,7 @@ class CreativeItemTab(ICreativeView):
     def reload(cls):
         cls.bg_texture = texture_util.to_pyglet_image(
             mcpython.util.texture.to_pillow_image(
-                mcpython.ResourceLoader.read_pyglet_image(
+                mcpython.engine.ResourceLoader.read_pyglet_image(
                     "minecraft:gui/container/creative_inventory/tab_items"
                 ).get_region(0, 120, 194, 255 - 120)
             ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
@@ -399,7 +400,7 @@ class CreativeTabSearchBar(CreativeItemTab):
     def reload(cls):
         cls.bg_texture = texture_util.to_pyglet_image(
             mcpython.util.texture.to_pillow_image(
-                mcpython.ResourceLoader.read_pyglet_image(
+                mcpython.engine.ResourceLoader.read_pyglet_image(
                     "minecraft:gui/container/creative_inventory/tab_item_search"
                 ).get_region(0, 120, 194, 255 - 120)
             ).resize((2 * 195, 2 * 136), PIL.Image.NEAREST)
@@ -440,7 +441,7 @@ class CreativePlayerInventory(ICreativeView):
     @classmethod
     def reload(cls):
         cls.TEXTURE = texture_util.resize_image_pyglet(
-            mcpython.ResourceLoader.read_pyglet_image(
+            mcpython.engine.ResourceLoader.read_pyglet_image(
                 "minecraft:gui/container/creative_inventory/tab_inventory"
             ).get_region(0, 120, 195, 136),
             cls.TEXTURE_SIZE,
@@ -523,7 +524,7 @@ class CreativeTabManager:
         self.saved_hotbars = None
         self.current_page = 0
 
-        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = (
+        self.underlying_event_bus: mcpython.engine.event.EventBus.EventBus = (
             shared.event_handler.create_bus(active=False)
         )
         self.underlying_event_bus.subscribe("user:mouse:press", self.on_mouse_press)

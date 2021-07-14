@@ -16,7 +16,8 @@ import typing
 
 import mcpython.common.data.serializer.DataSerializationManager
 import mcpython.util.data
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.common.data.serializer.DataSerializationManager import ISerializeAble
 
 

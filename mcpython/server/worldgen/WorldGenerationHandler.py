@@ -23,7 +23,8 @@ import mcpython.server.worldgen.layer.ILayer
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class WorldGenerationHandler:

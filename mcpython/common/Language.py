@@ -13,8 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.ResourceLoader
-from mcpython import logger, shared
+import mcpython.engine.ResourceLoader
+from mcpython import shared
+from mcpython.engine import logger
 
 LANGUAGES: typing.Dict[str, "Language"] = {}  # table of data of Languages
 # change this for having another language, you have to include the needed lang files yourself :/
@@ -64,7 +65,7 @@ class Language:
         try:
             Language.from_data(
                 file.split("/")[-1].split(".")[0] if name is None else name,
-                mcpython.ResourceLoader.read_json(file).copy(),
+                mcpython.engine.ResourceLoader.read_json(file).copy(),
             )
         except:
             logger.print_exception(
@@ -88,7 +89,7 @@ class Language:
         language = LANGUAGES[name]
         try:
             lines = (
-                mcpython.ResourceLoader.read_raw(file)
+                mcpython.engine.ResourceLoader.read_raw(file)
                 .decode("UTF-8", "ignore")
                 .split("\n")
             )
@@ -139,7 +140,7 @@ def from_directory(directory: str, modname: str):
     """
     if modname not in shared.mod_loader.mods:
         modname = "minecraft"
-    files = list(mcpython.ResourceLoader.get_all_entries_special(directory))
+    files = list(mcpython.engine.ResourceLoader.get_all_entries_special(directory))
     m = len(files)
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format

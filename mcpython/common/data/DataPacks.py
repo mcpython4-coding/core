@@ -16,10 +16,11 @@ import json
 import os
 import typing
 
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
 import mcpython.server.command.FunctionFile
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class DatapackLoadException(Exception):
@@ -46,7 +47,7 @@ class DataPackHandler:
 
     def __init__(self):
         self.loaded_data_packs: typing.List["DataPack"] = []
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "game:close", self.cleanup
         )
 
@@ -195,9 +196,9 @@ class DataPack:
             if self.status in (DataPackStatus.ACTIVATED, DataPackStatus.DEACTIVATED):
                 self.unload()
             self.access = (
-                mcpython.ResourceLoader.ResourceDirectory(self.directory)
+                mcpython.engine.ResourceLoader.ResourceDirectory(self.directory)
                 if os.path.isdir(self.directory)
-                else mcpython.ResourceLoader.ResourceZipFile(self.directory)
+                else mcpython.engine.ResourceLoader.ResourceZipFile(self.directory)
             )
             info = json.loads(self.access.read_raw("pack.mcmeta").decode("utf-8"))[
                 "pack"
@@ -269,11 +270,11 @@ class DataPack:
         self.status = status
         if (
             status == DataPackStatus.ACTIVATED
-            and self.access not in mcpython.ResourceLoader.RESOURCE_LOCATIONS
+            and self.access not in mcpython.engine.ResourceLoader.RESOURCE_LOCATIONS
         ):
-            mcpython.ResourceLoader.RESOURCE_LOCATIONS.append(self.access)
+            mcpython.engine.ResourceLoader.RESOURCE_LOCATIONS.append(self.access)
         elif (
             status == DataPackStatus.DEACTIVATED
-            and self.access in mcpython.ResourceLoader.RESOURCE_LOCATIONS
+            and self.access in mcpython.engine.ResourceLoader.RESOURCE_LOCATIONS
         ):
-            mcpython.ResourceLoader.RESOURCE_LOCATIONS.remove(self.access)
+            mcpython.engine.ResourceLoader.RESOURCE_LOCATIONS.remove(self.access)

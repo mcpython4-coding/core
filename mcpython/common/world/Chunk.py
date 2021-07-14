@@ -19,7 +19,8 @@ import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
 import mcpython.util.math
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class Chunk(mcpython.common.world.AbstractInterface.IChunk):

@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import collections
 import math
 
-import mcpython.client.rendering.MatrixStack
+import mcpython.engine.rendering.MatrixStack
 import pyglet.gl as _gl
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
@@ -111,7 +111,7 @@ class RenderingHelper:
 
     def get_default_3d_matrix_stack(
         self, base=None
-    ) -> mcpython.client.rendering.MatrixStack.MatrixStack:
+    ) -> mcpython.engine.rendering.MatrixStack.MatrixStack:
         """
         will create an MatrixStack-instance with the active transformation for the active player
         Will set up perspective for 3d rendering with these stack
@@ -121,7 +121,7 @@ class RenderingHelper:
         Use get_dynamic_3d_matrix_stack() where possible & reuse
         """
         if base is None:
-            base = mcpython.client.rendering.MatrixStack.MatrixStack()
+            base = mcpython.engine.rendering.MatrixStack.MatrixStack()
         width, height = shared.window.get_size()
         self.glEnable(_gl.GL_DEPTH_TEST)
         viewport = shared.window.get_viewport_size()
@@ -140,14 +140,14 @@ class RenderingHelper:
 
     def get_dynamic_3d_matrix_stack(
         self, base=None
-    ) -> mcpython.client.rendering.MatrixStack.LinkedMatrixStack:
+    ) -> mcpython.engine.rendering.MatrixStack.LinkedMatrixStack:
         """
         same as get_default_3d_matrix_stack, but the matrix stack is an LinkedMatrixStack with links to player position,
             etc. (so it dynamically updates itself when the player changes the parameters)
         [see above]
         """
         if base is None:
-            base = mcpython.client.rendering.MatrixStack.LinkedMatrixStack()
+            base = mcpython.engine.rendering.MatrixStack.LinkedMatrixStack()
         self.glEnable(_gl.GL_DEPTH_TEST)
         base.addViewport(
             lambda: (

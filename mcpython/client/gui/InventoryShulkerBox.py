@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.gui.InventoryChest
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import pyglet
 from mcpython import shared
 

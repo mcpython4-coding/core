@@ -36,7 +36,8 @@ except ImportError:
 
 import mcpython.common.config
 import mcpython.util.texture
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 """
 ---------------------------------------------

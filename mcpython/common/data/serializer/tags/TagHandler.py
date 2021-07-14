@@ -16,8 +16,9 @@ import typing
 import mcpython.common.data.serializer.tags.Tag
 import mcpython.common.data.serializer.tags.TagGroup
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLoader
-from mcpython import logger, shared
+import mcpython.engine.ResourceLoader
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class TagHandler:
@@ -68,13 +69,13 @@ class TagHandler:
         :param direct_call: if build now or in the loading stage for it
         """
         for row in [
-            mcpython.ResourceLoader.get_all_entries(x) for x in self.tag_locations
+            mcpython.engine.ResourceLoader.get_all_entries(x) for x in self.tag_locations
         ]:
             for address in row:
                 if address.endswith("/"):
                     continue
 
-                data = mcpython.ResourceLoader.read_json(address)
+                data = mcpython.engine.ResourceLoader.read_json(address)
                 s = address.split("/")
                 modname = s[s.index("data") + 1]
                 name = "#{}:{}".format(

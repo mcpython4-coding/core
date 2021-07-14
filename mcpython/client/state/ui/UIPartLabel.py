@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.EventInfo
+import mcpython.engine.event.EventInfo
 import mcpython.common.Language
 import pyglet
 from mcpython.util.annotation import onlyInClient
@@ -26,7 +26,7 @@ class UIPartLabel(UIPart.UIPart):
         self,
         text,
         position,
-        press=mcpython.common.event.EventInfo.MousePressEventInfo(
+        press=mcpython.engine.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.LEFT
         ),
         anchor_lable="WS",
@@ -52,7 +52,7 @@ class UIPartLabel(UIPart.UIPart):
         if len(color) != 4:
             raise ValueError("color must be an tuple of (r, g, b, a)")
         self.text = text
-        self.press: mcpython.common.event.EventInfo.MousePressEventInfo = press
+        self.press: mcpython.engine.event.EventInfo.MousePressEventInfo = press
         self.color = color
         self.text_size = text_size
 

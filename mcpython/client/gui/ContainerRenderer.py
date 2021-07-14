@@ -16,11 +16,12 @@ import typing
 import uuid
 from abc import ABC
 
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class ContainerRenderer(ABC):
@@ -65,7 +66,7 @@ class ContainerRenderer(ABC):
 
         if self.get_config_file() is not None:
             try:
-                self.config = mcpython.ResourceLoader.read_json(self.get_config_file())
+                self.config = mcpython.engine.ResourceLoader.read_json(self.get_config_file())
             except:
                 logger.print_exception(
                     "[FATAL] failed to load inventory config file '{}' for inventory {}".format(
@@ -109,7 +110,7 @@ class ContainerRenderer(ABC):
 
             if "empty_slot_image" in entry:
                 try:
-                    image = mcpython.ResourceLoader.read_image(
+                    image = mcpython.engine.ResourceLoader.read_image(
                         entry["empty_slot_image"]
                     )
                     image = mcpython.util.texture.to_pyglet_image(
@@ -140,15 +141,15 @@ class ContainerRenderer(ABC):
 
         if "image_location" in self.config:
             try:
-                if mcpython.ResourceLoader.exists(self.config["image_location"]):
+                if mcpython.engine.ResourceLoader.exists(self.config["image_location"]):
                     self.bg_sprite = pyglet.sprite.Sprite(
-                        mcpython.ResourceLoader.read_pyglet_image(
+                        mcpython.engine.ResourceLoader.read_pyglet_image(
                             self.config["image_location"]
                         )
                     )
                 else:
                     self.bg_sprite = pyglet.sprite.Sprite(
-                        mcpython.ResourceLoader.read_pyglet_image(
+                        mcpython.engine.ResourceLoader.read_pyglet_image(
                             "assets/missing_texture.png"
                         )
                     )

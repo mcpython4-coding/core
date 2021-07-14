@@ -19,7 +19,8 @@ import mcpython.common.event.Registry
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
 import simplejson as json
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 """
 How to decide when an new version is needed?

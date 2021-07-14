@@ -17,7 +17,7 @@ import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import pyglet
 from mcpython import shared
 
@@ -39,7 +39,7 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     def on_activate(self):
         super().on_activate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
         self.block.opened = True
@@ -48,7 +48,7 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     def on_deactivate(self):
         super().on_deactivate()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
         self.block.opened = False

@@ -15,7 +15,7 @@ import re
 import typing
 from abc import ABC
 
-from mcpython import ResourceLoader
+from mcpython.engine import ResourceLoader
 
 
 class AbstractReloadListener(ABC):

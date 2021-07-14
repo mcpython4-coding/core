@@ -17,7 +17,8 @@ import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.util.enums
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from pyglet.graphics.vertexdomain import VertexList
 
 

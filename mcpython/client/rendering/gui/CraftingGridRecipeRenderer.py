@@ -17,12 +17,12 @@ import typing
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.GridRecipeInstances as GridRecipe
 import mcpython.common.container.crafting.IRecipe
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
-from mcpython import logger
+from mcpython.engine import logger
 
 from . import RecipeViewRenderer
 
@@ -36,7 +36,7 @@ class CraftingTableLikeRecipeViewRenderer(
     @classmethod
     def update_texture(cls):
         # the custom view background
-        texture = mcpython.ResourceLoader.read_image(
+        texture = mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/crafting_table_view"
         )
 
@@ -136,6 +136,6 @@ class CraftingTableLikeRecipeViewRenderer(
                     i += 1
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", CraftingTableLikeRecipeViewRenderer.update_texture
 )

@@ -83,7 +83,7 @@ mod_loader = None  # the mod loader instance
 
 try:
     # todo: move to separated file
-    import mcpython.client.rendering.RenderingHelper as _helper
+    import mcpython.engine.rendering.RenderingHelper as _helper
 
     rendering_helper = _helper.RenderingHelper()
 except ImportError:

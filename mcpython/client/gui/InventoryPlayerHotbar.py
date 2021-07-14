@@ -19,13 +19,14 @@ import typing
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.InventoryHandler
 import mcpython.client.gui.Slot
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
 import mcpython.util.opengl
 import mcpython.util.texture
 import PIL.Image
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class _TEXTURES:
@@ -43,7 +44,7 @@ TEXTURES = _TEXTURES
 
 
 def reload():
-    import mcpython.ResourceLoader as ResourceLoader
+    import mcpython.engine.ResourceLoader as ResourceLoader
 
     try:
         base: pyglet.image.AbstractImage = ResourceLoader.read_pyglet_image("gui/icons")
@@ -134,7 +135,7 @@ def reload():
             base.crop((0, 22, 24, 46)).resize((48, 48), PIL.Image.NEAREST)
         )
 
-        base = mcpython.ResourceLoader.read_image("minecraft:gui/icons")
+        base = mcpython.engine.ResourceLoader.read_image("minecraft:gui/icons")
         xp_bars = [
             mcpython.util.texture.to_pyglet_image(
                 base.crop((0, 69, 182, 74)).resize((364, 10), PIL.Image.NEAREST)
@@ -148,7 +149,7 @@ def reload():
     TEXTURES = Textures
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", reload
 )
 

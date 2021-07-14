@@ -16,7 +16,8 @@ import math
 import typing
 
 import deprecation
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 def cube_vertices_better(

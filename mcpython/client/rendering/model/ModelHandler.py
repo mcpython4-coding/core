@@ -20,10 +20,11 @@ import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import mcpython.util.math
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class ModelHandler:
@@ -50,7 +51,7 @@ class ModelHandler:
         todo: add datapack locations
         """
         for location in self.lookup_locations:
-            found_models = mcpython.ResourceLoader.get_all_entries(location)
+            found_models = mcpython.engine.ResourceLoader.get_all_entries(location)
             for model in found_models:
                 s = model.split("/")
                 mod_fix = s[s.index("block") - 2]
@@ -104,7 +105,7 @@ class ModelHandler:
         file = self.found_models[used]
         if type(file) == str:
             try:
-                data = mcpython.ResourceLoader.read_json(file)
+                data = mcpython.engine.ResourceLoader.read_json(file)
             except json.decoder.JSONDecodeError:
                 data = {
                     "parent": "minecraft:block/cube_all",
@@ -166,7 +167,7 @@ class ModelHandler:
         location = self.found_models[name]
         try:
             if type(location) == str:
-                modeldata = mcpython.ResourceLoader.read_json(location)
+                modeldata = mcpython.engine.ResourceLoader.read_json(location)
                 self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
                     modeldata.copy(),
                     "block/" + location.split("/")[-1].split(".")[0],

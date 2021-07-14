@@ -15,10 +15,11 @@ import typing
 
 import mcpython.client.state.State
 import mcpython.client.state.StatePart
-import mcpython.common.event.EventHandler
+import mcpython.engine.event.EventHandler
 import mcpython.common.event.Registry
-import mcpython.ResourceLoader
-from mcpython import logger, shared
+import mcpython.engine.ResourceLoader
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
 
@@ -232,9 +233,9 @@ class StateConfigFile:
         Constructs an new deserializer for an file
         """
         self.file = file
-        self.data = mcpython.ResourceLoader.read_json(file)
+        self.data = mcpython.engine.ResourceLoader.read_json(file)
         self.injected_objects = set()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "command:reload:end", self.reload
         )
 
@@ -283,15 +284,15 @@ class StateConfigFile:
         Called by the system on data reload
         Will internally re-call the inject()-function on every state
         """
-        self.data = mcpython.ResourceLoader.read_json(self.file)
+        self.data = mcpython.engine.ResourceLoader.read_json(self.file)
         for state_instance in self.injected_objects:
             self.inject(state_instance)
 
     def __del__(self):
         if (
             mcpython is not None
-            and mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS is not None
+            and mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS is not None
         ):
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                 "command:reload:end", self.reload
             )

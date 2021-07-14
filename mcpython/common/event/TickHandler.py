@@ -18,7 +18,8 @@ import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.util.math
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class TickHandler:

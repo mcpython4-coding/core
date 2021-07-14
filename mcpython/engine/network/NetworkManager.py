@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.network.Backend
+import mcpython.engine.network.Backend
 import mcpython.common.network.package.AbstractPackage
 from mcpython import shared
 

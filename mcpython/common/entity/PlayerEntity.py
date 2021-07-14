@@ -18,10 +18,11 @@ import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.common.container.ResourceStack
 import mcpython.common.entity.AbstractEntity
 import mcpython.common.entity.DamageSource
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
 import mcpython.util.math
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 @shared.registry
@@ -88,10 +89,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         # todo: move to somewhere else! (Each player creation does a new one!)
         # todo: client-only
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:get_player_position", self.hotkey_get_position
         )
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:gamemode_1-3_toggle", self.toggle_gamemode
         )
 

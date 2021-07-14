@@ -24,13 +24,14 @@ import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
 import mcpython.common.mod.ModMcpython
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import mcpython.server.command.CommandParser
 import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.getskin
 import mcpython.util.math
 import mcpython.util.opengl
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
@@ -189,7 +190,7 @@ class StateWorldGeneration(State.State):
                 )
             )
             try:
-                mcpython.ResourceLoader.read_image(
+                mcpython.engine.ResourceLoader.read_image(
                     "assets/minecraft/textures/entity/steve.png"
                 ).save(shared.build + "/skin.png")
             except:

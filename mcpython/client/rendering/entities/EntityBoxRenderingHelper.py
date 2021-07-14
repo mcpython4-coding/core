@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.client.texture.TextureAtlas
-import mcpython.ResourceLoader
+import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython import shared
 from mcpython.util import opengl as opengl_util

@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.event.EventBus
+import mcpython.engine.event.EventBus
 import pyglet
 from mcpython import shared
 from mcpython.util import opengl
@@ -35,7 +35,7 @@ class SearchBar:
         self.position = 0, 0
         self.entry_size = 1, 1
 
-        self.underlying_event_bus: mcpython.common.event.EventBus.EventBus = (
+        self.underlying_event_bus: mcpython.engine.event.EventBus.EventBus = (
             shared.event_handler.create_bus(active=False)
         )
         self.underlying_event_bus.subscribe("user:keyboard:press", self.on_key_press)

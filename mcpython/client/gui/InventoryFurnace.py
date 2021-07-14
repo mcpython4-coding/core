@@ -17,12 +17,13 @@ import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.FurnaceCraftingHelper
 import mcpython.common.container.ResourceStack
-import mcpython.common.event.EventHandler
-import mcpython.ResourceLoader
+import mcpython.engine.event.EventHandler
+import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 
 
 class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
@@ -40,7 +41,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.ResourceLoader.read_image("minecraft:gui/container/furnace")
+        texture = mcpython.engine.ResourceLoader.read_image("minecraft:gui/container/furnace")
         size = texture.size
 
         texture_bg = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
@@ -205,29 +206,29 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def on_activate(self):
         super().on_activate()
         try:
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                 "user:keyboard:press", self.on_key_press
             )
-            mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                 "gameloop:tick:end", self.on_tick
             )
         except ValueError:
             pass
 
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "gameloop:tick:end", self.on_tick
         )
 
     def on_deactivate(self):
         super().on_deactivate()
         shared.world.get_active_player().reset_moving_slot()
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
-        mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "gameloop:tick:end", self.on_tick
         )
 
@@ -328,6 +329,6 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         }
 
 
-mcpython.common.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", InventoryFurnace.update_texture
 )

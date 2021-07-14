@@ -20,7 +20,8 @@ import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.util.math
 import mcpython.util.opengl
-from mcpython import logger, shared
+from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
