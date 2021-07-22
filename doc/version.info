@@ -1676,7 +1676,7 @@ R   [uuk]: improved world serialization API
 [uuk]: bumped target mc version to 1.17
 [uuk]: improved memory usage / block instance
 
-[github]: start of development cycle for 21w27a
+[github]: start of development cycle for 21w??a
 [uuk]: mod loader is now more efficient at loading mod info files from archives
 [uuk]: exported java jvm with bridge and built-ins into separate repository
 [uuk]: refactored the complete resource serialization system
@@ -1691,3 +1691,4 @@ R   [uuk]: improved world serialization API
 [uuk]: added codeql-analysis for code analysis to the github
 [uuk]: added dessert hills and lakes biomes
 [uuk]: major refactoring: moved code to mcpython/engine module
+[uuk]: added mcpython/engine/asyncm-module storing a set of classes for async work around pyglet
