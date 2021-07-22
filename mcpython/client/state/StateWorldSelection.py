@@ -16,13 +16,13 @@ import json
 import os
 import shutil
 
-import mcpython.engine.rendering.RenderingGroups
 import mcpython.client.state.StatePartConfigBackground
 import mcpython.client.state.StateWorldGeneration
 import mcpython.client.state.StateWorldLoading
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.SaveFile
+import mcpython.engine.rendering.RenderingGroups
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import mcpython.util.opengl
@@ -41,7 +41,9 @@ MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
         (50, 50), PIL.Image.NEAREST
     )
 )
-WORLD_SELECTION = mcpython.engine.ResourceLoader.read_image("minecraft:gui/world_selection")
+WORLD_SELECTION = mcpython.engine.ResourceLoader.read_image(
+    "minecraft:gui/world_selection"
+)
 WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
     WORLD_SELECTION.crop((0, 0, 32, 32))
 )

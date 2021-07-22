@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.engine.event.EventInfo
 import mcpython.common.Language
+import mcpython.engine.event.EventInfo
 import pyglet
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse

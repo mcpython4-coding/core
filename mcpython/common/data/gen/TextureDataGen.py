@@ -14,11 +14,11 @@ This project is not official by mojang and does not relate to it.
 import mcpython.engine.ResourceLoader as ResourceLoader
 import mcpython.util.texture
 import PIL.Image
-from mcpython.engine import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
     DataGeneratorInstance,
     IDataGenerator,
 )
+from mcpython.engine import logger
 
 
 class TextureConstructor(IDataGenerator):

@@ -17,8 +17,8 @@ import sys
 
 import mcpython.client.gui.InventoryRecipeView
 import mcpython.common.container.crafting.IRecipe
-import mcpython.engine.event.EventHandler
 import mcpython.common.item.ItemManager
+import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.engine import logger

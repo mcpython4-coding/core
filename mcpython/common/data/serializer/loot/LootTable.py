@@ -18,8 +18,8 @@ import typing
 import mcpython.common.container.ResourceStack
 import mcpython.common.data.serializer.loot.LootTableCondition
 import mcpython.common.data.serializer.loot.LootTableFunction
-import mcpython.engine.event.EventHandler
 import mcpython.common.mod.ModMcpython
+import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.engine import logger

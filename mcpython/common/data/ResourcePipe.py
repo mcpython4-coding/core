@@ -15,9 +15,9 @@ import gc
 import typing
 
 import mcpython.client.rendering.entities.EntityRenderer
-import mcpython.engine.rendering.util
 import mcpython.common.config
 import mcpython.common.data.DataPacks
+import mcpython.engine.rendering.util
 from mcpython import shared
 
 from .abstract import AbstractReloadListener

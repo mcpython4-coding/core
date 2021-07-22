@@ -14,11 +14,11 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.util.enums
-from mcpython.engine import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
     DataGeneratorInstance,
     IDataGenerator,
 )
+from mcpython.engine import logger
 
 
 def encode_model_key(key):

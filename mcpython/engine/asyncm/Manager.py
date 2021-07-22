@@ -1,3 +1,16 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import asyncio
 import multiprocessing
 import sys
@@ -20,10 +33,14 @@ class SpawnedProcessInfo:
         self.call_regular = None
 
     def spawn_main_task_manager(self):
-        return TaskManager(self, self.off2main, self.off2main_data, self.main2off, self.main2off_data)
+        return TaskManager(
+            self, self.off2main, self.off2main_data, self.main2off, self.main2off_data
+        )
 
     def spawn_off_task_manager(self):
-        return TaskManager(self, self.main2off, self.main2off_data, self.off2main, self.off2main_data)
+        return TaskManager(
+            self, self.main2off, self.main2off_data, self.off2main, self.off2main_data
+        )
 
     def off_work(self):
         asyncio.get_event_loop().create_task(self.off_work_async())
@@ -44,7 +61,14 @@ class SpawnedProcessInfo:
 
 
 class TaskManager:
-    def __init__(self, info: "SpawnedProcessInfo", queue_in: multiprocessing.Queue, data_queue_in: multiprocessing.Queue, queue_out: multiprocessing.Queue, data_queue_out: multiprocessing.Queue):
+    def __init__(
+        self,
+        info: "SpawnedProcessInfo",
+        queue_in: multiprocessing.Queue,
+        data_queue_in: multiprocessing.Queue,
+        queue_out: multiprocessing.Queue,
+        data_queue_out: multiprocessing.Queue,
+    ):
         self.info = info
         self.queue_in = queue_in
         self.data_queue_in = data_queue_in
@@ -85,15 +109,24 @@ class TaskManager:
 
             if target != self.info.name if not self.is_on_main else target != "main":
                 if self.router is None:
-                    raise RuntimeError(f"{self} has no router set and so cannot re-route task {task} to process '{target}'")
+                    raise RuntimeError(
+                        f"{self} has no router set and so cannot re-route task {task} to process '{target}'"
+                    )
 
                 # print(f"routing from {self.info.name} to {target}")
                 self.router(target).queue_out.put(d)
                 continue
 
-            function, args, kwargs, meta = mcpython.engine.asyncm.serializer.deserialize_task(task)
+            (
+                function,
+                args,
+                kwargs,
+                meta,
+            ) = mcpython.engine.asyncm.serializer.deserialize_task(task)
 
-            asyncio.ensure_future(self.execute_task(task_id, source, target, function, args, kwargs))
+            asyncio.ensure_future(
+                self.execute_task(task_id, source, target, function, args, kwargs)
+            )
 
         while not self.data_queue_in.empty():
             target, source, result, task_id = d = self.data_queue_in.get()
@@ -121,7 +154,7 @@ class TaskManager:
             if task_id in self.waiting_awaits:
                 self.waiting_awaits.pop(task_id).set()
             # else:
-                # print("warn: result was not waited for!", self.waiting_awaits)
+            # print("warn: result was not waited for!", self.waiting_awaits)
 
     async def invokeOnMain(self, function, *args, ignore_result=False, **kwargs):
         if not ignore_result:
@@ -129,7 +162,16 @@ class TaskManager:
             self.next_id += 1
         else:
             internal_id = -1
-        self.queue_out.put(("main", self.info.name, mcpython.engine.asyncm.serializer.serialize_task(function, args, kwargs), internal_id))
+        self.queue_out.put(
+            (
+                "main",
+                self.info.name,
+                mcpython.engine.asyncm.serializer.serialize_task(
+                    function, args, kwargs
+                ),
+                internal_id,
+            )
+        )
 
         event = asyncio.Event()
 
@@ -140,15 +182,35 @@ class TaskManager:
         return self.result_cache.pop(internal_id, None)
 
     def invokeOnMainNoWait(self, function, *args, **kwargs):
-        self.queue_out.put(("main", self.info.name, mcpython.engine.asyncm.serializer.serialize_task(function, args, kwargs), -1))
+        self.queue_out.put(
+            (
+                "main",
+                self.info.name,
+                mcpython.engine.asyncm.serializer.serialize_task(
+                    function, args, kwargs
+                ),
+                -1,
+            )
+        )
 
-    async def invokeOn(self, process: str, function, *args, ignore_result=False, **kwargs):
+    async def invokeOn(
+        self, process: str, function, *args, ignore_result=False, **kwargs
+    ):
         if not ignore_result:
             internal_id = self.next_id
             self.next_id += 1
         else:
             internal_id = -1
-        self.queue_out.put((process, self.info.name, mcpython.engine.asyncm.serializer.serialize_task(function, args, kwargs), internal_id))
+        self.queue_out.put(
+            (
+                process,
+                self.info.name,
+                mcpython.engine.asyncm.serializer.serialize_task(
+                    function, args, kwargs
+                ),
+                internal_id,
+            )
+        )
 
         event = asyncio.Event()
 
@@ -159,7 +221,16 @@ class TaskManager:
         return self.result_cache.pop(internal_id, None)
 
     def invokeOnNoWait(self, process: str, function, *args, **kwargs):
-        self.queue_out.put((process, self.info.name, mcpython.engine.asyncm.serializer.serialize_task(function, args, kwargs), -1))
+        self.queue_out.put(
+            (
+                process,
+                self.info.name,
+                mcpython.engine.asyncm.serializer.serialize_task(
+                    function, args, kwargs
+                ),
+                -1,
+            )
+        )
 
     def __repr__(self):
         return f"TaskManager(of='{self.info.name}',router={self.router},on_main={self.is_on_main})"
@@ -180,11 +251,15 @@ class AsyncProcessManager:
 
         self.running = False
 
-    def add_regular_async_callback(self, callback: typing.Callable[[SpawnedProcessInfo], typing.Awaitable]):
+    def add_regular_async_callback(
+        self, callback: typing.Callable[[SpawnedProcessInfo], typing.Awaitable]
+    ):
         self.callbacks.append(callback)
 
     def run_regular_on_process(self, process: str, task, *args, **kwargs):
-        self.lookup_processes[process].sided_task_manager.invokeOnNoWait(process, task, *args, **kwargs)
+        self.lookup_processes[process].sided_task_manager.invokeOnNoWait(
+            process, task, *args, **kwargs
+        )
 
     def add_process(self, name: str) -> SpawnedProcessInfo:
         if name == "main":
@@ -199,7 +274,9 @@ class AsyncProcessManager:
 
         info.sided_task_manager = info.spawn_main_task_manager()
         info.sided_task_manager.process = process
-        info.sided_task_manager.router = lambda p: self.lookup_processes[p].sided_task_manager
+        info.sided_task_manager.router = lambda p: self.lookup_processes[
+            p
+        ].sided_task_manager
         info.sided_task_manager.is_on_main = True
         info.sided_task_manager.main_obj = self
 
@@ -226,4 +303,3 @@ class AsyncProcessManager:
         for p in self.spawned_processes:
             p.sided_task_manager.process.terminate()
         asyncio.get_event_loop().stop()
-

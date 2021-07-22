@@ -78,7 +78,9 @@ class EntityRenderer:
             else:
                 if mcpython.engine.ResourceLoader.exists(texture):
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.engine.ResourceLoader.read_pyglet_image(texture).get_texture()
+                        mcpython.engine.ResourceLoader.read_pyglet_image(
+                            texture
+                        ).get_texture()
                     )
                 else:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(

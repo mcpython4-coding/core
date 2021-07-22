@@ -14,12 +14,12 @@ This project is not official by mojang and does not relate to it.
 
 import cProfile
 
-import mcpython.engine.rendering.util
 import mcpython.client.state.StateHandler
 import mcpython.client.state.StatePartGame
 import mcpython.common.config
-import mcpython.engine.event.EventHandler
 import mcpython.common.event.TickHandler
+import mcpython.engine.event.EventHandler
+import mcpython.engine.rendering.util
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import mcpython.util.texture

@@ -17,8 +17,8 @@ from abc import ABC
 import mcpython.client.rendering.gui.CraftingGridRecipeRenderer
 import mcpython.common.container.crafting.IRecipe
 from mcpython import shared
-from mcpython.engine import logger
 from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.engine import logger
 
 
 def transform_to_item_stack(item, file: str) -> list:

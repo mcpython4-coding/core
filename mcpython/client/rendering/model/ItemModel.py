@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.engine.rendering.BatchHelper
 import mcpython.client.rendering.model.BoxModel
 import mcpython.common.item.ItemTextureAtlas
+import mcpython.engine.rendering.BatchHelper
 import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.engine import logger

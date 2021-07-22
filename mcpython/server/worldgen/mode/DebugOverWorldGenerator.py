@@ -13,9 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import math
 
-import mcpython.engine.event.EventHandler
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
+import mcpython.engine.event.EventHandler
 import mcpython.server.worldgen.mode.IWorldGenConfig
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 import mcpython.util.math

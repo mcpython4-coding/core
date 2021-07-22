@@ -15,8 +15,8 @@ import functools
 import time
 
 import mcpython.client.state.StateGame
-import mcpython.engine.event.EventInfo
 import mcpython.common.mod.ModMcpython
+import mcpython.engine.event.EventInfo
 import mcpython.util.callbacks
 import pyglet
 from mcpython import shared
@@ -74,9 +74,7 @@ class StateEscape(State.State):
                 (0, 90),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=functools.partial(
-                    mcpython.util.callbacks.open_github_project
-                ),
+                on_press=functools.partial(mcpython.util.callbacks.open_github_project),
             ),
             mcpython.client.state.StateGame.game.parts[1],
         ]

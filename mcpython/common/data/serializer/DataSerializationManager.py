@@ -18,8 +18,8 @@ import mcpython.common.data.abstract
 import mcpython.common.data.ResourcePipe
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
-from mcpython.engine import ResourceLoader, logger
 from mcpython import shared
+from mcpython.engine import ResourceLoader, logger
 
 from .abstract import ISerializeAble, ISerializer
 

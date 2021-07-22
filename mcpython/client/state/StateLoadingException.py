@@ -14,9 +14,9 @@ This project is not official by mojang and does not relate to it.
 import psutil
 import pyglet
 from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
-from mcpython.engine import logger
 from . import State
 from .ui import UIPartButton
 

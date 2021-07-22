@@ -41,7 +41,9 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     @classmethod
     def update_texture(cls):
-        texture = mcpython.engine.ResourceLoader.read_image("minecraft:gui/container/furnace")
+        texture = mcpython.engine.ResourceLoader.read_image(
+            "minecraft:gui/container/furnace"
+        )
         size = texture.size
 
         texture_bg = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))

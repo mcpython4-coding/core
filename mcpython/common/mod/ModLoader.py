@@ -87,11 +87,15 @@ class ModContainer:
             )
             sys.path.append(path)
         elif os.path.isdir(path):
-            self.resource_access = mcpython.engine.ResourceLoader.ResourceDirectory(path)
+            self.resource_access = mcpython.engine.ResourceLoader.ResourceDirectory(
+                path
+            )
             sys.path.append(path)
         elif os.path.isfile(path):
             # In this case, it is a file, so we know what mod loader to use
-            self.resource_access = mcpython.engine.ResourceLoader.SimulatedResourceLoader()
+            self.resource_access = (
+                mcpython.engine.ResourceLoader.SimulatedResourceLoader()
+            )
             self.assigned_mod_loader = PyFileModLoader(self)
             self.assigned_mod_loader.on_select()
         else:

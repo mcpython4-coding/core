@@ -15,8 +15,8 @@ import typing
 
 import mcpython.client.state.State
 import mcpython.client.state.StatePart
-import mcpython.engine.event.EventHandler
 import mcpython.common.event.Registry
+import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.engine import logger

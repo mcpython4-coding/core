@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 
 import random
 
-import mcpython.engine.event.EventHandler
 import mcpython.common.world.Chunk
+import mcpython.engine.event.EventHandler
 import mcpython.server.worldgen.noise.INoiseImplementation
 import mcpython.server.worldgen.noise.NoiseManager
 from mcpython import shared

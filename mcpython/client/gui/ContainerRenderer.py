@@ -66,7 +66,9 @@ class ContainerRenderer(ABC):
 
         if self.get_config_file() is not None:
             try:
-                self.config = mcpython.engine.ResourceLoader.read_json(self.get_config_file())
+                self.config = mcpython.engine.ResourceLoader.read_json(
+                    self.get_config_file()
+                )
             except:
                 logger.print_exception(
                     "[FATAL] failed to load inventory config file '{}' for inventory {}".format(

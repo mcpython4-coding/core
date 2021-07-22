@@ -14,11 +14,11 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-from mcpython.engine import logger
 from mcpython.common.data.gen.DataGeneratorManager import (
     DataGeneratorInstance,
     IDataGenerator,
 )
+from mcpython.engine import logger
 
 
 class ILootTableCondition(IDataGenerator, ABC):

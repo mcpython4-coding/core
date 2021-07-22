@@ -19,12 +19,12 @@ import typing
 import mcpython.client.gui.HoveringItemBox
 import mcpython.client.rendering.model.ItemModel
 import mcpython.client.state.StateModLoading
-import mcpython.engine.event.EventInfo
 import mcpython.common.event.TickHandler
 import mcpython.common.factory.ItemFactory
 import mcpython.common.item.AbstractItem
 import mcpython.common.item.ItemManager
 import mcpython.common.mod.ModMcpython
+import mcpython.engine.event.EventInfo
 import mcpython.engine.ResourceLoader
 import PIL.Image
 import PIL.ImageDraw

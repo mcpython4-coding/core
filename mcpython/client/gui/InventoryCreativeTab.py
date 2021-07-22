@@ -20,16 +20,16 @@ import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.client.rendering.ui.Buttons
 import mcpython.client.rendering.ui.SearchBar
-import mcpython.engine.event.EventBus
 import mcpython.common.event.TickHandler
+import mcpython.engine.event.EventBus
 import mcpython.engine.ResourceLoader
 import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
 from mcpython import shared
-from mcpython.engine import logger
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
+from mcpython.engine import logger
 from mcpython.util.opengl import draw_line_rectangle
 from pyglet.window import key, mouse
 

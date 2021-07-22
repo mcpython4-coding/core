@@ -16,11 +16,11 @@ import sys
 import typing
 
 import deprecation
-import mcpython.engine.rendering.util
 import mcpython.common.block.AbstractBlock
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.AbstractInterface
 import mcpython.common.world.Chunk
+import mcpython.engine.rendering.util
 import mcpython.util.math
 import pyglet
 from mcpython import shared
