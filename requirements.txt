@@ -6,7 +6,7 @@ clipboard==0.0.4
 toml==0.10.2
 requests==2.26.0
 deprecation==2.1.0
-simplejson==3.17.3
+simplejson==3.17.4
 Python-NBT==1.2.0
 
 # dev-only
