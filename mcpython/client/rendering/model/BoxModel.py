@@ -21,8 +21,8 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
-from pyglet.graphics.vertexdomain import VertexList
 from mcpython.util.vertex import VertexProvider
+from pyglet.graphics.vertexdomain import VertexList
 
 UV_ORDER = [
     mcpython.util.enums.EnumSide.UP,
@@ -80,8 +80,12 @@ class BoxModel(AbstractBoxModel):
             mcpython.util.enums.EnumSide.W: None,
         }
 
-        self.texture_region: typing.List[typing.Tuple[float, float, float, float]] = [(0, 0, 1, 1)] * 6
+        self.texture_region: typing.List[typing.Tuple[float, float, float, float]] = [
+            (0, 0, 1, 1)
+        ] * 6
         self.texture_region_rotate: typing.List[float] = [0] * 6
+
+        self.enable_alpha = False
 
     def parse_mc_data(self, data: dict, model=None):
         """
@@ -94,7 +98,9 @@ class BoxModel(AbstractBoxModel):
         self.data = data
 
         self.box_position = tuple([x / 16 for x in data["from"]])
-        self.box_size = tuple([abs(a - b) / 16 for a, b in zip(data["to"], data["from"])])
+        self.box_size = tuple(
+            [abs(a - b) / 16 for a, b in zip(data["to"], data["from"])]
+        )
 
         if "rotation" in data:
             # Another rotation center than 0, 0, 0
@@ -105,7 +111,11 @@ class BoxModel(AbstractBoxModel):
             rot["xyz".index(data["rotation"]["axis"])] = data["rotation"]["angle"]
             self.rotation = tuple(rot)
 
-        self.vertex_provider = VertexProvider.create(typing.cast(typing.Tuple[float, float, float], self.box_position), typing.cast(typing.Tuple[float, float, float], self.box_size), typing.cast(typing.Tuple[float, float, float], self.rotation))
+        self.vertex_provider = VertexProvider.create(
+            typing.cast(typing.Tuple[float, float, float], self.box_position),
+            typing.cast(typing.Tuple[float, float, float], self.box_size),
+            typing.cast(typing.Tuple[float, float, float], self.rotation),
+        )
 
         UD = (
             data["from"][0] / 16,
@@ -193,6 +203,11 @@ class BoxModel(AbstractBoxModel):
             for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
         }
         self.atlas = atlas
+
+        self.enable_alpha = not shared.tag_handler.has_entry_tag(
+            self.model.name, "rendering", "#minecraft:alpha"
+        )
+
         # todo: can we upload vertices to GPU in advance and use some clever code for drawing?
         # todo: can we pre-calculated rotated variants for faster draw times later down the road
 
@@ -203,10 +218,7 @@ class BoxModel(AbstractBoxModel):
         :param position: the position of the vertex cube
         """
         vertices = self.vertex_provider.get_vertex_data(position, rotation)
-        return [
-            sum(x, tuple())
-            for x in vertices
-        ]
+        return [sum(x, tuple()) for x in vertices]
 
     def get_prepared_box_data(
         self,
@@ -280,17 +292,12 @@ class BoxModel(AbstractBoxModel):
         # select a batch when multiple are provided
         if type(batch) == list:
             batch = (
-                batch[0]
-                if self.model is not None
-                and not shared.tag_handler.has_entry_tag(
-                    self.model.name, "rendering", "#minecraft:alpha"
-                )
-                else batch[1]
+                batch[0] if self.model is not None and self.enable_alpha else batch[1]
             )
 
         # pyglet-2 thing: shader here
         # todo: export to somewhere where it is easier to exchange
-        # todo: add option to make mutable
+
         return (
             batch.add(
                 len(collected_data[0]) // 3,
@@ -394,7 +401,9 @@ class BoxModel(AbstractBoxModel):
         )
 
     def copy(self, new_model=None):
-        return BoxModel().parse_mc_data(self.data, new_model if new_model is not None else self.model)
+        return BoxModel().parse_mc_data(
+            self.data, new_model if new_model is not None else self.model
+        )
 
 
 @onlyInClient()
@@ -404,7 +413,14 @@ class RawBoxModel(AbstractBoxModel):
     """
 
     def copy(self) -> "AbstractBoxModel":
-        return type(self)(self.relative_position, self.size, self.texture, self.texture_region, self.rotation, self.rotation_center)
+        return type(self)(
+            self.relative_position,
+            self.size,
+            self.texture,
+            self.texture_region,
+            self.rotation,
+            self.rotation_center,
+        )
 
     def __init__(
         self,

@@ -169,7 +169,9 @@ class ModelHandler:
             if type(location) == str:
                 modeldata = mcpython.engine.ResourceLoader.read_json(location)
                 try:
-                    self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
+                    self.models[
+                        name
+                    ] = mcpython.client.rendering.model.BlockModel.Model(
                         modeldata.copy(),
                         "block/" + location.split("/")[-1].split(".")[0],
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
@@ -179,7 +181,9 @@ class ModelHandler:
                     self.models[name] = None
             else:
                 try:
-                    self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
+                    self.models[
+                        name
+                    ] = mcpython.client.rendering.model.BlockModel.Model(
                         location.copy(),
                         name,
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",

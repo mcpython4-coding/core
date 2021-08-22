@@ -76,7 +76,7 @@ class WorldGenerationTaskHandler:
         chunk: mcpython.common.world.AbstractInterface.IChunk,
         method,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """
         Schedules an callable-invoke for the future
@@ -105,7 +105,7 @@ class WorldGenerationTaskHandler:
         name: str,
         *args,
         on_add=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Schedules an addition of an block
@@ -131,7 +131,7 @@ class WorldGenerationTaskHandler:
         position: tuple,
         *args,
         on_remove=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Schedules an removal of an block
@@ -413,7 +413,7 @@ class IWorldGenerationTaskHandlerReference:
         end: typing.Tuple[int, int, int],
         block,
         only_non_air=False,
-        **kwargs
+        **kwargs,
     ):
         for y in range(start[1], end[1] + 1):
             for x in range(start[0], end[0] + 1):
