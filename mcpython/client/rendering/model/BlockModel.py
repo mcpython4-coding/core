@@ -84,7 +84,9 @@ class Model:
         if "elements" in data:
             for element in data["elements"]:
                 self.box_models.append(
-                    mcpython.client.rendering.model.BoxModel.BoxModel(element, self)
+                    mcpython.client.rendering.model.BoxModel.BoxModel().parse_mc_data(
+                        element, self
+                    )
                 )
 
     def get_prepared_data_for(

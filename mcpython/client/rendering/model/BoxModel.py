@@ -39,9 +39,11 @@ SIDE_ORDER = [
     mcpython.util.enums.EnumSide.WEST,
     mcpython.util.enums.EnumSide.EAST,
 ]
-UV_INDICES = [(0, 3, 2, 1), (1, 0, 3, 2)] + [
-    (0, 1, 2, 3)
-] * 4  # representative for the order of uv insertion
+
+# representative for the order of uv insertion
+UV_INDICES = [(0, 3, 2, 1), (1, 0, 3, 2)] + [(0, 1, 2, 3)] * 4
+
+# Stores cross-references for BoxModel's with same layout, so we can optimise some operations
 SIMILAR_VERTEX = {}
 
 
@@ -53,19 +55,24 @@ class AbstractBoxModel(ABC):
 @onlyInClient()
 class BoxModel(AbstractBoxModel):
     @classmethod
-    def new(cls, data: dict, model=None):
-        return cls(data, model)
+    def new(cls, data: dict, model=None) -> "BoxModel":
+        obj = cls()
+        obj.parse_mc_data(data, model)
+        return obj
 
-    def __init__(self, data: dict, model=None, flip_y=True):
-        # todo: move most of the code here to the build function / decode function
+    def __init__(self, flip_y=True):
+        self.flip_y = flip_y
+
         self.atlas = None
-        self.model = model
-        self.data = data
+        self.model = None
+        self.data = None
+        self.tex_data = None
+        self.inactive = None
+        self.box_position = (
+            self.relative_position
+        ) = self.position = self.rotation = self.rotation_center = (0, 0, 0)
+        self.box_size = 1, 1, 1
 
-        self.box_position = tuple([x / 16 for x in data["from"]])
-        self.box_size = tuple([a - b for a, b in zip(data["to"], data["from"])])
-
-        self.relative_position = tuple([x // 2 / 16 for x in self.box_size])
         self.faces = {
             mcpython.util.enums.EnumSide.U: None,
             mcpython.util.enums.EnumSide.D: None,
@@ -74,6 +81,27 @@ class BoxModel(AbstractBoxModel):
             mcpython.util.enums.EnumSide.S: None,
             mcpython.util.enums.EnumSide.W: None,
         }
+
+        self.texture_region = [(0, 0, 1, 1)] * 6
+        self.texture_region_rotate = [0] * 6
+
+        self.rotated_vertices = {}
+        self.raw_vertices = []
+
+    def parse_mc_data(self, data: dict, model=None):
+        """
+        Parses the default "elements" tag from a vanilla model file
+        :param data: one element of the "elements" tag
+        :param model: the assigned model, or None if not arrival
+        """
+
+        self.model = model
+        self.data = data
+
+        self.box_position = tuple([x / 16 for x in data["from"]])
+        self.box_size = tuple([a - b for a, b in zip(data["to"], data["from"])])
+
+        self.relative_position = tuple([x // 2 / 16 for x in self.box_size])
 
         UD = (
             data["from"][0] / 16,
@@ -93,8 +121,7 @@ class BoxModel(AbstractBoxModel):
             data["to"][2] / 16,
             data["to"][1] / 16,
         )
-        self.texture_region = [UD, UD, NS, EW, NS, EW]
-        self.texture_region_rotate = [0] * 6
+        self.texture_region[:] = [UD, UD, NS, EW, NS, EW]
 
         for face in mcpython.util.enums.EnumSide.iterate():
             name: str = face.normal_name
@@ -110,7 +137,7 @@ class BoxModel(AbstractBoxModel):
                 if "uv" in f:
                     uvs = tuple(f["uv"])
                     uvs = (uvs[0], uvs[3], uvs[2], uvs[1])
-                    if flip_y:
+                    if self.flip_y:
                         self.texture_region[index] = tuple(
                             [
                                 (uvs[i] / 16) if i % 2 == 0 else (1 - uvs[i] / 16)
@@ -124,9 +151,6 @@ class BoxModel(AbstractBoxModel):
 
                 if "rotation" in f:
                     self.texture_region_rotate[index] = f["rotation"]
-
-        self.rotation = (0, 0, 0)
-        self.rotation_center = (0, 0, 0)
 
         if "rotation" in data:
             # Another rotation center than 0, 0, 0
@@ -146,16 +170,12 @@ class BoxModel(AbstractBoxModel):
         if status in SIMILAR_VERTEX:
             self.rotated_vertices = SIMILAR_VERTEX[status].rotated_vertices
         else:
-            self.rotated_vertices = {}
             SIMILAR_VERTEX[status] = self
-
-        self.tex_data = None
-        self.inactive = None
 
         if model is not None and model.drawable and self.model.texture_atlas:
             self.build()
 
-        self.raw_vertices = mcpython.util.math.cube_vertices_better(
+        self.raw_vertices += mcpython.util.math.cube_vertices_better(
             0,
             0,
             0,
@@ -165,9 +185,11 @@ class BoxModel(AbstractBoxModel):
             [True] * 6,
         )
 
+        return self
+
     def build(self, atlas=None):
         """
-        "Builds" the model by preparing internal data like preparing the texture atlas, the texture coordinates
+        "Builds" the model by preparing internal data like preparing the texture atlas, the texture coordinates, etc.
         """
 
         if atlas is None:
@@ -255,13 +277,28 @@ class BoxModel(AbstractBoxModel):
         return [sum(e, tuple()) for e in vertex_r]
 
     def get_prepared_box_data(
-        self, position, rotation, active_faces=None, uv_lock=False, previous=None
+        self,
+        position: typing.Tuple[float, float, float],
+        rotation: typing.Tuple[float, float, float] = (0, 0, 0),
+        active_faces=None,
+        uv_lock=False,
+        previous=None,
     ):
+        """
+        Util method for getting the box data for a block (vertices and uv's)
+        :param position: the position of the block
+        :param rotation: the rotation
+        :param active_faces: the faces to get data for, None means all
+        :param uv_lock: ?
+        :param previous: previous data to add the new to, or None to create new
+        """
         vertex = self.get_vertex_variant(rotation, position)
         collected_data = ([], []) if previous is None else previous
+
         for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:
                 face = face.rotate(rotation)
+
             i = UV_ORDER.index(face)
             i2 = SIDE_ORDER.index(face)
 
@@ -273,6 +310,7 @@ class BoxModel(AbstractBoxModel):
                     else False
                 )
                 or (
+                    # todo: this seems wrong
                     (
                         active_faces[i]
                         if type(active_faces) == list
@@ -298,6 +336,11 @@ class BoxModel(AbstractBoxModel):
         collected_data: typing.Tuple[typing.List[float], typing.List[float]],
         batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]],
     ) -> typing.Iterable[VertexList]:
+        """
+        Adds the data from get_prepared_box_data to a given batch
+        :param collected_data: the collected data
+        :param batch: the batch to add in
+        """
         # Here we have nothing to do
         if len(collected_data[0]) == 0:
             return tuple()
@@ -397,6 +440,7 @@ class BoxModel(AbstractBoxModel):
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
         face = face.rotate(rotation)
+
         return self.add_to_batch(
             position,
             batch,
@@ -409,6 +453,7 @@ class BoxModel(AbstractBoxModel):
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
         face = face.rotate(rotation)
+
         return self.draw(
             position,
             rotation,
@@ -417,7 +462,7 @@ class BoxModel(AbstractBoxModel):
         )
 
     def copy(self, new_model=None):
-        return BoxModel(self.data, new_model if new_model is not None else self.model)
+        return BoxModel().parse_mc_data(self.data, new_model if new_model is not None else self.model)
 
 
 @onlyInClient()
@@ -504,6 +549,7 @@ class RawBoxModel(AbstractBoxModel):
                     vertices[i * 3 : i * 3 + 3], self.rotation_center, self.__rotation
                 )
             )
+        self.rotated_vertex_cache.clear()
 
         # todo: this seems odd
         self.texture_cache = sum(

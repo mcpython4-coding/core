@@ -1689,6 +1689,8 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed a rendering optimisation leading into elements of BlockModels not being created in some cases
 [uuk]: mod loading order is now not longer stable and may change in bounds of the dependency-relations
 [uuk]: added codeql-analysis for code analysis to the github
-[uuk]: added dessert hills and lakes biomes
-[uuk]: major refactoring: moved code to mcpython/engine module
+[uuk]: added dessert-hills and -lakes biomes
+[uuk]: major refactoring: moved a bunch of code to mcpython/engine module
 [uuk]: added mcpython/engine/asyncm-module storing a set of classes for async work around pyglet
+[uuk]: BoxModel parsing is now done in a separate method, making it more flexible for re-usage
+[uuk]: updated library versions
