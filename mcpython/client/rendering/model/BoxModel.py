@@ -22,6 +22,7 @@ import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 from pyglet.graphics.vertexdomain import VertexList
+from mcpython.util.vertex import VertexProvider
 
 UV_ORDER = [
     mcpython.util.enums.EnumSide.UP,
@@ -43,9 +44,6 @@ SIDE_ORDER = [
 # representative for the order of uv insertion
 UV_INDICES = [(0, 3, 2, 1), (1, 0, 3, 2)] + [(0, 1, 2, 3)] * 4
 
-# Stores cross-references for BoxModel's with same layout, so we can optimise some operations
-SIMILAR_VERTEX = {}
-
 
 class AbstractBoxModel(ABC):
     def copy(self) -> "AbstractBoxModel":
@@ -63,14 +61,14 @@ class BoxModel(AbstractBoxModel):
     def __init__(self, flip_y=True):
         self.flip_y = flip_y
 
+        self.vertex_provider: typing.Optional[VertexProvider] = None
+
         self.atlas = None
         self.model = None
         self.data = None
         self.tex_data = None
         self.inactive = None
-        self.box_position = (
-            self.relative_position
-        ) = self.position = self.rotation = self.rotation_center = (0, 0, 0)
+        self.box_position = self.rotation = self.rotation_center = (0, 0, 0)
         self.box_size = 1, 1, 1
 
         self.faces = {
@@ -82,11 +80,8 @@ class BoxModel(AbstractBoxModel):
             mcpython.util.enums.EnumSide.W: None,
         }
 
-        self.texture_region = [(0, 0, 1, 1)] * 6
-        self.texture_region_rotate = [0] * 6
-
-        self.rotated_vertices = {}
-        self.raw_vertices = []
+        self.texture_region: typing.List[typing.Tuple[float, float, float, float]] = [(0, 0, 1, 1)] * 6
+        self.texture_region_rotate: typing.List[float] = [0] * 6
 
     def parse_mc_data(self, data: dict, model=None):
         """
@@ -99,9 +94,18 @@ class BoxModel(AbstractBoxModel):
         self.data = data
 
         self.box_position = tuple([x / 16 for x in data["from"]])
-        self.box_size = tuple([a - b for a, b in zip(data["to"], data["from"])])
+        self.box_size = tuple([abs(a - b) / 16 for a, b in zip(data["to"], data["from"])])
 
-        self.relative_position = tuple([x // 2 / 16 for x in self.box_size])
+        if "rotation" in data:
+            # Another rotation center than 0, 0, 0
+            if "origin" in data["rotation"]:
+                self.rotation_center = tuple(e / 16 for e in data["rotation"]["origin"])
+
+            rot = [0, 0, 0]
+            rot["xyz".index(data["rotation"]["axis"])] = data["rotation"]["angle"]
+            self.rotation = tuple(rot)
+
+        self.vertex_provider = VertexProvider.create(typing.cast(typing.Tuple[float, float, float], self.box_position), typing.cast(typing.Tuple[float, float, float], self.box_size), typing.cast(typing.Tuple[float, float, float], self.rotation))
 
         UD = (
             data["from"][0] / 16,
@@ -152,38 +156,8 @@ class BoxModel(AbstractBoxModel):
                 if "rotation" in f:
                     self.texture_region_rotate[index] = f["rotation"]
 
-        if "rotation" in data:
-            # Another rotation center than 0, 0, 0
-            if "origin" in data["rotation"]:
-                self.rotation_center = tuple(e / 16 for e in data["rotation"]["origin"])
-
-            rot = [0, 0, 0]
-            rot["xyz".index(data["rotation"]["axis"])] = data["rotation"]["angle"]
-            self.rotation = tuple(rot)
-
-        status = (
-            self.rotation,
-            self.rotation_center,
-            tuple(self.box_position),
-            self.box_size,
-        )
-        if status in SIMILAR_VERTEX:
-            self.rotated_vertices = SIMILAR_VERTEX[status].rotated_vertices
-        else:
-            SIMILAR_VERTEX[status] = self
-
         if model is not None and model.drawable and self.model.texture_atlas:
             self.build()
-
-        self.raw_vertices += mcpython.util.math.cube_vertices_better(
-            0,
-            0,
-            0,
-            self.box_size[0] / 32,
-            self.box_size[1] / 32,
-            self.box_size[2] / 32,
-            [True] * 6,
-        )
 
         return self
 
@@ -228,53 +202,11 @@ class BoxModel(AbstractBoxModel):
         :param rotation: the rotation to use
         :param position: the position of the vertex cube
         """
-        x, y, z = (
-            self.box_position[i] - 0.5 + self.relative_position[i] + position[i]
-            for i in range(3)
-        )
-
-        # Is there data prepared in this case?
-        if rotation in self.rotated_vertices:
-            vertex_r = [
-                [(e[0] + x, e[1] + y, e[2] + z) for e in m]
-                for m in self.rotated_vertices[rotation]
-            ]
-
-        # Otherwise, create it and store it
-        # todo: share across similar BoxModels
-        else:
-            vertex = mcpython.util.math.cube_vertices_better(
-                x,
-                y,
-                z,
-                self.box_size[0] / 32,
-                self.box_size[1] / 32,
-                self.box_size[2] / 32,
-                [True] * 6,
-            )
-
-            vertex_r = []
-            for face in vertex:
-                face_r = []
-                for i in range(len(face) // 3):
-                    v = mcpython.util.math.rotate_point(
-                        face[i * 3 : i * 3 + 3], position, rotation
-                    )
-                    v = mcpython.util.math.rotate_point(
-                        v,
-                        tuple(
-                            [position[i] + self.rotation_center[i] for i in range(3)]
-                        ),
-                        self.rotation,
-                    )
-                    face_r.append(v)
-                vertex_r.append(face_r)
-
-            self.rotated_vertices[rotation] = [
-                [(e[0] - x, e[1] - y, e[2] - z) for e in m] for m in vertex_r
-            ]
-
-        return [sum(e, tuple()) for e in vertex_r]
+        vertices = self.vertex_provider.get_vertex_data(position, rotation)
+        return [
+            sum(x, tuple())
+            for x in vertices
+        ]
 
     def get_prepared_box_data(
         self,
@@ -470,6 +402,9 @@ class RawBoxModel(AbstractBoxModel):
     """
     A non-model-bound BoxModel class
     """
+
+    def copy(self) -> "AbstractBoxModel":
+        return type(self)(self.relative_position, self.size, self.texture, self.texture_region, self.rotation, self.rotation_center)
 
     def __init__(
         self,

@@ -318,14 +318,22 @@ class WorldGenerationTaskHandler:
                     return False
                 position, data = m.popitem()
                 block = chunk.get_block(position)
+
                 if type(block) == str or block is None:
                     return True
+
                 if data == 0:
                     chunk.hide_block(position)
+
                 elif data == 1:
                     chunk.show_block(position)
+
                 elif not isinstance(block, str) and shared.IS_CLIENT:
-                    block.face_state.update(redraw_complete=True)
+                    try:
+                        block.face_state.update(redraw_complete=True)
+                    except:
+                        logger.print_exception(f"during showing block {block}")
+
                 return True
 
         return False

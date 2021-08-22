@@ -168,17 +168,25 @@ class ModelHandler:
         try:
             if type(location) == str:
                 modeldata = mcpython.engine.ResourceLoader.read_json(location)
-                self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
-                    modeldata.copy(),
-                    "block/" + location.split("/")[-1].split(".")[0],
-                    name.split(":")[0] if name.count(":") == 1 else "minecraft",
-                )
+                try:
+                    self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
+                        modeldata.copy(),
+                        "block/" + location.split("/")[-1].split(".")[0],
+                        name.split(":")[0] if name.count(":") == 1 else "minecraft",
+                    )
+                except:
+                    logger.print_exception(f"during decoding model {location}")
+                    self.models[name] = None
             else:
-                self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
-                    location.copy(),
-                    name,
-                    name.split(":")[0] if name.count(":") == 1 else "minecraft",
-                )
+                try:
+                    self.models[name] = mcpython.client.rendering.model.BlockModel.Model(
+                        location.copy(),
+                        name,
+                        name.split(":")[0] if name.count(":") == 1 else "minecraft",
+                    )
+                except:
+                    logger.print_exception(f"during decoding model {name} [{location}]")
+                    self.models[name] = None
         except:
             logger.print_exception(
                 "error during loading model '{}' named '{}'".format(location, name)

@@ -1694,3 +1694,6 @@ R   [uuk]: improved world serialization API
 [uuk]: added mcpython/engine/asyncm-module storing a set of classes for async work around pyglet
 [uuk]: BoxModel parsing is now done in a separate method, making it more flexible for re-usage
 [uuk]: updated library versions
+[uuk]: rewritten how vertex positions are calculated, introducing another class for vertex calculations, reducing
+       the content related to vertices in the BoxModel class
+[uuk]: fixed some mistakes in the BoxModel class leading to unwanted behaviour
