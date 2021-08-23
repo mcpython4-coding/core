@@ -52,7 +52,12 @@ class EventBus:
         shared.NEXT_EVENT_BUS_ID += 1
 
         # name -> (function, args, kwargs)[
-        self.event_subscriptions: typing.Dict[str, typing.List[typing.Tuple[typing.Callable, typing.Iterable, typing.Dict, typing.Any]]] = {}
+        self.event_subscriptions: typing.Dict[
+            str,
+            typing.List[
+                typing.Tuple[typing.Callable, typing.Iterable, typing.Dict, typing.Any]
+            ],
+        ] = {}
         self.popped_event_subscriptions = {}
 
         self.crash_on_error = crash_on_error
@@ -107,7 +112,9 @@ class EventBus:
             return
 
         exception_occ = False
-        for function, extra_args, extra_kwargs, info in self.event_subscriptions[event_name]:
+        for function, extra_args, extra_kwargs, info in self.event_subscriptions[
+            event_name
+        ]:
             try:
                 function(
                     *list(args) + list(extra_args),
@@ -187,7 +194,9 @@ class EventBus:
         if event_name not in self.event_subscriptions:
             return
 
-        for function, extra_args, extra_kwargs, info in self.event_subscriptions[event_name]:
+        for function, extra_args, extra_kwargs, info in self.event_subscriptions[
+            event_name
+        ]:
             try:
                 result = function(
                     *list(args) + list(extra_args),
@@ -239,7 +248,9 @@ class EventBus:
         self.sub_buses.append(bus)
         return bus
 
-    def call_as_stack(self, event_name: str, *args, amount=1, store_stuff=True, **kwargs):
+    def call_as_stack(
+        self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
+    ):
         result = []
         if event_name not in self.event_subscriptions:
             raise RuntimeError(

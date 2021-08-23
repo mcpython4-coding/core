@@ -20,6 +20,7 @@ import isort
 # todo: add config option for this
 home = os.path.dirname(os.path.dirname(__file__))
 
+
 for root, dirs, files in os.walk(home):
     if (
         ".git" in root

@@ -35,9 +35,7 @@ class NetworkManager:
     def __init__(self):
         self.package_types: typing.Dict[
             int,
-            typing.Type[
-                mcpython.engine.network.AbstractPackage.AbstractPackage
-            ],
+            typing.Type[mcpython.engine.network.AbstractPackage.AbstractPackage],
         ] = {}
         self.custom_package_handlers: typing.Dict[
             int, typing.List[typing.Callable]
@@ -60,7 +58,9 @@ class NetworkManager:
         destination: int = 0,
     ):
         if package.PACKAGE_TYPE_ID == -1:
-            raise RuntimeError(f"{package}: Package type must be registered for sending it")
+            raise RuntimeError(
+                f"{package}: Package type must be registered for sending it"
+            )
 
         encoded_head = (
             (package.PACKAGE_TYPE_ID << 2 + 2 if package.CAN_GET_ANSWER else 0)
@@ -140,7 +140,9 @@ class NetworkManager:
             other = self.package_types[t.PACKAGE_TYPE_ID]
 
             if not other.DYNAMIC_PACKAGE_ID:
-                raise RuntimeError(f"package id conflict between {t} and {other}, both forcing {t.PACKAGE_TYPE_ID}")
+                raise RuntimeError(
+                    f"package id conflict between {t} and {other}, both forcing {t.PACKAGE_TYPE_ID}"
+                )
 
             # We need for the other a new package id
             while self.next_package_type_id in self.package_types:

@@ -63,7 +63,9 @@ class AbstractPackage:
 
     def answer(self, package: "AbstractPackage"):
         if self.package_id == -1:
-            raise RuntimeError(f"{self}: Package ID must be set for answering; This package has it not set!")
+            raise RuntimeError(
+                f"{self}: Package ID must be set for answering; This package has it not set!"
+            )
 
         package.previous_packages = self.previous_packages + [self.package_id]
 

@@ -38,7 +38,9 @@ class TextureAtlasGenerator:
     def __init__(self):
         self.atlases: typing.Dict[typing.Hashable, typing.List[TextureAtlas]] = {}
 
-    def add_image(self, image: PIL.Image.Image, identifier: typing.Hashable) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
+    def add_image(
+        self, image: PIL.Image.Image, identifier: typing.Hashable
+    ) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
         """
         Adds a single pillow image to the underlying atlas system
         """
@@ -49,15 +51,24 @@ class TextureAtlasGenerator:
                 return atlas.add_image(image), atlas
 
         self.atlases[identifier].append(TextureAtlas())
-        return self.atlases[identifier][-1].add_image(image), self.atlases[identifier][-1]
+        return (
+            self.atlases[identifier][-1].add_image(image),
+            self.atlases[identifier][-1],
+        )
 
-    def add_image_file(self, file: str, identifier: str) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
+    def add_image_file(
+        self, file: str, identifier: str
+    ) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
         """
         Adds a single image by file name (loadable by resource system!)
         """
-        return self.add_image(mcpython.engine.ResourceLoader.read_image(file), identifier)
+        return self.add_image(
+            mcpython.engine.ResourceLoader.read_image(file), identifier
+        )
 
-    def add_images(self, images: typing.List[PIL.Image.Image], identifier: str, single_atlas=True) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
+    def add_images(
+        self, images: typing.List[PIL.Image.Image], identifier: str, single_atlas=True
+    ) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
         if len(images) == 0:
             return []
 
@@ -75,9 +86,14 @@ class TextureAtlasGenerator:
         self.atlases[identifier].append(atlas)
         return [(atlas.add_image(image), atlas) for image in images]
 
-    def add_image_files(self, files: list, identifier: str, single_atlas=True) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
-        return self.add_images([mcpython.engine.ResourceLoader.read_image(x) for x in files], identifier,
-                               single_atlas=single_atlas)
+    def add_image_files(
+        self, files: list, identifier: str, single_atlas=True
+    ) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
+        return self.add_images(
+            [mcpython.engine.ResourceLoader.read_image(x) for x in files],
+            identifier,
+            single_atlas=single_atlas,
+        )
 
     def output(self):
         # todo: add per-mod, at end of every processing of models
@@ -137,7 +153,9 @@ class TextureAtlas:
         # The pyglet texture group, only for storage reasons
         self.group: typing.Optional[pyglet.graphics.TextureGroup] = None
 
-    def add_image(self, image: PIL.Image.Image, position=None) -> typing.Tuple[int, int]:
+    def add_image(
+        self, image: PIL.Image.Image, position=None
+    ) -> typing.Tuple[int, int]:
         """
         Adds an image to the atlas and returns the position of it in the atlas
         """
@@ -198,7 +216,7 @@ class TextureAtlas:
         for image in images:
             if image not in self.images:
                 count += 1
-        
+
         return count <= self.size[0] * self.size[1] - len(self.images) or count <= len(
             self.free_space
         )

@@ -90,11 +90,12 @@ class ProjectView:
     def write(self, file: str, data: bytes):
         """
         Writes data into the local cache, overriding existing data, and overriding the original file data previously
-            accessable via read()
+            access-able via read()
         :param file: the file
         :param data: the data to write
         """
-        assert isinstance(data, bytes)
+        if not isinstance(data, bytes):
+            raise RuntimeError
         self.path_cache[file] = data
         self.modified_files.add(file)
 
@@ -219,7 +220,7 @@ class ProjectBuildManager:
         Runs the build configuration onto the given directory and outputs the data at the given directory
         :param directory: the directory to use as a source
         :param build_output_dir: the directory to output to
-        :param project_view_consumer: a consumer for the project view, for additonal changes
+        :param project_view_consumer: a consumer for the project view, for additional changes
         """
 
         if not os.path.isdir(build_output_dir):
