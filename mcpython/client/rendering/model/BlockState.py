@@ -51,8 +51,6 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent, ABC):
         add_raw_face_to_batch() should add a face to the batch without the block instance, but instead the position
         draw() should draw the block in-place
 
-    todo: add draw variant for raw
-    todo: add data getter functions for better performance
     todo: cache non-offset data from models per state for faster drawing
     todo: can we do something rendering wise which will make it efficient to draw multiple same blocks
     todo: block batches should be selected before, based on a property on block class
@@ -67,9 +65,12 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent, ABC):
         """
         raise NotImplementedError
 
-    def __init__(self, data: dict, block_state: "BlockStateDefinition"):
-        self.data = data
+    def __init__(self, block_state: "BlockStateDefinition"):
+        self.data = None
         self.block_state = block_state
+
+    def parse_data(self, data: dict):
+        raise NotImplementedError
 
     def bake(self) -> bool:
         """
@@ -96,7 +97,7 @@ class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent, ABC):
     ):  # optional: draws the BlockState direct without an batch
         pass
 
-    def transform_to_hitbox(
+    def transform_to_bounding_box(
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
     ):  # optional: transforms the BlockState into an BoundingBox-like objects
@@ -108,6 +109,20 @@ blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     ["minecraft:blockstate"],
     "stage:blockstate:register_loaders",
 )
+
+
+def get_model_choice(data, instance):
+    if instance.block_state is None:
+        entries = [BlockState.decode_entry(e) for e in data]
+        model, config, _ = entry = random.choices(
+            entries, weights=[e[2] for e in entries]
+        )[0]
+        instance.block_state = entries.index(entry)
+    else:
+        model, config, _ = BlockState.decode_entry(
+            data[instance.block_state]
+        )
+    return config, model
 
 
 @shared.registry
@@ -132,8 +147,13 @@ class MultiPartDecoder(IBlockStateDecoder):
             and "mod_marker" not in data
         )
 
-    def __init__(self, data: dict, block_state):
-        super().__init__(data, block_state)
+    def __init__(self, block_state):
+        super().__init__(block_state)
+        self.parent = None
+        self.model_alias = None
+
+    def parse_data(self, data: dict):
+        self.data = data
         for entry in data["multipart"]:
             if type(entry["apply"]) == dict:
                 shared.model_handler.used_models.add(entry["apply"]["model"])
@@ -141,7 +161,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 for d in entry["apply"]:
                     shared.model_handler.used_models.add(d["model"])
 
-        self.model_alias = {}
+        self.model_alias: typing.Dict[str, typing.Any] = {}
         self.parent: typing.Union[str, "BlockStateDefinition", None] = None
 
         if "parent" in data:
@@ -155,6 +175,10 @@ class MultiPartDecoder(IBlockStateDecoder):
         if self.parent is not None and isinstance(self.parent, str):
             parent: BlockStateDefinition = BlockStateDefinition.get_or_load(self.parent)
 
+            if parent is None:
+                self.parent = None
+                return
+
             if not parent.baked:
                 return False
 
@@ -166,7 +190,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                 )
 
             self.parent = parent
-            self.model_alias.update(self.parent.loader.model_alias.copy())
+            self.model_alias = {**self.parent.loader.model_alias.copy(), **self.model_alias}
             self.data["multipart"].extend(
                 copy.deepcopy(self.parent.loader.data["multipart"])
             )
@@ -197,40 +221,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         prepared_vertex, prepared_texture, box_model = (
             ([], [], None) if previous is None else (*previous, None)
         )
-        for entry in self.data["multipart"]:
-            if "when" not in entry or self._test_for(state, entry["when"]):
-                data = entry["apply"]
-                if type(data) == dict:
-                    model, config, _ = BlockState.decode_entry(data)
-                    if model not in shared.model_handler.models:
-                        continue
-                    _, box_model = shared.model_handler.models[
-                        model
-                    ].get_prepared_data_for(
-                        instance.position,
-                        config,
-                        face,
-                        previous=(prepared_vertex, prepared_texture),
-                    )
-                else:
-                    if instance.block_state is None:
-                        entries = [BlockState.decode_entry(e) for e in data]
-                        model, config, _ = entry = random.choices(
-                            entries, weights=[e[2] for e in entries]
-                        )[0]
-                        instance.block_state = entries.index(entry)
-                    else:
-                        model, config, _ = BlockState.decode_entry(
-                            data[instance.block_state]
-                        )
-                    _, box_model = shared.model_handler.models[
-                        model
-                    ].get_prepared_data_for(
-                        instance.position,
-                        config,
-                        face,
-                        previous=(prepared_vertex, prepared_texture),
-                    )
+        box_model = self.prepare_rendering_data(box_model, face, instance, prepared_texture, prepared_vertex, state)
         return (
             tuple()
             if box_model is None
@@ -276,7 +267,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     return False
         return not use_or
 
-    def transform_to_hitbox(
+    def transform_to_bounding_box(
         self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
     ):
         state = instance.get_model_state()
@@ -287,31 +278,22 @@ class MultiPartDecoder(IBlockStateDecoder):
                 if type(data) == dict:
                     model, config, _ = BlockState.decode_entry(data)
                     model = shared.model_handler.models[model]
-                    for boxmodel in model.box_models:
+                    for box_model in model.box_models:
                         bbox.bounding_boxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
-                                boxmodel.box_size,
-                                boxmodel.box_position,
+                                box_model.box_size,
+                                box_model.box_position,
                                 rotation=config["rotation"],
                             )
                         )
                 else:
-                    if instance.block_state is None:
-                        entries = [BlockState.decode_entry(e) for e in data]
-                        model, config, _ = entry = random.choices(
-                            entries, weights=[e[2] for e in entries]
-                        )[0]
-                        instance.block_state = entries.index(entry)
-                    else:
-                        model, config, _ = BlockState.decode_entry(
-                            data[instance.block_state]
-                        )
+                    config, model = get_model_choice(data, instance)
                     model = shared.model_handler.models[model]
-                    for boxmodel in model.box_models:
+                    for box_model in model.box_models:
                         bbox.bounding_boxes.append(
                             mcpython.common.block.BoundingBox.BoundingBox(
-                                boxmodel.box_size,
-                                boxmodel.box_position,
+                                box_model.box_size,
+                                box_model.box_position,
                                 rotation=config["rotation"],
                             )
                         )
@@ -324,7 +306,12 @@ class MultiPartDecoder(IBlockStateDecoder):
         previous=None,
     ):
         state = instance.get_model_state()
-        prepared_vertex, prepared_texture, boxmodel = [], [], None
+        prepared_vertex, prepared_texture, box_model = [], [], None
+        box_model = self.prepare_rendering_data(box_model, face, instance, prepared_texture, prepared_vertex, state)
+        if box_model is not None:
+            box_model.draw_prepared_data((prepared_vertex, prepared_texture))
+
+    def prepare_rendering_data(self, box_model, face, instance, prepared_texture, prepared_vertex, state):
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
@@ -332,7 +319,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model, config, _ = BlockState.decode_entry(data)
                     if model not in shared.model_handler.models:
                         continue
-                    _, boxmodel = shared.model_handler.models[
+                    _, box_model = shared.model_handler.models[
                         model
                     ].get_prepared_data_for(
                         instance.position,
@@ -341,17 +328,8 @@ class MultiPartDecoder(IBlockStateDecoder):
                         previous=(prepared_vertex, prepared_texture),
                     )
                 else:
-                    if instance.block_state is None:
-                        entries = [BlockState.decode_entry(e) for e in data]
-                        model, config, _ = entry = random.choices(
-                            entries, weights=[e[2] for e in entries]
-                        )[0]
-                        instance.block_state = entries.index(entry)
-                    else:
-                        model, config, _ = BlockState.decode_entry(
-                            data[instance.block_state]
-                        )
-                    _, boxmodel = shared.model_handler.models[
+                    config, model = get_model_choice(data, instance)
+                    _, box_model = shared.model_handler.models[
                         model
                     ].get_prepared_data_for(
                         instance.position,
@@ -359,8 +337,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         face,
                         previous=(prepared_vertex, prepared_texture),
                     )
-        if boxmodel is not None:
-            boxmodel.draw_prepared_data((prepared_vertex, prepared_texture))
+        return box_model
 
 
 @shared.registry
@@ -382,9 +359,14 @@ class DefaultDecoder(IBlockStateDecoder):
             and "mod_marker" not in data
         )
 
-    def __init__(self, data: dict, block_state):
-        super().__init__(data, block_state)
+    def __init__(self, block_state):
+        super().__init__(block_state)
+        self.parent = None
+        self.model_alias = None
         self.states = []
+
+    def parse_data(self, data: dict):
+        self.data = data
 
         for element in data["variants"].keys():
             if element.count("=") > 0:
@@ -394,7 +376,7 @@ class DefaultDecoder(IBlockStateDecoder):
             else:
                 keymap = {}
 
-            self.states.append((keymap, BlockState(data["variants"][element])))
+            self.states.append((keymap, BlockState().parse_data(data["variants"][element])))
 
         self.model_alias = {}
         self.parent = None
@@ -476,7 +458,7 @@ class DefaultDecoder(IBlockStateDecoder):
 
         return tuple()
 
-    def transform_to_hitbox(
+    def transform_to_bounding_box(
         self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
     ):
         if instance.block_state is None:
@@ -488,12 +470,12 @@ class DefaultDecoder(IBlockStateDecoder):
             if keymap == data:
                 model, config, _ = blockstate.models[instance.block_state]
                 model = shared.model_handler.models[model]
-                for boxmodel in model.box_models:
+                for box_model in model.box_models:
                     rotation = config["rotation"]
                     bbox.bounding_boxes.append(
                         mcpython.common.block.BoundingBox.BoundingBox(
-                            boxmodel.box_size,
-                            boxmodel.box_position,
+                            box_model.box_size,
+                            box_model.box_position,
                             rotation=rotation,
                         )
                     )
@@ -551,9 +533,10 @@ class BlockStateDefinition:
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
-            return BlockStateDefinition(
-                mcpython.engine.ResourceLoader.read_json(file),
-                "{}:{}".format(modname, s[-1].split(".")[0]),
+            return cls(
+                "{}:{}".format(modname, s[-1].split(".")[0])
+            ).parse_data(
+                mcpython.engine.ResourceLoader.read_json(file)
             )
         except BlockStateNotNeeded:
             pass
@@ -592,7 +575,9 @@ class BlockStateDefinition:
     ):
         try:
             instance = BlockStateDefinition(
-                data, name, immediate=immediate, force=force
+                name, immediate=immediate, force=force
+            ).parse_data(
+                data
             )
             return instance
         except BlockStateNotNeeded:
@@ -614,7 +599,7 @@ class BlockStateDefinition:
         data = mcpython.engine.ResourceLoader.read_json(file)
         return cls.unsafe_from_data(name, data, immediate=True, force=True)
 
-    def __init__(self, data: dict, name: str, immediate=False, force=False):
+    def __init__(self, name: str, immediate=False, force=False):
         self.name = name
         if (
             (
@@ -628,12 +613,7 @@ class BlockStateDefinition:
 
         shared.model_handler.blockstates[name] = self
         self.loader = None
-        for loader in blockstate_decoder_registry.entries.values():
-            if loader.is_valid(data):
-                self.loader = loader(data, self)
-                break
-        else:
-            raise ValueError("can't find matching loader for model {}".format(name))
+
         self.baked = False
 
         if not immediate:
@@ -644,6 +624,17 @@ class BlockStateDefinition:
             )
         else:
             self.bake()
+
+    def parse_data(self, data: dict):
+        for loader in blockstate_decoder_registry.entries.values():
+            if loader.is_valid(data):
+                self.loader: IBlockStateDecoder = loader(self)
+                self.loader.parse_data(data)
+                break
+        else:
+            raise ValueError("can't find matching loader for model {}".format(self.name))
+
+        return self
 
     def bake(self):
         if not self.loader.bake():
@@ -690,9 +681,13 @@ class BlockState:
             1 if "weight" not in data else data["weight"],
         )
 
-    def __init__(self, data: dict):
-        self.data = data
+    def __init__(self):
+        self.data = None
         self.models = []  # (model, config, weight)
+
+    def parse_data(self, data: dict):
+        self.data = data
+
         if type(data) == dict:
             if "model" in data:
                 self.models.append(self.decode_entry(data))
@@ -702,8 +697,10 @@ class BlockState:
             self.models += models
             shared.model_handler.used_models |= set([x[0] for x in models])
 
+        return self
+
     def copy(self):
-        return BlockState(copy.deepcopy(self.data))
+        return BlockState().parse_data(copy.deepcopy(self.data))
 
     def add_face_to_batch(
         self,

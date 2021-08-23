@@ -256,7 +256,7 @@ class ModelHandler:
         [self.draw_face(block, face) for face in mcpython.util.enums.EnumSide.iterate()]
 
     def get_bbox(self, block):
-        return self.blockstates[block.NAME].loader.transform_to_hitbox(block)
+        return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)
 
     def reload_models(self):
         logger.println("deleting content of models...")
