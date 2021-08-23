@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.network.package.AbstractPackage
+import mcpython.engine.network.AbstractPackage
 import mcpython.engine.network.Backend
 from mcpython import shared
 
@@ -36,7 +36,7 @@ class NetworkManager:
         self.package_types: typing.Dict[
             int,
             typing.Type[
-                mcpython.common.network.package.AbstractPackage.AbstractPackage
+                mcpython.engine.network.AbstractPackage.AbstractPackage
             ],
         ] = {}
         self.custom_package_handlers: typing.Dict[
@@ -56,12 +56,11 @@ class NetworkManager:
 
     def send_package(
         self,
-        package: mcpython.common.network.package.AbstractPackage.AbstractPackage,
+        package: mcpython.engine.network.AbstractPackage.AbstractPackage,
         destination: int = 0,
     ):
-        assert (
-            package.PACKAGE_TYPE_ID != -1
-        ), "package must be registered for sending it"
+        if package.PACKAGE_TYPE_ID == -1:
+            raise RuntimeError(f"{package}: Package type must be registered for sending it")
 
         encoded_head = (
             (package.PACKAGE_TYPE_ID << 2 + 2 if package.CAN_GET_ANSWER else 0)
@@ -104,10 +103,10 @@ class NetworkManager:
     def register_package_handler(
         self,
         package_type: typing.Type[
-            mcpython.common.network.package.AbstractPackage.AbstractPackage
+            mcpython.engine.network.AbstractPackage.AbstractPackage
         ],
         handler: typing.Callable[
-            [mcpython.common.network.package.AbstractPackage.AbstractPackage], None
+            [mcpython.engine.network.AbstractPackage.AbstractPackage], None
         ],
     ):
         self.general_package_handlers.setdefault(
@@ -117,9 +116,9 @@ class NetworkManager:
 
     def register_answer_handler(
         self,
-        previous_package: mcpython.common.network.package.AbstractPackage.AbstractPackage,
+        previous_package: mcpython.engine.network.AbstractPackage.AbstractPackage,
         handler: typing.Callable[
-            [mcpython.common.network.package.AbstractPackage.AbstractPackage], None
+            [mcpython.engine.network.AbstractPackage.AbstractPackage], None
         ],
     ):
         self.custom_package_handlers.setdefault(previous_package.package_id, []).append(
@@ -129,22 +128,24 @@ class NetworkManager:
 
     def register_package_type(
         self,
-        t: typing.Type[mcpython.common.network.package.AbstractPackage.AbstractPackage],
+        t: typing.Type[mcpython.engine.network.AbstractPackage.AbstractPackage],
     ):
         if t.PACKAGE_TYPE_ID == -1:
             t.DYNAMIC_PACKAGE_ID = True
             while self.next_package_type_id in self.package_types:
                 self.next_package_type_id += 1
             t.PACKAGE_TYPE_ID = self.next_package_type_id
+
         elif t.PACKAGE_TYPE_ID in self.package_types:
             other = self.package_types[t.PACKAGE_TYPE_ID]
-            assert (
-                other.DYNAMIC_PACKAGE_ID
-            ), f"package id conflict between {t} and {other}, both forcing {t.PACKAGE_TYPE_ID}"
+
+            if not other.DYNAMIC_PACKAGE_ID:
+                raise RuntimeError(f"package id conflict between {t} and {other}, both forcing {t.PACKAGE_TYPE_ID}")
 
             # We need for the other a new package id
             while self.next_package_type_id in self.package_types:
                 self.next_package_type_id += 1
+
             self.package_types[self.next_package_type_id] = other
 
         self.package_types[t.PACKAGE_TYPE_ID] = t
@@ -230,7 +231,7 @@ class NetworkManager:
         except IndexError:
             return
 
-        package: mcpython.common.network.package.AbstractPackage.AbstractPackage = (
+        package: mcpython.engine.network.AbstractPackage.AbstractPackage = (
             self.package_types[package_type].from_data(package_data)
         )
         package.package_id = package_id

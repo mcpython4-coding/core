@@ -40,6 +40,10 @@ class AbstractPackage:
 
     CAN_GET_ANSWER = False
 
+    @classmethod
+    def from_data(cls, package_data: bytes):
+        pass
+
     def __init__(self):
         self.package_id = -1  # set during send process
         self.previous_packages = []  # set only during receiving or calling answer()
@@ -54,20 +58,17 @@ class AbstractPackage:
 
         return self
 
-    def on_answer_received(self, package):
-        pass
-
     def encode(self) -> bytes:
         raise NotImplementedError
 
-    @classmethod
-    def from_data(cls, package_data: bytes):
-        pass
-
     def answer(self, package: "AbstractPackage"):
-        assert self.package_id != -1, "package ID must be set by calling send()!"
+        if self.package_id == -1:
+            raise RuntimeError(f"{self}: Package ID must be set for answering; This package has it not set!")
 
         package.previous_packages = self.previous_packages + [self.package_id]
 
     def handle_inner(self):
+        raise NotImplementedError
+
+    def on_answer_received(self, package):
         pass
