@@ -108,12 +108,16 @@ class BoxModel(AbstractBoxModel):
             if "origin" in data["rotation"]:
                 self.rotation_center = tuple(e / 16 for e in data["rotation"]["origin"])
 
+            # todo: add a way to rotate around more than one axis
             rot = [0, 0, 0]
             rot["xyz".index(data["rotation"]["axis"])] = data["rotation"]["angle"]
             self.rotation = tuple(rot)
 
         self.vertex_provider = VertexProvider.create(
-            typing.cast(typing.Tuple[float, float, float], self.box_position),
+            typing.cast(typing.Tuple[float, float, float], tuple(
+                self.box_position[i] + self.box_size[i] / 2 - 0.5
+                for i in range(3)
+            )),
             typing.cast(typing.Tuple[float, float, float], self.box_size),
             typing.cast(typing.Tuple[float, float, float], self.rotation),
         )

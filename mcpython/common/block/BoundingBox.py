@@ -61,7 +61,15 @@ class BoundingBox(AbstractBoundingBox):
         self.relative_position = relative_position
         self.rotation = rotation
 
-        self.vertex_provider = VertexProvider.create(relative_position, size, (0, 0, 0), rotation)
+        self.vertex_provider = VertexProvider.create(
+            typing.cast(typing.Tuple[float, float, float], tuple(
+                self.relative_position[i] + self.size[i] / 2 - 0.5
+                for i in range(3)
+            )),
+            size,
+            (0, 0, 0),
+            rotation
+        )
 
     def recalculate_vertices(self):
         self.vertex_provider = VertexProvider.create(self.relative_position, self.size, (0, 0, 0), self.rotation)
