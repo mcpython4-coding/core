@@ -335,6 +335,8 @@ class LaunchWrapper:
         except SystemExit:
             # sys.exit() should not be handled
             raise
+        except KeyboardInterrupt:
+            sys.exit(-1)
         except:
             logger.print_exception("ERROR DURING RUNTIME (UNHANDLED)")
             import mcpython.client.state.StateLoadingException

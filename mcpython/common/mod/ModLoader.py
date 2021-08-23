@@ -67,7 +67,7 @@ def parse_provider_json(container: "ModContainer", data: dict):
             try:
                 importlib.import_module(module)
             except:
-                logger.println(
+                logger.print_exception(
                     f"[MOD DISCOVERY][ERROR] failed to load module {module} for container {container} in early loading phase"
                 )
 
@@ -86,11 +86,13 @@ class ModContainer:
                 path, close_when_scheduled=False
             )
             sys.path.append(path)
+
         elif os.path.isdir(path):
             self.resource_access = mcpython.engine.ResourceLoader.ResourceDirectory(
                 path
             )
             sys.path.append(path)
+
         elif os.path.isfile(path):
             # In this case, it is a file, so we know what mod loader to use
             self.resource_access = (
@@ -98,6 +100,7 @@ class ModContainer:
             )
             self.assigned_mod_loader = PyFileModLoader(self)
             self.assigned_mod_loader.on_select()
+
         else:
             raise RuntimeError(f"Invalid mod source file: {path}")
 
@@ -461,6 +464,7 @@ class ModLoader:
                 [],
             )
         )
+
         for entry in shared.launch_wrapper.get_flag_status("add-mod-file", default=[]):
             files |= set(entry)
 
