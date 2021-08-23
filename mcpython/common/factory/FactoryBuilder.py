@@ -306,11 +306,17 @@ class FactoryBuilder:
                     pass
 
             for builder in self.master.class_builders:
-                BuildTarget = builder.apply(BuildTarget, self)
+                try:
+                    BuildTarget = builder.apply(BuildTarget, self)
+                except:
+                    logger.print_exception(f"during applying {builder} to {self}")
 
             self.master.do_with_results(BuildTarget)
 
             return BuildTarget
+
+        def __repr__(self):
+            return f"FactoryInstance(of={self.master.name},name={self.config_table['name']})"
 
     def __init__(
         self,

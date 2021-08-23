@@ -179,6 +179,8 @@ def build_class(
         ASSIGNED_TOOLS = configs.setdefault("assigned_tools", cls.ASSIGNED_TOOLS)
 
         IS_BREAKABLE = configs.setdefault("break_able_flag", cls.IS_BREAKABLE)
+        if not isinstance(IS_BREAKABLE, bool):
+            IS_BREAKABLE = True
 
         DEFAULT_FACE_SOLID = configs.setdefault(
             "solid_face_table", cls.DEFAULT_FACE_SOLID

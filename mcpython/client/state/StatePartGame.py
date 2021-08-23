@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import enum
 import math
 import time
 
@@ -22,58 +21,32 @@ import mcpython.common.item.AbstractToolItem as ItemTool
 import mcpython.util.math
 import pyglet
 from mcpython import shared
-from mcpython.common.config import FLYING_SPEED, GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
+from mcpython.common.config import GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
 from . import StatePart
+from .InGameHotKeys import ALL_KEY_COMBOS
 
 
-@onlyInClient()
-class HotKeys(enum.Enum):
-    # from https://minecraft.gamepedia.com/Debug_screen
+def get_block_break_time(block, itemstack):
+    # todo: add factor when not on ground, when in water (when its added)
 
-    RELOAD_CHUNKS = ([key.F3, key.A], "hotkey:chunk_reload")
-    GAME_CRASH = ([key.F3, key.C], "hotkey:game_crash", 10)
-    GET_PLAYER_POSITION = ([key.F3, key.C], "hotkey:get_player_position")
-    CLEAR_CHAT = ([key.F3, key.D], "hotkey:clear_chat")
-    COPY_BLOCK_OR_ENTITY_DATA = ([key.F3, key.I], "hotkey:copy_block_or_entity_data")
-    TOGGLE_GAMEMODE_1_3 = ([key.F3, key.N], "hotkey:gamemode_1-3_toggle")
-    RELOAD_TEXTURES = ([key.F3, key.T], "hotkey:reload_textures")
-
-    def __init__(self, keys, event, min_press=0):
-        self.keys = keys
-        self.event = event
-        self.active = False
-        self.min_press = min_press
-        self.press_start = 0
-
-    def check(self):
-        status = all([shared.window.keys[symbol] for symbol in self.keys])
-        if self.active and not status:
-            self.active = False
-            if time.time() - self.press_start < self.min_press:
-                return
-            shared.event_handler.call(self.event)
-        if not self.active and status:
-            self.active = True
-            self.press_start = time.time()
-
-    def blocks(self, symbol, mods) -> bool:
+    hardness = block.HARDNESS
+    is_tool = not itemstack.is_empty() and issubclass(
+        type(itemstack.item), ItemTool.AbstractToolItem
+    )
+    tool_level = itemstack.item.TOOL_LEVEL if is_tool else 0
+    if not is_tool or not any(
+        [x in block.ASSIGNED_TOOLS for x in itemstack.item.TOOL_TYPE]
+    ):
+        return (1.5 if block.MINIMUM_TOOL_LEVEL <= tool_level else 5) * hardness
+    else:
         return (
-            symbol in self.keys and self.check()
-        )  # is this key a) affected by this and b) is our combo active
-
-
-ALL_KEY_COMBOS = [
-    HotKeys.RELOAD_CHUNKS,
-    HotKeys.GAME_CRASH,
-    HotKeys.GET_PLAYER_POSITION,
-    HotKeys.CLEAR_CHAT,
-    HotKeys.COPY_BLOCK_OR_ENTITY_DATA,
-    HotKeys.TOGGLE_GAMEMODE_1_3,
-    HotKeys.RELOAD_TEXTURES,
-]
+            (1.5 if block.MINIMUM_TOOL_LEVEL <= tool_level else 5)
+            * hardness
+            / itemstack.item.get_speed_multiplyer(itemstack)
+        )
 
 
 @onlyInClient()
@@ -92,41 +65,23 @@ class StatePartGame(StatePart.StatePart):
     @classmethod
     def calculate_new_break_time(cls):
         vector = shared.window.get_sight_vector()
-        blockpos = shared.world.hit_test(
+        block_position = shared.world.hit_test(
             shared.world.get_active_player().position, vector
         )[0]
         block = (
-            shared.world.get_active_dimension().get_block(blockpos)
-            if blockpos
+            shared.world.get_active_dimension().get_block(block_position)
+            if block_position
             else None
         )
-        if not block:
-            cls.break_time = None  # no break time because no block
+        if not block:  # no break time because no block
+            cls.break_time = None
         else:
-            hardness = block.HARDNESS
-            itemstack = (
+            cls.break_time = get_block_break_time(
+                block,
                 shared.world.get_active_player()
                 .get_active_inventory_slot()
                 .get_itemstack()
-                .copy()
             )
-            is_tool = not itemstack.is_empty() and issubclass(
-                type(itemstack.item), ItemTool.AbstractToolItem
-            )
-            tool_level = itemstack.item.TOOL_LEVEL if is_tool else 0
-            if not is_tool or not any(
-                [x in block.ASSIGNED_TOOLS for x in itemstack.item.TOOL_TYPE]
-            ):
-                cls.break_time = (
-                    1.5 if block.MINIMUM_TOOL_LEVEL <= tool_level else 5
-                ) * hardness
-            else:
-                cls.break_time = (
-                    (1.5 if block.MINIMUM_TOOL_LEVEL <= tool_level else 5)
-                    * hardness
-                    / itemstack.item.get_speed_multiplyer(itemstack)
-                )
-            # todo: add factor when not on ground, when in water (when its added)
 
     def __init__(
         self,
@@ -135,9 +90,9 @@ class StatePartGame(StatePart.StatePart):
         activate_keyboard=True,
         activate_3d_draw=True,
         activate_focused_block=True,
-        glcolor3d=(1.0, 1.0, 1.0),
+        gl_color_3d=(1.0, 1.0, 1.0),
         activate_crosshair=True,
-        activate_lable=True,
+        activate_label=True,
         clear_color=(0.5, 0.69, 1.0, 1),
         active_hotkeys=None,
     ):
@@ -150,8 +105,8 @@ class StatePartGame(StatePart.StatePart):
         self.activate_3d_draw = activate_3d_draw
         self.activate_focused_block_draw = activate_focused_block
         self.activate_crosshair = activate_crosshair
-        self.active_lable = activate_lable
-        self.color_3d = glcolor3d
+        self.active_label = activate_label
+        self.color_3d = gl_color_3d
         self.clear_color = clear_color
         self.active_hotkeys = active_hotkeys
 
@@ -205,14 +160,14 @@ class StatePartGame(StatePart.StatePart):
             and time.time() - self.set_cooldown > 1
         ):
             vector = shared.window.get_sight_vector()
-            blockpos, previous, hitpos = shared.world.hit_test(
+            block_position, previous, hit_position = shared.world.hit_test(
                 shared.world.get_active_player().position, vector
             )
-            if blockpos:
+            if block_position:
                 if (
-                    blockpos != self.block_looking_at
+                    block_position != self.block_looking_at
                 ):  # have we changed the block we were looking at?
-                    self.block_looking_at = blockpos
+                    self.block_looking_at = block_position
                     self.mouse_press_time = 0
 
             if not self.break_time:
@@ -221,10 +176,11 @@ class StatePartGame(StatePart.StatePart):
     def on_physics_update(self, dt: float):
         if not self.activate_physics:
             return
+
         m = 8
         dt = min(dt, 0.2)
         for _ in range(m):
-            self._update(dt / m)
+            self.physics_update_internal(dt / m)
 
     def on_left_click_interaction_update(self, dt: float):
         if self.break_time is None:
@@ -237,26 +193,27 @@ class StatePartGame(StatePart.StatePart):
         if (
             shared.window.exclusive
             and any(shared.window.mouse_pressing.values())
-            and time.time() - self.set_cooldown > 1
         ):
             vector = shared.window.get_sight_vector()
-            blockpos, previous, hit_position = shared.world.hit_test(
+            block_position, previous, hit_position = shared.world.hit_test(
                 player.position, vector
             )
-            if shared.window.mouse_pressing[mouse.LEFT] and blockpos:
-                block = shared.world.get_active_dimension().get_block(blockpos)
+            if shared.window.mouse_pressing[mouse.LEFT] and block_position:
+                block = shared.world.get_active_dimension().get_block(block_position)
                 if block is None:
                     return
 
                 chunk = shared.world.get_active_dimension().get_chunk(
-                    *mcpython.util.math.position_to_chunk(blockpos)
+                    *mcpython.util.math.position_to_chunk(block_position)
                 )
 
                 if player.gamemode == 1:
                     if self.mouse_press_time >= 0.10:
-                        chunk.remove_block(blockpos)
-                        chunk.on_block_updated(blockpos)
-                        chunk.check_neighbors(blockpos)
+                        # todo: check for special break behaviour (chests, etc.)
+                        chunk.remove_block(block_position)
+                        chunk.on_block_updated(block_position)
+                        chunk.check_neighbors(block_position)
+
                 elif player.gamemode in (0, 2):
                     if (
                         not isinstance(block, str)
@@ -268,6 +225,7 @@ class StatePartGame(StatePart.StatePart):
                             and selected_itemstack.item.check_can_destroy(block, player)
                         ) or (selected_itemstack.is_empty() and player.gamemode == 2):
                             return
+
                         if shared.world.gamerule_handler.table[
                             "doTileDrops"
                         ].status.status:
@@ -280,9 +238,9 @@ class StatePartGame(StatePart.StatePart):
                             ]
                             player.pick_up_item(items)
 
-                        chunk.remove_block(blockpos)
-                        chunk.on_block_updated(blockpos)
-                        chunk.check_neighbors(blockpos)
+                        chunk.remove_block(block_position)
+                        chunk.on_block_updated(block_position)
+                        chunk.check_neighbors(block_position)
 
                         if not selected_itemstack.is_empty():
                             selected_itemstack.item.on_block_broken_with(
@@ -306,11 +264,13 @@ class StatePartGame(StatePart.StatePart):
                     self.set_cooldown = time.time() - 1
                     active_itemstack.add_amount(-1)
                     return
+
             vector = shared.window.get_sight_vector()
-            blockpos, previous, hit_position = shared.world.hit_test(
+            block_position, previous, hit_position = shared.world.hit_test(
                 player.position, vector
             )
-            if blockpos:
+
+            if block_position:
                 if shared.window.mouse_pressing[mouse.RIGHT] and previous:
                     slot = player.get_active_inventory_slot()
                     if (
@@ -332,7 +292,7 @@ class StatePartGame(StatePart.StatePart):
                             )
 
                             if not slot.get_itemstack().item.check_can_be_set_on(
-                                chunk.get_block(blockpos), player
+                                chunk.get_block(block_position), player
                             ):
                                 self.mouse_press_time = 0
                                 return
@@ -341,7 +301,7 @@ class StatePartGame(StatePart.StatePart):
                                 previous,
                                 slot.get_itemstack().item.get_block(),
                                 lazy_setup=lambda block: block.set_creation_properties(
-                                    set_to=blockpos,
+                                    set_to=block_position,
                                     real_hit=hit_position,
                                     player=player,
                                 ),
@@ -361,29 +321,30 @@ class StatePartGame(StatePart.StatePart):
             and time.time() - self.set_cooldown > 1
         ):
             vector = shared.window.get_sight_vector()
-            blockpos, previous, hitpos = shared.world.hit_test(player.position, vector)
+            block_position, previous, hit_position = shared.world.hit_test(player.position, vector)
             if (
                 shared.window.mouse_pressing[mouse.MIDDLE]
-                and blockpos
+                and block_position
                 and self.mouse_press_time > 0.1
             ):
                 chunk = shared.world.get_active_dimension().get_chunk_for_position(
-                    blockpos
+                    block_position
                 )
                 self.mouse_press_time = 0
-                block = shared.world.get_active_dimension().get_block(blockpos)
+                block = shared.world.get_active_dimension().get_block(block_position)
                 itemstack = mcpython.common.container.ResourceStack.ItemStack(
                     block.NAME if type(block) != str else block
                 )
-                block = chunk.get_block(blockpos)
+                block = chunk.get_block(block_position)
                 if block:
                     block.on_request_item_for_block(itemstack)
                 selected_slot = player.get_active_inventory_slot()
 
                 for inventory, reverse in player.inventory_order:
-                    slots: list = inventory.slots
+                    slots = inventory.slots
                     if reverse:
                         slots.reverse()
+
                     for slot in slots:
                         if (
                             slot.get_itemstack().item
@@ -405,77 +366,50 @@ class StatePartGame(StatePart.StatePart):
                     if shared.window.mouse_pressing[mouse.LEFT]:
                         self.calculate_new_break_time()
 
-    def _update(self, dt: float):
-        """Private implementation of the `update()` method. This is where most
+    def physics_update_internal(self, dt: float):
+        """
+        Internal implementation of the `update()` method. This is where most
         of the motion logic lives, along with gravity and collision detection.
 
         Parameters
         ----------
         dt : float
             The change in time since the last call.
-
         """
         player = shared.world.get_active_player()
-        speed = mcpython.common.config.SPEED_DICT[player.gamemode][
-            (0 if not shared.window.keys[key.LSHIFT] else 1)
-            + (0 if not shared.world.get_active_player().flying else 2)
-        ]
 
-        if not shared.world.get_active_player().flying and shared.window.dy == 0:
-            x, y, z = mcpython.util.math.normalize(player.position)
-            block_inst = shared.world.get_active_dimension().get_block((x, y - 2, z))
-            if (
-                block_inst is not None
-                and type(block_inst) != str
-                and block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None
-            ):
-                speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
-
+        # todo: add check game hardness != friendly
         if player.gamemode in (0, 2) and shared.window.keys[key.LSHIFT]:
             player.hunger -= dt * 0.2
 
-        d = dt * speed  # distance covered this tick.
-        dx, dy, dz = shared.window.get_motion_vector()
-        # New position in space, before accounting for gravity.
-        dx, dy, dz = dx * d, dy * d, dz * d
+        dx, dy, dz = self.calculate_motion(dt, player)
 
-        # gravity
-        if not shared.world.get_active_player().flying:
-            # Update your vertical speed: if you are falling, speed up until you
-            # hit terminal velocity; if you are jumping, slow down until you
-            # start falling.
-            shared.window.dy -= dt * GRAVITY
-            shared.window.dy = max(shared.window.dy, -TERMINAL_VELOCITY)
-            dy += shared.window.dy * dt
-        elif self.activate_keyboard and not (
-            shared.window.keys[key.SPACE] and shared.window.keys[key.LSHIFT]
-        ):
-            dy = (
-                dt * 6
-                if shared.window.keys[key.SPACE]
-                else (-dt * 6 if shared.window.keys[key.LSHIFT] else 0)
-            )
-
-        # collisions
+        # collisions & position update
         x, y, z = player.position
         before = mcpython.util.math.position_to_chunk(player.position)
         if player.gamemode != 3:
+            # todo: move collide method somewhere else (player?)
             x, y, z = shared.window.collide(
                 (x + dx, y + dy, z + dz), 2, player.position
             )
         else:
             x, y, z = x + dx, y + dy, z + dz
+
         if shared.window.dy < 0 and player.fallen_since_y is None:
             player.fallen_since_y = player.position[1]
+
         player.position = (x, y, z)
+
+        # If below y=-10, and he has flown more than the cooldown, he should get damaged
+        # todo: add property for y level
         if y < -10 and time.time() - self.void_damage_cooldown > 0.25:
             player.damage(1, check_gamemode=False)
             self.void_damage_cooldown = time.time()
 
-        after = mcpython.util.math.position_to_chunk(player.position)
-        if before != after:
-            shared.world.change_chunks(before, after)
+        self.update_player_chunks(before, player)
+        self.calculate_player_hearts(dt, player)
 
+    def calculate_player_hearts(self, dt, player):
         if (
             player.hearts < 20
             and player.hunger > 4
@@ -485,42 +419,86 @@ class StatePartGame(StatePart.StatePart):
             player.hearts += 1
             player.hunger -= 0.5
             self.regenerate_cooldown = time.time()
-
         if player.hunger == 0 and time.time() - self.hunger_heart_cooldown > 1:
             player.damage(1)
             self.hunger_heart_cooldown = time.time()
-
         nx, _, nz = mcpython.util.math.normalize(player.position)
         ny = math.ceil(player.position[1])
-
         if player.gamemode in (0, 2) and shared.world.get_active_dimension().get_block(
-            (nx, ny, nz)
+                (nx, ny, nz)
         ):
             player.damage(dt)
+
+    def update_player_chunks(self, before, player):
+        after = mcpython.util.math.position_to_chunk(player.position)
+        if before != after:
+            shared.world.change_chunks(before, after)
+
+    def calculate_motion(self, dt, player):
+        speed = mcpython.common.config.SPEED_DICT[player.gamemode][
+            (0 if not shared.window.keys[key.LSHIFT] else 1)
+            + (0 if not player.flying else 2)
+        ]
+
+        if not player.flying and shared.window.dy == 0:
+            x, y, z = mcpython.util.math.normalize(player.position)
+            block_inst = shared.world.get_active_dimension().get_block((x, y - 2, z))
+            if (
+                    block_inst is not None
+                    and type(block_inst) != str
+                    and block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None
+            ):
+                speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
+
+        d = dt * speed  # distance covered this tick.
+        dx, dy, dz = shared.window.get_motion_vector()
+        # New position in space, before accounting for gravity.
+        dx, dy, dz = dx * d, dy * d, dz * d
+        # gravity
+        if not player.flying:
+            # Update your vertical speed: if you are falling, speed up until you
+            # hit terminal velocity; if you are jumping, slow down until you
+            # start falling.
+            shared.window.dy -= dt * GRAVITY
+            shared.window.dy = max(shared.window.dy, -TERMINAL_VELOCITY)
+            dy += shared.window.dy * dt
+        elif self.activate_keyboard and not (
+                shared.window.keys[key.SPACE] and shared.window.keys[key.LSHIFT]
+        ):
+            dy = (
+                dt * 6
+                if shared.window.keys[key.SPACE]
+                else (-dt * 6 if shared.window.keys[key.LSHIFT] else 0)
+            )
+        return dx, dy, dz
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         player = shared.world.get_active_player()
         if not self.activate_mouse:
             return
+
         slot = player.get_active_inventory_slot()
         vector = shared.window.get_sight_vector()
-        blockpos, previous, hitpos = shared.world.hit_test(player.position, vector)
+        block_position, previous, hit_position = shared.world.hit_test(player.position, vector)
         block = (
-            shared.world.get_active_dimension().get_block(blockpos)
-            if blockpos
+            shared.world.get_active_dimension().get_block(block_position)
+            if block_position
             else None
         )
         cancel = False
+
         if not slot.get_itemstack().is_empty():
             if slot.get_itemstack().item.on_player_interact(
                 player, block, button, modifiers
             ):
                 cancel = True
+
         if block and type(block) != str:
             if not cancel and block.on_player_interaction(
-                player, button, modifiers, hitpos
+                player, button, modifiers, hit_position
             ):
                 cancel = True
+
         if cancel:
             self.set_cooldown = time.time()
             shared.window.mouse_pressing[button] = False
@@ -557,6 +535,7 @@ class StatePartGame(StatePart.StatePart):
             shared.window.strafe[1] = -1
         elif symbol == key.D and not shared.window.keys[key.A]:
             shared.window.strafe[1] = 1
+
         elif (
             symbol == key.SPACE
             and shared.world.get_active_player().inventory_chat
@@ -574,6 +553,7 @@ class StatePartGame(StatePart.StatePart):
             else:
                 if shared.window.dy == 0:
                     shared.window.dy = JUMP_SPEED
+
         elif (
             symbol in shared.window.num_keys
             and shared.world.get_active_player().gamemode in (0, 1)
@@ -619,10 +599,11 @@ class StatePartGame(StatePart.StatePart):
                 self.activate_focused_block_draw
                 and shared.world.get_active_player().gamemode != 3
             ):
+                # todo: move this method to player
                 shared.window.draw_focused_block()
 
     def on_draw_2d(self):
-        if self.active_lable:
+        if self.active_label:
             shared.window.draw_label()
 
         if self.activate_crosshair:

@@ -46,9 +46,7 @@ def get_model_choice(data, instance):
         )[0]
         instance.block_state = entries.index(entry)
     else:
-        model, config, _ = decode_entry(
-            data[instance.block_state]
-        )
+        model, config, _ = decode_entry(data[instance.block_state])
     return config, model
 
 

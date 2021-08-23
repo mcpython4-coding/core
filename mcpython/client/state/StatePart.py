@@ -18,7 +18,7 @@ from mcpython.util.annotation import onlyInClient
 
 @onlyInClient()
 class StatePart(ABC):
-    NAME = "null"
+    NAME = None
 
     def __init__(self):
         self.part_dict = {}

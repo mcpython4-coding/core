@@ -151,12 +151,12 @@ class GridShaped(AbstractCraftingGridRecipe):
         self.output = output
         sx = max(self.inputs, key=lambda x: x[0])[0] + 1
         sy = max(self.inputs, key=lambda x: x[1])[1] + 1
-        self.bboxsize = (sx, sy)
+        self.bounding_box_size = (sx, sy)
 
     def prepare(self):
         shared.crafting_handler.crafting_recipes_shaped.setdefault(
             len(self.inputs), {}
-        ).setdefault(self.bboxsize, []).append(self)
+        ).setdefault(self.bounding_box_size, []).append(self)
 
     def as_grid(self, size=(3, 3)):
         grid: typing.List[

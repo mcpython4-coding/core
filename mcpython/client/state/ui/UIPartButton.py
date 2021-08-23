@@ -132,7 +132,7 @@ class UIPartButton(UIPart.UIPart):
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()
-        sx, sy = self.bboxsize
+        sx, sy = self.bounding_box_size
         self.press.area = ((mx, my), (mx + sx, my + sy))
         if self.press.equals(x, y, button, modifiers):
             if self.on_press:
@@ -143,7 +143,7 @@ class UIPartButton(UIPart.UIPart):
 
     def on_mouse_motion(self, x, y, dx, dy):
         mx, my = self.get_real_position()
-        sx, sy = self.bboxsize
+        sx, sy = self.bounding_box_size
         if 0 <= x - mx <= sx and 0 <= y - my <= sy:
             if self.on_hover:
                 self.on_hover(x, y)
@@ -162,12 +162,12 @@ class UIPartButton(UIPart.UIPart):
             )
         )
         x, y = self.get_real_position()
-        draw_button((x, y), self.bboxsize, mode)
+        draw_button((x, y), self.bounding_box_size, mode)
         self.lable.text = mcpython.common.Language.translate(self.text)
         wx, wy = self.lable.content_width, self.lable.content_height
-        self.lable.x = x + self.bboxsize[0] // 2 - wx // 2
-        self.lable.y = y + self.bboxsize[1] // 2 - wy // 3
-        self.lable.font_size = self.bboxsize[1] // 2.0
+        self.lable.x = x + self.bounding_box_size[0] // 2 - wx // 2
+        self.lable.y = y + self.bounding_box_size[1] // 2 - wy // 3
+        self.lable.font_size = self.bounding_box_size[1] // 2.0
         self.lable.draw()
 
 
@@ -255,7 +255,7 @@ class UIPartToggleButton(UIPartButton):
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()
-        sx, sy = self.bboxsize
+        sx, sy = self.bounding_box_size
         self.toggle.area = self.retoggle.area = ((mx, my), (mx + sx, my + sy))
         if self.toggle.equals(x, y, button, modifiers):
             self.index += 1

@@ -65,8 +65,8 @@ class UIPartProgressBar(UIPart.UIPart):
 
     def on_draw_2d(self):
         x, y = self.get_real_position()
-        mcpython.util.opengl.draw_line_rectangle((x, y), self.bboxsize)
-        sx, sy = self.bboxsize
+        mcpython.util.opengl.draw_line_rectangle((x, y), self.bounding_box_size)
+        sx, sy = self.bounding_box_size
 
         if self.progress > self.progress_max:
             self.progress = self.progress_max
@@ -77,16 +77,18 @@ class UIPartProgressBar(UIPart.UIPart):
             // (self.progress_max if self.progress_max != 0 else 1)
         )
         mcpython.util.opengl.draw_rectangle(
-            (x + 2, y + 3), (sx, self.bboxsize[1] - 5), color=self.color
+            (x + 2, y + 3), (sx, self.bounding_box_size[1] - 5), color=self.color
         )
 
         self.lable.text = self.text
 
-        self.lable.font_size = self.bboxsize[1] - 10
-        while self.lable.content_width > self.bboxsize[0]:
+        self.lable.font_size = self.bounding_box_size[1] - 10
+        while self.lable.content_width > self.bounding_box_size[0]:
             self.lable.font_size -= 1
 
-        self.lable.x = x + (self.bboxsize[0] - self.lable.content_width) // 2
-        self.lable.y = y + (self.bboxsize[1] - self.lable.content_height) // 2 + 5
+        self.lable.x = x + (self.bounding_box_size[0] - self.lable.content_width) // 2
+        self.lable.y = (
+            y + (self.bounding_box_size[1] - self.lable.content_height) // 2 + 5
+        )
 
         self.lable.draw()

@@ -18,17 +18,19 @@ from mcpython.util.annotation import onlyInClient
 
 @onlyInClient()
 class UIPart(mcpython.client.state.StatePart.StatePart):
-    def __init__(self, position, bboxsize, anchor_element="WS", anchor_window="WS"):
+    def __init__(
+        self, position, bounding_box_size, anchor_element="WS", anchor_window="WS"
+    ):
         super().__init__()
         self.position = position
-        self.bboxsize = bboxsize
+        self.bounding_box_size = bounding_box_size
         self.anchor_element = anchor_element
         self.anchor_window = anchor_window
 
     def get_real_position(self):
         x, y = self.position
         wx, wy = shared.window.get_size()
-        bx, by = self.bboxsize
+        bx, by = self.bounding_box_size
         if self.anchor_element[0] == "M":
             x -= bx // 2
         elif self.anchor_element[0] == "E":

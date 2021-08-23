@@ -25,30 +25,36 @@ class StateModLoading(State.State):
     NAME = "minecraft:mod_loading"
 
     def __init__(self):
-        State.State.__init__(self)
+        self.stage_bar = None
+        self.mod_bar = None
+        self.item_bar = None
+        self.memory_bar = None
+
+        super().__init__()
 
     def get_parts(self) -> list:
+        self.stage_bar = UIPartProgressBar.UIPartProgressBar(
+            (20, 10), (20, 20), status=1, color=(1.0, 0.0, 0.0)
+        )
+        self.mod_bar = UIPartProgressBar.UIPartProgressBar(
+            (20, 40), (20, 20), status=1, color=(0.0, 0.0, 1.0)
+        )
+        self.item_bar = UIPartProgressBar.UIPartProgressBar(
+            (20, 70), (20, 20), status=1, color=(0.0, 1.0, 0.0)
+        )
+        self.memory_bar = UIPartProgressBar.UIPartProgressBar(
+            (20, 10),
+            (20, 20),
+            status=1,
+            color=(1.0, 0.0, 0.0),
+            progress_items=psutil.virtual_memory().total,
+        )
+
         return [
-            # stage
-            UIPartProgressBar.UIPartProgressBar(
-                (20, 10), (20, 20), status=1, color=(1.0, 0.0, 0.0)
-            ),
-            # mod
-            UIPartProgressBar.UIPartProgressBar(
-                (20, 40), (20, 20), status=1, color=(0.0, 0.0, 1.0)
-            ),
-            # item
-            UIPartProgressBar.UIPartProgressBar(
-                (20, 70), (20, 20), status=1, color=(0.0, 1.0, 0.0)
-            ),
-            # memory usage
-            UIPartProgressBar.UIPartProgressBar(
-                (20, 10),
-                (20, 20),
-                status=1,
-                color=(1.0, 0.0, 0.0),
-                progress_items=psutil.virtual_memory().total,
-            ),
+            self.stage_bar,
+            self.mod_bar,
+            self.item_bar,
+            self.memory_bar,
         ]
 
     def bind_to_eventbus(self):
@@ -58,18 +64,22 @@ class StateModLoading(State.State):
 
     def on_resize(self, w, h):
         for part in self.parts:
-            part.bboxsize = (shared.window.get_size()[0] - 40, 20)
+            part.bounding_box_size = (shared.window.get_size()[0] - 40, 20)
+
         self.parts[3].position = (20, shared.window.get_size()[1] - 40)
 
     def on_draw_2d_pre(self):
         pyglet.gl.glClearColor(255, 255, 255, 255)
+
         process = psutil.Process()
         with process.oneshot():
-            self.parts[3].progress = process.memory_info().rss
-        self.parts[3].text = "Memory usage: {}MB/{}MB ({}%)".format(
-            self.parts[3].progress // 2 ** 20,
-            self.parts[3].progress_max // 2 ** 20,
-            round(self.parts[3].progress / self.parts[3].progress_max * 10000) / 100,
+            self.memory_bar.progress = process.memory_info().rss
+
+        self.memory_bar.text = "Memory usage: {}MB/{}MB ({}%)".format(
+            self.memory_bar.progress // 2 ** 20,
+            self.memory_bar.progress_max // 2 ** 20,
+            round(self.memory_bar.progress / self.memory_bar.progress_max * 10000)
+            / 100,
         )
 
     def on_update(self, dt):
@@ -80,4 +90,4 @@ class StateModLoading(State.State):
         shared.world.get_active_player().init_creative_tabs()
 
 
-modloading = StateModLoading()
+mod_loading = StateModLoading()

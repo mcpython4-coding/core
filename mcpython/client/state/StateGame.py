@@ -43,6 +43,13 @@ class StateGame(State.State):
 
     def activate(self):
         super().activate()
+
+        shared.window.mouse_pressing = {
+            mouse.LEFT: False,
+            mouse.RIGHT: False,
+            mouse.MIDDLE: False,
+        }
+
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
         shared.world_generation_handler.enable_auto_gen = True
@@ -50,6 +57,7 @@ class StateGame(State.State):
     def deactivate(self):
         super().deactivate()
         shared.world_generation_handler.enable_auto_gen = False
+
         shared.window.mouse_pressing = {
             mouse.LEFT: False,
             mouse.RIGHT: False,
@@ -66,8 +74,10 @@ class StateGame(State.State):
 
         if symbol == key.ESCAPE and shared.window.exclusive:
             shared.state_handler.change_state("minecraft:escape_state")
+
         elif symbol == key.R:
             shared.inventory_handler.reload_config()
+
         elif symbol == key.E:
             if (
                 not shared.world.get_active_player().inventory_main
@@ -79,13 +89,16 @@ class StateGame(State.State):
                         shared.world.get_active_player().inventory_main
                     )
                     self.parts[0].activate_mouse = False
+
             else:
                 shared.event_handler.call("on_player_inventory_close")
                 shared.inventory_handler.hide(
                     shared.world.get_active_player().inventory_main
                 )
+
         elif symbol == key.T and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(self.open_chat, 2)
+
         elif symbol == key._7 and modifiers & key.MOD_SHIFT and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(
                 self.open_chat, 2, args=["/"]

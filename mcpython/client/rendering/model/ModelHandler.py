@@ -86,9 +86,14 @@ class ModelHandler:
     def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
 
-        if modname not in shared.mod_loader.mods and modname != "minecraft":
+        if modname == "alias":
+            return
+
+        if modname not in shared.mod_loader.mods:
+            logger.println(
+                f"[MODEL MANAGER][WARN] namespace {modname} has no assigned mod; Using default mod for loading annotation"
+            )
             modname = "minecraft"
-            logger.println(f"[MODEL MANAGER][WARN] namespace {modname} has no assigned mod; Using default mod for loading annotation")
 
         if immediate:
             self.special_build(model)
@@ -225,9 +230,9 @@ class ModelHandler:
 
         # todo: add custom block renderer check
         if blockstate is None:
-            vertex_list = self.blockstates["minecraft:missing_texture"].add_face_to_batch(
-                block, batches, face
-            )
+            vertex_list = self.blockstates[
+                "minecraft:missing_texture"
+            ].add_face_to_batch(block, batches, face)
         else:
             vertex_list = blockstate.add_face_to_batch(block, batches, face)
             if issubclass(

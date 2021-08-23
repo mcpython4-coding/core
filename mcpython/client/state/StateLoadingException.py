@@ -51,11 +51,11 @@ class StateLoadingException(State.State):
             y += 12
 
     def get_parts(self) -> list:
-        from mcpython.client.state.StateModLoading import modloading
+        from mcpython.client.state.StateModLoading import mod_loading
 
         return [
-            modloading.parts[0],
-            modloading.parts[3],
+            mod_loading.stage_bar,
+            mod_loading.memory_bar,
             UIPartButton.UIPartButton(
                 (100, 20),
                 "continue",
@@ -67,7 +67,13 @@ class StateLoadingException(State.State):
         ]
 
     def resume(self, *_):
-        logger.println("[MOD LOADER] continuing loading")
+        logger.println(
+            "[MOD LOADER][EXCEPTION MANAGER][INFO] continuing mod loading after forced HALT"
+        )
+        logger.println(
+            "[MOD LOADER][EXCEPTION MANAGER][WARN] The game might be in an invalid state, errors down the road may be caused by above!"
+        )
+
         shared.state_handler.change_state("minecraft:mod_loading")
 
     def bind_to_eventbus(self):
@@ -77,7 +83,7 @@ class StateLoadingException(State.State):
 
     def on_resize(self, w, h):
         for part in self.parts[:-1]:
-            part.bboxsize = (shared.window.get_size()[0] - 40, 20)
+            part.bounding_box_size = (shared.window.get_size()[0] - 40, 20)
 
         self.parts[1].position = (20, shared.window.get_size()[1] - 40)
         for label in self.labels:

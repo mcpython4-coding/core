@@ -23,10 +23,8 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
 from mcpython import shared
-from mcpython.client.rendering.model.api import BlockStateNotNeeded
-from mcpython.client.rendering.model.api import IBlockStateDecoder
-from mcpython.client.rendering.model.util import decode_entry
-from mcpython.client.rendering.model.util import get_model_choice
+from mcpython.client.rendering.model.api import BlockStateNotNeeded, IBlockStateDecoder
+from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
@@ -101,7 +99,10 @@ class MultiPartDecoder(IBlockStateDecoder):
                 )
 
             self.parent = parent
-            self.model_alias = {**self.parent.loader.model_alias.copy(), **self.model_alias}
+            self.model_alias = {
+                **self.parent.loader.model_alias.copy(),
+                **self.model_alias,
+            }
             self.data["multipart"].extend(
                 copy.deepcopy(self.parent.loader.data["multipart"])
             )
@@ -132,7 +133,9 @@ class MultiPartDecoder(IBlockStateDecoder):
         prepared_vertex, prepared_texture, box_model = (
             ([], [], None) if previous is None else (*previous, None)
         )
-        box_model = self.prepare_rendering_data(box_model, face, instance, prepared_texture, prepared_vertex, state)
+        box_model = self.prepare_rendering_data(
+            box_model, face, instance, prepared_texture, prepared_vertex, state
+        )
         return (
             tuple()
             if box_model is None
@@ -218,11 +221,15 @@ class MultiPartDecoder(IBlockStateDecoder):
     ):
         state = instance.get_model_state()
         prepared_vertex, prepared_texture, box_model = [], [], None
-        box_model = self.prepare_rendering_data(box_model, face, instance, prepared_texture, prepared_vertex, state)
+        box_model = self.prepare_rendering_data(
+            box_model, face, instance, prepared_texture, prepared_vertex, state
+        )
         if box_model is not None:
             box_model.draw_prepared_data((prepared_vertex, prepared_texture))
 
-    def prepare_rendering_data(self, box_model, face, instance, prepared_texture, prepared_vertex, state):
+    def prepare_rendering_data(
+        self, box_model, face, instance, prepared_texture, prepared_vertex, state
+    ):
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
@@ -287,7 +294,9 @@ class DefaultDecoder(IBlockStateDecoder):
             else:
                 keymap = {}
 
-            self.states.append((keymap, BlockState().parse_data(data["variants"][element])))
+            self.states.append(
+                (keymap, BlockState().parse_data(data["variants"][element]))
+            )
 
         self.model_alias = {}
         self.parent = None
@@ -444,9 +453,7 @@ class BlockStateDefinition:
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
-            return cls(
-                "{}:{}".format(modname, s[-1].split(".")[0])
-            ).parse_data(
+            return cls("{}:{}".format(modname, s[-1].split(".")[0])).parse_data(
                 mcpython.engine.ResourceLoader.read_json(file)
             )
         except BlockStateNotNeeded:
@@ -487,9 +494,7 @@ class BlockStateDefinition:
         try:
             instance = BlockStateDefinition(
                 name, immediate=immediate, force=force
-            ).parse_data(
-                data
-            )
+            ).parse_data(data)
             return instance
         except BlockStateNotNeeded:
             pass  # do we need this model?
@@ -543,7 +548,9 @@ class BlockStateDefinition:
                 self.loader.parse_data(data)
                 break
         else:
-            raise ValueError("can't find matching loader for model {}".format(self.name))
+            raise ValueError(
+                "can't find matching loader for model {}".format(self.name)
+            )
 
         return self
 

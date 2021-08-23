@@ -66,7 +66,7 @@ class UIPartLabel(UIPart.UIPart):
         self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def get_real_position(self):
-        self.bboxsize = self.lable.content_width, self.lable.content_width
+        self.bounding_box_size = self.lable.content_width, self.lable.content_width
         return super().get_real_position()
 
     def on_mouse_press(self, x, y, button, modifiers):

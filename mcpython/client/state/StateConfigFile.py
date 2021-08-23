@@ -84,7 +84,7 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
                 if "on_press" in data
                 else None
             )
-            existing.bboxsize = size
+            existing.bounding_box_size = size
             existing.text = text
             existing.position = position
             existing.anchor_element = anchor_button

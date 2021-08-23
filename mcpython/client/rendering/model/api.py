@@ -12,13 +12,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
-from abc import ABC
-
-import pyglet
 
 import mcpython.common.event.Registry
 import mcpython.util
 import mcpython.util.enums
+import pyglet
 
 
 class BlockStateNotNeeded(Exception):
@@ -124,4 +122,3 @@ class IItemModelLoader:
 class AbstractBoxModel(ABC):
     def copy(self) -> "AbstractBoxModel":
         raise NotImplementedError
-

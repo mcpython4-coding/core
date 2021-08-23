@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import functools
 import time
 
-import mcpython.client.state.StateGame
+import mcpython.client.gui.InventoryHandler
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.event.EventInfo
 import mcpython.util.callbacks
@@ -40,7 +40,7 @@ class StateEscape(State.State):
                 activate_keyboard=False,
                 activate_mouse=False,
                 activate_focused_block=False,
-                glcolor3d=(0.8, 0.8, 0.8),
+                gl_color_3d=(0.8, 0.8, 0.8),
             ),
             UIPartLabel.UIPartLabel(
                 "#*menu.game*#",
@@ -76,7 +76,7 @@ class StateEscape(State.State):
                 anchor_button="MM",
                 on_press=functools.partial(mcpython.util.callbacks.open_github_project),
             ),
-            mcpython.client.state.StateGame.game.parts[1],
+            mcpython.client.gui.InventoryHandler.inventory_part,
         ]
 
     def bind_to_eventbus(self):
@@ -88,13 +88,15 @@ class StateEscape(State.State):
         shared.world.world_loaded = False
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
-        shared.world.save_file.save_world(
-            override=True
-        )  # make sure that file size is as small as possible
+
+        # make sure that file size is as small as possible
+        shared.world.save_file.save_world(override=True)
+
         shared.world.setup_by_filename("tmp")
         shared.world.cleanup()
         shared.event_handler.call("on_game_leave")
         shared.state_handler.change_state("minecraft:startmenu", immediate=False)
+
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
 

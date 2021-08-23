@@ -59,21 +59,21 @@ class UIPartTextInput(UIPart.UIPart):
 
     def update_lable(self):
         x, y = self.get_real_position()
-        self.lable.x, self.lable.y = x + 5, y + self.bboxsize[1] // 2
+        self.lable.x, self.lable.y = x + 5, y + self.bounding_box_size[1] // 2
         if not self.selected and self.entered_text == "":
             if self.empty_overlay_text != "":
                 self.lable.text = mcpython.common.Language.translate(
                     self.empty_overlay_text
                 )
                 self.lable.color = (150, 150, 150, 255)
-                self.lable.font_size = self.bboxsize[1] // 4
+                self.lable.font_size = self.bounding_box_size[1] // 4
         else:
             self.lable.color = (255, 255, 255, 255)
-            self.lable.font_size = self.bboxsize[1] // 3
+            self.lable.font_size = self.bounding_box_size[1] // 3
             self.lable.text = self.entered_text + (
                 " " if time.time() // 2 % 2 == 0 or not self.selected else "_"
             )
-            while self.lable.content_height > self.bboxsize[0] - 6:
+            while self.lable.content_height > self.bounding_box_size[0] - 6:
                 self.lable.text = self.lable.text[1:]
 
     def bind_to_eventbus(self):
@@ -86,7 +86,7 @@ class UIPartTextInput(UIPart.UIPart):
     def on_draw_2d(self):
         self.update_lable()
         x, y = self.get_real_position()
-        sx, sy = self.bboxsize
+        sx, sy = self.bounding_box_size
         mcpython.util.opengl.draw_rectangle((x, y), (sx, sy))
         mcpython.util.opengl.draw_line_rectangle(
             (x + 2, y + 1), (sx - 3, sy - 3), color=(1.0, 1.0, 1.0)
@@ -95,7 +95,7 @@ class UIPartTextInput(UIPart.UIPart):
 
     def on_mouse_press(self, x, y, button, modifiers):
         rx, ry = self.get_real_position()
-        sx, sy = self.bboxsize
+        sx, sy = self.bounding_box_size
         if 0 <= x - rx <= sx and 0 <= y - ry <= sy:
             self.selected = True
         else:
