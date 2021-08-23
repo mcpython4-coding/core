@@ -464,6 +464,9 @@ class RawBoxModel(AbstractBoxModel):
         self.rotation_center = (
             rotation_center if rotation_center is not None else relative_position
         )
+
+        self.vertex_provider: typing.Optional[VertexProvider] = None
+
         self.recalculate_cache()
 
     def auto_value_region(
@@ -485,22 +488,7 @@ class RawBoxModel(AbstractBoxModel):
         return self
 
     def recalculate_cache(self):
-        # todo: I think we can do better here
-        vertices = sum(
-            mcpython.util.math.cube_vertices_better(
-                *self.relative_position, *[self.size[i] / 2 for i in range(3)]
-            ),
-            [],
-        )
-
-        self.vertex_cache.clear()
-        for i in range(len(vertices) // 3):
-            self.vertex_cache.append(
-                mcpython.util.math.rotate_point(
-                    vertices[i * 3 : i * 3 + 3], self.rotation_center, self.__rotation
-                )
-            )
-        self.rotated_vertex_cache.clear()
+        self.vertex_provider = VertexProvider.create(self.relative_position, self.size, self.rotation_center, self.__rotation)
 
         # todo: this seems odd
         self.texture_cache = sum(
@@ -529,23 +517,7 @@ class RawBoxModel(AbstractBoxModel):
     texture_region = property(get_texture_region, set_texture_region)
 
     def get_vertices(self, position, rotation, rotation_center):
-        x, y, z = position
-
-        if rotation in self.rotated_vertex_cache:
-            return [
-                e + position[i % 3]
-                for i, e in enumerate(self.rotated_vertex_cache[rotation])
-            ]
-        else:
-            self.rotated_vertex_cache[rotation] = []
-            vertices = []
-            for dx, dy, dz in self.vertex_cache:
-                dx, dy, dz = mcpython.util.math.rotate_point(
-                    (dx, dy, dz), rotation_center, rotation
-                )
-                vertices.extend((x + dx, y + dy, z + dz))
-                self.rotated_vertex_cache[rotation].extend((x, y, z))
-            return vertices
+        return sum(sum(self.vertex_provider.get_vertex_data(position, rotation, rotation_center), tuple()), tuple())
 
     def add_to_batch(
         self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)

@@ -112,19 +112,24 @@ class VertexProvider:
         self,
         element_position: typing.Tuple[float, float, float],
         element_rotation: typing.Tuple[float, float, float],
+        element_rotation_center: typing.Tuple[float, float, float] = None,
     ):
-        self.ensure_prepared_rotation(element_rotation)
+        self.ensure_prepared_rotation(element_rotation, element_rotation_center)
 
         return list(offset_data(self.cache[element_rotation], element_position))
 
-    def ensure_prepared_rotation(self, rotation: typing.Tuple[float, float, float]):
-        if rotation not in self.cache:
+    def ensure_prepared_rotation(self, rotation: typing.Tuple[float, float, float], center: typing.Tuple[float, float, float] = None):
+        if center is None: center = 0, 0, 0
+
+        key = rotation, center
+
+        if key not in self.cache:
             return self.cache.setdefault(
-                rotation,
-                tuple(tuple(e) for e in rotate_data(self.default, (0, 0, 0), rotation)),
+                key,
+                tuple(tuple(e) for e in rotate_data(self.default, center, rotation)),
             )
 
-        return self.cache[rotation]
+        return self.cache[key]
 
     def invalidate_internal(self):
         self.cache.clear()

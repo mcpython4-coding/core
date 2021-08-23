@@ -11,15 +11,19 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import functools
 import itertools
 import math
 import typing
+from functools import reduce
 
 import deprecation
 from mcpython import shared
 from mcpython.engine import logger
 
 
+# Use vertex builder
+@deprecation.deprecated()
 def cube_vertices_better(
     x: float,
     y: float,
@@ -234,19 +238,6 @@ def normalize(position: typing.Tuple[float, float, float]):
         raise
 
 
-def normalize_ceil(position: typing.Tuple[float, float, float]):
-    """
-    Same as normalize(position), but with math.ceil() instead of round()
-    :param position: the position
-    :return: the ceil-ed position
-    """
-    try:
-        return tuple(math.ceil(e) for e in position)
-    except:
-        logger.println(position)
-        raise
-
-
 def position_to_chunk(
     position: typing.Union[
         typing.Tuple[float, float, float], typing.Tuple[float, float]
@@ -336,16 +327,11 @@ def rotate_point(point, origin, rotation):
     return x + ox, y + oy, z + oz
 
 
-def product(iterable: typing.List[float]):
+def product(iterable: typing.List[typing.SupportsFloat]):
     """
-    Similar to sum(), will use * instead of +
-    :param iterable: the iterable of add-ables
-    :return: the product of all elements
+    Same as sum(), but will use * instead of +
     """
-    v = iterable[0]
-    for x in iterable[1:]:
-        v *= x
-    return v
+    return functools.reduce(lambda x, y: x+y, iterable)
 
 
 def vector_offset(
