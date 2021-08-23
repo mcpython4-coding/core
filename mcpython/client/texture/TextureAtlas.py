@@ -11,7 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import os
+import typing
 
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
@@ -28,69 +30,85 @@ MISSING_TEXTURE = mcpython.engine.ResourceLoader.read_image(
 @onlyInClient()
 class TextureAtlasGenerator:
     """
-    generator system for an item atlas
+    Generator system for a multiple underlying ItemAtlas'
+
+    Based on some identifier
     """
 
     def __init__(self):
-        self.atlases = {}
+        self.atlases: typing.Dict[typing.Hashable, typing.List[TextureAtlas]] = {}
 
-    def add_image(self, image: PIL.Image.Image, modname: str) -> tuple:
-        if modname not in self.atlases:
-            self.atlases[modname] = [TextureAtlas()]
+    def add_image(self, image: PIL.Image.Image, identifier: typing.Hashable) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
+        """
+        Adds a single pillow image to the underlying atlas system
+        """
         image = image.crop((0, 0, image.size[0], image.size[0]))
-        for atlas in self.atlases:
+
+        for atlas in self.atlases.setdefault(identifier, []):
             if atlas.image_size == image.size:
                 return atlas.add_image(image), atlas
-        self.atlases[modname].append(TextureAtlas())
-        return self.atlases[modname][-1].add_image(image), self.atlases[-1]
 
-    def add_image_file(self, file: str, modname: str) -> tuple:
-        return self.add_image(mcpython.engine.ResourceLoader.read_image(file), modname)
+        self.atlases[identifier].append(TextureAtlas())
+        return self.atlases[identifier][-1].add_image(image), self.atlases[identifier][-1]
 
-    def add_images(self, images: list, modname, one_atlased=True) -> list:
+    def add_image_file(self, file: str, identifier: str) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
+        """
+        Adds a single image by file name (loadable by resource system!)
+        """
+        return self.add_image(mcpython.engine.ResourceLoader.read_image(file), identifier)
+
+    def add_images(self, images: typing.List[PIL.Image.Image], identifier: str, single_atlas=True) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
         if len(images) == 0:
             return []
-        if not one_atlased:
-            return [self.add_image(x, modname) for x in images]
-        if modname not in self.atlases:
-            self.atlases[modname] = [TextureAtlas()]
+
+        if not single_atlas:
+            return [self.add_image(x, identifier) for x in images]
+
         images = [image.crop((0, 0, image.size[0], image.size[0])) for image in images]
         m_size = max(images, key=lambda a: a.size[0] * a.size[1]).size
-        for atlas in self.atlases[modname]:
+
+        for atlas in self.atlases.setdefault(identifier, []):
             if atlas.image_size == m_size:
                 return [(atlas.add_image(image), atlas) for image in images]
+
         atlas = TextureAtlas()
-        self.atlases[modname].append(atlas)
+        self.atlases[identifier].append(atlas)
         return [(atlas.add_image(image), atlas) for image in images]
 
-    def add_image_files(self, files: list, modname: str, one_atlased=True) -> list:
-        return self.add_images(
-            [mcpython.engine.ResourceLoader.read_image(x) for x in files],
-            modname,
-            one_atlased=one_atlased,
-        )
+    def add_image_files(self, files: list, identifier: str, single_atlas=True) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
+        return self.add_images([mcpython.engine.ResourceLoader.read_image(x) for x in files], identifier,
+                               single_atlas=single_atlas)
 
     def output(self):
         # todo: add per-mod, at end of every processing of models
+
         shared.event_handler.call("textures:atlas:build:pre")
-        os.makedirs(shared.tmp.name + "/textureatlases")
-        for modname in self.atlases:
-            for i, atlas in enumerate(self.atlases[modname]):
+        os.makedirs(shared.tmp.name + "/texture_atlases", exist_ok=True)
+
+        for identifier in self.atlases:
+            for i, atlas in enumerate(self.atlases[identifier]):
                 location = (
                     shared.tmp.name
-                    + "/textureatlases/atlas_{}_{}_{}x{}.png".format(
-                        modname, i, *atlas.image_size
+                    + "/texture_atlases/atlas_{}_{}_{}x{}.png".format(
+                        identifier, i, *atlas.image_size
                     )
                 )
                 atlas.texture.save(location)
                 atlas.group = pyglet.graphics.TextureGroup(
                     pyglet.image.load(location).get_texture()
                 )
+
         shared.event_handler.call("textures:atlas:build:post")
 
 
 @onlyInClient()
 class TextureAtlas:
+    """
+    One-texture atlas
+
+    Contains a single underlying texture, dynamically resized when needed
+    """
+
     def __init__(
         self,
         size=(16, 16),
@@ -101,24 +119,31 @@ class TextureAtlas:
         self.size = size
         self.image_size = image_size
         self.pyglet_special_pos = pyglet_special_pos
+
+        # The underlying texture
         self.texture = PIL.Image.new(
             "RGBA", (size[0] * image_size[0], size[1] * image_size[1])
         )
-        self.free_space = set()
-        for x in range(self.size[0]):
-            self.free_space.update(set([(x, y) for y in range(self.size[1])]))
-        self.images = []
-        self.image_locations = []  # an images[-parallel (x, y)-list
+
+        # Where is space for images?
+        self.free_space = set(itertools.product(range(size[0]), range(size[1])))
+
+        self.images: typing.List[PIL.Image.Image] = []
+        self.image_locations: typing.List[typing.Tuple[int, int]] = []
+
         if add_missing_texture:
             self.add_image(MISSING_TEXTURE, position=(0, 0))
-        self.group = None
 
-    def add_image(self, image: PIL.Image.Image, ind=None, position=None) -> tuple:
-        if ind is None:
-            ind = image
+        # The pyglet texture group, only for storage reasons
+        self.group: typing.Optional[pyglet.graphics.TextureGroup] = None
 
-        if ind in self.images:
-            return self.image_locations[self.images.index(ind)]
+    def add_image(self, image: PIL.Image.Image, position=None) -> typing.Tuple[int, int]:
+        """
+        Adds an image to the atlas and returns the position of it in the atlas
+        """
+
+        if image in self.images:
+            return self.image_locations[self.images.index(image)]
 
         if image.size[0] > self.image_size[0] or image.size[1] > self.image_size[1]:
             self.image_size = image.size[0], image.size[0]
@@ -143,12 +168,14 @@ class TextureAtlas:
                     if x >= sx or y >= sy:
                         self.free_space.add((x, y))
 
-        self.images.append(ind)
+        self.images.append(image)
+
         if position is None or position not in self.free_space:
-            x, y = self.free_space.pop()
+            x, y = pos = self.free_space.pop()
         else:
-            x, y = position
+            x, y = pos = position
             self.free_space.remove(position)
+
         self.texture.paste(
             image,
             (
@@ -157,12 +184,13 @@ class TextureAtlas:
                 * self.image_size[1],
             ),
         )
-        pos = x, y
+
         self.image_locations.append(pos)
+
         return pos
 
     def is_free_for(self, images: list) -> bool:
-        # todo: is there are fast way to check for images present?
+        # todo: is there a better way to check for images present (duplicated images are skipped)?
         return len(images) <= len(self.free_space)
 
     def is_free_for_slow(self, images: list) -> bool:
@@ -170,6 +198,7 @@ class TextureAtlas:
         for image in images:
             if image not in self.images:
                 count += 1
+        
         return count <= self.size[0] * self.size[1] - len(self.images) or count <= len(
             self.free_space
         )

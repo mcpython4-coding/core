@@ -1697,3 +1697,4 @@ R   [uuk]: improved world serialization API
 [uuk]: rewritten how vertex positions are calculated, introducing another class for vertex calculations, reducing
        the content related to vertices in the BoxModel class
 [uuk]: fixed some mistakes in the BoxModel class leading to unwanted behaviour
+[uuk]: fixed some TextureAtlas stuff
