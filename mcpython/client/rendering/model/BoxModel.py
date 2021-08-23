@@ -114,10 +114,12 @@ class BoxModel(AbstractBoxModel):
             self.rotation = tuple(rot)
 
         self.vertex_provider = VertexProvider.create(
-            typing.cast(typing.Tuple[float, float, float], tuple(
-                self.box_position[i] + self.box_size[i] / 2 - 0.5
-                for i in range(3)
-            )),
+            typing.cast(
+                typing.Tuple[float, float, float],
+                tuple(
+                    self.box_position[i] + self.box_size[i] / 2 - 0.5 for i in range(3)
+                ),
+            ),
             typing.cast(typing.Tuple[float, float, float], self.box_size),
             typing.cast(typing.Tuple[float, float, float], self.rotation),
         )
@@ -493,7 +495,12 @@ class RawBoxModel(AbstractBoxModel):
         return self
 
     def recalculate_cache(self):
-        self.vertex_provider = VertexProvider.create(tuple(self.relative_position), tuple(self.size), tuple(self.rotation_center), tuple(self.__rotation))
+        self.vertex_provider = VertexProvider.create(
+            tuple(self.relative_position),
+            tuple(self.size),
+            tuple(self.rotation_center),
+            tuple(self.__rotation),
+        )
 
         # todo: this seems odd
         self.texture_cache = sum(
@@ -522,7 +529,14 @@ class RawBoxModel(AbstractBoxModel):
     texture_region = property(get_texture_region, set_texture_region)
 
     def get_vertices(self, position, rotation, rotation_center):
-        return sum(itertools.chain(*self.vertex_provider.get_vertex_data(position, rotation, rotation_center)), tuple())
+        return sum(
+            itertools.chain(
+                *self.vertex_provider.get_vertex_data(
+                    position, rotation, rotation_center
+                )
+            ),
+            tuple(),
+        )
 
     def add_to_batch(
         self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)

@@ -188,7 +188,8 @@ class Int(ICommandElementIdentifier):
         self.only_positive = only_positive
 
     def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
-        if not tracker.has(1): return False
+        if not tracker.has(1):
+            return False
 
         v = tracker.get()
 

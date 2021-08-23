@@ -12,13 +12,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import itertools
-import math
 import typing
 import weakref
 
 from mcpython.util.math import rotate_point
 
-# This defines how
+# This defines how cubes look; do not change!
 CORNER_SIGNS = tuple(itertools.product((-1, 1), repeat=3))
 CUBE_MAP = (
     (2, 3, 7, 6),
@@ -106,7 +105,12 @@ class VertexProvider:
         )
 
         # The cache is a structure holding
-        self.cache = {}
+        self.cache: typing.Dict[
+            typing.Tuple[
+                typing.Tuple[float, float, float], typing.Tuple[float, float, float]
+            ],
+            typing.Iterable,
+        ] = {}
 
     def get_vertex_data(
         self,
@@ -116,10 +120,20 @@ class VertexProvider:
     ):
         self.ensure_prepared_rotation(element_rotation, element_rotation_center)
 
-        return list(offset_data(self.cache[(element_rotation, element_rotation_center or (0, 0, 0))], element_position))
+        return list(
+            offset_data(
+                self.cache[(element_rotation, element_rotation_center or (0, 0, 0))],
+                element_position,
+            )
+        )
 
-    def ensure_prepared_rotation(self, rotation: typing.Tuple[float, float, float], center: typing.Tuple[float, float, float] = None):
-        if center is None: center = 0, 0, 0
+    def ensure_prepared_rotation(
+        self,
+        rotation: typing.Tuple[float, float, float],
+        center: typing.Tuple[float, float, float] = None,
+    ):
+        if center is None:
+            center = 0, 0, 0
 
         key = rotation, center
 

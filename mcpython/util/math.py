@@ -331,7 +331,7 @@ def product(iterable: typing.List[typing.SupportsFloat]):
     """
     Same as sum(), but will use * instead of +
     """
-    return functools.reduce(lambda x, y: x+y, iterable)
+    return functools.reduce(lambda x, y: x + y, iterable)
 
 
 def vector_offset(

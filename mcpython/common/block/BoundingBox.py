@@ -17,7 +17,6 @@ from abc import ABC
 
 import mcpython.engine.rendering.util
 import mcpython.util.math
-
 from mcpython.util.vertex import VertexProvider
 
 
@@ -62,17 +61,21 @@ class BoundingBox(AbstractBoundingBox):
         self.rotation = rotation
 
         self.vertex_provider = VertexProvider.create(
-            typing.cast(typing.Tuple[float, float, float], tuple(
-                self.relative_position[i] + self.size[i] / 2 - 0.5
-                for i in range(3)
-            )),
+            typing.cast(
+                typing.Tuple[float, float, float],
+                tuple(
+                    self.relative_position[i] + self.size[i] / 2 - 0.5 for i in range(3)
+                ),
+            ),
             size,
             (0, 0, 0),
-            rotation
+            rotation,
         )
 
     def recalculate_vertices(self):
-        self.vertex_provider = VertexProvider.create(self.relative_position, self.size, (0, 0, 0), self.rotation)
+        self.vertex_provider = VertexProvider.create(
+            self.relative_position, self.size, (0, 0, 0), self.rotation
+        )
 
     def test_point_hit(
         self,
@@ -97,7 +100,15 @@ class BoundingBox(AbstractBoundingBox):
         return sx <= x <= ex and sy <= y <= ey and sz <= z <= ez
 
     def draw_outline(self, position: typing.Tuple[float, float, float]):
-        mcpython.engine.rendering.util.draw_line_box(("v3f/static", sum(itertools.chain(*self.vertex_provider.get_vertex_data(position)), tuple())))
+        mcpython.engine.rendering.util.draw_line_box(
+            (
+                "v3f/static",
+                sum(
+                    itertools.chain(*self.vertex_provider.get_vertex_data(position)),
+                    tuple(),
+                ),
+            )
+        )
 
 
 class BoundingArea(AbstractBoundingBox):
