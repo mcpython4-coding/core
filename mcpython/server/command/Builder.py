@@ -145,10 +145,12 @@ class DefinedString(ICommandElementIdentifier):
     """
 
     def __init__(self, *strings: str):
-        assert all(" " not in e for e in strings), (
-            "no whitespaces currently allowed in defined strings",
-            strings,
-        )
+        if not all(" " not in e for e in strings):
+            raise RuntimeError(
+                "no whitespaces currently allowed in defined strings",
+                strings,
+            )
+
         self.strings = strings
 
     def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
@@ -175,8 +177,8 @@ class Int(ICommandElementIdentifier):
         value_range=None,
     ):
         """
-        :param only_positive: only positive integers
-        :param only_negative: only negative integers
+        :param only_positive: only positive integers allowed
+        :param only_negative: only negative integers allowed
         :param include_zero: zero allowed
         :param value_range: a range of (min, max) for the integer, or None for open range
         """
@@ -186,9 +188,13 @@ class Int(ICommandElementIdentifier):
         self.only_positive = only_positive
 
     def is_valid(self, node: "CommandNode", tracker: CommandExecutionTracker) -> bool:
+        if not tracker.has(1): return False
+
         v = tracker.get()
+
         if not v.removeprefix("-").isdigit():
             return False
+
         if (self.only_positive if v.startswith("-") else self.only_negative) and not (
             v == "0" and self.include_zero
         ):
@@ -441,7 +447,7 @@ class CommandNode:
         self.on_execution_callbacks = []
         self.name = "unknown"
         self.info_text = ""
-        self.handles = []
+        self.exception_handlers = []
 
     def than(self, node: "CommandNode"):
         """
@@ -466,7 +472,7 @@ class CommandNode:
     def with_handle(
         self, error: typing.Type[Exception], message_formatter: typing.Callable
     ):
-        self.handles.append((error, message_formatter))
+        self.exception_handlers.append((error, message_formatter))
         return self
 
     def get_executing_node(
@@ -522,7 +528,7 @@ class CommandNode:
                 func(env, data)
 
         except Exception as e:
-            for compare, handle in self.handles:
+            for compare, handle in self.exception_handlers:
                 if isinstance(e, compare):
                     env.chat.print_ln(handle(env, data, e))
                     break
