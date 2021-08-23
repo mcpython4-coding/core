@@ -67,7 +67,7 @@ def setup_fog():
 @onlyInClient()
 def draw_line_box(vertex):
     glColor3d(0, 0, 0)
-    glLineWidth(1.3)
+    glLineWidth(1.5)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
     pyglet.graphics.draw(24, GL_QUADS, vertex)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)

@@ -11,11 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
 from abc import ABC
 
 import mcpython.engine.rendering.util
 import mcpython.util.math
+
+from mcpython.util.vertex import VertexProvider
 
 
 class AbstractBoundingBox(ABC):
@@ -58,48 +61,35 @@ class BoundingBox(AbstractBoundingBox):
         self.relative_position = relative_position
         self.rotation = rotation
 
+        self.vertex_provider = VertexProvider.create(relative_position, size, (0, 0, 0), rotation)
+
+    def recalculate_vertices(self):
+        self.vertex_provider = VertexProvider.create(self.relative_position, self.size, (0, 0, 0), self.rotation)
+
     def test_point_hit(
         self,
         point: typing.Tuple[float, float, float],
-        boxposition: typing.Tuple[float, float, float],
+        box_position: typing.Tuple[float, float, float],
     ):
         point = mcpython.util.math.rotate_point(
             point,
-            tuple([boxposition[i] + self.relative_position[i] for i in range(3)]),
+            tuple([box_position[i] + self.relative_position[i] for i in range(3)]),
             rotation=self.rotation,
         )
         x, y, z = point
         sx, sy, sz = tuple(
-            [boxposition[i] - 0.5 + self.relative_position[i] for i in range(3)]
+            [box_position[i] - 0.5 + self.relative_position[i] for i in range(3)]
         )
         ex, ey, ez = tuple(
             [
-                boxposition[i] - 0.5 + self.relative_position[i] + self.size[i]
+                box_position[i] - 0.5 + self.relative_position[i] + self.size[i]
                 for i in range(3)
             ]
         )
         return sx <= x <= ex and sy <= y <= ey and sz <= z <= ez
 
     def draw_outline(self, position: typing.Tuple[float, float, float]):
-        rot = tuple([-e for e in self.rotation])
-        x, y, z = position
-        x += self.relative_position[0] - 0.5 + (self.size[0] / 2)
-        y += self.relative_position[1] - 0.5 + (self.size[1] / 2)
-        z += self.relative_position[2] - 0.5 + (self.size[2] / 2)
-        vertex_data_ur = sum(
-            mcpython.util.math.cube_vertices_better(
-                0, 0, 0, *[f / 2 + 0.001 for f in self.size]
-            ),
-            [],
-        )
-        vertex_data = []
-        for i in range(len(vertex_data_ur) // 3):
-            nx, ny, nz = x, y, z
-            rx, ry, rz = mcpython.util.math.rotate_point(
-                vertex_data_ur[i * 3 : i * 3 + 3], (0, 0, 0), rot
-            )
-            vertex_data.extend([nx + rx, ny + ry, nz + rz])
-        mcpython.engine.rendering.util.draw_line_box(("v3f/static", vertex_data))
+        mcpython.engine.rendering.util.draw_line_box(("v3f/static", sum(itertools.chain(*self.vertex_provider.get_vertex_data(position)), tuple())))
 
 
 class BoundingArea(AbstractBoundingBox):

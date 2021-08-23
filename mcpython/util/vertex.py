@@ -111,12 +111,12 @@ class VertexProvider:
     def get_vertex_data(
         self,
         element_position: typing.Tuple[float, float, float],
-        element_rotation: typing.Tuple[float, float, float],
+        element_rotation: typing.Tuple[float, float, float] = (0, 0, 0),
         element_rotation_center: typing.Tuple[float, float, float] = None,
     ):
         self.ensure_prepared_rotation(element_rotation, element_rotation_center)
 
-        return list(offset_data(self.cache[element_rotation], element_position))
+        return list(offset_data(self.cache[(element_rotation, element_rotation_center or (0, 0, 0))], element_position))
 
     def ensure_prepared_rotation(self, rotation: typing.Tuple[float, float, float], center: typing.Tuple[float, float, float] = None):
         if center is None: center = 0, 0, 0

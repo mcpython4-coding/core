@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
 from abc import ABC
 
@@ -488,7 +489,7 @@ class RawBoxModel(AbstractBoxModel):
         return self
 
     def recalculate_cache(self):
-        self.vertex_provider = VertexProvider.create(self.relative_position, self.size, self.rotation_center, self.__rotation)
+        self.vertex_provider = VertexProvider.create(tuple(self.relative_position), tuple(self.size), tuple(self.rotation_center), tuple(self.__rotation))
 
         # todo: this seems odd
         self.texture_cache = sum(
@@ -517,7 +518,7 @@ class RawBoxModel(AbstractBoxModel):
     texture_region = property(get_texture_region, set_texture_region)
 
     def get_vertices(self, position, rotation, rotation_center):
-        return sum(sum(self.vertex_provider.get_vertex_data(position, rotation, rotation_center), tuple()), tuple())
+        return sum(itertools.chain(*self.vertex_provider.get_vertex_data(position, rotation, rotation_center)), tuple())
 
     def add_to_batch(
         self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)

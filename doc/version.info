@@ -1701,3 +1701,4 @@ R   [uuk]: improved world serialization API
 [uuk]: removed support for args for all events of a event bus
 [uuk]: removed --debug-events flag (was only partially implemented)
 [uuk]: fixed a handful of possible crashes in command system
+[uuk]: everything using the old vertex calculation is now using the new system with VertexProvider
