@@ -20,7 +20,6 @@ launch_wrapper = None
 # todo: create MCPYTHON-class (as main game class) replacing this mess
 
 invalidate_cache = "--invalidate-cache" in sys.argv
-debug_events = "--debug-events" in sys.argv
 dev_environment = True  # dynamical set on build
 
 local = os.path.dirname(os.path.dirname(__file__)).replace("\\", "/")

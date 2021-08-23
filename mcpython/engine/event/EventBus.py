@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import sys
-import time
 import traceback
 import typing
 
@@ -22,6 +21,10 @@ from mcpython.engine import logger
 
 
 class CancelAbleEvent:
+    """
+    Tracker class for a cancelable event
+    """
+
     def __init__(self):
         self.canceled = False
 
@@ -39,37 +42,31 @@ class EventBus:
 
     def __init__(
         self,
-        args: typing.Iterable = (),
-        kwargs: dict = None,
         crash_on_error: bool = True,
     ):
         """
-        Creates an new EventBus instance
-        :param args: the args to send to every function call
-        :param kwargs: the kwargs to send to every function call
+        Creates a new EventBus instance
         :param crash_on_error: if an crash should be triggered on an exception of an func
         """
-        if kwargs is None:
-            kwargs = {}
-        self.event_subscriptions = {}  # name -> (function, args, kwargs)[
-        self.popped_event_subscriptions = {}
-        self.extra_arguments = (args, kwargs)
-        self.crash_on_error = crash_on_error
-        self.close_on_error = True
-        self.sub_buses = []
         self.id = shared.NEXT_EVENT_BUS_ID
         shared.NEXT_EVENT_BUS_ID += 1
-        if shared.debug_events:
-            with open(
-                shared.local + "/debug/eventbus_{}.txt".format(self.id), mode="w"
-            ) as f:
-                f.write("//debug profile")
+
+        # name -> (function, args, kwargs)[
+        self.event_subscriptions: typing.Dict[str, typing.List[typing.Tuple[typing.Callable, typing.Iterable, typing.Dict, typing.Any]]] = {}
+        self.popped_event_subscriptions = {}
+
+        self.crash_on_error = crash_on_error
+        self.close_on_error = True
+
+        self.sub_buses = []
 
     def subscribe(
         self, event_name: str, function: typing.Callable, *args, info=None, **kwargs
     ):
         """
-        Add an function to the event bus by event name. If event name does NOT exists, it will be created locally
+        Adds a function to the event bus by event name. Dynamically creates underlying data structure for new
+        event names
+
         :param event_name: the event to listen to on this bis
         :param function: the function that should be called when event is send
         :param args: the args to give
@@ -80,9 +77,9 @@ class EventBus:
             (function, args, kwargs, info)
         )
 
-    def unsubscribe(self, event_name: str, function):
+    def unsubscribe(self, event_name: str, function: typing.Callable):
         """
-        Remove an function from the event bus
+        Remove a function from the event bus from a given event
         :param event_name: the event name the function was registered to
         :param function: the function itself
         :raise ValueError: when event name is unknown OR function was never assigned
@@ -110,26 +107,29 @@ class EventBus:
             return
 
         exception_occ = False
-        for function, eargs, ekwargs, info in self.event_subscriptions[event_name]:
+        for function, extra_args, extra_kwargs, info in self.event_subscriptions[event_name]:
             try:
                 function(
-                    *list(args) + list(self.extra_arguments[0]) + list(eargs),
-                    **{**kwargs, **self.extra_arguments[1], **ekwargs},
+                    *list(args) + list(extra_args),
+                    **{**kwargs, **extra_kwargs},
                 )
+
             except SystemExit:
                 raise
+
             except MemoryError:  # Memory error is something fatal
                 shared.window.close()
                 pyglet.app.exit()
                 print("closing due to missing memory")
                 sys.exit(-1)
+
             except:
                 exception_occ = True
                 logger.print_exception(
                     "during calling function: {} with arguments: {}, {}".format(
                         function,
-                        list(args) + list(self.extra_arguments[0]) + list(eargs),
-                        {**kwargs, **self.extra_arguments[1], **ekwargs},
+                        list(args) + list(extra_args),
+                        {**kwargs, **extra_kwargs},
                         sep="\n",
                     ),
                     "function info: '{}'".format(info) if info is not None else "",
@@ -138,7 +138,8 @@ class EventBus:
                 )
 
         if exception_occ and self.crash_on_error:
-            logger.println("\nout of the above reasons, the game has crashed")
+            logger.println("\nout of the above reasons, the game is being closed")
+
             if self.close_on_error:
                 shared.window.close()
                 pyglet.app.exit()
@@ -149,12 +150,13 @@ class EventBus:
                     traceback.format_exc()
                 )
                 return
+
             else:
                 raise RuntimeError
 
     def call_cancelable(self, event_name: str, *args, **kwargs):
         """
-        Will call an cancel able event.
+        Will call a cancel able event.
         Works the same way as call, but will use call_until() with an CancelAbleEvent as first parameter which is checked after each call
         :param event_name: the name to call
         :param args: args to call with
@@ -185,24 +187,12 @@ class EventBus:
         if event_name not in self.event_subscriptions:
             return
 
-        for function, eargs, ekwargs, info in self.event_subscriptions[event_name]:
-            start = time.time()
+        for function, extra_args, extra_kwargs, info in self.event_subscriptions[event_name]:
             try:
                 result = function(
-                    *list(args) + list(self.extra_arguments[0]) + list(eargs),
-                    **{**kwargs, **self.extra_arguments[1], **ekwargs},
+                    *list(args) + list(extra_args),
+                    **{**kwargs, **extra_kwargs},
                 )
-                dif = time.time() - start
-                if shared.debug_events:
-                    with open(
-                        shared.local + "/debug/eventbus_{}.txt".format(self.id),
-                        mode="a",
-                    ) as f:
-                        f.write(
-                            "\nevent call of {} takes {}s until finish".format(
-                                function, dif
-                            )
-                        )
 
                 if check_function(result):
                     return result
@@ -218,8 +208,8 @@ class EventBus:
                 logger.print_exception(
                     "during calling function: {} with arguments: {}, {}".format(
                         function,
-                        list(args) + list(self.extra_arguments[0]) + list(eargs),
-                        {**kwargs, **self.extra_arguments[1], **ekwargs},
+                        list(args) + list(extra_args),
+                        {**kwargs, **extra_kwargs},
                         sep="\n",
                     ),
                     "function info: '{}'".format(info) if info is not None else "",
@@ -230,22 +220,26 @@ class EventBus:
 
     def activate(self):
         shared.event_handler.activate_bus(self)
+
         for eventbus in self.sub_buses:
             eventbus.activate()
 
     def deactivate(self):
         shared.event_handler.deactivate_bus(self)
+
         for eventbus in self.sub_buses:
             eventbus.deactivate()
 
     def create_sub_bus(self, *args, activate=True, **kwargs):
         bus = EventBus(*args, **kwargs)
+
         if activate:
             bus.activate()
+
         self.sub_buses.append(bus)
         return bus
 
-    def call_as_stack(self, event_name, *args, amount=1, store_stuff=True, **kwargs):
+    def call_as_stack(self, event_name: str, *args, amount=1, store_stuff=True, **kwargs):
         result = []
         if event_name not in self.event_subscriptions:
             raise RuntimeError(
@@ -259,22 +253,20 @@ class EventBus:
                 )
             )
 
-        exception_occ = False
         for _ in range(amount):
-            function, eargs, ekwargs, info = d = self.event_subscriptions[
+            function, extra_args, extra_kwargs, info = d = self.event_subscriptions[
                 event_name
             ].pop(0)
 
             if store_stuff:
                 self.popped_event_subscriptions.setdefault(event_name, []).append(d)
 
-            start = time.time()
             try:
                 result.append(
                     (
                         function(
-                            *list(args) + list(self.extra_arguments[0]) + list(eargs),
-                            **{**kwargs, **self.extra_arguments[1], **ekwargs},
+                            *list(args) + list(extra_args),
+                            **{**kwargs, **extra_kwargs},
                         ),
                         info,
                     )

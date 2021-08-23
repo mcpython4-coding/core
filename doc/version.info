@@ -1698,3 +1698,5 @@ R   [uuk]: improved world serialization API
        the content related to vertices in the BoxModel class
 [uuk]: fixed some mistakes in the BoxModel class leading to unwanted behaviour
 [uuk]: fixed some TextureAtlas stuff
+[uuk]: removed support for args for all events of a event bus
+[uuk]: removed --debug-events flag (was only partially implemented)
