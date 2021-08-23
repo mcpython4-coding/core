@@ -24,7 +24,7 @@ from pyglet.graphics.vertexdomain import VertexList
 
 class Model:
     """
-    Class representing an model from the file system
+    Class representing a (block) model from the file system
     """
 
     def __init__(self, data: dict, name: str, modname: str):

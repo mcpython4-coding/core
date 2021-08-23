@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 import copy
 import random
 import typing
-from abc import ABC
 
 import mcpython.client.rendering.model.api
 import mcpython.common.block.BoundingBox
@@ -24,105 +23,17 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
 from mcpython import shared
+from mcpython.client.rendering.model.api import BlockStateNotNeeded
+from mcpython.client.rendering.model.api import IBlockStateDecoder
+from mcpython.client.rendering.model.util import decode_entry
+from mcpython.client.rendering.model.util import get_model_choice
 from mcpython.engine import logger
-
-
-class BlockStateNotNeeded(Exception):
-    pass
-
-
-class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent, ABC):
-    """
-    Abstract base class for block state decoders
-
-    Identification of files to decode:
-        bool(is_valid(data)) == True, where data is the loaded json data
-        for developers of mods: add an entry called "mod_marker" storing the mod name the loader is implemented in and
-            check for it here
-
-    Loading:
-        __init__(data, BlockStateDefinition) -> Instance
-
-    Baking:
-        bake() is called to on_bake references and do similar stuff, returning success or not
-
-    Drawing:
-        add_face_to_batch() should add the given face to the batches given
-        add_raw_face_to_batch() should add a face to the batch without the block instance, but instead the position
-        draw() should draw the block in-place
-
-    todo: cache non-offset data from models per state for faster drawing
-    todo: can we do something rendering wise which will make it efficient to draw multiple same blocks
-    todo: block batches should be selected before, based on a property on block class
-    """
-
-    TYPE = "minecraft:blockstate"
-
-    @classmethod
-    def is_valid(cls, data: dict) -> bool:
-        """
-        Checker function if some data matches the loader
-        """
-        raise NotImplementedError
-
-    def __init__(self, block_state: "BlockStateDefinition"):
-        self.data = None
-        self.block_state = block_state
-
-    def parse_data(self, data: dict):
-        raise NotImplementedError
-
-    def bake(self) -> bool:
-        """
-        Bake method for doing some stuff after loading all block-states
-        :return: if successful or not
-        """
-        return True
-
-    def add_face_to_batch(
-        self,
-        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
-        batch: pyglet.graphics.Batch,
-        face: mcpython.util.enums.EnumSide,
-    ) -> list:
-        raise NotImplementedError()
-
-    def add_raw_face_to_batch(self, position, state, batches, faces):
-        return tuple()
-
-    def draw_face(
-        self,
-        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
-        face: mcpython.util.enums.EnumSide,
-    ):  # optional: draws the BlockState direct without an batch
-        pass
-
-    def transform_to_bounding_box(
-        self,
-        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
-    ):  # optional: transforms the BlockState into an BoundingBox-like objects
-        pass
-
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",
     ["minecraft:blockstate"],
     "stage:blockstate:register_loaders",
 )
-
-
-def get_model_choice(data, instance):
-    if instance.block_state is None:
-        entries = [BlockState.decode_entry(e) for e in data]
-        model, config, _ = entry = random.choices(
-            entries, weights=[e[2] for e in entries]
-        )[0]
-        instance.block_state = entries.index(entry)
-    else:
-        model, config, _ = BlockState.decode_entry(
-            data[instance.block_state]
-        )
-    return config, model
 
 
 @shared.registry
@@ -276,7 +187,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
                 if type(data) == dict:
-                    model, config, _ = BlockState.decode_entry(data)
+                    model, config, _ = decode_entry(data)
                     model = shared.model_handler.models[model]
                     for box_model in model.box_models:
                         bbox.bounding_boxes.append(
@@ -316,7 +227,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
                 if type(data) == dict:
-                    model, config, _ = BlockState.decode_entry(data)
+                    model, config, _ = decode_entry(data)
                     if model not in shared.model_handler.models:
                         continue
                     _, box_model = shared.model_handler.models[
@@ -666,21 +577,6 @@ class BlockStateDefinition:
 
 
 class BlockState:
-    @staticmethod
-    def decode_entry(data: typing.Dict[str, typing.Any]):
-        model = data["model"]
-        shared.model_handler.used_models.add(model)
-        rotations = (
-            data["x"] if "x" in data else 0,
-            data["y"] if "y" in data else 0,
-            data["z"] if "z" in data else 0,
-        )
-        return (
-            model,
-            {"rotation": rotations, "uv_lock": data.setdefault("uvlock", False)},
-            1 if "weight" not in data else data["weight"],
-        )
-
     def __init__(self):
         self.data = None
         self.models = []  # (model, config, weight)
@@ -690,10 +586,10 @@ class BlockState:
 
         if type(data) == dict:
             if "model" in data:
-                self.models.append(self.decode_entry(data))
+                self.models.append(decode_entry(data))
                 shared.model_handler.used_models.add(data["model"])
         elif type(data) == list:
-            models = [self.decode_entry(x) for x in data]
+            models = [decode_entry(x) for x in data]
             self.models += models
             shared.model_handler.used_models |= set([x[0] for x in models])
 

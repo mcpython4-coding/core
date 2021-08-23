@@ -15,6 +15,7 @@ import gc
 import json
 import sys
 import traceback
+import typing
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
@@ -29,18 +30,18 @@ from mcpython.engine import logger
 
 class ModelHandler:
     def __init__(self):
-        self.models = {}
-        self.used_models = set()
-        self.found_models = {}
-        self.blockstates = {}
-        self.lookup_locations = set()
+        self.models: typing.Dict[str, typing.Any] = {}
+        self.used_models: typing.Set[str] = set()
+        self.found_models: typing.Dict[str, typing.Any] = {}
+        self.blockstates: typing.Dict[str, typing.Any] = {}
+        self.lookup_locations: typing.Set[str] = set()
         self.dependence_list = []
         self.hide_blockstate_errors = False
         self.raw_models = []
 
     def add_from_mod(self, modname: str):
         """
-        will add locations for an given mod name
+        Will add locations for a given mod name
         :param modname: the mod to use
         """
         self.lookup_locations.add("assets/{}/models/block".format(modname))
@@ -67,7 +68,7 @@ class ModelHandler:
 
     def add_from_data(self, name: str, data: dict, store=True):
         """
-        will inject data as an block-model file
+        Will inject data as a block-model file
         :param name: the name to use
         :param data: the data to inject
         :param store: if it should be stored and re-loaded on reload event
@@ -84,8 +85,11 @@ class ModelHandler:
 
     def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
-        if modname not in shared.mod_loader.mods:
+
+        if modname not in shared.mod_loader.mods and modname != "minecraft":
             modname = "minecraft"
+            logger.println(f"[MODEL MANAGER][WARN] namespace {modname} has no assigned mod; Using default mod for loading annotation")
+
         if immediate:
             self.special_build(model)
         else:
@@ -99,9 +103,10 @@ class ModelHandler:
     def special_build(self, used: str):
         if used.count(":") == 0:
             used = "minecraft:" + used
+
         if used not in self.found_models:
-            # logger.println("model error: can't locate model for '{}'".format(used))
             return
+
         file = self.found_models[used]
         if type(file) == str:
             try:
@@ -118,11 +123,13 @@ class ModelHandler:
                 )
         else:
             data = file
+
         if "parent" in data:
             self.special_build(data["parent"])
             depend = [data["parent"]]
         else:
             depend = []
+
         self.dependence_list.append(
             (used, [e if ":" in e else "minecraft:" + e for e in depend])
         )
@@ -145,9 +152,9 @@ class ModelHandler:
 
             raise LoadingInterruptException from None
 
-        sorted_models = list(set(sorted_models))
         self.dependence_list.clear()  # decrease memory usage
-        for x in sorted_models:
+
+        for x in list(set(sorted_models)):
             modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
             if immediate:
                 self.load_model(x)
@@ -162,23 +169,26 @@ class ModelHandler:
     def load_model(self, name: str):
         if ":" not in name:
             name = "minecraft:" + name
+
         if name in self.models:
             return
+
         location = self.found_models[name]
         try:
             if type(location) == str:
-                modeldata = mcpython.engine.ResourceLoader.read_json(location)
+                model_data = mcpython.engine.ResourceLoader.read_json(location)
                 try:
                     self.models[
                         name
                     ] = mcpython.client.rendering.model.BlockModel.Model(
-                        modeldata.copy(),
+                        model_data.copy(),
                         "block/" + location.split("/")[-1].split(".")[0],
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
                     )
                 except:
                     logger.print_exception(f"during decoding model {location}")
                     self.models[name] = None
+
             else:
                 try:
                     self.models[
@@ -191,12 +201,13 @@ class ModelHandler:
                 except:
                     logger.print_exception(f"during decoding model {name} [{location}]")
                     self.models[name] = None
+
         except:
             logger.print_exception(
                 "error during loading model '{}' named '{}'".format(location, name)
             )
 
-    def add_face_to_batch(self, block, face, batches) -> list:
+    def add_face_to_batch(self, block, face, batches) -> typing.Iterable:
         if not shared.IS_CLIENT:
             return tuple()
 
@@ -205,36 +216,40 @@ class ModelHandler:
                 logger.println(
                     "[FATAL] block state for block '{}' not found!".format(block.NAME)
                 )
+
             return self.blockstates["minecraft:missing_texture"].add_face_to_batch(
                 block, batches, face
             )
 
         blockstate = self.blockstates[block.NAME]
+
         # todo: add custom block renderer check
         if blockstate is None:
-            vertex = self.blockstates["minecraft:missing_texture"].add_face_to_batch(
+            vertex_list = self.blockstates["minecraft:missing_texture"].add_face_to_batch(
                 block, batches, face
             )
         else:
-            vertex = blockstate.add_face_to_batch(block, batches, face)
+            vertex_list = blockstate.add_face_to_batch(block, batches, face)
             if issubclass(
                 type(block.face_state.custom_renderer),
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
             ):
-                block.face_state.custom_renderer.handle(block, vertex)
-        return vertex
+                block.face_state.custom_renderer.handle(block, vertex_list)
+
+        return vertex_list
 
     def add_raw_face_to_batch(
         self, position, state, block_state_name: str, batches, face
     ):
         if block_state_name is None or block_state_name not in self.blockstates:
-            vertex = self.blockstates[
+            vertex_list = self.blockstates[
                 "minecraft:missing_texture"
             ].add_raw_face_to_batch(position, state, batches, face)
         else:
             blockstate = self.blockstates[block_state_name]
-            vertex = blockstate.add_raw_to_batch(position, state, batches, face)
-        return vertex
+            vertex_list = blockstate.add_raw_to_batch(position, state, batches, face)
+
+        return vertex_list
 
     def draw_face(self, block, face):
         if not shared.IS_CLIENT:
@@ -246,6 +261,7 @@ class ModelHandler:
                     "[FATAL] block state for block '{}' not found!".format(block.NAME)
                 )
             return
+
         blockstate = self.blockstates[block.NAME]
         # todo: add custom block renderer check
         if blockstate is None:

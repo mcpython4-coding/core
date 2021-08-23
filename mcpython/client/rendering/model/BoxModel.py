@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import itertools
 import typing
-from abc import ABC
 
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
@@ -21,34 +20,11 @@ import mcpython.util.enums
 import mcpython.util.math
 import pyglet
 from mcpython import shared
+from mcpython.client.rendering.model.api import AbstractBoxModel
+from mcpython.client.rendering.model.util import SIDE_ORDER, UV_INDICES, UV_ORDER
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.vertex import VertexProvider
 from pyglet.graphics.vertexdomain import VertexList
-
-UV_ORDER = [
-    mcpython.util.enums.EnumSide.UP,
-    mcpython.util.enums.EnumSide.DOWN,
-    mcpython.util.enums.EnumSide.WEST,
-    mcpython.util.enums.EnumSide.EAST,
-    mcpython.util.enums.EnumSide.NORTH,
-    mcpython.util.enums.EnumSide.SOUTH,
-]
-SIDE_ORDER = [
-    mcpython.util.enums.EnumSide.UP,
-    mcpython.util.enums.EnumSide.DOWN,
-    mcpython.util.enums.EnumSide.NORTH,
-    mcpython.util.enums.EnumSide.SOUTH,
-    mcpython.util.enums.EnumSide.WEST,
-    mcpython.util.enums.EnumSide.EAST,
-]
-
-# representative for the order of uv insertion
-UV_INDICES = [(0, 3, 2, 1), (1, 0, 3, 2)] + [(0, 1, 2, 3)] * 4
-
-
-class AbstractBoxModel(ABC):
-    def copy(self) -> "AbstractBoxModel":
-        raise NotImplementedError
 
 
 @onlyInClient()

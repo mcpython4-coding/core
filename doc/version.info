@@ -1702,3 +1702,5 @@ R   [uuk]: improved world serialization API
 [uuk]: removed --debug-events flag (was only partially implemented)
 [uuk]: fixed a handful of possible crashes in command system
 [uuk]: everything using the old vertex calculation is now using the new system with VertexProvider
+[uuk]: relocated some bits of the model system
+       Item model loaders must now be put in the array inside the ItemModel class

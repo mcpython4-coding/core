@@ -16,17 +16,8 @@ import mcpython.common.item.ItemTextureAtlas
 import mcpython.engine.rendering.BatchHelper
 import mcpython.engine.ResourceLoader
 from mcpython import shared
+from mcpython.client.rendering.model.api import IItemModelLoader
 from mcpython.engine import logger
-
-
-class IItemModelLoader:
-    @classmethod
-    def validate(cls, data: dict) -> bool:
-        raise NotImplementedError()
-
-    @classmethod
-    def decode(cls, data: dict, model: "ItemModel"):
-        raise NotImplementedError()
 
 
 class DefaultLoader(IItemModelLoader):
@@ -76,10 +67,9 @@ class DefaultLoader(IItemModelLoader):
                 model.addOverride(case["predicate"], case["model"])
 
 
-LOADERS = [DefaultLoader]
-
-
 class ItemModel:
+    LOADERS = [DefaultLoader]
+
     @classmethod
     def from_file(cls, file: str, item: str):
         data = mcpython.engine.ResourceLoader.read_json(file)
@@ -88,7 +78,7 @@ class ItemModel:
     @classmethod
     def from_data(cls, data, item):
         model = cls(item)
-        for loader in LOADERS:
+        for loader in cls.LOADERS:
             if loader.validate(data):
                 loader.decode(data, model)
         return model
