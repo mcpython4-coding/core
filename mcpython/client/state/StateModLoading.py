@@ -18,6 +18,7 @@ from mcpython.util.annotation import onlyInClient
 
 from . import State
 from .ui import UIPartProgressBar
+from .util import update_memory_usage_bar
 
 
 @onlyInClient()
@@ -71,16 +72,7 @@ class StateModLoading(State.State):
     def on_draw_2d_pre(self):
         pyglet.gl.glClearColor(255, 255, 255, 255)
 
-        process = psutil.Process()
-        with process.oneshot():
-            self.memory_bar.progress = process.memory_info().rss
-
-        self.memory_bar.text = "Memory usage: {}MB/{}MB ({}%)".format(
-            self.memory_bar.progress // 2 ** 20,
-            self.memory_bar.progress_max // 2 ** 20,
-            round(self.memory_bar.progress / self.memory_bar.progress_max * 10000)
-            / 100,
-        )
+        update_memory_usage_bar(self.memory_bar)
 
     def on_update(self, dt):
         shared.mod_loader.process()

@@ -19,6 +19,7 @@ from mcpython.util.annotation import onlyInClient
 
 from . import State
 from .ui import UIPartButton
+from .util import update_memory_usage_bar
 
 
 @onlyInClient()
@@ -91,15 +92,8 @@ class StateLoadingException(State.State):
 
     def on_draw_2d_pre(self):
         pyglet.gl.glClearColor(255, 255, 255, 255)
-        process = psutil.Process()
-        with process.oneshot():
-            self.parts[1].progress = process.memory_info().rss
 
-        self.parts[1].text = "Memory usage: {}MB/{}MB ({}%)".format(
-            self.parts[1].progress // 2 ** 20,
-            self.parts[1].progress_max // 2 ** 20,
-            round(self.parts[1].progress / self.parts[1].progress_max * 10000) / 100,
-        )
+        update_memory_usage_bar(self.parts[1])
 
         self.label_batch.draw()
 

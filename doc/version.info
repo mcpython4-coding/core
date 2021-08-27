@@ -1667,9 +1667,6 @@ R   [uuk]: improved world serialization API
 [uuk]: ModLoader will switch to a special state when error occurs during mod loading
 [uuk]: loading exceptions are now mostly FATAL and cannot be skipped
 [uuk]: ModLoader assigns now the resource access to each Mod instance when loading
-[uuk]: added some parsing for the BlockProperty stuff
-[uuk]: fixed Runtime.run_method not returning for non-native methods the return value, resulting into None to be always
-       pushed back onto the stack
 [github]: end of feature period of snapshot 21w23a
 [uuk]: fixed chat history index not resetting after entering a command
 [uuk]: fixed uv horizontal rendering of blocks
@@ -1704,3 +1701,8 @@ R   [uuk]: improved world serialization API
 [uuk]: everything using the old vertex calculation is now using the new system with VertexProvider
 [uuk]: relocated some bits of the model system
        Item model loaders must now be put in the array inside the ItemModel class
+[uuk]: removed a handful of safety checks from BlockItemGenerator
+[uuk]: BlockItemGenerator makes now sure that there is a draw() call in between each image take, so we don't collide
+       with stuff
+[uuk]: fixed crash when deleting the home folder due to ModLoader trying a lookup where nothing to look at is found
+[uuk]: TagHandler.has_entry_tag will return now False when the tag does not exists instead of raising an exception

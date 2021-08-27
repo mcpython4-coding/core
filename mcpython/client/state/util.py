@@ -11,25 +11,20 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.config
-import mcpython.common.mod.Mod
-from mcpython.engine import logger
+import psutil
 
-VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+from mcpython.client.state.ui import UIPartProgressBar
 
 
-# create the mod
-mcpython = minecraft = mcpython.common.mod.Mod.Mod(
-    "minecraft",
-    (mcpython.common.config.VERSION_ID,),
-    version_name=mcpython.common.config.VERSION_NAME,
-)
-mcpython.add_load_default_resources()
+def update_memory_usage_bar(bar: UIPartProgressBar.UIPartProgressBar):
+    # Update memory usage bar progress & text
+    process = psutil.Process()
+    with process.oneshot():
+        bar.progress = process.memory_info().rss
 
-
-def init():
-    import mcpython.common.data.serializer.loot.LootTable
-    import mcpython.common.entity.EntityManager
-
-
-mcpython.eventbus.subscribe("stage:mod:init", init)
+    bar.text = "Memory usage: {}MB/{}MB ({}%)".format(
+        bar.progress // 2 ** 20,
+        bar.progress_max // 2 ** 20,
+        round(bar.progress / bar.progress_max * 10000)
+        / 100,
+    )

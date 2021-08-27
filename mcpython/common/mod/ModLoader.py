@@ -459,7 +459,7 @@ class ModLoader:
             sum(
                 [
                     [os.path.join(loc, file) for file in os.listdir(loc)]
-                    for loc in folders
+                    for loc in folders if os.path.exists(loc)
                 ],
                 [],
             )

@@ -154,7 +154,8 @@ class TagHandler:
         :param tag_name: the tag name to check for
         :return: if the identifier is in the given tag
         """
-        return identifier in self.get_tag_for(tag_name, group).entries
+        tag = self.get_tag_for(tag_name, group, or_else_none=True)
+        return tag is not None and identifier in tag.entries
 
 
 shared.tag_handler = TagHandler()
