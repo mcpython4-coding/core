@@ -373,7 +373,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             and not internal
         ):
             shared.state_handler.change_state(
-                "minecraft:escape_state"
+                "minecraft:escape_menu"
             )  # todo: add special state [see above]
 
         if not internal:

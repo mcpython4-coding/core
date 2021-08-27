@@ -49,7 +49,7 @@ class BackgroundHandler:
 
 
 @onlyInClient()
-class StatePartConfigBackground(mcpython.client.state.StatePart.StatePart):
+class ConfigBackground(mcpython.client.state.AbstractStatePart.AbstractStatePart):
     def activate(self):
         super().activate()
         BackgroundHandler.recreate(*shared.window.get_size())

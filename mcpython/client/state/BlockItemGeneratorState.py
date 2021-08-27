@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-__all__ = ["StateBlockItemGenerator", "block_item_generator"]
+__all__ = ["BlockItemGenerator", "block_item_generator"]
 
 import json
 import os
@@ -20,7 +20,7 @@ import typing
 
 from mcpython.client.gui.HoveringItemBox import DEFAULT_BLOCK_ITEM_TOOLTIP
 import mcpython.client.rendering.model.ItemModel as ItemModel
-from mcpython.client.state.StateModLoading import mod_loading
+from mcpython.client.state.ModLoadingProgressState import mod_loading
 import mcpython.common.event.TickHandler as TickHandler
 from mcpython.common.factory.ItemFactory import ItemFactory
 import mcpython.common.item.ItemManager as ItemManager
@@ -32,13 +32,13 @@ from mcpython import shared
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
-from . import State, StatePartGame
+from . import AbstractState, GameViewStatePart
 from .ui import UIPartProgressBar
 from .util import update_memory_usage_bar
 
 
 @onlyInClient()
-class StateBlockItemGenerator(State.State):
+class BlockItemGenerator(AbstractState.AbstractState):
     SETUP_TIME = 6
     CLEANUP_TIME = 4
 
@@ -48,7 +48,7 @@ class StateBlockItemGenerator(State.State):
         self.status_bar = None
         self.memory_bar = None
 
-        State.State.__init__(self)
+        AbstractState.AbstractState.__init__(self)
 
         # The current block number
         self.block_index: int = 0
@@ -82,7 +82,7 @@ class StateBlockItemGenerator(State.State):
         self.memory_bar = mod_loading.memory_bar
 
         return [
-            StatePartGame.StatePartGame(
+            GameViewStatePart.GameView(
                 activate_physics=False,
                 activate_mouse=False,
                 activate_keyboard=False,
@@ -254,7 +254,7 @@ class StateBlockItemGenerator(State.State):
         player.rotation = (0, 0, 0)
         player.dimension.remove_block((0, 0, 0))
 
-        shared.state_handler.change_state("minecraft:startmenu")
+        shared.state_handler.change_state("minecraft:start_menu")
 
     def add_new_screen(self, *args):
         self.block_index += 1
@@ -363,7 +363,7 @@ block_item_generator = None
 @onlyInClient()
 def create():
     global block_item_generator
-    block_item_generator = StateBlockItemGenerator()
+    block_item_generator = BlockItemGenerator()
 
 
 minecraft.eventbus.subscribe("stage:states", create)

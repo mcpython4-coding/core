@@ -25,8 +25,8 @@ from mcpython.common.config import GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
-from . import StatePart
-from .InGameHotKeys import ALL_KEY_COMBOS
+from . import AbstractStatePart
+from .InGameHotKeysManager import ALL_KEY_COMBOS
 
 
 def get_block_break_time(block, itemstack):
@@ -50,7 +50,7 @@ def get_block_break_time(block, itemstack):
 
 
 @onlyInClient()
-class StatePartGame(StatePart.StatePart):
+class GameView(AbstractStatePart.AbstractStatePart):
     NAME = "minecraft:state_part_game"
 
     mouse_press_time = 0

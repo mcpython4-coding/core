@@ -52,10 +52,10 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w??a> released on <?> targeting <1.17.1?>
+changelog of snapshot <21w35a> released on <01.09.2021> targeting <1.17.1>
     JVM:
         - a lot smaller stuff, fixes, more integration work
-        - decoupled JVM from main code into seperate repository
+        - decoupled JVM from main code into separate repository
 
     Mod Loader:
         - rewritten initial discovery system for mods, making it more extendable

@@ -15,7 +15,7 @@ This project is not official by mojang and does not relate to it.
 import cProfile
 
 import mcpython.client.state.StateHandler
-import mcpython.client.state.StatePartGame
+import mcpython.client.state.GameViewStatePart
 import mcpython.common.config
 import mcpython.common.event.TickHandler
 import mcpython.engine.event.EventHandler
@@ -301,7 +301,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 + " seconds"
             )
         if any(
-            type(x) == mcpython.client.state.StatePartGame.StatePartGame
+            type(x) == mcpython.client.state.GameViewStatePart.GameView
             for x in shared.state_handler.active_state.parts
         ):
             shared.world_generation_handler.task_handler.process_tasks(timer=0.02)

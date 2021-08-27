@@ -17,17 +17,17 @@ from mcpython import shared
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
-from . import State
+from . import AbstractState
 from .ui import UIPartButton
 from .util import update_memory_usage_bar
 
 
 @onlyInClient()
-class StateLoadingException(State.State):
+class LoadingExceptionView(AbstractState.AbstractState):
     NAME = "minecraft:loading_exception"
 
     def __init__(self):
-        State.State.__init__(self)
+        AbstractState.AbstractState.__init__(self)
 
         self.labels = []
         self.label_batch = pyglet.graphics.Batch()
@@ -52,7 +52,7 @@ class StateLoadingException(State.State):
             y += 12
 
     def get_parts(self) -> list:
-        from mcpython.client.state.StateModLoading import mod_loading
+        from mcpython.client.state.ModLoadingProgressState import mod_loading
 
         return [
             mod_loading.stage_bar,
@@ -108,9 +108,9 @@ class StateLoadingException(State.State):
         super().activate()
 
 
-loadingexception = StateLoadingException()
+loading_exception = LoadingExceptionView()
 
 
 def error_occur(text: str):
-    loadingexception.set_text(text)
-    shared.state_handler.change_state(loadingexception.NAME)
+    loading_exception.set_text(text)
+    shared.state_handler.change_state(loading_exception.NAME)

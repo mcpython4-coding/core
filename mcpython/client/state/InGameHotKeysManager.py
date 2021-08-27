@@ -20,7 +20,7 @@ from pyglet.window import key
 
 
 @onlyInClient()
-class HotKeys(enum.Enum):
+class HotKeyDefinitions(enum.Enum):
     # from https://minecraft.gamepedia.com/Debug_screen
     # todo: do NOT use a enum here, we need something extendable!
 
@@ -57,11 +57,11 @@ class HotKeys(enum.Enum):
 
 
 ALL_KEY_COMBOS = [
-    HotKeys.RELOAD_CHUNKS,
-    HotKeys.GAME_CRASH,
-    HotKeys.GET_PLAYER_POSITION,
-    HotKeys.CLEAR_CHAT,
-    HotKeys.COPY_BLOCK_OR_ENTITY_DATA,
-    HotKeys.TOGGLE_GAMEMODE_1_3,
-    HotKeys.RELOAD_TEXTURES,
+    HotKeyDefinitions.RELOAD_CHUNKS,
+    HotKeyDefinitions.GAME_CRASH,
+    HotKeyDefinitions.GET_PLAYER_POSITION,
+    HotKeyDefinitions.CLEAR_CHAT,
+    HotKeyDefinitions.COPY_BLOCK_OR_ENTITY_DATA,
+    HotKeyDefinitions.TOGGLE_GAMEMODE_1_3,
+    HotKeyDefinitions.RELOAD_TEXTURES,
 ]

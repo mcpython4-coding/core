@@ -20,7 +20,7 @@ from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()
-class State(IRegistryContent, ABC):
+class AbstractState(IRegistryContent, ABC):
     """
     Base class for all states
     Handled by the StateHandler of the game

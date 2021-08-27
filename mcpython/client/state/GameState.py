@@ -21,11 +21,11 @@ from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
-from . import State, StatePartGame
+from . import AbstractState, GameViewStatePart
 
 
 @onlyInClient()
-class StateGame(State.State):
+class Game(AbstractState.AbstractState):
     NAME = "minecraft:game"
 
     @classmethod
@@ -33,11 +33,11 @@ class StateGame(State.State):
         return True
 
     def __init__(self):
-        State.State.__init__(self)
+        AbstractState.AbstractState.__init__(self)
 
     def get_parts(self) -> list:
         return [
-            StatePartGame.StatePartGame(),
+            GameViewStatePart.GameView(),
             mcpython.client.gui.InventoryHandler.inventory_part,
         ]
 
@@ -73,7 +73,7 @@ class StateGame(State.State):
             return
 
         if symbol == key.ESCAPE and shared.window.exclusive:
-            shared.state_handler.change_state("minecraft:escape_state")
+            shared.state_handler.change_state("minecraft:escape_menu")
 
         elif symbol == key.R:
             shared.inventory_handler.reload_config()
@@ -120,7 +120,7 @@ game = None
 @onlyInClient()
 def create():
     global game
-    game = StateGame()
+    game = Game()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

@@ -17,13 +17,13 @@ import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.HoveringItemBox
 import mcpython.client.gui.ShiftContainer
 import mcpython.client.gui.Slot
-import mcpython.client.state.StatePart
+import mcpython.client.state.AbstractStatePart
 from mcpython import shared
 from mcpython.engine import logger
 from pyglet.window import key, mouse
 
 
-class OpenedInventoryStatePart(mcpython.client.state.StatePart.StatePart):
+class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractStatePart):
     """
     class for inventories as state
     todo: make A LOT OF THINGS public and static

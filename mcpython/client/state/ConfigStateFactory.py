@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.client.state.State
-import mcpython.client.state.StatePart
+import mcpython.client.state.AbstractState
+import mcpython.client.state.AbstractStatePart
 import mcpython.common.event.Registry
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
@@ -38,8 +38,8 @@ class IStateConfigEntry(mcpython.common.event.Registry.IRegistryContent):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.StatePart.StatePart],
-    ) -> mcpython.client.state.StatePart.StatePart:
+        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         raise NotImplementedError()
 
 
@@ -60,8 +60,8 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.StatePart.StatePart],
-    ) -> mcpython.client.state.StatePart.StatePart:
+        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         import mcpython.client.state.ui.UIPartButton
 
         size = tuple(data["size"])
@@ -115,8 +115,8 @@ class UILableStateConfigEntry(IStateConfigEntry):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.StatePart.StatePart],
-    ) -> mcpython.client.state.StatePart.StatePart:
+        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         import mcpython.client.state.ui.UIPartLabel
 
         text = data["text"]
@@ -159,7 +159,7 @@ class UIProgressBarConfigEntry(IStateConfigEntry):
     @classmethod
     def deserialize(
         cls, state_instance, data: dict, existing
-    ) -> mcpython.client.state.StatePart.StatePart:
+    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         import mcpython.client.state.ui.UIPartProgressBar
 
         position = data["position"]
@@ -198,17 +198,17 @@ class ConfigBackground(IStateConfigEntry):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.StatePart.StatePart],
-    ) -> mcpython.client.state.StatePart.StatePart:
-        import mcpython.client.state.StatePartConfigBackground
+        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
+        import mcpython.client.state.ConfigBackgroundPart
 
         if existing is not None and issubclass(
             type(existing),
-            mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground,
+            mcpython.client.state.ConfigBackgroundPart.ConfigBackground,
         ):
             return existing
         return (
-            mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground()
+            mcpython.client.state.ConfigBackgroundPart.ConfigBackground()
         )
 
 
@@ -242,7 +242,7 @@ class StateConfigFile:
     def inject(
         self,
         state_instance: typing.Union[
-            mcpython.client.state.State.State, mcpython.client.state.StatePart.StatePart
+            mcpython.client.state.AbstractState.AbstractState, mcpython.client.state.AbstractStatePart.AbstractStatePart
         ],
     ):
         """

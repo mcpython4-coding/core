@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 
-import mcpython.client.state.StatePartConfigBackground
+import mcpython.client.state.ConfigBackgroundPart
 import mcpython.client.state.ui.UIPartLabel
 import mcpython.common.config
 import mcpython.common.data.DataPacks
@@ -25,15 +25,15 @@ from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
-from . import State
+from . import AbstractState
 
 
 @onlyInClient()
-class StateWorldLoading(State.State):
+class WorldLoadingProgress(AbstractState.AbstractState):
     NAME = "minecraft:world_loading"
 
     def __init__(self):
-        State.State.__init__(self)
+        AbstractState.AbstractState.__init__(self)
         self.status_table = {}
         self.world_size = ((0, 0), (0, 0, 0, 0), 0)
         self.finished_chunks = 0
@@ -54,7 +54,7 @@ class StateWorldLoading(State.State):
 
     def get_parts(self) -> list:
         return [
-            mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
+            mcpython.client.state.ConfigBackgroundPart.ConfigBackground(),
             mcpython.client.state.ui.UIPartLabel.UIPartLabel(
                 "0%",
                 (0, 50),
@@ -110,12 +110,12 @@ class StateWorldLoading(State.State):
                 "failed to load world. data-fixer failed with NoDataFixerFoundException"
             )
             shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:start_menu")
             return
         except:
             logger.print_exception("failed to load world")
             shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:start_menu")
             return
         for cx in range(-3, 4):
             for cz in range(-3, 4):
@@ -138,7 +138,7 @@ class StateWorldLoading(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.change_state("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:start_menu")
             shared.world.cleanup()
             logger.println("interrupted world loading by user")
 
@@ -180,7 +180,7 @@ world_loading = None
 @onlyInClient()
 def create():
     global world_loading
-    world_loading = StateWorldLoading()
+    world_loading = WorldLoadingProgress()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

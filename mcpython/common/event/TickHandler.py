@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import random
 
-import mcpython.client.state.StatePartGame
+import mcpython.client.state.GameViewStatePart
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.util.math

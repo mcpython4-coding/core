@@ -16,13 +16,13 @@ import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
-from . import State
+from . import AbstractState
 from .ui import UIPartProgressBar
 from .util import update_memory_usage_bar
 
 
 @onlyInClient()
-class StateModLoading(State.State):
+class ModLoadingProgress(AbstractState.AbstractState):
     NAME = "minecraft:mod_loading"
 
     def __init__(self):
@@ -82,4 +82,4 @@ class StateModLoading(State.State):
         shared.world.get_active_player().init_creative_tabs()
 
 
-mod_loading = StateModLoading()
+mod_loading = ModLoadingProgress()

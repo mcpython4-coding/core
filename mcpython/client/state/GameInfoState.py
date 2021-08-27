@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.state.State
-import mcpython.client.state.StatePartGame
+import mcpython.client.state.AbstractState
+import mcpython.client.state.GameViewStatePart
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.ResourceLoader
 import mcpython.util.texture
@@ -30,8 +30,8 @@ sprite = mcpython.util.texture.to_pyglet_sprite(
 
 
 @onlyInClient()
-class StateGameInfo(mcpython.client.state.State.State):
-    NAME = "minecraft:gameinfo"
+class GameInfo(mcpython.client.state.AbstractState.AbstractState):
+    NAME = "minecraft:game_info"
 
     @staticmethod
     def is_mouse_exclusive():
@@ -39,7 +39,7 @@ class StateGameInfo(mcpython.client.state.State.State):
 
     def get_parts(self) -> list:
         parts = [
-            mcpython.client.state.StatePartGame.StatePartGame(
+            mcpython.client.state.GameViewStatePart.GameView(
                 activate_physics=False,
                 activate_mouse=False,
                 activate_keyboard=False,
@@ -83,7 +83,7 @@ game_info = None
 @onlyInClient()
 def create():
     global game_info
-    game_info = StateGameInfo()
+    game_info = GameInfo()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

@@ -1673,7 +1673,7 @@ R   [uuk]: improved world serialization API
 [uuk]: bumped target mc version to 1.17
 [uuk]: improved memory usage / block instance
 
-[github]: start of development cycle for 21w??a
+[github]: start of development cycle for 21w35a
 [uuk]: mod loader is now more efficient at loading mod info files from archives
 [uuk]: exported java jvm with bridge and built-ins into separate repository
 [uuk]: refactored the complete resource serialization system

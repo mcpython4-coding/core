@@ -18,7 +18,7 @@ import shutil
 import sys
 import typing
 
-import mcpython.client.state.StatePartConfigBackground
+import mcpython.client.state.ConfigBackgroundPart
 import mcpython.client.state.ui.UIPartLabel
 import mcpython.common.config
 import mcpython.common.data.DataPacks
@@ -35,7 +35,7 @@ from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
-from . import State
+from . import AbstractState
 
 DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
     "world_config_name": "minecraft:default_overworld",
@@ -48,11 +48,11 @@ DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
 
 
 @onlyInClient()
-class StateWorldGeneration(State.State):
+class WorldGenerationProgress(AbstractState.AbstractState):
     NAME = "minecraft:world_generation"
 
     def __init__(self):
-        State.State.__init__(self)
+        AbstractState.AbstractState.__init__(self)
         self.status_table = {}
         self.profiler = cProfile.Profile()
         self.world_gen_config = {}
@@ -81,7 +81,7 @@ class StateWorldGeneration(State.State):
 
     def get_parts(self) -> list:
         return [
-            mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
+            mcpython.client.state.ConfigBackgroundPart.ConfigBackground(),
             mcpython.client.state.ui.UIPartLabel.UIPartLabel(
                 "0%",
                 (0, 50),
@@ -259,7 +259,7 @@ class StateWorldGeneration(State.State):
                 dimension=shared.world.get_active_dimension()
             ),
         )
-        shared.state_handler.change_state("minecraft:gameinfo", immediate=False)
+        shared.state_handler.change_state("minecraft:game_info", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
@@ -269,7 +269,7 @@ class StateWorldGeneration(State.State):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.change_state("minecraft:startmenu")
+            shared.state_handler.change_state("minecraft:start_menu")
             shared.tick_handler.schedule_once(shared.world.cleanup)
             logger.println("interrupted world generation by user")
 
@@ -307,7 +307,7 @@ world_generation = None
 @onlyInClient()
 def create():
     global world_generation
-    world_generation = StateWorldGeneration()
+    world_generation = WorldGenerationProgress()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

@@ -16,17 +16,13 @@ import json
 import os
 import sys
 import time
-import traceback
 import typing
 import zipfile
 
-# import mcpython.client.state.StateLoadingException
-# import mcpython.client.state.StateModLoading
 from abc import ABC
 
 import mcpython.common.config
 
-# import mcpython.engine.event.EventHandler
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
@@ -34,16 +30,13 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import toml
 from mcpython import shared
+from mcpython.common.mod.util import LoadingInterruptException
 from mcpython.engine import logger
-
-
-class LoadingInterruptException(Exception):
-    pass
 
 
 def cast_dependency(depend: dict):
     """
-    Will cast an dict-structure to the depend
+    Will cast a dict-structure to the depend
     :param depend: the depend dict
     :return: the parsed mod.Mod.ModDependency-object
     """
@@ -691,7 +684,7 @@ class ModLoader:
             return
 
         start = time.time()
-        astate: mcpython.client.state.StateModLoading.StateModLoading = (
+        astate: mcpython.client.state.ModLoadingProgress.ModLoadingProgress = (
             shared.state_handler.active_state
         )
         astate.parts[0].progress_max = len(
@@ -725,7 +718,7 @@ class ModLoader:
         if stage is None:
             return
 
-        astate: mcpython.client.state.StateModLoading.StateModLoading = (
+        astate: mcpython.client.state.ModLoadingProgress.ModLoadingProgress = (
             shared.state_handler.active_state
         )
         instance: mcpython.common.mod.Mod.Mod = self.mods[

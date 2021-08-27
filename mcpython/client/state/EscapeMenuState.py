@@ -23,20 +23,20 @@ from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
-from . import State, StatePartGame
+from . import AbstractState, GameViewStatePart
 from .ui import UIPartButton, UIPartLabel
 
 
 @onlyInClient()
-class StateEscape(State.State):
-    NAME = "minecraft:escape_state"
+class EscapeMenu(AbstractState.AbstractState):
+    NAME = "minecraft:escape_menu"
 
     def __init__(self):
-        State.State.__init__(self)
+        AbstractState.AbstractState.__init__(self)
 
     def get_parts(self) -> list:
         return [
-            StatePartGame.StatePartGame(
+            GameViewStatePart.GameView(
                 activate_keyboard=False,
                 activate_mouse=False,
                 activate_focused_block=False,
@@ -95,7 +95,7 @@ class StateEscape(State.State):
         shared.world.setup_by_filename("tmp")
         shared.world.cleanup()
         shared.event_handler.call("on_game_leave")
-        shared.state_handler.change_state("minecraft:startmenu", immediate=False)
+        shared.state_handler.change_state("minecraft:start_menu", immediate=False)
 
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
@@ -120,7 +120,7 @@ escape = None
 @onlyInClient()
 def create():
     global escape
-    escape = StateEscape()
+    escape = EscapeMenu()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

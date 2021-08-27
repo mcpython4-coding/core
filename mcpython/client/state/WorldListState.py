@@ -16,9 +16,9 @@ import json
 import os
 import shutil
 
-import mcpython.client.state.StatePartConfigBackground
-import mcpython.client.state.StateWorldGeneration
-import mcpython.client.state.StateWorldLoading
+import mcpython.client.state.ConfigBackgroundPart
+import mcpython.client.state.WorldGenerationProgressState
+import mcpython.client.state.WorldLoadingProgressState
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.SaveFile
@@ -33,7 +33,7 @@ from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
-from . import State
+from . import AbstractState
 from .ui import UIPartButton, UIPartScrollBar
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
@@ -50,7 +50,7 @@ WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
 
 
 @onlyInClient()
-class StateWorldSelection(State.State):
+class WorldList(AbstractState.AbstractState):
     NAME = "minecraft:world_selection"
 
     def __init__(self):
@@ -89,7 +89,7 @@ class StateWorldSelection(State.State):
     def get_parts(self) -> list:
         wx, wy = shared.window.get_size()
         return [
-            mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground(),
+            mcpython.client.state.ConfigBackgroundPart.ConfigBackground(),
             UIPartButton.UIPartButton(
                 (150, 20),
                 "generate new",
@@ -274,7 +274,7 @@ class StateWorldSelection(State.State):
         self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
 
     def on_back_press(self, *_):
-        shared.state_handler.change_state("minecraft:startmenu")
+        shared.state_handler.change_state("minecraft:start_menu")
 
     def on_new_world_press(self, *_):
         shared.state_handler.change_state("minecraft:world_generation_config")
@@ -302,7 +302,7 @@ world_selection = None
 @onlyInClient()
 def create():
     global world_selection
-    world_selection = StateWorldSelection()
+    world_selection = WorldList()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

@@ -15,13 +15,13 @@ import sys
 import time
 import typing
 
-import mcpython.client.state.StateConfigFile
+import mcpython.client.state.ConfigStateFactory
 import mcpython.common.event.TickHandler
 from mcpython import shared
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
-from . import State
+from . import AbstractState
 
 
 @onlyInClient()
@@ -38,8 +38,8 @@ class StateHandler:
     """
 
     def __init__(self):
-        self.active_state: typing.Optional[State.State] = None
-        self.states: typing.Dict[str, State] = {}
+        self.active_state: typing.Optional[AbstractState.AbstractState] = None
+        self.states: typing.Dict[str, AbstractState] = {}
         self.global_key_bind_toggle = False
 
     def change_state(self, state_name: str, immediate=True):
@@ -68,7 +68,7 @@ class StateHandler:
         if self.active_state:
             self.active_state.deactivate()
 
-        self.active_state: State.State = self.states[state_name]
+        self.active_state: AbstractState.AbstractState = self.states[state_name]
         self.active_state.activate()
         self.active_state.eventbus.call("user:window:resize", *shared.window.get_size())
         shared.event_handler.call("state:switch:post", state_name)
@@ -77,11 +77,11 @@ class StateHandler:
             console=False,
         )
 
-    def add_state(self, state_instance: State.State):
+    def add_state(self, state_instance: AbstractState.AbstractState):
         self.states[state_instance.NAME] = state_instance
 
         if state_instance.CONFIG_LOCATION is not None:
-            mcpython.client.state.StateConfigFile.get_config(
+            mcpython.client.state.ConfigStateFactory.get_config(
                 state_instance.CONFIG_LOCATION
             ).inject(state_instance)
 
@@ -96,13 +96,13 @@ def load_states():
     import mcpython.client.gui.InventoryHandler
 
     from . import (
-        StateBlockItemGenerator,
-        StateEscape,
-        StateGame,
-        StateGameInfo,
-        StateModLoading,
-        StateStartMenu,
-        StateWorldGenerationConfig,
+        BlockItemGeneratorState,
+        EscapeMenuState,
+        GameState,
+        GameInfoState,
+        ModLoadingProgressState,
+        StartMenuState,
+        WorldGenerationConfigState,
     )
 
     # this is the first state, so initial init for it

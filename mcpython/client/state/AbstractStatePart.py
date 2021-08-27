@@ -17,7 +17,7 @@ from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()
-class StatePart(ABC):
+class AbstractStatePart(ABC):
     NAME = None
 
     def __init__(self):

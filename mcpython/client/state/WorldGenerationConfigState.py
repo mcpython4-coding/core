@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import random
 
-import mcpython.client.state.StatePartConfigBackground
-import mcpython.client.state.StateWorldGeneration
+import mcpython.client.state.ConfigBackgroundPart
+import mcpython.client.state.WorldGenerationProgressState
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.server.worldgen.noise.NoiseManager
@@ -24,17 +24,17 @@ from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
-from . import State
+from . import AbstractState
 from .ui import UIPartButton, UIPartTextInput
 from .ui.UIPartTextInput import INT_PATTERN
 
 
 @onlyInClient()
-class StateWorldGenerationConfig(State.State):
+class WorldGenerationConfig(AbstractState.AbstractState):
     NAME = "minecraft:world_generation_config"
 
     def __init__(self):
-        State.State.__init__(self)
+        AbstractState.AbstractState.__init__(self)
 
     def get_parts(self) -> list:
         parts = [
@@ -122,7 +122,7 @@ class StateWorldGenerationConfig(State.State):
             parts
             + text
             + [
-                mcpython.client.state.StatePartConfigBackground.StatePartConfigBackground()
+                mcpython.client.state.ConfigBackgroundPart.ConfigBackground()
             ]
         )
 
@@ -154,7 +154,7 @@ class StateWorldGenerationConfig(State.State):
         return self.parts[5].text
 
     def on_back_press(self, x, y):
-        shared.state_handler.change_state("minecraft:startmenu")
+        shared.state_handler.change_state("minecraft:start_menu")
 
     def on_generate_press(self, x, y):
         filename = self.parts[11].entered_text
@@ -208,7 +208,7 @@ world_generation_config = None
 @onlyInClient()
 def create():
     global world_generation_config
-    world_generation_config = StateWorldGenerationConfig()
+    world_generation_config = WorldGenerationConfig()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)

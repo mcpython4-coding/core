@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.client.state.State
+import mcpython.client.state.AbstractState
 import mcpython.server.worldgen.mode.IWorldGenConfig
 
 
@@ -44,7 +44,7 @@ class AbstractModeConfig:
         raise NotImplementedError()
 
 
-class AbstractState(mcpython.client.state.State.State, ABC):
+class AbstractState(mcpython.client.state.AbstractState.AbstractState, ABC):
     """
     Base class for a configuration screen for a world generator mode
     todo: add sub-class with factory system
