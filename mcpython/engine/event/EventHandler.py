@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+__all__ = ["EventHandler", "PUBLIC_EVENT_BUS", "LOADING_EVENT_BUS"]
+
 from mcpython import shared
 from mcpython.engine.event.EventBus import EventBus
 
