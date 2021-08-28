@@ -141,88 +141,142 @@ class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractS
         return None, None
 
     def on_mouse_press(self, x, y, button, modifiers):
+        # when no mouse interaction is active, do nothing
         if shared.window.exclusive:
-            return  # when no mouse interaction is active, do nothing
-        slot: mcpython.client.gui.Slot.Slot = self._get_slot_for(x, y)
-        if slot is None:
             return
+
         self.moving_itemstack = shared.inventory_handler.moving_slot.itemstack.copy()
         moving_itemstack = shared.inventory_handler.moving_slot.itemstack
-        if modifiers & key.MOD_SHIFT:
-            if slot.on_shift_click:
-                try:
-                    flag = slot.on_shift_click(
-                        slot, x, y, button, modifiers, shared.world.get_active_player()
-                    )
-                    if flag is not True:
-                        return  # no default logic should go on
-                except:
-                    logger.print_exception(
-                        "during shift-clicking {}, the function {} crashed".format(
-                            slot, slot.on_shift_click
-                        )
-                    )
-            if (
-                shared.inventory_handler.shift_container is not None
-                and shared.inventory_handler.shift_container.move_to_opposite(slot)
-            ):
+
+        slot: mcpython.client.gui.Slot.Slot = self._get_slot_for(x, y)
+
+        for inventory in shared.inventory_handler.opened_inventory_stack:
+            ix, iy = inventory.get_position()
+
+            if inventory.on_mouse_button_press(x - ix, y - iy, button, modifiers, moving_itemstack, slot):
                 return
+
+        if slot is None:
+            return
+
+        if modifiers & key.MOD_SHIFT:
+            if self.handle_shift_click(button, modifiers, slot, x, y):
+                return
+
         if button == mouse.LEFT:
-            if self.moving_itemstack.is_empty():
-                if not slot.interaction_mode[0]:
-                    return
-                shared.inventory_handler.moving_slot.set_itemstack(
-                    slot.itemstack.copy()
-                )
-                slot.clean_itemstack()
-                slot.call_update(True)
-
-            elif slot.interaction_mode[1] and slot.itemstack.contains_same_resource(
-                moving_itemstack
-            ):
-                target = min(
-                    slot.itemstack.item.STACK_SIZE,
-                    slot.itemstack.amount + moving_itemstack.amount,
-                )
-                moving_itemstack.set_amount(
-                    moving_itemstack.amount - (target - slot.itemstack.amount)
-                )
-                slot.itemstack.set_amount(target)
-                slot.call_update(True)
-
-            elif slot.can_set_item(moving_itemstack):
-                self.mode = 1
-                self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            if self.handle_left_click(button, modifiers, moving_itemstack, slot, x, y):
+                return
 
         elif button == mouse.RIGHT:
-            if moving_itemstack.is_empty() and slot.allow_half_getting:
-                if not slot.interaction_mode[0]:
-                    return
-
-                amount = slot.itemstack.amount
-                shared.inventory_handler.moving_slot.set_itemstack(
-                    slot.itemstack.copy().set_amount(amount - amount // 2)
-                )
-                slot.itemstack.set_amount(amount // 2)
-                slot.call_update(True)
-
-            elif slot.can_set_item(moving_itemstack):
-                self.mode = 2
-                self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            if self.handle_right_click(button, modifiers, moving_itemstack, slot, x, y):
+                return
 
         elif button == mouse.MIDDLE:
-            if (
+            if self.handle_middle_click(button, modifiers, moving_itemstack, slot, x, y):
+                return
+
+        if slot.assigned_inventory is not None:
+            ix, iy = slot.assigned_inventory.position
+
+            if slot.assigned_inventory.on_mouse_button_press(x-ix, y-iy, button, modifiers, moving_itemstack):
+                return
+
+    def handle_shift_click(self, button, modifiers, slot, x, y):
+        if slot.on_shift_click:
+            try:
+                flag = slot.on_shift_click(
+                    slot, x, y, button, modifiers, shared.world.get_active_player()
+                )
+
+                # no default logic should go on
+                if flag is not True:
+                    return True
+            except:
+                logger.print_exception(
+                    "during shift-clicking {}, the function {} crashed".format(
+                        slot, slot.on_shift_click
+                    )
+                )
+        if (
+                shared.inventory_handler.shift_container is not None
+                and shared.inventory_handler.shift_container.move_to_opposite(slot)
+        ):
+            return True
+
+        return False
+
+    def handle_middle_click(self, button, modifiers, moving_itemstack, slot, x, y):
+        if (
                 moving_itemstack.is_empty()
                 and shared.world.get_active_player().gamemode == 1
-            ):
-                shared.inventory_handler.moving_slot.set_itemstack(
-                    slot.itemstack.copy().set_amount(slot.itemstack.item.STACK_SIZE)
-                )
-            elif shared.world.get_active_player().gamemode == 1 and slot.can_set_item(
+        ):
+            shared.inventory_handler.moving_slot.set_itemstack(
+                slot.itemstack.copy().set_amount(slot.itemstack.item.STACK_SIZE)
+            )
+        elif shared.world.get_active_player().gamemode == 1 and slot.can_set_item(
                 moving_itemstack
-            ):
-                self.mode = 3
-                self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+        ):
+            self.mode = 3
+            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+
+        else:
+            return False
+
+        return True
+
+    def handle_right_click(self, button, modifiers, moving_itemstack, slot, x, y):
+        if moving_itemstack.is_empty() and slot.allow_half_getting:
+            if not slot.interaction_mode[0]:
+                return False
+
+            amount = slot.itemstack.amount
+            shared.inventory_handler.moving_slot.set_itemstack(
+                slot.itemstack.copy().set_amount(amount - amount // 2)
+            )
+            slot.itemstack.set_amount(amount // 2)
+            slot.call_update(True)
+
+        elif slot.can_set_item(moving_itemstack):
+            self.mode = 2
+            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+
+        else:
+            return False
+
+        return True
+
+    def handle_left_click(self, button, modifiers, moving_itemstack, slot, x, y):
+        if self.moving_itemstack.is_empty():
+            if not slot.interaction_mode[0]:
+                return False
+
+            shared.inventory_handler.moving_slot.set_itemstack(
+                slot.itemstack.copy()
+            )
+            slot.clean_itemstack()
+            slot.call_update(True)
+
+        elif slot.interaction_mode[1] and slot.itemstack.contains_same_resource(
+            moving_itemstack
+        ):
+            target = min(
+                slot.itemstack.item.STACK_SIZE,
+                slot.itemstack.amount + moving_itemstack.amount,
+            )
+            moving_itemstack.set_amount(
+                moving_itemstack.amount - (target - slot.itemstack.amount)
+            )
+            slot.itemstack.set_amount(target)
+            slot.call_update(True)
+
+        elif slot.can_set_item(moving_itemstack):
+            self.mode = 1
+            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+
+        else:
+            return False
+
+        return True
 
     def on_mouse_release(self, x, y, button, modifiers):
         if (

@@ -21,6 +21,7 @@ import mcpython.util.texture
 import PIL.Image
 import pyglet
 from mcpython import shared
+from mcpython.client.gui.Slot import ISlot
 from mcpython.engine import logger
 
 
@@ -47,7 +48,10 @@ class ContainerRenderer(ABC):
         self.bg_image_pos = (0, 0)
         self.uuid = uuid.uuid4()
         shared.inventory_handler.add(self)
-        self.slots = self.create_slot_renderers()
+        self.slots: typing.List[ISlot] = self.create_slot_renderers()
+
+        for slot in self.slots:
+            slot.assigned_inventory = self
 
         # todo: add special class holding this information with serializer for it
         self.config = {}
@@ -56,6 +60,9 @@ class ContainerRenderer(ABC):
         self.custom_name = None  # the custom name; If set, rendered in the inventory
         self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
         self.custom_name_label.anchor_y = "top"
+
+    def on_mouse_button_press(self, relative_x: int, relative_y: int, button: int, modifiers: int, item_stack, slot) -> bool:
+        return False
 
     def reload_config(self):
         """

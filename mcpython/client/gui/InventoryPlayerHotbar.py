@@ -17,7 +17,7 @@ import traceback
 import typing
 
 import mcpython.client.gui.ContainerRenderer
-import mcpython.client.gui.InventoryHandler
+import mcpython.client.gui.ContainerRenderingManager
 import mcpython.client.gui.Slot
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader

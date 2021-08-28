@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import time
 
-import mcpython.client.gui.InventoryHandler
+import mcpython.client.gui.ContainerRenderingManager
 import mcpython.common.event.TickHandler
 import mcpython.common.mod.ModMcpython
 import pyglet
@@ -38,7 +38,7 @@ class Game(AbstractState.AbstractState):
     def get_parts(self) -> list:
         return [
             GameViewStatePart.GameView(),
-            mcpython.client.gui.InventoryHandler.inventory_part,
+            mcpython.client.gui.ContainerRenderingManager.inventory_part,
         ]
 
     def activate(self):

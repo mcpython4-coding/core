@@ -35,6 +35,9 @@ else:
 
 
 class ISlot(ABC):
+    def __init__(self):
+        self.assigned_inventory = None
+
     def get_capacity(self) -> int:
         raise NotImplementedError()
 
@@ -106,7 +109,7 @@ class Slot(ISlot):
         check_function=None,
     ):
         """
-        creates an new slot
+        Creates a new slot
         :param itemstack: the itemstack to use
         :param position: the position to create at
         :param allow_player_remove: if the player is allowed to remove items out of it
@@ -119,6 +122,8 @@ class Slot(ISlot):
         :param capacity: the max item count for the slot
         :param check_function: an function to check if the item is valid, signature: (Slot, ItemStack) -> bool
         """
+        super().__init__()
+
         self.__itemstack = (
             itemstack
             if itemstack
@@ -370,6 +375,7 @@ class SlotCopy(ISlot):
         on_shift_click=None,
         on_button_press=None,
     ):
+        super().__init__()
         # todo: add empty image
         # todo: add options for item allowing
         self.master: Slot = master

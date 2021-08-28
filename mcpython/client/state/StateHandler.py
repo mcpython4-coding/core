@@ -93,7 +93,7 @@ handler = shared.state_handler = StateHandler()
 
 
 def load_states():
-    import mcpython.client.gui.InventoryHandler
+    import mcpython.client.gui.ContainerRenderingManager
 
     from . import (
         BlockItemGeneratorState,

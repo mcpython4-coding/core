@@ -390,6 +390,13 @@ class CreativeItemTab(ICreativeView):
         self.scroll_bar.activate()
         self.update_rendering(True)
 
+    def on_mouse_button_press(self, relative_x: int, relative_y: int, button: int, modifiers: int, item_stack, slot) -> bool:
+        if 2 * 16 <= relative_x <= 2 * 170 and 24 * 2 <= relative_y <= 119 * 2 and not item_stack.is_empty() and (slot is None or not slot.get_itemstack().contains_same_resource(item_stack)):
+            item_stack.clean()
+            return True
+
+        return False
+
 
 if not shared.IS_TEST_ENV:
     CreativeItemTab.reload()

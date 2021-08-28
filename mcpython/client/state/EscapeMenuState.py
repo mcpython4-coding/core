@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import functools
 import time
 
-import mcpython.client.gui.InventoryHandler
+import mcpython.client.gui.ContainerRenderingManager
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.event.EventInfo
 import mcpython.util.callbacks
@@ -76,7 +76,7 @@ class EscapeMenu(AbstractState.AbstractState):
                 anchor_button="MM",
                 on_press=functools.partial(mcpython.util.callbacks.open_github_project),
             ),
-            mcpython.client.gui.InventoryHandler.inventory_part,
+            mcpython.client.gui.ContainerRenderingManager.inventory_part,
         ]
 
     def bind_to_eventbus(self):
