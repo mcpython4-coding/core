@@ -44,7 +44,7 @@ class AbstractModeConfig:
         raise NotImplementedError()
 
 
-class AbstractState(mcpython.client.state.AbstractState.AbstractState, ABC):
+class AbstractConfigState(mcpython.client.state.AbstractState.AbstractState, ABC):
     """
     Base class for a configuration screen for a world generator mode
     todo: add sub-class with factory system

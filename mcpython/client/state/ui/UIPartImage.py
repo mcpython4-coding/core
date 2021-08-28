@@ -16,11 +16,11 @@ import pyglet
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
 
-from . import UIPart
+from . import AbstractUIPart
 
 
 @onlyInClient()
-class UIPartImage(UIPart.UIPart):
+class UIPartImage(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,
         image: pyglet.sprite.Sprite,

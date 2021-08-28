@@ -99,7 +99,7 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
             position,
             anchor_button=anchor_button,
             anchor_window=anchor_window,
-            enabled=enabled,
+            enable=enabled,
             has_hovering_state=has_hov,
             on_press=on_press,
         )

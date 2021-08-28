@@ -11,13 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 import mcpython.client.state.AbstractStatePart
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()
-class UIPart(mcpython.client.state.AbstractStatePart.AbstractStatePart):
+class AbstractUIPart(mcpython.client.state.AbstractStatePart.AbstractStatePart, ABC):
     def __init__(
         self, position, bounding_box_size, anchor_element="WS", anchor_window="WS"
     ):

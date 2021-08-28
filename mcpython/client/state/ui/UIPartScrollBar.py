@@ -17,6 +17,7 @@ import PIL.Image
 import pyglet
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
+from .AbstractUIPart import AbstractUIPart
 
 IMAGE = mcpython.engine.ResourceLoader.read_image(
     "assets/minecraft/textures/gui/container/creative_inventory/tabs.png"
@@ -30,9 +31,10 @@ scroll_inactive = mcpython.util.texture.to_pyglet_image(
 
 
 @onlyInClient()
-class UIScrollBar(mcpython.client.state.ui.UIPart.UIPart):
+class UIScrollBar(AbstractUIPart):
     """
-    class representing an scroll bar
+    Class representing a scroll bar in a gui-state of the game
+    The user is needed to work with the values returned by this system (on_scroll)
     """
 
     def __init__(self, position: tuple, scroll_distance: int, on_scroll=None):
@@ -61,8 +63,10 @@ class UIScrollBar(mcpython.client.state.ui.UIPart.UIPart):
     def on_mouse_press(self, x, y, button, mod):
         if not self.active:
             return
+
         if button != mouse.LEFT:
             return
+
         bx, by = self.bar_position
         if 0 <= x - bx <= 20 and 0 <= y - by <= 28:
             self.selected = True
@@ -73,6 +77,7 @@ class UIScrollBar(mcpython.client.state.ui.UIPart.UIPart):
     def on_mouse_drag(self, x, y, dx, dy, button, mod):
         if not self.active:
             return
+
         if button == mouse.LEFT and self.selected:
             self.bar_position = (
                 self.position[0],
@@ -84,15 +89,17 @@ class UIScrollBar(mcpython.client.state.ui.UIPart.UIPart):
     def on_draw(self):
         if not self.active:
             return
-        self.bar_sprite.position = self.bar_position
+
+        if self.bar_sprite.position != self.bar_position: self.bar_sprite.position = self.bar_position
         self.bar_sprite.draw()
 
     def get_status(self) -> float:
         """
-        will return the status as an float between 0 and 1 where 0 is the downer end and 1 the upper
+        Will return the status as an float between 0 and 1 where 0 is the downer end and 1 the upper
         """
         if not self.active:
             return 0
+
         return (self.bar_position[1] - self.position[1]) / self.scroll_distance
 
     def set_status(self, status: float):

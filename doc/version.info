@@ -1706,3 +1706,4 @@ R   [uuk]: improved world serialization API
        with stuff
 [uuk]: fixed crash when deleting the home folder due to ModLoader trying a lookup where nothing to look at is found
 [uuk]: TagHandler.has_entry_tag will return now False when the tag does not exists instead of raising an exception
+[uuk]: button texture is now reloaded when needed

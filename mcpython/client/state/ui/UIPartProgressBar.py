@@ -16,11 +16,11 @@ import pyglet
 import pyglet.gl
 from mcpython.util.annotation import onlyInClient
 
-from . import UIPart
+from . import AbstractUIPart
 
 
 @onlyInClient()
-class UIPartProgressBar(UIPart.UIPart):
+class UIPartProgressBar(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,
         position,

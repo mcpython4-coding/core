@@ -21,7 +21,7 @@ import pyglet
 import pyglet.window.key
 from mcpython.util.annotation import onlyInClient
 
-from . import UIPart
+from . import AbstractUIPart
 
 ALL_PATTERN = None
 INT_PATTERN = "-0123456789."
@@ -29,7 +29,7 @@ INT_PATTERN_POSITIVE = INT_PATTERN[1:]
 
 
 @onlyInClient()
-class UIPartTextInput(UIPart.UIPart):
+class UIPartTextInput(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,
         size,

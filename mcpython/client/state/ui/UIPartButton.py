@@ -19,61 +19,76 @@ import pyglet
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.enums import ButtonMode
 from pyglet.window import mouse
+import mcpython.engine.event.EventHandler
 
-from . import UIPart
-
-image = mcpython.engine.ResourceLoader.read_pyglet_image("gui/widgets")
-disabled = image.get_region(2, 256 - 46 - 17, 196, 14)
-enabled = image.get_region(2, 256 - 66 - 17, 196, 14)
-hovering = image.get_region(2, 256 - 86 - 17, 196, 14)
-# enabled.save(shared.local+"/tmp/minecraft.png")  # only for debugging reasons
+from . import AbstractUIPart
 
 
-IMAGES = {
-    ButtonMode.DISABLED: disabled,
-    ButtonMode.ENABLED: enabled,
-    ButtonMode.HOVERING: hovering,
-}
+image = disabled = enabled = hovering = None
+IMAGES = {}
+
+
+def load_images():
+    global image, disabled, enabled, hovering
+
+    image = mcpython.engine.ResourceLoader.read_pyglet_image("gui/widgets")
+    disabled = image.get_region(2, 256 - 46 - 17, 196, 14)
+    enabled = image.get_region(2, 256 - 66 - 17, 196, 14)
+    hovering = image.get_region(2, 256 - 86 - 17, 196, 14)
+    # enabled.save(shared.local+"/tmp/minecraft.png")  # only for debugging reasons
+
+    IMAGES.update({
+        ButtonMode.DISABLED: disabled,
+        ButtonMode.ENABLED: enabled,
+        ButtonMode.HOVERING: hovering,
+    })
+
+
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "data:reload:work", load_images
+)
 
 
 @onlyInClient()
 def draw_button(position, size, mode):
     if mode not in IMAGES:
         mode = ButtonMode.DISABLED
-    sourceimage: pyglet.image.AbstractImage = IMAGES[mode]
-    w = size[0] // sourceimage.width
-    h = size[1] // sourceimage.height
+    source_image: pyglet.image.AbstractImage = IMAGES[mode]
+    w = size[0] // source_image.width
+    h = size[1] // source_image.height
     pyglet.gl.glColor3d(255, 255, 255)
+
     for x in range(w + 1):
         i = (
-            sourceimage
+            source_image
             if x != w
-            else sourceimage.get_region(
-                0, 0, size[0] % sourceimage.width, sourceimage.height
+            else source_image.get_region(
+                0, 0, size[0] % source_image.width, source_image.height
             )
         )
         for y in range(h + 1):
             ii = (
                 i
                 if y != h
-                else i.get_region(0, 0, i.width, size[1] % sourceimage.height)
+                else i.get_region(0, 0, i.width, size[1] % source_image.height)
             )
             try:
                 ii.blit(
-                    x * sourceimage.width + position[0],
-                    y * sourceimage.height + position[1],
+                    x * source_image.width + position[0],
+                    y * source_image.height + position[1],
                 )
             except ZeroDivisionError:
                 pass
             except TypeError:
                 pass
+
     mcpython.util.opengl.draw_line_rectangle(
         position, size, (0, 0, 0) if mode != ButtonMode.HOVERING else (255, 255, 255)
     )
 
 
 @onlyInClient()
-class UIPartButton(UIPart.UIPart):
+class UIPartButton(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,
         size,
@@ -87,7 +102,7 @@ class UIPartButton(UIPart.UIPart):
         on_press=None,
         on_hover=None,
         on_try_press=None,
-        enabled=True,
+        enable=True,
         has_hovering_state=True,
     ):
         """
@@ -101,7 +116,7 @@ class UIPartButton(UIPart.UIPart):
         :param on_press: called together with x and y on press on the button  todo: change to include button
         :param on_hover: called on every mouse move on the button with the mouse x and y
         :param on_try_press: called when the button is pressed during an in-active phase of the button with x and y
-        :param enabled: if the button should be enabled from the start
+        :param enable: if the button should be enabled from the start
         :param has_hovering_state: if the button has an state different from normal when the mouse is over it
         """
         super().__init__(
@@ -114,11 +129,11 @@ class UIPartButton(UIPart.UIPart):
         self.on_hover = on_hover
         self.on_try_press = on_try_press
 
-        self.enabled = enabled
+        self.enabled = enable
         self.has_hovering_state = has_hovering_state
         self.hovering = False
 
-        self.lable = pyglet.text.Label(text=text)
+        self.label = pyglet.text.Label(text=text)
         self.active = False
 
     def bind_to_eventbus(self):
@@ -163,12 +178,17 @@ class UIPartButton(UIPart.UIPart):
         )
         x, y = self.get_real_position()
         draw_button((x, y), self.bounding_box_size, mode)
-        self.lable.text = mcpython.common.Language.translate(self.text)
-        wx, wy = self.lable.content_width, self.lable.content_height
-        self.lable.x = x + self.bounding_box_size[0] // 2 - wx // 2
-        self.lable.y = y + self.bounding_box_size[1] // 2 - wy // 3
-        self.lable.font_size = self.bounding_box_size[1] // 2.0
-        self.lable.draw()
+
+        # todo: reconsider language only on reload & text change
+        self.label.text = mcpython.common.Language.translate(self.text)
+
+        # todo: update data only on change
+        wx, wy = self.label.content_width, self.label.content_height
+        self.label.x = x + self.bounding_box_size[0] // 2 - wx // 2
+        self.label.y = y + self.bounding_box_size[1] // 2 - wy // 3
+        self.label.font_size = self.bounding_box_size[1] // 2.0
+
+        self.label.draw()
 
 
 @onlyInClient()
@@ -181,7 +201,7 @@ class UIPartToggleButton(UIPartButton):
         toggle=mcpython.engine.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.LEFT
         ),
-        retoggle=mcpython.engine.event.EventInfo.MousePressEventInfo(
+        toggle_back=mcpython.engine.event.EventInfo.MousePressEventInfo(
             pyglet.window.mouse.RIGHT
         ),
         anchor_button="WS",
@@ -189,7 +209,7 @@ class UIPartToggleButton(UIPartButton):
         on_toggle=None,
         on_hover=None,
         on_try_press=None,
-        enabled=True,
+        enable=True,
         has_hovering_state=True,
         text_constructor="{}",
         start=0,
@@ -200,18 +220,18 @@ class UIPartToggleButton(UIPartButton):
         :param text_possibilities: the texts of the button
         :param position: the position of the button
         :param toggle: the EventInfo for mouse buttons and mods, no area to define, toggle forward
-        :param retoggle: the EventInfo for mouse buttons and mods, no area to define, toggle backwards
+        :param toggle_back: the EventInfo for mouse buttons and mods, no area to define, toggle backwards
         :param anchor_button: the anchor on the button
         :param anchor_window: the anchor on the window
         :param on_toggle: called when the button toggles, parameters: (from: str, to: str, direction: int, position:tuple)
         :param on_hover: called when the mouse is over the button
         :param on_try_press: called when button is disabled and the user presses the button
-        :param enabled: button should be clickable?
+        :param enable: button should be clickable?
         :param has_hovering_state: if the button gets blue when mouse is over it
         :param text_constructor: an string.format(item) or an function(item: str) -> str entry
         :param start: where in the array to start from
         """
-        UIPart.UIPart.__init__(
+        AbstractUIPart.AbstractUIPart.__init__(
             self,
             position,
             size,
@@ -223,7 +243,7 @@ class UIPartToggleButton(UIPartButton):
         self.index = start
         self.text = ""
         self.toggle: mcpython.engine.event.EventInfo.MousePressEventInfo = toggle
-        self.retoggle: mcpython.engine.event.EventInfo.MousePressEventInfo = retoggle
+        self.toggle_back: mcpython.engine.event.EventInfo.MousePressEventInfo = toggle_back
 
         self.on_toggle = on_toggle
         self.on_hover = on_hover
@@ -235,7 +255,7 @@ class UIPartToggleButton(UIPartButton):
             ("render:draw:2d", self.on_draw_2d),
         ]
 
-        self.enabled = enabled
+        self.enabled = enable
         self.has_hovering_state = has_hovering_state
         self.hovering = False
 
@@ -256,7 +276,7 @@ class UIPartToggleButton(UIPartButton):
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()
         sx, sy = self.bounding_box_size
-        self.toggle.area = self.retoggle.area = ((mx, my), (mx + sx, my + sy))
+        self.toggle.area = self.toggle_back.area = ((mx, my), (mx + sx, my + sy))
         if self.toggle.equals(x, y, button, modifiers):
             self.index += 1
             if self.index >= len(self.text_pages):
@@ -265,7 +285,7 @@ class UIPartToggleButton(UIPartButton):
             if self.on_toggle:
                 self.on_toggle(self.text, new, 1, (x, y))
             self.update_text()
-        elif self.retoggle.equals(x, y, button, modifiers):
+        elif self.toggle_back.equals(x, y, button, modifiers):
             self.index -= 1
             if self.index < 0:
                 self.index = len(self.text_pages) - 1
