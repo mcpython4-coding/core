@@ -50,9 +50,6 @@ class Tag:
                 and entry in self.master.tags
             ):
                 dep.append(entry)
-            else:
-                # todo: implement
-                self.entries.remove(entry)
         return dep
 
     def build(self):
