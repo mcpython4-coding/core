@@ -15,7 +15,7 @@ import time
 
 import clipboard
 import mcpython.client.state.AbstractStatePart
-import mcpython.common.Language
+import mcpython.common.data.Language
 import mcpython.util.opengl
 import pyglet
 import pyglet.window.key
@@ -62,7 +62,7 @@ class UIPartTextInput(AbstractUIPart.AbstractUIPart):
         self.lable.x, self.lable.y = x + 5, y + self.bounding_box_size[1] // 2
         if not self.selected and self.entered_text == "":
             if self.empty_overlay_text != "":
-                self.lable.text = mcpython.common.Language.translate(
+                self.lable.text = mcpython.common.data.Language.translate(
                     self.empty_overlay_text
                 )
                 self.lable.color = (150, 150, 150, 255)

@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.Language
+import mcpython.common.data.Language
 import mcpython.engine.event.EventHandler
 import mcpython.engine.event.EventInfo
 import mcpython.engine.ResourceLoader
@@ -181,7 +181,7 @@ class UIPartButton(AbstractUIPart.AbstractUIPart):
         draw_button((x, y), self.bounding_box_size, mode)
 
         # todo: reconsider language only on reload & text change
-        self.label.text = mcpython.common.Language.translate(self.text)
+        self.label.text = mcpython.common.data.Language.translate(self.text)
 
         # todo: update data only on change
         wx, wy = self.label.content_width, self.label.content_height
@@ -268,13 +268,13 @@ class UIPartToggleButton(UIPartButton):
     def update_text(self):
         text = self.text_pages[self.index]
         if type(self.text_constructor) == str:
-            self.text = mcpython.common.Language.translate(
+            self.text = mcpython.common.data.Language.translate(
                 self.text_constructor.format(text)
             )
         elif callable(self.text_constructor):
-            self.text = mcpython.common.Language.translate(self.text_constructor(text))
+            self.text = mcpython.common.data.Language.translate(self.text_constructor(text))
         else:
-            self.text = mcpython.common.Language.translate(text)
+            self.text = mcpython.common.data.Language.translate(text)
 
     def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()

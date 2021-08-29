@@ -70,9 +70,9 @@ def tag_mapper(modname, pathname):
 
 
 def language_mapper(modname, pathname):
-    import mcpython.common.Language
+    import mcpython.common.data.Language
 
-    mcpython.common.Language.from_mod_name(modname)
+    mcpython.common.data.Language.from_mod_name(modname)
 
 
 def loot_table_mapper(modname, pathname):

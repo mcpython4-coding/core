@@ -231,9 +231,9 @@ class LaunchWrapper:
 
         mcpython.common.data.ResourcePipe.load()
 
-        import mcpython.common.Language
+        import mcpython.common.data.Language
 
-        mcpython.common.Language.load()
+        mcpython.common.data.Language.load()
 
         return self
 

@@ -24,7 +24,7 @@ ACTIVE_LANGUAGE = "en_us"  # the active language
 
 def get(key: str, formatting=None):
     """
-    get the translated name for an given key
+    Get the translated name for a given key and applies a formatting when needed
     :param key: the key to get
     :param formatting: an list of formatting to use
     :return:
@@ -38,7 +38,7 @@ def get(key: str, formatting=None):
 
 def translate(s: str):
     """
-    translates an special string to an translated one
+    Translates a special string to a translated one, sections in *#...#* are put into get()
     :param s: an string defining it
     :return: the formatted string
     """
@@ -52,7 +52,8 @@ def translate(s: str):
 
 class Language:
     """
-    base class for language data
+    Base class for language data
+    Handles all translations of the language set
     """
 
     @classmethod

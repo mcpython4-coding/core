@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.Language
+import mcpython.common.data.Language
 import mcpython.engine.event.EventInfo
 import pyglet
 from mcpython.util.annotation import onlyInClient
@@ -86,5 +86,5 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
         self.lable.y = y + size[1] // 2 - wy // 2
         self.lable.color = self.color
         self.lable.font_size = self.text_size
-        self.lable.text = mcpython.common.Language.translate(self.text)
+        self.lable.text = mcpython.common.data.Language.translate(self.text)
         self.lable.draw()

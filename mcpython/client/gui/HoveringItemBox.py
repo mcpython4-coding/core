@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.container.ResourceStack
-import mcpython.common.Language
+import mcpython.common.data.Language
 import pyglet
 from mcpython import shared
 
@@ -78,7 +78,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
 
         item_name = itemstack.get_item_name()
         raw = self.localize_builder.format(*item_name.split(":"))
-        localized_name = mcpython.common.Language.get(raw)
+        localized_name = mcpython.common.data.Language.get(raw)
         if raw == localized_name:
             localized_name = itemstack.item.NAME
         if localized_name == "ConstructedItem":
@@ -99,7 +99,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
             ]
             + [
                 self.default_style.format(
-                    color="gray", text=mcpython.common.Language.translate(line)
+                    color="gray", text=mcpython.common.data.Language.translate(line)
                 )
                 for line in itemstack.item.get_additional_tooltip_text(itemstack, self)
             ]
