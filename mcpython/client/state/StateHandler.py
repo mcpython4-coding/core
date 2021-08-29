@@ -98,8 +98,8 @@ def load_states():
     from . import (
         BlockItemGeneratorState,
         EscapeMenuState,
-        GameState,
         GameInfoState,
+        GameState,
         ModLoadingProgressState,
         StartMenuState,
         WorldGenerationConfigState,

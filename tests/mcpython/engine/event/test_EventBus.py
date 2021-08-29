@@ -1,3 +1,16 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 from unittest import TestCase
 
 
@@ -14,7 +27,7 @@ class TestEventBus(TestCase):
         instance = mcpython.engine.event.EventBus.EventBus()
         self.assertEqual(instance.id, 10, "id read from shared")
         self.assertEqual(shared.NEXT_EVENT_BUS_ID, 11, "id increment on shared")
-    
+
     def test_subscribe(self):
         from mcpython.engine.event.EventBus import EventBus
 
@@ -39,18 +52,12 @@ class TestEventBus(TestCase):
 
         bus = EventBus()
 
-        self.assertRaises(
-            ValueError,
-            lambda: bus.unsubscribe("test_event", test)
-        )
+        self.assertRaises(ValueError, lambda: bus.unsubscribe("test_event", test))
 
         bus.subscribe("test_event", test)
         bus.unsubscribe("test_event", test)
 
-        self.assertRaises(
-            ValueError,
-            lambda: bus.unsubscribe("test_event", test)
-        )
+        self.assertRaises(ValueError, lambda: bus.unsubscribe("test_event", test))
 
     def test_call(self):
         from mcpython.engine.event.EventBus import EventBus
@@ -113,7 +120,7 @@ class TestEventBus(TestCase):
         self.assertTrue(state)
 
     def test_call_cancelable(self):
-        from mcpython.engine.event.EventBus import EventBus, CancelAbleEvent
+        from mcpython.engine.event.EventBus import CancelAbleEvent, EventBus
 
         calls = 0
 
@@ -146,10 +153,7 @@ class TestEventBus(TestCase):
         bus.call_as_stack("test_event")
 
         self.assertTrue(invoked)
-        self.assertRaises(
-            ValueError,
-            lambda: bus.unsubscribe("test_event", test)
-        )
+        self.assertRaises(ValueError, lambda: bus.unsubscribe("test_event", test))
 
     def test_call_as_stack_multi(self):
         from mcpython.engine.event.EventBus import EventBus
@@ -182,4 +186,3 @@ class TestEventBus(TestCase):
         bus.call_as_stack("test_event")
         bus.reset_event_stack("test_event")
         bus.unsubscribe("test_event", test)
-

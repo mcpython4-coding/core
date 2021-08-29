@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.common.event.TickHandler
-from mcpython.util.enums import LogAxis
 from mcpython.engine import logger
+from mcpython.util.enums import LogAxis
 
 
 class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
@@ -50,6 +50,8 @@ class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
             try:
                 self.axis = LogAxis[axis.upper()]
             except KeyError:
-                logger.println(f"[WARN] invalid log axis: {axis}; This indicates a world-save error!")
+                logger.println(
+                    f"[WARN] invalid log axis: {axis}; This indicates a world-save error!"
+                )
 
     DEBUG_WORLD_BLOCK_STATES = [{"axis": "x"}, {"axis": "y"}, {"axis": "z"}]

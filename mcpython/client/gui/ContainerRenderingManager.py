@@ -23,7 +23,9 @@ from mcpython.engine import logger
 from pyglet.window import key, mouse
 
 
-class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractStatePart):
+class OpenedInventoryStatePart(
+    mcpython.client.state.AbstractStatePart.AbstractStatePart
+):
     """
     class for inventories as state
     todo: make A LOT OF THINGS public and static
@@ -153,7 +155,9 @@ class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractS
         for inventory in shared.inventory_handler.opened_inventory_stack:
             ix, iy = inventory.get_position()
 
-            if inventory.on_mouse_button_press(x - ix, y - iy, button, modifiers, moving_itemstack, slot):
+            if inventory.on_mouse_button_press(
+                x - ix, y - iy, button, modifiers, moving_itemstack, slot
+            ):
                 return
 
         if slot is None:
@@ -172,13 +176,17 @@ class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractS
                 return
 
         elif button == mouse.MIDDLE:
-            if self.handle_middle_click(button, modifiers, moving_itemstack, slot, x, y):
+            if self.handle_middle_click(
+                button, modifiers, moving_itemstack, slot, x, y
+            ):
                 return
 
         if slot.assigned_inventory is not None:
             ix, iy = slot.assigned_inventory.position
 
-            if slot.assigned_inventory.on_mouse_button_press(x-ix, y-iy, button, modifiers, moving_itemstack):
+            if slot.assigned_inventory.on_mouse_button_press(
+                x - ix, y - iy, button, modifiers, moving_itemstack
+            ):
                 return
 
     def handle_shift_click(self, button, modifiers, slot, x, y):
@@ -198,8 +206,8 @@ class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractS
                     )
                 )
         if (
-                shared.inventory_handler.shift_container is not None
-                and shared.inventory_handler.shift_container.move_to_opposite(slot)
+            shared.inventory_handler.shift_container is not None
+            and shared.inventory_handler.shift_container.move_to_opposite(slot)
         ):
             return True
 
@@ -207,14 +215,14 @@ class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractS
 
     def handle_middle_click(self, button, modifiers, moving_itemstack, slot, x, y):
         if (
-                moving_itemstack.is_empty()
-                and shared.world.get_active_player().gamemode == 1
+            moving_itemstack.is_empty()
+            and shared.world.get_active_player().gamemode == 1
         ):
             shared.inventory_handler.moving_slot.set_itemstack(
                 slot.itemstack.copy().set_amount(slot.itemstack.item.STACK_SIZE)
             )
         elif shared.world.get_active_player().gamemode == 1 and slot.can_set_item(
-                moving_itemstack
+            moving_itemstack
         ):
             self.mode = 3
             self.on_mouse_drag(x, y, 0, 0, button, modifiers)
@@ -250,9 +258,7 @@ class OpenedInventoryStatePart(mcpython.client.state.AbstractStatePart.AbstractS
             if not slot.interaction_mode[0]:
                 return False
 
-            shared.inventory_handler.moving_slot.set_itemstack(
-                slot.itemstack.copy()
-            )
+            shared.inventory_handler.moving_slot.set_itemstack(slot.itemstack.copy())
             slot.clean_itemstack()
             slot.call_update(True)
 

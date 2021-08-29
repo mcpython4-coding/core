@@ -121,9 +121,7 @@ class WorldGenerationConfig(AbstractState.AbstractState):
         return (
             parts
             + text
-            + [
-                mcpython.client.state.ConfigBackgroundPart.ConfigBackground()
-            ]
+            + [mcpython.client.state.ConfigBackgroundPart.ConfigBackground()]
         )
 
     def is_auto_gen_enabled(self) -> bool:

@@ -38,7 +38,9 @@ class IStateConfigEntry(mcpython.common.event.Registry.IRegistryContent):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+        existing: typing.Union[
+            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+        ],
     ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         raise NotImplementedError()
 
@@ -60,7 +62,9 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+        existing: typing.Union[
+            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+        ],
     ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         import mcpython.client.state.ui.UIPartButton
 
@@ -115,7 +119,9 @@ class UILableStateConfigEntry(IStateConfigEntry):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+        existing: typing.Union[
+            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+        ],
     ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         import mcpython.client.state.ui.UIPartLabel
 
@@ -198,7 +204,9 @@ class ConfigBackground(IStateConfigEntry):
         cls,
         state_instance,
         data: dict,
-        existing: typing.Union[None, mcpython.client.state.AbstractStatePart.AbstractStatePart],
+        existing: typing.Union[
+            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+        ],
     ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
         import mcpython.client.state.ConfigBackgroundPart
 
@@ -207,9 +215,7 @@ class ConfigBackground(IStateConfigEntry):
             mcpython.client.state.ConfigBackgroundPart.ConfigBackground,
         ):
             return existing
-        return (
-            mcpython.client.state.ConfigBackgroundPart.ConfigBackground()
-        )
+        return mcpython.client.state.ConfigBackgroundPart.ConfigBackground()
 
 
 configs = {}
@@ -242,7 +248,8 @@ class StateConfigFile:
     def inject(
         self,
         state_instance: typing.Union[
-            mcpython.client.state.AbstractState.AbstractState, mcpython.client.state.AbstractStatePart.AbstractStatePart
+            mcpython.client.state.AbstractState.AbstractState,
+            mcpython.client.state.AbstractStatePart.AbstractStatePart,
         ],
     ):
         """

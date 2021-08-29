@@ -80,7 +80,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 block,
                 shared.world.get_active_player()
                 .get_active_inventory_slot()
-                .get_itemstack()
+                .get_itemstack(),
             )
 
     def __init__(
@@ -190,10 +190,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         selected_itemstack: mcpython.common.container.ResourceStack.ItemStack = (
             player.get_active_inventory_slot().get_itemstack()
         )
-        if (
-            shared.window.exclusive
-            and any(shared.window.mouse_pressing.values())
-        ):
+        if shared.window.exclusive and any(shared.window.mouse_pressing.values()):
             vector = shared.window.get_sight_vector()
             block_position, previous, hit_position = shared.world.hit_test(
                 player.position, vector
@@ -321,7 +318,9 @@ class GameView(AbstractStatePart.AbstractStatePart):
             and time.time() - self.set_cooldown > 1
         ):
             vector = shared.window.get_sight_vector()
-            block_position, previous, hit_position = shared.world.hit_test(player.position, vector)
+            block_position, previous, hit_position = shared.world.hit_test(
+                player.position, vector
+            )
             if (
                 shared.window.mouse_pressing[mouse.MIDDLE]
                 and block_position
@@ -425,7 +424,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         nx, _, nz = mcpython.util.math.normalize(player.position)
         ny = math.ceil(player.position[1])
         if player.gamemode in (0, 2) and shared.world.get_active_dimension().get_block(
-                (nx, ny, nz)
+            (nx, ny, nz)
         ):
             player.damage(dt)
 
@@ -444,9 +443,9 @@ class GameView(AbstractStatePart.AbstractStatePart):
             x, y, z = mcpython.util.math.normalize(player.position)
             block_inst = shared.world.get_active_dimension().get_block((x, y - 2, z))
             if (
-                    block_inst is not None
-                    and type(block_inst) != str
-                    and block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None
+                block_inst is not None
+                and type(block_inst) != str
+                and block_inst.CUSTOM_WALING_SPEED_MULTIPLIER is not None
             ):
                 speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
 
@@ -463,7 +462,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
             shared.window.dy = max(shared.window.dy, -TERMINAL_VELOCITY)
             dy += shared.window.dy * dt
         elif self.activate_keyboard and not (
-                shared.window.keys[key.SPACE] and shared.window.keys[key.LSHIFT]
+            shared.window.keys[key.SPACE] and shared.window.keys[key.LSHIFT]
         ):
             dy = (
                 dt * 6
@@ -479,7 +478,9 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         slot = player.get_active_inventory_slot()
         vector = shared.window.get_sight_vector()
-        block_position, previous, hit_position = shared.world.hit_test(player.position, vector)
+        block_position, previous, hit_position = shared.world.hit_test(
+            player.position, vector
+        )
         block = (
             shared.world.get_active_dimension().get_block(block_position)
             if block_position

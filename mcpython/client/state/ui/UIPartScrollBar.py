@@ -17,6 +17,7 @@ import PIL.Image
 import pyglet
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
+
 from .AbstractUIPart import AbstractUIPart
 
 IMAGE = mcpython.engine.ResourceLoader.read_image(
@@ -90,7 +91,8 @@ class UIScrollBar(AbstractUIPart):
         if not self.active:
             return
 
-        if self.bar_sprite.position != self.bar_position: self.bar_sprite.position = self.bar_position
+        if self.bar_sprite.position != self.bar_position:
+            self.bar_sprite.position = self.bar_position
         self.bar_sprite.draw()
 
     def get_status(self) -> float:

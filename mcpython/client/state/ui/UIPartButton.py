@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.Language
+import mcpython.engine.event.EventHandler
 import mcpython.engine.event.EventInfo
 import mcpython.engine.ResourceLoader
 import mcpython.util.opengl
@@ -19,10 +20,8 @@ import pyglet
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.enums import ButtonMode
 from pyglet.window import mouse
-import mcpython.engine.event.EventHandler
 
 from . import AbstractUIPart
-
 
 image = disabled = enabled = hovering = None
 IMAGES = {}
@@ -37,11 +36,13 @@ def load_images():
     hovering = image.get_region(2, 256 - 86 - 17, 196, 14)
     # enabled.save(shared.local+"/tmp/minecraft.png")  # only for debugging reasons
 
-    IMAGES.update({
-        ButtonMode.DISABLED: disabled,
-        ButtonMode.ENABLED: enabled,
-        ButtonMode.HOVERING: hovering,
-    })
+    IMAGES.update(
+        {
+            ButtonMode.DISABLED: disabled,
+            ButtonMode.ENABLED: enabled,
+            ButtonMode.HOVERING: hovering,
+        }
+    )
 
 
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
@@ -243,7 +244,9 @@ class UIPartToggleButton(UIPartButton):
         self.index = start
         self.text = ""
         self.toggle: mcpython.engine.event.EventInfo.MousePressEventInfo = toggle
-        self.toggle_back: mcpython.engine.event.EventInfo.MousePressEventInfo = toggle_back
+        self.toggle_back: mcpython.engine.event.EventInfo.MousePressEventInfo = (
+            toggle_back
+        )
 
         self.on_toggle = on_toggle
         self.on_hover = on_hover

@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 
 import cProfile
 
-import mcpython.client.state.StateHandler
 import mcpython.client.state.GameViewStatePart
+import mcpython.client.state.StateHandler
 import mcpython.common.config
 import mcpython.common.event.TickHandler
 import mcpython.engine.event.EventHandler

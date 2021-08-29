@@ -61,7 +61,15 @@ class ContainerRenderer(ABC):
         self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
         self.custom_name_label.anchor_y = "top"
 
-    def on_mouse_button_press(self, relative_x: int, relative_y: int, button: int, modifiers: int, item_stack, slot) -> bool:
+    def on_mouse_button_press(
+        self,
+        relative_x: int,
+        relative_y: int,
+        button: int,
+        modifiers: int,
+        item_stack,
+        slot,
+    ) -> bool:
         return False
 
     def reload_config(self):

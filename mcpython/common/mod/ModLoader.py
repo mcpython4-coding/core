@@ -18,11 +18,9 @@ import sys
 import time
 import typing
 import zipfile
-
 from abc import ABC
 
 import mcpython.common.config
-
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
 import mcpython.common.mod.ModLoadingStages
@@ -452,7 +450,8 @@ class ModLoader:
             sum(
                 [
                     [os.path.join(loc, file) for file in os.listdir(loc)]
-                    for loc in folders if os.path.exists(loc)
+                    for loc in folders
+                    if os.path.exists(loc)
                 ],
                 [],
             )

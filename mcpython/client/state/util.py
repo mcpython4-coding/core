@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import psutil
-
 from mcpython.client.state.ui import UIPartProgressBar
 
 
@@ -25,6 +24,5 @@ def update_memory_usage_bar(bar: UIPartProgressBar.UIPartProgressBar):
     bar.text = "Memory usage: {}MB/{}MB ({}%)".format(
         bar.progress // 2 ** 20,
         bar.progress_max // 2 ** 20,
-        round(bar.progress / bar.progress_max * 10000)
-        / 100,
+        round(bar.progress / bar.progress_max * 10000) / 100,
     )

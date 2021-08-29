@@ -18,18 +18,18 @@ import os
 import sys
 import typing
 
-from mcpython.client.gui.HoveringItemBox import DEFAULT_BLOCK_ITEM_TOOLTIP
 import mcpython.client.rendering.model.ItemModel as ItemModel
-from mcpython.client.state.ModLoadingProgressState import mod_loading
 import mcpython.common.event.TickHandler as TickHandler
-from mcpython.common.factory.ItemFactory import ItemFactory
 import mcpython.common.item.ItemManager as ItemManager
-from mcpython.common.mod.ModMcpython import minecraft
-from mcpython.engine.ResourceLoader import read_image
 import PIL.Image
 import pyglet
 from mcpython import shared
+from mcpython.client.gui.HoveringItemBox import DEFAULT_BLOCK_ITEM_TOOLTIP
+from mcpython.client.state.ModLoadingProgressState import mod_loading
+from mcpython.common.factory.ItemFactory import ItemFactory
+from mcpython.common.mod.ModMcpython import minecraft
 from mcpython.engine import logger
+from mcpython.engine.ResourceLoader import read_image
 from mcpython.util.annotation import onlyInClient
 
 from . import AbstractState, GameViewStatePart
@@ -300,7 +300,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
     def take_image(self, *args):
         if not self.got_draw_call:
-            pyglet.clock.schedule_once(self.take_image, 1/20)
+            pyglet.clock.schedule_once(self.take_image, 1 / 20)
             return
 
         if self.block_index >= len(self.tasks):
@@ -339,16 +339,14 @@ class BlockItemGenerator(AbstractState.AbstractState):
             .set_default_item_file(file)
             .set_name(block_name)
             .set_has_block_flag(True)
-            .set_tool_tip_renderer(
-                DEFAULT_BLOCK_ITEM_TOOLTIP
-            )
+            .set_tool_tip_renderer(DEFAULT_BLOCK_ITEM_TOOLTIP)
         )
         block = shared.world.get_active_dimension().get_block((0, 0, 0))
         if type(block) != str and block is not None:
             block.modify_block_item(obj)
 
         obj.finish()
-        
+
         model = ItemModel.ItemModel(block_name)
         model.addTextureLayer(0, file)
         ItemModel.handler.models[block_name] = model
