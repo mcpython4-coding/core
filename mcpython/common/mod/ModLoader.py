@@ -267,7 +267,11 @@ class TomlModLoader(DefaultModJsonBasedLoader):
         else:
             data = self.container.resource_access.read_raw("META-INF/mods.toml")
 
-        data = toml.loads(data.decode("utf-8"))
+        try:
+            data = toml.loads(data.decode("utf-8"))
+        except:
+            raise RuntimeError(self.container)
+
         self.raw_data = data
         self.load_from_data(data)
 

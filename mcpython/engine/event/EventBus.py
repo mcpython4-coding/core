@@ -108,6 +108,8 @@ class EventBus:
         :param args: arguments to give
         :param kwargs: kwargs to give
         """
+        from mcpython.common.mod.util import LoadingInterruptException
+
         if event_name not in self.event_subscriptions:
             return
 
@@ -122,6 +124,9 @@ class EventBus:
                 )
 
             except SystemExit:
+                raise
+
+            except LoadingInterruptException:
                 raise
 
             except MemoryError:  # Memory error is something fatal

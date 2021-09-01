@@ -262,8 +262,15 @@ manager.add_stage(
     LoadingStage("minecraft:loading_preparation", "preparation of loading")
     .add_event_stage("stage:pre")
     .add_event_stage("stage:mod:init", "stage:pre")
-    .update_order()
 )
+
+if shared.IS_CLIENT:
+    manager.stages["minecraft:loading_preparation"].add_event_stage(
+        "stage:client:work", "stage:mod:init"
+    ).update_order()
+else:
+    manager.stages["minecraft:loading_preparation"].update_order()
+
 manager.add_stage(
     LoadingStage(
         "minecraft:api_management",
@@ -484,7 +491,8 @@ if shared.IS_CLIENT:
         LoadingStage(
             "minecraft:textures", "preparing texture atlases", "minecraft:models"
         )
-        .add_event_stage("stage:textureatlas:on_bake")
+        .add_event_stage("stage:textureatlas:prepare")
+        .add_event_stage("stage:textureatlas:on_bake", "stage:textureatlas:prepare")
         .add_event_stage("stage:boxmodel:on_bake", "stage:textureatlas:on_bake")
         .add_event_stage("stage:block_boundingbox_get", "stage:boxmodel:on_bake")
         .update_order()

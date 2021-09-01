@@ -48,6 +48,7 @@ def load_images():
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", load_images
 )
+load_images()
 
 
 @onlyInClient()
@@ -134,7 +135,7 @@ class UIPartButton(AbstractUIPart.AbstractUIPart):
         self.has_hovering_state = has_hovering_state
         self.hovering = False
 
-        self.label = pyglet.text.Label(text=text)
+        self.lable = pyglet.text.Label(text=text)
         self.active = False
 
     def bind_to_eventbus(self):
@@ -181,15 +182,15 @@ class UIPartButton(AbstractUIPart.AbstractUIPart):
         draw_button((x, y), self.bounding_box_size, mode)
 
         # todo: reconsider language only on reload & text change
-        self.label.text = mcpython.common.data.Language.translate(self.text)
+        self.lable.text = mcpython.common.data.Language.translate(self.text)
 
         # todo: update data only on change
-        wx, wy = self.label.content_width, self.label.content_height
-        self.label.x = x + self.bounding_box_size[0] // 2 - wx // 2
-        self.label.y = y + self.bounding_box_size[1] // 2 - wy // 3
-        self.label.font_size = self.bounding_box_size[1] // 2.0
+        wx, wy = self.lable.content_width, self.lable.content_height
+        self.lable.x = x + self.bounding_box_size[0] // 2 - wx // 2
+        self.lable.y = y + self.bounding_box_size[1] // 2 - wy // 3
+        self.lable.font_size = self.bounding_box_size[1] // 2.0
 
-        self.label.draw()
+        self.lable.draw()
 
 
 @onlyInClient()
@@ -272,7 +273,9 @@ class UIPartToggleButton(UIPartButton):
                 self.text_constructor.format(text)
             )
         elif callable(self.text_constructor):
-            self.text = mcpython.common.data.Language.translate(self.text_constructor(text))
+            self.text = mcpython.common.data.Language.translate(
+                self.text_constructor(text)
+            )
         else:
             self.text = mcpython.common.data.Language.translate(text)
 

@@ -1709,3 +1709,4 @@ R   [uuk]: improved world serialization API
 [uuk]: button texture is now reloaded when needed
 [uuk]: fixed tag loading not working correctly, leading to empty creative tabs
 [uuk]: added an mouse press event to ContainerRenderer, used in creative tabs for discarding items
+[github]: released snapshot 21w35a

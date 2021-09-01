@@ -51,25 +51,30 @@ class TickHandler:
         while self.lost_time > 1 / 20:
             self.lost_time -= 1 / 20
             if self.active_tick in self.tick_array:
-                for ticketid, function, args, kwargs, ticketupdate in self.tick_array[
+                for ticket_id, function, args, kwargs, ticket_update in self.tick_array[
                     self.active_tick
                 ]:
                     result = function(*args, **kwargs)
-                    if ticketid:
-                        self.results[ticketid] = result
-                        ticketupdate(self, ticketid, function, args, kwargs)
+                    if ticket_id:
+                        self.results[ticket_id] = result
+                        ticket_update(self, ticket_id, function, args, kwargs)
+
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
                     return
+
         shared.entity_manager.tick(dt)
         shared.inventory_handler.tick(dt)
         shared.world.tick()
+        shared.event_handler.call("tickhandler:general")
+
         # todo: include command info here!
         mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:tick", None
         )
         if self.enable_random_ticks:
             pyglet.clock.schedule_once(self.send_random_ticks, 0)
+
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
             try:
