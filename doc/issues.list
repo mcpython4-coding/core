@@ -108,10 +108,7 @@ issue 199:  [removed with save rework]
     fix: add them to the storage system and re-assign on load
 
 issue 217:  [removed with save rework]
-    bug: chest content can get lost [see warnings in log]
-
-issue 218: [removed when command rework]
-    bug: game crashes when using e.g. "/tp @s 10 10 10" in chat
+    bug: certain save data, including chest content, can get lost when loading a world [see warnings in log]
 
 issue 235:
     bug: tools are CONSUMED when using them

@@ -283,13 +283,16 @@ manager.add_stage(
 )
 manager.add_stage(
     LoadingStage(
-        "minecraft:loading_stage_addition",
+        "minecraft:loading_system_manipulation",
         "adding custom loading stages",
         "minecraft:loading_preparation",
     )
     .add_event_stage("stage:addition_of_stages")
     .add_event_stage(
         "stage:addition_of_stages:update_order", "stage:addition_of_stages"
+    )
+    .add_event_stage(
+        "stage:registry_addition"
     )
     .update_order()
 )

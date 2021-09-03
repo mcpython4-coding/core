@@ -1710,3 +1710,6 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed tag loading not working correctly, leading to empty creative tabs
 [uuk]: added an mouse press event to ContainerRenderer, used in creative tabs for discarding items
 [github]: released snapshot 21w35a
+
+[github]: start of development cycle for 21w??a
+[uuk]: dumped pillow version, allowing for python 3.10

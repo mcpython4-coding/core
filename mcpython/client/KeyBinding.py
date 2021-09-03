@@ -20,7 +20,7 @@ from pyglet.window import key, mouse
 @onlyInClient()
 class KeyMouseBinding:
     """
-    class holding an key or mouse binding
+    Class holding a key or mouse binding
     """
 
     def __init__(
