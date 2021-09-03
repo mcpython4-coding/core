@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.common.world.AbstractInterface
 
@@ -40,7 +41,7 @@ class LayerConfig:
         return self
 
 
-class ILayer(mcpython.common.event.Registry.IRegistryContent):
+class ILayer(mcpython.common.event.api.IRegistryContent):
     """
     Implementation for each layer in generation code.
     An layer is an step in the generation code

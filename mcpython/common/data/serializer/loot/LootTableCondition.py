@@ -14,11 +14,12 @@ This project is not official by mojang and does not relate to it.
 import random
 
 import mcpython.common.entity.DamageSource
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython import shared
 
 
-class ILootTableCondition(mcpython.common.event.Registry.IRegistryContent):
+class ILootTableCondition(mcpython.common.event.api.IRegistryContent):
     TYPE = "minecraft:loot_table_condition"
 
     def __init__(self, data: dict):

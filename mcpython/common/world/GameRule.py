@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython import shared
 
@@ -77,7 +78,7 @@ class GameRuleTypeInt(GameRuleDataType):
         self.status = data
 
 
-class GameRule(mcpython.common.event.Registry.IRegistryContent):
+class GameRule(mcpython.common.event.api.IRegistryContent):
     TYPE = "minecraft:game_rule"
     VALUE_TYPE = GameRuleDataType
     DEFAULT_VALUE = None

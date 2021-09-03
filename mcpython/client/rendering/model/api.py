@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.util
 import mcpython.util.enums
@@ -34,7 +35,7 @@ class IBlockStateRenderingTarget:
         pass
 
 
-class IBlockStateDecoder(mcpython.common.event.Registry.IRegistryContent, ABC):
+class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
     """
     Abstract base class for block state decoders
 

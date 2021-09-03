@@ -14,13 +14,14 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.feature.IFeature
 import mcpython.server.worldgen.feature.IOre
 
 
-class Biome(mcpython.common.event.Registry.IRegistryContent, ABC):
+class Biome(mcpython.common.event.api.IRegistryContent, ABC):
     """
     Abstract base class for biomes
     Defines the look of the biome

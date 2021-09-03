@@ -15,6 +15,7 @@ import copy
 import typing
 from abc import ABC
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython import shared
 from mcpython.engine import logger
@@ -321,7 +322,7 @@ class FactoryBuilder:
     def __init__(
         self,
         name: str,
-        base_class: typing.Type[mcpython.common.event.Registry.IRegistryContent],
+        base_class: typing.Type[mcpython.common.event.api.IRegistryContent],
         do_with_results=shared.registry.__call__,
     ):
         self.name = name

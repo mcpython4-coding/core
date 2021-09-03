@@ -14,11 +14,12 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.container.crafting.IRecipe
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython.common.container.ResourceStack import ItemStack
 
 
-class IRecipeUser(mcpython.common.event.Registry.IRegistryContent):
+class IRecipeUser(mcpython.common.event.api.IRegistryContent):
     """
     Abstract marker for a thing supporting recipes.
     Any recipe may be linked. There may be none recipe linked.

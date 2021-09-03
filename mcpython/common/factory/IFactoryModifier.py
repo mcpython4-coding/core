@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 
 
@@ -23,8 +24,8 @@ class IFactoryModifier:
     def on_apply(
         self,
         target: typing.Callable[
-            [typing.Any, mcpython.common.event.Registry.IRegistryContent],
-            mcpython.common.event.Registry.IRegistryContent,
+            [typing.Any, mcpython.common.event.api.IRegistryContent],
+            mcpython.common.event.api.IRegistryContent,
         ],
     ):
         self.subscriber.append(target)
@@ -32,8 +33,8 @@ class IFactoryModifier:
     def apply(
         self,
         factory,
-        instance: mcpython.common.event.Registry.IRegistryContent,
-    ) -> mcpython.common.event.Registry.IRegistryContent:
+        instance: mcpython.common.event.api.IRegistryContent,
+    ) -> mcpython.common.event.api.IRegistryContent:
         for target in self.subscriber:
             instance = target(factory, instance)
         return instance

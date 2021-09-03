@@ -17,13 +17,14 @@ import uuid
 import mcpython.common.container.ResourceStack
 import mcpython.common.entity.DamageSource
 import mcpython.common.entity.EntityManager
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.util.math
 from mcpython import shared
 from mcpython.engine import logger
 
 
-class AbstractEntity(mcpython.common.event.Registry.IRegistryContent):
+class AbstractEntity(mcpython.common.event.api.IRegistryContent):
     """
     Dummy class for every entity,
     only used by the player at the moment (as no more entities are implemented)

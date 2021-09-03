@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython import shared
 
@@ -23,7 +24,7 @@ class MissingSaveException(Exception):
     pass
 
 
-class IDataSerializer(mcpython.common.event.Registry.IRegistryContent):
+class IDataSerializer(mcpython.common.event.api.IRegistryContent):
     """
     Serializer class for any stuff saved in the game files.
     Used for accessing the data and loading it into an way that the game can understand it.

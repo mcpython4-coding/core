@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 
@@ -51,7 +52,7 @@ class FeatureDefinition:
         self.config = {} if config is None else config
 
 
-class IFeature(mcpython.common.event.Registry.IRegistryContent):
+class IFeature(mcpython.common.event.api.IRegistryContent):
     TYPE = "minecraft:generation_feature"
 
     @classmethod

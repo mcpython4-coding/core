@@ -291,9 +291,7 @@ manager.add_stage(
     .add_event_stage(
         "stage:addition_of_stages:update_order", "stage:addition_of_stages"
     )
-    .add_event_stage(
-        "stage:registry_addition"
-    )
+    .add_event_stage("stage:registry_addition")
     .update_order()
 )
 manager.add_stage(
@@ -318,18 +316,20 @@ manager.add_stage(
 )
 manager.add_stage(
     LoadingStage(
-        "minecraft:combined_factories",
-        "working on combined factories",
+        "minecraft:deferred_registries",
+        "Filling deferred registries",
         "minecraft:configs",
         "minecraft:additional_resource_locations",
     )
-    .add_event_stage("stage:combined_factory:blocks")
+    .add_event_stage("stage:deferred:fill")
+    # These are only here as this is a phase before the special registry phases
+    .add_event_stage("stage:combined_factory:blocks", "stage:deferred:fill")
     .add_event_stage("stage:combined_factory:build", "stage:combined_factory:blocks")
     .update_order()
 )
 manager.add_stage(
     LoadingStage(
-        "minecraft:fluids", "loading fluid definitions", "minecraft:combined_factories"
+        "minecraft:fluids", "loading fluid definitions", "minecraft:deferred_registries"
     )
     .add_event_stage("stage:fluids:register")
     .update_order()
@@ -338,7 +338,7 @@ manager.add_stage(
     LoadingStage(
         "minecraft:blocks",
         "loading blocks",
-        "minecraft:combined_factories",
+        "minecraft:deferred_registries",
         "minecraft:fluids",
     )
     .add_event_stage("stage:block:factory:prepare")
@@ -354,7 +354,7 @@ manager.add_stage(
     LoadingStage(
         "minecraft:items",
         "loading items",
-        "minecraft:combined_factories",
+        "minecraft:deferred_registries",
         "minecraft:fluids",
     )
     .add_event_stage("stage:item:factory:prepare")

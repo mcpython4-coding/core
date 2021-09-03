@@ -20,6 +20,7 @@ import mcpython.client.gui.Slot
 import mcpython.common.block.BoundingBox
 import mcpython.common.block.FaceInfo
 import mcpython.common.container.ResourceStack
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.util.enums
 from mcpython import shared
@@ -42,7 +43,7 @@ if shared.IS_CLIENT:
     import mcpython.client.rendering.model.api
 
     class parent(
-        mcpython.common.event.Registry.IRegistryContent,
+        mcpython.common.event.api.IRegistryContent,
         mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
     ):
         def __init__(self):
@@ -52,7 +53,7 @@ if shared.IS_CLIENT:
 
 
 else:
-    parent = mcpython.common.event.Registry.IRegistryContent
+    parent = mcpython.common.event.api.IRegistryContent
 
 
 class AbstractBlock(parent):

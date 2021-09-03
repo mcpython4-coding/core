@@ -1713,3 +1713,8 @@ R   [uuk]: improved world serialization API
 
 [github]: start of development cycle for 21w??a
 [uuk]: dumped pillow version, allowing for python 3.10
+[uuk]: DeferredRegistryPipe accepts now also un-"finish"-ed IFactory objects
+       (that things you get when creating a Factory instance from a FactoryBuilder)
+[uuk]: added a event phase for deferred registries
+[uuk]: removed asyncm framework, we don't use it currently, may use it later down the road, but maybe as an extra
+       package

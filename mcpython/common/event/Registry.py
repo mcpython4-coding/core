@@ -12,53 +12,51 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
-from abc import ABC
 
 import mcpython.common.data.serializer.tags.ITagTarget
 import mcpython.engine.event.EventHandler
 from mcpython import shared
+from mcpython.common.event.api import AbstractRegistry, IRegistryContent
+from mcpython.common.event.DeferredRegistryHelper import DeferredRegistryPipe
 from mcpython.engine import logger
 
 
-class IRegistryContent(mcpython.common.data.serializer.tags.ITagTarget.ITagTarget):
-    NAME = "minecraft:unknown_registry_content"
-    TYPE = "minecraft:unknown_registry_content_type"
+class Registry(AbstractRegistry):
+    """
+    One registry for one object-type
 
-    @classmethod
-    def on_register(cls, registry):
-        pass
+    Holds information about it and does some magic to handle it
 
-    INFO = None  # can be used to display any special info in e.g. /registryinfo-command
+    Supports "XY" in registry and registry["XY"], but no write this way
+    """
 
-    # returns some information about the class stored in registry. used in saves to determine if registry was changed,
-    # so could also include an version. Must be pickle-able
-    @classmethod
-    def compressed_info(cls):
-        return cls.NAME
-
-
-class Registry:
     def __init__(
         self,
         name: str,
         registry_type_names: list,
-        phase: typing.Optional[str],
+        phase: typing.Optional[str] = None,
         injection_function=None,
         allow_argument_injection=False,
         class_based=True,
         dump_content_in_saves=True,
+        register_to_shared_registry=True,
     ):
+        super().__init__()
+
         self.name = name
         self.phase = phase
         self.registry_type_names = registry_type_names
         self.injection_function = injection_function
         self.allow_argument_injection = allow_argument_injection
+
         self.entries = {}
         self.full_entries = {}
-        self.locked = False
+
         self.class_based = class_based
-        shared.registry.registries[name] = self
         self.dump_content_in_saves = dump_content_in_saves
+
+        if register_to_shared_registry:
+            shared.registry.registries[name] = self
 
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "mod_loader:load_finished", self.lock
@@ -76,38 +74,44 @@ class Registry:
     def register(
         self,
         obj: typing.Union[IRegistryContent, typing.Type[IRegistryContent]],
-        override_existing=True,
+        overwrite_existing=True,
     ):
         """
         Registers an obj to this registry
+
+        When locked, a RuntimeError is raised
+        When an object with the name exists, and overwrite_existing is False, a RuntimeError is raised
+        When the object does not extend IRegistryContent, a ValueError is raised
+        When the object NAME-attribute is not set, a ValueError is raised
         """
+
         if self.locked:
-            logger.print_stack(
-                "[WARN] can't register object '{}' to locked registry '{}'. Skipping registering...".format(
-                    obj, self.name
-                )
+            raise RuntimeError(f"registry {self.name} is locked!")
+
+        if not (
+            isinstance(obj, IRegistryContent)
+            if not self.class_based
+            else issubclass(obj, IRegistryContent)
+        ):
+            raise ValueError(
+                f"can only register stuff created from IRegistryContent, not {obj}"
             )
-            return
 
         if obj.NAME == "minecraft:unknown_registry_content":
-            logger.print_stack(
-                "can't register unnamed object '{}'".format(obj),
-                "every registry object MUST have an unique name",
+            raise ValueError(
+                f"object {obj} has no name set, and as such cannot be registered!"
             )
-            return
 
-        if obj.NAME in self.entries and not override_existing:
-            logger.println(
-                "[INFO] skipping register of {} named '{}' into registry '{}' as currently arrival".format(
-                    obj, obj.NAME, self.name
-                )
+        if obj.NAME in self.entries and not overwrite_existing:
+            raise RuntimeError(
+                f"could not register object {obj.NAME} ({obj}) into registry {self.name} as an object with this name exists"
             )
-            return
 
         self.entries[obj.NAME] = obj
         self.full_entries[obj.NAME] = obj
 
-        if hasattr(obj.NAME, "split"):
+        # todo: what to do if an object exists HERE?
+        if isinstance(obj.NAME, str):
             self.full_entries[obj.NAME.split(":")[-1]] = obj
 
         if self.injection_function:
@@ -158,46 +162,24 @@ class RegistryHandler:
     def __init__(self):
         self.registries = {}
 
-    def __call__(self, *args, **kwargs):
-        if len(args) == len(kwargs) == 0:
-            raise ValueError("can't register. no object provided")
-
-        elif len(args) > 1 or len(kwargs) > 0:  # create an injectable object instance
-            return RegistryInjectionHolder(*args, **kwargs)
-
-        elif type(args[0]) == RegistryInjectionHolder:
-            if not issubclass(args[0].inhectable, IRegistryContent):
-                raise ValueError(
-                    "can't register. Object {} is NO sub-class of IRegistryContent".format(
-                        args[0].injectable
-                    )
-                )
-            for registry in self.registries.values():
-                if registry.allow_argument_injection and registry.is_valid(
-                    args[0].injectable
-                ):
-                    registry.register(args[0])
-                return args[0].injectable
+    def __call__(self, obj):
+        if not issubclass(obj, IRegistryContent):
             raise ValueError(
-                "could not register entry {} as no registry was found".format(args[0])
+                "can't register. Object {} is NO sub-class of IRegistryContent".format(
+                    obj
+                )
             )
 
-        else:
-            if not issubclass(args[0], IRegistryContent):
-                raise ValueError(
-                    "can't register. Object {} is NO sub-class of IRegistryContent".format(
-                        args[0]
-                    )
-                )
-            for registry in self.registries.values():
-                if registry.is_valid(args[0]):
-                    registry.register(args[0])
-                    return args[0]
-            raise ValueError(
-                "could not register entry {} as no registry for type '{}' was found".format(
-                    args[0], args[0].TYPE
-                )
+        for registry in self.registries.values():
+            if registry.is_valid(obj):
+                registry.register(obj)
+                return obj
+
+        raise ValueError(
+            "could not register entry {} as no registry for type '{}' was found".format(
+                obj, obj.TYPE
             )
+        )
 
     def get_by_name(self, name: str) -> typing.Optional[Registry]:
         return None if name not in self.registries else self.registries[name]
@@ -205,7 +187,7 @@ class RegistryHandler:
     def register(self, *args, **kwargs):
         return self(*args, **kwargs)
 
-    def async_register(self, mod: str, phase: str):
+    def delayed_register(self, mod: str, phase: str):
         return lambda obj: shared.mod_loader(mod, phase)(lambda: self.register(obj))
 
     def create_deferred(self, registry: str, mod_name: str):
@@ -233,16 +215,3 @@ class RegistryHandler:
 
 
 shared.registry = RegistryHandler()
-
-
-class DeferredRegistryPipe:
-    """
-    Base class for deferred registries
-    """
-
-    def __init__(self, registry: Registry, modname: str):
-        self.registry = registry
-        self.modname = modname
-
-    def run_later(self, lazy: typing.Callable[[], IRegistryContent]):
-        shared.mod_loader(self.modname, self.registry.phase)(lazy)

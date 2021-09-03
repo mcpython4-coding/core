@@ -15,7 +15,7 @@ import typing
 from abc import ABC
 
 from mcpython import shared
-from mcpython.common.event.Registry import IRegistryContent
+from mcpython.common.event.api import IRegistryContent
 from mcpython.util.annotation import onlyInClient
 
 

@@ -15,11 +15,12 @@ import json
 import typing
 from abc import ABC
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython.common.container.ResourceStack import ItemStack
 
 
-class IRecipe(mcpython.common.event.Registry.IRegistryContent, ABC):
+class IRecipe(mcpython.common.event.api.IRegistryContent, ABC):
     """
     Base class for recipes
 

@@ -15,6 +15,7 @@ import typing
 
 import mcpython.client.state.AbstractState
 import mcpython.client.state.AbstractStatePart
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
@@ -24,7 +25,7 @@ from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()
-class IStateConfigEntry(mcpython.common.event.Registry.IRegistryContent):
+class IStateConfigEntry(mcpython.common.event.api.IRegistryContent):
     """
     base class for every entry in an config file
     """

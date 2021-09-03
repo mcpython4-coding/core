@@ -14,12 +14,13 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
+import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.common.world.AbstractInterface
 from mcpython import shared
 
 
-class AbstractFluid(mcpython.common.event.Registry.IRegistryContent, ABC):
+class AbstractFluid(mcpython.common.event.api.IRegistryContent, ABC):
     """
     Abstract class defining fluid behaviour
     This is the stuff referenced by FluidStacks
