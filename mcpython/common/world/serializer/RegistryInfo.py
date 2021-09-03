@@ -45,9 +45,11 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
                 type_change_builder.println(
                     "registry {} not dumped in save files".format(registry.name)
                 )
+
             else:
                 entries = data[registry.name]
                 del data[registry.name]
+
                 for obj in registry.entries.values():
                     compressed = obj.compressed_info()
                     if compressed not in entries:
@@ -56,10 +58,12 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
                         )
                     else:
                         entries.remove(compressed)
+
                 for compressed in entries:
                     registry_miss_match[registry.name].append(
                         "missing object: {}".format(compressed)
                     )
+
         for name in data:
             type_change_builder.println("missing registry: {}".format(name))
 

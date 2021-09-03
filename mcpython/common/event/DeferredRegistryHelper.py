@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared
-from mcpython.common.event.api import IRegistryContent, AbstractRegistry
+from mcpython.common.event.api import AbstractRegistry, IRegistryContent
 
 
 class DeferredRegistryPipe:
@@ -24,13 +24,19 @@ class DeferredRegistryPipe:
 
     def __init__(self, registry: AbstractRegistry, modname: str = "minecraft"):
         if registry.phase is None:
-            raise ValueError("registry defines no phase to fill it in, so deferred registration does not work!")
+            raise ValueError(
+                "registry defines no phase to fill it in, so deferred registration does not work!"
+            )
 
         self.registry = registry
         self.modname = modname
 
     def register_later(self, lazy: typing.Callable[[], IRegistryContent]):
-        shared.mod_loader(self.modname, self.registry.phase)(lambda: self.registry.register(lazy()))
+        shared.mod_loader(self.modname, self.registry.phase)(
+            lambda: self.registry.register(lazy())
+        )
 
     def create_later(self, factory_instance):
-        shared.mod_loader(self.modname, self.registry.phase)(lambda: factory_instance.finish())
+        shared.mod_loader(self.modname, self.registry.phase)(
+            lambda: factory_instance.finish()
+        )

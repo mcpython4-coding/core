@@ -34,31 +34,21 @@ class IDataSerializer(mcpython.common.event.api.IRegistryContent):
     PART = None  # which part it can serialize
 
     @classmethod
-    def load(cls, save_file, **kwargs):
+    def load(cls, save_file, *args, **kwargs):
         """
         Loads stuff into the game
         :param save_file: the SaveFile object to use
-        :param kwargs: the configuration
         """
         raise NotImplementedError()
 
     @classmethod
-    def save(cls, data, save_file, **kwargs):
+    def save(cls, data, save_file, *args, **kwargs):
         """
         Saves data into the storage file
         :param data: the data to save
         :param save_file: the SaveFile object to save
-        :param kwargs: the configuration
         """
         raise NotImplementedError()
-
-    @classmethod
-    def apply_part_fixer(cls, save_file, fixer):
-        """
-        Handler function for applying PartFixer instances into the given system
-        :param save_file: the SaveFile used
-        :param fixer: the fixer instance
-        """
 
 
 data_serializer_registry = mcpython.common.event.Registry.Registry(

@@ -92,6 +92,3 @@ class IPartFixer(IDataFixer, ABC):
         by TARGET_SERIALIZER_NAME
         Mods may want to override this method when doing other special stuff
         """
-        save_file.get_serializer_for(cls.TARGET_SERIALIZER_NAME).apply_part_fixer(
-            save_file, cls, *args, **kwargs
-        )

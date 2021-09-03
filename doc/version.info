@@ -1718,3 +1718,4 @@ R   [uuk]: improved world serialization API
 [uuk]: added a event phase for deferred registries
 [uuk]: removed asyncm framework, we don't use it currently, may use it later down the road, but maybe as an extra
        package
+[uuk]: changed some bits of the world serializer system, including its API

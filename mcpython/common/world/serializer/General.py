@@ -23,49 +23,9 @@ from mcpython import shared
 from mcpython.engine import logger
 
 
-class WorldConfigFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
-    """
-    Class representing an fix for the config-entry
-    """
-
-    TARGET_SERIALIZER_NAME = "minecraft:general_config"
-
-    @classmethod
-    def fix(cls, save_file, data: dict) -> dict:
-        raise NotImplementedError()
-
-
-class WorldGeneralFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
-    """
-    Class representing an fix for the config-entry
-    """
-
-    TARGET_SERIALIZER_NAME = "minecraft:general"
-
-    @classmethod
-    def fix(cls, save_file, data: dict) -> dict:
-        raise NotImplementedError()
-
-
 @shared.registry
 class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:general"
-
-    @classmethod
-    def apply_part_fixer(cls, save_file, fixer):
-        # when it is another version, loading MAY fail
-        if save_file.version != mcpython.common.world.SaveFile.LATEST_VERSION:
-            return
-
-        if issubclass(fixer, WorldConfigFixer):
-            data = save_file.access_file_json("level.json")
-            data["config"] = fixer.fix(save_file, data["config"])
-            save_file.write_file_json("level.json", data)
-
-        elif issubclass(fixer, WorldGeneralFixer):
-            data = save_file.access_file_json("level.json")
-            data = fixer.fix(save_file, data)
-            save_file.write_file_json("level.json", data)
 
     @classmethod
     def load(cls, save_file):

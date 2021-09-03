@@ -18,44 +18,9 @@ import mcpython.common.world.datafixers.IDataFixer
 from mcpython import shared
 
 
-class PlayerDataFixer(mcpython.common.world.datafixers.IDataFixer.IPartFixer):
-    """
-    fixer for fixing player data
-    """
-
-    TARGET_SERIALIZER_NAME = "minecraft:player_data"
-
-    @classmethod
-    def fix(cls, savefile, player, data) -> dict:
-        """
-        will apply the fix
-        :param savefile: the savefile to use
-        :param player: the player used or None if not provided
-        :param data: the data used
-        :return: the fixed data
-        """
-
-
 @shared.registry
 class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:player_data"
-
-    @classmethod
-    def apply_part_fixer(cls, save_file, fixer):
-        if issubclass(fixer, PlayerDataFixer):
-            data = save_file.access_file_json("players.json")
-            for name in data:
-                player_data = data[name]
-                player = (
-                    shared.world.players[name]
-                    if name not in shared.world.players
-                    else None
-                )
-                player_data = fixer.fix(save_file, player, player_data)
-                data[name] = player_data
-            save_file.dump_file_json("players.json", data)
-        else:
-            raise ValueError(f"invalid part fixer for player data: {fixer}")
 
     @classmethod
     def load(cls, save_file, **_):
