@@ -59,7 +59,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         # Temporary storage for the information in the json file for later runs
         self.table = []
 
-        self.got_draw_call = False
+        self.draw_calls_since_last_take = 0
 
     def get_parts(self) -> list:
         kwargs = {}
@@ -98,7 +98,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
     def on_draw_2d_pre(self):
         update_memory_usage_bar(self.memory_bar)
 
-        self.got_draw_call = True
+        self.draw_calls_since_last_take += 1
 
     def bind_to_eventbus(self):
         # Helper code for event bus annotations
@@ -293,13 +293,13 @@ class BlockItemGenerator(AbstractState.AbstractState):
             self.block_index + 1, len(self.tasks), self.tasks[self.block_index]
         )
 
-        self.got_draw_call = False
+        self.draw_calls_since_last_take = 0
 
         pyglet.clock.schedule_once(self.take_image, self.SETUP_TIME / 20)
         dimension.get_chunk(0, 0, generate=False).is_ready = True
 
     def take_image(self, *args):
-        if not self.got_draw_call:
+        if self.draw_calls_since_last_take < 2:
             pyglet.clock.schedule_once(self.take_image, 1 / 20)
             return
 
