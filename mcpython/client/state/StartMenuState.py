@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.client.state.AbstractState
-import mcpython.client.state.WorldListState
 import mcpython.common.mod.ModMcpython
 import pyglet
 from mcpython import shared
@@ -53,6 +52,10 @@ class StartMenu(mcpython.client.state.AbstractState.AbstractState):
             shared.state_handler.change_state(
                 "minecraft:world_selection", immediate=False
             )
+
+    @staticmethod
+    def on_multiplayer_press(x, y):
+        shared.state_handler.change_state("minecraft:server_selection")
 
 
 start_menu = None

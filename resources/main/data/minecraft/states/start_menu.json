@@ -18,6 +18,15 @@
       "anchor_but": "MM",
       "on_press": "on_new_game_press"
     },
+    "game_multi_player": {
+      "type": "minecraft:ui_button_default",
+      "size": [200, 15],
+      "text": "Multiplayer",
+      "position": [0, 40],
+      "anchor_win": "MM",
+      "anchor_but": "MM",
+      "on_press": "on_multiplayer_press"
+    },
     "game_quit": {
       "type": "minecraft:ui_button_default",
       "size": [200, 15],

@@ -48,6 +48,10 @@ class StateHandler:
         :param state_name: the name to switch to
         :param immediate: now or next scheduled event cycle (so afterwards), defaults to True
         """
+        if state_name not in self.states:
+            logger.print_stack("state '{}' does not exists".format(state_name))
+            return
+
         if immediate:
             self.inner_change_state(state_name)
         else:
@@ -56,12 +60,13 @@ class StateHandler:
             )
 
     def inner_change_state(self, state_name: str):
-        if state_name not in self.states:
-            logger.print_stack("state '{}' does not exists".format(state_name))
-            sys.exit(-10)
+        """
+        Internal change_state
+
+        DO NOT USE!
+        """
 
         previous = self.active_state.NAME if self.active_state is not None else None
-        now = time.time()
 
         shared.event_handler.call("state:switch:pre", state_name)
 
@@ -73,7 +78,7 @@ class StateHandler:
         self.active_state.eventbus.call("user:window:resize", *shared.window.get_size())
         shared.event_handler.call("state:switch:post", state_name)
         logger.println(
-            f"[STATE HANDLER][STATE CHANGE] state changed to '{state_name}' (from {repr(previous)}) took {time.time()-now}s'",
+            f"[STATE HANDLER][STATE CHANGE] state changed to '{state_name}' (from {repr(previous)})'",
             console=False,
         )
 
@@ -103,6 +108,8 @@ def load_states():
         ModLoadingProgressState,
         StartMenuState,
         WorldGenerationConfigState,
+        ServerSelectionState,
+        ServerConnectionState,
     )
 
     # this is the first state, so initial init for it
