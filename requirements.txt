@@ -8,7 +8,3 @@ requests==2.26.0
 deprecation==2.1.0
 simplejson==3.17.5
 Python-NBT==1.2.0
-
-# dev-only
-black==21.8b0
-isort==5.9.3

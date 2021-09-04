@@ -26,6 +26,15 @@ VERSION_NAME = data["name"]
 MC_VERSION_BASE = data["mc_version"]
 VERSION_TYPE = data["version_type"]
 
+if shared.dev_environment:
+    import git
+
+    repo = git.Repo(shared.local)
+    sha = repo.head.object.hexsha
+
+    VERSION_NAME = f"{repo.active_branch} - {str(sha)[:10]}"
+    VERSION_TYPE = "dev-version"
+
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE
 )
