@@ -41,7 +41,7 @@ Client:
 python __main__.py
 ```
 
-Dedicated server (Unstable, NOT recommended currently):
+Dedicated server (Unstable, NOT recommended currently, client cannot connect):
 ```shell script
 python launch_server.py
 ```

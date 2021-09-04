@@ -56,6 +56,18 @@ changelog of snapshot 21w??a, released on ??.??.2021 targeting <1.17>
     Python:
         - allowing now python 3.10, as all our dependencies have upgraded their support
 
+    Registries:
+        - some work on deferred registries, and the other registry parts
+
+    Rendering:
+        - window caption contains now in dev version branch name + last commit hash
+
+    Bug Fixes:
+        - BlockItemGenerator was doing not what it was supposed to do
+
+    Gameplay:
+        - creative item search tab is now filled with items
+
 
 changelog of snapshot 21w35a released on 01.09.2021 targeting 1.17.1
     JVM:

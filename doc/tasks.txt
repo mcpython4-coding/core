@@ -12,19 +12,21 @@ Toolchain:
     - user name
     - path to mc asset folder / archive
 - installer .jar file linking in the installation.json file instead of extraction
+
 - obfuscator
 - System to dynamically migrate code from deobf <-> obf and up versions [only simple changes]
-- Better custom LaunchWrapper use system
+
+- Better custom LaunchWrapper use system [in progress]
 - PyCharm launch Configuration setup handler for dev env and mdk
 
 Library backend:
-- upgrade to pyglet 2.0 [currently: 2.0dev2]
+- upgrade to pyglet 2.0 [For consideration]
 
 Data generation:
 - attribute for data generator instances for name, so we don't need to set it at submitting, but in advance
 
 Block Item Generator:
-- improve, cleanup, prepare for removal & export to in-inventory rendering
+- improve, cleanup, prepare for removal & export to in-inventory rendering [in progress]
 
 Data driver:
 - item, block, implementation for the other recipes
