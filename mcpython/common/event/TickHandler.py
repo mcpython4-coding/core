@@ -64,7 +64,10 @@ class TickHandler:
                     return
 
         shared.entity_manager.tick(dt)
-        shared.inventory_handler.tick(dt)
+
+        if shared.IS_CLIENT:
+            shared.inventory_handler.tick(dt)
+
         shared.world.tick()
         shared.event_handler.call("tickhandler:general")
 

@@ -107,6 +107,7 @@ class LaunchWrapper:
             shared.SERVER_NETWORK_HANDLER = (
                 mcpython.engine.network.Backend.ServerBackend()
             )
+            shared.SERVER_NETWORK_HANDLER.connect()
 
         self.setup()
         self.launch()

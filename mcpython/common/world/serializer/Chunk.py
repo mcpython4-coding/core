@@ -47,6 +47,8 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 int(chunk[0]), int(chunk[1]), generate=False
             )
         )
+
+        # So, in some cases we cannot load the chunk
         if chunk_instance.loaded:
             return
         if data is None:
@@ -54,11 +56,16 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         if chunk not in data:
             return
 
+        # Don't do this when we are saving stuff
         shared.world_generation_handler.enable_generation = False
 
         data = data[chunk]
         chunk_instance.generated = data["generated"]
+
+        # This file stores the inventory data
         inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
+
+        # Prepare the block palette for later usage
         for i, d in enumerate(data["block_palette"]):
             if d[0] not in shared.registry.get_by_name("minecraft:block").entries:
                 # todo: add missing texture block -> insert here
@@ -69,6 +76,8 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 )
                 data["block_palette"][i] = ("minecraft:air", {}, False, tuple())
 
+        # So, this are all blocks in the map...
+        # todo: make sector based and DON'T use a dict! (Ints can be stored a lot better than this map)
         for rel_position in data["blocks"].keys():
             position = (
                 rel_position[0] + chunk_instance.get_position()[0] * 16,
@@ -77,6 +86,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
             d = data["block_palette"][data["blocks"][rel_position]]
 
+            # helper for setting up the block
             def add(instance):
                 if instance is None:
                     return
@@ -106,19 +116,13 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     chunk_instance, position, d[0], on_add=add, immediate=flag
                 )
 
-        positions = []
-        for x in range(int(chunk[0] * 16), int(chunk[0] * 16 + 16)):
-            positions.extend(
-                [(x, z) for z in range(int(chunk[1]) * 16, int(chunk[1]) * 16 + 16)]
-            )
-
         for data_map in chunk_instance.get_all_data_maps():
             if data_map.NAME in data["maps"]:
                 data_map_data = data["maps"][data_map.NAME]
                 data_map.load_from_saves(data_map_data)
 
         for entity in data["entities"]:
-            # todo: add dynamic system for skipping
+            # todo: add dynamic system for skipping by attribute
             if entity[0] == "minecraft:player":
                 continue
 
@@ -138,6 +142,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     )
                 )
                 continue
+
             entity_instance.rotation = entity[2]
             entity_instance.harts = entity[3]
             if "nbt" in entity:
@@ -194,32 +199,37 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         shared.world_generation_handler.enable_generation = False
 
         # Load the block palette
-        palette = cdata[
-            "block_palette"
-        ]  # list of {"custom": <some stuff>, "name": <name>, "shown": <shown>, ...}
+        # list of {"custom": <some stuff>, "name": <name>, "shown": <shown>, ...}
+        palette = cdata["block_palette"]
 
-        inv_file = "dim/{}/{}_{}.inv".format(
-            dimension, *region
-        )  # where to dump inventory stuff
+        # where to dump inventory stuff
+        inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
         overridden = not override
+
         for position in (
             chunk_instance.get_positions_updated_since_last_save()
             if not override
             else (e[0] for e in chunk_instance)
         ):
+            # the relative position to the chunk
             rel_position = (
                 position[0] - chunk_instance.get_position()[0] * 16,
                 position[1],
                 position[2] - chunk_instance.get_position()[1] * 16,
-            )  # the relative position to the chunk
+            )
 
             block = chunk_instance.get_block(position, none_if_str=True)
-
-            assert not isinstance(block, str), "something is really wrong!"
 
             if block is None and not override:
                 if rel_position in cdata["blocks"]:
                     del cdata["blocks"][rel_position]  # ok, old data MUST be removed
+
+                continue
+
+            if isinstance(block, str):
+                if rel_position in cdata["blocks"]:
+                    del cdata["blocks"][rel_position]  # ok, invalid data MUST be removed
+
                 continue
 
             block_data = (

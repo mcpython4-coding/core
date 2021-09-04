@@ -31,6 +31,8 @@ class ClientBackend:
         self.scheduled_packages.append(data)
 
     def connect(self):
+        print(f"connecting to server {self.ip}@{self.port}")
+
         self.socket.connect((self.ip, self.port))
 
     def work(self):
@@ -51,18 +53,20 @@ class ServerBackend:
     Contains threading code for each client
     """
 
-    def __init__(self, ip="0.0.0.0", port=8080):
+    def __init__(self, ip="localhost", port=8080):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.ip, self.port = ip, port
-        self.scheduled_packages = []
+        self.scheduled_packages_by_client = {}
         self.data_by_client = {}
         self.server_handler_thread = None
         self.pending_stops = set()
 
     def send_package(self, data: bytes, client: int):
-        self.scheduled_packages.append(data)
+        self.scheduled_packages_by_client.setdefault(client, []).append(data)
 
     def connect(self):
+        print(f"Bound server to {self.ip}@{self.port}")
+
         self.socket.bind((self.ip, self.port))
 
     def enable_server(self):
@@ -91,4 +95,5 @@ class ServerBackend:
             self.data_by_client[addr] += data
 
             if addr in self.pending_stops:
+                self.pending_stops.remove(addr)
                 return

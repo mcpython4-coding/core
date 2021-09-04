@@ -39,12 +39,12 @@ if __name__ == "__main__":
     print(
         "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     )
-    import mcpython.logger
+    import mcpython.engine.logger
 
-    mcpython.logger.println(
+    mcpython.engine.logger.println(
         "[EXPERIMENTAL][WARN] launching experimental dedicated mcpython server"
     )
-    mcpython.logger.println(
+    mcpython.engine.logger.println(
         "[EXPERIMENTAL][WARN] see version.info and git diffs for recent changes"
     )
     print(
