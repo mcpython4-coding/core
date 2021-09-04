@@ -1722,3 +1722,5 @@ R   [uuk]: improved world serialization API
 [uuk]: in dev version, the version text of mcpython is now branch name + commit hash
 [uuk]: fixed BlockItemGenerator being to fast in taking images, leading to wrong assigned BlockItem images
 [uuk]: creative tab with search bar fetches now all items from the other tabs on reload
+[uuk]: combined block factory system accepts now a deferred registry instance
+[uuk]: moved a handful block creation stuff to deferred registry system

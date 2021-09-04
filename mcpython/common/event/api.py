@@ -26,7 +26,7 @@ class AbstractRegistry(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def register(self, obj, overwrite_existing):
+    def register(self, obj, overwrite_existing=False):
         """
         Registers an obj to this registry
 

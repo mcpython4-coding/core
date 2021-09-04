@@ -17,7 +17,7 @@ from mcpython import shared
 from mcpython.common.event.api import AbstractRegistry, IRegistryContent
 
 
-class DeferredRegistryPipe:
+class DeferredRegistry:
     """
     Base class for deferred registries
     """
@@ -37,6 +37,9 @@ class DeferredRegistryPipe:
         )
 
     def create_later(self, factory_instance):
+        if not hasattr(factory_instance, "finish"):
+            raise ValueError(factory_instance)
+
         shared.mod_loader(self.modname, self.registry.phase)(
             lambda: factory_instance.finish()
         )

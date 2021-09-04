@@ -18,6 +18,7 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 from mcpython import shared
+from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 
 
 def colorize_texture(
@@ -51,6 +52,7 @@ class CombinedFactoryInstance:
             ],
             PIL.Image.Image,
         ] = colorize_texture,
+        deferred_registry: DeferredRegistry = None,
     ):
         """
         Creates a new CombinedFactoryInstance instance
@@ -63,6 +65,7 @@ class CombinedFactoryInstance:
         self.default_texture = default_texture
         self.color = color
         self.color_texture_consumer = color_texture_consumer
+        self.deferred_registry = deferred_registry
 
     def create_colored_texture(
         self, texture: typing.Union[PIL.Image.Image, str], color=None
@@ -160,7 +163,11 @@ class CombinedFactoryInstance:
             )
             if callable(block_factory_consumer):
                 block_factory_consumer(self, instance)
-            instance.finish()
+
+            if self.deferred_registry is None:
+                instance.finish()
+            else:
+                self.deferred_registry.create_later(instance)
 
         if shared.IS_CLIENT:
 
@@ -369,7 +376,11 @@ class CombinedFactoryInstance:
             )
             if callable(block_factory_consumer):
                 block_factory_consumer(self, instance)
-            instance.finish()
+
+            if self.deferred_registry is None:
+                instance.finish()
+            else:
+                self.deferred_registry.create_later(instance)
 
         if shared.IS_CLIENT:
 
@@ -584,7 +595,11 @@ class CombinedFactoryInstance:
             )
             if callable(block_factory_consumer):
                 block_factory_consumer(self, instance)
-            instance.finish()
+
+            if self.deferred_registry is None:
+                instance.finish()
+            else:
+                self.deferred_registry.create_later(instance)
 
         if shared.IS_CLIENT:
 

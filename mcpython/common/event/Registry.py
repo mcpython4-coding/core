@@ -17,7 +17,7 @@ import mcpython.common.data.serializer.tags.ITagTarget
 import mcpython.engine.event.EventHandler
 from mcpython import shared
 from mcpython.common.event.api import AbstractRegistry, IRegistryContent
-from mcpython.common.event.DeferredRegistryHelper import DeferredRegistryPipe
+from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.engine import logger
 
 
@@ -146,6 +146,9 @@ class Registry(AbstractRegistry):
             return default
         return self.full_entries[key]
 
+    def create_deferred(self, mod_name: str):
+        return DeferredRegistry(self, mod_name)
+
 
 class RegistryInjectionHolder:
     def __init__(self, *args, **kwargs):  # todo: do something with the args and kwargs!
@@ -191,7 +194,7 @@ class RegistryHandler:
         return lambda obj: shared.mod_loader(mod, phase)(lambda: self.register(obj))
 
     def create_deferred(self, registry: str, mod_name: str):
-        return DeferredRegistryPipe(self.get_by_name(registry), mod_name)
+        return DeferredRegistry(self.get_by_name(registry), mod_name)
 
     def print_content(self, registry: str, namespace=None):
         namespace = "" if namespace is None else namespace + ":"
