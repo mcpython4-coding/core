@@ -110,6 +110,7 @@ def load_states():
         WorldGenerationConfigState,
         ServerSelectionState,
         ServerConnectionState,
+        WorldListState,
     )
 
     # this is the first state, so initial init for it
