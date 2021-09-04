@@ -413,6 +413,9 @@ class CreativeItemTab(ICreativeView):
 
         return False
 
+    def __repr__(self):
+        return f"CreateItemTab({self.name}, entry_count={len(self.group.entries)})"
+
 
 if not shared.IS_TEST_ENV:
     CreativeItemTab.reload()
@@ -443,6 +446,17 @@ class CreativeTabSearchBar(CreativeItemTab):
         self.tab_icon = CreativeTabManager.UPPER_TAB
         self.tab_icon_selected = CreativeTabManager.UPPER_TAB_SELECTED
 
+        self.need_reload = True
+
+        def setNeedReload():
+            self.need_reload = True
+
+        import mcpython.common.data.ResourcePipe as ResourcePipe
+
+        ResourcePipe.handler.register_data_processor(
+            setNeedReload
+        )
+
     def on_deactivate(self):
         super().on_deactivate()
         self.search_bar.disable()
@@ -450,6 +464,19 @@ class CreativeTabSearchBar(CreativeItemTab):
     def on_activate(self):
         super().on_activate()
         self.group.apply_raw_filter("(.*)")
+
+        if self.need_reload:
+            self.need_reload = False
+
+            self.group.entries.clear()
+
+            for page in CT_MANAGER.pages:
+                for tab in page:
+                    if isinstance(tab, CreativeItemTab):
+                        self.group.entries += tab.group.entries
+
+            self.group.entries.sort(key=lambda stack: stack.get_item_name())
+            self.update_rendering(True)
 
 
 if not shared.IS_TEST_ENV:
@@ -845,20 +872,10 @@ def init():
     Brewing = CreativeItemTab(
         "Brewing", ItemStack("minecraft:barrier"), linked_tag="#minecraft:tab_brewing"
     )
-    Test = CreativeItemTab("Testing", ItemStack("minecraft:diamond_block")).add_item(
-        "minecraft:obsidian"
-    )
 
     CT_MANAGER.add_tab(BuildingBlocks).add_tab(Decoration).add_tab(Redstone).add_tab(
         Transportation
     ).add_tab(Miscellaneous).add_tab(Food).add_tab(Tools).add_tab(Weapons).add_tab(
         Brewing
     )
-    # CT_MANAGER.add_tab(Test)
 
-    """AllTestTab = CreativeItemTab("All Items", ItemStack("minecraft:nether_star"))
-
-    for item in shared.registry.get_by_name("minecraft:item").entries_iterator():
-        AllTestTab.add_item(ItemStack(item))
-
-    CT_MANAGER.add_tab(AllTestTab)"""

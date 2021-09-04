@@ -1721,3 +1721,4 @@ R   [uuk]: improved world serialization API
 [uuk]: changed some bits of the world serializer system, including its API
 [uuk]: in dev version, the version text of mcpython is now branch name + commit hash
 [uuk]: fixed BlockItemGenerator being to fast in taking images, leading to wrong assigned BlockItem images
+[uuk]: creative tab with search bar fetches now all items from the other tabs on reload
