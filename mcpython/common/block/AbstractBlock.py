@@ -239,30 +239,32 @@ class AbstractBlock(parent):
         """
         return self.get_model_state()
 
-    def dump_data(self) -> bytes:
+    def dump_data(self):
         """
         API function for chunk serialization
         :return: bytes representing the whole block, not including inventories
-        todo: add a saver way of doing this! (pickle is an unsafe interface)
         """
-        return pickle.dumps(self.get_save_data())
+        return self.get_save_data()
 
-    def load_data(self, data):
+    def load_data(self, data: typing.Optional):
         """
         Loads block data
         :param data:  the data saved by get_save_data()
         WARNING: if not providing DataFixers for old mod versions, these data may get very old and lead into errors!
         todo: add an saver way of doing this!
         """
+        if data is None: return
+
         self.set_model_state(data)
 
-    def inject(self, data: bytes):
+    def inject(self, data):
         """
         Loads block data from bytes
         :param data:  the data saved by dump_data()
         WARNING: if not providing DataFixers for old mod versions, these data may get very old and lead into errors!
+        todo: way to disable the pickle load as it is unsafe
         """
-        self.load_data(pickle.loads(data) if type(data) == bytes else data)
+        return self.load_data(data if not isinstance(data, bytes) else pickle.loads(data))
 
     def get_item_saved_state(self) -> typing.Any:
         """

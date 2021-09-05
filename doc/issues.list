@@ -96,7 +96,7 @@ issue 185:
     bug: in big worlds, chunks can get randomly hidden (or unloaded?) [e.g. debug world]
     fix: implement chunk load ticket system [WIP]
     root cause search: implement logger for unloading & hiding chunks
-    temporary fix: prevent from unloading [for some short moment, they get unloaded]
+    temporary fix: prevented from unloading [for some short moment, they get unloaded]
 
 issue 196:
     bug: when in gui and picking up an itemstack during holding one, it gets reset

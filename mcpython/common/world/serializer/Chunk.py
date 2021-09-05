@@ -86,35 +86,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
             d = data["block_palette"][data["blocks"][rel_position]]
 
-            # helper for setting up the block
-            def add(instance):
-                if instance is None:
-                    return
-
-                instance.inject(d[1])
-
-                if len(d) > 3:
-                    inventories = instance.get_inventories()
-                    if "inventories" not in d:
-                        return
-
-                    for i, path in enumerate(d[3]):
-                        if i >= len(inventories):
-                            break
-                        save_file.read(
-                            "minecraft:inventory",
-                            inventory=inventories[i],
-                            path=path,
-                            file=inv_file,
-                        )
-
-            flag = d[2]
-            if immediate:
-                add(chunk_instance.add_block(position, d[0], immediate=flag))
-            else:
-                shared.world_generation_handler.task_handler.schedule_block_add(
-                    chunk_instance, position, d[0], on_add=add, immediate=flag
-                )
+            cls.add_block_to_world(chunk_instance, d, immediate, position, save_file, inv_file)
 
         for data_map in chunk_instance.get_all_data_maps():
             if data_map.NAME in data["maps"]:
@@ -155,6 +127,36 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         shared.world_generation_handler.enable_generation = True
 
         chunk_instance.show()
+
+    @classmethod
+    def add_block_to_world(cls, chunk_instance, d, immediate, position, save_file, inv_file):
+        # helper for setting up the block
+        def add(instance):
+            if instance is None:
+                return
+
+            instance.inject(d[1])
+
+            if len(d) > 3:
+                inventories = instance.get_inventories()
+                for i, path in enumerate(d[3]):
+                    if i >= len(inventories):
+                        break
+
+                    save_file.read(
+                        "minecraft:inventory",
+                        inventory=inventories[i],
+                        path=path,
+                        file=inv_file,
+                    )
+
+        flag = d[2]
+        if immediate:
+            add(chunk_instance.add_block(position, d[0], immediate=flag))
+        else:
+            shared.world_generation_handler.task_handler.schedule_block_add(
+                chunk_instance, position, d[0], on_add=add, immediate=flag
+            )
 
     @classmethod
     def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):

@@ -187,20 +187,5 @@ class Chest(AbstractBlock.AbstractBlock):
         return {"model": self.get_model_state(), "loot_table": self.loot_table_link}
 
     def load_data(self, data):
-        if "model" in data:
-            self.set_model_state(data["model"])
-        else:
-            logger.println(
-                "[SERIALIZER][WARN] '{}' is missing model state in save files; this indicates a save error...".format(
-                    self
-                )
-            )
-
-        if "loot_table" in data:
-            self.loot_table_link = data["loot_table"]
-        else:
-            logger.println(
-                "[SERIALIZER][WARN] '{}' is missing loot table in save files; this indicates a save error...".format(
-                    self
-                )
-            )
+        self.set_model_state(data["model"])
+        self.loot_table_link = data["loot_table"]

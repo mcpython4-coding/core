@@ -1724,3 +1724,7 @@ R   [uuk]: improved world serialization API
 [uuk]: creative tab with search bar fetches now all items from the other tabs on reload
 [uuk]: combined block factory system accepts now a deferred registry instance
 [uuk]: moved a handful block creation stuff to deferred registry system
+[uuk]: removed unsafe pickle load/dump in block data serializer
+[uuk]: fixed variable reassignment during waiting for block to be added to the world leading to wrong block data
+       to be loaded [this was the cause for the missing chest data in save files]
+[uuk]: fixed block inventory deserialization in save files
