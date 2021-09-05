@@ -473,7 +473,7 @@ class CreativeTabSearchBar(CreativeItemTab):
                     if isinstance(tab, CreativeItemTab):
                         self.group.entries += tab.group.entries
 
-            self.group.entries.sort(key=lambda stack: stack.get_item_name())
+            self.group.sort_after_item_name()
             self.update_rendering(True)
 
 

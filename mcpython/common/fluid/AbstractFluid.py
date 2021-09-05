@@ -49,14 +49,14 @@ class AbstractFluid(mcpython.common.event.api.IRegistryContent, ABC):
     FLUID_BLOCK_NAME: typing.Optional[str] = None
 
     # A FluidStack size which is "critical", that means that this class wants to be informed about it
-    # Set to -1 if no amount is critical
+    # Set to -1 if the smallest amount is critical
     CRITICAL_AMOUNT = -1
 
     # Set this to detect fluids touching with each other by the on_fluids_touching function
     # This can be used by e.g. lava for cobble gen
     CAN_BE_CRITICAL_ON_CONTACT = False
 
-    # When the fluid solidifies, in K
+    # When the fluid solidifies, in K; Only for inter-mod information
     SOLIDIFICATION_POINT = -1
 
     # What does it solidify to?

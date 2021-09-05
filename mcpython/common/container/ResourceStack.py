@@ -49,6 +49,9 @@ class AbstractResourceStack(ABC):
     def get_difference(self, other: "AbstractResourceStack") -> "AbstractResourceStack":
         raise NotImplementedError
 
+    def set_amount(self, amount) -> "AbstractResourceStack":
+        raise NotImplementedError
+
 
 class ItemStack(AbstractResourceStack):
     """
@@ -197,7 +200,7 @@ class FluidStack(AbstractResourceStack):
         self.fluid = fluid
         self.amount = amount
 
-    def copy(self) -> "AbstractResourceStack":
+    def copy(self) -> "FluidStack":
         return FluidStack(self.fluid, self.amount)
 
     def copy_from(self, other: "FluidStack"):
@@ -211,15 +214,19 @@ class FluidStack(AbstractResourceStack):
     def is_empty(self) -> bool:
         return self.fluid is None or self.amount == 0
 
-    def contains_same_resource(self, other: "AbstractResourceStack") -> bool:
+    def contains_same_resource(self, other: "FluidStack") -> bool:
         return isinstance(other, FluidStack) and self.fluid == other.fluid
 
-    def has_more_than(self, other: "AbstractResourceStack") -> bool:
+    def has_more_than(self, other: "FluidStack") -> bool:
         return self.contains_same_resource(other) and self.amount >= other.amount
 
-    def get_difference(self, other: "AbstractResourceStack") -> "AbstractResourceStack":
+    def get_difference(self, other: "FluidStack") -> "FluidStack":
         return (
             None
             if not self.contains_same_resource(other)
             else self.copy().set_amount(self.amount - other.amount)
         )
+
+    def set_amount(self, amount: float) -> "FluidStack":
+        self.amount = amount
+        return self

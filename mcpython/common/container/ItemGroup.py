@@ -22,10 +22,13 @@ class ItemGroup:
         self.entries: typing.List[ItemStack] = []
         self.has_lazy = False
 
-    def add(self, entry: ItemStack):
-        assert (
-            isinstance(entry, LazyClassLoadItemstack) or not entry.is_empty()
-        ), "itemstack cannot be empty!"
+    def add(self, entry: typing.Union[ItemStack, str]):
+        if isinstance(entry, str):
+            entry = ItemStack(entry)
+
+        if isinstance(entry, LazyClassLoadItemstack) or not entry.is_empty():
+            raise ValueError(f"Itemstack {entry} cannot be empty or lazy!")
+
         self.entries.append(entry.set_amount(1))
 
         if isinstance(entry, LazyClassLoadItemstack):
@@ -58,6 +61,7 @@ class ItemGroup:
         for entry in self.entries:
             if entry.is_empty():
                 continue
+
             if pattern.fullmatch(entry.get_item_name()):
                 yield entry
 

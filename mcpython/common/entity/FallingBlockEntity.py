@@ -22,6 +22,7 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     Class for the falling block entity
 
     todo: can we replicate some original block behaviour, like inventories, interaction, ...?
+        -> Capability mirror?
     """
 
     NAME = "minecraft:falling_block"
