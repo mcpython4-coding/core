@@ -28,39 +28,59 @@ from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 
 class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC):
     """
-    Dummy class for every entity,
-    only used by the player at the moment (as no more entities are implemented)
-    feel free to use, general functions for cross-mod work
-    """
-    CAPABILITY_CONTAINER_NAME = "minecraft:entity"
+    Base class for every entity in the game
 
+    MUST be implemented by all entities scheduled to be used with the EntityManager system
+
+    Allows capability injects & lookups via the capability API
+
+    DO NOT CHANGE STUFF AT THE FILE HEAD BY SUBCLASSES. IT WILL BREAK THE UNDERLYING STUFF
+
+    Capabilities are auto-saved and this behaviour cannot be disabled currently.
+    """
+    # ---------------------
+    # Internal Region START
+    # ---------------------
+
+    CAPABILITY_CONTAINER_NAME = "minecraft:entity"
     TYPE = "minecraft:entity"
+
+    # -------------------
+    # Internal Region END
+    # -------------------
 
     SUMMON_ABLE = True  # if the entity can be used in /summom-command
 
     @classmethod
-    def create_new(cls, position, *args, **kwargs):
+    def create_new(cls, position, *args, dimension=None, **kwargs):
         """
-        creates an new entity and set up it correctly for later use
+        Creates a new entity and set up it correctly for later use
         :param position: the position to create at
         :param args: args to send to the constructor
+        :param dimension: the dimension to spawn in
         :param kwargs: kwargs to send to the constructor
         :return: the created entity
-        todo: make added to world
         for moder: use this rather than raw constructor as it is the more "safe" way of doing it
+
+        Does not spawn the entity in the real dimension
         """
-        entity = cls(*args, **kwargs)
+        entity = cls(*args, dimension=dimension, **kwargs)
         entity.position = position
         return entity
 
     @classmethod
     def init_renderers(cls):
-        pass
+        """
+        Use this to create your entity renderers
+        Invoked only on client
+        """
 
     def __init__(self, dimension=None):
         """
         Creates a new entity for the world
-        for moder: you SHOULD implement an custom constructor which set the bellow values to an "good" value
+        for moder: you SHOULD implement a custom constructor which set the bellow values to "good" values
+
+        For creating entities, use create_new() - it is far more saver and does some internal stuff
         """
         super().__init__()
 
@@ -94,6 +114,13 @@ class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityCont
 
         self.dead = False
 
+    def add_to_chunk(self):
+        self.dimension.get_chunk_for_position(self.position).entities.add(self)
+
+    def remove_from_chunk(self):
+        if self in self.dimension.get_chunk_for_position(self.position).entities:
+            self.dimension.get_chunk_for_position(self.position).entities.remove(self)
+
     def __del__(self):
         if not hasattr(self, "chunk"):
             return
@@ -116,8 +143,9 @@ class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityCont
                     self, position
                 )
             )
-            traceback.print_exc()
+            traceback.print_stack()
             return
+
         self.teleport(position)
 
     position = property(get_position, set_position)
@@ -167,20 +195,21 @@ class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityCont
             if shared.world is not None
             else None
         )
-        self.unsafe_position = position
-        if dimension is None:
-            return
 
-        sector_after = mcpython.util.math.position_to_chunk(self.position)
+        sector_after = mcpython.util.math.position_to_chunk(position)
+
         if (
             sector_before != sector_after
             or before_dim != dimension_id
             or force_chunk_save_update
         ):
-            if self.chunk and self in self.chunk.entities:
-                self.chunk.entities.remove(self)
-            self.chunk = dimension.get_chunk_for_position(self.position)
-            self.chunk.entities.add(self)
+            self.remove_from_chunk()
+            self.unsafe_position = position
+            self.add_to_chunk()
+
+        else:
+            self.unsafe_position = position
+
         shared.event_handler.call("world:entity:teleport:post", self)
 
     # interaction functions
