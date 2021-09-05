@@ -22,7 +22,7 @@ import mcpython.common.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
 import mcpython.common.world.GameRule
-import mcpython.common.world.RemoteWorldAccess
+import mcpython.common.world.OffProcessWorldAccess
 import mcpython.common.world.SaveFile
 import mcpython.server.worldgen.WorldGenerationHandler
 import mcpython.util.math
@@ -76,7 +76,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.world_loaded = False  # describes if the world is loaded or not
 
         self.world_generation_process = (
-            mcpython.common.world.RemoteWorldAccess.RemoteWorldHelper.spawn_process(
+            mcpython.common.world.OffProcessWorldAccess.OffProcessWorldHelper.spawn_process(
                 self
             )
         )

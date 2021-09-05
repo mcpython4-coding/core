@@ -25,14 +25,14 @@ import mcpython.util.math
 from mcpython.common.world.AbstractInterface import IChunk
 
 
-class RemoteWorldHelper:
+class OffProcessWorldHelper:
     """
     Some really big, complex system for asynchronous world-access-able multiprocessing.
-    Use RemoteWorldHelper.spawn_process(World) for creating a new process linke to the given world.
+    Use OffProcessWorldHelper.spawn_process(World) for creating a new process linke to the given world.
     You MUST call run_tasks() regular on your RemoteWorldHelperReference to process tasks to run on main!
     """
 
-    class RemoteWorldContext:
+    class OffProcessWorldContext:
         def __init__(
             self, world: mcpython.common.world.AbstractInterface.IWorld, helper
         ):
@@ -42,19 +42,19 @@ class RemoteWorldHelper:
         def get_world(self) -> mcpython.common.world.AbstractInterface.IWorld:
             return self.world
 
-        def get_helper(self) -> "RemoteWorldHelper":
+        def get_helper(self) -> "OffProcessWorldHelper":
             return self.helper
 
-    class RemoteWorldHelperReference:
+    class OffProcessWorldHelperReference:
         def __init__(
             self,
-            instance: "RemoteWorldHelper",
+            instance: "OffProcessWorldHelper",
             process: multiprocessing.Process,
             world: mcpython.common.world.AbstractInterface.IWorld,
         ):
             self.instance = instance
             self.process = process
-            self.context = RemoteWorldHelper.RemoteWorldContext(world, instance)
+            self.context = OffProcessWorldHelper.OffProcessWorldContext(world, instance)
 
         def stop(self, immediate=True):
             self.run_on_process(lambda context: context.get_helper().stop())
@@ -65,7 +65,7 @@ class RemoteWorldHelper:
         def run_tasks(self):
             while not self.instance.task_main_queue.empty():
                 task = self.instance.task_main_queue.get()
-                RemoteWorldHelper.run_task(
+                OffProcessWorldHelper.run_task(
                     task,
                     lambda task_id, result: self.instance.task_result_queue.put(
                         (task_id, result)
@@ -92,11 +92,11 @@ class RemoteWorldHelper:
     @classmethod
     def spawn_process(
         cls, world: mcpython.common.world.AbstractInterface.IWorld
-    ) -> "RemoteWorldHelper.RemoteWorldHelperReference":
+    ) -> "OffProcessWorldHelper.OffProcessWorldHelperReference":
         instance = cls()
         process = multiprocessing.Process(target=instance.run)
         process.start()
-        return RemoteWorldHelper.RemoteWorldHelperReference(instance, process, world)
+        return OffProcessWorldHelper.OffProcessWorldHelperReference(instance, process, world)
 
     @classmethod
     def run_task(cls, task, result_helper, context):
@@ -155,7 +155,7 @@ class RemoteWorldHelper:
         asyncio.run(self.main())
 
     async def main(self):
-        context = RemoteWorldHelper.RemoteWorldContext(RemoteWorld(self), self)
+        context = OffProcessWorldHelper.OffProcessWorldContext(OffProcessWorld(self), self)
 
         while self.running:
             while not self.task_off_process_queue.empty():
@@ -215,8 +215,8 @@ class RemoteWorldHelper:
         )
 
 
-class RemoteWorld(mcpython.common.world.AbstractInterface.IWorld):
-    def __init__(self, helper: RemoteWorldHelper):
+class OffProcessWorld(mcpython.common.world.AbstractInterface.IWorld):
+    def __init__(self, helper: OffProcessWorldHelper):
         self.helper = helper
         self.chunk_dimension_cache = {}
 
@@ -241,28 +241,28 @@ class RemoteWorld(mcpython.common.world.AbstractInterface.IWorld):
     async def reset_config(self):
         self.helper.run_on_main(lambda context: context.get_world().reset_config())
 
-    async def get_active_dimension(self) -> typing.Union["RemoteDimension", None]:
+    async def get_active_dimension(self) -> typing.Union["OffProcessDimension", None]:
         dim_id = await self.helper.run_on_main_async(
             lambda context: context.get_world().get_active_dimension().get_id()
         )
         if dim_id in self.chunk_dimension_cache:
             return self.chunk_dimension_cache[dim_id]
         dim = self.chunk_dimension_cache.setdefault(
-            dim_id, RemoteDimension(self.helper, dim_id, self)
+            dim_id, OffProcessDimension(self.helper, dim_id, self)
         )
         await dim.setup()
         return dim
 
     async def add_dimension(
         self, dim_id: int, name: str, dim_config=None
-    ) -> "RemoteDimension":
+    ) -> "OffProcessDimension":
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
             .add_dimension(dim_id, name, dim_config)
             .get_id()
         )
         dim = self.chunk_dimension_cache.setdefault(
-            name, RemoteDimension(self.helper, dim_id, self)
+            name, OffProcessDimension(self.helper, dim_id, self)
         )
         await dim.setup()
         return dim
@@ -272,9 +272,9 @@ class RemoteWorld(mcpython.common.world.AbstractInterface.IWorld):
             lambda context: context.get_world().join_dimension(dim_id)
         )
 
-    async def get_dimension(self, dim_id: int) -> "RemoteDimension":
+    async def get_dimension(self, dim_id: int) -> "OffProcessDimension":
         dim = self.chunk_dimension_cache.setdefault(
-            dim_id, RemoteDimension(self.helper, dim_id, self)
+            dim_id, OffProcessDimension(self.helper, dim_id, self)
         )
         await dim.setup()
         return dim
@@ -324,9 +324,9 @@ class RemoteWorld(mcpython.common.world.AbstractInterface.IWorld):
         )
 
 
-class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
+class OffProcessDimension(mcpython.common.world.AbstractInterface.IDimension):
     def __init__(
-        self, helper: RemoteWorldHelper, dimension_id: int, world: RemoteWorld
+        self, helper: OffProcessWorldHelper, dimension_id: int, world: OffProcessWorld
     ):
         super().__init__()
         self.helper = helper
@@ -362,7 +362,7 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
         cz: int = None,
         generate: bool = True,
         create: bool = True,
-    ) -> "RemoteChunk":
+    ) -> "OffProcessChunk":
 
         if cz is None:
             assert type(cx) == tuple
@@ -372,7 +372,7 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
             return self.chunk_cache[(cx, cz)]
 
         chunk = self.chunk_cache.setdefault(
-            (cx, cz), RemoteChunk(self.helper, (cx, cz), self)
+            (cx, cz), OffProcessChunk(self.helper, (cx, cz), self)
         )
         await chunk.setup()
         return chunk
@@ -384,7 +384,7 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
             typing.Any,
         ],
         **kwargs
-    ) -> typing.Optional["RemoteChunk"]:
+    ) -> typing.Optional["OffProcessChunk"]:
         if hasattr(position, "position"):
             position = position.position
         pos = mcpython.util.math.position_to_chunk(position)
@@ -468,8 +468,8 @@ class RemoteDimension(mcpython.common.world.AbstractInterface.IDimension):
         )
 
 
-class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
-    def __init__(self, helper: RemoteWorldHelper, position, dimension: RemoteDimension):
+class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
+    def __init__(self, helper: OffProcessWorldHelper, position, dimension: OffProcessDimension):
         super().__init__()
         self.helper = helper
         self.position = position
@@ -506,7 +506,7 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
             .is_visible()
         )
 
-    def get_dimension(self) -> "RemoteDimension":
+    def get_dimension(self) -> "OffProcessDimension":
         return self.dimension
 
     def get_position(self) -> typing.Tuple[int, int]:
@@ -667,7 +667,7 @@ class RemoteChunk(mcpython.common.world.AbstractInterface.IChunk):
             .get_block(position, none_if_str=none_if_str)
         )
 
-    def as_shareable(self) -> "RemoteChunk":
+    def as_shareable(self) -> "OffProcessChunk":
         return self
 
     def mark_dirty(self):
