@@ -11,9 +11,23 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
+from .AbstractCapability import AbstractCapability
 from mcpython import shared
-from mcpython.engine.network.Backend import ClientBackend
 
 
-def connectClient2Server(ip: str, port: int):
-    pass
+class CapabilityManager:
+    def __init__(self):
+        self.capabilities: typing.Dict[str, AbstractCapability] = {}
+
+    def get_by_name(self, name: str) -> AbstractCapability:
+        return self.capabilities[name]
+
+    def register(self, name: str, capability: AbstractCapability):
+        self.capabilities[name] = capability
+        return capability
+
+
+shared.capability_manager = CapabilityManager()
+
