@@ -246,6 +246,8 @@ def build_class_default_state(
             if not is_super_base:
                 super().__init__()
 
+            self.prepare_container()
+
             for base in bases:
                 base.__init__(self)
 

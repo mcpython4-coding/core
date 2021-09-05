@@ -24,6 +24,7 @@ import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.util.enums
 from mcpython import shared
+from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 
 
 class BlockRemovalReason(enum.Enum):
@@ -56,7 +57,7 @@ else:
     parent = mcpython.common.event.api.IRegistryContent
 
 
-class AbstractBlock(parent):
+class AbstractBlock(parent, ICapabilityContainer):
     """
     Abstract base class for all blocks
     All block classes should extend from this
@@ -69,6 +70,7 @@ class AbstractBlock(parent):
 
     todo: add custom properties to set_creation_properties() -> injected by add_block() call
     """
+    CAPABILITY_CONTAINER_NAME = "minecraft:block"
 
     # Internal registry type name; DO NOT CHANGE
     TYPE: str = "minecraft:block_registry"
@@ -142,7 +144,8 @@ class AbstractBlock(parent):
             - setup attributes here
             - fill them with data in on_block_added
         """
-        super().__init__()
+        super(parent, self).__init__()
+        self.prepare_container()
 
         self.position: typing.Optional[typing.Tuple[float, float, float]] = None
         self.dimension = None  # dimension instance
@@ -244,7 +247,7 @@ class AbstractBlock(parent):
         API function for chunk serialization
         :return: bytes representing the whole block, not including inventories
         """
-        return self.get_save_data()
+        return self.get_save_data(), self.serialize_container()
 
     def load_data(self, data: typing.Optional):
         """
@@ -264,7 +267,14 @@ class AbstractBlock(parent):
         WARNING: if not providing DataFixers for old mod versions, these data may get very old and lead into errors!
         todo: way to disable the pickle load as it is unsafe
         """
-        return self.load_data(data if not isinstance(data, bytes) else pickle.loads(data))
+        if isinstance(data, bytes):
+            data = pickle.loads(data)
+
+        elif isinstance(data, tuple):
+            self.deserialize_container(data[1])
+            data = data[0]
+
+        return self.load_data(data)
 
     def get_item_saved_state(self) -> typing.Any:
         """

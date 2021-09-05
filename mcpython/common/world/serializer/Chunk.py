@@ -121,6 +121,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 entity_instance.nbt_data.update(entity[6])
             entity_instance.load(entity[5])
 
+            if len(entity) == 8:
+                entity_instance.deserialize_container(entity[8])
+
         chunk_instance.loaded = True
         chunk_instance.is_ready = True
         chunk_instance.visible = True
@@ -286,6 +289,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 str(entity.uuid),
                 entity.dump(),
                 entity.nbt_data,
+                entity.serialize_container(),
             )
             cdata["entities"].append(entity_data)
 

@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import traceback
 import uuid
+from abc import ABC
 
 import mcpython.common.container.ResourceStack
 import mcpython.common.entity.DamageSource
@@ -22,14 +23,16 @@ import mcpython.common.event.Registry
 import mcpython.util.math
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 
 
-class AbstractEntity(mcpython.common.event.api.IRegistryContent):
+class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC):
     """
     Dummy class for every entity,
     only used by the player at the moment (as no more entities are implemented)
     feel free to use, general functions for cross-mod work
     """
+    CAPABILITY_CONTAINER_NAME = "minecraft:entity"
 
     TYPE = "minecraft:entity"
 
@@ -56,9 +59,11 @@ class AbstractEntity(mcpython.common.event.api.IRegistryContent):
 
     def __init__(self, dimension=None):
         """
-        creates an new entity for the world
+        Creates a new entity for the world
         for moder: you SHOULD implement an custom constructor which set the bellow values to an "good" value
         """
+        super().__init__()
+
         self.dimension = (
             shared.world.get_active_dimension()
             if dimension is None and shared.world is not None

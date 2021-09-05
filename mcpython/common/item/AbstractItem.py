@@ -11,13 +11,17 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython.engine import logger
+from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 
 
-class AbstractItem(mcpython.common.event.api.IRegistryContent):
+class AbstractItem(mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC):
     TYPE = "minecraft:item"
+    CAPABILITY_CONTAINER_NAME = "minecraft:item"
 
     STACK_SIZE = 64
     HAS_BLOCK = True
@@ -34,6 +38,8 @@ class AbstractItem(mcpython.common.event.api.IRegistryContent):
         raise NotImplementedError()
 
     def __init__(self):
+        super().__init__()
+
         self.stored_block_state = None
         self.can_destroy = None
         self.can_be_set_on = None
@@ -93,12 +99,15 @@ class AbstractItem(mcpython.common.event.api.IRegistryContent):
     # functions used by data serializers
 
     def get_data(self):
-        return self.stored_block_state, self.can_destroy, self.can_be_set_on
+        return self.stored_block_state, self.can_destroy, self.can_be_set_on, self.serialize_container()
 
     def set_data(self, data):
         if data == "no:data":
             return
-        self.stored_block_state, self.can_destroy, self.can_be_set_on = data
+        self.stored_block_state, self.can_destroy, self.can_be_set_on, *extra = data
+
+        if len(extra) == 1:
+            self.deserialize_container(extra[3])
 
     def get_tooltip_provider(self):
         import mcpython.client.gui.HoveringItemBox

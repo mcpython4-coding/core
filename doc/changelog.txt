@@ -68,6 +68,17 @@ changelog of snapshot 21w??a, released on ??.??.2021 targeting <1.17>
     Gameplay:
         - creative item search tab is now filled with items
 
+    Capabilities:
+        - implemented capability API
+        - currently supports items [AbstractItem instance, not ItemStack], blocks and entities
+        - can be disabled for entries in the system
+        - WARNING: block & item implementation is linked to some public-facing serialization code, meaning
+            mods which are not careful enough may override the needed bindings
+
+    Blocks:
+        - block serialization code (the public facing dump_data() and inject()) were rewritten, mods
+            overriding these will encounter issues!
+
 
 changelog of snapshot 21w35a released on 01.09.2021 targeting 1.17.1
     JVM:

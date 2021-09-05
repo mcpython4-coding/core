@@ -28,6 +28,7 @@ class AbstractCapability:
 
     NAME = None
     ACCEPTED_CONTAINERS: typing.Set[str] = set()
+    SHOULD_BE_SAVED = False
 
     @classmethod
     def attach(cls, body: ICapabilityContainer):

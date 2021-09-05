@@ -1728,3 +1728,5 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed variable reassignment during waiting for block to be added to the world leading to wrong block data
        to be loaded [this was the cause for the missing chest data in save files]
 [uuk]: fixed block inventory deserialization in save files
+[uuk]: added capability API supported by items, blocks and entities with support for storing capabilities at save files
+       [Entity cap serialization is partially forced, block & item can be overridden]
