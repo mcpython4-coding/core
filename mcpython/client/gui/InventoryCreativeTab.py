@@ -453,9 +453,7 @@ class CreativeTabSearchBar(CreativeItemTab):
 
         import mcpython.common.data.ResourcePipe as ResourcePipe
 
-        ResourcePipe.handler.register_data_processor(
-            setNeedReload
-        )
+        ResourcePipe.handler.register_data_processor(setNeedReload)
 
     def on_deactivate(self):
         super().on_deactivate()
@@ -878,4 +876,3 @@ def init():
     ).add_tab(Miscellaneous).add_tab(Food).add_tab(Tools).add_tab(Weapons).add_tab(
         Brewing
     )
-

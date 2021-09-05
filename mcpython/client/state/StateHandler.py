@@ -106,10 +106,10 @@ def load_states():
         GameInfoState,
         GameState,
         ModLoadingProgressState,
+        ServerConnectionState,
+        ServerSelectionState,
         StartMenuState,
         WorldGenerationConfigState,
-        ServerSelectionState,
-        ServerConnectionState,
         WorldListState,
     )
 

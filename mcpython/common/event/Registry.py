@@ -146,8 +146,8 @@ class Registry(AbstractRegistry):
             return default
         return self.full_entries[key]
 
-    def create_deferred(self, mod_name: str):
-        return DeferredRegistry(self, mod_name)
+    def create_deferred(self, mod_name: str, *args, **kwargs):
+        return DeferredRegistry(self, mod_name, *args, **kwargs)
 
 
 class RegistryInjectionHolder:

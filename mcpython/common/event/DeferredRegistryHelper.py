@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import types
 import typing
 
 from mcpython import shared
@@ -22,7 +23,9 @@ class DeferredRegistry:
     Base class for deferred registries
     """
 
-    def __init__(self, registry: AbstractRegistry, modname: str = "minecraft"):
+    def __init__(
+        self, registry: AbstractRegistry, modname: str = "minecraft", base_factory=None
+    ):
         if registry.phase is None:
             raise ValueError(
                 "registry defines no phase to fill it in, so deferred registration does not work!"
@@ -30,6 +33,7 @@ class DeferredRegistry:
 
         self.registry = registry
         self.modname = modname
+        self.base_factory = base_factory
 
     def register_later(self, lazy: typing.Callable[[], IRegistryContent]):
         shared.mod_loader(self.modname, self.registry.phase)(
@@ -43,3 +47,19 @@ class DeferredRegistry:
         shared.mod_loader(self.modname, self.registry.phase)(
             lambda: factory_instance.finish()
         )
+
+    def create_named(self, name: str, factory_instance):
+        if isinstance(factory_instance, types.FunctionType):
+            factory_instance = factory_instance(self.base_factory())
+
+        if not hasattr(factory_instance, "finish"):
+            raise ValueError(factory_instance)
+
+        if ":" not in name:
+            name = self.modname + ":" + name
+
+        shared.mod_loader(
+            self.modname,
+            self.registry.phase,
+            info=f"Creating object {name} in registry {self.registry.name}",
+        )(lambda: factory_instance.set_name(name).finish())

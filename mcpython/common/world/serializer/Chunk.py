@@ -228,7 +228,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
             if isinstance(block, str):
                 if rel_position in cdata["blocks"]:
-                    del cdata["blocks"][rel_position]  # ok, invalid data MUST be removed
+                    del cdata["blocks"][
+                        rel_position
+                    ]  # ok, invalid data MUST be removed
 
                 continue
 

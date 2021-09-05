@@ -20,6 +20,7 @@ class AbstractRegistry(metaclass=ABCMeta):
     def __init__(self):
         self.locked = False
         self.phase = None
+        self.name = None
 
     @abstractmethod
     def is_valid(self, obj):

@@ -1,10 +1,11 @@
+from mcpython import shared
+from mcpython.common.network.connection import connectClient2Server
+from mcpython.util.annotation import onlyInClient
+
 from .AbstractState import AbstractState
 from .ConfigBackgroundPart import ConfigBackground
 from .ui.UIPartButton import UIPartButton
 from .ui.UIPartTextInput import UIPartTextInput
-from mcpython.util.annotation import onlyInClient
-from mcpython import shared
-from mcpython.common.network.connection import connectClient2Server
 
 
 @onlyInClient()
@@ -27,7 +28,9 @@ class ServerSelectionState(AbstractState):
             (-180, 30),
             anchor_window="MD",
             anchor_button="MD",
-            on_press=lambda *_: shared.state_handler.change_state("minecraft:start_menu"),
+            on_press=lambda *_: shared.state_handler.change_state(
+                "minecraft:start_menu"
+            ),
         )
         self.join_button = UIPartButton(
             (300, 20),
@@ -61,4 +64,3 @@ class ServerSelectionState(AbstractState):
 
 
 server_selection = ServerSelectionState()
-
