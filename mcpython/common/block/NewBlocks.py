@@ -11,12 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython import shared
+from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
 from mcpython.common.factory.combined.complex import create_full_slab_wall_set
 from mcpython.common.factory.combined.simple import CombinedFactoryInstance
-from mcpython import shared
-from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
-
 
 """
 Missing:
@@ -25,7 +24,9 @@ attached_melon_stem
 attached_pumpkin_stem
 """
 
-DEFERRED_PIPE: DeferredRegistry = shared.registry.get_by_name("minecraft:block").create_deferred("minecraft")
+DEFERRED_PIPE: DeferredRegistry = shared.registry.get_by_name(
+    "minecraft:block"
+).create_deferred("minecraft", base_factory=BlockFactory)
 
 
 def plant(name: str):
@@ -40,58 +41,66 @@ def plant(name: str):
 
 def wood(name: str, normal=True):
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_button").set_default_model_state(
-            "face=ceiling,facing=east,powered=false"
-        ).set_solid(False).set_all_side_solid(False).set_strength(0.5)
+        BlockFactory()
+        .set_name(f"minecraft:{name}_button")
+        .set_default_model_state("face=ceiling,facing=east,powered=false")
+        .set_solid(False)
+        .set_all_side_solid(False)
+        .set_strength(0.5)
     )
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_door").set_default_model_state(
-            "facing=east,half=lower,hinge=left,open=false"
-        ).set_solid(False).set_all_side_solid(False).set_strength(0.5)
+        BlockFactory()
+        .set_name(f"minecraft:{name}_door")
+        .set_default_model_state("facing=east,half=lower,hinge=left,open=false")
+        .set_solid(False)
+        .set_all_side_solid(False)
+        .set_strength(0.5)
     )
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_fence").set_fence().set_strength(
-            0.5
-        )
+        BlockFactory().set_name(f"minecraft:{name}_fence").set_fence().set_strength(0.5)
     )
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(
-            f"minecraft:{name}_fence_gate"
-        ).set_fence_gate().set_strength(0.5)
+        BlockFactory()
+        .set_name(f"minecraft:{name}_fence_gate")
+        .set_fence_gate()
+        .set_strength(0.5)
     )
 
-    DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_planks").set_strength(2))
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_pressure_plate").set_default_model_state(
-            "powered=false"
-        ).set_solid(False).set_all_side_solid(False).set_strength(0.5)
+        BlockFactory().set_name(f"minecraft:{name}_planks").set_strength(2)
     )
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_slab").set_slab().set_strength(
-            2
-        )
+        BlockFactory()
+        .set_name(f"minecraft:{name}_pressure_plate")
+        .set_default_model_state("powered=false")
+        .set_solid(False)
+        .set_all_side_solid(False)
+        .set_strength(0.5)
+    )
+    DEFERRED_PIPE.create_later(
+        BlockFactory().set_name(f"minecraft:{name}_slab").set_slab().set_strength(2)
     )
 
     if normal:
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{name}_leaves").set_solid(
-                False
-            ).set_all_side_solid(False).set_strength(0.2)
+            BlockFactory()
+            .set_name(f"minecraft:{name}_leaves")
+            .set_solid(False)
+            .set_all_side_solid(False)
+            .set_strength(0.2)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{name}_log").set_log().set_strength(
-                2
-            )
+            BlockFactory().set_name(f"minecraft:{name}_log").set_log().set_strength(2)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(
-                2
-            )
+            BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(2)
         )
         DEFERRED_PIPE.create_later(plant(f"minecraft:{name}_sapling"))
 
     CombinedFactoryInstance(
-        f"minecraft:{name}_wall", f"minecraft:block/{name}_planks", deferred_registry=DEFERRED_PIPE
+        f"minecraft:{name}_wall",
+        f"minecraft:block/{name}_planks",
+        deferred_registry=DEFERRED_PIPE,
     ).create_wall(suffix="_wall")
 
     # todo: signs, stairs
@@ -108,7 +117,8 @@ def stone_like(
 ):
     fname = name.removesuffix("s")
     instance = CombinedFactoryInstance(
-        f"minecraft:{name}", f"minecraft:block/{name}" if texture is None else texture,
+        f"minecraft:{name}",
+        f"minecraft:block/{name}" if texture is None else texture,
         deferred_registry=DEFERRED_PIPE,
     )
 
@@ -118,26 +128,34 @@ def stone_like(
         instance.create_full_block()
 
     if existing_slab:
-        DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{fname}_slab").set_slab())
+        DEFERRED_PIPE.create_later(
+            BlockFactory().set_name(f"minecraft:{fname}_slab").set_slab()
+        )
     else:
         instance.create_slab_block("_slab")
 
     if existing_wall:
-        DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall())
+        DEFERRED_PIPE.create_later(
+            BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall()
+        )
     else:
         instance.create_wall("_wall")
 
     if existing_stairs:
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{fname}_stairs").set_default_model_state(
-                "facing=east,half=bottom,shape=inner_left"
-            ).set_solid(False).set_all_side_solid(False)
+            BlockFactory()
+            .set_name(f"minecraft:{fname}_stairs")
+            .set_default_model_state("facing=east,half=bottom,shape=inner_left")
+            .set_solid(False)
+            .set_all_side_solid(False)
         )
     else:
         pass  # todo: implement
 
     if existing_fence:
-        DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{fname}_fence").set_fence())
+        DEFERRED_PIPE.create_later(
+            BlockFactory().set_name(f"minecraft:{fname}_fence").set_fence()
+        )
     else:
         instance.create_fence("_fence")
 
@@ -145,80 +163,108 @@ def stone_like(
 wood("acacia")
 
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:activator_rail").set_solid(False).set_all_side_solid(
-        False
-    ).set_default_model_state("powered=false,shape=north_south")
+    BlockFactory()
+    .set_name("minecraft:activator_rail")
+    .set_solid(False)
+    .set_all_side_solid(False)
+    .set_default_model_state("powered=false,shape=north_south")
 )
 DEFERRED_PIPE.create_later(plant("minecraft:allium"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:amethyst_block"))
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:amethyst_cluster").set_solid(
-        False
-    ).set_all_side_solid(False).set_default_model_state("facing=up")
+    BlockFactory()
+    .set_name("minecraft:amethyst_cluster")
+    .set_solid(False)
+    .set_all_side_solid(False)
+    .set_default_model_state("facing=up")
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:ancient_debris"))
 
 stone_like("andesite")
 
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:anvil").set_solid(False).set_all_side_solid(
-        False
-    ).set_default_model_state("facing=north")
+    BlockFactory()
+    .set_name("minecraft:anvil")
+    .set_solid(False)
+    .set_all_side_solid(False)
+    .set_default_model_state("facing=north")
 )
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:azalea_leaves").set_solid(False).set_all_side_solid(
-        False
-    )
+    BlockFactory()
+    .set_name("minecraft:azalea_leaves")
+    .set_solid(False)
+    .set_all_side_solid(False)
 )
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:azalea_leaves_flowers").set_solid(
-        False
-    ).set_all_side_solid(False)
+    BlockFactory()
+    .set_name("minecraft:azalea_leaves_flowers")
+    .set_solid(False)
+    .set_all_side_solid(False)
 )
 DEFERRED_PIPE.create_later(plant("minecraft:azure_bluet"))
-DEFERRED_PIPE.create_later(plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small"))
+DEFERRED_PIPE.create_later(
+    plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small")
+)
 DEFERRED_PIPE.create_later(plant("minecraft:bamboo_sapling"))
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:barrier").set_break_able_flag(
-        False
-    ).set_all_side_solid(False).set_solid(False)
+    BlockFactory()
+    .set_name("minecraft:barrier")
+    .set_break_able_flag(False)
+    .set_all_side_solid(False)
+    .set_solid(False)
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:basalt").set_log())
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:beacon").set_all_side_solid(False).set_solid(
-        False
-    )
+    BlockFactory()
+    .set_name("minecraft:beacon")
+    .set_all_side_solid(False)
+    .set_solid(False)
 )
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:bedrock").set_break_able_flag(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:beehive")
+    .set_default_model_state("facing=east,honey_level=3")
+    .set_strength(0.6)
+)
+DEFERRED_PIPE.create_later(
+    plant("minecraft:beetroots").set_default_model_state("age=2")
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:bee_nest")
+    .set_default_model_state("facing=east,honey_level=2")
+    .set_strength(0.3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:bell")
+    .set_default_model_state("attachment=ceiling,facing=north")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:big_dripleaf")
+    .set_default_model_state("facing=east,tilt=none")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:big_dripleaf_stem")
+    .set_default_model_state("facing=south")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+wood("birch")
+stone_like("blackstone", existing_fence=False)
 
 
 # All blocks, by blockstate
 """
-bedrock
-beehive
-beetroots
-bee_nest
-bell
-big_dripleaf
-big_dripleaf_stem
-birch_button
-birch_door
-birch_fence
-birch_fence_gate
-birch_leaves
-birch_log
-birch_planks
-birch_pressure_plate
-birch_sapling
-birch_sign
-birch_slab
-birch_stairs
-birch_trapdoor
-birch_wall_sign
-birch_wood
-blackstone
-blackstone_slab
-blackstone_stairs
-blackstone_wall
 black_banner
 black_bed
 black_candle
