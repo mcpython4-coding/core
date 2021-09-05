@@ -217,3 +217,20 @@ class NetherWoodTypes(enum.Enum):
 
 def all_woods():
     return itertools.chain(NormalWoodTypes.__iter__(), NetherWoodTypes.__iter__())
+
+
+class BlockRotationType(enum.Enum):
+    ROTATE_Y_90 = 0
+    ROTATE_Y_180 = 1
+    ROTATE_Y_270 = 2
+    FLIP_Y = 3
+
+    ROTATE_X_90 = 4
+    ROTATE_X_180 = 5
+    ROTATE_X_270 = 6
+    FLIP_X = 7
+
+    ROTATE_Z_90 = 8
+    ROTATE_Z_180 = 9
+    ROTATE_Z_270 = 10
+    FLIP_Z = 11
