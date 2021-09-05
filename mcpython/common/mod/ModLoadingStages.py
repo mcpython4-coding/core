@@ -561,7 +561,8 @@ manager.add_stage(
     LoadingStage(
         "minecraft:post_load", "post-loading stuff", *list(manager.stages.keys())
     )
-    .add_event_stage("stage:post")
+    .add_event_stage("stage:capabilities:register")
+    .add_event_stage("stage:post", "stage:capabilities:register")
     .add_event_stage("stage:final", "stage:post")
     .update_order()
     # todo: add registry lock phase
