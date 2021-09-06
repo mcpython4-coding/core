@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
+
 from .ICapabilityContainer import ICapabilityContainer
 
 
@@ -43,7 +44,9 @@ class AbstractCapability:
         return data
 
     @classmethod
-    def copyOver(cls, source_body: ICapabilityContainer, target_body: ICapabilityContainer, data):
+    def copyOver(
+        cls, source_body: ICapabilityContainer, target_body: ICapabilityContainer, data
+    ):
         return data
 
     @classmethod

@@ -26,12 +26,12 @@ class ServerSelectionState(AbstractState):
     NAME = "minecraft:server_selection"
 
     def __init__(self):
-        super().__init__()
-
         self.config_background = None
         self.back_button = None
         self.join_button = None
-        self.server_ip_input: UIPartTextInput = None
+        self.server_ip_input = None
+
+        super().__init__()
 
     def get_parts(self) -> list:
         self.config_background = ConfigBackground()
@@ -59,7 +59,7 @@ class ServerSelectionState(AbstractState):
             (0, 60),
             anchor_ti="MD",
             anchor_window="MD",
-            default_text="localhost:8080",
+            default_text="127.0.0.1:8088",
         )
 
         return [
@@ -69,11 +69,13 @@ class ServerSelectionState(AbstractState):
             self.server_ip_input,
         ]
 
-    def open_server_connection(self):
+    def open_server_connection(self, *_):
         pair = self.server_ip_input.entered_text.split(":")
         connectClient2Server(pair[0], int(pair[1]))
 
-        # todo: and here goes the networking logic!
+        from mcpython.common.network.packages.HandShakePackage import Client2ServerHandshake
+
+        shared.NETWORK_MANAGER.send_package(Client2ServerHandshake().setup("test:player"))
 
 
 server_selection = ServerSelectionState()

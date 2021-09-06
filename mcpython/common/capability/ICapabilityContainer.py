@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
+
 from mcpython import shared
 
 
@@ -42,7 +43,11 @@ class ICapabilityContainer:
 
         self.forceAttachmentOfCapability(name)
 
-        return capability.prepareData(self, self.capability_data[name]) if not raw else self.capability_data[name]
+        return (
+            capability.prepareData(self, self.capability_data[name])
+            if not raw
+            else self.capability_data[name]
+        )
 
     def copy_capabilities(self, target: "ICapabilityContainer"):
         for name in self.capability_data.keys():
@@ -55,7 +60,8 @@ class ICapabilityContainer:
         data = self.capability_data[name]
 
         new_data = capability.copyOver(self, target, data)
-        if new_data is None: return
+        if new_data is None:
+            return
 
         target.write_raw_capability_data(name, new_data)
 
@@ -80,10 +86,12 @@ class ICapabilityContainer:
         return d
 
     def deserialize_container(self, data: typing.Optional[dict]):
-        if data is None: return
+        if data is None:
+            return
 
         self.init_container()
 
         for name, d in data.items():
-            self.capability_data[name] = shared.capability_manager.get_by_name(name).rawRead(d)
-
+            self.capability_data[name] = shared.capability_manager.get_by_name(
+                name
+            ).rawRead(d)

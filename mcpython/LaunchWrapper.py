@@ -84,6 +84,8 @@ class LaunchWrapper:
 
         # todo: parse mixins
 
+        import mcpython.engine.network.NetworkManager
+
         if self.is_client:
             import mcpython.engine.rendering.window
 
@@ -328,6 +330,8 @@ class LaunchWrapper:
             except:
                 logger.print_exception("[FATAL] failed to load window images")
                 sys.exit(-1)
+        else:
+            shared.SERVER_NETWORK_HANDLER.enable_server()
 
         try:
             import pyglet.app

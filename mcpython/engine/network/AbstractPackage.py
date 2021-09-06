@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class AbstractPackage:
@@ -40,12 +41,9 @@ class AbstractPackage:
 
     CAN_GET_ANSWER = False
 
-    @classmethod
-    def from_data(cls, package_data: bytes):
-        pass
-
     def __init__(self):
         self.package_id = -1  # set during send process
+        self.client_id = -1  # set on the server to the client ID this package came from
         self.previous_packages = []  # set only during receiving or calling answer()
 
     def send(self, destination=0):
@@ -58,7 +56,10 @@ class AbstractPackage:
 
         return self
 
-    def encode(self) -> bytes:
+    def read_from_buffer(self, buffer: ReadBuffer):
+        raise NotImplementedError
+
+    def write_to_buffer(self, buffer: WriteBuffer):
         raise NotImplementedError
 
     def answer(self, package: "AbstractPackage"):

@@ -11,11 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import io
 import typing
 
 import mcpython.engine.network.AbstractPackage
 import mcpython.engine.network.Backend
 from mcpython import shared
+
+from .util import ReadBuffer, WriteBuffer
 
 
 class NetworkManager:
@@ -78,11 +81,15 @@ class NetworkManager:
         )
         previous_package_id_data = (
             b""
-            if package.previous_packages
+            if not package.previous_packages
             else package.previous_packages[-1].to_bytes(4, "big", signed=False)
         )
 
-        package_data = package.encode()
+        buffer = WriteBuffer()
+
+        package.write_to_buffer(buffer)
+
+        package_data = buffer.get_data()
 
         package_size_data = len(package_data).to_bytes(3, "big", signed=False)
 
@@ -158,6 +165,9 @@ class NetworkManager:
         self.custom_package_handlers.clear()
 
     def fetch_as_client(self):
+        if not shared.CLIENT_NETWORK_HANDLER.connected:
+            return
+
         shared.CLIENT_NETWORK_HANDLER.work()
         buffer = shared.CLIENT_NETWORK_HANDLER.data_stream
 
@@ -174,26 +184,26 @@ class NetworkManager:
             if package.package_id in self.custom_package_handlers:
                 for func in self.custom_package_handlers[package.package_id]:
                     func(package, self.client_id)
+
                 self.custom_package_handlers[package.package_id].clear()
 
     def fetch_as_server(self):
-        shared.CLIENT_NETWORK_HANDLER.work()
-        buffer = shared.CLIENT_NETWORK_HANDLER.data_stream
+        for client_id, buffer in shared.SERVER_NETWORK_HANDLER.get_package_streams():
+            while True:
+                package = self.fetch_package_from_buffer(buffer)
+                package.client_id = client_id
 
-        while True:
-            package = self.fetch_package_from_buffer(buffer)
+                if package is None:
+                    return
 
-            if package is None:
-                return
+                if package.PACKAGE_TYPE_ID in self.general_package_handlers:
+                    for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
+                        func(package, 0)
 
-            if package.PACKAGE_TYPE_ID in self.general_package_handlers:
-                for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
-                    func(package, 0)
-
-            if package.package_id in self.custom_package_handlers:
-                for func in self.custom_package_handlers[package.package_id]:
-                    func(package, 0)
-                self.custom_package_handlers[package.package_id].clear()
+                if package.package_id in self.custom_package_handlers:
+                    for func in self.custom_package_handlers[package.package_id]:
+                        func(package, 0)
+                    self.custom_package_handlers[package.package_id].clear()
 
     def fetch_package_from_buffer(self, buffer):
         try:
@@ -233,9 +243,10 @@ class NetworkManager:
         except IndexError:
             return
 
-        package: mcpython.engine.network.AbstractPackage.AbstractPackage = (
-            self.package_types[package_type].from_data(package_data)
-        )
+        buffer = ReadBuffer(io.BytesIO(package_data))
+        package = self.package_types[package_type]()
+        package.read_from_buffer(buffer)
+
         package.package_id = package_id
         if previous_id:
             package.previous_packages.append(previous_id)

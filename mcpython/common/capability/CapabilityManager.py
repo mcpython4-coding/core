@@ -13,8 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from .AbstractCapability import AbstractCapability
 from mcpython import shared
+
+from .AbstractCapability import AbstractCapability
 
 
 class CapabilityManager:
@@ -30,4 +31,3 @@ class CapabilityManager:
 
 
 shared.capability_manager = CapabilityManager()
-

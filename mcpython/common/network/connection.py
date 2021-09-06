@@ -12,8 +12,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-from mcpython.engine.network.Backend import ClientBackend
 
 
 def connectClient2Server(ip: str, port: int):
-    pass
+    if shared.CLIENT_NETWORK_HANDLER.connected:
+        raise RuntimeError("client is connected to a server")
+
+    shared.CLIENT_NETWORK_HANDLER.ip, shared.CLIENT_NETWORK_HANDLER.port = ip, port
+    shared.CLIENT_NETWORK_HANDLER.connect()

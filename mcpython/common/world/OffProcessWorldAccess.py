@@ -96,7 +96,9 @@ class OffProcessWorldHelper:
         instance = cls()
         process = multiprocessing.Process(target=instance.run)
         process.start()
-        return OffProcessWorldHelper.OffProcessWorldHelperReference(instance, process, world)
+        return OffProcessWorldHelper.OffProcessWorldHelperReference(
+            instance, process, world
+        )
 
     @classmethod
     def run_task(cls, task, result_helper, context):
@@ -155,7 +157,9 @@ class OffProcessWorldHelper:
         asyncio.run(self.main())
 
     async def main(self):
-        context = OffProcessWorldHelper.OffProcessWorldContext(OffProcessWorld(self), self)
+        context = OffProcessWorldHelper.OffProcessWorldContext(
+            OffProcessWorld(self), self
+        )
 
         while self.running:
             while not self.task_off_process_queue.empty():
@@ -469,7 +473,9 @@ class OffProcessDimension(mcpython.common.world.AbstractInterface.IDimension):
 
 
 class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
-    def __init__(self, helper: OffProcessWorldHelper, position, dimension: OffProcessDimension):
+    def __init__(
+        self, helper: OffProcessWorldHelper, position, dimension: OffProcessDimension
+    ):
         super().__init__()
         self.helper = helper
         self.position = position

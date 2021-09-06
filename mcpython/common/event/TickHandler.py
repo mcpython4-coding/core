@@ -71,6 +71,13 @@ class TickHandler:
         shared.world.tick()
         shared.event_handler.call("tickhandler:general")
 
+        if shared.IS_CLIENT:
+            shared.event_handler.call("tickhandler:client")
+            shared.NETWORK_MANAGER.fetch_as_client()
+        else:
+            shared.event_handler.call("tickhandler:server")
+            shared.NETWORK_MANAGER.fetch_as_server()
+
         # todo: include command info here!
         mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:tick", None

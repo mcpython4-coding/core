@@ -15,11 +15,13 @@ from abc import ABC
 
 import mcpython.common.event.api
 import mcpython.common.event.Registry
-from mcpython.engine import logger
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
+from mcpython.engine import logger
 
 
-class AbstractItem(mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC):
+class AbstractItem(
+    mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC
+):
     TYPE = "minecraft:item"
     CAPABILITY_CONTAINER_NAME = "minecraft:item"
 
@@ -99,7 +101,12 @@ class AbstractItem(mcpython.common.event.api.IRegistryContent, ICapabilityContai
     # functions used by data serializers
 
     def get_data(self):
-        return self.stored_block_state, self.can_destroy, self.can_be_set_on, self.serialize_container()
+        return (
+            self.stored_block_state,
+            self.can_destroy,
+            self.can_be_set_on,
+            self.serialize_container(),
+        )
 
     def set_data(self, data):
         if data == "no:data":

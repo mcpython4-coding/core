@@ -86,7 +86,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
             d = data["block_palette"][data["blocks"][rel_position]]
 
-            cls.add_block_to_world(chunk_instance, d, immediate, position, save_file, inv_file)
+            cls.add_block_to_world(
+                chunk_instance, d, immediate, position, save_file, inv_file
+            )
 
         for data_map in chunk_instance.get_all_data_maps():
             if data_map.NAME in data["maps"]:
@@ -132,7 +134,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         chunk_instance.show()
 
     @classmethod
-    def add_block_to_world(cls, chunk_instance, d, immediate, position, save_file, inv_file):
+    def add_block_to_world(
+        cls, chunk_instance, d, immediate, position, save_file, inv_file
+    ):
         # helper for setting up the block
         def add(instance):
             if instance is None:

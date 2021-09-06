@@ -75,10 +75,8 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
         self.world_loaded = False  # describes if the world is loaded or not
 
-        self.world_generation_process = (
-            mcpython.common.world.OffProcessWorldAccess.OffProcessWorldHelper.spawn_process(
-                self
-            )
+        self.world_generation_process = mcpython.common.world.OffProcessWorldAccess.OffProcessWorldHelper.spawn_process(
+            self
         )
 
     def tick(self):

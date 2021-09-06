@@ -71,6 +71,7 @@ class AbstractBlock(parent, ICapabilityContainer):
 
     todo: add custom properties to set_creation_properties() -> injected by add_block() call
     """
+
     # Internal registry type name & capability buffer name; DO NOT CHANGE
     CAPABILITY_CONTAINER_NAME = "minecraft:block"
     TYPE: str = "minecraft:block_registry"
@@ -259,7 +260,8 @@ class AbstractBlock(parent, ICapabilityContainer):
         WARNING: if not providing DataFixers for old mod versions, these data may get very old and lead into errors!
         todo: add an saver way of doing this!
         """
-        if data is None: return
+        if data is None:
+            return
 
         self.set_model_state(data)
 

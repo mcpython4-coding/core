@@ -1730,3 +1730,5 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed block inventory deserialization in save files
 [uuk]: added capability API supported by items, blocks and entities with support for storing capabilities at save files
        [Entity cap serialization is partially forced, block & item can be overridden]
+[uuk]: some work on the networking API, including reading/writing util
+[uuk]: added client <-> server handshake packages
