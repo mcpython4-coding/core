@@ -21,6 +21,7 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 class DisconnectionInitPackage(AbstractPackage):
     CAN_GET_ANSWER = True
     PACKAGE_TYPE_ID = 3
+    PACKAGE_NAME = "minecraft:disconnection_init"
 
     def __init__(self):
         super().__init__()
@@ -53,6 +54,7 @@ class DisconnectionInitPackage(AbstractPackage):
 
 class DisconnectionConfirmPackage(AbstractPackage):
     PACKAGE_TYPE_ID = 4
+    PACKAGE_NAME = "minecraft:disconnection_confirm"
 
     def handle_inner(self):
         shared.NETWORK_MANAGER.disconnect(self.target_id)

@@ -1732,3 +1732,5 @@ R   [uuk]: improved world serialization API
        [Entity cap serialization is partially forced, block & item can be overridden]
 [uuk]: some work on the networking API, including reading/writing util
 [uuk]: added client <-> server handshake packages
+[uuk]: added server -> client package ID sync system [for dynamic ID's only]
+       (needed as mod loading order is unstable across sessions)

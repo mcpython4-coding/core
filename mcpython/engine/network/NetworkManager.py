@@ -48,6 +48,8 @@ class NetworkManager:
             int, typing.List[typing.Callable]
         ] = {}
 
+        self.name2package_type = {}
+
         self.next_package_type_id = 1
         self.next_package_id = 0
 
@@ -55,6 +57,51 @@ class NetworkManager:
 
         # Filled during handshake
         self.valid_package_ids = set()
+
+    def get_dynamic_id_info(self) -> typing.List[typing.Tuple[str, int]]:
+        d = []
+
+        for package_id, package_type in self.package_types.items():
+            if package_type.DYNAMIC_PACKAGE_ID:
+                d.append((package_type.PACKAGE_NAME, package_id))
+
+        return d
+
+    def set_dynamic_id_info(self, data: typing.List[typing.Tuple[str, int]]):
+        logger.println("[NETWORK][SYNC] starting package ID sync...")
+
+        for name, package_id in data:
+            if name not in self.name2package_type:
+                continue
+
+            package_type: typing.Type[
+                mcpython.engine.network.AbstractPackage.AbstractPackage
+            ] = self.name2package_type[name]
+            package_id_here = package_type.PACKAGE_TYPE_ID
+
+            logger.println(f"[NETWORK][SYNC] considering package {name}")
+
+            if package_id_here == package_id:
+                continue
+
+            logger.println(
+                f"[NETWORK][SYNC] transforming {package_id_here} -> {package_id}"
+            )
+
+            self.package_types[package_id] = package_type
+
+            if package_id_here in self.package_types:
+                del self.package_types[package_id_here]
+
+            if package_id_here in self.general_package_handlers:
+                self.general_package_handlers[
+                    package_id
+                ] = self.general_package_handlers[package_id_here]
+                del self.general_package_handlers[package_id_here]
+
+        shared.event_handler.call("minecraft:package_rearrangement")
+
+        logger.println("[NETWORK][SYNC] package ID sync was successful!")
 
     def disconnect(self, target=-1):
         print(f"disconnecting connection to {target}")
@@ -78,7 +125,10 @@ class NetworkManager:
             if destination == 0:
                 shared.CLIENT_NETWORK_HANDLER.send_package(data)
             else:
-                from mcpython.common.network.packages.PackageReroutingPackage import PackageReroute
+                from mcpython.common.network.packages.PackageReroutingPackage import (
+                    PackageReroute,
+                )
+
                 # todo: do not encode package above there!
                 self.send_package(PackageReroute().set_package(destination, package), 0)
 
@@ -95,8 +145,8 @@ class NetworkManager:
             )
         package.target_id = destination
         bit_map = (
-                          (package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0)
-                  ) + (1 if package.previous_packages else 0)
+            (package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0)
+        ) + (1 if package.previous_packages else 0)
         encoded_head = bit_map.to_bytes(4, "big", signed=False)
         if package.CAN_GET_ANSWER and package.package_id == -1:
             package.package_id = self.next_package_id
@@ -116,11 +166,11 @@ class NetworkManager:
         package_data = buffer.get_data()
         package_size_data = len(package_data).to_bytes(3, "big", signed=False)
         data = (
-                encoded_head
-                + package_id_data
-                + previous_package_id_data
-                + package_size_data
-                + package_data
+            encoded_head
+            + package_id_data
+            + previous_package_id_data
+            + package_size_data
+            + package_data
         )
         return data
 
@@ -154,6 +204,9 @@ class NetworkManager:
         self,
         t: typing.Type[mcpython.engine.network.AbstractPackage.AbstractPackage],
     ):
+        if t.PACKAGE_NAME is None:
+            raise ValueError(t)
+
         if t.PACKAGE_TYPE_ID == -1:
             t.DYNAMIC_PACKAGE_ID = True
             while self.next_package_type_id in self.package_types:
@@ -175,6 +228,8 @@ class NetworkManager:
             self.package_types[self.next_package_type_id] = other
 
         self.package_types[t.PACKAGE_TYPE_ID] = t
+
+        self.name2package_type[t.PACKAGE_NAME] = t
         return self
 
     def clean_network_graph(self):
@@ -294,7 +349,12 @@ shared.NETWORK_MANAGER = NetworkManager()
 
 
 def load_packages():
-    from mcpython.common.network.packages import DisconnectionPackage, HandShakePackage, PackageReroutingPackage
+    from mcpython.common.network.packages import (
+        DisconnectionPackage,
+        HandShakePackage,
+        PackageIDSync,
+        PackageReroutingPackage,
+    )
 
     shared.NETWORK_MANAGER.register_package_type(
         HandShakePackage.Client2ServerHandshake
@@ -308,9 +368,8 @@ def load_packages():
     shared.NETWORK_MANAGER.register_package_type(
         DisconnectionPackage.DisconnectionConfirmPackage
     )
-    shared.NETWORK_MANAGER.register_package_type(
-        PackageReroutingPackage.PackageReroute
-    )
+    shared.NETWORK_MANAGER.register_package_type(PackageReroutingPackage.PackageReroute)
+    shared.NETWORK_MANAGER.register_package_type(PackageIDSync.PackageIDSync)
 
 
 shared.mod_loader("minecraft", "stage:network:package_register")(load_packages)

@@ -20,6 +20,8 @@ from mcpython.engine import logger
 from mcpython.engine.network.AbstractPackage import AbstractPackage
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
+from .PackageIDSync import PackageIDSync
+
 
 class Client2ServerHandshake(AbstractPackage):
     """
@@ -28,6 +30,7 @@ class Client2ServerHandshake(AbstractPackage):
 
     CAN_GET_ANSWER = True
     PACKAGE_TYPE_ID = 1
+    PACKAGE_NAME = "minecraft:client2server_handshake"
 
     def __init__(self):
         super().__init__()
@@ -61,6 +64,7 @@ class Client2ServerHandshake(AbstractPackage):
             return
 
         self.answer(Server2ClientHandshake().setup_accept())
+        self.answer(PackageIDSync().setup())
 
 
 class Server2ClientHandshake(AbstractPackage):
@@ -70,6 +74,7 @@ class Server2ClientHandshake(AbstractPackage):
     """
 
     PACKAGE_TYPE_ID = 2
+    PACKAGE_NAME = "minecraft:server2client_handshake"
 
     def __init__(self):
         super().__init__()
