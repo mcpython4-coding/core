@@ -48,7 +48,7 @@ class NetworkManager:
             int, typing.List[typing.Callable]
         ] = {}
 
-        self.next_package_type_id = 0
+        self.next_package_type_id = 1
         self.next_package_id = 0
 
         self.client_id = -1
@@ -72,22 +72,35 @@ class NetworkManager:
         package: mcpython.engine.network.AbstractPackage.AbstractPackage,
         destination: int = 0,
     ):
+        data = self.encode_package(destination, package)
+
+        if shared.IS_CLIENT:
+            if destination == 0:
+                shared.CLIENT_NETWORK_HANDLER.send_package(data)
+            else:
+                from mcpython.common.network.packages.PackageReroutingPackage import PackageReroute
+                # todo: do not encode package above there!
+                self.send_package(PackageReroute().set_package(destination, package), 0)
+
+        else:
+            if destination == 0:
+                raise ValueError("destination must be non-zero on server")
+
+            shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
+
+    def encode_package(self, destination, package) -> bytes:
         if package.PACKAGE_TYPE_ID == -1:
             raise RuntimeError(
                 f"{package}: Package type must be registered for sending it"
             )
-
         package.target_id = destination
-
         bit_map = (
-            (package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0)
-        ) + (1 if package.previous_packages else 0)
+                          (package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0)
+                  ) + (1 if package.previous_packages else 0)
         encoded_head = bit_map.to_bytes(4, "big", signed=False)
-
         if package.CAN_GET_ANSWER and package.package_id == -1:
             package.package_id = self.next_package_id
             self.next_package_id += 1
-
         package_id_data = (
             b""
             if not package.CAN_GET_ANSWER
@@ -98,31 +111,18 @@ class NetworkManager:
             if not package.previous_packages
             else package.previous_packages[-1].to_bytes(4, "big", signed=False)
         )
-
         buffer = WriteBuffer()
-
         package.write_to_buffer(buffer)
-
         package_data = buffer.get_data()
-
         package_size_data = len(package_data).to_bytes(3, "big", signed=False)
-
         data = (
-            encoded_head
-            + package_id_data
-            + previous_package_id_data
-            + package_size_data
-            + package_data
+                encoded_head
+                + package_id_data
+                + previous_package_id_data
+                + package_size_data
+                + package_data
         )
-
-        if shared.IS_CLIENT:
-            if destination == 0:
-                shared.CLIENT_NETWORK_HANDLER.send_package(data)
-        else:
-            if destination == 0:
-                raise ValueError("destination must be non-zero on server")
-
-            shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
+        return data
 
     def register_package_handler(
         self,
@@ -294,7 +294,7 @@ shared.NETWORK_MANAGER = NetworkManager()
 
 
 def load_packages():
-    from mcpython.common.network.packages import DisconnectionPackage, HandShakePackage
+    from mcpython.common.network.packages import DisconnectionPackage, HandShakePackage, PackageReroutingPackage
 
     shared.NETWORK_MANAGER.register_package_type(
         HandShakePackage.Client2ServerHandshake
@@ -307,6 +307,9 @@ def load_packages():
     )
     shared.NETWORK_MANAGER.register_package_type(
         DisconnectionPackage.DisconnectionConfirmPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        PackageReroutingPackage.PackageReroute
     )
 
 

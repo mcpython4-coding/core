@@ -51,6 +51,10 @@ class ReadBuffer:
         size = self.read_int()
         return [handling() for _ in range(size)]
 
+    def read_bytes(self, size_size=2):
+        size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
+        return self.stream.read(size)
+
 
 class WriteBuffer:
     def __init__(self):
@@ -96,4 +100,9 @@ class WriteBuffer:
         self.write_int(len(data))
         for e in data:
             handling(e)
+        return self
+
+    def write_bytes(self, data: bytes, size_size=2):
+        self.data.append(len(data).to_bytes(size_size, "big", signed=False))
+        self.data.append(data)
         return self
