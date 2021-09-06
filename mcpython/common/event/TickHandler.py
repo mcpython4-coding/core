@@ -42,7 +42,7 @@ class TickHandler:
 
     def tick(self, dt):
         """
-        execute ticks
+        Execute ticks
         :param dt: the time that came after the last event
         """
         self.active_tick += 1

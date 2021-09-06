@@ -331,6 +331,7 @@ class LaunchWrapper:
                 logger.print_exception("[FATAL] failed to load window images")
                 sys.exit(-1)
         else:
+            import threading
             shared.SERVER_NETWORK_HANDLER.enable_server()
 
         try:

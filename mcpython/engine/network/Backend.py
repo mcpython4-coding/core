@@ -84,7 +84,7 @@ class ServerBackend:
 
     def get_package_streams(self):
         self.handle_lock.acquire()
-        yield from self.data_by_client.items()
+        yield from list(self.data_by_client.items())
         self.handle_lock.release()
 
     def send_package(self, data: bytes, client: int):
@@ -97,7 +97,7 @@ class ServerBackend:
 
     def enable_server(self):
         self.server_handler_thread = threading.Thread(target=self.inner_server_thread)
-        self.server_handler_thread.run()
+        self.server_handler_thread.start()
 
     def inner_server_thread(self):
         threads = []

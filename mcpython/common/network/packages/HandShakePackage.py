@@ -26,6 +26,7 @@ class Client2ServerHandshake(AbstractPackage):
     Package to be send from the client to the server on connection
     """
     CAN_GET_ANSWER = True
+    PACKAGE_TYPE_ID = 1
 
     def __init__(self):
         super().__init__()
@@ -58,6 +59,7 @@ class Server2ClientHandshake(AbstractPackage):
     The package send from the server back to the client
     Contains some meta information
     """
+    PACKAGE_TYPE_ID = 2
 
     def __init__(self):
         super().__init__()
@@ -99,6 +101,3 @@ class Server2ClientHandshake(AbstractPackage):
                 f"[SERVER-MSG][ERROR] connection stopped; reason: {self.deny_reason}"
             )
 
-
-shared.NETWORK_MANAGER.register_package_type(Client2ServerHandshake)
-shared.NETWORK_MANAGER.register_package_type(Server2ClientHandshake)

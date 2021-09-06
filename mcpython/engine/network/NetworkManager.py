@@ -19,6 +19,7 @@ import mcpython.engine.network.Backend
 from mcpython import shared
 
 from .util import ReadBuffer, WriteBuffer
+from .. import logger
 
 
 class NetworkManager:
@@ -65,10 +66,11 @@ class NetworkManager:
                 f"{package}: Package type must be registered for sending it"
             )
 
-        encoded_head = (
-            (package.PACKAGE_TYPE_ID << 2 + 2 if package.CAN_GET_ANSWER else 0)
+        bit_map = (
+            ((package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0))
             + (1 if package.previous_packages else 0)
-        ).to_bytes(3, "big", signed=False)
+        )
+        encoded_head = bit_map.to_bytes(4, "big", signed=False)
 
         if package.CAN_GET_ANSWER and package.package_id == -1:
             package.package_id = self.next_package_id
@@ -105,6 +107,9 @@ class NetworkManager:
             if destination == 0:
                 shared.CLIENT_NETWORK_HANDLER.send_package(data)
         else:
+            if destination == 0:
+                raise ValueError("destination must be non-zero on server")
+
             shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
 
     def register_package_handler(
@@ -171,7 +176,7 @@ class NetworkManager:
         shared.CLIENT_NETWORK_HANDLER.work()
         buffer = shared.CLIENT_NETWORK_HANDLER.data_stream
 
-        while True:
+        while buffer:
             package = self.fetch_package_from_buffer(buffer)
 
             if package is None:
@@ -189,12 +194,13 @@ class NetworkManager:
 
     def fetch_as_server(self):
         for client_id, buffer in shared.SERVER_NETWORK_HANDLER.get_package_streams():
-            while True:
+            while buffer:
                 package = self.fetch_package_from_buffer(buffer)
-                package.client_id = client_id
 
                 if package is None:
                     return
+
+                package.client_id = client_id
 
                 if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                     for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
@@ -210,6 +216,16 @@ class NetworkManager:
             head = int.from_bytes(buffer[:4], "big", signed=False)
 
             package_type = head >> 2
+
+            if not self.package_types:
+                load_packages()
+
+            if package_type not in self.package_types:
+                logger.println(f"[NETWORK][ERROR] received unknown package type of ID {package_type}")
+                print(list(self.package_types.keys()))
+                print(buffer[:4])
+                print(head)
+                return
 
             has_package_id = head & 2
             has_previous_package_id = head & 1
@@ -244,6 +260,7 @@ class NetworkManager:
             return
 
         buffer = ReadBuffer(io.BytesIO(package_data))
+
         package = self.package_types[package_type]()
         package.read_from_buffer(buffer)
 
@@ -257,3 +274,13 @@ class NetworkManager:
 
 
 shared.NETWORK_MANAGER = NetworkManager()
+
+
+def load_packages():
+    from mcpython.common.network.packages import HandShakePackage
+
+    shared.NETWORK_MANAGER.register_package_type(HandShakePackage.Client2ServerHandshake)
+    shared.NETWORK_MANAGER.register_package_type(HandShakePackage.Server2ClientHandshake)
+
+
+shared.mod_loader("minecraft", "stage:network:package_register")(load_packages)

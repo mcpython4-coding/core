@@ -559,6 +559,15 @@ manager.add_stage(
 )
 manager.add_stage(
     LoadingStage(
+        "minecraft:network",
+        "loading network stuff",
+        "minecraft:configs",
+    )
+    .add_event_stage("stage:network:package_register")
+    .update_order()
+)
+manager.add_stage(
+    LoadingStage(
         "minecraft:post_load", "post-loading stuff", *list(manager.stages.keys())
     )
     .add_event_stage("stage:capabilities:register")
