@@ -44,23 +44,18 @@ class AbstractPackage:
     def __init__(self):
         self.package_id = -1  # set during send process
         self.sender_id = -1  # set on the server to the client ID this package came from
+        self.target_id = -1
         self.previous_packages = []  # set only during receiving or calling answer()
 
     def send(self, destination=0):
         shared.NETWORK_MANAGER.send_package(self, destination)
-
-        if self.CAN_GET_ANSWER:
-            shared.NETWORK_MANAGER.register_answer_handler(
-                self, self.on_answer_received
-            )
-
         return self
 
     def read_from_buffer(self, buffer: ReadBuffer):
-        raise NotImplementedError
+        pass
 
     def write_to_buffer(self, buffer: WriteBuffer):
-        raise NotImplementedError
+        pass
 
     def answer(self, package: "AbstractPackage"):
         if self.package_id == -1:
@@ -73,7 +68,4 @@ class AbstractPackage:
         shared.NETWORK_MANAGER.send_package(package, self.sender_id)
 
     def handle_inner(self):
-        raise NotImplementedError
-
-    def on_answer_received(self, package):
         pass

@@ -82,7 +82,41 @@ class ServerBackend:
         self.pending_stops = set()
         self.client_locks: typing.Dict[typing.Hashable, threading.Lock] = {}
 
+        self.next_client_id = 1
+
+        self.threads = {}
+        self.pending_thread_stops = set()
+
         self.handle_lock = threading.Lock()
+
+    def disconnect_client(self, client_id: int):
+        self.handle_lock.acquire()
+        self.client_locks[client_id].acquire()
+
+        self.pending_thread_stops.add(client_id)
+
+        del self.data_by_client[client_id]
+        del self.scheduled_packages_by_client[client_id]
+        del self.client_locks[client_id]
+        del self.threads[client_id]
+
+        self.handle_lock.release()
+
+    def disconnect_all(self):
+        self.handle_lock.acquire()
+        for lock in self.client_locks.values():
+            lock.acquire()
+
+        client_ids = set(self.data_by_client.keys())
+
+        self.pending_thread_stops |= client_ids
+
+        self.data_by_client.clear()
+        self.scheduled_packages_by_client.clear()
+        self.client_locks.clear()
+        self.threads.clear()
+
+        self.handle_lock.release()
 
     def get_package_streams(self):
         self.handle_lock.acquire()
@@ -104,13 +138,13 @@ class ServerBackend:
         self.server_handler_thread.start()
 
     def inner_server_thread(self):
-        threads = []
         self.socket.listen(4)
 
         while True:
             conn, addr = self.socket.accept()
 
-            client_id = len(threads) + 1
+            client_id = self.next_client_id
+            self.next_client_id += 1
 
             print(f"client {addr} with id {client_id} connected!")
 
@@ -126,17 +160,27 @@ class ServerBackend:
             )
             send_thread.start()
 
-            threads.append((recv_thread, send_thread))
+            self.threads[client_id] = (recv_thread, send_thread)
 
     def single_client_thread_recv(self, conn, client_id: int):
-        while True:
-            data = conn.recv(4096)
-            self.data_by_client[client_id] += data
+        try:
+            while client_id not in self.pending_thread_stops:
+                data = conn.recv(4096)
+                self.data_by_client[client_id] += data
+        except:
+            if client_id not in self.pending_thread_stops:
+                logger.print_exception(f"in client handler (recv) {client_id}")
 
     def single_client_thread_send(self, conn, client_id: int):
-        while True:
-            self.client_locks[client_id].acquire()
-            for package in self.scheduled_packages_by_client.setdefault(client_id, []):
-                conn.send(package)
-            self.scheduled_packages_by_client.clear()
-            self.client_locks[client_id].release()
+        try:
+            while client_id not in self.pending_thread_stops:
+                self.client_locks[client_id].acquire()
+                for package in self.scheduled_packages_by_client.setdefault(
+                    client_id, []
+                ):
+                    conn.send(package)
+                self.scheduled_packages_by_client.clear()
+                self.client_locks[client_id].release()
+        except:
+            if client_id not in self.pending_thread_stops:
+                logger.print_exception(f"in client handler (send) {client_id}")

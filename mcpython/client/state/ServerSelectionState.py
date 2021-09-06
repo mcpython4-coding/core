@@ -73,9 +73,13 @@ class ServerSelectionState(AbstractState):
         pair = self.server_ip_input.entered_text.split(":")
         connectClient2Server(pair[0], int(pair[1]))
 
-        from mcpython.common.network.packages.HandShakePackage import Client2ServerHandshake
+        from mcpython.common.network.packages.HandShakePackage import (
+            Client2ServerHandshake,
+        )
 
-        shared.NETWORK_MANAGER.send_package(Client2ServerHandshake().setup("test:player"))
+        shared.NETWORK_MANAGER.send_package(
+            Client2ServerHandshake().setup("test:player")
+        )
 
 
 server_selection = ServerSelectionState()

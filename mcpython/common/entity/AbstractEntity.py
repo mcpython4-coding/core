@@ -122,7 +122,10 @@ class AbstractEntity(
             self.dimension.get_chunk_for_position(self.position).entities.add(self)
 
     def remove_from_chunk(self):
-        if self.dimension is not None and self in self.dimension.get_chunk_for_position(self.position).entities:
+        if (
+            self.dimension is not None
+            and self in self.dimension.get_chunk_for_position(self.position).entities
+        ):
             self.dimension.get_chunk_for_position(self.position).entities.remove(self)
 
     def __del__(self):

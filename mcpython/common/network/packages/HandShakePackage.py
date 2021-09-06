@@ -14,17 +14,18 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.config
+import mcpython.engine.network.NetworkManager
 from mcpython import shared
 from mcpython.engine import logger
 from mcpython.engine.network.AbstractPackage import AbstractPackage
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-import mcpython.engine.network.NetworkManager
 
 
 class Client2ServerHandshake(AbstractPackage):
     """
     Package to be send from the client to the server on connection
     """
+
     CAN_GET_ANSWER = True
     PACKAGE_TYPE_ID = 1
 
@@ -45,12 +46,18 @@ class Client2ServerHandshake(AbstractPackage):
         buffer.write_int(self.game_version).write_string(self.player_name)
 
     def handle_inner(self):
-        logger.println(f"client named {self.player_name} (game version: {self.game_version}) is connecting to this server")
+        logger.println(
+            f"client named {self.player_name} (game version: {self.game_version}) is connecting to this server"
+        )
 
         # todo: some better lookup
         if self.game_version != mcpython.common.config.VERSION_ID:
             logger.println("denied connection due to incompatible versions")
-            self.answer(Server2ClientHandshake().setup_deny(f"Incompatible game version: {self.game_version}; expected: {mcpython.common.config.VERSION_ID}"))
+            self.answer(
+                Server2ClientHandshake().setup_deny(
+                    f"Incompatible game version: {self.game_version}; expected: {mcpython.common.config.VERSION_ID}"
+                )
+            )
             return
 
         self.answer(Server2ClientHandshake().setup_accept())
@@ -61,6 +68,7 @@ class Server2ClientHandshake(AbstractPackage):
     The package send from the server back to the client
     Contains some meta information
     """
+
     PACKAGE_TYPE_ID = 2
 
     def __init__(self):
@@ -114,4 +122,3 @@ class Server2ClientHandshake(AbstractPackage):
         logger.println(
             "[SERVER-MSG][INFO] connection successful, sending further game-information"
         )
-

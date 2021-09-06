@@ -332,6 +332,7 @@ class LaunchWrapper:
                 sys.exit(-1)
         else:
             import threading
+
             shared.SERVER_NETWORK_HANDLER.enable_server()
 
         try:

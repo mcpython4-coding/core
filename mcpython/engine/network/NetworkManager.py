@@ -18,8 +18,8 @@ import mcpython.engine.network.AbstractPackage
 import mcpython.engine.network.Backend
 from mcpython import shared
 
-from .util import ReadBuffer, WriteBuffer
 from .. import logger
+from .util import ReadBuffer, WriteBuffer
 
 
 class NetworkManager:
@@ -56,6 +56,17 @@ class NetworkManager:
         # Filled during handshake
         self.valid_package_ids = set()
 
+    def disconnect(self, target=-1):
+        print(f"disconnecting connection to {target}")
+
+        if shared.IS_CLIENT:
+            shared.CLIENT_NETWORK_HANDLER.disconnect()
+        else:
+            if target == -1:
+                shared.SERVER_NETWORK_HANDLER.disconnect_all()
+            else:
+                shared.SERVER_NETWORK_HANDLER.disconnect_client(target)
+
     def send_package(
         self,
         package: mcpython.engine.network.AbstractPackage.AbstractPackage,
@@ -66,10 +77,11 @@ class NetworkManager:
                 f"{package}: Package type must be registered for sending it"
             )
 
+        package.target_id = destination
+
         bit_map = (
-            ((package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0))
-            + (1 if package.previous_packages else 0)
-        )
+            (package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0)
+        ) + (1 if package.previous_packages else 0)
         encoded_head = bit_map.to_bytes(4, "big", signed=False)
 
         if package.CAN_GET_ANSWER and package.package_id == -1:
@@ -226,7 +238,9 @@ class NetworkManager:
                 load_packages()
 
             if package_type not in self.package_types:
-                logger.println(f"[NETWORK][ERROR] received unknown package type of ID {package_type}")
+                logger.println(
+                    f"[NETWORK][ERROR] received unknown package type of ID {package_type}"
+                )
                 print(list(self.package_types.keys()))
                 print(buffer[:4])
                 print(head)
@@ -280,10 +294,20 @@ shared.NETWORK_MANAGER = NetworkManager()
 
 
 def load_packages():
-    from mcpython.common.network.packages import HandShakePackage
+    from mcpython.common.network.packages import DisconnectionPackage, HandShakePackage
 
-    shared.NETWORK_MANAGER.register_package_type(HandShakePackage.Client2ServerHandshake)
-    shared.NETWORK_MANAGER.register_package_type(HandShakePackage.Server2ClientHandshake)
+    shared.NETWORK_MANAGER.register_package_type(
+        HandShakePackage.Client2ServerHandshake
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        HandShakePackage.Server2ClientHandshake
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        DisconnectionPackage.DisconnectionInitPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        DisconnectionPackage.DisconnectionConfirmPackage
+    )
 
 
 shared.mod_loader("minecraft", "stage:network:package_register")(load_packages)
