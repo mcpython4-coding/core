@@ -22,11 +22,13 @@ import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.util.math
 from mcpython import shared
-from mcpython.engine import logger
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
+from mcpython.engine import logger
 
 
-class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC):
+class AbstractEntity(
+    mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC
+):
     """
     Base class for every entity in the game
 
@@ -38,6 +40,7 @@ class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityCont
 
     Capabilities are auto-saved and this behaviour cannot be disabled currently.
     """
+
     # ---------------------
     # Internal Region START
     # ---------------------
@@ -115,10 +118,11 @@ class AbstractEntity(mcpython.common.event.api.IRegistryContent, ICapabilityCont
         self.dead = False
 
     def add_to_chunk(self):
-        self.dimension.get_chunk_for_position(self.position).entities.add(self)
+        if self.dimension is not None:
+            self.dimension.get_chunk_for_position(self.position).entities.add(self)
 
     def remove_from_chunk(self):
-        if self in self.dimension.get_chunk_for_position(self.position).entities:
+        if self.dimension is not None and self in self.dimension.get_chunk_for_position(self.position).entities:
             self.dimension.get_chunk_for_position(self.position).entities.remove(self)
 
     def __del__(self):
