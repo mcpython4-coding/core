@@ -182,6 +182,9 @@ class NetworkManager:
             if package is None:
                 return
 
+            package.sender_id = 0
+            package.handle_inner()
+
             if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                 for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
                     func(package, self.client_id)
@@ -200,7 +203,9 @@ class NetworkManager:
                 if package is None:
                     return
 
-                package.client_id = client_id
+                package.sender_id = client_id
+
+                package.handle_inner()
 
                 if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                     for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
@@ -267,8 +272,6 @@ class NetworkManager:
         package.package_id = package_id
         if previous_id:
             package.previous_packages.append(previous_id)
-
-        package.handle_inner()
 
         return package
 

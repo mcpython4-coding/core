@@ -43,7 +43,7 @@ class AbstractPackage:
 
     def __init__(self):
         self.package_id = -1  # set during send process
-        self.client_id = -1  # set on the server to the client ID this package came from
+        self.sender_id = -1  # set on the server to the client ID this package came from
         self.previous_packages = []  # set only during receiving or calling answer()
 
     def send(self, destination=0):
@@ -69,6 +69,8 @@ class AbstractPackage:
             )
 
         package.previous_packages = self.previous_packages + [self.package_id]
+
+        shared.NETWORK_MANAGER.send_package(package, self.sender_id)
 
     def handle_inner(self):
         raise NotImplementedError

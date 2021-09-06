@@ -53,6 +53,8 @@ class Client2ServerHandshake(AbstractPackage):
             self.answer(Server2ClientHandshake().setup_deny(f"Incompatible game version: {self.game_version}; expected: {mcpython.common.config.VERSION_ID}"))
             return
 
+        self.answer(Server2ClientHandshake().setup_accept())
+
 
 class Server2ClientHandshake(AbstractPackage):
     """
@@ -71,6 +73,13 @@ class Server2ClientHandshake(AbstractPackage):
     def setup_deny(self, reason: str):
         self.accept_connection = False
         self.deny_reason = reason
+        return self
+
+    def setup_accept(self):
+        mod_info = []
+        for mod in shared.mod_loader.mods.values():
+            mod_info.append((mod.name, str(mod.version)))
+        self.mod_list = mod_info
         return self
 
     def read_from_buffer(self, buffer: ReadBuffer):
@@ -98,6 +107,11 @@ class Server2ClientHandshake(AbstractPackage):
     def handle_inner(self):
         if not self.accept_connection:
             logger.println(
-                f"[SERVER-MSG][ERROR] connection stopped; reason: {self.deny_reason}"
+                f"[SERVER-MSG][ERROR] connection closed by server; reason: {self.deny_reason}"
             )
+            return
+
+        logger.println(
+            "[SERVER-MSG][INFO] connection successful, sending further game-information"
+        )
 

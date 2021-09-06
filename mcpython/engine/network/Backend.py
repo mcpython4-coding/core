@@ -57,6 +57,7 @@ class ClientBackend:
     def work(self):
         for package in self.scheduled_packages:
             self.socket.send(package)
+        self.scheduled_packages.clear()
 
         while True:
             d = self.socket.recv(4096)
@@ -79,6 +80,7 @@ class ServerBackend:
         self.data_by_client = {}
         self.server_handler_thread = None
         self.pending_stops = set()
+        self.client_locks: typing.Dict[typing.Hashable, threading.Lock] = {}
 
         self.handle_lock = threading.Lock()
 
@@ -88,7 +90,9 @@ class ServerBackend:
         self.handle_lock.release()
 
     def send_package(self, data: bytes, client: int):
+        self.client_locks[client].acquire()
         self.scheduled_packages_by_client.setdefault(client, []).append(data)
+        self.client_locks[client].release()
 
     def connect(self):
         print(f"Bound server to {self.ip}@{self.port}")
@@ -106,25 +110,33 @@ class ServerBackend:
         while True:
             conn, addr = self.socket.accept()
 
-            print(f"client {addr} connected!")
+            client_id = len(threads) + 1
 
-            self.data_by_client[addr] = bytearray()
+            print(f"client {addr} with id {client_id} connected!")
 
-            thread = threading.Thread(
-                target=self.single_client_thread, args=(conn, addr, len(threads) + 1)
+            self.data_by_client[client_id] = bytearray()
+            self.client_locks[client_id] = threading.Lock()
+
+            recv_thread = threading.Thread(
+                target=self.single_client_thread_recv, args=(conn, client_id)
             )
-            thread.run()
+            recv_thread.start()
+            send_thread = threading.Thread(
+                target=self.single_client_thread_send, args=(conn, client_id)
+            )
+            send_thread.start()
 
-            threads.append(thread)
+            threads.append((recv_thread, send_thread))
 
-    def single_client_thread(self, conn, addr, client_id: int):
+    def single_client_thread_recv(self, conn, client_id: int):
         while True:
             data = conn.recv(4096)
+            self.data_by_client[client_id] += data
 
-            self.handle_lock.acquire()
-            self.data_by_client[addr] += data
-            self.handle_lock.release()
-
-            if addr in self.pending_stops:
-                self.pending_stops.remove(addr)
-                return
+    def single_client_thread_send(self, conn, client_id: int):
+        while True:
+            self.client_locks[client_id].acquire()
+            for package in self.scheduled_packages_by_client.setdefault(client_id, []):
+                conn.send(package)
+            self.scheduled_packages_by_client.clear()
+            self.client_locks[client_id].release()
