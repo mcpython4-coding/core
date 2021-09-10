@@ -39,7 +39,9 @@ class RegistrySyncInitPackage(AbstractPackage):
         buffer.write_list(self.registries, lambda e: buffer.write_string(e))
 
     def handle_inner(self):
-        shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"] = {e: -1 for e in self.registries}
+        shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"] = {
+            e: -1 for e in self.registries
+        }
         shared.event_handler.call("network:registry_sync:init", self)
 
         for name in self.registries:
@@ -142,25 +144,45 @@ class RegistrySyncResultPackage(AbstractPackage):
 
         if shared.IS_CLIENT:
             if self.status:
-                logger.println("[NETWORK][INFO] registry compare results are back from server, everything fine")
+                logger.println(
+                    "[NETWORK][INFO] registry compare results are back from server, everything fine"
+                )
                 shared.event_handler.call("network:registry_sync:success")
 
                 logger.println("[NETWORK][INFO] requesting world now...")
                 from .WorldDataExchangePackage import DataRequestPackage
-                self.answer(DataRequestPackage().request_player_info().request_world_info())
+
+                self.answer(
+                    DataRequestPackage().request_player_info().request_world_info()
+                )
 
                 return
             else:
                 logger.println("[NETWORK][WARN] registry sync FAILED on server side")
-                self.answer(DisconnectionInitPackage().set_reason("registry sync fatal"))
+                self.answer(
+                    DisconnectionInitPackage().set_reason("registry sync fatal")
+                )
                 shared.event_handler.call("network:registry_sync:fail")
                 return
 
-        shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"][self.name] = int(self.status)
+        shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"][
+            self.name
+        ] = int(self.status)
 
-        if -1 not in shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"].values():
-            if 0 in shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"].values():
-                self.answer(DisconnectionInitPackage().set_reason("registry miss-matches"))
+        if (
+            -1
+            not in shared.NETWORK_MANAGER.client_profiles[self.sender_id][
+                "registry_sync"
+            ].values()
+        ):
+            if (
+                0
+                in shared.NETWORK_MANAGER.client_profiles[self.sender_id][
+                    "registry_sync"
+                ].values()
+            ):
+                self.answer(
+                    DisconnectionInitPackage().set_reason("registry miss-matches")
+                )
             else:
                 self.answer(RegistrySyncResultPackage().setup("all", True))
-

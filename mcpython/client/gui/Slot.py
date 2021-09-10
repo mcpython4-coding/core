@@ -21,9 +21,7 @@ import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import IBufferSerializeAble
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
 SLOT_WIDTH = 32
 

@@ -21,7 +21,10 @@ from mcpython.engine.network.util import IBufferSerializeAble
 
 
 class AbstractItem(
-    mcpython.common.event.api.IRegistryContent, ICapabilityContainer, IBufferSerializeAble, ABC
+    mcpython.common.event.api.IRegistryContent,
+    ICapabilityContainer,
+    IBufferSerializeAble,
+    ABC,
 ):
     TYPE = "minecraft:item"
     CAPABILITY_CONTAINER_NAME = "minecraft:item"

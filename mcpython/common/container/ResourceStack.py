@@ -18,9 +18,7 @@ from abc import ABC
 import mcpython.common.item.AbstractItem
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import IBufferSerializeAble
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
 
 class AbstractResourceStack(IBufferSerializeAble, ABC):
@@ -116,7 +114,9 @@ class ItemStack(AbstractResourceStack):
         else:
             self.amount = buffer.read_int()
             item_name = buffer.read_string()
-            self.item = shared.registry.get_by_name("minecraft:item").full_entries[item_name]()
+            self.item = shared.registry.get_by_name("minecraft:item").full_entries[
+                item_name
+            ]()
             self.item.read_from_network_buffer(buffer)
 
     def copy(self) -> "ItemStack":
@@ -239,7 +239,11 @@ class FluidStack(AbstractResourceStack):
         return self.fluid is None or self.amount == 0
 
     def contains_same_resource(self, other: "FluidStack") -> bool:
-        return isinstance(other, FluidStack) and self.fluid == other.fluid and self.nbt == other.nbt
+        return (
+            isinstance(other, FluidStack)
+            and self.fluid == other.fluid
+            and self.nbt == other.nbt
+        )
 
     def has_more_than(self, other: "FluidStack") -> bool:
         return self.contains_same_resource(other) and self.amount >= other.amount

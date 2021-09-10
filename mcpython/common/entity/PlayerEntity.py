@@ -22,9 +22,11 @@ import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
 from mcpython import shared
+from mcpython.common.network.packages.WorldDataExchangePackage import (
+    PlayerUpdatePackage,
+)
 from mcpython.engine import logger
-from mcpython.engine.network.util import WriteBuffer, ReadBuffer
-from mcpython.common.network.packages.WorldDataExchangePackage import PlayerUpdatePackage
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 @shared.registry
@@ -158,7 +160,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def create_update_package(self) -> PlayerUpdatePackage:
         package = PlayerUpdatePackage()
         package.name = self.name
-        package.position, package.rotation, package.motion = self.position, self.rotation, self.nbt_data["motion"]
+        package.position, package.rotation, package.motion = (
+            self.position,
+            self.rotation,
+            self.nbt_data["motion"],
+        )
         package.dimension = self.dimension.get_name()
         package.selected_slot = self.active_inventory_slot
         package.gamemode = self.gamemode
@@ -166,7 +172,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         return package
 
     def write_update_package(self, package: PlayerUpdatePackage):
-        self.position, self.rotation, self.nbt_data["motion"] = package.position, package.rotation, package.motion
+        self.position, self.rotation, self.nbt_data["motion"] = (
+            package.position,
+            package.rotation,
+            package.motion,
+        )
         self.dimension = shared.world.get_dimension_by_name(package.dimension)
         self.active_inventory_slot = package.selected_slot
         self.gamemode = package.gamemode
@@ -204,7 +214,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         Helper method for setting up the player inventory
         todo: can we re-use inventories from previous players?
         """
-        if self.inventories_created: return
+        if self.inventories_created:
+            return
         self.inventories_created = True
 
         import mcpython.client.Chat as Chat

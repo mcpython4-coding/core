@@ -122,4 +122,3 @@ class IBufferSerializeAble(ABC):
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         pass
-

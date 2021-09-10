@@ -107,7 +107,9 @@ class NetworkManager:
         logger.println("[NETWORK][SYNC] package ID sync was successful!")
 
     def disconnect(self, target=-1):
-        logger.println(f"disconnecting connection to {target if target != -1 else ('all' if not shared.IS_CLIENT else 'server')}")
+        logger.println(
+            f"disconnecting connection to {target if target != -1 else ('all' if not shared.IS_CLIENT else 'server')}"
+        )
 
         if shared.IS_CLIENT:
             shared.CLIENT_NETWORK_HANDLER.disconnect()
@@ -287,7 +289,9 @@ class NetworkManager:
                 try:
                     package = self.fetch_package_from_buffer(buffer)
                 except:
-                    logger.print_exception(f"during fetching data @server from @{client_id}")
+                    logger.print_exception(
+                        f"during fetching data @server from @{client_id}"
+                    )
                     self.disconnect(client_id)
                     break
 
@@ -299,7 +303,9 @@ class NetworkManager:
                 try:
                     package.handle_inner()
                 except:
-                    logger.print_exception(f"during handling package {package} @server from @{client_id}")
+                    logger.print_exception(
+                        f"during handling package {package} @server from @{client_id}"
+                    )
                     continue
 
                 if package.PACKAGE_TYPE_ID in self.general_package_handlers:

@@ -24,13 +24,14 @@ import mcpython.util.math
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.engine import logger
-from mcpython.engine.network.util import IBufferSerializeAble
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
 
 class AbstractEntity(
-    mcpython.common.event.api.IRegistryContent, ICapabilityContainer, IBufferSerializeAble, ABC
+    mcpython.common.event.api.IRegistryContent,
+    ICapabilityContainer,
+    IBufferSerializeAble,
+    ABC,
 ):
     """
     Base class for every entity in the game
@@ -122,7 +123,9 @@ class AbstractEntity(
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         dim_name = buffer.read_string()
-        self.dimension = shared.world.get_dimension_by_name(dim_name if dim_name != "" else "overworld")
+        self.dimension = shared.world.get_dimension_by_name(
+            dim_name if dim_name != "" else "overworld"
+        )
 
         self.teleport(tuple((buffer.read_float() for _ in range(3))))
         self.rotation = list((buffer.read_float() for _ in range(3)))
@@ -136,7 +139,9 @@ class AbstractEntity(
         self.nbt_data["invulnerable"] = buffer.read_bool()
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
-        buffer.write_string(self.dimension.get_name() if self.dimension is not None else "")
+        buffer.write_string(
+            self.dimension.get_name() if self.dimension is not None else ""
+        )
 
         if len(self.unsafe_position) != 3 or len(self.rotation) != 3:
             raise RuntimeError("invalid player configuration")

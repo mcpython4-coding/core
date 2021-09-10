@@ -89,19 +89,25 @@ class PlayerInfoPackage(AbstractPackage):
         return self
 
     def write_to_buffer(self, buffer: WriteBuffer):
-        buffer.write_list(self.players, lambda player: player.write_to_network_buffer(buffer))
+        buffer.write_list(
+            self.players, lambda player: player.write_to_network_buffer(buffer)
+        )
 
     def read_from_buffer(self, buffer: ReadBuffer):
         from mcpython.common.entity.PlayerEntity import PlayerEntity
 
-        self.players = buffer.read_list(lambda: PlayerEntity().read_from_network_buffer(buffer))
+        self.players = buffer.read_list(
+            lambda: PlayerEntity().read_from_network_buffer(buffer)
+        )
 
     def handle_inner(self):
         for player in self.players:
             shared.entity_manager.spawn_entity(player, player.position)
             shared.world.players[player.name] = player
 
-            logger.println(f"[NETWORK] got player data for player '{player.name}'@{player.position}@{player.dimension.get_name()}")
+            logger.println(
+                f"[NETWORK] got player data for player '{player.name}'@{player.position}@{player.dimension.get_name()}"
+            )
 
 
 class PlayerUpdatePackage(AbstractPackage):
@@ -139,7 +145,9 @@ class PlayerUpdatePackage(AbstractPackage):
         player.write_update_package(self)
 
         if not shared.IS_CLIENT:
-            shared.NETWORK_MANAGER.send_package_to_all(self, not_including=self.sender_id)
+            shared.NETWORK_MANAGER.send_package_to_all(
+                self, not_including=self.sender_id
+            )
 
 
 class WorldInfoPackage(AbstractPackage):
