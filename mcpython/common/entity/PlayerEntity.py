@@ -352,7 +352,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             self.teleport_to_spawn_point()
 
         self.active_inventory_slot = 0
-        shared.window.dy = 0
+
+        if shared.IS_CLIENT:
+            shared.window.dy = 0
+
         shared.chat.close()
         shared.inventory_handler.close_all_inventories()
 
@@ -414,6 +417,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         stack.clean()
 
     def teleport_to_spawn_point(self):
+        # todo: is there a better way?
+        if self.dimension is None:
+            self.dimension = shared.world.get_dimension(0)
+
         x, _, z = mcpython.util.math.normalize(self.position)
         h = self.dimension.get_chunk_for_position(
             self.position

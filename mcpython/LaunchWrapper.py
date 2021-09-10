@@ -225,6 +225,12 @@ class LaunchWrapper:
         import mcpython.server.worldgen.layer
         import mcpython.server.worldgen.feature
 
+        if not shared.IS_CLIENT:
+            import mcpython.client.state.StateHandler
+            mcpython.client.state.StateHandler.load_states()
+
+            import mcpython.common.event.TickHandler
+
         import mcpython.client.rendering.model.ModelHandler
         import mcpython.common.data.serializer.tags.TagHandler
 
@@ -331,8 +337,6 @@ class LaunchWrapper:
                 logger.print_exception("[FATAL] failed to load window images")
                 sys.exit(-1)
         else:
-            import threading
-
             shared.SERVER_NETWORK_HANDLER.enable_server()
 
         try:

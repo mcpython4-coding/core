@@ -322,7 +322,9 @@ class OpenedInventoryStatePart(
     def deactivate(self):
         for statepart in self.parts:
             statepart.deactivate()
-        self.on_mouse_release(0, 0, 0, 0)
+
+        if shared.IS_CLIENT:
+            self.on_mouse_release(0, 0, 0, 0)
 
     def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
         if shared.window.exclusive:

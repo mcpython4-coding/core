@@ -93,13 +93,18 @@ class LoadingStage:
     def next_event(self):
         if self.active_event is not None:
             self.order.done(self.active_event)
+
         self.event_scheduled.extend(self.order.get_ready())
+
         self.active_event = (
             self.event_scheduled.pop(0) if len(self.event_scheduled) > 0 else None
         )
+
+        if not shared.IS_CLIENT and self.active_event is not None:
+            logger.println(f"[MOD LOADER][STAGE] {self.active_event}")
+
         self.current_progress += 1
         self.active_mod_index = 0
-        # print(self.active_event)
         return self
 
     def finished(self):

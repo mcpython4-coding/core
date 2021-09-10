@@ -80,7 +80,7 @@ class LoadingExceptionView(AbstractState.AbstractState):
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
         self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
-        self.eventbus.subscribe("gameloop:tick:end", self.on_update)
+        self.eventbus.subscribe("tickhandler:general", self.on_update)
 
     def on_resize(self, w, h):
         for part in self.parts[:-1]:

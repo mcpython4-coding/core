@@ -66,6 +66,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
         if shared.invalidate_cache:
             kwargs["glcolor3d"] = (1.0, 1.0, 1.0)
 
+        if not shared.IS_CLIENT:
+            return []
+
         # We want a progress bar to inform te user
         self.status_bar = UIPartProgressBar.UIPartProgressBar(
             (10, 10),

@@ -44,11 +44,12 @@ class Game(AbstractState.AbstractState):
     def activate(self):
         super().activate()
 
-        shared.window.mouse_pressing = {
-            mouse.LEFT: False,
-            mouse.RIGHT: False,
-            mouse.MIDDLE: False,
-        }
+        if shared.IS_CLIENT:
+            shared.window.mouse_pressing = {
+                mouse.LEFT: False,
+                mouse.RIGHT: False,
+                mouse.MIDDLE: False,
+            }
 
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)

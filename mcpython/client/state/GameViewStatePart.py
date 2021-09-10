@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import math
 import time
+import typing
 
 import mcpython.common.config
 import mcpython.common.container.ResourceStack
@@ -27,6 +28,7 @@ from pyglet.window import key, mouse
 
 from . import AbstractStatePart
 from .InGameHotKeysManager import ALL_KEY_COMBOS
+from ...engine.physics.collision import collide
 
 
 def get_block_break_time(block, itemstack):
@@ -127,51 +129,55 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
     def bind_to_eventbus(self):
         state = self.master[0]
-        state.eventbus.subscribe("gameloop:tick:end", self.on_update)
-        state.eventbus.subscribe("gameloop:tick:end", self.on_physics_update)
-        state.eventbus.subscribe(
-            "gameloop:tick:end", self.on_left_click_interaction_update
-        )
-        state.eventbus.subscribe(
-            "gameloop:tick:end", self.on_right_click_interaction_update
-        )
-        state.eventbus.subscribe(
-            "gameloop:tick:end", self.on_middle_click_interaction_update
-        )
-        state.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
-        state.eventbus.subscribe("user:mouse:motion", self.on_mouse_motion)
-        state.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        state.eventbus.subscribe("user:keyboard:release", self.on_key_release)
-        state.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
-        state.eventbus.subscribe("render:draw:3d", self.on_draw_3d)
-        state.eventbus.subscribe("render:draw:2d", self.on_draw_2d)
+        state.eventbus.subscribe("tickhandler:general", self.on_update)
+        state.eventbus.subscribe("tickhandler:general", self.on_physics_update)
+
+        # These are the client-only events
+        if shared.IS_CLIENT:
+            state.eventbus.subscribe(
+                "tickhandler:general", self.on_left_click_interaction_update
+            )
+            state.eventbus.subscribe(
+                "tickhandler:general", self.on_right_click_interaction_update
+            )
+            state.eventbus.subscribe(
+                "tickhandler:general", self.on_middle_click_interaction_update
+            )
+            state.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
+            state.eventbus.subscribe("user:mouse:motion", self.on_mouse_motion)
+            state.eventbus.subscribe("user:keyboard:press", self.on_key_press)
+            state.eventbus.subscribe("user:keyboard:release", self.on_key_release)
+            state.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
+            state.eventbus.subscribe("render:draw:3d", self.on_draw_3d)
+            state.eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def on_update(self, dt: float):
-        for hotkey in self.active_hotkeys:
-            hotkey.check()
+        if shared.IS_CLIENT:
+            for hotkey in self.active_hotkeys:
+                hotkey.check()
 
-        # do counting stuff  todo: change to per-mouse-button
-        if any(shared.window.mouse_pressing.values()):
-            self.mouse_press_time += dt
+            # do counting stuff  todo: change to per-mouse-button
+            if any(shared.window.mouse_pressing.values()):
+                self.mouse_press_time += dt
 
-        if (
-            shared.window.exclusive
-            and any(shared.window.mouse_pressing.values())
-            and time.time() - self.set_cooldown > 1
-        ):
-            vector = shared.window.get_sight_vector()
-            block_position, previous, hit_position = shared.world.hit_test(
-                shared.world.get_active_player().position, vector
-            )
-            if block_position:
-                if (
-                    block_position != self.block_looking_at
-                ):  # have we changed the block we were looking at?
-                    self.block_looking_at = block_position
-                    self.mouse_press_time = 0
+            if (
+                shared.window.exclusive
+                and any(shared.window.mouse_pressing.values())
+                and time.time() - self.set_cooldown > 1
+            ):
+                vector = shared.window.get_sight_vector()
+                block_position, previous, hit_position = shared.world.hit_test(
+                    shared.world.get_active_player().position, vector
+                )
+                if block_position:
+                    if (
+                        block_position != self.block_looking_at
+                    ):  # have we changed the block we were looking at?
+                        self.block_looking_at = block_position
+                        self.mouse_press_time = 0
 
-            if not self.break_time:
-                self.calculate_new_break_time()
+                if not self.break_time:
+                    self.calculate_new_break_time()
 
     def on_physics_update(self, dt: float):
         if not self.activate_physics:
@@ -370,6 +376,8 @@ class GameView(AbstractStatePart.AbstractStatePart):
         Internal implementation of the `update()` method. This is where most
         of the motion logic lives, along with gravity and collision detection.
 
+        todo: on server, do for all players
+
         Parameters
         ----------
         dt : float
@@ -387,14 +395,13 @@ class GameView(AbstractStatePart.AbstractStatePart):
         x, y, z = player.position
         before = mcpython.util.math.position_to_chunk(player.position)
         if player.gamemode != 3:
-            # todo: move collide method somewhere else (player?)
-            x, y, z = shared.window.collide(
+            x, y, z = collide(
                 (x + dx, y + dy, z + dz), 2, player.position
             )
         else:
             x, y, z = x + dx, y + dy, z + dz
 
-        if shared.window.dy < 0 and player.fallen_since_y is None:
+        if shared.IS_CLIENT and shared.window.dy < 0 and player.fallen_since_y is None:
             player.fallen_since_y = player.position[1]
 
         player.position = (x, y, z)
@@ -433,7 +440,11 @@ class GameView(AbstractStatePart.AbstractStatePart):
         if before != after:
             shared.world.change_chunks(before, after)
 
-    def calculate_motion(self, dt, player):
+    def calculate_motion(self, dt: float, player) -> typing.Tuple[float, float, float]:
+
+        # todo: add a way to do stuff here!
+        if not shared.IS_CLIENT: return 0, 0, 0
+
         speed = mcpython.common.config.SPEED_DICT[player.gamemode][
             (0 if not shared.window.keys[key.LSHIFT] else 1)
             + (0 if not player.flying else 2)

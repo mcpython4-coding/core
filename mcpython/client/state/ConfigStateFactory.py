@@ -50,6 +50,7 @@ entry_registry = mcpython.common.event.Registry.Registry(
     "minecraft:state_definition_entries",
     ["minecraft:state_definition_entry"],
     "stage:mod:config:entry_loaders",
+    sync_via_network=False,
 )
 
 

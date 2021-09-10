@@ -79,6 +79,16 @@ changelog of snapshot 21w??a, released on ??.??.2021 targeting <1.17>
         - block serialization code (the public facing dump_data() and inject()) were rewritten, mods
             overriding these will encounter issues!
 
+    Networking & dedicated server:
+        - added more networking code, including first real packages, including:
+            - handshake (both directions)
+            - sync packages (package ID's, registry content, mod list)
+            - disconnection packages (init & response)
+        - fixed some bugs existing in the networking API
+
+        - fixed dedicated servers doing no mod loading, no world generation, and in general acting not like
+            a game instance
+
 
 changelog of snapshot 21w35a released on 01.09.2021 targeting 1.17.1
     JVM:

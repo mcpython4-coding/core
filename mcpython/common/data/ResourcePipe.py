@@ -150,8 +150,6 @@ class ResourcePipeHandler:
         return self
 
     def reload_content(self):
-        shared.window.print_profiler()  # print the profilers
-
         if not shared.event_handler.call_cancelable("data:reload:cancel"):
             return
 
@@ -198,7 +196,6 @@ class ResourcePipeHandler:
         shared.event_handler.call("data:reload:work")
 
         gc.collect()  # make sure that memory was cleaned up
-        shared.window.print_profiler()  # and now print the profile's (if needed)
 
         for function in self.data_processors:
             function()

@@ -31,6 +31,7 @@ blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",
     ["minecraft:blockstate"],
     "stage:blockstate:register_loaders",
+    sync_via_network=False,
 )
 
 

@@ -87,6 +87,9 @@ class WorldList(AbstractState.AbstractState):
         self.scissor_group.area = (45, 100, wx - 90, wy - 160)
 
     def get_parts(self) -> list:
+        if not shared.IS_CLIENT:
+            return []
+
         wx, wy = shared.window.get_size()
         return [
             mcpython.client.state.ConfigBackgroundPart.ConfigBackground(),

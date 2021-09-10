@@ -212,7 +212,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 "user:keyboard:press", self.on_key_press
             )
             mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                "gameloop:tick:end", self.on_tick
+                "tickhandler:general", self.on_tick
             )
         except ValueError:
             pass
@@ -221,7 +221,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             "user:keyboard:press", self.on_key_press
         )
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "gameloop:tick:end", self.on_tick
+            "tickhandler:general", self.on_tick
         )
 
     def on_deactivate(self):
@@ -231,7 +231,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             "user:keyboard:press", self.on_key_press
         )
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-            "gameloop:tick:end", self.on_tick
+            "tickhandler:general", self.on_tick
         )
 
     def draw(self, hovering_slot=None):

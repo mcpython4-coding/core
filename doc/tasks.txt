@@ -37,6 +37,10 @@ UI:
 - config UI
 - mod list UI
 
+dedicated servers:
+- split state system into two parts: the handling part and the visual part
+    (so we can split of the visual part into client-only)
+
 Test System:
 The test system is a external tool developed along the game sitting on top of it. It uses
 a) The python import system, for loading single files and providing dummy files

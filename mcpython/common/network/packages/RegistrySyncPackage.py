@@ -63,7 +63,7 @@ class RegistrySyncPackage(AbstractPackage):
 
     def handle_inner(self):
         entries_there = set(self.content)
-        entries_here = set((entry.NAME, entry.INFO) for entry in shared.registry.get_by_name(self.name).entries.values())
+        entries_here = set((entry.NAME, entry.INFO if entry.INFO is not None else "") for entry in shared.registry.get_by_name(self.name).entries.values())
 
         if entries_here.symmetric_difference(entries_there):
             logger.write_into_container(
@@ -78,4 +78,6 @@ class RegistrySyncPackage(AbstractPackage):
 
             from .DisconnectionPackage import DisconnectionInitPackage
             self.answer(DisconnectionInitPackage().set_reason("registry mismatch"))
+        else:
+            logger.println(f"[REGISTRY][SYNC] registry {self.name} seems to be equal in client & server")
 

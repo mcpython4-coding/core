@@ -24,7 +24,7 @@ from mcpython.engine import logger
 
 class TickHandler:
     """
-    main handler for ticks
+    Main handler for ticks
     """
 
     def __init__(self):
@@ -32,13 +32,16 @@ class TickHandler:
         self.active_tick = 0
         self.next_ticket_id = 0
         self.results = {}
-        pyglet.clock.schedule_interval(self.tick, 1 / 20)
+
         self.lost_time = 0
         self.enable_tick_skipping = False
         self.instant_ticks = False
         self.enable_random_ticks = True
+
         # an array of (function, args, kwargs) for functions which should be executed in near future
         self.execute_array = []
+
+        pyglet.clock.schedule_interval(self.tick, 1 / 20)
 
     def tick(self, dt):
         """
@@ -69,7 +72,7 @@ class TickHandler:
             shared.inventory_handler.tick(dt)
 
         shared.world.tick()
-        shared.event_handler.call("tickhandler:general")
+        shared.event_handler.call("tickhandler:general", dt)
 
         if shared.IS_CLIENT:
             shared.event_handler.call("tickhandler:client")

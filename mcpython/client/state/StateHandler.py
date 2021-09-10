@@ -52,6 +52,9 @@ class StateHandler:
             logger.print_stack("state '{}' does not exists".format(state_name))
             return
 
+        if not shared.IS_CLIENT:
+            logger.println(f"[STATE] {state_name}")
+
         if immediate:
             self.inner_change_state(state_name)
         else:
@@ -75,7 +78,10 @@ class StateHandler:
 
         self.active_state: AbstractState.AbstractState = self.states[state_name]
         self.active_state.activate()
-        self.active_state.eventbus.call("user:window:resize", *shared.window.get_size())
+
+        if shared.IS_CLIENT:
+            self.active_state.eventbus.call("user:window:resize", *shared.window.get_size())
+
         shared.event_handler.call("state:switch:post", state_name)
         logger.println(
             f"[STATE HANDLER][STATE CHANGE] state changed to '{state_name}' (from {repr(previous)})'",

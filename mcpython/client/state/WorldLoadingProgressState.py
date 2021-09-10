@@ -134,7 +134,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
         self.eventbus.subscribe("render:draw:2d", self.on_draw_2d_post)
-        self.eventbus.subscribe("gameloop:tick:end", self.on_update)
+        self.eventbus.subscribe("tickhandler:general", self.on_update)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:

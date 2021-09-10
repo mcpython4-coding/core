@@ -1734,4 +1734,11 @@ R   [uuk]: improved world serialization API
 [uuk]: added client <-> server handshake packages
 [uuk]: added server -> client package ID sync system [for dynamic ID's only]
        (needed as mod loading order is unstable across sessions)
-[uuk]: added server ->  client mod list compare
+[uuk]: added server -> client mod list compare
+[uuk]: added server -> client registry sync
+[uuk]: fixed server mod loading cycle
+[uuk]: made a lot of parts dedicated-server proof
+[uuk]: fixed server world gen not doing its job
+[uuk]: fixed tick events
+[uuk]: moved physics calculation out of window into separate physics package of the engine module
+[uuk]: dedicated server is now more informal in logs as the visual part is missing

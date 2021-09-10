@@ -52,7 +52,9 @@ class BackgroundHandler:
 class ConfigBackground(mcpython.client.state.AbstractStatePart.AbstractStatePart):
     def activate(self):
         super().activate()
-        BackgroundHandler.recreate(*shared.window.get_size())
+
+        if shared.IS_CLIENT:
+            BackgroundHandler.recreate(*shared.window.get_size())
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
