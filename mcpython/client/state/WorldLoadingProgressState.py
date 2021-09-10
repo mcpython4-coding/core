@@ -127,8 +127,10 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
     def deactivate(self):
         super().deactivate()
-        player = shared.world.get_active_player()
-        player.teleport(player.position, force_chunk_save_update=True)
+
+        if shared.IS_CLIENT:
+            player = shared.world.get_active_player()
+            player.teleport(player.position, force_chunk_save_update=True)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

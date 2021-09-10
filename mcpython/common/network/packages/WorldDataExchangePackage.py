@@ -17,6 +17,7 @@ from mcpython import shared
 from mcpython.engine import logger
 from mcpython.engine.network.AbstractPackage import AbstractPackage
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from .DisconnectionPackage import DisconnectionInitPackage
 
 
 class DataRequestPackage(AbstractPackage):
@@ -151,23 +152,68 @@ class PlayerUpdatePackage(AbstractPackage):
 
 
 class WorldInfoPackage(AbstractPackage):
+    """
+    Package server -> client for sending requested data back to client.
+
+    Mostly only for sync stuff, but dimensions should be created when needed
+    """
+
     PACKAGE_NAME = "minecraft:world_info"
 
+    def __init__(self):
+        super().__init__()
+        self.dimensions = []
+        self.spawn_point = 0, 0
+
     def setup(self):
+        self.spawn_point = shared.world.spawn_point
+
+        for dim_id, dim in shared.world.dimensions.items():
+            self.dimensions.append((dim.get_name(), dim_id, dim.get_dimension_range()))
+
         return self
+
+    def write_to_buffer(self, buffer: WriteBuffer):
+        buffer.write_int(self.spawn_point[0]).write_int(self.spawn_point[1])
+
+        buffer.write_list(
+            self.dimensions,
+            lambda e: buffer.write_string(e[0]).write_int(e[1]).write_int(e[2][0]).write_int(e[2][1])
+        )
+
+    def read_from_buffer(self, buffer: ReadBuffer):
+        self.spawn_point = buffer.read_int(), buffer.read_int()
+
+        self.dimensions = buffer.read_list(
+            lambda: (buffer.read_string(), buffer.read_int(), (buffer.read_int(), buffer.read_int()))
+        )
+
+    def handle_inner(self):
+        shared.world.spawn_point = self.spawn_point
+
+        for name, dim_id, height_range in self.dimensions:
+            logger.println(f"[NETWORK][WORLD] got dimension info of dimension '{name}'")
+
+            dim = shared.world.get_dimension_by_name(name)
+
+            if dim.get_id() != dim_id:
+                self.answer(DisconnectionInitPackage().set_reason("world dim id miss-match"))
+
+            if dim.get_dimension_range() != height_range:
+                self.answer(DisconnectionInitPackage().set_reason("world height miss-match"))
 
 
 class DimensionInfoPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:dimension_info"
 
-    def setup(self, dimension):
+    def setup(self, dimension: str):
         return self
 
 
 class ChunkDataPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:chunk_data"
 
-    def setup(self, dim, param):
+    def setup(self, dim: str, position: typing.Tuple[int, int]):
         return self
 
 

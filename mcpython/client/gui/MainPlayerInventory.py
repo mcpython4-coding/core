@@ -103,7 +103,10 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
                     mcpython.common.item.AbstractArmorItem.AbstractArmorItem,
                 ):
                     points += slot.get_itemstack().item.DEFENSE_POINTS
-        shared.world.get_active_player().armor_level = points
+
+        # todo: store somewhere the assigned player!
+        if shared.IS_CLIENT:
+            shared.world.get_active_player().armor_level = points
 
     def draw(self, hovering_slot=None):
         self.bg_image_size = self.TEXTURE_SIZE

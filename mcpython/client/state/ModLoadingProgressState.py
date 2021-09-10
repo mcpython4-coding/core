@@ -79,7 +79,9 @@ class ModLoadingProgress(AbstractState.AbstractState):
 
     def deactivate(self):
         super().deactivate()
-        shared.world.get_active_player().init_creative_tabs()
+
+        if shared.IS_CLIENT:
+            shared.world.get_active_player().init_creative_tabs()
 
 
 mod_loading = ModLoadingProgress()

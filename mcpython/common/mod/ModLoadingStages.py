@@ -154,9 +154,6 @@ class LoadingStage:
             if shared.IS_CLIENT:
                 shared.state_handler.change_state("minecraft:block_item_generator")
             else:
-                player = shared.world.get_active_player()
-                player.position = (0, 10, 0)
-                player.rotation = (0, 0, 0)
                 shared.state_handler.states["minecraft:world_loading"].load_or_generate(
                     "server_world"
                 )

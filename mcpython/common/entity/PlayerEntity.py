@@ -57,6 +57,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.is_in_init = True
         super().__init__(dimension=dimension)
 
+        if name is None:
+            raise RuntimeError("name cannot be None")
+
         self.name: str = name  # the name of the player
         self.gamemode: int = -1  # the current gamemode
 
@@ -524,9 +527,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             h = 255
 
         self.position = (
-            shared.world.spawnpoint[0],
+            shared.world.spawn_point[0],
             h + 3,
-            shared.world.spawnpoint[1],
+            shared.world.spawn_point[1],
         )
 
     def tell(self, msg: str):

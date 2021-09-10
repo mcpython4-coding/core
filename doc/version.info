@@ -1744,3 +1744,5 @@ R   [uuk]: improved world serialization API
 [uuk]: dedicated server is now more informal in logs as the visual part is missing
 [uuk]: added IBufferSerializeAble base class for things serialize-able to the network buffer instances
 [uuk]: player instances are now send server -> client
+[uuk]: calling get_active_player() on dedicated server is now FATAL
+[uuk]: player data on dedicated server is now loaded for ALL players

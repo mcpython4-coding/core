@@ -527,6 +527,9 @@ class IWorld(ABC):
     def get_active_player(self, create: bool = True) -> typing.Optional:
         raise NotImplementedError
 
+    def get_player_by_name(self, name: str):
+        raise NotImplementedError
+
     def player_iterator(self) -> typing.Iterable:
         raise NotImplementedError
 

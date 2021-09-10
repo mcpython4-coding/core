@@ -124,7 +124,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             entity_instance.load(entity[5])
 
             if len(entity) == 8:
-                entity_instance.deserialize_container(entity[8])
+                entity_instance.deserialize_container(entity[7])
 
         chunk_instance.loaded = True
         chunk_instance.is_ready = True

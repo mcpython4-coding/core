@@ -25,38 +25,50 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
     @classmethod
     def load(cls, save_file, **_):
         data = save_file.access_file_json("players.json")
-        if data is not None and shared.world.get_active_player().name in data:
-            player = shared.world.get_active_player()
-            pd = data[player.name]
-            player.set_gamemode(pd["gamemode"])
-            player.hearts = pd["hearts"]
-            player.hunger = pd["hunger"]
-            player.xp = pd["xp"]
-            player.xp_level = pd["xp level"]
-            player.fallen_since_y = pd["fallen since y"]
-            player.active_inventory_slot = pd["active inventory slot"]
-            player.position = pd["position"]
-            player.rotation = pd["rotation"]
-            shared.world.join_dimension(pd["dimension"])
-            shared.world.get_active_player().flying = pd["flying"]
 
-            for i, (name, inventory) in enumerate(
+        if data is None: return
+
+        if shared.IS_CLIENT:
+            if shared.world.get_active_player().name in data:
+                player = shared.world.get_active_player()
+                cls.load_player_data(data, player, save_file)
+                shared.world.join_dimension(data[player.name]["dimension"])
+        else:
+            for name in data.keys():
+                player = shared.world.get_player_by_name(name)
+                cls.load_player_data(data, player, save_file)
+
+    @classmethod
+    def load_player_data(cls, data, player, save_file):
+        pd = data[player.name]
+        player.set_gamemode(pd["gamemode"])
+        player.hearts = pd["hearts"]
+        player.hunger = pd["hunger"]
+        player.xp = pd["xp"]
+        player.xp_level = pd["xp level"]
+        player.fallen_since_y = pd["fallen since y"]
+        player.active_inventory_slot = pd["active inventory slot"]
+        player.position = pd["position"]
+        player.rotation = pd["rotation"]
+
+        player.flying = pd["flying"]
+
+        for i, (name, inventory) in enumerate(
                 zip(pd["inventory_data"], player.get_inventories())
-            ):
-                save_file.read(
-                    "minecraft:inventory",
-                    inventory=inventory,
-                    path="players/{}/inventory/{}".format(player.name, i),
-                )
-
-            if pd["dimension_data"]["nether_portal"]["portal_inner_time"] is not None:
-                player.in_nether_portal_since = (
+        ):
+            save_file.read(
+                "minecraft:inventory",
+                inventory=inventory,
+                path="players/{}/inventory/{}".format(player.name, i),
+            )
+        if pd["dimension_data"]["nether_portal"]["portal_inner_time"] is not None:
+            player.in_nether_portal_since = (
                     time.time()
                     - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
-                )
-            player.should_leave_nether_portal_before_dim_change = pd["dimension_data"][
-                "nether_portal"
-            ]["portal_need_leave_before_change"]
+            )
+        player.should_leave_nether_portal_before_dim_change = pd["dimension_data"][
+            "nether_portal"
+        ]["portal_need_leave_before_change"]
 
     @classmethod
     def save(cls, data, save_file, **_):

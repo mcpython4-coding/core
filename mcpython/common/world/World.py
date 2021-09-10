@@ -38,41 +38,54 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
     def __init__(self, filename: str = None):
         shared.world = self
+
         # todo: add some more variation
-        self.spawnpoint: typing.Tuple[int, int] = (
+        self.spawn_point: typing.Tuple[int, int] = (
             random.randint(0, 15),
             random.randint(0, 15),
         )
+
+        # todo: change for str-based
         self.dimensions: typing.Dict[
             int, mcpython.common.world.AbstractInterface.IDimension
-        ] = {}  # todo: change for str-based
-        self.dim_to_id = {}
+        ] = {}
+
+        self.dim_to_id: typing.Dict[str, int] = {}
+
         shared.dimension_handler.init_dims()
-        self.active_dimension: int = (
-            0  # todo: change to str; todo: move to player; todo: make property
-        )
+
+        # todo: change to str; todo: move to player; todo: make property
+        self.active_dimension: int = 0
+
         # container for world-related config; contains: seed [build in] todo: move to config class
         self.config: typing.Dict[str, typing.Any] = {}
+
+        # the gamerule handler fort his world
         self.gamerule_handler: typing.Union[
             mcpython.common.world.GameRule.GameRuleHandler, None
-        ] = None  # the gamerule handler fort his world
+        ] = None
+
         self.reset_config()  # will reset the config
-        self.CANCEL_DIM_CHANGE: bool = False  # flag for canceling the dim change event
-        self.hide_faces_to_not_generated_chunks: bool = (
-            True  # todo: move to configs / game rules
-        )
-        self.filename: str = (
-            "tmp" if filename is None else filename
-        )  # the file-name to use, todo: make None if not needed
+
+        # todo: move to configs / game rules
+        self.hide_faces_to_not_generated_chunks: bool = True
+
+        # the file-name to use, todo: make None if not needed
+        self.filename: str = "tmp" if filename is None else filename
+
+        # the save file instance
         self.save_file: mcpython.common.world.SaveFile.SaveFile = (
             mcpython.common.world.SaveFile.SaveFile(self.filename)
-        )  # the save file instance
+        )
 
         # when in an network, stores an reference to all other players
         self.players: typing.Dict[
             str, mcpython.common.entity.PlayerEntity.PlayerEntity
         ] = {}
-        self.active_player: str = "unknown"  # todo: make property, make None-able & set default None when not in world
+
+        # The name of the local player; None on dedicated servers
+        self.local_player: str = "unknown" if shared.IS_CLIENT else None
+
         self.world_loaded = False  # describes if the world is loaded or not
 
         self.world_generation_process = mcpython.common.world.OffProcessWorldAccess.OffProcessWorldHelper.spawn_process(
@@ -90,14 +103,18 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self, name: str, add_inventories: bool = True, override: bool = True
     ):
         """
-        will add an new player into the world
+        Will add a new player into the world
         :param name: the name of the player to create
         :param add_inventories: if the inventories should be created
         :param override: if the player should be re-created if it exists in memory
         :return: the player instance
         """
+        if name is None:
+            raise ValueError("name cannot be None")
+
         if not override and name in self.players:
             return self.players[name]
+
         self.players[name] = shared.entity_manager.spawn_entity(
             "minecraft:player", (0, 0, 0), name
         )
@@ -109,21 +126,23 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         self, create: bool = True
     ) -> typing.Union[mcpython.common.entity.PlayerEntity.PlayerEntity, None]:
         """
-        returns the player instance for this client
-        :param create: if the player should be created or not
-        :return: the player instance or None if no player is set
+        Returns the player instance for this client
+        :param create: if the player should be created or not (by calling add_player())
+        :return: the player instance or None if no player with the name is arrival
         """
-        if not create and self.active_player is None:
+        if not create and self.local_player is None:
             return
+
         return (
-            self.players[self.active_player]
-            if self.active_player in self.players
-            else self.add_player(self.active_player)
+            self.players[self.local_player]
+            if self.local_player in self.players
+            else self.add_player(self.local_player)
         )
 
     def get_player_by_name(self, name: str):
         if name not in self.players:
             self.add_player(name)
+
         return self.players[name]
 
     def player_iterator(self) -> typing.Iterable:
@@ -189,11 +208,9 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         todo: move to player
         """
         logger.println("changing dimension to '{}'...".format(dim_id))
-        self.CANCEL_DIM_CHANGE = False
-        shared.event_handler.call("dimension:chane:pre", self.active_dimension, dim_id)
-        if self.CANCEL_DIM_CHANGE:
-            logger.println("interrupted!")
-            return
+
+        shared.event_handler.call("dimension:change:pre", self.active_dimension, dim_id)
+
         sector = mcpython.util.math.position_to_chunk(
             shared.world.get_active_player().position
         )
@@ -419,10 +436,13 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             for inventory in shared.inventory_handler.containers
         ]
         self.reset_config()
-        shared.world.get_active_player().flying = False
-        for inv in shared.world.get_active_player().get_inventories():
-            inv.clear()
-        self.spawnpoint = (random.randint(0, 15), random.randint(0, 15))
+
+        if shared.IS_CLIENT:
+            shared.world.get_active_player().flying = False
+            for inv in shared.world.get_active_player().get_inventories():
+                inv.clear()
+
+        self.spawn_point = (random.randint(0, 15), random.randint(0, 15))
         shared.world_generation_handler.task_handler.clear()
         shared.entity_manager.clear()
         self.players.clear()

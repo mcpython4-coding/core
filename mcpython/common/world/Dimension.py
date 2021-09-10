@@ -150,11 +150,13 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         super().__init__()
         if gen_config is None:
             gen_config = {}
+
         self.id = dim_id
         self.world = world_in
         self.chunks: typing.Dict[
             typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk
         ] = {}
+
         self.name = name
         self.world_generation_config = gen_config
         self.world_generation_config_objects = {}
