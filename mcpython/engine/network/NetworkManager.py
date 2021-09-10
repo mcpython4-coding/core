@@ -106,10 +106,11 @@ class NetworkManager:
         logger.println("[NETWORK][SYNC] package ID sync was successful!")
 
     def disconnect(self, target=-1):
-        print(f"disconnecting connection to {target if target != -1 else 'all'}")
+        logger.println(f"disconnecting connection to {target if target != -1 else ('all' if not shared.IS_CLIENT else 'server')}")
 
         if shared.IS_CLIENT:
             shared.CLIENT_NETWORK_HANDLER.disconnect()
+            shared.state_handler.change_state("minecraft:start_menu")
         else:
             if target == -1:
                 shared.SERVER_NETWORK_HANDLER.disconnect_all()
@@ -246,13 +247,23 @@ class NetworkManager:
         buffer = shared.CLIENT_NETWORK_HANDLER.data_stream
 
         while buffer:
-            package = self.fetch_package_from_buffer(buffer)
+            try:
+                package = self.fetch_package_from_buffer(buffer)
+            except:
+                logger.print_exception("during fetching package data @client")
+                self.disconnect()
+                return
 
             if package is None:
                 return
 
             package.sender_id = 0
-            package.handle_inner()
+
+            try:
+                package.handle_inner()
+            except:
+                logger.print_exception(f"during handling package {package} @client")
+                continue
 
             if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                 for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
@@ -267,14 +278,23 @@ class NetworkManager:
     def fetch_as_server(self):
         for client_id, buffer in shared.SERVER_NETWORK_HANDLER.get_package_streams():
             while buffer:
-                package = self.fetch_package_from_buffer(buffer)
+                try:
+                    package = self.fetch_package_from_buffer(buffer)
+                except:
+                    logger.print_exception(f"during fetching data @server from @{client_id}")
+                    self.disconnect(client_id)
+                    break
 
                 if package is None:
                     return
 
                 package.sender_id = client_id
 
-                package.handle_inner()
+                try:
+                    package.handle_inner()
+                except:
+                    logger.print_exception(f"during handling package {package} @server from @{client_id}")
+                    continue
 
                 if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                     for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:

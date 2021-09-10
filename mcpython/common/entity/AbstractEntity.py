@@ -125,7 +125,7 @@ class AbstractEntity(
         self.dimension = shared.world.get_dimension_by_name(dim_name if dim_name != "" else "overworld")
 
         self.teleport(tuple((buffer.read_float() for _ in range(3))))
-        self.rotation = tuple((buffer.read_float() for _ in range(3)))
+        self.rotation = list((buffer.read_float() for _ in range(3)))
         self.uuid = uuid.UUID(hex=buffer.read_string())
 
         # todo: do something with this!
@@ -137,6 +137,9 @@ class AbstractEntity(
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.dimension.get_name() if self.dimension is not None else "")
+
+        if len(self.unsafe_position) != 3 or len(self.rotation) != 3:
+            raise RuntimeError("invalid player configuration")
 
         for e in self.unsafe_position:
             buffer.write_float(e)
@@ -150,6 +153,9 @@ class AbstractEntity(
 
         for e in self.nbt_data["motion"]:
             buffer.write_float(e)
+
+        if len(self.nbt_data["motion"]) != 3:
+            raise RuntimeError("invalid player configuration")
 
         buffer.write_bool(self.nbt_data["invulnerable"])
 

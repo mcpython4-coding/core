@@ -76,6 +76,15 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         # which slot is currently selected
         self.active_inventory_slot: int = 0
 
+        # the different parts of the player inventory
+        # todo: use only containers here
+        self.inventories_created = False
+        self.inventory_hotbar = None
+        self.inventory_main = None
+        self.inventory_enderchest = None
+        self.inventory_chat = None
+        self.inventory_crafting_table = None
+
         # used for determine if we can access stuff now or must wait
         # todo: can we do something else
         if not shared.mod_loader.finished:
@@ -97,14 +106,6 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             "hotkey:gamemode_1-3_toggle", self.toggle_gamemode
         )
 
-        # the different parts of the player inventory
-        # todo: use only containers here
-        self.inventory_hotbar = None
-        self.inventory_main = None
-        self.inventory_enderchest = None
-        self.inventory_chat = None
-        self.inventory_crafting_table = None
-
         # the lookup order of inventory, todo: move to inventory handler
         self.inventory_order = []
 
@@ -123,6 +124,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         buffer.write_float(self.fallen_since_y)
         buffer.write_int(self.active_inventory_slot)
 
+        self.create_inventories()
         self.inventory_hotbar.write_to_network_buffer(buffer)
         self.inventory_main.write_to_network_buffer(buffer)
         self.inventory_enderchest.write_to_network_buffer(buffer)
@@ -142,9 +144,12 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.fallen_since_y = buffer.read_float()
         self.active_inventory_slot = buffer.read_int()
 
+        self.create_inventories()
         self.inventory_hotbar.read_from_network_buffer(buffer)
         self.inventory_main.read_from_network_buffer(buffer)
-        self.inventory_enderchest.read_from_network(buffer)
+        self.inventory_enderchest.read_from_network_buffer(buffer)
+
+        return self
 
     def hotkey_get_position(self):
         # todo: remove this check when only the current player uses this event
@@ -173,6 +178,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         Helper method for setting up the player inventory
         todo: can we re-use inventories from previous players?
         """
+        if self.inventories_created: return
+        self.inventories_created = True
+
         import mcpython.client.Chat as Chat
         import mcpython.client.gui.InventoryChest as Chest
         import mcpython.client.gui.InventoryCraftingTable as InvCrafting

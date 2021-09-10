@@ -85,7 +85,8 @@ class PlayerInfoPackage(AbstractPackage):
         self.players: typing.List[PlayerEntity] = []
 
     def setup(self):
-        pass
+        self.players = list(shared.world.players.values())
+        return self
 
     def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_list(self.players, lambda player: player.write_to_network_buffer(buffer))
@@ -94,7 +95,9 @@ class PlayerInfoPackage(AbstractPackage):
         self.players = buffer.read_list(lambda: PlayerEntity().read_from_network_buffer(buffer))
 
     def handle_inner(self):
-        pass
+        for player in self.players:
+            shared.entity_manager.spawn_entity(player, player.position)
+            shared.world.players[player.name] = player
 
 
 class PlayerUpdatePackage(AbstractPackage):
@@ -104,13 +107,22 @@ class PlayerUpdatePackage(AbstractPackage):
 class WorldInfoPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:world_info"
 
+    def setup(self):
+        return self
+
 
 class DimensionInfoPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:dimension_info"
 
+    def setup(self, dimension):
+        return self
+
 
 class ChunkDataPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:chunk_data"
+
+    def setup(self, dim, param):
+        return self
 
 
 class ChunkUpdatePackage(AbstractPackage):

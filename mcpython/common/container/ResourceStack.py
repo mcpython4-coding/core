@@ -111,7 +111,7 @@ class ItemStack(AbstractResourceStack):
             self.item.write_to_network_buffer(buffer)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
-        if not buffer.read_bool():
+        if buffer.read_bool():
             self.clean()
         else:
             self.amount = buffer.read_int()

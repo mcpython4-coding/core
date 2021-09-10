@@ -56,6 +56,9 @@ class ReadBuffer:
         size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
         return self.stream.read(size)
 
+    def read_const_bytes(self, count: int):
+        return self.stream.read(count)
+
 
 class WriteBuffer:
     def __init__(self):
@@ -105,6 +108,10 @@ class WriteBuffer:
 
     def write_bytes(self, data: bytes, size_size=2):
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
+        self.data.append(data)
+        return self
+
+    def write_const_bytes(self, data: bytes):
         self.data.append(data)
         return self
 

@@ -66,22 +66,26 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.active)
+        buffer.write_string(self.custom_name if self.custom_name is not None else "")
 
         buffer.write_list(self.slots, lambda slot: slot.write_to_network_buffer(buffer))
-        buffer.write_string(self.custom_name if self.custom_name is not None else "")
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         self.active = buffer.read_bool()
-
-        size = buffer.read_int()
-        for slot in self.slots:
-            slot.read_from_network_buffer(buffer)
 
         self.custom_name = buffer.read_string()
         if self.custom_name == "":
             self.custom_name = None
         else:
             self.custom_name_label.text = self.custom_name
+
+        size = buffer.read_int()
+
+        if size != len(self.slots):
+            raise RuntimeError("invalid slot count received!")
+
+        for slot in self.slots:
+            slot.read_from_network_buffer(buffer)
 
     def on_mouse_button_press(
         self,
