@@ -355,6 +355,7 @@ def load_packages():
         PackageIDSync,
         PackageReroutingPackage,
         RegistrySyncPackage,
+        WorldDataExchangePackage,
     )
 
     shared.NETWORK_MANAGER.register_package_type(
@@ -376,6 +377,27 @@ def load_packages():
     )
     shared.NETWORK_MANAGER.register_package_type(
         RegistrySyncPackage.RegistrySyncPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        WorldDataExchangePackage.DataRequestPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        WorldDataExchangePackage.PlayerInfoPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        WorldDataExchangePackage.PlayerUpdatePackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        WorldDataExchangePackage.WorldInfoPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        WorldDataExchangePackage.DimensionInfoPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        WorldDataExchangePackage.ChunkDataPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        WorldDataExchangePackage.ChunkUpdatePackage
     )
 
 
