@@ -58,6 +58,8 @@ class NetworkManager:
         # Filled during handshake
         self.valid_package_ids = set()
 
+        self.client_profiles = {}
+
     def get_dynamic_id_info(self) -> typing.List[typing.Tuple[str, int]]:
         d = []
 
@@ -377,6 +379,9 @@ def load_packages():
     )
     shared.NETWORK_MANAGER.register_package_type(
         RegistrySyncPackage.RegistrySyncPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        RegistrySyncPackage.RegistrySyncResultPackage
     )
     shared.NETWORK_MANAGER.register_package_type(
         WorldDataExchangePackage.DataRequestPackage

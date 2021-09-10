@@ -15,6 +15,7 @@ import socket
 import threading
 import typing
 
+from mcpython import shared
 from mcpython.engine import logger
 
 
@@ -147,6 +148,8 @@ class ServerBackend:
             self.next_client_id += 1
 
             print(f"client {addr} with id {client_id} connected!")
+
+            shared.NETWORK_MANAGER.client_profiles[client_id] = {}
 
             self.data_by_client[client_id] = bytearray()
             self.client_locks[client_id] = threading.Lock()

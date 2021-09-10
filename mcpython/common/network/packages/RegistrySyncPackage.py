@@ -39,6 +39,9 @@ class RegistrySyncInitPackage(AbstractPackage):
         buffer.write_list(self.registries, lambda e: buffer.write_string(e))
 
     def handle_inner(self):
+        shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"] = {e: -1 for e in self.registries}
+        shared.event_handler.call("network:registry_sync:init", self)
+
         for name in self.registries:
             registry = shared.registry.get_by_name(name)
 
@@ -104,10 +107,60 @@ class RegistrySyncPackage(AbstractPackage):
                 header=f"registry mismatches in registry {self.name} (first missing on client, second missing on server)",
             )
 
-            from .DisconnectionPackage import DisconnectionInitPackage
-
-            self.answer(DisconnectionInitPackage().set_reason("registry mismatch"))
+            self.answer(RegistrySyncResultPackage().setup(self.name, False))
+            shared.event_handler.call("network:registry_sync:fail", self)
         else:
             logger.println(
                 f"[REGISTRY][SYNC] registry {self.name} seems to be equal in client & server"
             )
+            self.answer(RegistrySyncResultPackage().setup(self.name, True))
+
+
+class RegistrySyncResultPackage(AbstractPackage):
+    PACKAGE_NAME = "minecraft:registry_sync_status"
+
+    def __init__(self):
+        super().__init__()
+        self.name = ""
+        self.status = False
+
+    def setup(self, name: str, status: bool):
+        self.name = name
+        self.status = status
+        return self
+
+    def write_to_buffer(self, buffer: WriteBuffer):
+        buffer.write_string(self.name)
+        buffer.write_bool(self.status)
+
+    def read_from_buffer(self, buffer: ReadBuffer):
+        self.name = buffer.read_string()
+        self.status = buffer.read_bool()
+
+    def handle_inner(self):
+        from .DisconnectionPackage import DisconnectionInitPackage
+
+        if shared.IS_CLIENT:
+            if self.status:
+                logger.println("[NETWORK][INFO] registry compare results are back from server, everything fine")
+                shared.event_handler.call("network:registry_sync:success")
+
+                logger.println("[NETWORK][INFO] requesting world now...")
+                from .WorldDataExchangePackage import DataRequestPackage
+                self.answer(DataRequestPackage().request_player_info().request_world_info())
+
+                return
+            else:
+                logger.println("[NETWORK][WARN] registry sync FAILED on server side")
+                self.answer(DisconnectionInitPackage().set_reason("registry sync fatal"))
+                shared.event_handler.call("network:registry_sync:fail")
+                return
+
+        shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"][self.name] = int(self.status)
+
+        if -1 not in shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"].values():
+            if 0 in shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"].values():
+                self.answer(DisconnectionInitPackage().set_reason("registry miss-matches"))
+            else:
+                self.answer(RegistrySyncResultPackage().setup("all", True))
+

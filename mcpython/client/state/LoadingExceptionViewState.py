@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import sys
+
 import psutil
 import pyglet
 from mcpython import shared
@@ -112,5 +114,9 @@ loading_exception = LoadingExceptionView()
 
 
 def error_occur(text: str):
+    if not shared.IS_CLIENT:
+        print(text)
+        sys.exit(-1)
+
     loading_exception.set_text(text)
     shared.state_handler.change_state(loading_exception.NAME)
