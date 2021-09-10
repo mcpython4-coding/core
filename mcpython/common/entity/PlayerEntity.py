@@ -23,6 +23,7 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.math
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.network.util import WriteBuffer, ReadBuffer
 
 
 @shared.registry
@@ -57,11 +58,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.set_gamemode(1)  # and set it
 
         self.hearts: int = 20
-        self.hunger: int = 20
+        self.hunger: float = 20
         self.xp: int = 0
         self.xp_level: int = 0
-        self.armor_level = 0
-        self.armor_toughness = 0
+        self.armor_level: float = 0
+        self.armor_toughness: float = 0
 
         self.in_nether_portal_since: typing.Optional[float] = None
         self.should_leave_nether_portal_before_dim_change = False
@@ -106,6 +107,44 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         # the lookup order of inventory, todo: move to inventory handler
         self.inventory_order = []
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+
+        buffer.write_string(self.name)
+        buffer.write_int(self.gamemode)
+        buffer.write_int(self.hearts)
+        buffer.write_float(self.hunger)
+        buffer.write_int(self.xp)
+        buffer.write_long(self.xp_level)
+        buffer.write_float(self.armor_level)
+        buffer.write_float(self.armor_toughness)
+        buffer.write_bool(self.flying)
+        buffer.write_float(self.fallen_since_y)
+        buffer.write_int(self.active_inventory_slot)
+
+        self.inventory_hotbar.write_to_network_buffer(buffer)
+        self.inventory_main.write_to_network_buffer(buffer)
+        self.inventory_enderchest.write_to_network_buffer(buffer)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+
+        self.name = buffer.read_string()
+        self.gamemode = buffer.read_int()
+        self.hearts = buffer.read_int()
+        self.hunger = buffer.read_float()
+        self.xp = buffer.read_int()
+        self.xp_level = buffer.read_long()
+        self.armor_level = buffer.read_float()
+        self.armor_toughness = buffer.read_float()
+        self.flying = buffer.read_bool()
+        self.fallen_since_y = buffer.read_float()
+        self.active_inventory_slot = buffer.read_int()
+
+        self.inventory_hotbar.read_from_network_buffer(buffer)
+        self.inventory_main.read_from_network_buffer(buffer)
+        self.inventory_enderchest.read_from_network(buffer)
 
     def hotkey_get_position(self):
         # todo: remove this check when only the current player uses this event

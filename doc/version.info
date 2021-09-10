@@ -1742,3 +1742,4 @@ R   [uuk]: improved world serialization API
 [uuk]: fixed tick events
 [uuk]: moved physics calculation out of window into separate physics package of the engine module
 [uuk]: dedicated server is now more informal in logs as the visual part is missing
+[uuk]: added IBufferSerializeAble base class for things serialize-able to the network buffer instances

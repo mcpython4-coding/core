@@ -118,7 +118,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 continue
 
             entity_instance.rotation = entity[2]
-            entity_instance.harts = entity[3]
+            entity_instance.hearts = entity[3]
             if "nbt" in entity:
                 entity_instance.nbt_data.update(entity[6])
             entity_instance.load(entity[5])
@@ -289,7 +289,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 entity.NAME,
                 entity.position,
                 entity.rotation,
-                entity.harts,
+                entity.hearts,
                 str(entity.uuid),
                 entity.dump(),
                 entity.nbt_data,

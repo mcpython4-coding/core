@@ -21,6 +21,9 @@ import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.network.util import IBufferSerializeAble
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 SLOT_WIDTH = 32
 
@@ -34,7 +37,7 @@ else:
     PYGLET_IMAGE_HOVERING = None
 
 
-class ISlot(ABC):
+class ISlot(IBufferSerializeAble, ABC):
     def __init__(self):
         self.assigned_inventory = None
 
@@ -168,6 +171,12 @@ class Slot(ISlot):
         self.on_button_press = on_button_press
         self.__capacity = capacity
         self.check_function = check_function
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        self.itemstack.read_from_network_buffer(buffer)
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        self.itemstack.write_to_network_buffer(buffer)
 
     def get_capacity(self) -> int:
         return (

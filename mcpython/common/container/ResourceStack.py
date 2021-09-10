@@ -11,15 +11,19 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import copy
 import typing
 from abc import ABC
 
 import mcpython.common.item.AbstractItem
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.network.util import IBufferSerializeAble
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
-class AbstractResourceStack(ABC):
+class AbstractResourceStack(IBufferSerializeAble, ABC):
     """
     Abstract class for stack like objects
     """
@@ -97,6 +101,23 @@ class ItemStack(AbstractResourceStack):
             self.item = None
 
         self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_bool(self.is_empty())
+
+        if not self.is_empty():
+            buffer.write_int(self.amount)
+            buffer.write_string(self.item.NAME)
+            self.item.write_to_network_buffer(buffer)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        if not buffer.read_bool():
+            self.clean()
+        else:
+            self.amount = buffer.read_int()
+            item_name = buffer.read_string()
+            self.item = shared.registry.get_by_name("minecraft:item").full_entries[item_name]()
+            self.item.read_from_network_buffer(buffer)
 
     def copy(self) -> "ItemStack":
         """
@@ -196,26 +217,29 @@ class FluidStack(AbstractResourceStack):
     def create_empty(cls):
         return cls(None)
 
-    def __init__(self, fluid: typing.Optional[str], amount: float = 0):
+    def __init__(self, fluid: typing.Optional[str], amount: float = 0, nbt=None):
         self.fluid = fluid
         self.amount = amount
+        self.nbt = {} if nbt is None else nbt
 
     def copy(self) -> "FluidStack":
-        return FluidStack(self.fluid, self.amount)
+        return FluidStack(self.fluid, self.amount, nbt=copy.deepcopy(self.nbt))
 
     def copy_from(self, other: "FluidStack"):
         self.fluid, self.amount = other.fluid, other.amount
+        self.nbt = copy.deepcopy(other.nbt)
         return self
 
     def clean(self):
         self.fluid = None
         self.amount = 0
+        self.nbt.clear()
 
     def is_empty(self) -> bool:
         return self.fluid is None or self.amount == 0
 
     def contains_same_resource(self, other: "FluidStack") -> bool:
-        return isinstance(other, FluidStack) and self.fluid == other.fluid
+        return isinstance(other, FluidStack) and self.fluid == other.fluid and self.nbt == other.nbt
 
     def has_more_than(self, other: "FluidStack") -> bool:
         return self.contains_same_resource(other) and self.amount >= other.amount
@@ -230,3 +254,17 @@ class FluidStack(AbstractResourceStack):
     def set_amount(self, amount: float) -> "FluidStack":
         self.amount = amount
         return self
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_bool(self.is_empty())
+
+        if not self.is_empty():
+            buffer.write_float(self.amount)
+            buffer.write_string(self.fluid)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        if not buffer.read_bool():
+            self.clean()
+        else:
+            self.amount = buffer.read_float()
+            self.fluid = buffer.read_string()

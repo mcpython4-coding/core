@@ -24,10 +24,13 @@ import mcpython.util.math
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.engine import logger
+from mcpython.engine.network.util import IBufferSerializeAble
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 class AbstractEntity(
-    mcpython.common.event.api.IRegistryContent, ICapabilityContainer, ABC
+    mcpython.common.event.api.IRegistryContent, ICapabilityContainer, IBufferSerializeAble, ABC
 ):
     """
     Base class for every entity in the game
@@ -94,7 +97,7 @@ class AbstractEntity(
         )
         self.unsafe_position = (0, 0, 0)  # todo: move to nbt
         self.rotation = (0, 0, 0)  # todo: move to nbt
-        self.harts = 0  # todo: move to nbt
+        self.hearts = 0  # todo: move to nbt
         self.chunk = (
             None
             if self.dimension is None
@@ -116,6 +119,39 @@ class AbstractEntity(
         }
 
         self.dead = False
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        dim_name = buffer.read_string()
+        self.dimension = shared.world.get_dimension_by_name(dim_name if dim_name != "" else "overworld")
+
+        self.teleport(tuple((buffer.read_float() for _ in range(3))))
+        self.rotation = tuple((buffer.read_float() for _ in range(3)))
+        self.uuid = uuid.UUID(hex=buffer.read_string())
+
+        # todo: do something with this!
+        parent_uuid = buffer.read_string()
+        child_uuid = buffer.read_string()
+
+        self.nbt_data["motion"] = tuple((buffer.read_float() for _ in range(3)))
+        self.nbt_data["invulnerable"] = buffer.read_bool()
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_string(self.dimension.get_name() if self.dimension is not None else "")
+
+        for e in self.unsafe_position:
+            buffer.write_float(e)
+
+        for e in self.rotation:
+            buffer.write_float(e)
+
+        buffer.write_string(self.uuid.hex)
+        buffer.write_string("" if self.parent is None else self.parent.uuid.hex)
+        buffer.write_string("" if self.child is None else self.child.uuid.hex)
+
+        for e in self.nbt_data["motion"]:
+            buffer.write_float(e)
+
+        buffer.write_bool(self.nbt_data["invulnerable"])
 
     def add_to_chunk(self):
         if self.dimension is not None:
@@ -284,8 +320,8 @@ class AbstractEntity(
         :param damage: the damage to apply
         :param reason: the reason for the damage, as an DamageSource-instance
         """
-        self.harts -= damage
-        if self.harts <= 0:
+        self.hearts -= damage
+        if self.hearts <= 0:
             self.kill()
 
     def on_interact(self, player, button, modifiers, itemstack):

@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared
+from mcpython.common.entity.PlayerEntity import PlayerEntity
 from mcpython.engine.network.AbstractPackage import AbstractPackage
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
@@ -78,6 +79,22 @@ class DataRequestPackage(AbstractPackage):
 
 class PlayerInfoPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:player_info"
+
+    def __init__(self):
+        super().__init__()
+        self.players: typing.List[PlayerEntity] = []
+
+    def setup(self):
+        pass
+
+    def write_to_buffer(self, buffer: WriteBuffer):
+        buffer.write_list(self.players, lambda player: player.write_to_network_buffer(buffer))
+
+    def read_from_buffer(self, buffer: ReadBuffer):
+        self.players = buffer.read_list(lambda: PlayerEntity().read_from_network_buffer(buffer))
+
+    def handle_inner(self):
+        pass
 
 
 class PlayerUpdatePackage(AbstractPackage):

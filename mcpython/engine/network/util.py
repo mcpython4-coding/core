@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import math
 import struct
 import typing
+from abc import ABC
 
 INT = struct.Struct("!i")
 LONG = struct.Struct("!q")
@@ -106,3 +107,12 @@ class WriteBuffer:
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
         self.data.append(data)
         return self
+
+
+class IBufferSerializeAble(ABC):
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        pass
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        pass
+

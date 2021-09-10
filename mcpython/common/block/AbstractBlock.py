@@ -25,6 +25,7 @@ import mcpython.common.event.Registry
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
+from mcpython.engine.network.util import IBufferSerializeAble
 from mcpython.util.enums import BlockRotationType
 
 
@@ -58,7 +59,7 @@ else:
     parent = mcpython.common.event.api.IRegistryContent
 
 
-class AbstractBlock(parent, ICapabilityContainer):
+class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble):
     """
     Abstract base class for all blocks
     All block classes should extend from this

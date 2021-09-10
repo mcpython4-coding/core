@@ -23,9 +23,12 @@ import pyglet
 from mcpython import shared
 from mcpython.client.gui.Slot import ISlot
 from mcpython.engine import logger
+from mcpython.engine.network.util import IBufferSerializeAble
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
-class ContainerRenderer(ABC):
+class ContainerRenderer(IBufferSerializeAble, ABC):
     """
     Base class for rendering a container at the client
     Client-only code
@@ -60,6 +63,25 @@ class ContainerRenderer(ABC):
         self.custom_name = None  # the custom name; If set, rendered in the inventory
         self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
         self.custom_name_label.anchor_y = "top"
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_bool(self.active)
+
+        buffer.write_list(self.slots, lambda slot: slot.write_to_network_buffer(buffer))
+        buffer.write_string(self.custom_name if self.custom_name is not None else "")
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        self.active = buffer.read_bool()
+
+        size = buffer.read_int()
+        for slot in self.slots:
+            slot.read_from_network_buffer(buffer)
+
+        self.custom_name = buffer.read_string()
+        if self.custom_name == "":
+            self.custom_name = None
+        else:
+            self.custom_name_label.text = self.custom_name
 
     def on_mouse_button_press(
         self,
