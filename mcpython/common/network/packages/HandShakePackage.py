@@ -142,6 +142,8 @@ class Server2ClientHandshake(AbstractPackage):
             shared.NETWORK_MANAGER.send_package(DisconnectionInitPackage().set_reason("mod missmatch"))
             return
 
-        logger.println(
-            "[SERVER-MSG][INFO] connection successful, sending further game-information"
-        )
+        logger.println("[SERVER-MSG][INFO] connection successful")
+
+        logger.println("[CLIENT][INFO] starting registry compare...")
+        from .RegistrySyncPackage import RegistrySyncInitPackage
+        self.answer(RegistrySyncInitPackage().setup())

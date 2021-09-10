@@ -40,6 +40,8 @@ class Registry(AbstractRegistry):
         class_based=True,
         dump_content_in_saves=True,
         register_to_shared_registry=True,
+        sync_via_network=True,
+        registry_sync_package_class=None,
     ):
         super().__init__()
 
@@ -54,6 +56,9 @@ class Registry(AbstractRegistry):
 
         self.class_based = class_based
         self.dump_content_in_saves = dump_content_in_saves
+
+        self.sync_via_network = sync_via_network
+        self.registry_sync_package_class = registry_sync_package_class
 
         if register_to_shared_registry:
             shared.registry.registries[name] = self

@@ -165,7 +165,13 @@ class ServerBackend:
     def single_client_thread_recv(self, conn, client_id: int):
         try:
             while client_id not in self.pending_thread_stops:
-                data = conn.recv(4096)
+                try:
+                    data = conn.recv(4096)
+                except ConnectionResetError:
+                    logger.println(f"forced-disconnected client @{client_id}")
+                    self.disconnect_client(client_id)
+                    return
+
                 self.data_by_client[client_id] += data
         except:
             if client_id not in self.pending_thread_stops:
@@ -178,7 +184,13 @@ class ServerBackend:
                 for package in self.scheduled_packages_by_client.setdefault(
                     client_id, []
                 ):
-                    conn.send(package)
+                    try:
+                        conn.send(package)
+                    except ConnectionResetError:
+                        logger.println(f"forced-disconnected client @{client_id}")
+                        self.disconnect_client(client_id)
+                        return
+
                 self.scheduled_packages_by_client.clear()
                 self.client_locks[client_id].release()
         except:

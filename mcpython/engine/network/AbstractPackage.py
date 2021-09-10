@@ -58,12 +58,13 @@ class AbstractPackage:
         pass
 
     def answer(self, package: "AbstractPackage"):
-        if self.package_id == -1:
-            raise RuntimeError(
-                f"{self}: Package ID must be set for answering; This package has it not set!"
-            )
+        if self.CAN_GET_ANSWER:
+            if self.package_id == -1:
+                raise RuntimeError(
+                    f"{self}: Package ID must be set for answering; This package has it not set!"
+                )
 
-        package.previous_packages = self.previous_packages + [self.package_id]
+            package.previous_packages = self.previous_packages + [self.package_id]
 
         shared.NETWORK_MANAGER.send_package(package, self.sender_id)
 

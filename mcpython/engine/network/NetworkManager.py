@@ -354,6 +354,7 @@ def load_packages():
         HandShakePackage,
         PackageIDSync,
         PackageReroutingPackage,
+        RegistrySyncPackage,
     )
 
     shared.NETWORK_MANAGER.register_package_type(
@@ -370,6 +371,8 @@ def load_packages():
     )
     shared.NETWORK_MANAGER.register_package_type(PackageReroutingPackage.PackageReroute)
     shared.NETWORK_MANAGER.register_package_type(PackageIDSync.PackageIDSync)
+    shared.NETWORK_MANAGER.register_package_type(RegistrySyncPackage.RegistrySyncInitPackage)
+    shared.NETWORK_MANAGER.register_package_type(RegistrySyncPackage.RegistrySyncPackage)
 
 
 shared.mod_loader("minecraft", "stage:network:package_register")(load_packages)

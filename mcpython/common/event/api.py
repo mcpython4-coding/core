@@ -71,7 +71,8 @@ class IRegistryContent(mcpython.common.data.serializer.tags.ITagTarget.ITagTarge
     def on_register(cls, registry):
         pass
 
-    INFO = None  # can be used to display any special info in e.g. /registryinfo-command
+    # can be used to display any special info in e.g. /registryinfo-command, must be str!
+    INFO = None
 
     # returns some information about the class stored in registry. used in saves to determine if registry was changed,
     # so could also include an version. Must be pickle-able
