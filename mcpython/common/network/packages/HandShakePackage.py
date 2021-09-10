@@ -127,6 +127,21 @@ class Server2ClientHandshake(AbstractPackage):
             )
             return
 
+        miss_matches = []
+
+        for modname, version in self.mod_list:
+            if modname not in shared.mod_loader.mods:
+                miss_matches.append(f"missing mod: {modname}")
+            elif str(shared.mod_loader[modname].version) != version:
+                miss_matches.append(f"mod {modname} version miss-match: {version} (server) != {shared.mod_loader[modname].version} (client)")
+
+        if miss_matches:
+            logger.write_into_container(miss_matches)
+
+            from .DisconnectionPackage import DisconnectionInitPackage
+            shared.NETWORK_MANAGER.send_package(DisconnectionInitPackage().set_reason("mod missmatch"))
+            return
+
         logger.println(
             "[SERVER-MSG][INFO] connection successful, sending further game-information"
         )

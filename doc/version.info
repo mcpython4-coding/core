@@ -1734,3 +1734,4 @@ R   [uuk]: improved world serialization API
 [uuk]: added client <-> server handshake packages
 [uuk]: added server -> client package ID sync system [for dynamic ID's only]
        (needed as mod loading order is unstable across sessions)
+[uuk]: added server ->  client mod list compare
