@@ -1,15 +1,25 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import math
 import typing
 
-from pyglet.window import key
-from pyglet.window import mouse
-
 import mcpython.engine
+import mcpython.engine.event.EventBus
+import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.util import texture as texture_util
-import mcpython.engine.ResourceLoader
-import mcpython.engine.event.EventBus
-
+from pyglet.window import key, mouse
 
 TAB_TEXTURE = (
     None
@@ -142,4 +152,3 @@ class CreativeTabScrollbar:
 
 if not shared.IS_TEST_ENV:
     CreativeTabScrollbar.reload()
-

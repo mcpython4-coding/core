@@ -80,7 +80,9 @@ class StateHandler:
         self.active_state.activate()
 
         if shared.IS_CLIENT:
-            self.active_state.eventbus.call("user:window:resize", *shared.window.get_size())
+            self.active_state.eventbus.call(
+                "user:window:resize", *shared.window.get_size()
+            )
 
         shared.event_handler.call("state:switch:post", state_name)
         logger.println(

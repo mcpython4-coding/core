@@ -27,7 +27,7 @@ import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
 from mcpython import shared
-from mcpython.client.gui.util import CreativeTabScrollbar, TAB_TEXTURE
+from mcpython.client.gui.util import TAB_TEXTURE, CreativeTabScrollbar
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
 from mcpython.engine import logger
@@ -343,6 +343,7 @@ class CreativeTabSearchBar(CreativeItemTab):
 
             self.group.sort_after_item_name()
             self.update_rendering(True)
+
 
 class CreativePlayerInventory(ICreativeView):
     TEXTURE_SIZE = 195 * 2, 136 * 2

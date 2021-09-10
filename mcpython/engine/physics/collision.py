@@ -1,3 +1,16 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 from mcpython import shared
 from mcpython.common.config import ADVANCED_FACES
 from mcpython.util.math import normalize
@@ -17,9 +30,7 @@ def collide(position: tuple, height: int, previous=None):
     todo: make account player & block hit box
     """
     previous_positions = (
-        sum(get_colliding_blocks(previous, height), [])
-        if previous is not None
-        else []
+        sum(get_colliding_blocks(previous, height), []) if previous is not None else []
     )
     # How much overlap with a dimension of a surrounding block you need to
     # have to count as a collision. If 0, touching terrain at all counts as
@@ -55,9 +66,9 @@ def collide(position: tuple, height: int, previous=None):
                     continue
 
                 if (
-                        block is not None
-                        and type(block) != str
-                        and block.NO_ENTITY_COLLISION
+                    block is not None
+                    and type(block) != str
+                    and block.NO_ENTITY_COLLISION
                 ):
                     block.on_no_collision_collide(
                         shared.world.get_active_player(),
@@ -77,9 +88,8 @@ def collide(position: tuple, height: int, previous=None):
                 if face == (0, -1, 0):
                     shared.world.get_active_player().flying = False
                     if (
-                            shared.world.get_active_player().gamemode in (0, 2)
-                            and shared.world.get_active_player().fallen_since_y
-                            is not None
+                        shared.world.get_active_player().gamemode in (0, 2)
+                        and shared.world.get_active_player().fallen_since_y is not None
                     ):
                         dy = (
                             shared.world.get_active_player().fallen_since_y

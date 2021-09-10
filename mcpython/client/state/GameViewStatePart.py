@@ -26,9 +26,9 @@ from mcpython.common.config import GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
+from ...engine.physics.collision import collide
 from . import AbstractStatePart
 from .InGameHotKeysManager import ALL_KEY_COMBOS
-from ...engine.physics.collision import collide
 
 
 def get_block_break_time(block, itemstack):
@@ -395,9 +395,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         x, y, z = player.position
         before = mcpython.util.math.position_to_chunk(player.position)
         if player.gamemode != 3:
-            x, y, z = collide(
-                (x + dx, y + dy, z + dz), 2, player.position
-            )
+            x, y, z = collide((x + dx, y + dy, z + dz), 2, player.position)
         else:
             x, y, z = x + dx, y + dy, z + dz
 
@@ -443,7 +441,8 @@ class GameView(AbstractStatePart.AbstractStatePart):
     def calculate_motion(self, dt: float, player) -> typing.Tuple[float, float, float]:
 
         # todo: add a way to do stuff here!
-        if not shared.IS_CLIENT: return 0, 0, 0
+        if not shared.IS_CLIENT:
+            return 0, 0, 0
 
         speed = mcpython.common.config.SPEED_DICT[player.gamemode][
             (0 if not shared.window.keys[key.LSHIFT] else 1)

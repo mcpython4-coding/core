@@ -133,17 +133,23 @@ class Server2ClientHandshake(AbstractPackage):
             if modname not in shared.mod_loader.mods:
                 miss_matches.append(f"missing mod: {modname}")
             elif str(shared.mod_loader[modname].version) != version:
-                miss_matches.append(f"mod {modname} version miss-match: {version} (server) != {shared.mod_loader[modname].version} (client)")
+                miss_matches.append(
+                    f"mod {modname} version miss-match: {version} (server) != {shared.mod_loader[modname].version} (client)"
+                )
 
         if miss_matches:
             logger.write_into_container(miss_matches)
 
             from .DisconnectionPackage import DisconnectionInitPackage
-            shared.NETWORK_MANAGER.send_package(DisconnectionInitPackage().set_reason("mod missmatch"))
+
+            shared.NETWORK_MANAGER.send_package(
+                DisconnectionInitPackage().set_reason("mod missmatch")
+            )
             return
 
         logger.println("[SERVER-MSG][INFO] connection successful")
 
         logger.println("[CLIENT][INFO] starting registry compare...")
         from .RegistrySyncPackage import RegistrySyncInitPackage
+
         self.answer(RegistrySyncInitPackage().setup())

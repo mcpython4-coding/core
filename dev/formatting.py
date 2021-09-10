@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import os
 import subprocess
 import sys
+import traceback
 
 import isort
 
@@ -41,6 +42,6 @@ for root, dirs, files in os.walk(home):
             isort.file(os.path.join(root, file))
         except:
             print(os.path.join(root, file))
-            raise
+            traceback.print_exc()
 
 subprocess.call([sys.executable, "-m", "black", home])

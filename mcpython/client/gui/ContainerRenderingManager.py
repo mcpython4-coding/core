@@ -367,7 +367,9 @@ class OpenedInventoryStatePart(
                     )
             if (
                 shared.inventory_handler.shift_container_handler is not None
-                and shared.inventory_handler.shift_container_handler.move_to_opposite(slot)
+                and shared.inventory_handler.shift_container_handler.move_to_opposite(
+                    slot
+                )
             ):
                 return
 
@@ -422,7 +424,9 @@ class OpenedInventoryStatePart(
             if shared.window.keys[key.LSHIFT]:
                 shared.inventory_handler.shift_container_handler.move_to_opposite(slot)
             else:
-                shared.inventory_handler.shift_container_handler.move_to_opposite(slot, count=1)
+                shared.inventory_handler.shift_container_handler.move_to_opposite(
+                    slot, count=1
+                )
 
 
 inventory_part = OpenedInventoryStatePart()
@@ -445,7 +449,9 @@ class InventoryHandler:
             allow_player_insert=False,
             allow_player_remove=False,
         )
-        self.shift_container_handler = mcpython.client.gui.ShiftContainer.ShiftContainer()
+        self.shift_container_handler = (
+            mcpython.client.gui.ShiftContainer.ShiftContainer()
+        )
 
     def tick(self, dt: float):
         for inventory in self.open_containers:

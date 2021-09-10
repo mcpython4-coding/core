@@ -227,6 +227,7 @@ class LaunchWrapper:
 
         if not shared.IS_CLIENT:
             import mcpython.client.state.StateHandler
+
             mcpython.client.state.StateHandler.load_states()
 
             import mcpython.common.event.TickHandler
