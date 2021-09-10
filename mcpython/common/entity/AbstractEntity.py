@@ -244,12 +244,6 @@ class AbstractEntity(
         else:
             dimension_id = dimension
 
-        dimension = (
-            shared.world.get_dimension(dimension_id)
-            if shared.world is not None
-            else None
-        )
-
         sector_after = mcpython.util.math.position_to_chunk(position)
 
         if (

@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
+import time
 import typing
 
 from mcpython import shared
@@ -18,6 +20,7 @@ from mcpython.engine import logger
 from mcpython.engine.network.AbstractPackage import AbstractPackage
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from .DisconnectionPackage import DisconnectionInitPackage
+from mcpython.common.world.NetworkSyncedImplementation import NetworkSyncedDimension
 
 
 class DataRequestPackage(AbstractPackage):
@@ -75,6 +78,7 @@ class DataRequestPackage(AbstractPackage):
             self.answer(DimensionInfoPackage().setup(dimension))
 
         for dim, cx, cz in self.requested_chunks:
+            logger.println(f"collecting chunk information for chunk @{cx}:{cz}@{dim}")
             self.answer(ChunkDataPackage().setup(dim, (cx, cz)))
 
 
@@ -196,6 +200,12 @@ class WorldInfoPackage(AbstractPackage):
 
             dim = shared.world.get_dimension_by_name(name)
 
+            if not isinstance(dim, NetworkSyncedDimension):
+                logger.println("[NETWORK][WORLD] exchanging for a network sync-ed one...")
+                new_dim = shared.world.dimensions[dim.get_id()] = NetworkSyncedDimension(shared.world, dim.get_id(), dim.get_name(), dim.world_generation_config)
+                new_dim.world_generation_config_objects = dim.world_generation_config_objects
+                new_dim.batches = dim.batches
+
             if dim.get_id() != dim_id:
                 self.answer(DisconnectionInitPackage().set_reason("world dim id miss-match"))
 
@@ -206,6 +216,9 @@ class WorldInfoPackage(AbstractPackage):
 class DimensionInfoPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:dimension_info"
 
+    def __init__(self):
+        super().__init__()
+
     def setup(self, dimension: str):
         return self
 
@@ -213,8 +226,81 @@ class DimensionInfoPackage(AbstractPackage):
 class ChunkDataPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:chunk_data"
 
+    def __init__(self):
+        super().__init__()
+        self.dimension = "overworld"
+        self.position = 0, 0
+
+        self.blocks = []
+
     def setup(self, dim: str, position: typing.Tuple[int, int]):
+        self.dimension = dim
+        self.position = position
+
+        chunk = shared.world.get_dimension_by_name(dim).get_chunk(position)
+
+        dx, dz = chunk.position[0] * 16, chunk.position[1] * 16
+
+        for x, y, z in itertools.product(range(16), range(256), range(16)):
+            x += dx
+            z += dz
+
+            b = chunk.get_block((x, y, z), none_if_str=True)
+            self.blocks.append(b)
+
         return self
+
+    def write_to_buffer(self, buffer: WriteBuffer):
+        start = time.time()
+        logger.println(f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} for networking")
+
+        buffer.write_string(self.dimension)
+        buffer.write_int(self.position[0]).write_int(self.position[1])
+
+        for b in self.blocks:
+            if b is None:
+                buffer.write_string("")
+            else:
+                buffer.write_string(b.NAME)
+                b.write_to_buffer(buffer)
+
+        logger.println(f"-> chunk data ready (took {time.time() - start}s)")
+
+    def read_from_buffer(self, buffer: ReadBuffer):
+        start = time.time()
+        logger.println(f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world")
+
+        self.dimension = buffer.read_string()
+        self.position = buffer.read_int(), buffer.read_int()
+
+        for _ in range(16 * 256 * 16):
+            name = buffer.read_string()
+
+            if name == "":
+                self.blocks.append(None)
+            else:
+                instance = shared.registry.get_by_name("minecraft:block").get(name)
+                instance.read_from_buffer(buffer)
+                self.blocks.append(instance)
+
+        logger.println(f"-> chunk data ready (took {time.time() - start}s)")
+
+    def handle_inner(self):
+        start = time.time()
+        logger.println(f"adding chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world")
+        chunk = shared.world.get_dimension_by_name(self.dimension).get_chunk(self.position)
+
+        dx, dz = self.position
+
+        i = 0
+        for x, y, z in itertools.product(range(16), range(256), range(16)):
+            x += dx
+            z += dz
+
+            chunk.add_block((x, y, z), self.blocks[i])
+            i += 1
+
+        logger.println(f"-> chunk data fully added (took {time.time()-start}s)")
 
 
 class ChunkUpdatePackage(AbstractPackage):
