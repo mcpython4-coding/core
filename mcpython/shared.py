@@ -44,6 +44,7 @@ if data_gen_exit and not data_gen:
 NO_WINDOW = False
 
 IS_CLIENT = True
+IS_NETWORKING = False
 IS_TEST_ENV = False
 
 # used by fml to store which mod is currently working

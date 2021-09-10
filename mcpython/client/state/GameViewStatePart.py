@@ -183,10 +183,14 @@ class GameView(AbstractStatePart.AbstractStatePart):
         if not self.activate_physics:
             return
 
+        player = shared.world.get_active_player()
+
         m = 8
         dt = min(dt, 0.2)
         for _ in range(m):
-            self.physics_update_internal(dt / m)
+            self.physics_update_internal(dt / m, player)
+
+        player.send_update_package_when_client()
 
     def on_left_click_interaction_update(self, dt: float):
         if self.break_time is None:
@@ -371,7 +375,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                     if shared.window.mouse_pressing[mouse.LEFT]:
                         self.calculate_new_break_time()
 
-    def physics_update_internal(self, dt: float):
+    def physics_update_internal(self, dt: float, player):
         """
         Internal implementation of the `update()` method. This is where most
         of the motion logic lives, along with gravity and collision detection.
@@ -383,7 +387,6 @@ class GameView(AbstractStatePart.AbstractStatePart):
         dt : float
             The change in time since the last call.
         """
-        player = shared.world.get_active_player()
 
         # todo: add check game hardness != friendly
         if player.gamemode in (0, 2) and shared.window.keys[key.LSHIFT]:

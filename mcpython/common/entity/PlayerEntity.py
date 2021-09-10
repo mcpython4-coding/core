@@ -24,6 +24,7 @@ import mcpython.util.math
 from mcpython import shared
 from mcpython.engine import logger
 from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+from mcpython.common.network.packages.WorldDataExchangePackage import PlayerUpdatePackage
 
 
 @shared.registry
@@ -51,11 +52,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     }
 
     def __init__(self, name="unknown", dimension=None):
+        self.is_in_init = True
         super().__init__(dimension=dimension)
 
         self.name: str = name  # the name of the player
         self.gamemode: int = -1  # the current gamemode
-        self.set_gamemode(1)  # and set it
 
         self.hearts: int = 20
         self.hunger: float = 20
@@ -108,6 +109,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         # the lookup order of inventory, todo: move to inventory handler
         self.inventory_order = []
+        self.set_gamemode(1)
+
+        self.is_in_init = False
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
@@ -150,6 +154,28 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.inventory_enderchest.read_from_network_buffer(buffer)
 
         return self
+
+    def create_update_package(self) -> PlayerUpdatePackage:
+        package = PlayerUpdatePackage()
+        package.name = self.name
+        package.position, package.rotation, package.motion = self.position, self.rotation, self.nbt_data["motion"]
+        package.dimension = self.dimension.get_name()
+        package.selected_slot = self.active_inventory_slot
+        package.gamemode = self.gamemode
+
+        return package
+
+    def write_update_package(self, package: PlayerUpdatePackage):
+        self.position, self.rotation, self.nbt_data["motion"] = package.position, package.rotation, package.motion
+        self.dimension = shared.world.get_dimension_by_name(package.dimension)
+        self.active_inventory_slot = package.selected_slot
+        self.gamemode = package.gamemode
+
+        return self
+
+    def send_update_package_when_client(self):
+        if shared.IS_CLIENT and shared.IS_NETWORKING and not self.is_in_init:
+            shared.NETWORK_MANAGER.send_package(self.create_update_package(), 0)
 
     def hotkey_get_position(self):
         # todo: remove this check when only the current player uses this event
@@ -227,6 +253,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         else:
             # todo: add an option to raise an exception here
             logger.println("[ERROR] invalid gamemode:", gamemode)
+        self.send_update_package_when_client()
 
     def get_needed_xp_for_next_level(self) -> int:
         """
@@ -251,15 +278,18 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             else:
                 xp = xp - (needed - self.xp)
                 self.xp_level += 1
+        self.send_update_package_when_client()
         return self
 
     def add_xp_level(self, xp_levels: int):
         self.xp_level += xp_levels
+        self.send_update_package_when_client()
         return self
 
     def clear_xp(self):
         self.xp_level = 0
         self.xp = 0
+        self.send_update_package_when_client()
         return self
 
     def pick_up_item(
@@ -328,6 +358,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         Clamped in the range when out of range
         """
         self.active_inventory_slot = max(min(round(slot), 8), 0)
+        self.send_update_package_when_client()
         return self
 
     def get_active_inventory_slot(self):
@@ -428,6 +459,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         if not internal:
             shared.event_handler.call("gamplay:player:die", self, damage_source)
+
+        self.send_update_package_when_client()
 
     def _get_position(self):
         return self.position

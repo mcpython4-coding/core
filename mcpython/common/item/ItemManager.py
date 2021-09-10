@@ -51,7 +51,11 @@ def load_data():
         shared.build + "/item_block_factory.json"
     ):
         with open(shared.build + "/item_block_factory.json") as f:
-            data = json.load(f)
+            try:
+                data = json.load(f)
+            except json.decoder.JSONDecodeError:
+                return
+
         builder = logger.TableBuilder(
             header=[
                 "MCPYTHON REGISTRY CHANGE - Following BlockItemTextures",

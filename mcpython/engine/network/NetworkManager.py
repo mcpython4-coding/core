@@ -54,6 +54,7 @@ class NetworkManager:
         self.next_package_id = 0
 
         self.client_id = -1
+        self.valid_client_ids = set()
 
         # Filled during handshake
         self.valid_package_ids = set()
@@ -116,6 +117,11 @@ class NetworkManager:
                 shared.SERVER_NETWORK_HANDLER.disconnect_all()
             else:
                 shared.SERVER_NETWORK_HANDLER.disconnect_client(target)
+
+    def send_package_to_all(self, package, not_including=-1):
+        for client_id in self.valid_client_ids:
+            if client_id != not_including:
+                self.send_package(package, client_id)
 
     def send_package(
         self,

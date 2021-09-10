@@ -121,6 +121,11 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             else self.add_player(self.active_player)
         )
 
+    def get_player_by_name(self, name: str):
+        if name not in self.players:
+            self.add_player(name)
+        return self.players[name]
+
     def player_iterator(self) -> typing.Iterable:
         return list(self.players.values())
 

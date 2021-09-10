@@ -63,6 +63,8 @@ class Client2ServerHandshake(AbstractPackage):
             )
             return
 
+        shared.world.add_player(self.player_name)
+
         logger.println("sending mod list...")
         self.answer(Server2ClientHandshake().setup_accept())
 

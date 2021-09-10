@@ -48,12 +48,14 @@ class ClientBackend:
             return
 
         self.connected = True
+        shared.IS_NETWORKING = True
 
     def disconnect(self):
         print("disconnected from server")
 
         self.socket.close()
         self.connected = False
+        shared.IS_NETWORKING = False
 
     def work(self):
         for package in self.scheduled_packages:
@@ -100,6 +102,9 @@ class ServerBackend:
         del self.scheduled_packages_by_client[client_id]
         del self.client_locks[client_id]
         del self.threads[client_id]
+        del shared.NETWORK_MANAGER.client_profiles[client_id]
+
+        shared.NETWORK_MANAGER.valid_client_ids.remove(client_id)
 
         self.handle_lock.release()
 
@@ -138,6 +143,8 @@ class ServerBackend:
         self.server_handler_thread = threading.Thread(target=self.inner_server_thread)
         self.server_handler_thread.start()
 
+        shared.IS_NETWORKING = True
+
     def inner_server_thread(self):
         self.socket.listen(4)
 
@@ -150,6 +157,7 @@ class ServerBackend:
             print(f"client {addr} with id {client_id} connected!")
 
             shared.NETWORK_MANAGER.client_profiles[client_id] = {}
+            shared.NETWORK_MANAGER.valid_client_ids.add(client_id)
 
             self.data_by_client[client_id] = bytearray()
             self.client_locks[client_id] = threading.Lock()
