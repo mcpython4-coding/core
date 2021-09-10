@@ -104,7 +104,7 @@ class NetworkManager:
         logger.println("[NETWORK][SYNC] package ID sync was successful!")
 
     def disconnect(self, target=-1):
-        print(f"disconnecting connection to {target}")
+        print(f"disconnecting connection to {target if target != -1 else 'all'}")
 
         if shared.IS_CLIENT:
             shared.CLIENT_NETWORK_HANDLER.disconnect()

@@ -63,7 +63,10 @@ class Client2ServerHandshake(AbstractPackage):
             )
             return
 
+        logger.println("sending mod list...")
         self.answer(Server2ClientHandshake().setup_accept())
+
+        logger.println("syncing up package id lists...")
         self.answer(PackageIDSync().setup())
 
 
