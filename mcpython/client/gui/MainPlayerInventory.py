@@ -132,10 +132,10 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
         shared.state_handler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):
-        shared.inventory_handler.shift_container.container_A = (
+        shared.inventory_handler.shift_container_handler.container_A = (
             self.slots[:9] + self.slots[36:41]
         )
-        shared.inventory_handler.shift_container.container_B = self.slots[9:36]
+        shared.inventory_handler.shift_container_handler.container_B = self.slots[9:36]
 
     def free(self):
         MainPlayerInventory.INSTANCES.append(self)

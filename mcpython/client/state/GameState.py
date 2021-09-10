@@ -81,7 +81,7 @@ class Game(AbstractState.AbstractState):
         elif symbol == key.E:
             if (
                 not shared.world.get_active_player().inventory_main
-                in shared.inventory_handler.opened_inventory_stack
+                in shared.inventory_handler.open_containers
             ):
                 if shared.window.exclusive:
                     shared.event_handler.call("on_player_inventory_open")

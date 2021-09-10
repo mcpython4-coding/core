@@ -279,7 +279,7 @@ class ContainerRenderer(ABC):
     # todo: remove
     def on_world_cleared(self):
         [slot.get_itemstack().clean() for slot in self.slots]
-        if self in shared.inventory_handler.opened_inventory_stack:
+        if self in shared.inventory_handler.open_containers:
             shared.inventory_handler.hide(self)
 
     def get_interaction_slots(self):

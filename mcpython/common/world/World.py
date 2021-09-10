@@ -411,7 +411,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
             shared.dimension_handler.init_dims()
         [
             inventory.on_world_cleared()
-            for inventory in shared.inventory_handler.inventories
+            for inventory in shared.inventory_handler.containers
         ]
         self.reset_config()
         shared.world.get_active_player().flying = False

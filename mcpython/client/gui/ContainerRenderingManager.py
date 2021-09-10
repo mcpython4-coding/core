@@ -66,7 +66,7 @@ class OpenedInventoryStatePart(
         if any(
             [
                 inventory.is_blocking_interactions()
-                for inventory in shared.inventory_handler.opened_inventory_stack
+                for inventory in shared.inventory_handler.open_containers
             ]
         ):
             shared.window.set_exclusive_mouse(False)
@@ -79,7 +79,7 @@ class OpenedInventoryStatePart(
                 0
             ].activate_keyboard = True
 
-        for inventory in shared.inventory_handler.opened_inventory_stack:
+        for inventory in shared.inventory_handler.open_containers:
             shared.rendering_helper.enableAlpha()  # make sure that it is enabled
             inventory.draw(hovering_slot=hovering_slot)
 
@@ -113,8 +113,8 @@ class OpenedInventoryStatePart(
         todo: move to InventoryHandler
         """
         for inventory in itertools.chain(
-            shared.inventory_handler.opened_inventory_stack,
-            shared.inventory_handler.always_opened,
+            shared.inventory_handler.open_containers,
+            shared.inventory_handler.always_open_containers,
         ):
             dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
@@ -132,7 +132,7 @@ class OpenedInventoryStatePart(
         :return: the slot and the inventory or None and None if none found
         todo: move to InventoryHandler
         """
-        for inventory in shared.inventory_handler.opened_inventory_stack:
+        for inventory in shared.inventory_handler.open_containers:
             dx, dy = inventory.get_position()
             for slot in inventory.get_interaction_slots():
                 sx, sy = slot.position
@@ -152,7 +152,7 @@ class OpenedInventoryStatePart(
 
         slot: mcpython.client.gui.Slot.Slot = self._get_slot_for(x, y)
 
-        for inventory in shared.inventory_handler.opened_inventory_stack:
+        for inventory in shared.inventory_handler.open_containers:
             ix, iy = inventory.get_position()
 
             if inventory.on_mouse_button_press(
@@ -206,8 +206,8 @@ class OpenedInventoryStatePart(
                     )
                 )
         if (
-            shared.inventory_handler.shift_container is not None
-            and shared.inventory_handler.shift_container.move_to_opposite(slot)
+            shared.inventory_handler.shift_container_handler is not None
+            and shared.inventory_handler.shift_container_handler.move_to_opposite(slot)
         ):
             return True
 
@@ -364,8 +364,8 @@ class OpenedInventoryStatePart(
                         )
                     )
             if (
-                shared.inventory_handler.shift_container is not None
-                and shared.inventory_handler.shift_container.move_to_opposite(slot)
+                shared.inventory_handler.shift_container_handler is not None
+                and shared.inventory_handler.shift_container_handler.move_to_opposite(slot)
             ):
                 return
 
@@ -416,11 +416,11 @@ class OpenedInventoryStatePart(
             return
         if self.mode != 0:
             return
-        if shared.inventory_handler.shift_container is not None:
+        if shared.inventory_handler.shift_container_handler is not None:
             if shared.window.keys[key.LSHIFT]:
-                shared.inventory_handler.shift_container.move_to_opposite(slot)
+                shared.inventory_handler.shift_container_handler.move_to_opposite(slot)
             else:
-                shared.inventory_handler.shift_container.move_to_opposite(slot, count=1)
+                shared.inventory_handler.shift_container_handler.move_to_opposite(slot, count=1)
 
 
 inventory_part = OpenedInventoryStatePart()
@@ -435,80 +435,83 @@ class InventoryHandler:
     """
 
     def __init__(self):
-        self.opened_inventory_stack = []
-        self.always_opened = []
-        self.inventories = []
+        self.open_containers = []
+        self.always_open_containers = []
+        self.containers = []
         self.moving_slot: mcpython.client.gui.Slot.Slot = mcpython.client.gui.Slot.Slot(
             allow_player_add_to_free_place=False,
             allow_player_insert=False,
             allow_player_remove=False,
         )
-        self.shift_container = mcpython.client.gui.ShiftContainer.ShiftContainer()
+        self.shift_container_handler = mcpython.client.gui.ShiftContainer.ShiftContainer()
 
     def tick(self, dt: float):
-        for inventory in self.opened_inventory_stack:
+        for inventory in self.open_containers:
             inventory.tick(dt)
 
     def update_shift_container(self):
-        for inventory in self.opened_inventory_stack:
+        for inventory in self.open_containers:
             inventory.update_shift_container()
 
     def add(self, inventory):
         """
-        add an new inventory
+        Adds a new inventory to the intenal handling system
         :param inventory: the inventory to add
         """
-        if inventory in self.inventories:
+        if inventory in self.containers:
             return
-        self.inventories.append(inventory)
+
+        self.containers.append(inventory)
+
         if inventory.is_always_open():
-            self.always_opened.append(inventory)
+            self.always_open_containers.append(inventory)
             self.show(inventory)
 
     def reload_config(self):
-        [inventory.reload_config() for inventory in self.inventories]
+        [inventory.reload_config() for inventory in self.containers]
 
     def show(self, inventory):
         """
-        show an inventory
+        Shows a inventory by adding it to the corresponding structure
         :param inventory: the inventory to show
         """
-        if inventory in self.opened_inventory_stack:
+        if inventory in self.open_containers:
             return
-        self.opened_inventory_stack.append(inventory)
+
+        self.open_containers.append(inventory)
         inventory.on_activate()
         self.update_shift_container()
+
         shared.event_handler.call("inventory:show", inventory)
-        shared.event_handler.call(
-            "inventory:show:{}".format(inventory.__class__.__name__), inventory
-        )
 
     def hide(self, inventory):
         """
-        hide an inventory
+        Hides a inventory
         :param inventory: the inventory to hide
         """
-        if inventory not in self.opened_inventory_stack:
+        if inventory not in self.open_containers:
             return
-        if inventory in self.always_opened:
-            return
-        inventory.on_deactivate()
-        self.opened_inventory_stack.remove(inventory)
-        self.update_shift_container()
-        shared.event_handler.call("inventory:hide", inventory)
-        shared.event_handler.call(
-            "inventory:hide:{}".format(inventory.__class__.__name__), inventory
-        )
 
-    def remove_one_from_stack(self):
+        if inventory in self.always_open_containers:
+            return
+
+        inventory.on_deactivate()
+        self.open_containers.remove(inventory)
+        self.update_shift_container()
+
+        shared.event_handler.call("inventory:hide", inventory)
+
+    def remove_one_from_stack(self, is_escape=True):
         """
-        removes one inventory from stack
+        Removes one inventory from stack which can be removed
+        :param is_escape: if to handle like it is an escape press, so we skip containers not wanting to be closed that
+            way
         :return: the inventory removed or None if no is active
         """
-        stack = self.opened_inventory_stack.copy()
+        stack = self.open_containers.copy()
         stack.reverse()
         for inventory in stack:
-            if inventory.is_closable_by_escape():
+            if inventory.is_closable_by_escape() or not is_escape:
                 self.hide(inventory)
                 return inventory
 
@@ -516,8 +519,8 @@ class InventoryHandler:
         """
         close all inventories
         """
-        for inventory in self.opened_inventory_stack:
-            if inventory in self.always_opened:
+        for inventory in self.open_containers:
+            if inventory in self.always_open_containers:
                 continue
             self.hide(inventory)
 

@@ -76,7 +76,7 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
-        shared.inventory_handler.shift_container.container_A = (
+        shared.inventory_handler.shift_container_handler.container_A = (
             shared.world.get_active_player().inventory_main.slots[:36]
         )
-        shared.inventory_handler.shift_container.container_B = self.slots
+        shared.inventory_handler.shift_container_handler.container_B = self.slots
