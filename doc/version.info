@@ -1771,3 +1771,4 @@ b   [uuk]: fixed default dimension implementation yielding all entities twice
 E   [uuk]: renamed event gamplay:player:die to gameplay:player:die
 b   [uuk]: fixed exception when kill()-ing a player on a dedicated server
 F   [uuk]: added connecting to server state
+T   [uuk]: added unit test for disconnection package
