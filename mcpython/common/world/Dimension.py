@@ -137,7 +137,13 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     # normal, alpha; mods are free to add more; todo: add better API
     BATCH_COUNT = 2
 
-    def __init__(self, world_in: mcpython.common.world.AbstractInterface.IWorld, dim_id: int, name: str, gen_config=None):
+    def __init__(
+        self,
+        world_in: mcpython.common.world.AbstractInterface.IWorld,
+        dim_id: int,
+        name: str,
+        gen_config=None,
+    ):
         """
         Creates a new dimension. Should be registered to the world instance.
         Can be automated by using the appropriate function at world
@@ -166,7 +172,9 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         self.height_range = (0, 255)
 
     def update_visible_block(self, position: typing.Tuple[int, int, int]):
-        self.get_chunk_for_position(position, generate=False).update_visible_block(position)
+        self.get_chunk_for_position(position, generate=False).update_visible_block(
+            position
+        )
 
     def exposed(self, position: typing.Tuple[int, int, int]):
         return self.get_chunk_for_position(position, generate=False).exposed(position)

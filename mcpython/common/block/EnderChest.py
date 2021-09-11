@@ -45,7 +45,11 @@ class EnderChest(AbstractBlock.AbstractBlock):
         super().__init__()
 
         self.front_side = mcpython.util.enums.EnumSide.N
-        self.inventory = shared.world.get_active_player().inventory_enderchest if shared.IS_CLIENT else None
+        self.inventory = (
+            shared.world.get_active_player().inventory_enderchest
+            if shared.IS_CLIENT
+            else None
+        )
 
     def on_block_added(self):
         if self.real_hit:

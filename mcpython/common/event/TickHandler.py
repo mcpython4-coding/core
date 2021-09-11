@@ -143,7 +143,8 @@ class TickHandler:
 
     def send_random_ticks(self, *args, **kwargs):
         # todo: when networking, only on server & walk over all players!
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         dimension = shared.world.get_active_dimension()
         if dimension is None:

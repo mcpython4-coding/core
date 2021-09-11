@@ -16,11 +16,12 @@ import time
 import typing
 
 from mcpython import shared
+from mcpython.common.world.NetworkSyncedImplementation import NetworkSyncedDimension
 from mcpython.engine import logger
 from mcpython.engine.network.AbstractPackage import AbstractPackage
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
 from .DisconnectionPackage import DisconnectionInitPackage
-from mcpython.common.world.NetworkSyncedImplementation import NetworkSyncedDimension
 
 
 class DataRequestPackage(AbstractPackage):
@@ -173,7 +174,9 @@ class WorldInfoPackage(AbstractPackage):
         self.spawn_point = shared.world.spawn_point
 
         for dim_id, dim in shared.world.dimensions.items():
-            self.dimensions.append((dim.get_name(), dim_id, dim.get_world_height_range()))
+            self.dimensions.append(
+                (dim.get_name(), dim_id, dim.get_world_height_range())
+            )
 
         return self
 
@@ -182,14 +185,21 @@ class WorldInfoPackage(AbstractPackage):
 
         buffer.write_list(
             self.dimensions,
-            lambda e: buffer.write_string(e[0]).write_int(e[1]).write_int(e[2][0]).write_int(e[2][1])
+            lambda e: buffer.write_string(e[0])
+            .write_int(e[1])
+            .write_int(e[2][0])
+            .write_int(e[2][1]),
         )
 
     def read_from_buffer(self, buffer: ReadBuffer):
         self.spawn_point = buffer.read_int(), buffer.read_int()
 
         self.dimensions = buffer.read_list(
-            lambda: (buffer.read_string(), buffer.read_int(), (buffer.read_int(), buffer.read_int()))
+            lambda: (
+                buffer.read_string(),
+                buffer.read_int(),
+                (buffer.read_int(), buffer.read_int()),
+            )
         )
 
     def handle_inner(self):
@@ -201,16 +211,31 @@ class WorldInfoPackage(AbstractPackage):
             dim = shared.world.get_dimension_by_name(name)
 
             if not isinstance(dim, NetworkSyncedDimension):
-                logger.println("[NETWORK][WORLD] exchanging for a network sync-ed one...")
-                new_dim = shared.world.dimensions[dim.get_dimension_id()] = NetworkSyncedDimension(shared.world, dim.get_dimension_id(), dim.get_name(), dim.world_generation_config)
-                new_dim.world_generation_config_objects = dim.world_generation_config_objects
+                logger.println(
+                    "[NETWORK][WORLD] exchanging for a network sync-ed one..."
+                )
+                new_dim = shared.world.dimensions[
+                    dim.get_dimension_id()
+                ] = NetworkSyncedDimension(
+                    shared.world,
+                    dim.get_dimension_id(),
+                    dim.get_name(),
+                    dim.world_generation_config,
+                )
+                new_dim.world_generation_config_objects = (
+                    dim.world_generation_config_objects
+                )
                 new_dim.batches = dim.batches
 
             if dim.get_dimension_id() != dim_id:
-                self.answer(DisconnectionInitPackage().set_reason("world dim id miss-match"))
+                self.answer(
+                    DisconnectionInitPackage().set_reason("world dim id miss-match")
+                )
 
             if dim.get_world_height_range() != height_range:
-                self.answer(DisconnectionInitPackage().set_reason("world height miss-match"))
+                self.answer(
+                    DisconnectionInitPackage().set_reason("world height miss-match")
+                )
 
 
 class DimensionInfoPackage(AbstractPackage):
@@ -252,7 +277,9 @@ class ChunkDataPackage(AbstractPackage):
 
     def write_to_buffer(self, buffer: WriteBuffer):
         start = time.time()
-        logger.println(f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} for networking")
+        logger.println(
+            f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} for networking"
+        )
 
         buffer.write_string(self.dimension)
         buffer.write_int(self.position[0]).write_int(self.position[1])
@@ -269,7 +296,9 @@ class ChunkDataPackage(AbstractPackage):
 
     def read_from_buffer(self, buffer: ReadBuffer):
         start = time.time()
-        logger.println(f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world")
+        logger.println(
+            f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world"
+        )
 
         self.dimension = buffer.read_string()
         self.position = buffer.read_int(), buffer.read_int()
@@ -289,8 +318,12 @@ class ChunkDataPackage(AbstractPackage):
 
     def handle_inner(self):
         start = time.time()
-        logger.println(f"adding chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world")
-        chunk = shared.world.get_dimension_by_name(self.dimension).get_chunk(self.position)
+        logger.println(
+            f"adding chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world"
+        )
+        chunk = shared.world.get_dimension_by_name(self.dimension).get_chunk(
+            self.position
+        )
 
         if chunk.loaded:
             logger.println("-> skipping as chunk exists in game")
@@ -307,7 +340,9 @@ class ChunkDataPackage(AbstractPackage):
 
             if block is not None:
                 print(x, y, z, block.NAME)
-                chunk.add_block((x, y, z), block[0], immediate=block[1], block_update=False)
+                chunk.add_block(
+                    (x, y, z), block[0], immediate=block[1], block_update=False
+                )
 
             i += 1
 

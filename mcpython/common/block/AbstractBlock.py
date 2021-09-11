@@ -25,9 +25,7 @@ import mcpython.common.event.Registry
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
-from mcpython.engine.network.util import IBufferSerializeAble
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.util.enums import BlockRotationType
 
 
@@ -175,7 +173,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble):
             buffer.write_string(key).write_string(value)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
-        state = {buffer.read_string(): buffer.read_string() for _ in range(buffer.read_int())}
+        state = {
+            buffer.read_string(): buffer.read_string() for _ in range(buffer.read_int())
+        }
         self.set_model_state(state)
 
     def set_creation_properties(

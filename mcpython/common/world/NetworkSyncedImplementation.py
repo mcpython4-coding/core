@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -18,8 +18,8 @@ import mcpython.common.world.AbstractInterface
 import mcpython.util.math
 from mcpython import shared
 
-from .Dimension import Dimension
 from .Chunk import Chunk
+from .Dimension import Dimension
 
 
 class NetworkSyncedDimension(Dimension):
@@ -47,12 +47,16 @@ class NetworkSyncedDimension(Dimension):
 
             self.chunks[(cx, cz)] = NetworkSyncedChunk(self, (cx, cz))
 
-            from mcpython.common.network.packages.WorldDataExchangePackage import DataRequestPackage
-            shared.NETWORK_MANAGER.send_package(DataRequestPackage().request_chunk(self.name, cx, cz))
+            from mcpython.common.network.packages.WorldDataExchangePackage import (
+                DataRequestPackage,
+            )
+
+            shared.NETWORK_MANAGER.send_package(
+                DataRequestPackage().request_chunk(self.name, cx, cz)
+            )
 
         return self.chunks[(cx, cz)]
 
 
 class NetworkSyncedChunk(Chunk):
     pass
-

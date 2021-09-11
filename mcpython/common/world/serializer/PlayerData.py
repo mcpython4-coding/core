@@ -26,7 +26,8 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
     def load(cls, save_file, **_):
         data = save_file.access_file_json("players.json")
 
-        if data is None: return
+        if data is None:
+            return
 
         if shared.IS_CLIENT:
             if shared.world.get_active_player().name in data:
@@ -54,7 +55,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
         player.flying = pd["flying"]
 
         for i, (name, inventory) in enumerate(
-                zip(pd["inventory_data"], player.get_inventories())
+            zip(pd["inventory_data"], player.get_inventories())
         ):
             save_file.read(
                 "minecraft:inventory",
@@ -63,8 +64,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
             )
         if pd["dimension_data"]["nether_portal"]["portal_inner_time"] is not None:
             player.in_nether_portal_since = (
-                    time.time()
-                    - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
+                time.time() - pd["dimension_data"]["nether_portal"]["portal_inner_time"]
             )
         player.should_leave_nether_portal_before_dim_change = pd["dimension_data"][
             "nether_portal"

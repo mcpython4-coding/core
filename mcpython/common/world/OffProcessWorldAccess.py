@@ -247,7 +247,9 @@ class OffProcessWorld(mcpython.common.world.AbstractInterface.IWorld):
 
     async def get_active_dimension(self) -> typing.Union["OffProcessDimension", None]:
         dim_id = await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_active_dimension().get_dimension_id()
+            lambda context: context.get_world()
+            .get_active_dimension()
+            .get_dimension_id()
         )
         if dim_id in self.chunk_dimension_cache:
             return self.chunk_dimension_cache[dim_id]

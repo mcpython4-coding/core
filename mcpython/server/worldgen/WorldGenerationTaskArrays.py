@@ -94,9 +94,9 @@ class WorldGenerationTaskHandler:
             )
 
         self.chunks.add(chunk)
-        self.data_maps[0].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
-            chunk.get_position(), []
-        ).append((method, args, kwargs))
+        self.data_maps[0].setdefault(
+            chunk.get_dimension().get_dimension_id(), {}
+        ).setdefault(chunk.get_position(), []).append((method, args, kwargs))
 
     def schedule_block_add(
         self,
@@ -120,9 +120,9 @@ class WorldGenerationTaskHandler:
             self.schedule_visual_update(chunk, position)
 
         kwargs["immediate"] = False
-        self.data_maps[1].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
-            chunk.get_position(), {}
-        )[position] = (name, args, kwargs, on_add)
+        self.data_maps[1].setdefault(
+            chunk.get_dimension().get_dimension_id(), {}
+        ).setdefault(chunk.get_position(), {})[position] = (name, args, kwargs, on_add)
         self.chunks.add(chunk)
 
     def schedule_block_remove(
@@ -141,9 +141,14 @@ class WorldGenerationTaskHandler:
         :param on_remove: an callable to call when the block gets removed, with None as an parameter
         :param kwargs: the kwargs to call the remove_block-function with
         """
-        self.data_maps[1].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
-            chunk.get_position(), {}
-        )[position] = (None, args, kwargs, on_remove)
+        self.data_maps[1].setdefault(
+            chunk.get_dimension().get_dimension_id(), {}
+        ).setdefault(chunk.get_position(), {})[position] = (
+            None,
+            args,
+            kwargs,
+            on_remove,
+        )
         self.chunks.add(chunk)
 
     def schedule_block_show(
@@ -154,9 +159,9 @@ class WorldGenerationTaskHandler:
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
-            chunk.get_position(), {}
-        )[position] = 1
+        self.data_maps[2].setdefault(
+            chunk.get_dimension().get_dimension_id(), {}
+        ).setdefault(chunk.get_position(), {})[position] = 1
         self.chunks.add(chunk)
 
     def schedule_block_hide(
@@ -167,9 +172,9 @@ class WorldGenerationTaskHandler:
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
-            chunk.get_position(), {}
-        )[position] = 0
+        self.data_maps[2].setdefault(
+            chunk.get_dimension().get_dimension_id(), {}
+        ).setdefault(chunk.get_position(), {})[position] = 0
         self.chunks.add(chunk)
 
     def schedule_visual_update(
@@ -180,9 +185,9 @@ class WorldGenerationTaskHandler:
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
-            chunk.get_position(), {}
-        )[position] = 2
+        self.data_maps[2].setdefault(
+            chunk.get_dimension().get_dimension_id(), {}
+        ).setdefault(chunk.get_position(), {})[position] = 2
         self.chunks.add(chunk)
 
     def process_one_task(self, chunk=None, log_msg=False) -> int:
@@ -349,9 +354,9 @@ class WorldGenerationTaskHandler:
         """
         dimension = chunk.get_dimension()
         try:
-            return self.data_maps[1][dimension.get_dimension_id()][chunk.get_position()][
-                position
-            ][0]
+            return self.data_maps[1][dimension.get_dimension_id()][
+                chunk.get_position()
+            ][position][0]
         except (KeyError, AttributeError):
             pass
 

@@ -148,7 +148,9 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     def save(cls, data, save_file):
         data = {
             "storage version": save_file.version,  # the storage version stored in
-            "player name": shared.world.get_active_player().name if shared.IS_CLIENT else None,  # the name of the player the world played in
+            "player name": shared.world.get_active_player().name
+            if shared.IS_CLIENT
+            else None,  # the name of the player the world played in
             "config": shared.world.config,  # the world config
             "game version": mcpython.common.config.VERSION_ID,
             "mods": {mod.name: mod.version for mod in shared.mod_loader.mods.values()},
@@ -160,7 +162,9 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 dimension.get_dimension_id(): dimension.get_name()
                 for dimension in shared.world.dimensions.values()
             },
-            "active_dimension": shared.world.get_active_player().dimension.get_dimension_id() if shared.IS_CLIENT else 0,
+            "active_dimension": shared.world.get_active_player().dimension.get_dimension_id()
+            if shared.IS_CLIENT
+            else 0,
             "world_gen_info": {
                 "noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation,
                 "chunk_generators": shared.world_generation_handler.serialize_chunk_generator_info(),
