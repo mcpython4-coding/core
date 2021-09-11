@@ -280,6 +280,7 @@ class ChunkDataPackage(AbstractPackage):
         logger.println(
             f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} for networking"
         )
+        chunk = shared.world.get_dimension_by_name(self.dimension).get_chunk(self.position)
 
         buffer.write_string(self.dimension)
         buffer.write_int(self.position[0]).write_int(self.position[1])
@@ -289,7 +290,7 @@ class ChunkDataPackage(AbstractPackage):
                 buffer.write_string("")
             else:
                 buffer.write_string(b.NAME)
-                buffer.write_bool(b.face_state.is_shown())
+                buffer.write_bool(chunk.exposed(b.position))
                 b.write_to_network_buffer(buffer)
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
@@ -309,9 +310,9 @@ class ChunkDataPackage(AbstractPackage):
             if name == "":
                 self.blocks.append(None)
             else:
-                instance = shared.registry.get_by_name("minecraft:block").get(name)
+                instance = shared.registry.get_by_name("minecraft:block").get(name)()
                 visible = buffer.read_bool()
-                instance.read_from_buffer(buffer)
+                instance.read_from_network_buffer(buffer)
                 self.blocks.append((instance, visible))
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
@@ -339,7 +340,6 @@ class ChunkDataPackage(AbstractPackage):
             block = self.blocks[i]
 
             if block is not None:
-                print(x, y, z, block.NAME)
                 chunk.add_block(
                     (x, y, z), block[0], immediate=block[1], block_update=False
                 )

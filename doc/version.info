@@ -1730,7 +1730,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: added a mouse press event to ContainerRenderer, used in creative tabs for discarding items
     [github]: released snapshot 21w35a
 
-G   [github]: start of development cycle for 21w??a
+G   [github]: start of development cycle for [21w37a]
 L   [uuk]: dumped pillow version, allowing for python 3.10
 F   [uuk]: DeferredRegistryPipe accepts now also un-"finish"-ed IFactory objects
            (that things you get when creating a Factory instance from a FactoryBuilder)
@@ -1773,3 +1773,4 @@ b   [uuk]: fixed exception when kill()-ing a player on a dedicated server
 F   [uuk]: added connecting to server state
 T   [uuk]: added unit test for disconnection package
 A-  [uuk]: removed server package cache API
+b   [uuk]: fixed chunk serialization on both sides
