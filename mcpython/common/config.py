@@ -15,6 +15,7 @@ import json
 import math
 import os
 import sys
+import traceback
 
 from mcpython import shared
 
@@ -27,13 +28,16 @@ MC_VERSION_BASE = data["mc_version"]
 VERSION_TYPE = data["version_type"]
 
 if shared.dev_environment:
-    import git
+    try:
+        import git
 
-    repo = git.Repo(shared.local)
-    sha = repo.head.object.hexsha
+        repo = git.Repo(shared.local)
+        sha = repo.head.object.hexsha
 
-    VERSION_NAME = f"{repo.active_branch} - {str(sha)[:10]}"
-    VERSION_TYPE = "dev-version"
+        VERSION_NAME = f"{repo.active_branch} - {str(sha)[:10]}"
+        VERSION_TYPE = "dev-version"
+    except:
+        traceback.print_exc()
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(
     VERSION_NAME, VERSION_TYPE, MC_VERSION_BASE

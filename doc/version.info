@@ -1774,3 +1774,4 @@ F   [uuk]: added connecting to server state
 T   [uuk]: added unit test for disconnection package
 A-  [uuk]: removed server package cache API
 b   [uuk]: fixed chunk serialization on both sides
+f   [uuk]: when no repo is set in dev, skip the special caption
