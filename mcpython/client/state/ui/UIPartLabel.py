@@ -34,15 +34,16 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
         on_press=None,
         color=(0, 0, 0, 255),
         text_size=20,
+        text_color=(0, 0, 0, 255),
     ):
         """
-        creates an new UIPartButton
-        :param text: the text of the lable
-        :param position: the position of the lable
-        :param press: the EventInfo for mouse lables and mods, no area
-        :param anchor_lable: the anchor on the lable
+        Creates a new label
+        :param text: the text of the label
+        :param position: the position of the label
+        :param press: the EventInfo for mouse labels and mods, no area
+        :param anchor_label: the anchor on the label
         :param anchor_window: the anchor on the window
-        :param on_press: called when the mouse presses on the lable together with x and y
+        :param on_press: called when the mouse presses on the label together with x and y
         :param color: the color of the text to use
         :param text_size: the size of the text
         """
@@ -55,10 +56,11 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
         self.press: mcpython.engine.event.EventInfo.MousePressEventInfo = press
         self.color = color
         self.text_size = text_size
+        self.text_color = text_color
 
         self.on_press = on_press
 
-        self.lable = pyglet.text.Label(text=text)
+        self.lable = pyglet.text.Label(text=text, color=text_color)
         self.active = False
 
     def bind_to_eventbus(self):
@@ -87,4 +89,5 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
         self.lable.color = self.color
         self.lable.font_size = self.text_size
         self.lable.text = mcpython.common.data.Language.translate(self.text)
+        self.lable.color = self.text_color
         self.lable.draw()
