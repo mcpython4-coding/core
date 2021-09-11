@@ -24,6 +24,8 @@ from mcpython.engine import logger
 from pyglet.window import key, mouse
 
 from . import AbstractBlock
+from ...engine.network.util import ReadBuffer
+from ...engine.network.util import WriteBuffer
 
 BBOX = mcpython.common.block.BoundingBox.BoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
@@ -70,6 +72,20 @@ class Chest(AbstractBlock.AbstractBlock):
 
         self.inventory = InventoryChest.InventoryChest()
         self.loot_table_link = None
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        self.inventory.write_to_network_buffer(buffer)
+
+        buffer.write_string(self.loot_table_link if self.loot_table_link is not None else "")
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.inventory.read_from_network_buffer(buffer)
+
+        self.loot_table_link = buffer.read_string()
+        if self.loot_table_link == "":
+            self.loot_table_link = None
 
     def on_block_added(self):
         if self.real_hit:

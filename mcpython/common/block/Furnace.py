@@ -15,6 +15,8 @@ import mcpython.client.gui.InventoryFurnace
 import mcpython.common.block.IHorizontalOrientableBlock
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 from mcpython.util.enums import EnumSide
 from pyglet.window import key, mouse
 
@@ -49,6 +51,14 @@ class Furnace(
         self.inventory = mcpython.client.gui.InventoryFurnace.InventoryFurnace(
             self, self.FURNACE_RECIPES
         )
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        self.inventory.write_to_network_buffer(buffer)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.inventory.read_from_network_buffer(buffer)
 
     def get_model_state(self) -> dict:
         return {"facing": self.face.normal_name, "lit": str(self.active).lower()}

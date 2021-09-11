@@ -16,6 +16,8 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.fluid.AbstractFluid
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
@@ -38,3 +40,16 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         self.is_flowing = False
         self.flow_direction = 0, 0
         self.height = 0
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        buffer.write_bool(self.is_flowing)
+        buffer.write_int(self.flow_direction[0])
+        buffer.write_int(self.flow_direction[1])
+        buffer.write_int(self.height)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.is_flowing = buffer.read_bool()
+        self.flow_direction = buffer.read_int(), buffer.read_int()
+        self.height = buffer.read_int()

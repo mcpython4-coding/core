@@ -17,22 +17,36 @@ from mcpython import shared
 from pyglet.window import key, mouse
 
 from . import AbstractBlock
+from ...engine.network.util import ReadBuffer
+from ...engine.network.util import WriteBuffer
 
 
 def create_shulker_box(name):
     @shared.registry
     class ShulkerBox(AbstractBlock.AbstractBlock):
+        NAME = "minecraft:{}".format(name)
+
+        DEFAULT_FACE_SOLID = (
+            mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+        )
+
+        HARDNESS = 2.5
+        MINIMUM_TOOL_LEVEL = 0
+        ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
+
         def __init__(self):
             super().__init__()
             import mcpython.client.gui.InventoryShulkerBox as InventoryShulkerBox
 
             self.inventory = InventoryShulkerBox.InventoryShulkerBox()
 
-        NAME = "minecraft:{}".format(name)
+        def write_to_network_buffer(self, buffer: WriteBuffer):
+            super().write_to_network_buffer(buffer)
+            self.inventory.write_to_network_buffer(buffer)
 
-        DEFAULT_FACE_SOLID = (
-            mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-        )
+        def read_from_network_buffer(self, buffer: ReadBuffer):
+            super().read_from_network_buffer(buffer)
+            self.inventory.read_from_network_buffer(buffer)
 
         def on_player_interaction(
             self, player, button: int, modifiers: int, hit_position: tuple
@@ -45,10 +59,6 @@ def create_shulker_box(name):
 
         def get_inventories(self):
             return (self.inventory,)
-
-        HARDNESS = 2.5
-        MINIMUM_TOOL_LEVEL = 0
-        ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
         def get_provided_slot_lists(self, side):
             return self.inventory.slots, self.inventory.slots

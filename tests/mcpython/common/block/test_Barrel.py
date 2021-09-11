@@ -121,3 +121,34 @@ class TestBarrel(TestCase):
         self.assertNotEqual(state, instance.get_model_state())
         instance.set_model_state(state)
         self.assertEqual(state, instance.get_model_state())
+
+    def test_serializer(self):
+        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.common.container.ResourceStack import ItemStack
+        from mcpython.common.item.AbstractItem import AbstractItem
+        from mcpython import shared
+
+        shared.IS_CLIENT = False
+
+        @shared.registry
+        class TestItem(AbstractItem):
+            NAME = "minecraft:test_item"
+
+        shared.crafting_handler = FakeCraftingHandler()
+
+        import mcpython.common.block.Barrel
+
+        shared.inventory_handler = FakeInventoryHandler
+        FakeInventoryHandler.SHOWN = False
+
+        instance = mcpython.common.block.Barrel.Barrel()
+        instance.inventory.slots[0].set_itemstack(ItemStack(TestItem()))
+
+        buffer = WriteBuffer()
+        instance.write_to_network_buffer(buffer)
+
+        instance2 = mcpython.common.block.Barrel.Barrel()
+        instance2.read_from_network_buffer(ReadBuffer(buffer.get_data()))
+
+        self.assertEqual(instance2.inventory.slots[0].get_itemstack().get_item_name(), "minecraft:test_item")
+

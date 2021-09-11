@@ -19,6 +19,8 @@ from mcpython import shared
 from pyglet.window import key, mouse
 
 from . import AbstractBlock
+from ...engine.network.util import ReadBuffer
+from ...engine.network.util import WriteBuffer
 
 
 class Barrel(AbstractBlock.AbstractBlock):
@@ -47,6 +49,14 @@ class Barrel(AbstractBlock.AbstractBlock):
         self.opened: bool = False  # if the barrel is open
         self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
         self.facing: str = "up"  # the direction the block faces to
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        self.inventory.write_to_network_buffer(buffer)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.inventory.read_from_network_buffer(buffer)
 
     def on_block_added(self):
         # only if this is set, decode it

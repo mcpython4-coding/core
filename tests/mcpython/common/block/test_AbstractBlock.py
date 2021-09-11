@@ -22,3 +22,28 @@ class TestAbstractBlock(TestCase):
             mcpython.common.block.AbstractBlock.AbstractBlock.TYPE,
             "minecraft:block_registry",
         )
+
+    def test_network_serializer(self):
+        import mcpython.common.block.AbstractBlock
+        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+
+        class TestBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
+            NAME = "minecraft:test_block"
+
+            model_state_set = False
+
+            def get_model_state(self) -> dict:
+                return {"test": "test", "tets": "tete23"}
+
+            def set_model_state(s, state: dict):
+                self.assertEqual(state, s.get_model_state())
+                TestBlock.model_state_set = True
+
+        buffer = WriteBuffer()
+        block = TestBlock()
+        block.write_to_network_buffer(buffer)
+
+        block = TestBlock()
+        block.read_from_network_buffer(ReadBuffer(buffer.get_data()))
+
+        self.assertTrue(TestBlock.model_state_set)
