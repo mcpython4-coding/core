@@ -103,7 +103,7 @@ class EntityManager:
 
             # check if it has fallen to far down so it should be killed
             if not entity.nbt_data["invulnerable"] and entity.position[1] < -1000 + (
-                entity.dimension.get_dimension_range()[0]
+                entity.dimension.get_world_height_range()[0]
                 if entity.dimension is not None
                 else 0
             ):

@@ -153,14 +153,14 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             "game version": mcpython.common.config.VERSION_ID,
             "mods": {mod.name: mod.version for mod in shared.mod_loader.mods.values()},
             "chunks_to_generate": [
-                (chunk.get_position(), chunk.get_dimension().get_id())
+                (chunk.get_position(), chunk.get_dimension().get_dimension_id())
                 for chunk in shared.world_generation_handler.task_handler.chunks
             ],
             "dimensions": {
-                dimension.get_id(): dimension.get_name()
+                dimension.get_dimension_id(): dimension.get_name()
                 for dimension in shared.world.dimensions.values()
             },
-            "active_dimension": shared.world.get_active_player().dimension.get_id() if shared.IS_CLIENT else 0,
+            "active_dimension": shared.world.get_active_player().dimension.get_dimension_id() if shared.IS_CLIENT else 0,
             "world_gen_info": {
                 "noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation,
                 "chunk_generators": shared.world_generation_handler.serialize_chunk_generator_info(),

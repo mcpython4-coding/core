@@ -247,7 +247,7 @@ class OffProcessWorld(mcpython.common.world.AbstractInterface.IWorld):
 
     async def get_active_dimension(self) -> typing.Union["OffProcessDimension", None]:
         dim_id = await self.helper.run_on_main_async(
-            lambda context: context.get_world().get_active_dimension().get_id()
+            lambda context: context.get_world().get_active_dimension().get_dimension_id()
         )
         if dim_id in self.chunk_dimension_cache:
             return self.chunk_dimension_cache[dim_id]
@@ -263,7 +263,7 @@ class OffProcessWorld(mcpython.common.world.AbstractInterface.IWorld):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
             .add_dimension(dim_id, name, dim_config)
-            .get_id()
+            .get_dimension_id()
         )
         dim = self.chunk_dimension_cache.setdefault(
             name, OffProcessDimension(self.helper, dim_id, self)
@@ -346,15 +346,15 @@ class OffProcessDimension(mcpython.common.world.AbstractInterface.IDimension):
             lambda context: (
                 context.get_world()
                 .get_dimension(self.dimension_id)
-                .get_dimension_range(),
+                .get_world_height_range(),
                 context.get_world().get_dimension(self.dimension_id).get_name(),
             )
         )
 
-    def get_dimension_range(self) -> typing.Tuple[int, int]:
+    def get_world_height_range(self) -> typing.Tuple[int, int]:
         return self.dimension_range
 
-    def get_id(self):
+    def get_dimension_id(self):
         return self.dimension_id
 
     def get_name(self) -> str:
@@ -489,7 +489,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache and get informed by chunk
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .is_loaded()
         )
@@ -498,7 +498,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache and get informed by chunk
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .is_generated()
         )
@@ -507,7 +507,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache and get informed by chunk
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .is_visible()
         )
@@ -521,7 +521,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     async def get_maximum_y_coordinate_from_generation(self, x: int, z: int) -> int:
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .get_maximum_y_coordinate_from_generation(x, z)
         )
@@ -531,7 +531,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     ) -> typing.Dict[mcpython.util.enums.EnumSide, bool]:
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .exposed_faces(position)
         )
@@ -541,7 +541,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     ) -> bool:
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .is_position_blocked()
         )
@@ -550,7 +550,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .add_block(*args, **kwargs)
         )
@@ -560,7 +560,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     ):
         self.helper.run_on_main(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .on_block_updated(position)
         )
@@ -569,7 +569,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .remove_block(*args, **kwargs)
         )
@@ -577,7 +577,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         self.helper.run_on_main(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .check_neighbors(position)
         )
@@ -592,7 +592,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     ):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .show_block(position, immediate=immediate)
         )
@@ -607,7 +607,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     ):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .hide_block(position, immediate=immediate)
         )
@@ -615,7 +615,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     async def show(self, force=False):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .show(force=force)
         )
@@ -623,7 +623,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     async def hide(self, force=False):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .hide(force=force)
         )
@@ -633,7 +633,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     ):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .update_visible_block(position, hide=hide)
         )
@@ -641,7 +641,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     async def exposed(self, position: typing.Tuple[int, int, int]):
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .exposed(position)
         )
@@ -649,7 +649,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     async def update_visible(self, hide=True, immediate=False):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .update_visible(hide=hide, immediate=immediate)
         )
@@ -657,7 +657,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     async def hide_all(self, immediate=True):
         await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .hide_all(immediate=immediate)
         )
@@ -668,7 +668,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .get_block(position, none_if_str=none_if_str)
         )
@@ -679,7 +679,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
     def mark_dirty(self):
         self.helper.run_on_main(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .mark_dirty()
         )
@@ -688,7 +688,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .get_entities()
         )
@@ -697,7 +697,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .set_value(key, data)
         )
@@ -706,7 +706,7 @@ class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
         # todo: cache & get informed by other side
         return await self.helper.run_on_main_async(
             lambda context: context.get_world()
-            .get_dimension(self.dimension.get_id())
+            .get_dimension(self.dimension.get_dimension_id())
             .get_chunk(*self.position)
             .get_value(key)
         )

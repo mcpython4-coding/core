@@ -129,19 +129,18 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
     Class holding a whole dimension
     Default cross-side implementation
 
-    todo: add network synced variant
     todo: add save/load/delete methods
     todo: better config system for world gen
-    todo: move rendering to separated structure only created on client
+    todo: move rendering to separated structure only created on client!
     """
 
     # normal, alpha; mods are free to add more; todo: add better API
     BATCH_COUNT = 2
 
-    def __init__(self, world_in, dim_id: int, name: str, gen_config=None):
+    def __init__(self, world_in: mcpython.common.world.AbstractInterface.IWorld, dim_id: int, name: str, gen_config=None):
         """
         Creates a new dimension. Should be registered to the world instance.
-        Can be automated by using the appropriate function at dimension
+        Can be automated by using the appropriate function at world
         :param world_in: the world instance to use
         :param dim_id: the id for it
         :param name: the name for it
@@ -166,12 +165,17 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
 
         self.height_range = (0, 255)
 
+    def update_visible_block(self, position: typing.Tuple[int, int, int]):
+        self.get_chunk_for_position(position, generate=False).update_visible_block(position)
+
+    def exposed(self, position: typing.Tuple[int, int, int]):
+        return self.get_chunk_for_position(position, generate=False).exposed(position)
+
     def get_world(self):
         return self.world
 
     def entity_iterator(self) -> typing.Iterable:
         for chunk in self.chunks.values():
-            yield from chunk.entity_iterator()
             yield from chunk.entity_iterator()
 
     def tick(self):
@@ -184,10 +188,10 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         chunk.hide_all(True)
         del self.chunks[chunk.get_position()]
 
-    def get_dimension_range(self) -> typing.Tuple[int, int]:
+    def get_world_height_range(self) -> typing.Tuple[int, int]:
         return self.height_range
 
-    def get_id(self):
+    def get_dimension_id(self):
         return self.id
 
     def get_chunk(
@@ -198,15 +202,18 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         create: bool = True,
     ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
-        Used to get an chunk instance with an given position
-        :param cx: the chunk x position or an tuple of (x, z)
-        :param cz: the chunk z position or None íf cx is tuple
+        Used to get a chunk instance with a given chunk-position
+        :param cx: the chunk x position or a tuple of (x, z)
+        :param cz: the chunk z position or None íf cx is a tuple
         :param generate: if the chunk should be scheduled for generation if it is not generated
         :param create: if the chunk instance should be created when it does not exist
         :return: the chunk instance or None
+        :raises ValueError: if cz is None and cx is now tuple
         """
         if cz is None:
-            assert type(cx) == tuple
+            if type(cx) != tuple:
+                raise ValueError
+
             cx, cz = cx
 
         if (cx, cz) not in self.chunks:
@@ -229,17 +236,20 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         **kwargs,
     ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
         """
-        Gets an chunk for an position
+        Gets a chunk for a block-position
         :param position: the position to use or the block instance to use
         :param kwargs: same as get_chunk()
         :return: the chunk instance or None
+        :raises: ValueError: if position is not tuple or block
         """
         if issubclass(
             type(position), mcpython.common.block.AbstractBlock.AbstractBlock
         ):
             position = position.position
+        elif not isinstance(position, tuple):
+            raise ValueError(position)
 
-        return self.get_chunk(*mcpython.util.math.position_to_chunk(position), **kwargs)
+        return self.get_chunk(mcpython.util.math.position_to_chunk(position), **kwargs)
 
     def get_block(
         self, position: typing.Tuple[int, int, int], none_if_str=False

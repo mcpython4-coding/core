@@ -134,7 +134,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             shared.tick_handler.schedule_once(
                 shared.world.save_file.read,
                 "minecraft:chunk",
-                dimension=self.dimension.get_id(),
+                dimension=self.dimension.get_dimension_id(),
                 chunk=self.position,
             )
 
@@ -266,7 +266,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :return: the block instance or None if it could not be created
         """
         # check if it is in build range
-        r = self.dimension.get_dimension_range()
+        r = self.dimension.get_world_height_range()
         if check_build_range and (position[1] < r[0] or position[1] > r[1]):
             return
 
@@ -578,7 +578,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
     def __str__(self):
         return "Chunk(dimension={},position={})".format(
-            self.dimension.get_id(), self.position
+            self.dimension.get_dimension_id(), self.position
         )
 
     def is_loaded(self) -> bool:

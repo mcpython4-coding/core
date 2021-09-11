@@ -427,10 +427,10 @@ class IDimension(ISupportWorldInterface, ABC):
     def __init__(self):
         self.loaded = True
 
-    def get_dimension_range(self) -> typing.Tuple[int, int]:
+    def get_world_height_range(self) -> typing.Tuple[int, int]:
         raise NotImplementedError
 
-    def get_id(self):
+    def get_dimension_id(self):
         raise NotImplementedError
 
     def get_chunk(

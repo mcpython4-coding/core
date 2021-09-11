@@ -30,7 +30,7 @@ class FakeChunk:
         return cls
 
     @classmethod
-    def get_id(cls):
+    def get_dimension_id(cls):
         return 0
 
 

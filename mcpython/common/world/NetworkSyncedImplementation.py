@@ -34,16 +34,10 @@ class NetworkSyncedDimension(Dimension):
         generate: bool = True,
         create: bool = True,
     ) -> typing.Optional["NetworkSyncedChunk"]:
-        """
-        Used to get an chunk instance with an given position
-        :param cx: the chunk x position or an tuple of (x, z)
-        :param cz: the chunk z position or None íf cx is tuple
-        :param generate: if the chunk should be scheduled for generation if it is not generated
-        :param create: if the chunk instance should be created when it does not exist
-        :return: the chunk instance or None
-        """
         if cz is None:
-            assert type(cx) == tuple
+            if type(cx) != tuple:
+                raise ValueError
+
             cx, cz = cx
 
         # Is this chunk locally arrival?

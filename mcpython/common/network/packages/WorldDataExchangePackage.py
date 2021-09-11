@@ -130,7 +130,7 @@ class PlayerUpdatePackage(AbstractPackage):
 
     def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.name)
-        for e in self.position + self.rotation + self.motion:
+        for e in self.position + tuple(self.rotation) + self.motion:
             buffer.write_float(e)
         buffer.write_string(self.dimension)
         buffer.write_int(self.selected_slot)
@@ -139,7 +139,7 @@ class PlayerUpdatePackage(AbstractPackage):
     def read_from_buffer(self, buffer: ReadBuffer):
         self.name = buffer.read_string()
         self.position = tuple(buffer.read_float() for _ in range(3))
-        self.rotation = tuple(buffer.read_float() for _ in range(3))
+        self.rotation = list(buffer.read_float() for _ in range(3))
         self.motion = tuple(buffer.read_float() for _ in range(3))
         self.dimension = buffer.read_string()
         self.selected_slot = buffer.read_int()
@@ -173,7 +173,7 @@ class WorldInfoPackage(AbstractPackage):
         self.spawn_point = shared.world.spawn_point
 
         for dim_id, dim in shared.world.dimensions.items():
-            self.dimensions.append((dim.get_name(), dim_id, dim.get_dimension_range()))
+            self.dimensions.append((dim.get_name(), dim_id, dim.get_world_height_range()))
 
         return self
 
@@ -202,14 +202,14 @@ class WorldInfoPackage(AbstractPackage):
 
             if not isinstance(dim, NetworkSyncedDimension):
                 logger.println("[NETWORK][WORLD] exchanging for a network sync-ed one...")
-                new_dim = shared.world.dimensions[dim.get_id()] = NetworkSyncedDimension(shared.world, dim.get_id(), dim.get_name(), dim.world_generation_config)
+                new_dim = shared.world.dimensions[dim.get_dimension_id()] = NetworkSyncedDimension(shared.world, dim.get_dimension_id(), dim.get_name(), dim.world_generation_config)
                 new_dim.world_generation_config_objects = dim.world_generation_config_objects
                 new_dim.batches = dim.batches
 
-            if dim.get_id() != dim_id:
+            if dim.get_dimension_id() != dim_id:
                 self.answer(DisconnectionInitPackage().set_reason("world dim id miss-match"))
 
-            if dim.get_dimension_range() != height_range:
+            if dim.get_world_height_range() != height_range:
                 self.answer(DisconnectionInitPackage().set_reason("world height miss-match"))
 
 
@@ -262,7 +262,8 @@ class ChunkDataPackage(AbstractPackage):
                 buffer.write_string("")
             else:
                 buffer.write_string(b.NAME)
-                b.write_to_buffer(buffer)
+                buffer.write_bool(b.face_state.is_shown())
+                b.write_to_network_buffer(buffer)
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
 
@@ -280,8 +281,9 @@ class ChunkDataPackage(AbstractPackage):
                 self.blocks.append(None)
             else:
                 instance = shared.registry.get_by_name("minecraft:block").get(name)
+                visible = buffer.read_bool()
                 instance.read_from_buffer(buffer)
-                self.blocks.append(instance)
+                self.blocks.append((instance, visible))
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
 
@@ -290,6 +292,10 @@ class ChunkDataPackage(AbstractPackage):
         logger.println(f"adding chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world")
         chunk = shared.world.get_dimension_by_name(self.dimension).get_chunk(self.position)
 
+        if chunk.loaded:
+            logger.println("-> skipping as chunk exists in game")
+            return
+
         dx, dz = self.position
 
         i = 0
@@ -297,10 +303,16 @@ class ChunkDataPackage(AbstractPackage):
             x += dx
             z += dz
 
-            chunk.add_block((x, y, z), self.blocks[i])
+            block = self.blocks[i]
+
+            if block is not None:
+                print(x, y, z, block.NAME)
+                chunk.add_block((x, y, z), block[0], immediate=block[1], block_update=False)
+
             i += 1
 
         logger.println(f"-> chunk data fully added (took {time.time()-start}s)")
+        chunk.loaded = True
 
 
 class ChunkUpdatePackage(AbstractPackage):

@@ -47,6 +47,9 @@ class FaceInfo:
         self.custom_renderer = None  # holds a custom block renderer
         self.subscribed_renderer: bool = False
 
+    def is_shown(self) -> bool:
+        return any(self.faces.values())
+
     def show_face(self, face: mcpython.util.enums.EnumSide):
         """
         Shows an face

@@ -59,11 +59,12 @@ class Game(AbstractState.AbstractState):
         super().deactivate()
         shared.world_generation_handler.enable_auto_gen = False
 
-        shared.window.mouse_pressing = {
-            mouse.LEFT: False,
-            mouse.RIGHT: False,
-            mouse.MIDDLE: False,
-        }
+        if shared.IS_CLIENT:
+            shared.window.mouse_pressing = {
+                mouse.LEFT: False,
+                mouse.RIGHT: False,
+                mouse.MIDDLE: False,
+            }
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)

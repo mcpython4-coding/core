@@ -37,7 +37,7 @@ class GrassBlock(AbstractBlock.AbstractBlock):
         x, y, z = self.position
         dim = shared.world.get_dimension_by_name(self.dimension)
 
-        for dy in range(y + 1, dim.get_dimension_range()[1] + 1):
+        for dy in range(y + 1, dim.get_world_height_range()[1] + 1):
             instance = dim.get_block((x, dy, z))
             if instance is not None:
                 break

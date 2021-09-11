@@ -1746,3 +1746,6 @@ R   [uuk]: improved world serialization API
 [uuk]: player instances are now send server -> client
 [uuk]: calling get_active_player() on dedicated server is now FATAL
 [uuk]: player data on dedicated server is now loaded for ALL players
+[uuk]: world is handed over to the player now when chunks are loading in
+[uuk]: underlying client socket is now non-blocking when recv()-ing, so the main game thread is not halted
+[uuk]: fixed default dimension implementation yielding all entities twice

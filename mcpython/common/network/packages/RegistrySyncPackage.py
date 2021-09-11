@@ -120,6 +120,7 @@ class RegistrySyncPackage(AbstractPackage):
 
 class RegistrySyncResultPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:registry_sync_status"
+    CAN_GET_ANSWER = True
 
     def __init__(self):
         super().__init__()
@@ -152,9 +153,15 @@ class RegistrySyncResultPackage(AbstractPackage):
                 logger.println("[NETWORK][INFO] requesting world now...")
                 from .WorldDataExchangePackage import DataRequestPackage
 
-                self.answer(
-                    DataRequestPackage().request_player_info().request_world_info()
-                )
+                def handle(*_):
+                    logger.println("[NETWORK][WORLD] world data received successful, handing over to user...")
+                    shared.state_handler.change_state("minecraft:game")
+                    shared.world.get_active_player().teleport((0, 100, 0))
+                    shared.world.get_active_dimension().get_chunk(0, 0).update_visible()
+
+                package = DataRequestPackage().request_player_info().request_world_info()
+                shared.NETWORK_MANAGER.register_answer_handler(package, handle)
+                self.answer(package)
 
                 return
             else:

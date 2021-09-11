@@ -37,6 +37,12 @@ class GameInfo(mcpython.client.state.AbstractState.AbstractState):
     def is_mouse_exclusive():
         return False
 
+    def activate(self):
+        super().activate()
+
+        if not shared.IS_CLIENT:
+            shared.state_handler.change_state("minecraft:game", immediate=False)
+
     def get_parts(self) -> list:
         parts = [
             mcpython.client.state.GameViewStatePart.GameView(

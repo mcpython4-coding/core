@@ -211,7 +211,7 @@ class WorldGenerationHandler:
                     ),
                     **layer_config
                 )
-                layer_config.dimension = dimension.get_id()
+                layer_config.dimension = dimension.get_dimension_id()
             else:
                 layer_config = config[layer_name]
 

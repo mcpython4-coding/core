@@ -58,12 +58,20 @@ class ClientBackend:
         shared.IS_NETWORKING = False
 
     def work(self):
+        self.socket.setblocking(True)
+
         for package in self.scheduled_packages:
             self.socket.send(package)
         self.scheduled_packages.clear()
 
+        self.socket.setblocking(False)
+
         while True:
-            d = self.socket.recv(4096)
+            try:
+                d = self.socket.recv(4096)
+            except BlockingIOError:
+                return
+
             self.data_stream += d
 
             if len(d) < 4096:

@@ -203,7 +203,7 @@ class NetworkManager:
         self,
         previous_package: mcpython.engine.network.AbstractPackage.AbstractPackage,
         handler: typing.Callable[
-            [mcpython.engine.network.AbstractPackage.AbstractPackage], None
+            [mcpython.engine.network.AbstractPackage.AbstractPackage, int], None
         ],
     ):
         self.custom_package_handlers.setdefault(previous_package.package_id, []).append(

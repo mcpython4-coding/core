@@ -89,6 +89,9 @@ class EscapeMenu(AbstractState.AbstractState):
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
 
+        if shared.IS_NETWORKING:
+            shared.NETWORK_MANAGER.disconnect()
+
         # make sure that file size is as small as possible
         shared.world.save_file.save_world(override=True)
 

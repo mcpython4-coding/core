@@ -54,7 +54,7 @@ class WorldGenerationTaskHandler:
         :param chunk:
         :return:
         """
-        dim = chunk.get_dimension().get_id()
+        dim = chunk.get_dimension().get_dimension_id()
         p = chunk.get_position()
         count = 0
         try:
@@ -94,7 +94,7 @@ class WorldGenerationTaskHandler:
             )
 
         self.chunks.add(chunk)
-        self.data_maps[0].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+        self.data_maps[0].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
             chunk.get_position(), []
         ).append((method, args, kwargs))
 
@@ -120,7 +120,7 @@ class WorldGenerationTaskHandler:
             self.schedule_visual_update(chunk, position)
 
         kwargs["immediate"] = False
-        self.data_maps[1].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+        self.data_maps[1].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
             chunk.get_position(), {}
         )[position] = (name, args, kwargs, on_add)
         self.chunks.add(chunk)
@@ -141,7 +141,7 @@ class WorldGenerationTaskHandler:
         :param on_remove: an callable to call when the block gets removed, with None as an parameter
         :param kwargs: the kwargs to call the remove_block-function with
         """
-        self.data_maps[1].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+        self.data_maps[1].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
             chunk.get_position(), {}
         )[position] = (None, args, kwargs, on_remove)
         self.chunks.add(chunk)
@@ -154,7 +154,7 @@ class WorldGenerationTaskHandler:
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+        self.data_maps[2].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
             chunk.get_position(), {}
         )[position] = 1
         self.chunks.add(chunk)
@@ -167,7 +167,7 @@ class WorldGenerationTaskHandler:
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+        self.data_maps[2].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
             chunk.get_position(), {}
         )[position] = 0
         self.chunks.add(chunk)
@@ -180,7 +180,7 @@ class WorldGenerationTaskHandler:
         :param chunk: the chunk
         :param position: the position of the block
         """
-        self.data_maps[2].setdefault(chunk.get_dimension().get_id(), {}).setdefault(
+        self.data_maps[2].setdefault(chunk.get_dimension().get_dimension_id(), {}).setdefault(
             chunk.get_position(), {}
         )[position] = 2
         self.chunks.add(chunk)
@@ -264,8 +264,8 @@ class WorldGenerationTaskHandler:
         self, chunk: mcpython.common.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?
-        if chunk.get_dimension().get_id() in self.data_maps[0]:
-            dim_map = self.data_maps[0][chunk.get_dimension().get_id()]
+        if chunk.get_dimension().get_dimension_id() in self.data_maps[0]:
+            dim_map = self.data_maps[0][chunk.get_dimension().get_dimension_id()]
             if chunk.get_position() in dim_map:
                 m: list = dim_map[chunk.get_position()]
                 if len(m) == 0:
@@ -286,8 +286,8 @@ class WorldGenerationTaskHandler:
         self, chunk: mcpython.common.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?
-        if chunk.get_dimension().get_id() in self.data_maps[1]:
-            dim_map = self.data_maps[1][chunk.get_dimension().get_id()]
+        if chunk.get_dimension().get_dimension_id() in self.data_maps[1]:
+            dim_map = self.data_maps[1][chunk.get_dimension().get_dimension_id()]
             if chunk.get_position() in dim_map:
                 m: dict = dim_map[chunk.get_position()]
                 if len(m) == 0:
@@ -310,8 +310,8 @@ class WorldGenerationTaskHandler:
         self, chunk: mcpython.common.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?
-        if chunk.get_dimension().get_id() in self.data_maps[2]:
-            dim_map = self.data_maps[2][chunk.get_dimension().get_id()]
+        if chunk.get_dimension().get_dimension_id() in self.data_maps[2]:
+            dim_map = self.data_maps[2][chunk.get_dimension().get_dimension_id()]
             if chunk.get_position() in dim_map:
                 m: dict = dim_map[chunk.get_position()]
                 if len(m) == 0:
@@ -349,7 +349,7 @@ class WorldGenerationTaskHandler:
         """
         dimension = chunk.get_dimension()
         try:
-            return self.data_maps[1][dimension.get_id()][chunk.get_position()][
+            return self.data_maps[1][dimension.get_dimension_id()][chunk.get_position()][
                 position
             ][0]
         except (KeyError, AttributeError):
@@ -360,7 +360,7 @@ class WorldGenerationTaskHandler:
         Will remove all scheduled tasks from an given chunk
         :param chunk: the chunk
         """
-        dim = chunk.get_dimension().get_id()
+        dim = chunk.get_dimension().get_dimension_id()
         p = chunk.get_position()
         if dim in self.data_maps[0] and p in self.data_maps[0][dim]:
             del self.data_maps[0][dim][p]

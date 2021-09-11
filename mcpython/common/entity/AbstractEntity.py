@@ -237,7 +237,7 @@ class AbstractEntity(
         if self.chunk is None:
             before_dim = None
         else:
-            before_dim = self.chunk.get_dimension().get_id()
+            before_dim = self.chunk.get_dimension().get_dimension_id()
 
         if dimension is None:
             dimension_id = before_dim if before_dim is not None else 0
