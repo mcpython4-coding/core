@@ -1766,9 +1766,10 @@ I   [uuk]: player instances are now send server -> client
 A   [uuk]: calling get_active_player() on dedicated server is now FATAL
 I   [uuk]: player data on dedicated server is now loaded for ALL players
 f** [uuk]: world is handed over to the player now when chunks are loading in
-I   [uuk]: underlying client socket is now non-blocking when recv()-ing, so the main game thread is not halted
+Ib  [uuk]: underlying client socket is now non-blocking when recv()-ing, so the main game thread is not halted
 b   [uuk]: fixed default dimension implementation yielding all entities twice
 E   [uuk]: renamed event gamplay:player:die to gameplay:player:die
 b   [uuk]: fixed exception when kill()-ing a player on a dedicated server
 F   [uuk]: added connecting to server state
 T   [uuk]: added unit test for disconnection package
+A-  [uuk]: removed server package cache API
