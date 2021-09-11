@@ -1769,3 +1769,5 @@ f** [uuk]: world is handed over to the player now when chunks are loading in
 I   [uuk]: underlying client socket is now non-blocking when recv()-ing, so the main game thread is not halted
 b   [uuk]: fixed default dimension implementation yielding all entities twice
 A   [uuk]: UIPartLabel accept now a text color
+E   [uuk]: renamed event gamplay:player:die to gameplay:player:die
+b   [uuk]: fixed exception when kill()-ing a player on a dedicated server

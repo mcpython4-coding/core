@@ -447,9 +447,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         if shared.IS_CLIENT:
             shared.window.dy = 0
-
-        shared.chat.close()
-        shared.inventory_handler.close_all_inventories()
+            shared.chat.close()
+            shared.inventory_handler.close_all_inventories()
 
         # todo: drop parts of the xp
         self.xp = 0
@@ -459,20 +458,24 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.flying = False if self.gamemode != 3 else True  # todo: add event for this
         self.armor_level = 0
         self.armor_toughness = 0
-        sector = mcpython.util.math.position_to_chunk(self.position)
-        shared.world.change_chunks(None, sector)
+        
+        if shared.IS_CLIENT:
+            sector = mcpython.util.math.position_to_chunk(self.position)
+            shared.world.change_chunks(None, sector)
+        
         # todo: recalculate armor level!
 
         if (
             not shared.world.gamerule_handler.table["doImmediateRespawn"].status.status
             and not internal
         ):
+            # todo: add special state [see above]
             shared.state_handler.change_state(
                 "minecraft:escape_menu"
-            )  # todo: add special state [see above]
+            )
 
         if not internal:
-            shared.event_handler.call("gamplay:player:die", self, damage_source)
+            shared.event_handler.call("gameplay:player:die", self, damage_source)
 
         self.send_update_package_when_client()
 
