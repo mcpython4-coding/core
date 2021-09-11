@@ -81,5 +81,7 @@ class ServerSelectionState(AbstractState):
             Client2ServerHandshake().setup("test:player")
         )
 
+        shared.state_handler.change_state("minecraft:server_connecting")
+
 
 server_selection = ServerSelectionState()
