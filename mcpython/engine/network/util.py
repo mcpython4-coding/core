@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import io
 import math
 import struct
 import typing
@@ -22,8 +23,12 @@ FLOAT = struct.Struct("!d")
 
 
 class ReadBuffer:
-    def __init__(self, stream: typing.BinaryIO):
-        self.stream = stream
+    def __init__(self, stream: typing.Union[typing.BinaryIO, bytes]):
+        self.stream = (
+            stream
+            if isinstance(stream, (typing.BinaryIO, io.BytesIO))
+            else io.BytesIO(stream)
+        )
 
     def read_bool(self):
         return self.stream.read(1) == b"\xFF"

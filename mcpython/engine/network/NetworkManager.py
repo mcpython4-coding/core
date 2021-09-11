@@ -41,14 +41,14 @@ class NetworkManager:
             int,
             typing.Type[mcpython.engine.network.AbstractPackage.AbstractPackage],
         ] = {}
+        self.name2package_type = {}
+
         self.custom_package_handlers: typing.Dict[
             int, typing.List[typing.Callable]
         ] = {}
         self.general_package_handlers: typing.Dict[
             int, typing.List[typing.Callable]
         ] = {}
-
-        self.name2package_type = {}
 
         self.next_package_type_id = 1
         self.next_package_id = 0
@@ -60,6 +60,11 @@ class NetworkManager:
         self.valid_package_ids = set()
 
         self.client_profiles = {}
+
+    def reset_package_registry(self):
+        self.next_package_type_id = 1
+        self.package_types.clear()
+        self.name2package_type.clear()
 
     def get_dynamic_id_info(self) -> typing.List[typing.Tuple[str, int]]:
         d = []

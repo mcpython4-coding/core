@@ -1777,3 +1777,5 @@ b   [uuk]: fixed chunk serialization on both sides
 f   [uuk]: when no repo is set in dev, skip the special caption
 F   [uuk]: when a connection error arises, the game will now go back to start menu
 B   [uuk]: fixed decoding for items with attached capabilities
+T   [uuk]: added more package unit tests
+AI  [uuk]: added reset_package_registry() method to network manager

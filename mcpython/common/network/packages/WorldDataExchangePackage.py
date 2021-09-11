@@ -280,7 +280,9 @@ class ChunkDataPackage(AbstractPackage):
         logger.println(
             f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} for networking"
         )
-        chunk = shared.world.get_dimension_by_name(self.dimension).get_chunk(self.position)
+        chunk = shared.world.get_dimension_by_name(self.dimension).get_chunk(
+            self.position
+        )
 
         buffer.write_string(self.dimension)
         buffer.write_int(self.position[0]).write_int(self.position[1])

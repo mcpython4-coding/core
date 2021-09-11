@@ -458,11 +458,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.flying = False if self.gamemode != 3 else True  # todo: add event for this
         self.armor_level = 0
         self.armor_toughness = 0
-        
+
         if shared.IS_CLIENT:
             sector = mcpython.util.math.position_to_chunk(self.position)
             shared.world.change_chunks(None, sector)
-        
+
         # todo: recalculate armor level!
 
         if (
@@ -470,9 +470,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             and not internal
         ):
             # todo: add special state [see above]
-            shared.state_handler.change_state(
-                "minecraft:escape_menu"
-            )
+            shared.state_handler.change_state("minecraft:escape_menu")
 
         if not internal:
             shared.event_handler.call("gameplay:player:die", self, damage_source)
