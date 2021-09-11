@@ -118,7 +118,7 @@ class AbstractItem(
         self.stored_block_state, self.can_destroy, self.can_be_set_on, *extra = data
 
         if len(extra) == 1:
-            self.deserialize_container(extra[3])
+            self.deserialize_container(extra[0])
 
     def get_tooltip_provider(self):
         import mcpython.client.gui.HoveringItemBox
