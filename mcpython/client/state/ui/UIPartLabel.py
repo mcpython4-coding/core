@@ -34,7 +34,6 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
         on_press=None,
         color=(0, 0, 0, 255),
         text_size=20,
-        text_color=(0, 0, 0, 255),
     ):
         """
         Creates a new label
@@ -56,11 +55,10 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
         self.press: mcpython.engine.event.EventInfo.MousePressEventInfo = press
         self.color = color
         self.text_size = text_size
-        self.text_color = text_color
 
         self.on_press = on_press
 
-        self.lable = pyglet.text.Label(text=text, color=text_color)
+        self.lable = pyglet.text.Label(text=text, color=color)
         self.active = False
 
     def bind_to_eventbus(self):
@@ -89,5 +87,4 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
         self.lable.color = self.color
         self.lable.font_size = self.text_size
         self.lable.text = mcpython.common.data.Language.translate(self.text)
-        self.lable.color = self.text_color
         self.lable.draw()

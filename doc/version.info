@@ -1750,8 +1750,8 @@ B   [uuk]: fixed block inventory deserialization in save files
 AF  [uuk]: added capability API supported by items, blocks and entities with support for storing capabilities at save files
            [Entity cap serialization is partially forced, block & item can be overridden]
 A   [uuk]: some work on the networking API, including reading/writing util
-A+I [uuk]: added client <-> server handshake packages
-A+I [uuk]: added server -> client package ID sync system [for dynamic ID's only]
+AI  [uuk]: added client <-> server handshake packages
+AI  [uuk]: added server -> client package ID sync system [for dynamic ID's only]
            (needed as mod loading order is unstable across sessions)
 I   [uuk]: added server -> client mod list compare
 I   [uuk]: added server -> client registry sync
@@ -1768,6 +1768,5 @@ I   [uuk]: player data on dedicated server is now loaded for ALL players
 f** [uuk]: world is handed over to the player now when chunks are loading in
 I   [uuk]: underlying client socket is now non-blocking when recv()-ing, so the main game thread is not halted
 b   [uuk]: fixed default dimension implementation yielding all entities twice
-A   [uuk]: UIPartLabel accept now a text color
 E   [uuk]: renamed event gamplay:player:die to gameplay:player:die
 b   [uuk]: fixed exception when kill()-ing a player on a dedicated server
