@@ -36,7 +36,7 @@ class ClientBackend:
     def send_package(self, data: bytes):
         self.scheduled_packages.append(data)
 
-    def connect(self):
+    def connect(self) -> bool:
         print(f"connecting to server {self.ip}@{self.port}")
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,11 +44,12 @@ class ClientBackend:
         try:
             self.socket.connect((self.ip, self.port))
         except ConnectionRefusedError:
-            logger.print_exception("during connecting to server")
-            return
+            logger.println("[NETWORK] No server at the other side to reach")
+            return False
 
         self.connected = True
         shared.IS_NETWORKING = True
+        return True
 
     def disconnect(self):
         print("disconnected from server")

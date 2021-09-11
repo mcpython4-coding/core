@@ -14,9 +14,9 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 
 
-def connectClient2Server(ip: str, port: int):
+def connectClient2Server(ip: str, port: int) -> bool:
     if shared.CLIENT_NETWORK_HANDLER.connected:
         raise RuntimeError("client is connected to a server")
 
     shared.CLIENT_NETWORK_HANDLER.ip, shared.CLIENT_NETWORK_HANDLER.port = ip, port
-    shared.CLIENT_NETWORK_HANDLER.connect()
+    return shared.CLIENT_NETWORK_HANDLER.connect()

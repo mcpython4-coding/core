@@ -71,7 +71,9 @@ class ServerSelectionState(AbstractState):
 
     def open_server_connection(self, *_):
         pair = self.server_ip_input.entered_text.split(":")
-        connectClient2Server(pair[0], int(pair[1]))
+        if not connectClient2Server(pair[0], int(pair[1])):
+            shared.state_handler.change_state("minecraft:start_menu")
+            return
 
         from mcpython.common.network.packages.HandShakePackage import (
             Client2ServerHandshake,
