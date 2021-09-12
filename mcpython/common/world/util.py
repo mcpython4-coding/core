@@ -133,7 +133,7 @@ def filter_list(
 
 
 def area_iterator(start: typing.Tuple[int, int, int], end: typing.Tuple[int, int, int]):
-    return itertools.product(*map(lambda e: range(*e), zip(start, end)))
+    return itertools.product(*map(lambda e: range(e[0], e[1]+1), zip(start, end)))
 
 
 def fill_area(
