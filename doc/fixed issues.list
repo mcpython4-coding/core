@@ -8,7 +8,7 @@ issue 20: mod list was not proper saved; fixed on: 31.01.2020 by uuk; occur sinc
 issue 19: /reload command was not working; fixed on: 31.01.2020 by uuk; occur since: mod loading introduction
 issue 18: loading bar was offset; fixed on: 01.02.2020 by uuk; occur since: progress bar fixes
 issue 29: DebugWorldGenerator was not working; fixed on: 01.02.2020; occur since: event removal of generation system
-issue 30: game crashes if an value is accessed in HeightMap without set it in advance
+issue 30: game crashes if a value is accessed in HeightMap without set it in advance
 issue 31: event "worldgen:chunk:finished" was only called in dynamic generated chunks; fixed on: 01.02.2020 by uuk;
           occur since: introduction of this event
 issue 32: EnderChest was not working in debug world; fixed on: 01.02.2002 by uuk; occur since: introduction of chest

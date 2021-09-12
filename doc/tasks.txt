@@ -6,6 +6,14 @@ Issues:
 - biome map is not saved to save files or loaded not correctly somehow
 
 
+Pending for next non-snapshot release:
+- issues above
+- fix gamemode 0
+- game .jar linking
+- more unit tests
+- built pipe for jvm
+
+
 Toolchain:
 - userconfig.json storing local information like:
     - path to launcher
