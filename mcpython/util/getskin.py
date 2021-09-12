@@ -46,7 +46,10 @@ def find_texture_info(properties):
 
 def store_missing_texture(path: str):
     import mcpython.engine.ResourceLoader
-    missing_texture = mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
+
+    missing_texture = mcpython.engine.ResourceLoader.read_image(
+        "assets/missing_texture.png"
+    )
 
     missing_texture.save(path)
 

@@ -25,7 +25,7 @@ class TestAbstractBlock(TestCase):
 
     def test_network_serializer(self):
         import mcpython.common.block.AbstractBlock
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         class TestBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             NAME = "minecraft:test_block"

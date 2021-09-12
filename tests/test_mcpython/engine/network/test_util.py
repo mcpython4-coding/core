@@ -11,14 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
-from unittest import TestCase
 import random
 import string
-
+import typing
+from unittest import TestCase
 
 # These is a list of tests that we can execute on buffers, used for the multi test
-MULTI_TEST_POOL: typing.List[typing.Tuple[typing.Callable, typing.Callable, typing.Callable]] = [
+MULTI_TEST_POOL: typing.List[
+    typing.Tuple[typing.Callable, typing.Callable, typing.Callable]
+] = [
     (
         lambda: bool(random.randint(0, 1)),
         lambda buffer, v: buffer.write_bool(v),
@@ -45,10 +46,12 @@ MULTI_TEST_POOL: typing.List[typing.Tuple[typing.Callable, typing.Callable, typi
         lambda buffer, v: buffer.read_float() == v,
     ),
     (
-        lambda: "".join(random.choice(string.printable) for _ in range(random.randint(10, 1000))),
+        lambda: "".join(
+            random.choice(string.printable) for _ in range(random.randint(10, 1000))
+        ),
         lambda buffer, v: buffer.write_string(v),
         lambda buffer, v: buffer.read_string() == v,
-    )
+    ),
 ]
 
 
@@ -63,7 +66,7 @@ class TestBuffer(TestCase):
         self.assertEqual(buffer.get_data(), bytes())
 
     def test_bool_false(self):
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         write = WriteBuffer()
 
@@ -74,7 +77,7 @@ class TestBuffer(TestCase):
         self.assertFalse(read.read_bool())
 
     def test_bool_true(self):
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         write = WriteBuffer()
 
@@ -87,7 +90,7 @@ class TestBuffer(TestCase):
     # todo: some struct tests
 
     def test_int(self):
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         for _ in range(20):
             v = random.randint(-100000, 100000)
@@ -101,7 +104,7 @@ class TestBuffer(TestCase):
             self.assertEqual(read.read_int(), v)
 
     def test_long(self):
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         for _ in range(20):
             v = random.randint(-100000, 100000)
@@ -115,7 +118,7 @@ class TestBuffer(TestCase):
             self.assertEqual(read.read_long(), v)
 
     def test_big_long(self):
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         for _ in range(20):
             v = random.randint(-100000, 100000)
@@ -130,7 +133,7 @@ class TestBuffer(TestCase):
             self.assertEqual(read.read_big_long(size), v)
 
     def test_float(self):
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         for _ in range(20):
             v = random.randint(-100000, 100000) / random.randint(1, 1000000)
@@ -144,10 +147,12 @@ class TestBuffer(TestCase):
             self.assertEqual(read.read_float(), v)
 
     def test_string(self):
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         for _ in range(20):
-            text = "".join(random.choice(string.printable) for _ in range(random.randint(10, 1000)))
+            text = "".join(
+                random.choice(string.printable) for _ in range(random.randint(10, 1000))
+            )
 
             write = WriteBuffer()
 
@@ -161,7 +166,7 @@ class TestBuffer(TestCase):
 
     def test_multi(self):
         # tests out chains of data
-        from mcpython.engine.network.util import WriteBuffer, ReadBuffer
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         for _ in range(10):
             count = random.randint(4, 20)

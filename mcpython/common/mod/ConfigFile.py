@@ -55,26 +55,33 @@ def toDataMapper(value):
     """
     if issubclass(type(value), IDataMapper):
         return value
+
     elif type(value) == dict:
         obj = DictDataMapper()
         obj.write(value)
         return obj
+
     elif type(value) == list:
         obj = ListDataMapper()
         obj.write(value)
         return obj
+
     elif type(value) == int:
         return IntDataMapper(value)
+
     elif type(value) == float:
         return FloatDataMapper(value)
+
     elif type(value) == bool:
         return BooleanDataMapper(value)
+
     else:
         for mapper in MAPPERS:
             if issubclass(mapper, ICustomDataMapper) and mapper.valid_value_to_parse(
                 value
             ):
                 return mapper.parse(value)
+
         return StringDataMapper(value)
 
 

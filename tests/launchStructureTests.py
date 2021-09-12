@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import sys
 import os
+import sys
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -22,12 +22,13 @@ launch = LaunchWrapper()
 launch.set_client()
 
 
-import mcpython.common.mod.ModLoader
 import mcpython.common.mod.Mod
+import mcpython.common.mod.ModLoader
 from mcpython import shared
 
-
-test_mod = mcpython.common.mod.Mod.Mod("structure_test_system", (1, 0, 0)).add_dependency(mcpython.common.mod.Mod.ModDependency("minecraft"))
+test_mod = mcpython.common.mod.Mod.Mod(
+    "structure_test_system", (1, 0, 0)
+).add_dependency(mcpython.common.mod.Mod.ModDependency("minecraft"))
 
 
 class StructureTest:
@@ -39,15 +40,17 @@ def intercept_loading(handler):
     handler.cancel()
 
     world_config_state = shared.state_handler.states["minecraft:world_generation"]
-    world_config_state.generate_world({
-        "world_config_name": "minecraft:default_overworld",  # todo: empty world
-        "world_size": (1, 1),
-        "seed_source": "minecraft:open_simplex_noise",
-        "seed": 0,
-        "player_name": "test_system_player",
-        "auto_gen_enabled": False,
-        "world_barrier_enabled": False,
-    })
+    world_config_state.generate_world(
+        {
+            "world_config_name": "minecraft:default_overworld",  # todo: empty world
+            "world_size": (1, 1),
+            "seed_source": "minecraft:open_simplex_noise",
+            "seed": 0,
+            "player_name": "test_system_player",
+            "auto_gen_enabled": False,
+            "world_barrier_enabled": False,
+        }
+    )
 
     shared.state_handler.change_state("minecraft:world_generation")
 
@@ -61,4 +64,3 @@ def init():
 
 if __name__ == "__main__":
     launch.full_launch()
-

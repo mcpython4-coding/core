@@ -15,8 +15,7 @@ import mcpython.client.gui.InventoryFurnace
 import mcpython.common.block.IHorizontalOrientableBlock
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide
 from pyglet.window import key, mouse
 

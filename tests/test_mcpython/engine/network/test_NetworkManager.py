@@ -17,24 +17,24 @@ from unittest import TestCase
 class TestNetworkManager(TestCase):
     def test_module_import(self):
         import mcpython.engine.network.NetworkManager
-    
+
     def test_reset_package_registry(self):
-        from mcpython.engine.network.NetworkManager import load_packages
         from mcpython import shared
-        
+        from mcpython.engine.network.NetworkManager import load_packages
+
         self.assertEqual(len(shared.NETWORK_MANAGER.package_types), 0)
-        
+
         load_packages()
-        
+
         self.assertNotEqual(len(shared.NETWORK_MANAGER.package_types), 0)
-        
+
         shared.NETWORK_MANAGER.reset_package_registry()
 
         self.assertEqual(len(shared.NETWORK_MANAGER.package_types), 0)
 
     def test_dynamic_id_info(self):
-        from mcpython.engine.network.NetworkManager import load_packages
         from mcpython import shared
+        from mcpython.engine.network.NetworkManager import load_packages
 
         load_packages()
 
@@ -49,9 +49,11 @@ class TestNetworkManager(TestCase):
         shared.NETWORK_MANAGER.reset_package_registry()
 
     def test_serialize_package(self):
-        from mcpython.engine.network.NetworkManager import load_packages
         from mcpython import shared
-        from mcpython.common.network.packages.DisconnectionPackage import DisconnectionConfirmPackage
+        from mcpython.common.network.packages.DisconnectionPackage import (
+            DisconnectionConfirmPackage,
+        )
+        from mcpython.engine.network.NetworkManager import load_packages
 
         load_packages()
 
@@ -64,4 +66,3 @@ class TestNetworkManager(TestCase):
         # todo: test more attributes
 
         shared.NETWORK_MANAGER.reset_package_registry()
-

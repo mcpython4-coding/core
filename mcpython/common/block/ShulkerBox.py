@@ -16,9 +16,8 @@ import mcpython.util.enums
 from mcpython import shared
 from pyglet.window import key, mouse
 
+from ...engine.network.util import ReadBuffer, WriteBuffer
 from . import AbstractBlock
-from ...engine.network.util import ReadBuffer
-from ...engine.network.util import WriteBuffer
 
 
 def create_shulker_box(name):

@@ -16,8 +16,7 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.fluid.AbstractFluid
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
