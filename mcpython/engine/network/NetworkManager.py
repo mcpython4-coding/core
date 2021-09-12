@@ -409,6 +409,7 @@ def load_packages():
         HandShakePackage,
         PackageIDSync,
         PackageReroutingPackage,
+        PlayerChatPackage,
         RegistrySyncPackage,
         WorldDataExchangePackage,
     )
@@ -456,6 +457,12 @@ def load_packages():
     )
     shared.NETWORK_MANAGER.register_package_type(
         WorldDataExchangePackage.ChunkUpdatePackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        PlayerChatPackage.PlayerChatInputPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        PlayerChatPackage.PlayerMessageShowPackage
     )
 
 

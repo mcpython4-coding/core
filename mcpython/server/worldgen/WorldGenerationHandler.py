@@ -276,6 +276,17 @@ class WorldGenerationHandler:
         shared.event_handler.call("worldgen:chunk:finished", chunk)
         config.on_chunk_generation_finished(chunk)
 
+        if not shared.IS_CLIENT:
+            from mcpython.common.network.packages.WorldDataExchangePackage import (
+                ChunkDataPackage,
+            )
+
+            shared.NETWORK_MANAGER.send_package_to_all(
+                ChunkDataPackage().setup(
+                    chunk.get_dimension().get_name(), chunk.get_position()
+                )
+            )
+
     def register_layer(
         self, layer: typing.Type[mcpython.server.worldgen.layer.ILayer.ILayer]
     ):

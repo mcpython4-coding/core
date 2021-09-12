@@ -22,6 +22,7 @@ import mcpython.server.command.CommandParser
 import mcpython.util.opengl
 import pyglet
 from mcpython import shared
+from mcpython.common.network.packages.PlayerChatPackage import PlayerChatInputPackage
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
@@ -145,11 +146,12 @@ class Chat:
             self.active_index = len(self.text)
 
         elif symbol == key.ENTER:  # execute command
-            logger.println(
-                "[CHAT][INFO] entered text: '{}'".format(self.text), console=False
-            )
+            if shared.IS_CLIENT and shared.IS_NETWORKING:
+                shared.NETWORK_MANAGER.send_package(
+                    PlayerChatInputPackage().setup(self.text)
+                )
 
-            if self.text.startswith("/"):
+            elif self.text.startswith("/"):
                 # execute command
                 if self.executing_command_info is None:
                     self.executing_command_info = mcpython.server.command.CommandParser.CommandExecutionEnvironment(
@@ -160,6 +162,7 @@ class Chat:
                     player = shared.world.get_active_player()
                     self.executing_command_info.position = player.get_position()
                     self.executing_command_info.dimension = player.get_dimension()
+
                 shared.command_parser.run(self.text, self.executing_command_info)
 
             else:

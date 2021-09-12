@@ -63,6 +63,10 @@ class Client2ServerHandshake(AbstractPackage):
             )
             return
 
+        shared.NETWORK_MANAGER.client_profiles[self.sender_id][
+            "player_name"
+        ] = self.player_name
+
         shared.world.add_player(self.player_name)
 
         logger.println("sending mod list...")

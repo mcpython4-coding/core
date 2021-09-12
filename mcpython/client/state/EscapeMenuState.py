@@ -55,7 +55,9 @@ class EscapeMenu(AbstractState.AbstractState):
                 (0, 150),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=lambda *_: shared.state_handler.change_state("minecraft:game", immediate=False),
+                on_press=lambda *_: shared.state_handler.change_state(
+                    "minecraft:game", immediate=False
+                ),
             ),
             UIPartButton.UIPartButton(
                 (250, 25),

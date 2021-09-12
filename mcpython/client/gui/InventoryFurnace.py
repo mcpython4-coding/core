@@ -25,8 +25,7 @@ import PIL.Image
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
@@ -99,7 +98,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         buffer.write_int(self.fuel_left)
         buffer.write_int(self.fuel_max)
         buffer.write_int(self.xp_stored)
-        buffer.write_float(time.time()-self.smelt_start)
+        buffer.write_float(time.time() - self.smelt_start)
         buffer.write_int(self.progress)
         buffer.write_list(self.types, lambda e: buffer.write_string(e))
 
