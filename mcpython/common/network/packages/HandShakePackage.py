@@ -63,7 +63,7 @@ class Client2ServerHandshake(AbstractPackage):
             )
             return
 
-        shared.NETWORK_MANAGER.client_profiles[self.sender_id][
+        shared.NETWORK_MANAGER.client_profiles.setdefault(self.sender_id, {})[
             "player_name"
         ] = self.player_name
 

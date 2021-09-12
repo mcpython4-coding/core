@@ -36,7 +36,7 @@ data = (
         # todo: add tags, loot tables, helper command for /data view recipe resulting <item>
         #  and /data view recipe using <item>
         .than(
-            CommandNode(DefinedString("recipe"))
+            CommandNode(DefinedString("recipe"), execute_on_client=True)
             .of_name("recipe")
             .than(
                 CommandNode(AnyString.INSTANCE)
@@ -49,7 +49,7 @@ data = (
         ).than(
             # todo: a real in-game view with scrollbar, and custom injection point for rendering,
             #   e.g. items with item texture, blocks with BlockItem, ...
-            CommandNode(DefinedString("registry"))
+            CommandNode(DefinedString("registry"), execute_on_client=True)
             .of_name("registry")
             .than(
                 CommandNode(DefinedString("list"))
@@ -86,7 +86,7 @@ data = (
         .of_name("creative")
         .than(
             # client-executed
-            CommandNode(DefinedString("missing"))
+            CommandNode(DefinedString("missing"), execute_on_client=True)
             .of_name("missing")
             .info("prints all missing items in creative tabs")
             .on_execution(

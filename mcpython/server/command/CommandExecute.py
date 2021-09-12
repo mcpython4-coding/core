@@ -67,7 +67,7 @@ class parts:
     in_ = (
         CommandNode(DefinedString("in"))
         .than(CommandNode(AnyString.INSTANCE))
-        .than(AnyString().open())
+        .than(CommandNode(AnyString().open()))
         .on_execution(
             lambda env, data: shared.command_parser.run(
                 data[-1], env.copy().with_dimension(data[-2])

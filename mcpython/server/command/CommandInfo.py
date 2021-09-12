@@ -59,7 +59,7 @@ def print_item_info(itemstack, text: str):
 
 
 info = (
-    Command("info").than(
+    Command("info", execute_on_client=True).than(
         CommandNode(DefinedString("block"))
         .of_name("block")
         .than(

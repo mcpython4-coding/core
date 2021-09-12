@@ -114,7 +114,7 @@ chunk = (
         )
     )
     .than(
-        CommandNode(DefinedString("visualupdate"))
+        CommandNode(DefinedString("visualupdate"), execute_on_client=True)
         .of_name("visual update")
         .info("updates the visible state of all blocks in that chunk")
         .on_execution(lambda env, data: env.get_current_chunk().update_all_rendering())

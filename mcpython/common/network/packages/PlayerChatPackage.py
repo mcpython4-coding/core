@@ -41,7 +41,9 @@ class PlayerChatInputPackage(AbstractPackage):
                 shared.NETWORK_MANAGER.client_profiles[self.sender_id]["player_name"]
             )
             env = CommandExecutionEnvironment(player)
-            shared.command_parser.run(self.text, env)
+            if not shared.command_parser.run(self.text, env):
+                self.answer(PlayerClientCommandExecution().setup(self.text))
+
         else:
             text = (
                 f"[{shared.NETWORK_MANAGER.client_profiles[self.sender_id]['player_name']}] "

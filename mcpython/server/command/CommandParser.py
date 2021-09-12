@@ -80,13 +80,16 @@ class CommandParser:
     def __init__(self):
         self.commands: typing.Dict[str, mcpython.server.command.Builder.Command] = {}
 
-    def run(self, string: str, env: CommandExecutionEnvironment):
+    def run(self, string: str, env: CommandExecutionEnvironment) -> bool:
         parsed = self.parse(string)
 
         if parsed is None:
-            return
+            return True
 
         node, data = parsed
+
+        if node.execute_on_client and not shared.IS_CLIENT:
+            return False
 
         try:
             node.run(env, data)
@@ -94,6 +97,8 @@ class CommandParser:
             logger.print_exception(
                 f"command parser: during running {string} in {env} using {node}"
             )
+
+        return True
 
     def run_function(self, name: str, info=None):
         # todo: move here

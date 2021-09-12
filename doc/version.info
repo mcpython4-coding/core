@@ -1789,4 +1789,5 @@ FI  [uuk]: furnace inventory can now be fully serialized to network buffers
 B   [uuk]: entities spawned client-side where not updating their dimension when dimension package arrived,
            causing server-world saves not working correctly as a side effect
 F   [uuk]: commands are now executed server-only when server arrival
+F   [uuk]: added client-only, sever-only and client-executed command options
 

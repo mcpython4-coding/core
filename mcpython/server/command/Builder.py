@@ -442,8 +442,18 @@ class CommandNode:
     A node in the tree of a command
     """
 
-    def __init__(self, inner_identifier: ICommandElementIdentifier):
+    def __init__(
+        self,
+        inner_identifier: ICommandElementIdentifier,
+        execute_on_client=False,
+        valid_on_dedicated=True,
+        valid_on_integrated=True,
+    ):
         self.inner_identifier = inner_identifier
+        self.execute_on_client = execute_on_client
+        self.valid_on_dedicated = valid_on_dedicated
+        self.valid_on_integrated = valid_on_integrated
+
         self.following_nodes: typing.List["CommandNode"] = []
         self.on_execution_callbacks = []
         self.name = "unknown"
@@ -456,6 +466,7 @@ class CommandNode:
         :param node: the node to add
         """
         self.following_nodes.append(node)
+        node.execute_on_client = node.execute_on_client or self.execute_on_client
         return self
 
     def on_execution(self, func: typing.Callable):
@@ -488,6 +499,16 @@ class CommandNode:
             tracker.parsing_errors.append(
                 f"node '{self.name}' using entry {self.inner_identifier}"
             )
+            return
+
+        if not self.valid_on_dedicated and not shared.IS_CLIENT:
+            return
+
+        if (
+            not self.valid_on_integrated
+            and shared.IS_CLIENT
+            and not shared.IS_NETWORKING
+        ):
             return
 
         tracker.save()
@@ -544,8 +565,19 @@ class Command(CommandNode):
     <name> is without the / in front
     """
 
-    def __init__(self, name: str):
-        super().__init__(DefinedString("/" + name))
+    def __init__(
+        self,
+        name: str,
+        execute_on_client=False,
+        valid_on_dedicated=True,
+        valid_on_integrated=True,
+    ):
+        super().__init__(
+            DefinedString("/" + name),
+            execute_on_client=execute_on_client,
+            valid_on_dedicated=valid_on_dedicated,
+            valid_on_integrated=valid_on_integrated,
+        )
         self.name = name
         self.additional_names = []
 
