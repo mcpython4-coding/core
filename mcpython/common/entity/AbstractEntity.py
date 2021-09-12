@@ -122,6 +122,7 @@ class AbstractEntity(
         self.dead = False
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
+        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         dim_name = buffer.read_string()
         self.dimension = shared.world.get_dimension_by_name(
             dim_name if dim_name != "" else "overworld"
@@ -139,6 +140,7 @@ class AbstractEntity(
         self.nbt_data["invulnerable"] = buffer.read_bool()
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
+        super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         buffer.write_string(
             self.dimension.get_name() if self.dimension is not None else ""
         )

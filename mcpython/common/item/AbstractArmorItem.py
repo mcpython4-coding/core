@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.item.AbstractDamageBarItem
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class AbstractArmorItem(
@@ -22,6 +23,14 @@ class AbstractArmorItem(
     def __init__(self):
         super().__init__()
         self.damage = self.DURABILITY
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        buffer.write_int(self.damage)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.damage = buffer.read_int()
 
     DEFENSE_POINTS = 0
 

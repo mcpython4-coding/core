@@ -11,16 +11,46 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import pickle
 import typing
 
+import picklemagic
 from mcpython import shared
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
 
-class ICapabilityContainer:
+class ICapabilityContainer(IBufferSerializeAble):
     CAPABILITY_CONTAINER_NAME = None
 
     def __init__(self):
         self.capability_data: typing.Optional[typing.Dict[str, typing.Any]] = None
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        flag = self.capability_data is None
+        buffer.write_bool(flag)
+        if flag:
+            return
+
+        buffer.write_list(
+            list(self.capability_data.items()),
+            lambda e: buffer.write_string(e[0]).write_bytes(pickle.dumps(e[1])),
+        )
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        flag = buffer.read_bool()
+        if flag:
+            self.capability_data = None
+            return
+
+        self.capability_data = {
+            e[0]: e[1]
+            for e in buffer.read_list(
+                lambda: (
+                    buffer.read_string(),
+                    picklemagic.safe_loads(buffer.read_bytes()),
+                )
+            )
+        }
 
     def forceAttachmentOfCapability(self, name: str):
         capability = shared.capability_manager.get_by_name(name)

@@ -166,6 +166,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble):
         ] = {}
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
+        super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
 
         buffer.write_int(len(state))
@@ -173,6 +174,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble):
             buffer.write_string(key).write_string(value)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
+        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         state = {
             buffer.read_string(): buffer.read_string() for _ in range(buffer.read_int())
         }

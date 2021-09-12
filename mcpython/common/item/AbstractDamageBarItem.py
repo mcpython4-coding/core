@@ -15,13 +15,21 @@ import typing
 from abc import ABC
 
 import mcpython.common.item.AbstractItem
-import pyglet
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class AbstractDamageBarItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
     def __init__(self):
         super().__init__()
         self.unbreakable = False
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        buffer.write_bool(self.unbreakable)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.unbreakable = buffer.read_bool()
 
     def get_damage_info(
         self,
