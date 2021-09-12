@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import time
+import typing
 
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
@@ -24,6 +25,8 @@ import PIL.Image
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
@@ -77,7 +80,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         cls.TEXTURE_ARROW = mcpython.util.texture.to_pyglet_image(texture_fire)
         cls.TEXTURE_ARROW_SIZE = texture_fire.size
 
-    def __init__(self, block, types):
+    def __init__(self, block, types: typing.List[str]):
         super().__init__()
         self.block = block
         self.fuel_left = 0
@@ -90,6 +93,24 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         self.types = types
         if self.custom_name is None:
             self.custom_name = "Furnace"
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        buffer.write_int(self.fuel_left)
+        buffer.write_int(self.fuel_max)
+        buffer.write_int(self.xp_stored)
+        buffer.write_float(time.time()-self.smelt_start)
+        buffer.write_int(self.progress)
+        buffer.write_list(self.types, lambda e: buffer.write_string(e))
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.fuel_left = buffer.read_int()
+        self.fuel_max = buffer.read_int()
+        self.xp_stored = buffer.read_int()
+        self.smelt_start = buffer.read_float() + time.time()
+        self.progress = buffer.read_int()
+        self.types = buffer.read_list(lambda: buffer.read_string())
 
     @staticmethod
     def get_config_file() -> str or None:

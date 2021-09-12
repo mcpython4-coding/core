@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import pickle
 import typing
 
-import picklemagic
+import mcpython.util.picklemagic
 from mcpython import shared
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
@@ -47,7 +47,7 @@ class ICapabilityContainer(IBufferSerializeAble):
             for e in buffer.read_list(
                 lambda: (
                     buffer.read_string(),
-                    picklemagic.safe_loads(buffer.read_bytes()),
+                    mcpython.util.picklemagic.safe_loads(buffer.read_bytes()),
                 )
             )
         }

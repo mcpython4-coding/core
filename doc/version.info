@@ -1785,4 +1785,5 @@ A*  [uuk]: util methods of world iterating over a world region are now both-end-
 FI  [uuk]: capabilities are now serialized also into network buffers
 FI  [uuk]: added package compression via gzip for big packages
 SL  [uuk]: added picklemagic helper from https://github.com/CensoredUsername/picklemagic
+FI  [uuk]: furnace inventory can now be fully serialized to network buffers
 
