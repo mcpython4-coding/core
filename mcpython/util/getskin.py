@@ -44,6 +44,13 @@ def find_texture_info(properties):
     return None
 
 
+def store_missing_texture(path: str):
+    import mcpython.engine.ResourceLoader
+    missing_texture = mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
+
+    missing_texture.save(path)
+
+
 def download_skin(username: str, store: str):
     """
     will download skin data for an user name
@@ -64,30 +71,42 @@ def download_skin(username: str, store: str):
     try:
         r = get_url(userid_url.format(username=username))
     except requests.exceptions.ConnectionError:
-        raise ValueError() from None
+        store_missing_texture(store)
+        return
+
     if r.status_code != 200:
-        raise ValueError()
+        store_missing_texture(store)
+        return
+
     userid = r.json()["id"]
 
     r = get_url(userinfo_url.format(userid=userid))
     userinfo = r.json()
+
     if "error" in userinfo:
         logger.println(
-            "[SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"])
+            "[MOJANG/SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"])
         )
-        raise ValueError()
+        store_missing_texture(store)
+        return
+
     try:
         texture_info = find_texture_info(userinfo["properties"])
     except KeyError:
         logger.println("ParseError in '{}'".format(userinfo))
         raise
+
     if texture_info is None:
-        raise ValueError()
+        store_missing_texture(store)
+        return
 
     skin_url = texture_info["textures"]["SKIN"]["url"]
     r = get_url(skin_url, stream=True)
+
     if r.status_code != 200:
-        raise ValueError()
+        store_missing_texture(store)
+        return
+
     with open(store, "wb") as f:
         f.write(r.content)
     image = PIL.Image.open(store)
