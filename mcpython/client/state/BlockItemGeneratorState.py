@@ -257,7 +257,8 @@ class BlockItemGenerator(AbstractState.AbstractState):
         player.rotation = (0, 0, 0)
         player.dimension.remove_block((0, 0, 0))
 
-        shared.state_handler.change_state("minecraft:start_menu")
+        if shared.event_handler.call_cancelable("stage_handler:loading2main_menu"):
+            shared.state_handler.change_state("minecraft:start_menu")
 
     def add_new_screen(self, *args):
         self.block_index += 1
