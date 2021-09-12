@@ -227,6 +227,9 @@ class WorldInfoPackage(AbstractPackage):
                 )
                 new_dim.batches = dim.batches
 
+                for entity in dim.entity_iterator():
+                    entity.dimension = new_dim
+
             if dim.get_dimension_id() != dim_id:
                 self.answer(
                     DisconnectionInitPackage().set_reason("world dim id miss-match")

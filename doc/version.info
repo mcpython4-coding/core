@@ -1786,4 +1786,6 @@ FI  [uuk]: capabilities are now serialized also into network buffers
 FI  [uuk]: added package compression via gzip for big packages
 SL  [uuk]: added picklemagic helper from https://github.com/CensoredUsername/picklemagic
 FI  [uuk]: furnace inventory can now be fully serialized to network buffers
+B   [uuk]: entities spawned client-side where not updating their dimension when dimension package arrived,
+           causing server-world saves not working correctly as a side effect
 
