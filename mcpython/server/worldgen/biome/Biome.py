@@ -19,9 +19,10 @@ import mcpython.common.event.Registry
 import mcpython.common.world.AbstractInterface
 import mcpython.server.worldgen.feature.IFeature
 import mcpython.server.worldgen.feature.IOre
+from mcpython.common.data.serializer.DataSerializationManager import ISerializeAble
 
 
-class Biome(mcpython.common.event.api.IRegistryContent, ABC):
+class Biome(mcpython.common.event.api.IRegistryContent, ISerializeAble, ABC):
     """
     Abstract base class for biomes
     Defines the look of the biome

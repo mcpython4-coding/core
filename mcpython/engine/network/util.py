@@ -105,7 +105,7 @@ class WriteBuffer:
         return self
 
     def write_list(
-        self, data: typing.List, handling: typing.Callable[[typing.Any], None]
+        self, data: typing.List, handling: typing.Callable[[typing.Any], typing.Any]
     ):
         self.write_int(len(data))
         for e in data:
