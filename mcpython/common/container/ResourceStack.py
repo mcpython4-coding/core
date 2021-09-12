@@ -118,6 +118,7 @@ class ItemStack(AbstractResourceStack):
                 item_name
             ]()
             self.item.read_from_network_buffer(buffer)
+        return self
 
     def copy(self) -> "ItemStack":
         """
