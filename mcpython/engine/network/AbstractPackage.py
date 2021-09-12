@@ -25,9 +25,9 @@ class AbstractPackage:
 
     A package does not need to be arrival on both sides of a network. Each network manager holds
     a list of valid package id's, other ones will be ignored
-
-
     """
+
+    ALLOW_PACKAGE_COMPRESSION = True
 
     # A unique package name, used during handshake for package type comparison
     # Can include version of the package

@@ -1783,4 +1783,5 @@ It  [uuk]: added serializers for the custom block classes
 E   [uuk]: added stage_handler:loading2main_menu event when BlockItemGenerator switches to main menu
 A*  [uuk]: util methods of world iterating over a world region are now both-end-inclusive
 FI  [uuk]: capabilities are now serialized also into network buffers
+FI  [uuk]: added package compression via gzip for big packages
 

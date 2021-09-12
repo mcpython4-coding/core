@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import gzip
 import io
 import typing
 
@@ -32,6 +33,7 @@ class NetworkManager:
         [3B-2Bi package type id][1Bi has id, 1Bi has answer id]
         [4B package id, if answering or answer is expected]
         [4B previous package id, if answer]
+        [1B package compression enable]
         [3B package size]
         [package data, encoded by the package]
     """
@@ -180,11 +182,19 @@ class NetworkManager:
         buffer = WriteBuffer()
         package.write_to_buffer(buffer)
         package_data = buffer.get_data()
+
+        compress_data = len(package_data) > 200 and package.ALLOW_PACKAGE_COMPRESSION
+
+        if compress_data:
+            package_data = gzip.compress(package_data)
+
         package_size_data = len(package_data).to_bytes(3, "big", signed=False)
+
         data = (
             encoded_head
             + package_id_data
             + previous_package_id_data
+            + (b"\x00" if not compress_data else b"\xFF")
             + package_size_data
             + package_data
         )
@@ -360,12 +370,18 @@ class NetworkManager:
             else:
                 previous_id = None
 
+            package_compressed = buffer[index] == 255
+            index += 1
+
             package_size = int.from_bytes(
                 buffer[index : index + 3], "big", signed=False
             )
             index += 3
 
             package_data = buffer[index : index + package_size]
+
+            if package_compressed:
+                package_data = gzip.decompress(package_data)
 
             del buffer[: index + package_size]
 
