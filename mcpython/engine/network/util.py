@@ -44,7 +44,7 @@ class ReadBuffer:
 
     def read_big_long(self, size_size=2):
         size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
-        return int.from_bytes(self.stream.read(size), "big")
+        return int.from_bytes(self.stream.read(size), "big", signed=True)
 
     def read_float(self):
         return self.read_struct(FLOAT)[0]
@@ -88,8 +88,9 @@ class WriteBuffer:
         return self.write_struct(LONG, value)
 
     def write_big_long(self, value: int, size_size=2):
-        length = math.ceil(math.log(value, 2 ** 8))
-        data = value.to_bytes(length, "big")
+        # todo: can we optimize this calculation (one byte more is a lot bigger than we need!)?
+        length = max(math.ceil(math.log(abs(value), 2 ** 8)), 0) + 1
+        data = value.to_bytes(length, "big", signed=True)
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
         self.data.append(data)
         return self
