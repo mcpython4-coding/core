@@ -116,9 +116,7 @@ def println(*msg, sep=" ", end="\n", console=True, log_file=True):
     """
     now = datetime.now()
     msg = [
-        "[{}][{}][{}][{}][{}][{}] ".format(
-            now.year, now.month, now.day, now.hour, now.minute, now.second
-        )
+        f"[{now.hour:02d}][{now.minute:02d}][{now.second:02d}] "
     ] + [escape(str(e).replace("\\", "/")) for e in msg]
     if console:
         print(*msg, sep=sep, end=end)
