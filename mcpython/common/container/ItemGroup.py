@@ -15,7 +15,7 @@ import re
 import typing
 
 from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
-from mcpython.engine.network.util import IBufferSerializeAble, WriteBuffer, ReadBuffer
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
 
 class ItemGroup(IBufferSerializeAble):
@@ -27,7 +27,9 @@ class ItemGroup(IBufferSerializeAble):
         buffer.write_list(self.entries, lambda e: e.write_to_network_buffer(buffer))
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
-        self.entries = buffer.read_list(lambda: ItemStack().read_from_network_buffer(buffer))
+        self.entries = buffer.read_list(
+            lambda: ItemStack().read_from_network_buffer(buffer)
+        )
 
     def add(self, entry: typing.Union[ItemStack, str]):
         if isinstance(entry, str):

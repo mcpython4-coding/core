@@ -115,9 +115,9 @@ def println(*msg, sep=" ", end="\n", console=True, log_file=True):
     :param log_file: if the data should be written into the log file
     """
     now = datetime.now()
-    msg = [
-        f"[{now.hour:02d}][{now.minute:02d}][{now.second:02d}] "
-    ] + [escape(str(e).replace("\\", "/")) for e in msg]
+    msg = [f"[{now.hour:02d}][{now.minute:02d}][{now.second:02d}] "] + [
+        escape(str(e).replace("\\", "/")) for e in msg
+    ]
     if console:
         print(*msg, sep=sep, end=end)
 
@@ -144,7 +144,7 @@ def write_into_container(
     style=("+", "-", "|"),
     header=None,
     outer_line_distance=2,
-    empty_lines_before_separate=1
+    empty_lines_before_separate=1,
 ):
     """
     will print the given data into an container-like structure

@@ -65,8 +65,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         # Indicated that the chunk was modified
         self.dirty = False
 
-        # Creates the needed chunk maps as defined in the world generation handler
-        shared.world_generation_handler.setup_chunk_maps(self)
+        if shared.world_generation_handler is not None:
+            # Creates the needed chunk maps as defined in the world generation handler
+            shared.world_generation_handler.setup_chunk_maps(self)
 
         # For all default chunks, we add such ticket. todo: remove & set only when needed
         self.add_chunk_load_ticket(
@@ -234,9 +235,9 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         :param position: the position to check
         :return: if there is an block
         """
-        return (
-            position in self._world
-            or shared.world_generation_handler.task_handler.get_block(position, self)
+        return position in self._world or (
+            shared.world_generation_handler is not None
+            and shared.world_generation_handler.task_handler.get_block(position, self)
             is not None
         )
 
@@ -571,7 +572,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 shared.world_generation_handler.task_handler.get_block(
                     position, chunk=self
                 )
-                if not none_if_str
+                if not none_if_str and shared.world_generation_handler is not None
                 else None
             )
         )
