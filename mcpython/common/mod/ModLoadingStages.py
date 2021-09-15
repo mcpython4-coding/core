@@ -325,7 +325,6 @@ manager.add_stage(
         "minecraft:additional_resource_locations",
     )
     .add_event_stage("stage:deferred:fill")
-
     # These are only here as this is a phase before the special registry phases
     .add_event_stage("stage:combined_factory:blocks", "stage:deferred:fill")
     .add_event_stage("stage:combined_factory:build", "stage:combined_factory:blocks")

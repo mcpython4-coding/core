@@ -52,7 +52,7 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot [21w37a], released on [15.09.2021] targeting <1.17>
+changelog of snapshot 21w37a, released on 15.09.2021 targeting 1.17
     Python:
         - allowing now python 3.10, as all our dependencies have upgraded their support
 
