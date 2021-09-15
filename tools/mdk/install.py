@@ -51,9 +51,9 @@ mod_name_camel_case = "".join([e[0].upper() + e[1:] for e in mod_name.split("_")
 
 create_or_leave(local + "/source/{}".format(mod_name))
 
-print("creating mod.json...")
-with open(local + "/source/mod.json", mode="w") as target, open(
-    local + "/tools/mod.jsont"
+print("creating mods.json...")
+with open(local + "/source/mods.json", mode="w") as target, open(
+    local + "/tools/mods.jsont"
 ) as template:
     target.write(
         template.read().format(
