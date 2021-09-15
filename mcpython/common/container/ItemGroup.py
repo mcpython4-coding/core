@@ -35,7 +35,7 @@ class ItemGroup(IBufferSerializeAble):
         if isinstance(entry, str):
             entry = ItemStack(entry)
 
-        if isinstance(entry, LazyClassLoadItemstack) or not entry.is_empty():
+        if isinstance(entry, LazyClassLoadItemstack) or entry.is_empty():
             raise ValueError(f"Itemstack {entry} cannot be empty or lazy!")
 
         self.entries.append(entry.set_amount(1))
