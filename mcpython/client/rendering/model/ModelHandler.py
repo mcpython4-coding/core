@@ -281,6 +281,7 @@ class ModelHandler:
 
     def reload_models(self):
         logger.println("deleting content of models...")
+
         # clear the list holding the data...
         self.models.clear()
         self.found_models.clear()
@@ -293,6 +294,7 @@ class ModelHandler:
         self.search()
         mcpython.client.rendering.model.BlockState.BlockStateDefinition.TO_CREATE.clear()
         mcpython.client.rendering.model.BlockState.BlockStateDefinition.NEEDED.clear()
+
         for (
             directory,
             modname,
@@ -302,6 +304,7 @@ class ModelHandler:
             mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_directory(
                 directory, modname, immediate=True
             )
+
         for (
             data,
             name,
@@ -310,6 +313,7 @@ class ModelHandler:
             mcpython.client.rendering.model.BlockState.BlockStateDefinition.unsafe_from_data(
                 name, data, immediate=True, force=force
             )
+
         shared.event_handler.call("data:blockstates:custom_injection", self)
         shared.event_handler.call("data:models:custom_injection", self)
         self.build(immediate=True)

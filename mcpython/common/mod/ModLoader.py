@@ -117,6 +117,9 @@ class ModContainer:
                 self.assigned_mod_loader = loader(self)
                 break
         else:
+            logger.println(
+                f"[MOD LOADER][WARN] could not identify mod loader for mod {self}"
+            )
             return
 
         self.assigned_mod_loader.on_select()
