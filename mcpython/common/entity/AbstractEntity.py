@@ -168,7 +168,9 @@ class AbstractEntity(
 
     def add_to_chunk(self):
         if self.dimension is not None:
-            self.dimension.get_chunk_for_position(self.position).entities.add(self)
+            self.dimension.get_chunk_for_position(tuple(self.position)).entities.add(
+                self
+            )
 
     def remove_from_chunk(self):
         if (
