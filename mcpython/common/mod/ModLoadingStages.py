@@ -301,6 +301,7 @@ manager.add_stage(
         "minecraft:additional_resource_locations",
         "adding additional resource locations to the system",
         "minecraft:loading_stage_addition",
+        "minecraft:loading_system_manipulation",
     )
     .add_event_stage("stage:resources:pipe:add_mapper")
     .add_event_stage("stage:additional_resources", "stage:resources:pipe:add_mapper")
@@ -324,6 +325,7 @@ manager.add_stage(
         "minecraft:additional_resource_locations",
     )
     .add_event_stage("stage:deferred:fill")
+
     # These are only here as this is a phase before the special registry phases
     .add_event_stage("stage:combined_factory:blocks", "stage:deferred:fill")
     .add_event_stage("stage:combined_factory:build", "stage:combined_factory:blocks")
