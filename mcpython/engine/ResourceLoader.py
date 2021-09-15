@@ -252,8 +252,23 @@ class SimulatedResourceLoader(IResourceLoader):
     def __init__(self):
         self.raw = {}
         self.images = {}
-        self.id = self.SIMULATOR_ID
-        self.SIMULATOR_ID += 1
+        self.id = SimulatedResourceLoader.SIMULATOR_ID
+        SimulatedResourceLoader.SIMULATOR_ID += 1
+
+    def debug_dump(self, directory: str):
+        for file, data in self.raw.items():
+            file = os.path.join(directory, file)
+            d = os.path.dirname(file)
+            os.makedirs(d, exist_ok=True)
+
+            with open(file, mode="wb") as f:
+                f.write(data)
+
+        for file, image in self.images.items():
+            file = os.path.join(directory, file)
+            d = os.path.dirname(file)
+            os.makedirs(d, exist_ok=True)
+            image.save(file)
 
     def provide_raw(self, name: str, raw: bytes):
         self.raw[name] = raw
@@ -386,6 +401,7 @@ def close_all_resources():
     Will close all opened resource locations using <locator>.close()
     Will call the resource:close event in the process
     """
+    logger.println("[RESOURCE LOADER] clearing resource system...")
     for item in RESOURCE_LOCATIONS:
         item.close()
 
