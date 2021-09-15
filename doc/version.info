@@ -1730,7 +1730,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: added a mouse press event to ContainerRenderer, used in creative tabs for discarding items
     [github]: released snapshot 21w35a
 
-G   [github]: start of development cycle for [21w37a]
+G   [github]: start of development cycle for 21w37a
 L   [uuk]: dumped pillow version, allowing for python 3.10
 F   [uuk]: DeferredRegistryPipe accepts now also un-"finish"-ed IFactory objects
            (that things you get when creating a Factory instance from a FactoryBuilder)
@@ -1792,4 +1792,6 @@ F   [uuk]: commands are now executed server-only when server arrival
 F   [uuk]: added client-only, sever-only and client-executed command options
 I   [uuk]: reduced logging to hours, minutes & seconds; formatting now equal-length, filled with 0's
 G   [github]: released snapshot 21w37a
+
+G   [github]: start of development cycle for [21w39a]
 
