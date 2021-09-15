@@ -180,9 +180,13 @@ handler = shared.loot_table_handler = LootTableHandler()
 class LootTablePoolEntry:
     @classmethod
     def from_data(cls, pool, data: dict):
-        obj = cls(
-            entry_type=LootTablePoolEntryType[data["type"].split(":")[-1].upper()]
-        )
+        try:
+            obj = cls(
+                entry_type=LootTablePoolEntryType[data["type"].split(":")[-1].upper()]
+            )
+        except KeyError:
+            obj = cls()
+
         obj.pool = pool
         if "conditions" in data:
             obj.conditions = [
