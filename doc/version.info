@@ -1791,5 +1791,5 @@ B   [uuk]: entities spawned client-side where not updating their dimension when 
 F   [uuk]: commands are now executed server-only when server arrival
 F   [uuk]: added client-only, sever-only and client-executed command options
 I   [uuk]: reduced logging to hours, minutes & seconds; formatting now equal-length, filled with 0's
-G   [uuk]: released snapshot 21w37a
+G   [github]: released snapshot 21w37a
 

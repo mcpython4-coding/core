@@ -175,9 +175,9 @@ class AbstractEntity(
     def remove_from_chunk(self):
         if (
             self.dimension is not None
-            and self in self.dimension.get_chunk_for_position(self.position).entities
+            and self in self.dimension.get_chunk_for_position(tuple(self.position)).entities
         ):
-            self.dimension.get_chunk_for_position(self.position).entities.remove(self)
+            self.dimension.get_chunk_for_position(tuple(self.position)).entities.remove(self)
 
     def __del__(self):
         if not hasattr(self, "chunk"):
