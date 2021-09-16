@@ -1794,4 +1794,5 @@ I   [uuk]: reduced logging to hours, minutes & seconds; formatting now equal-len
 G   [github]: released snapshot 21w37a
 
 G   [github]: start of development cycle for [21w39a]
+G*I [uuk]: changed how mc assets are stored; directly loaded from the .zip file now instead of extraction
 

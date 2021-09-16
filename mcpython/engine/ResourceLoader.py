@@ -391,7 +391,8 @@ def load_resource_packs():
         RESOURCE_LOCATIONS.append(
             ResourceDirectory(shared.local + "/resources/generated")
         )
-        RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/source"))
+
+    RESOURCE_LOCATIONS.append(ResourceZipFile(shared.local + "/source.zip"))
 
     shared.event_handler.call("resources:load")
 

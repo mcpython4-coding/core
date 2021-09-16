@@ -43,7 +43,6 @@ subprocess.call(
         sys.executable,
         home + "/tools/update_asset_source.py",
         version_data["mc_version_url"],
-        home if not IS_DEV else home + "/resources/source",
     ],
     stdout=sys.stdout,
 )
