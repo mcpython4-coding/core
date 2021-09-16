@@ -24,6 +24,15 @@ if sys.version_info.major != 3 or sys.version_info.minor < 9:
     )
     sys.exit(-1)
 
+
+if sys.version_info.minor == 9:
+    print(
+        "[INTERNAL][WARN] You are using python 3.9 which will be unsupported in a handful of released"
+    )
+    print(
+        "                 We made our game compatible with python 3.10 some releases ago, so please update!"
+    )
+
 if sys.version_info.minor >= 11:
     print(
         f"[VERSION DETECTOR][WARN] Detected python version 3.{sys.version_info.minor}, which is >= 11, which may break at any point"
