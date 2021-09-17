@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
 from abc import ABC
 
 from mcpython.util.annotation import onlyInClient
@@ -24,14 +25,38 @@ class AbstractStatePart(ABC):
         self.part_dict = {}
         self.parts = self.get_sub_parts()
         self.master = None
+        self.underlying_batch = None
+        self.state_renderer = None
+        self.eventbus = None
+
+    def init_rendering(self):
+        self.underlying_batch = self.master[-1].underlying_batch
+        self.eventbus = self.master[-1].eventbus
+
+        self.state_renderer = self.create_renderer()
+
+        if self.state_renderer is not None:
+            self.state_renderer.assigned_state = self
+            self.state_renderer.init()
+
+            self.eventbus.subscribe("render:draw:2d", self.state_renderer.draw)
+
+    def create_renderer(self) -> typing.Any:
+        pass
 
     def activate(self):
         for part in self.parts:
             part.activate()
 
+        if self.state_renderer is not None:
+            self.state_renderer.on_activate()
+
     def deactivate(self):
         for part in self.parts:
             part.deactivate()
+
+        if self.state_renderer is not None:
+            self.state_renderer.on_deactivate()
 
     def get_sub_parts(self) -> list:
         return []

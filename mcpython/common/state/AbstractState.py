@@ -65,7 +65,31 @@ class AbstractState(IRegistryContent, ABC):
             # Ok, you can now assign to these event bus
             state_part.bind_to_eventbus()
 
+        if shared.IS_CLIENT:
+            import pyglet
+
+            self.underlying_batch = pyglet.graphics.Batch()
+
+            self.state_renderer = self.create_state_renderer()
+
+            if self.state_renderer is not None:
+                self.eventbus.subscribe("render:draw:2d", self.state_renderer.draw)
+                self.state_renderer.assigned_state = self
+                self.state_renderer.batch = self.underlying_batch
+
+                self.state_renderer.init()
+
+            for state in self.parts:
+                state.init_rendering()
+
+        else:
+            self.state_renderer = None
+            self.underlying_batch = None
+
         shared.state_handler.add_state(self)
+
+    def create_state_renderer(self) -> typing.Any:
+        pass
 
     def activate(self):
         self.eventbus.activate()
@@ -73,11 +97,17 @@ class AbstractState(IRegistryContent, ABC):
         for part in self.parts:
             part.activate()
 
+        if self.state_renderer is not None:
+            self.state_renderer.on_activate()
+
     def deactivate(self):
         self.eventbus.deactivate()
 
         for part in self.parts:
             part.deactivate()
+
+        if self.state_renderer is not None:
+            self.state_renderer.on_deativate()
 
     def bind_to_eventbus(self):
         pass

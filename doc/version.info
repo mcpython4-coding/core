@@ -1796,4 +1796,5 @@ G   [github]: released snapshot 21w37a
 G   [github]: start of development cycle for [21w39a]
 G*I [uuk]: changed how mc assets are stored; directly loaded from the .zip file now instead of extraction
 RA  [uuk]: moved state system from client-package to common-package preparing for rendering separation
+AI  [uuk]: split of state system from state rendering; States define now a StateRenderer rendering stuff for them
 
