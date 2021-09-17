@@ -16,9 +16,9 @@ import json
 import os
 import shutil
 
-import mcpython.client.state.ConfigBackgroundPart
-import mcpython.client.state.WorldGenerationProgressState
-import mcpython.client.state.WorldLoadingProgressState
+import mcpython.common.state.ConfigBackgroundPart
+import mcpython.common.state.WorldGenerationProgressState
+import mcpython.common.state.WorldLoadingProgressState
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.common.world.SaveFile
@@ -92,7 +92,7 @@ class WorldList(AbstractState.AbstractState):
 
         wx, wy = shared.window.get_size()
         return [
-            mcpython.client.state.ConfigBackgroundPart.ConfigBackground(),
+            mcpython.common.state.ConfigBackgroundPart.ConfigBackground(),
             UIPartButton.UIPartButton(
                 (150, 20),
                 "generate new",

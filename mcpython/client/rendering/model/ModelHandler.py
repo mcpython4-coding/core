@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import gc
 import json
-import sys
 import traceback
 import typing
 
@@ -149,7 +148,7 @@ class ModelHandler:
         except:
             logger.println(self.found_models, "\n", self.dependence_list)
             logger.print_exception("top-sort error during sorting models")
-            import mcpython.client.state.LoadingExceptionViewState as StateLoadingException
+            import mcpython.common.state.LoadingExceptionViewState as StateLoadingException
             from mcpython.common.mod.util import LoadingInterruptException
 
             StateLoadingException.error_occur(traceback.format_exc())

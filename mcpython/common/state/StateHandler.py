@@ -12,10 +12,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import sys
-import time
 import typing
 
-import mcpython.client.state.ConfigStateFactory
+import mcpython.common.state.ConfigStateFactory
 import mcpython.common.event.TickHandler
 from mcpython import shared
 from mcpython.engine import logger
@@ -94,7 +93,7 @@ class StateHandler:
         self.states[state_instance.NAME] = state_instance
 
         if state_instance.CONFIG_LOCATION is not None:
-            mcpython.client.state.ConfigStateFactory.get_config(
+            mcpython.common.state.ConfigStateFactory.get_config(
                 state_instance.CONFIG_LOCATION
             ).inject(state_instance)
 

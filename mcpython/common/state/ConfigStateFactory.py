@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.client.state.AbstractState
-import mcpython.client.state.AbstractStatePart
+import mcpython.common.state.AbstractState
+import mcpython.common.state.AbstractStatePart
 import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.engine.event.EventHandler
@@ -40,9 +40,9 @@ class IStateConfigEntry(mcpython.common.event.api.IRegistryContent):
         state_instance,
         data: dict,
         existing: typing.Union[
-            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+            None, mcpython.common.state.AbstractStatePart.AbstractStatePart
         ],
-    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
+    ) -> mcpython.common.state.AbstractStatePart.AbstractStatePart:
         raise NotImplementedError()
 
 
@@ -65,10 +65,10 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
         state_instance,
         data: dict,
         existing: typing.Union[
-            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+            None, mcpython.common.state.AbstractStatePart.AbstractStatePart
         ],
-    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
-        import mcpython.client.state.ui.UIPartButton
+    ) -> mcpython.common.state.AbstractStatePart.AbstractStatePart:
+        import mcpython.common.state.ui.UIPartButton
 
         size = tuple(data["size"])
         text = data["text"] if "text" in data else ""
@@ -83,7 +83,7 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
         )
 
         if existing is not None and issubclass(
-            type(existing), mcpython.client.state.ui.UIPartButton.UIPartButton
+            type(existing), mcpython.common.state.ui.UIPartButton.UIPartButton
         ):
             on_press = (
                 getattr(state_instance, data["on_press"])
@@ -99,7 +99,7 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
             existing.has_hovering_state = has_hov
             existing.on_press = on_press
             return existing
-        return mcpython.client.state.ui.UIPartButton.UIPartButton(
+        return mcpython.common.state.ui.UIPartButton.UIPartButton(
             size,
             text,
             position,
@@ -122,10 +122,10 @@ class UILableStateConfigEntry(IStateConfigEntry):
         state_instance,
         data: dict,
         existing: typing.Union[
-            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+            None, mcpython.common.state.AbstractStatePart.AbstractStatePart
         ],
-    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
-        import mcpython.client.state.ui.UIPartLabel
+    ) -> mcpython.common.state.AbstractStatePart.AbstractStatePart:
+        import mcpython.common.state.ui.UIPartLabel
 
         text = data["text"]
         position = tuple(data["position"])
@@ -138,7 +138,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
         text_size = data["text_size"] if "text_size" in data else 20
 
         if existing is not None and issubclass(
-            type(existing), mcpython.client.state.ui.UIPartLabel.UIPartLabel
+            type(existing), mcpython.common.state.ui.UIPartLabel.UIPartLabel
         ):
             existing.text = text
             existing.position = position
@@ -148,7 +148,7 @@ class UILableStateConfigEntry(IStateConfigEntry):
             existing.color = color
             existing.text_size = text_size
             return existing
-        return mcpython.client.state.ui.UIPartLabel.UIPartLabel(
+        return mcpython.common.state.ui.UIPartLabel.UIPartLabel(
             text,
             position,
             anchor_lable=anchor_lable,
@@ -167,8 +167,8 @@ class UIProgressBarConfigEntry(IStateConfigEntry):
     @classmethod
     def deserialize(
         cls, state_instance, data: dict, existing
-    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
-        import mcpython.client.state.ui.UIPartProgressBar
+    ) -> mcpython.common.state.AbstractStatePart.AbstractStatePart:
+        import mcpython.common.state.ui.UIPartProgressBar
 
         position = data["position"]
         size = data["size"]
@@ -180,7 +180,7 @@ class UIProgressBarConfigEntry(IStateConfigEntry):
         anchor_win = data["window_anchor"] if "window_anchor" in data else "LD"
         assert type(size) == tuple
         if existing is not None and issubclass(
-            type(existing), mcpython.client.state.ui.UIPartProgressBar.UIPartProgressBar
+            type(existing), mcpython.common.state.ui.UIPartProgressBar.UIPartProgressBar
         ):
             existing.position = position
             existing.size = size
@@ -191,7 +191,7 @@ class UIProgressBarConfigEntry(IStateConfigEntry):
             existing.progress_max = item_count
             existing.text = text
             return existing
-        return mcpython.client.state.ui.UIPartProgressBar.UIPartProgressBar(
+        return mcpython.common.state.ui.UIPartProgressBar.UIPartProgressBar(
             position, size, color, item_count, status, text, anchor_ele, anchor_win
         )
 
@@ -207,17 +207,17 @@ class ConfigBackground(IStateConfigEntry):
         state_instance,
         data: dict,
         existing: typing.Union[
-            None, mcpython.client.state.AbstractStatePart.AbstractStatePart
+            None, mcpython.common.state.AbstractStatePart.AbstractStatePart
         ],
-    ) -> mcpython.client.state.AbstractStatePart.AbstractStatePart:
-        import mcpython.client.state.ConfigBackgroundPart
+    ) -> mcpython.common.state.AbstractStatePart.AbstractStatePart:
+        import mcpython.common.state.ConfigBackgroundPart
 
         if existing is not None and issubclass(
             type(existing),
-            mcpython.client.state.ConfigBackgroundPart.ConfigBackground,
+            mcpython.common.state.ConfigBackgroundPart.ConfigBackground,
         ):
             return existing
-        return mcpython.client.state.ConfigBackgroundPart.ConfigBackground()
+        return mcpython.common.state.ConfigBackgroundPart.ConfigBackground()
 
 
 configs = {}
@@ -250,8 +250,8 @@ class StateConfigFile:
     def inject(
         self,
         state_instance: typing.Union[
-            mcpython.client.state.AbstractState.AbstractState,
-            mcpython.client.state.AbstractStatePart.AbstractStatePart,
+            mcpython.common.state.AbstractState.AbstractState,
+            mcpython.common.state.AbstractStatePart.AbstractStatePart,
         ],
     ):
         """

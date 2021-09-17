@@ -26,7 +26,7 @@ from mcpython.common.config import GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
-from ...engine.physics.collision import collide
+from mcpython.engine.physics.collision import collide
 from . import AbstractStatePart
 from .InGameHotKeysManager import ALL_KEY_COMBOS
 

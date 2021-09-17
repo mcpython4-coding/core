@@ -155,10 +155,10 @@ class EventBus:
             if self.close_on_error:
                 shared.window.close()
                 pyglet.app.exit()
-                import mcpython.client.state.LoadingExceptionViewState
+                import mcpython.common.state.LoadingExceptionViewState
                 from mcpython.common.mod.util import LoadingInterruptException
 
-                mcpython.client.state.LoadingExceptionViewState.error_occur(
+                mcpython.common.state.LoadingExceptionViewState.error_occur(
                     traceback.format_exc()
                 )
                 return
@@ -290,10 +290,10 @@ class EventBus:
             except SystemExit:
                 raise
             except MemoryError:
-                import mcpython.client.state.LoadingExceptionViewState
+                import mcpython.common.state.LoadingExceptionViewState
                 from mcpython.common.mod.util import LoadingInterruptException
 
-                mcpython.client.state.LoadingExceptionViewState.error_occur(
+                mcpython.common.state.LoadingExceptionViewState.error_occur(
                     traceback.format_exc()
                 )
                 return

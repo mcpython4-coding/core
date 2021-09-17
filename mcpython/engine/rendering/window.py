@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 
 import cProfile
 
-import mcpython.client.state.GameViewStatePart
-import mcpython.client.state.StateHandler
+import mcpython.common.state.GameViewStatePart
+import mcpython.common.state.StateHandler
 import mcpython.common.config
 import mcpython.common.event.TickHandler
 import mcpython.engine.event.EventHandler
@@ -181,7 +181,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         pyglet.clock.schedule_interval(self.update, 0.05)
         pyglet.clock.schedule_interval(self.print_profiler, 10)
 
-        mcpython.client.state.StateHandler.load_states()
+        mcpython.common.state.StateHandler.load_states()
 
         self.push_handlers(self.keys)
 
@@ -301,7 +301,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 + " seconds"
             )
         if any(
-            type(x) == mcpython.client.state.GameViewStatePart.GameView
+                type(x) == mcpython.common.state.GameViewStatePart.GameView
             for x in shared.state_handler.active_state.parts
         ):
             shared.world_generation_handler.task_handler.process_tasks(timer=0.02)

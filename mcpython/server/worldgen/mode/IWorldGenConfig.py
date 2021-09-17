@@ -102,7 +102,7 @@ class IWorldGenConfig(
 
     GENERATES_START_CHEST = False
 
-    # A lazy mcpython.client.state.worldgen.AbstractWorldGeneration.AbstractState for usage for configuration
+    # A lazy mcpython.common.state.worldgen.AbstractWorldGeneration.AbstractState for usage for configuration
     # todo: use this API and display it correctly
     # todo: add serialization config
     # todo: store configured object for later usage

@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import random
 import typing
 
-import mcpython.client.state.GameViewStatePart
+import mcpython.common.state.GameViewStatePart
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity

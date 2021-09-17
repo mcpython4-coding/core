@@ -690,7 +690,7 @@ class ModLoader:
             return
 
         start = time.time()
-        astate: mcpython.client.state.ModLoadingProgress.ModLoadingProgress = (
+        astate: mcpython.common.state.ModLoadingProgress.ModLoadingProgress = (
             shared.state_handler.active_state
         )
         astate.parts[0].progress_max = len(
@@ -724,7 +724,7 @@ class ModLoader:
         if stage is None:
             return
 
-        astate: mcpython.client.state.ModLoadingProgress.ModLoadingProgress = (
+        astate: mcpython.common.state.ModLoadingProgress.ModLoadingProgress = (
             shared.state_handler.active_state
         )
         instance: mcpython.common.mod.Mod.Mod = self.mods[

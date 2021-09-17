@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import random
 
-import mcpython.client.state.ConfigBackgroundPart
-import mcpython.client.state.WorldGenerationProgressState
+import mcpython.common.state.ConfigBackgroundPart
+import mcpython.common.state.WorldGenerationProgressState
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
 import mcpython.server.worldgen.noise.NoiseManager
@@ -121,7 +121,7 @@ class WorldGenerationConfig(AbstractState.AbstractState):
         return (
             parts
             + text
-            + [mcpython.client.state.ConfigBackgroundPart.ConfigBackground()]
+            + [mcpython.common.state.ConfigBackgroundPart.ConfigBackground()]
         )
 
     def is_auto_gen_enabled(self) -> bool:

@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.state.AbstractState
+import mcpython.common.state.AbstractState
 import mcpython.common.mod.ModMcpython
 import pyglet
 from mcpython import shared
@@ -19,7 +19,7 @@ from mcpython.util.annotation import onlyInClient
 
 
 @onlyInClient()
-class StartMenu(mcpython.client.state.AbstractState.AbstractState):
+class StartMenu(mcpython.common.state.AbstractState.AbstractState):
     NAME = "minecraft:start_menu"
     CONFIG_LOCATION = "data/minecraft/states/start_menu.json"
 

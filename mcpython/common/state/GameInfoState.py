@@ -11,13 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.state.AbstractState
-import mcpython.client.state.GameViewStatePart
+import mcpython.common.state.AbstractState
+import mcpython.common.state.GameViewStatePart
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 from mcpython import shared
-from mcpython.client.state.ui import UIPartImage, UIPartLabel
+from mcpython.common.state.ui import UIPartLabel
+from mcpython.common.state.ui import UIPartImage
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
@@ -30,7 +31,7 @@ sprite = mcpython.util.texture.to_pyglet_sprite(
 
 
 @onlyInClient()
-class GameInfo(mcpython.client.state.AbstractState.AbstractState):
+class GameInfo(mcpython.common.state.AbstractState.AbstractState):
     NAME = "minecraft:game_info"
 
     @staticmethod
@@ -45,7 +46,7 @@ class GameInfo(mcpython.client.state.AbstractState.AbstractState):
 
     def get_parts(self) -> list:
         parts = [
-            mcpython.client.state.GameViewStatePart.GameView(
+            mcpython.common.state.GameViewStatePart.GameView(
                 activate_physics=False,
                 activate_mouse=False,
                 activate_keyboard=False,

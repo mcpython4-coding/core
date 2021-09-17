@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 
-import mcpython.client.state.ConfigBackgroundPart
-import mcpython.client.state.ui.UIPartLabel
+import mcpython.common.state.ConfigBackgroundPart
+import mcpython.common.state.ui.UIPartLabel
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
@@ -54,15 +54,15 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
     def get_parts(self) -> list:
         return [
-            mcpython.client.state.ConfigBackgroundPart.ConfigBackground(),
-            mcpython.client.state.ui.UIPartLabel.UIPartLabel(
+            mcpython.common.state.ConfigBackgroundPart.ConfigBackground(),
+            mcpython.common.state.ui.UIPartLabel.UIPartLabel(
                 "0%",
                 (0, 50),
                 anchor_lable="MM",
                 anchor_window="MD",
                 color=(255, 255, 255, 255),
             ),
-            mcpython.client.state.ui.UIPartLabel.UIPartLabel(
+            mcpython.common.state.ui.UIPartLabel.UIPartLabel(
                 "(0/0/0)",
                 (0, 30),
                 anchor_lable="MM",

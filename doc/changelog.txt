@@ -52,7 +52,9 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w39a>, released on <29.09.2021> targetting <1.17>
+changelog of snapshot <21w39a>, released on <29.09.2021> targeting <1.17>
+    Resource system:
+        - optimised how mc source assets are linked at setup time
 
 
 changelog of snapshot 21w37a, released on 15.09.2021 targeting 1.17

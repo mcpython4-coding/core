@@ -181,7 +181,7 @@ class LaunchWrapper:
         if shared.IS_CLIENT:
             self.setup_opengl()
 
-        import mcpython.client.state.StateHandler
+        import mcpython.common.state.StateHandler
 
         self.setup_registries()
 
@@ -224,11 +224,11 @@ class LaunchWrapper:
         import mcpython.server.worldgen.biome.BiomeManager
         import mcpython.server.worldgen.layer
         import mcpython.server.worldgen.feature
+        import mcpython.client.gui.ContainerRenderingManager
+        import mcpython.common.state.StateHandler
 
         if not shared.IS_CLIENT:
-            import mcpython.client.state.StateHandler
-
-            mcpython.client.state.StateHandler.load_states()
+            mcpython.common.state.StateHandler.load_states()
 
             import mcpython.common.event.TickHandler
 
@@ -351,9 +351,9 @@ class LaunchWrapper:
             sys.exit(-1)
         except:
             logger.print_exception("ERROR DURING RUNTIME (UNHANDLED)")
-            import mcpython.client.state.LoadingExceptionViewState
+            import mcpython.common.state.LoadingExceptionViewState
 
-            mcpython.client.state.LoadingExceptionViewState.error_occur(
+            mcpython.common.state.LoadingExceptionViewState.error_occur(
                 traceback.format_exc()
             )
             return self

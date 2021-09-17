@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import sys
 
-import psutil
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
@@ -54,7 +53,7 @@ class LoadingExceptionView(AbstractState.AbstractState):
             y += 12
 
     def get_parts(self) -> list:
-        from mcpython.client.state.ModLoadingProgressState import mod_loading
+        from mcpython.common.state.ModLoadingProgressState import mod_loading
 
         return [
             mod_loading.stage_bar,

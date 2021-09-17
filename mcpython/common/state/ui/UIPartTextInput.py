@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import time
 
 import clipboard
-import mcpython.client.state.AbstractStatePart
+import mcpython.common.state.AbstractStatePart
 import mcpython.common.data.Language
 import mcpython.util.opengl
 import pyglet
@@ -127,7 +127,7 @@ class UIPartTextInput(AbstractUIPart.AbstractUIPart):
 
 
 @onlyInClient()
-class TextInputTabHandler(mcpython.client.state.AbstractStatePart.AbstractStatePart):
+class TextInputTabHandler(mcpython.common.state.AbstractStatePart.AbstractStatePart):
     def __init__(self, textinputs: list):
         super().__init__()
         self.textinputs = textinputs
