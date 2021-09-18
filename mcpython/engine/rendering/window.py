@@ -492,19 +492,22 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 x,
                 y,
                 z,
-                0,
-                0,
+                x // 16 // 32,
+                z // 16 // 32,
                 shared.world.get_active_player().gamemode,
             )
         )
+
         vector = shared.window.get_sight_vector()
         blockpos, previous, hitpos = shared.world.hit_test(
             shared.world.get_active_player().position, vector
         )
+
         if blockpos:
             blockname = shared.world.get_active_dimension().get_block(blockpos)
             if type(blockname) != str:
                 blockname = blockname.NAME
+
             self.label2.text = "looking at '{}(position={})'".format(
                 blockname,
                 blockpos
@@ -515,12 +518,14 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             self.label3.y = self.height - 34
         else:
             self.label3.y = self.height - 22
+
         if chunk:
             biomemap = chunk.get_map("minecraft:biome_map")
             biome = biomemap.get_at_xz(nx, nz)
             if biome is not None:
                 self.label.text += ", biome: " + str(biome)
         self.label.draw()
+
         process = psutil.Process()
         mem_info = process.memory_info()
         used_m = mem_info.rss
