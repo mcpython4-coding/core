@@ -9,6 +9,8 @@ class AbstractStateRenderer(ABC):
     Base class for state renderers
     """
 
+    ASSIGNED_DRAW_STAGE = "render:draw:2d"
+
     def __init__(self):
         self.batch: typing.Optional[pyglet.graphics.Batch] = None
         self.assigned_state = None
@@ -24,4 +26,7 @@ class AbstractStateRenderer(ABC):
 
     def draw(self):
         self.batch.draw()
+
+    def resize(self, width: int, height: int):
+        pass
 

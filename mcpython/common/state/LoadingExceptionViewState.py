@@ -52,7 +52,7 @@ class LoadingExceptionView(AbstractState.AbstractState):
             )
             y += 12
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         from mcpython.common.state.ModLoadingProgressState import mod_loading
 
         return [

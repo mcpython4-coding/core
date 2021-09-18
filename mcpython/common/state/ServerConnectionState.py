@@ -28,7 +28,7 @@ class ConnectingToServerState(AbstractState):
 
         super().__init__()
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         self.config_background = ConfigBackground()
         self.connecting_label = UIPartLabel(
             "Connecting to server...",

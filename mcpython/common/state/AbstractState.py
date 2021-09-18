@@ -16,10 +16,8 @@ from abc import ABC
 
 from mcpython import shared
 from mcpython.common.event.api import IRegistryContent
-from mcpython.util.annotation import onlyInClient
 
 
-@onlyInClient()
 class AbstractState(IRegistryContent, ABC):
     """
     Base class for all states
@@ -29,7 +27,7 @@ class AbstractState(IRegistryContent, ABC):
     bind_to_eventbus() is a helper function for registering functions to the internal event bus
     (It should be used as it is automatically bind when the state is active)
 
-    get_parts() is the initializer for the "parts" attribute and can be used to return a list of StatePart's,
+    create_state_parts() is the initializer for the "parts" attribute and can be used to return a list of StatePart's,
     bound also when needed
     """
 
@@ -53,11 +51,12 @@ class AbstractState(IRegistryContent, ABC):
             active=False, crash_on_error=False
         )
 
-        self.parts = self.get_parts()
+        self.parts = self.create_state_parts()
 
         for state_part in self.parts:
             # StateParts get an list of steps to get to them as an list
             state_part.master = [self]
+            state_part.eventbus = self.eventbus
 
         self.bind_to_eventbus()
 
@@ -73,7 +72,9 @@ class AbstractState(IRegistryContent, ABC):
             self.state_renderer = self.create_state_renderer()
 
             if self.state_renderer is not None:
-                self.eventbus.subscribe("render:draw:2d", self.state_renderer.draw)
+                self.eventbus.subscribe(self.state_renderer.ASSIGNED_DRAW_STAGE, self.state_renderer.draw)
+                self.eventbus.subscribe("user:window:resize", self.state_renderer.resize)
+
                 self.state_renderer.assigned_state = self
                 self.state_renderer.batch = self.underlying_batch
 
@@ -89,13 +90,37 @@ class AbstractState(IRegistryContent, ABC):
         shared.state_handler.add_state(self)
 
     def create_state_renderer(self) -> typing.Any:
-        pass
+        """
+        Optional creates a AbstractStateRenderer instance for this state
+        Only invoked on client side
+        May return None when no state renderer is needed (e.g. when all is handled somewhere in the parts)
+        """
+
+    def create_state_parts(self) -> typing.List:
+        """
+        Creates the parts of the state (instances of AbstractStatePart)
+        When not overwritten, defaults to no state parts
+        Invoked somewhere during state construction; Not further defined by API
+        WARNING: this might get invoked DURING the constructor of THIS class,
+            so invoking super().__init__() will result into this being invoked. When writing to the same variables
+            as below the line in the constructor, this will reset the values!
+        """
+        return []
+
+    def bind_to_eventbus(self):
+        """
+        Helper method for binding to the internal EventBus
+        Invoked somewhere during state construction; Not further defined by API
+        """
 
     def activate(self):
         self.eventbus.activate()
 
         for part in self.parts:
             part.activate()
+
+            if shared.IS_CLIENT:
+                part.init_rendering()
 
         if self.state_renderer is not None:
             self.state_renderer.on_activate()
@@ -109,8 +134,3 @@ class AbstractState(IRegistryContent, ABC):
         if self.state_renderer is not None:
             self.state_renderer.on_deativate()
 
-    def bind_to_eventbus(self):
-        pass
-
-    def get_parts(self) -> list:
-        return []

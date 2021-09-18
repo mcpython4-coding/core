@@ -52,7 +52,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         shared.world.setup_by_filename(name)
         shared.state_handler.change_state("minecraft:world_loading")
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         return [
             mcpython.common.state.ConfigBackgroundPart.ConfigBackground(),
             mcpython.common.state.ui.UIPartLabel.UIPartLabel(

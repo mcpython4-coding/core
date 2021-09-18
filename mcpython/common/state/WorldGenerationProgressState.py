@@ -79,7 +79,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             }
         )
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         return [
             mcpython.common.state.ConfigBackgroundPart.ConfigBackground(),
             mcpython.common.state.ui.UIPartLabel.UIPartLabel(

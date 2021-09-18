@@ -61,11 +61,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         self.draw_calls_since_last_take = 0
 
-    def get_parts(self) -> list:
-        kwargs = {}
-        if shared.invalidate_cache:
-            kwargs["glcolor3d"] = (1.0, 1.0, 1.0)
-
+    def create_state_parts(self) -> list:
         if not shared.IS_CLIENT:
             return []
 

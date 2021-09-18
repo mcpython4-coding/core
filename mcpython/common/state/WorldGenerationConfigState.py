@@ -36,7 +36,7 @@ class WorldGenerationConfig(AbstractState.AbstractState):
     def __init__(self):
         AbstractState.AbstractState.__init__(self)
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         parts = [
             UIPartButton.UIPartButton(
                 (300, 20),

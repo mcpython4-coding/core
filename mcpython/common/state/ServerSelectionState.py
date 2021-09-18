@@ -33,7 +33,7 @@ class ServerSelectionState(AbstractState):
 
         super().__init__()
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         self.config_background = ConfigBackground()
         self.back_button = UIPartButton(
             (300, 20),

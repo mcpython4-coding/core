@@ -14,34 +14,44 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-from mcpython.util.annotation import onlyInClient
+from mcpython import shared
 
 
-@onlyInClient()
 class AbstractStatePart(ABC):
-    NAME = None
+    NAME: typing.Optional[str] = None
 
     def __init__(self):
-        self.part_dict = {}
-        self.parts = self.get_sub_parts()
+        self.part_dict: typing.Dict[str, "AbstractStatePart"] = {}
+        self.parts: typing.List["AbstractStatePart"] = self.get_sub_parts()
         self.master = None
         self.underlying_batch = None
         self.state_renderer = None
         self.eventbus = None
 
+        self.state_renderer_init = False
+
     def init_rendering(self):
-        self.underlying_batch = self.master[-1].underlying_batch
+        if self.state_renderer_init: return
+        self.state_renderer_init = True
+
+        if not shared.IS_CLIENT: return
+
+        import pyglet
+        self.underlying_batch = pyglet.graphics.Batch()
+
         self.eventbus = self.master[-1].eventbus
 
-        self.state_renderer = self.create_renderer()
+        self.state_renderer = self.create_state_renderer()
 
         if self.state_renderer is not None:
             self.state_renderer.assigned_state = self
+            self.state_renderer.batch = self.underlying_batch
             self.state_renderer.init()
 
-            self.eventbus.subscribe("render:draw:2d", self.state_renderer.draw)
+            self.eventbus.subscribe(self.state_renderer.ASSIGNED_DRAW_STAGE, self.state_renderer.draw)
+            self.eventbus.subscribe("user:window:resize", self.state_renderer.resize)
 
-    def create_renderer(self) -> typing.Any:
+    def create_state_renderer(self) -> typing.Any:
         pass
 
     def activate(self):
@@ -58,7 +68,7 @@ class AbstractStatePart(ABC):
         if self.state_renderer is not None:
             self.state_renderer.on_deactivate()
 
-    def get_sub_parts(self) -> list:
+    def get_sub_parts(self) -> typing.List["AbstractStatePart"]:
         return []
 
     def bind_to_eventbus(self):

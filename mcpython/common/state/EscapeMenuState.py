@@ -34,7 +34,7 @@ class EscapeMenu(AbstractState.AbstractState):
     def __init__(self):
         AbstractState.AbstractState.__init__(self)
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         return [
             GameViewStatePart.GameView(
                 activate_keyboard=False,

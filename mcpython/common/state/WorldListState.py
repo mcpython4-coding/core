@@ -60,16 +60,6 @@ class WorldList(AbstractState.AbstractState):
         )  # the data representing the world list; first goes first in list from above
         self.selected_world = None
         self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
-        del self.eventbus
-        self.eventbus = shared.event_handler.create_bus(
-            active=False, crash_on_error=False
-        )
-        for statepart in self.parts:
-            statepart.master = [
-                self
-            ]  # StateParts get an list of steps to get to them as an list
-            statepart.bind_to_eventbus()  # Ok, you can now assign to these event bus
-        self.bind_to_eventbus()
         self.scissor_group = mcpython.engine.rendering.RenderingGroups.ScissorGroup(
             0, 0, 10, 10
         )
@@ -86,7 +76,7 @@ class WorldList(AbstractState.AbstractState):
         self.recalculate_sprite_position()
         self.scissor_group.area = (45, 100, wx - 90, wy - 160)
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         if not shared.IS_CLIENT:
             return []
 
@@ -230,6 +220,7 @@ class WorldList(AbstractState.AbstractState):
 
     def activate(self):
         super().activate()
+
         self.reload_world_icons()
         self.parts[-1].set_status(1)
 

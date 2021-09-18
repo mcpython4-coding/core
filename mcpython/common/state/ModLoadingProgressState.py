@@ -33,7 +33,7 @@ class ModLoadingProgress(AbstractState.AbstractState):
 
         super().__init__()
 
-    def get_parts(self) -> list:
+    def create_state_parts(self) -> list:
         self.stage_bar = UIPartProgressBar.UIPartProgressBar(
             (20, 10), (20, 20), status=1, color=(1.0, 0.0, 0.0)
         )
