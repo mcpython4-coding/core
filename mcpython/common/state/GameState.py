@@ -37,7 +37,7 @@ class Game(AbstractState.AbstractState):
 
     def create_state_parts(self) -> list:
         return [
-            GameViewStatePart.GameView(),
+            GameViewStatePart.GameView(clear_color=(0.5, 0.69, 1.0, 1)),
             mcpython.client.gui.ContainerRenderingManager.inventory_part,
         ]
 
@@ -68,7 +68,6 @@ class Game(AbstractState.AbstractState):
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
 
     def on_key_press(self, symbol, modifiers):
         if shared.state_handler.global_key_bind_toggle:
@@ -110,10 +109,6 @@ class Game(AbstractState.AbstractState):
     def open_chat(enter=""):
         shared.inventory_handler.show(shared.world.get_active_player().inventory_chat)
         shared.chat.text = enter
-
-    @staticmethod
-    def on_draw_2d_pre():
-        pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
 
 game = None

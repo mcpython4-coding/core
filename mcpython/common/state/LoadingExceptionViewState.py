@@ -114,6 +114,7 @@ loading_exception = LoadingExceptionView()
 
 def error_occur(text: str):
     if not shared.IS_CLIENT:
+        print("INTERNAL ERROR OCCURRED - SCHEDULED FOR DISPLAY TO USER")
         print(text)
         sys.exit(-1)
 

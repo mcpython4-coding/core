@@ -169,17 +169,12 @@ class WorldGenerationConfig(AbstractState.AbstractState):
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             self.on_back_press(0, 0)
         elif symbol == key.ENTER:
             self.on_generate_press(0, 0)
-
-    @staticmethod
-    def on_draw_2d_pre():
-        pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
 
     def activate(self):
         super().activate()

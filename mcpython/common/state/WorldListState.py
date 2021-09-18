@@ -15,6 +15,7 @@ import datetime
 import json
 import os
 import shutil
+import typing
 
 import mcpython.common.state.ConfigBackgroundPart
 import mcpython.common.state.WorldGenerationProgressState
@@ -64,10 +65,13 @@ class WorldList(AbstractState.AbstractState):
             0, 0, 10, 10
         )
 
+    def create_state_renderer(self) -> typing.Any:
+        from mcpython.client.state.WorldListRenderer import WorldListRenderer
+        return WorldListRenderer()
+
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe("render:draw:2d:overlay", self.on_draw_2d_post)
         self.eventbus.subscribe("user:window:resize", self.on_resize)
         self.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
 
@@ -190,33 +194,6 @@ class WorldList(AbstractState.AbstractState):
         ):
             self.selected_world += 1
             self.parts[-1].move(-60)
-
-    def on_draw_2d_post(self):
-        wx, wy = shared.window.get_size()
-        pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
-        x, y = shared.window.mouse_position
-        self.scissor_group.set_state()
-        for i, (_, icon, labels, _) in enumerate(self.world_data):
-            icon.draw()
-            for label in labels:
-                label.draw()
-            if i == self.selected_world:
-                x, y = icon.position
-                mcpython.util.opengl.draw_line_rectangle(
-                    (x - 2, y - 2), (wx - 130, 54), (1, 1, 1)
-                )
-            px, py = icon.position
-            if 0 <= x - px <= wx and 0 <= y - py <= 50:
-                if 0 <= x - px <= 50:
-                    self.selection_sprite.position = (
-                        icon.position[0] + 25 - 16,
-                        icon.position[1] + 25 - 16,
-                    )
-                    self.selection_sprite.draw()
-        self.scissor_group.unset_state()
-        mcpython.util.opengl.draw_line_rectangle(
-            (45, 100), (wx - 90, wy - 160), (1, 1, 1)
-        )
 
     def activate(self):
         super().activate()

@@ -41,6 +41,7 @@ class EscapeMenu(AbstractState.AbstractState):
                 activate_mouse=False,
                 activate_focused_block=False,
                 gl_color_3d=(0.8, 0.8, 0.8),
+                clear_color=(0.5, 0.69, 1.0, 1),
             ),
             UIPartLabel.UIPartLabel(
                 "#*menu.game*#",
@@ -80,7 +81,6 @@ class EscapeMenu(AbstractState.AbstractState):
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
 
     @staticmethod
     def start_menu_press(x, y):
@@ -106,10 +106,6 @@ class EscapeMenu(AbstractState.AbstractState):
     def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
             shared.state_handler.change_state("minecraft:game", immediate=False)
-
-    @staticmethod
-    def on_draw_2d_pre():
-        pyglet.gl.glClearColor(0.5, 0.69, 1.0, 1)
 
     def activate(self):
         super().activate()

@@ -259,12 +259,11 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 dimension=shared.world.get_active_dimension()
             ),
         )
-        shared.state_handler.change_state("minecraft:game_info", immediate=False)
+        shared.state_handler.change_state("minecraft:game", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe("render:draw:2d", self.on_draw_2d_post)
         self.eventbus.subscribe("tickhandler:general", self.on_update)
 
     def on_key_press(self, symbol, modifiers):
@@ -277,28 +276,9 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         k = list(self.status_table.values())
         return k.count(-1) / len(k)
 
-    def on_draw_2d_post(self):
-        wx, wy = shared.window.get_size()
-        mx, my = wx // 2, wy // 2
-        self.parts[1].text = "{}%".format(
-            round(self.calculate_percentage_of_progress() * 1000) / 10
-        )
-        self.parts[2].text = "{}/{}/{}".format(
-            *shared.world_generation_handler.task_handler.get_total_task_stats()
-        )
-
-        for cx, cz in self.status_table:
-            status = self.status_table[(cx, cz)]
-            if 0 <= status <= 1:
-                factor = status * 255
-                color = (factor, factor, factor)
-            elif status == -1:
-                color = (0, 255, 0)
-            else:
-                color = (136, 0, 255)
-            mcpython.util.opengl.draw_rectangle(
-                (mx + cx * 10, my + cz * 10), (10, 10), color
-            )
+    def create_state_renderer(self) -> typing.Any:
+        from mcpython.client.state.WorldGenProgressRenderer import WorldGenProgressRenderer
+        return WorldGenProgressRenderer()
 
 
 world_generation = None

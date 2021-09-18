@@ -127,6 +127,11 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
     activate_mouse = property(get_mouse_active, set_mouse_active)
 
+    def create_state_renderer(self) -> typing.Any:
+        from mcpython.client.state.GameViewRenderer import GameViewRenderer
+
+        return GameViewRenderer()
+
     def bind_to_eventbus(self):
         state = self.master[0]
         state.eventbus.subscribe("tickhandler:general", self.on_update)
@@ -148,8 +153,6 @@ class GameView(AbstractStatePart.AbstractStatePart):
             state.eventbus.subscribe("user:keyboard:press", self.on_key_press)
             state.eventbus.subscribe("user:keyboard:release", self.on_key_release)
             state.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
-            state.eventbus.subscribe("render:draw:3d", self.on_draw_3d)
-            state.eventbus.subscribe("render:draw:2d", self.on_draw_2d)
 
     def on_update(self, dt: float):
         if shared.IS_CLIENT:
@@ -609,22 +612,3 @@ class GameView(AbstractStatePart.AbstractStatePart):
             if shared.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_break_time()
 
-    def on_draw_3d(self):
-        pyglet.gl.glClearColor(*self.clear_color)
-        pyglet.gl.glColor3d(*self.color_3d)
-
-        if self.activate_3d_draw:
-            shared.world.get_active_dimension().draw()
-            if (
-                self.activate_focused_block_draw
-                and shared.world.get_active_player().gamemode != 3
-            ):
-                # todo: move this method to player
-                shared.window.draw_focused_block()
-
-    def on_draw_2d(self):
-        if self.active_label:
-            shared.window.draw_label()
-
-        if self.activate_crosshair:
-            shared.window.draw_reticle()

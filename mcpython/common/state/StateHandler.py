@@ -110,7 +110,6 @@ def load_states():
     from . import (
         BlockItemGeneratorState,
         EscapeMenuState,
-        GameInfoState,
         GameState,
         ModLoadingProgressState,
         ServerConnectionState,

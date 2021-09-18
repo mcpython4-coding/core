@@ -132,5 +132,5 @@ class AbstractState(IRegistryContent, ABC):
             part.deactivate()
 
         if self.state_renderer is not None:
-            self.state_renderer.on_deativate()
+            self.state_renderer.on_deactivate()
 
