@@ -18,6 +18,7 @@ import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.event.EventHandler
 import mcpython.util.enums
 from mcpython import shared
+from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 
 
 class FaceInfo:
@@ -80,7 +81,7 @@ class FaceInfo:
             ):
                 if not self.subscribed_renderer:
                     mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-                        "render:draw:3d", self._draw_custom_render
+                        NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
                     )
                     self.subscribed_renderer = True
 
@@ -126,7 +127,7 @@ class FaceInfo:
             ):
                 if self.subscribed_renderer and not any(self.faces.values()):
                     mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                        "render:draw:3d", self._draw_custom_render
+                        NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
                     )
                     self.subscribed_renderer = False
         else:
@@ -146,7 +147,7 @@ class FaceInfo:
         """
         if not self.subscribed_renderer:
             mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                "render:draw:3d", self._draw_custom_render
+                NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
             )
             return
         self.custom_renderer.draw(self.block.position, self.block)
@@ -191,7 +192,7 @@ class FaceInfo:
             and self.subscribed_renderer
         ):
             mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                "render:draw:3d", self._draw_custom_render
+                NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
             )
             self.subscribed_renderer = False
 

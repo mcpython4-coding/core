@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.data.Language
 import mcpython.engine.event.EventInfo
 import pyglet
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
 
@@ -63,7 +64,9 @@ class UIPartLabel(AbstractUIPart.AbstractUIPart):
 
     def bind_to_eventbus(self):
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
-        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
+        self.master[0].eventbus.subscribe(
+            MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d
+        )
 
     def get_real_position(self):
         self.bounding_box_size = self.lable.content_width, self.lable.content_width

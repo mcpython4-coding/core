@@ -15,6 +15,7 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 import pyglet
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
 
@@ -59,7 +60,9 @@ class UIScrollBar(AbstractUIPart):
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.master[0].eventbus.subscribe("user:mouse:release", self.on_mouse_release)
         self.master[0].eventbus.subscribe("user:mouse:drag", self.on_mouse_drag)
-        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw)
+        self.master[0].eventbus.subscribe(
+            MIDDLE_GROUND.getRenderingEvent(), self.on_draw
+        )
 
     def on_mouse_press(self, x, y, button, mod):
         if not self.active:

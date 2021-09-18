@@ -25,6 +25,7 @@ from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
+from ...engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from . import AbstractState
 
 
@@ -135,7 +136,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe("render:draw:2d", self.on_draw_2d_post)
+        self.eventbus.subscribe(MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d_post)
         self.eventbus.subscribe("tickhandler:general", self.on_update)
 
     def on_key_press(self, symbol, modifiers):

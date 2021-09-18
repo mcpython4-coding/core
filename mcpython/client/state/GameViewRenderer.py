@@ -13,15 +13,19 @@ This project is not official by mojang and does not relate to it.
 """
 import pyglet
 from mcpython import shared
+from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 
+from ...engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 from .AbstractStateRenderer import AbstractStateRenderer
 
 
 class GameViewRenderer(AbstractStateRenderer):
-    ASSIGNED_DRAW_STAGE = "render:draw:2d:background"
+    ASSIGNED_DRAW_STAGE = INTER_BACKGROUND.getRenderingEvent()
 
     def init(self):
-        self.assigned_state.eventbus.subscribe("render:draw:3d", self.draw_3d)
+        self.assigned_state.eventbus.subscribe(
+            NORMAL_WORLD.getRenderingEvent(), self.draw_3d
+        )
 
     def draw(self):
         if self.assigned_state.active_label:

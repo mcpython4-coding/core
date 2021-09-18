@@ -15,6 +15,7 @@ import typing
 from abc import ABC
 
 import pyglet
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 
 
 class AbstractStateRenderer(ABC):
@@ -22,7 +23,7 @@ class AbstractStateRenderer(ABC):
     Base class for state renderers
     """
 
-    ASSIGNED_DRAW_STAGE = "render:draw:2d"
+    ASSIGNED_DRAW_STAGE = MIDDLE_GROUND.getRenderingEvent()
 
     def __init__(self):
         self.batch: typing.Optional[pyglet.graphics.Batch] = None

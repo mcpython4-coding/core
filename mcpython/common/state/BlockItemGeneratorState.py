@@ -32,6 +32,7 @@ from mcpython.engine import logger
 from mcpython.engine.ResourceLoader import read_image
 from mcpython.util.annotation import onlyInClient
 
+from ...engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 from . import AbstractState, GameViewStatePart
 from .ui import UIPartProgressBar
 from .util import update_memory_usage_bar
@@ -102,7 +103,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
     def bind_to_eventbus(self):
         # Helper code for event bus annotations
         self.eventbus.subscribe("user:window:resize", self.on_resize)
-        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
+        self.eventbus.subscribe(
+            INTER_BACKGROUND.getRenderingEvent(), self.on_draw_2d_pre
+        )
 
     def on_resize(self, w, h):
         # Update positions of the items

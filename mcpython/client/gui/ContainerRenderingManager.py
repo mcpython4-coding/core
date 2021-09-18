@@ -20,6 +20,7 @@ import mcpython.client.gui.Slot
 import mcpython.common.state.AbstractStatePart
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from pyglet.window import key, mouse
 
 
@@ -45,7 +46,9 @@ class OpenedInventoryStatePart(
 
     def bind_to_eventbus(self):
         self.master[0].eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
+        self.master[0].eventbus.subscribe(
+            MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d
+        )
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.master[0].eventbus.subscribe("user:mouse:release", self.on_mouse_release)
         self.master[0].eventbus.subscribe("user:mouse:drag", self.on_mouse_drag)

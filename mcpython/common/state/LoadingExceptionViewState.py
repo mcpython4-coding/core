@@ -18,6 +18,7 @@ from mcpython import shared
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
+from ...engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 from . import AbstractState
 from .ui import UIPartButton
 from .util import update_memory_usage_bar
@@ -80,7 +81,9 @@ class LoadingExceptionView(AbstractState.AbstractState):
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
-        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
+        self.eventbus.subscribe(
+            INTER_BACKGROUND.getRenderingEvent(), self.on_draw_2d_pre
+        )
         self.eventbus.subscribe("tickhandler:general", self.on_update)
 
     def on_resize(self, w, h):

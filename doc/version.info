@@ -1798,4 +1798,6 @@ G*I [uuk]: changed how mc assets are stored; directly loaded from the .zip file 
 RA  [uuk]: moved state system from client-package to common-package preparing for rendering separation
 AI  [uuk]: split of state system from state rendering; States define now a StateRenderer rendering stuff for them
 A-  [uuk]: removed game info state
+A-  [uuk]: removed event render:draw:pre_clear and render:draw:pre_setup
+A** [uuk]: removed the old rendering events & replaced with dynamic rendering layer system
 

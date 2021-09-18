@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.util.opengl
 import pyglet
 import pyglet.gl
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from mcpython.util.annotation import onlyInClient
 
 from . import AbstractUIPart
@@ -61,7 +62,9 @@ class UIPartProgressBar(AbstractUIPart.AbstractUIPart):
         self.active = False
 
     def bind_to_eventbus(self):
-        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
+        self.master[0].eventbus.subscribe(
+            MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d
+        )
 
     def on_draw_2d(self):
         x, y = self.get_real_position()

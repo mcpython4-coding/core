@@ -19,6 +19,7 @@ import mcpython.common.event.TickHandler
 import mcpython.common.state.GameViewStatePart
 import mcpython.common.state.StateHandler
 import mcpython.engine.event.EventHandler
+import mcpython.engine.rendering.RenderingLayerManager
 import mcpython.engine.rendering.util
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
@@ -445,24 +446,12 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         ):
             self.draw_profiler.enable()
 
-        shared.event_handler.call("render:draw:pre_clear")
         self.clear()  # clear the screen
-        shared.event_handler.call("render:draw:pre_setup")
-        self.set_2d()
-        shared.event_handler.call("render:draw:2d:background_pre")
-        self.set_3d()  # setup for 3d drawing
-        shared.event_handler.call("render:draw:3d")  # call general 3d rendering event
-        self.set_2d()  # setup for 2d rendering
-        shared.event_handler.call("render:draw:2d:background")  # call pre 2d
-        shared.event_handler.call("render:draw:2d")  # call normal 2d
-        shared.event_handler.call("render:draw:2d:overlay")  # call overlay 2d
-        if (
-            mcpython.common.config.ENABLE_PROFILER_DRAW
-            and mcpython.common.config.ENABLE_PROFILING
-        ):
-            self.draw_profiler.disable()
+        glClearColor(1, 1, 1, 1)
+
+        mcpython.engine.rendering.RenderingLayerManager.manager.draw()
+
         shared.rendering_helper.apply(state)
-        shared.event_handler.call("render:draw:post:cleanup")
         shared.rendering_helper.deleteSavedStates()
 
     def draw_focused_block(self):

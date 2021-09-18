@@ -56,6 +56,14 @@ changelog of snapshot <21w39a>, released on <29.09.2021> targeting <1.17>
     Resource system:
         - optimised how mc source assets are linked at setup time
 
+    Rendering:
+        - broke backwards compatibility COMPLETELY
+        - the old rendering events are GONE, handled now by a new rendering layer system
+        - removed the out-of-bounds events (realy early & after cleanup rendering)
+
+    States:
+        - states can now optionally define a state renderer which is only init-ed on clients
+
 
 changelog of snapshot 21w37a, released on 15.09.2021 targeting 1.17
     Python:

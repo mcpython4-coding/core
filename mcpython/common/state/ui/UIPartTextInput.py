@@ -19,6 +19,7 @@ import mcpython.common.state.AbstractStatePart
 import mcpython.util.opengl
 import pyglet
 import pyglet.window.key
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from mcpython.util.annotation import onlyInClient
 
 from . import AbstractUIPart
@@ -78,7 +79,9 @@ class UIPartTextInput(AbstractUIPart.AbstractUIPart):
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
-        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
+        self.master[0].eventbus.subscribe(
+            MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d
+        )
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.master[0].eventbus.subscribe("user:keyboard:press", self.on_key_press)
         self.master[0].eventbus.subscribe("user:keyboard:enter", self.on_text)

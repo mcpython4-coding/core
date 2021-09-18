@@ -17,11 +17,12 @@ import PIL.Image
 import pyglet
 from mcpython import shared
 
+from ...engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 from .AbstractStateRenderer import AbstractStateRenderer
 
 
 class ConfigBackgroundRenderer(AbstractStateRenderer):
-    ASSIGNED_DRAW_STAGE = "render:draw:2d:background"
+    ASSIGNED_DRAW_STAGE = INTER_BACKGROUND.getRenderingEvent()
 
     def __init__(self):
         super().__init__()

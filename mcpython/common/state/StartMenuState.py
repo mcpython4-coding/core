@@ -27,7 +27,6 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
         super().__init__()
 
     def bind_to_eventbus(self):
-        self.eventbus.subscribe("render:draw:2d:background", self.on_draw_2d_pre)
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
     def activate(self):
@@ -41,10 +40,6 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
     @staticmethod
     def on_quit_game_press(x, y):
         shared.window.close()
-
-    @staticmethod
-    def on_draw_2d_pre():
-        pyglet.gl.glClearColor(1.0, 1.0, 1.0, 1.0)
 
     @staticmethod
     def on_key_press(key, modifier):

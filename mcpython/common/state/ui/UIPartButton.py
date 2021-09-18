@@ -17,6 +17,7 @@ import mcpython.engine.event.EventInfo
 import mcpython.engine.ResourceLoader
 import mcpython.util.opengl
 import pyglet
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.enums import ButtonMode
 from pyglet.window import mouse
@@ -141,7 +142,9 @@ class UIPartButton(AbstractUIPart.AbstractUIPart):
     def bind_to_eventbus(self):
         self.master[0].eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.master[0].eventbus.subscribe("user:mouse:motion", self.on_mouse_motion)
-        self.master[0].eventbus.subscribe("render:draw:2d", self.on_draw_2d)
+        self.master[0].eventbus.subscribe(
+            MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d
+        )
 
     def deactivate(self):
         super().deactivate()
@@ -256,7 +259,7 @@ class UIPartToggleButton(UIPartButton):
         self.event_functions = [
             ("user:mouse:press", self.on_mouse_press),
             ("user:mouse:motion", self.on_mouse_motion),
-            ("render:draw:2d", self.on_draw_2d),
+            (MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d),
         ]
 
         self.enabled = enable
