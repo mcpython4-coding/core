@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 import time
 
 import clipboard
-import mcpython.common.state.AbstractStatePart
 import mcpython.common.data.Language
+import mcpython.common.state.AbstractStatePart
 import mcpython.util.opengl
 import pyglet
 import pyglet.window.key

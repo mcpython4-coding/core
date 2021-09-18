@@ -14,10 +14,10 @@ This project is not official by mojang and does not relate to it.
 import random
 import typing
 
-import mcpython.common.state.GameViewStatePart
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
+import mcpython.common.state.GameViewStatePart
 import mcpython.common.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension

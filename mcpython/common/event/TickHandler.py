@@ -13,9 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import random
 
-import mcpython.common.state.GameViewStatePart
 import mcpython.common.config
 import mcpython.common.data.DataPacks
+import mcpython.common.state.GameViewStatePart
 import mcpython.util.math
 import pyglet
 from mcpython import shared

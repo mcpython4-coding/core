@@ -72,8 +72,12 @@ class AbstractState(IRegistryContent, ABC):
             self.state_renderer = self.create_state_renderer()
 
             if self.state_renderer is not None:
-                self.eventbus.subscribe(self.state_renderer.ASSIGNED_DRAW_STAGE, self.state_renderer.draw)
-                self.eventbus.subscribe("user:window:resize", self.state_renderer.resize)
+                self.eventbus.subscribe(
+                    self.state_renderer.ASSIGNED_DRAW_STAGE, self.state_renderer.draw
+                )
+                self.eventbus.subscribe(
+                    "user:window:resize", self.state_renderer.resize
+                )
 
                 self.state_renderer.assigned_state = self
                 self.state_renderer.batch = self.underlying_batch
@@ -133,4 +137,3 @@ class AbstractState(IRegistryContent, ABC):
 
         if self.state_renderer is not None:
             self.state_renderer.on_deactivate()
-

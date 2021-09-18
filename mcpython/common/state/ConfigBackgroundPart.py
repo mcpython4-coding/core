@@ -21,4 +21,3 @@ class ConfigBackground(AbstractStatePart):
         import mcpython.client.state.ConfigBackgroundRenderer
 
         return mcpython.client.state.ConfigBackgroundRenderer.ConfigBackgroundRenderer()
-

@@ -23,10 +23,10 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.common.config import GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
+from mcpython.engine.physics.collision import collide
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
-from mcpython.engine.physics.collision import collide
 from . import AbstractStatePart
 from .InGameHotKeysManager import ALL_KEY_COMBOS
 
@@ -611,4 +611,3 @@ class GameView(AbstractStatePart.AbstractStatePart):
             )
             if shared.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_break_time()
-

@@ -13,11 +13,11 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 
-import mcpython.common.state.ConfigBackgroundPart
-import mcpython.common.state.ui.UIPartLabel
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
+import mcpython.common.state.ConfigBackgroundPart
+import mcpython.common.state.ui.UIPartLabel
 import mcpython.util.math
 import mcpython.util.opengl
 from mcpython import shared

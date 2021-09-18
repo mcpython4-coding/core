@@ -18,12 +18,12 @@ import shutil
 import sys
 import typing
 
-import mcpython.common.state.ConfigBackgroundPart
-import mcpython.common.state.ui.UIPartLabel
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
 import mcpython.common.mod.ModMcpython
+import mcpython.common.state.ConfigBackgroundPart
+import mcpython.common.state.ui.UIPartLabel
 import mcpython.engine.ResourceLoader
 import mcpython.server.command.CommandParser
 import mcpython.server.worldgen.noise.NoiseManager
@@ -277,7 +277,10 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         return k.count(-1) / len(k)
 
     def create_state_renderer(self) -> typing.Any:
-        from mcpython.client.state.WorldGenProgressRenderer import WorldGenProgressRenderer
+        from mcpython.client.state.WorldGenProgressRenderer import (
+            WorldGenProgressRenderer,
+        )
+
         return WorldGenProgressRenderer()
 
 

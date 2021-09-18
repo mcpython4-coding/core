@@ -25,9 +25,9 @@ import PIL.Image
 import pyglet
 from mcpython import shared
 from mcpython.client.gui.HoveringItemBox import DEFAULT_BLOCK_ITEM_TOOLTIP
-from mcpython.common.state.ModLoadingProgressState import mod_loading
 from mcpython.common.factory.ItemFactory import ItemFactory
 from mcpython.common.mod.ModMcpython import minecraft
+from mcpython.common.state.ModLoadingProgressState import mod_loading
 from mcpython.engine import logger
 from mcpython.engine.ResourceLoader import read_image
 from mcpython.util.annotation import onlyInClient

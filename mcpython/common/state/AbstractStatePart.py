@@ -31,12 +31,15 @@ class AbstractStatePart(ABC):
         self.state_renderer_init = False
 
     def init_rendering(self):
-        if self.state_renderer_init: return
+        if self.state_renderer_init:
+            return
         self.state_renderer_init = True
 
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         import pyglet
+
         self.underlying_batch = pyglet.graphics.Batch()
 
         self.eventbus = self.master[-1].eventbus
@@ -48,7 +51,9 @@ class AbstractStatePart(ABC):
             self.state_renderer.batch = self.underlying_batch
             self.state_renderer.init()
 
-            self.eventbus.subscribe(self.state_renderer.ASSIGNED_DRAW_STAGE, self.state_renderer.draw)
+            self.eventbus.subscribe(
+                self.state_renderer.ASSIGNED_DRAW_STAGE, self.state_renderer.draw
+            )
             self.eventbus.subscribe("user:window:resize", self.state_renderer.resize)
 
     def create_state_renderer(self) -> typing.Any:

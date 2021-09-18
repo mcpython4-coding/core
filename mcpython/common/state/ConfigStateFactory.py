@@ -13,10 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.state.AbstractState
-import mcpython.common.state.AbstractStatePart
 import mcpython.common.event.api
 import mcpython.common.event.Registry
+import mcpython.common.state.AbstractState
+import mcpython.common.state.AbstractStatePart
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 from mcpython import shared

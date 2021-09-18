@@ -13,10 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 import random
 
-import mcpython.common.state.ConfigBackgroundPart
-import mcpython.common.state.WorldGenerationProgressState
 import mcpython.common.data.DataPacks
 import mcpython.common.mod.ModMcpython
+import mcpython.common.state.ConfigBackgroundPart
+import mcpython.common.state.WorldGenerationProgressState
 import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.math
 import pyglet

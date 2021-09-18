@@ -17,11 +17,11 @@ import os
 import shutil
 import typing
 
+import mcpython.common.data.DataPacks
+import mcpython.common.mod.ModMcpython
 import mcpython.common.state.ConfigBackgroundPart
 import mcpython.common.state.WorldGenerationProgressState
 import mcpython.common.state.WorldLoadingProgressState
-import mcpython.common.data.DataPacks
-import mcpython.common.mod.ModMcpython
 import mcpython.common.world.SaveFile
 import mcpython.engine.rendering.RenderingGroups
 import mcpython.engine.ResourceLoader
@@ -67,6 +67,7 @@ class WorldList(AbstractState.AbstractState):
 
     def create_state_renderer(self) -> typing.Any:
         from mcpython.client.state.WorldListRenderer import WorldListRenderer
+
         return WorldListRenderer()
 
     def bind_to_eventbus(self):

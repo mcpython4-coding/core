@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.state.AbstractState
 import mcpython.common.mod.ModMcpython
+import mcpython.common.state.AbstractState
 import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
