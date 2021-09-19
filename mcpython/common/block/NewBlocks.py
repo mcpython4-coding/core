@@ -160,6 +160,70 @@ def stone_like(
         instance.create_fence("_fence")
 
 
+def colored(name: str):
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_banner")
+        .set_solid(False)
+        .set_all_side_solid(False)
+    )
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_bed")
+        .set_solid(False)
+        .set_all_side_solid(False)
+    )
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_candle")
+        .set_default_model_state("candles=4,lit=false")
+        .set_solid(False)
+        .set_all_side_solid(False)
+    )
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_candle_cake")
+        .set_default_model_state("lit=false")
+        .set_solid(False)
+        .set_all_side_solid(False)
+    )
+
+    DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_concrete"))
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory().set_name(f"minecraft:{name}_concrete_powder").set_fall_able()
+    )
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_glazed_terracotta")
+        .set_default_model_state("facing=east")
+    )
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_stained_glass")
+        .set_solid(False)
+        .set_all_side_solid(False)
+    )
+
+    # todo: glass pane
+
+    DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_terracotta"))
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_wall_banner")
+        .set_solid(False)
+        .set_all_side_solid(False)
+    )
+
+    DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_wool"))
+
+
 wood("acacia")
 
 DEFERRED_PIPE.create_later(
@@ -261,73 +325,32 @@ DEFERRED_PIPE.create_later(
 )
 wood("birch")
 stone_like("blackstone", existing_fence=False)
+colored("black")
+colored("blue")
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:blue_ice"))
+DEFERRED_PIPE.create_later(plant("minecraft:blue_orchid"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:bone_block").set_log())
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:bookshelf"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:brewing_stand")
+    .set_default_model_state("has_bottle_0=false,has_bottle_1=false,has_bottle_2=false")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+stone_like("bricks", existing_slab=True, existing_wall=True, existing_stairs=True)
+colored("brown")
+DEFERRED_PIPE.create_later(plant("minecraft:brown_mushroom"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:brown_mushroom_block")
+    .set_default_model_state("up=false,down=false,north=false,east=false,south=false,west=false")
+)
+# todo: bubble column
 
 
 # All blocks, by blockstate
 """
-black_banner
-black_bed
-black_candle
-black_candle_cake
-black_carpet
-black_concrete
-black_concrete_powder
-black_glazed_terracotta
-black_shulker_box
-black_stained_glass
-black_stained_glass_pane
-black_terracotta
-black_wall_banner
-black_wool
-blast_furnace
-blue_banner
-blue_bed
-blue_candle
-blue_candle_cake
-blue_carpet
-blue_concrete
-blue_concrete_powder
-blue_glazed_terracotta
-blue_ice
-blue_orchid
-blue_shulker_box
-blue_stained_glass
-blue_stained_glass_pane
-blue_terracotta
-blue_wall_banner
-blue_wool
-bone_block
-bookshelf
-brain_coral
-brain_coral_block
-brain_coral_fan
-brain_coral_wall_fan
-brewing_stand
-bricks
-brick_slab
-brick_stairs
-brick_wall
-brown_banner
-brown_bed
-brown_candle
-brown_candle_cake
-brown_carpet
-brown_concrete
-brown_concrete_powder
-brown_glazed_terracotta
-brown_mushroom
-brown_mushroom_block
-brown_shulker_box
-brown_stained_glass
-brown_stained_glass_pane
-brown_terracotta
-brown_wall_banner
-brown_wool
-bubble_column
-bubble_coral
-bubble_coral_block
-bubble_coral_fan
-bubble_coral_wall_fan
 budding_amethyst
 cactus
 cake
