@@ -18,7 +18,7 @@ import pyglet
 from mcpython import shared
 from pyglet.window import key, mouse
 
-from ...engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from . import AbstractBlock
 
 

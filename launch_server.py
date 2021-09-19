@@ -42,7 +42,7 @@ if __name__ == "__main__":
     try:
         wrapper.set_server()
         wrapper.full_launch()
-    except SystemExit:
+    except (SystemExit, KeyboardInterrupt):
         raise
     except:
         wrapper.error_clean()

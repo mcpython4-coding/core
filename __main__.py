@@ -22,15 +22,11 @@ wrapper.check_py_version()
 
 
 if __name__ == "__main__":
-    from mcpython.engine import logger
-
     try:
         wrapper.set_client()
         wrapper.full_launch()
 
-    except SystemExit:
-        # this is here to fix some cleanup problems
-        # os._exit(-1)
+    except (SystemExit, KeyboardInterrupt):
         raise
     except:
         wrapper.error_clean()

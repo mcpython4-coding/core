@@ -344,7 +344,9 @@ DEFERRED_PIPE.create_later(plant("minecraft:brown_mushroom"))
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:brown_mushroom_block")
-    .set_default_model_state("up=false,down=false,north=false,east=false,south=false,west=false")
+    .set_default_model_state(
+        "up=false,down=false,north=false,east=false,south=false,west=false"
+    )
 )
 # todo: bubble column
 
