@@ -22,9 +22,7 @@ import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
 from mcpython import shared
-from mcpython.common.network.packages.WorldDataExchangePackage import (
-    PlayerUpdatePackage,
-)
+from mcpython.common.network.packages.PlayerInfoPackages import PlayerUpdatePackage
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 

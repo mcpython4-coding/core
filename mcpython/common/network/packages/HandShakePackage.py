@@ -66,7 +66,9 @@ class Client2ServerHandshake(AbstractPackage):
         shared.NETWORK_MANAGER.client_profiles.setdefault(self.sender_id, {})[
             "player_name"
         ] = self.player_name
-        shared.NETWORK_MANAGER.playername2connectionID[self.player_name] = self.sender_id
+        shared.NETWORK_MANAGER.playername2connectionID[
+            self.player_name
+        ] = self.sender_id
 
         shared.world.add_player(self.player_name)
 

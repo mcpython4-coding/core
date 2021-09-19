@@ -27,7 +27,9 @@ class CommandExecutionEnvironment:
         dimension: IDimension = None,
         this=None,
     ):
-        self.position = position if (position is not None or this is None) else this.position
+        self.position = (
+            position if (position is not None or this is None) else this.position
+        )
         self.dimension = (
             dimension if dimension is not None or this is None else this.get_dimension()
         )

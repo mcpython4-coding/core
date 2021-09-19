@@ -19,9 +19,9 @@ import mcpython.engine.network.AbstractPackage
 import mcpython.engine.network.Backend
 from mcpython import shared
 
+from ...common.world.AbstractInterface import IChunk
 from .. import logger
 from .util import ReadBuffer, WriteBuffer
-from ...common.world.AbstractInterface import IChunk
 
 
 class NetworkManager:
@@ -70,11 +70,20 @@ class NetworkManager:
         if not shared.IS_CLIENT or not shared.IS_NETWORKING:
             raise RuntimeError
 
-        from mcpython.common.network.packages.WorldDataExchangePackage import DataRequestPackage
-        self.send_package(DataRequestPackage().request_chunk(chunk.get_dimension().get_name(), *chunk.get_position()))
+        from mcpython.common.network.packages.WorldDataExchangePackage import (
+            DataRequestPackage,
+        )
+
+        self.send_package(
+            DataRequestPackage().request_chunk(
+                chunk.get_dimension().get_name(), *chunk.get_position()
+            )
+        )
 
     def send_to_player_chat(self, player: typing.Union[str, int], msg: str):
-        from mcpython.common.network.packages.PlayerChatPackage import PlayerMessageShowPackage
+        from mcpython.common.network.packages.PlayerChatPackage import (
+            PlayerMessageShowPackage,
+        )
 
         if isinstance(player, str):
             if player not in self.playername2connectionID:
@@ -431,6 +440,7 @@ def load_packages():
         PackageIDSync,
         PackageReroutingPackage,
         PlayerChatPackage,
+        PlayerInfoPackages,
         RegistrySyncPackage,
         WorldDataExchangePackage,
     )
@@ -462,10 +472,10 @@ def load_packages():
         WorldDataExchangePackage.DataRequestPackage
     )
     shared.NETWORK_MANAGER.register_package_type(
-        WorldDataExchangePackage.PlayerInfoPackage
+        mcpython.common.network.packages.PlayerInfoPackages.PlayerInfoPackage
     )
     shared.NETWORK_MANAGER.register_package_type(
-        WorldDataExchangePackage.PlayerUpdatePackage
+        mcpython.common.network.packages.PlayerInfoPackages.PlayerUpdatePackage
     )
     shared.NETWORK_MANAGER.register_package_type(
         WorldDataExchangePackage.WorldInfoPackage

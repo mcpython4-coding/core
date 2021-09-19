@@ -13,13 +13,13 @@ This project is not official by mojang and does not relate to it.
 """
 import copy
 import typing
+import weakref
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.event.EventHandler
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
-import weakref
 
 
 class FaceInfo:
