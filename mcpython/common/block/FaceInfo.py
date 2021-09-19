@@ -19,6 +19,7 @@ import mcpython.engine.event.EventHandler
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
+import weakref
 
 
 class FaceInfo:
@@ -38,7 +39,7 @@ class FaceInfo:
         """
         Block face state
         """
-        self.block = block
+        self.block = weakref.proxy(block)
         self.faces: typing.Optional[
             mcpython.util.enums.EnumSide, bool
         ] = self.DEFAULT_FACE_STATE.copy()
