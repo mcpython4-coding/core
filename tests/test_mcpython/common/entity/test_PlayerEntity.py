@@ -17,6 +17,11 @@ from mcpython import shared
 
 shared.IS_TEST_ENV = True
 
+import mcpython.common.item.ItemManager
+from mcpython.common.factory.ItemFactory import ItemFactory
+
+shared.IS_TEST_ENV = True
+
 
 class FakeMod:
     class eventbus:
@@ -34,6 +39,9 @@ class FakeModloader:
 
     def __getitem__(self, item):
         return FakeMod
+
+
+ItemFactory().set_name("fake:item").finish()
 
 
 class TestPlayerEntity(TestCase):
@@ -105,3 +113,22 @@ class TestPlayerEntity(TestCase):
 
         self.assertEqual(instance.xp, 0)
         self.assertEqual(instance.xp_level, 0)
+
+    def test_pickup_item(self):
+        import mcpython.common.container.crafting.CraftingManager
+        import mcpython.common.entity.PlayerEntity
+        from mcpython.common.container.ResourceStack import ItemStack
+
+        shared.IS_CLIENT = False
+
+        shared.mod_loader = FakeModloader()
+
+        instance = mcpython.common.entity.PlayerEntity.PlayerEntity(name="test_player")
+        instance.pick_up_item(ItemStack("fake:item"))
+
+        for inventory in instance.inventory_order:
+            for slot in inventory[0].slots:
+                if slot.get_itemstack().get_item_name() == "fake:item":
+                    self.assertTrue(True)
+                    return
+        self.assertTrue(False)

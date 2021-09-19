@@ -88,10 +88,11 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.inventory_enderchest = None
         self.inventory_chat = None
         self.inventory_crafting_table = None
+        self.inventory_order = []
 
         # used for determine if we can access stuff now or must wait
         # todo: can we do something else
-        if not shared.mod_loader.finished:
+        if not shared.mod_loader.finished and not shared.IS_TEST_ENV:
             shared.mod_loader["minecraft"].eventbus.subscribe(
                 "stage:inventories",
                 self.create_inventories,
@@ -110,14 +111,12 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             "hotkey:gamemode_1-3_toggle", self.toggle_gamemode
         )
 
-        # the lookup order of inventory, todo: move to inventory handler
-        self.inventory_order = []
         self.set_gamemode(1)
 
         self.is_in_init = False
 
     def __repr__(self):
-        return super().__repr__()+"::"+self.name
+        return super().__repr__() + "::" + self.name
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
@@ -257,10 +256,12 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.inventory_enderchest = Chest.InventoryChest()
         self.inventory_crafting_table = InvCrafting.InventoryCraftingTable()
 
-        self.inventory_order = [
-            (self.inventory_hotbar, False),
-            (self.inventory_main, False),
-        ]
+        self.inventory_order.extend(
+            [
+                (self.inventory_hotbar, False),
+                (self.inventory_main, False),
+            ]
+        )
 
     def init_creative_tabs(self):
         import mcpython.client.gui.InventoryCreativeTab
@@ -287,7 +288,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             # todo: add an option to raise an exception here
             logger.println("[ERROR] invalid gamemode:", gamemode)
 
-        self.send_update_package_when_server(update_flags=32)
+        if not shared.IS_TEST_ENV:
+            self.send_update_package_when_server(update_flags=32)
 
     def get_needed_xp_for_next_level(self) -> int:
         """

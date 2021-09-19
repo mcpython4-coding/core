@@ -1805,4 +1805,5 @@ B   [uuk]: fixed IFallingBlock recursive updating itself in some edge cases
 b   [uuk]: fixed chat input package not setting player correctly
 b   [uuk]: fixed command execution env not fetching the position from the entity when needed
 b   [uuk]: fixed /tell command on dedicated server
+B*T [uuk]: fixed player not beeing able to pick up items (by the API method)
 

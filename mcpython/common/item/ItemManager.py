@@ -100,7 +100,7 @@ def register_item(registry, cls):
         return
     items.item_index_table.setdefault(cls.NAME, {})
 
-    if shared.IS_CLIENT:
+    if shared.IS_CLIENT and not shared.IS_TEST_ENV:
         for i, file in enumerate(cls.get_used_texture_files()):
             ITEM_ATLAS.add_file("{}#{}".format(cls.NAME, i), file)
 
