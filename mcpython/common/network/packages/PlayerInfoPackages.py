@@ -63,13 +63,18 @@ class PlayerUpdatePackage(AbstractPackage):
         self.selected_slot = 0
         self.gamemode = 0
 
+        self.update_flags = -1
+
     def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.name)
+
         for e in self.position + tuple(self.rotation) + self.motion:
             buffer.write_float(e)
+
         buffer.write_string(self.dimension)
         buffer.write_int(self.selected_slot)
         buffer.write_int(self.gamemode)
+        buffer.write_int(self.update_flags)
 
     def read_from_buffer(self, buffer: ReadBuffer):
         self.name = buffer.read_string()
@@ -79,9 +84,15 @@ class PlayerUpdatePackage(AbstractPackage):
         self.dimension = buffer.read_string()
         self.selected_slot = buffer.read_int()
         self.gamemode = buffer.read_int()
+        self.update_flags = buffer.read_int()
 
     def handle_inner(self):
         player = shared.world.get_player_by_name(self.name)
+
+        # Stuff the client is NOT allowed to change on its own
+        if not shared.IS_CLIENT:
+            self.gamemode = player.gamemode
+
         player.write_update_package(self)
 
         if not shared.IS_CLIENT:

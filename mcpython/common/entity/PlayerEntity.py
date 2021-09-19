@@ -116,6 +116,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         self.is_in_init = False
 
+    def __repr__(self):
+        return super().__repr__()+"::"+self.name
+
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
 
@@ -168,25 +171,48 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         )
         package.dimension = self.dimension.get_name()
         package.selected_slot = self.active_inventory_slot
-        package.gamemode = self.gamemode
+
+        if not shared.IS_CLIENT:
+            package.gamemode = self.gamemode
 
         return package
 
     def write_update_package(self, package: PlayerUpdatePackage):
-        self.position, self.rotation, self.nbt_data["motion"] = (
-            package.position,
-            package.rotation,
-            package.motion,
-        )
-        self.dimension = shared.world.get_dimension_by_name(package.dimension)
-        self.active_inventory_slot = package.selected_slot
-        self.gamemode = package.gamemode
+        if package.update_flags == -1:
+            self.position, self.rotation, self.nbt_data["motion"] = (
+                package.position,
+                package.rotation,
+                package.motion,
+            )
+            self.dimension = shared.world.get_dimension_by_name(package.dimension)
+            self.active_inventory_slot = package.selected_slot
+            self.gamemode = package.gamemode
+        else:
+            flag = package.update_flags
+            if flag & 1:
+                self.position = package.position
+            if flag & 2:
+                self.rotation = package.rotation
+            if flag & 4:
+                self.nbt_data["motion"] = package.motion
+            if flag & 8:
+                self.dimension = shared.world.get_dimension_by_name(package.dimension)
+            if flag & 16:
+                self.active_inventory_slot = package.selected_slot
+            if flag & 32:
+                self.set_gamemode(package.gamemode)
 
         return self
 
     def send_update_package_when_client(self):
         if shared.IS_CLIENT and shared.IS_NETWORKING and not self.is_in_init:
             shared.NETWORK_MANAGER.send_package(self.create_update_package(), 0)
+
+    def send_update_package_when_server(self, update_flags=-1):
+        if not shared.IS_CLIENT:
+            package = self.create_update_package()
+            package.update_flags = update_flags
+            shared.NETWORK_MANAGER.send_package_to_all(package)
 
     def hotkey_get_position(self):
         # todo: remove this check when only the current player uses this event
@@ -247,11 +273,6 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if str(gamemode) in self.GAMEMODE_DICT:
             gamemode = self.GAMEMODE_DICT[str(gamemode)]
 
-            if not shared.event_handler.call_cancelable(
-                "player:gamemode_change", self, self.gamemode, gamemode
-            ):
-                return
-
             if gamemode == 0:
                 self.flying = False
             elif gamemode == 1:
@@ -265,7 +286,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         else:
             # todo: add an option to raise an exception here
             logger.println("[ERROR] invalid gamemode:", gamemode)
-        self.send_update_package_when_client()
+
+        self.send_update_package_when_server(update_flags=32)
 
     def get_needed_xp_for_next_level(self) -> int:
         """
