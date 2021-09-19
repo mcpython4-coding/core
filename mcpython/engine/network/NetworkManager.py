@@ -21,6 +21,7 @@ from mcpython import shared
 
 from .. import logger
 from .util import ReadBuffer, WriteBuffer
+from ...common.world.AbstractInterface import IChunk
 
 
 class NetworkManager:
@@ -62,6 +63,13 @@ class NetworkManager:
         self.valid_package_ids = set()
 
         self.client_profiles = {}
+
+    def request_chunk(self, chunk: IChunk):
+        if not shared.IS_CLIENT or not shared.IS_NETWORKING:
+            raise RuntimeError
+
+        from mcpython.common.network.packages.WorldDataExchangePackage import DataRequestPackage
+        self.send_package(DataRequestPackage().request_chunk(chunk.get_dimension().get_name(), *chunk.get_position()))
 
     def reset_package_registry(self):
         self.next_package_type_id = 1

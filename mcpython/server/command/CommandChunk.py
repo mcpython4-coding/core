@@ -131,6 +131,11 @@ chunk = (
         )
     )
     .than(
+        CommandNode(DefinedString("request"), execute_on_client=True, valid_on_dedicated=True)
+        .of_name("request")
+        .on_execution(lambda env, data: shared.NETWORK_MANAGER.request_chunk(env.get_current_chunk()))
+    )
+    .than(
         CommandNode(DefinedString("dumpdatadebug"))
         .of_name("dump data debug")
         .info("dumps the debug information")

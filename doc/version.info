@@ -1800,4 +1800,5 @@ AI  [uuk]: split of state system from state rendering; States define now a State
 A-  [uuk]: removed game info state
 A-  [uuk]: removed event render:draw:pre_clear and render:draw:pre_setup
 A** [uuk]: removed the old rendering events & replaced with dynamic rendering layer system
+F   [uuk]: added /chunk request command for requesting chunks from the server
 
