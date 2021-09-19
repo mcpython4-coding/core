@@ -40,7 +40,7 @@ class PlayerChatInputPackage(AbstractPackage):
             player = shared.world.get_player_by_name(
                 shared.NETWORK_MANAGER.client_profiles[self.sender_id]["player_name"]
             )
-            env = CommandExecutionEnvironment(player)
+            env = CommandExecutionEnvironment(this=player)
             if not shared.command_parser.run(self.text, env):
                 self.answer(PlayerClientCommandExecution().setup(self.text))
 

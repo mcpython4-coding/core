@@ -64,12 +64,25 @@ class NetworkManager:
 
         self.client_profiles = {}
 
+        self.playername2connectionID = {}
+
     def request_chunk(self, chunk: IChunk):
         if not shared.IS_CLIENT or not shared.IS_NETWORKING:
             raise RuntimeError
 
         from mcpython.common.network.packages.WorldDataExchangePackage import DataRequestPackage
         self.send_package(DataRequestPackage().request_chunk(chunk.get_dimension().get_name(), *chunk.get_position()))
+
+    def send_to_player_chat(self, player: typing.Union[str, int], msg: str):
+        from mcpython.common.network.packages.PlayerChatPackage import PlayerMessageShowPackage
+
+        if isinstance(player, str):
+            if player not in self.playername2connectionID:
+                return
+
+            player = self.playername2connectionID[player]
+
+        self.send_package(PlayerMessageShowPackage().setup(msg), player)
 
     def reset_package_registry(self):
         self.next_package_type_id = 1

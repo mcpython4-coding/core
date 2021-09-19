@@ -534,10 +534,14 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         )
 
     def tell(self, msg: str):
+        if not shared.IS_CLIENT:
+            shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
+            return
+
         if self == shared.world.get_active_player():
             shared.chat.print_ln(msg)
         else:
-            pass  # todo: send through network
+            shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
 
     def draw(self, position=None, rotation=None, full=None):
         old_position = self.position
