@@ -20,7 +20,6 @@ import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractFoodItem as ItemFood
 import mcpython.common.item.AbstractToolItem as ItemTool
 import mcpython.util.math
-import pyglet
 from mcpython import shared
 from mcpython.common.config import GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
 from mcpython.engine.physics.collision import collide
@@ -51,7 +50,6 @@ def get_block_break_time(block, itemstack):
         )
 
 
-@onlyInClient()
 class GameView(AbstractStatePart.AbstractStatePart):
     NAME = "minecraft:state_part_game"
 

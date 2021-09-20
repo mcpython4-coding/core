@@ -114,21 +114,25 @@ class TestPlayerEntity(TestCase):
         self.assertEqual(instance.xp, 0)
         self.assertEqual(instance.xp_level, 0)
 
+    # Test for issue 1000
     def test_pickup_item(self):
         import mcpython.common.container.crafting.CraftingManager
         import mcpython.common.entity.PlayerEntity
         from mcpython.common.container.ResourceStack import ItemStack
+        from mcpython.client.gui.Slot import SlotCopy
 
         shared.IS_CLIENT = False
 
         shared.mod_loader = FakeModloader()
 
         instance = mcpython.common.entity.PlayerEntity.PlayerEntity(name="test_player")
-        instance.pick_up_item(ItemStack("fake:item"))
+        instance.pick_up_item(ItemStack("fake:item", 32))
+
+        count = 0
 
         for inventory in instance.inventory_order:
             for slot in inventory[0].slots:
-                if slot.get_itemstack().get_item_name() == "fake:item":
-                    self.assertTrue(True)
-                    return
-        self.assertTrue(False)
+                if not isinstance(slot, SlotCopy) and slot.get_itemstack().get_item_name() == "fake:item":
+                    count += slot.get_itemstack().amount
+
+        self.assertEqual(count, 32)

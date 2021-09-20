@@ -9,7 +9,6 @@ Issues:
 Pending for next non-snapshot release:
 - issues above
 - fix gamemode 0
-- game .jar linking
 - more unit tests
 - built pipe for jvm
 
