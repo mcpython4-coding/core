@@ -25,7 +25,9 @@ from mcpython.engine import logger
 
 class Chunk(mcpython.common.world.AbstractInterface.IChunk):
     """
-    representation of an chunk in the world
+    Default representation of a chunk in the world
+
+    Defines the default behaviour
     """
 
     BLOCK_REGISTRY = shared.registry.get_by_name("minecraft:block")
@@ -372,18 +374,19 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         reason=Block.BlockRemovalReason.UNKNOWN,
     ):
         """
-        Remove the block at the given `position`.
-        :param position: The (x, y, z) position of the block to remove.
+        Remove the block at the given position. When no block is there, nothing happens
+        :param position: The (x, y, z) position of the block to remove, or the block instance
         :param immediate: Whether or not to immediately remove block from canvas.
         :param block_update: Whether an block-update should be called or not
         :param block_update_self: Whether the block to remove should get an block-update or not
         :param reason: the reason why the block was removed
+        todo: remove from scheduled world generation if needed
         """
-        if position not in self._world:
-            return
-
         if issubclass(type(position), Block.AbstractBlock):
             position = position.position
+
+        if position not in self._world:
+            return
 
         self._world[position].on_block_remove(reason)
 

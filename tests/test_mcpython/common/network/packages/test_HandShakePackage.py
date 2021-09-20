@@ -23,6 +23,10 @@ class FakeWorld:
 class FakeModLoader:
     mods = {}
 
+    @classmethod
+    def add_to_add(cls, mod):
+        pass
+
 
 class FakeMod:
     name = "minecraft"

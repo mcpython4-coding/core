@@ -12,6 +12,21 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from unittest import TestCase
+from mcpython.common.factory.BlockFactory import BlockFactory
+import mcpython.common.block.BlockManager
+
+test_block = BlockFactory().set_name("test:block").finish()
+
+
+class FakeDim:
+    def get_world_height_range(self):
+        return 0, 255
+
+    def get_name(self):
+        return "overworld"
+
+    def get_block(self, position):
+        pass
 
 
 class TestChunk(TestCase):
@@ -62,3 +77,34 @@ class TestChunk(TestCase):
         self.assertTrue(instance.is_position_blocked((0, 0, 0)))
 
     # todo: test more
+
+    def test_add_block_by_str(self):
+        from mcpython.common.world.Chunk import Chunk
+
+        instance = Chunk(FakeDim(), (0, 0))
+        b = instance.add_block((0, 0, 0), "test:block")
+        self.assertEqual(instance.get_block((0, 0, 0)), b)
+
+    def test_add_block_by_instance(self):
+        from mcpython.common.world.Chunk import Chunk
+
+        instance = Chunk(FakeDim(), (0, 0))
+        b = instance.add_block((0, 0, 0), test_block)
+        self.assertEqual(instance.get_block((0, 0, 0)), b)
+
+    def test_remove_block_by_position(self):
+        from mcpython.common.world.Chunk import Chunk
+
+        instance = Chunk(FakeDim(), (0, 0))
+        b = instance.add_block((0, 0, 0), "test:block")
+        instance.remove_block((0, 0, 0))
+        self.assertEqual(instance.get_block((0, 0, 0)), None)
+
+    # Test for issue 1001
+    def test_remove_block_by_instance(self):
+        from mcpython.common.world.Chunk import Chunk
+
+        instance = Chunk(FakeDim(), (0, 0))
+        b = instance.add_block((0, 0, 0), "test:block")
+        instance.remove_block(b)
+        self.assertEqual(instance.get_block((0, 0, 0)), None)

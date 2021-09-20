@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.config
 import mcpython.common.mod.Mod
-from mcpython.engine import logger
+from mcpython import shared
 
 VERSION_POST = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
@@ -24,7 +24,9 @@ mcpython = minecraft = mcpython.common.mod.Mod.Mod(
     (mcpython.common.config.VERSION_ID,),
     version_name=mcpython.common.config.VERSION_NAME,
 )
-mcpython.add_load_default_resources()
+
+if not shared.IS_TEST_ENV:
+    mcpython.add_load_default_resources()
 
 
 def init():

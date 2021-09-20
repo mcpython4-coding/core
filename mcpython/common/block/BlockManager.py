@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.block.AbstractBlock
 import mcpython.common.data.serializer.tags.TagGroup
 import mcpython.common.event.Registry
-import mcpython.common.mod.ModMcpython
 from mcpython import shared
 from mcpython.common.block.AbstractBlock import AbstractBlock
 from mcpython.engine import logger
@@ -103,6 +102,7 @@ def load():
 
 
 if not shared.IS_TEST_ENV:
+    import mcpython.common.mod.ModMcpython
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
         "stage:block:load", load, info="loading special blocks"
     )

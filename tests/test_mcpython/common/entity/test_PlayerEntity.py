@@ -34,6 +34,9 @@ class FakeModloader:
     def __init__(self):
         self.finished = False
 
+    def add_to_add(self, mod):
+        pass
+
     def __call__(self, *args, **kwargs):
         return lambda func: None
 

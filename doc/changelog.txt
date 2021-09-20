@@ -64,6 +64,12 @@ changelog of snapshot <21w39a>, released on <29.09.2021> targeting <1.17>
     States:
         - states can now optionally define a state renderer which is only init-ed on clients
 
+    Issues fixed:
+        - Chunk.remove_block with block instances
+        - player /give command & API for picking up blocks
+        - falling blocks could result in a crash
+        - commands executed only by someone, not somewhere, would have None as position instead of the this.position
+
 
 changelog of snapshot 21w37a, released on 15.09.2021 targeting 1.17
     Python:

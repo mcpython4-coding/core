@@ -240,3 +240,4 @@ issue 251: block item generator loading generated data from files was not workin
 issue 252: reload listener was when defining a stage to load in not reloading correctly; fixed on 26.01.2021 by uuk
 
 issue 1000: fixed players not beeing able to pick up items
+issue 1001: Chunk.remove_block was not working with block instances

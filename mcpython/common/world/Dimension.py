@@ -17,7 +17,6 @@ import typing
 
 import deprecation
 import mcpython.common.block.AbstractBlock
-import mcpython.common.mod.ModMcpython
 import mcpython.common.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.engine.rendering.util
@@ -63,7 +62,9 @@ class DimensionHandler:
     def __init__(self):
         self.dimensions = {}
         self.unfinished_dims = []
-        mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+
+        from mcpython.common.mod.ModMcpython import mcpython
+        mcpython.eventbus.subscribe(
             "stage:post", self.finish
         )
 
@@ -119,9 +120,12 @@ class DimensionHandler:
 
 shared.dimension_handler = DimensionHandler()
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:dimension", shared.dimension_handler.add_default_dimensions
-)
+
+if not shared.IS_TEST_ENV:
+    from mcpython.common.mod.ModMcpython import mcpython
+    mcpython.eventbus.subscribe(
+        "stage:dimension", shared.dimension_handler.add_default_dimensions
+    )
 
 
 class Dimension(mcpython.common.world.AbstractInterface.IDimension):

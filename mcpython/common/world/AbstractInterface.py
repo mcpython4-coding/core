@@ -248,7 +248,7 @@ class IChunk(ISupportWorldInterface, ABC):
 
     def add_block(
         self,
-        position: tuple,
+        position: typing.Tuple[int, int, int],
         block_name: typing.Union[str, typing.Any],
         immediate=True,
         block_update=True,
@@ -258,7 +258,7 @@ class IChunk(ISupportWorldInterface, ABC):
         block_state=None,
     ) -> typing.Optional[typing.Any]:
         """
-        Adds an block to the given position
+        Adds a block to the given position
         :param position: the position to add at
         :param block_name: the name of the block or an instance of it (typing.Any)
         :param immediate: if the block should be shown if needed or not
@@ -276,7 +276,7 @@ class IChunk(ISupportWorldInterface, ABC):
         self, position: typing.Tuple[float, float, float], itself=True
     ):
         """
-        Updates the block at the given position
+        Updates the block at the given position with a block update
         """
         raise NotImplementedError
 
