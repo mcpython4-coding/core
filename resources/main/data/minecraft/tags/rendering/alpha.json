@@ -45,6 +45,12 @@
     "minecraft:azure_bluet",
     "minecraft:bamboo",
     "minecraft:bamboo_sapling",
-    "minecraft:beacon"
+    "minecraft:beacon",
+    "minecraft:cactus",
+    "minecraft:campfire",
+    "minecraft:carrots",
+    "minecraft:cave_vines",
+    "minecraft:chain",
+    "minecraft:cauldron"
   ]
 }

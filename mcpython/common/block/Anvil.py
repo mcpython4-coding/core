@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,51 +11,49 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.gui.InventoryBarrel
-import mcpython.common.block.PossibleBlockStateBuilder
+import random
+from pyglet.window import key
+from pyglet.window import mouse
+
 import mcpython.util.enums
-import pyglet
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-from pyglet.window import key, mouse
+import mcpython.common.block.PossibleBlockStateBuilder
 
-from . import AbstractBlock
+from . import IFallingBlock, AbstractBlock
 
 
-class Barrel(AbstractBlock.AbstractBlock):
+class AbstractAnvil(IFallingBlock.IFallingBlock):
     """
-    Class for the Barrel-Block
+    Base class for all anvils
+    Mods are allowed to implement this for their own anvils
     """
 
-    NAME = "minecraft:barrel"
+    HARDNESS = 5
+    BLAST_RESISTANCE = 1200
+    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
-        .add_comby_bool("open")
         .add_comby_side("facing")
         .build()
     )
+    SOLID = False
 
-    HARDNESS = 2.5
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
+    BREAK_CHANCE = 0
+    BREAKS_BLOCK_RESIST = 0
+    BROKEN_BLOCK = None
+
+    DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
 
     def __init__(self):
-        """
-        Creates a new BlockBarrel-class
-        """
         super().__init__()
 
         self.opened: bool = False  # if the barrel is open
-        self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
-        self.facing: str = "up"  # the direction the block faces to
+        self.inventory = None  # todo: add anvil inventory
+        self.facing: str = "north"  # the direction the block faces to
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
-        self.inventory.write_to_network_buffer(buffer)
-
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
-        self.inventory.read_from_network_buffer(buffer)
+        self.broken_count = 0
 
     def on_block_added(self):
         # only if this is set, decode it
@@ -69,16 +67,32 @@ class Barrel(AbstractBlock.AbstractBlock):
                 self.facing = "east"
             elif dz < 0:
                 self.facing = "south"
-            elif dy > 0:
-                self.facing = "down"
-            elif dy < 0:
-                self.facing = "up"
+
             if shared.IS_CLIENT:
                 self.face_state.update()
+
+    def on_anvil_use(self):
+        if random.random() < self.BREAK_CHANCE:
+            self.broken_count += 1
+
+            if self.broken_count >= self.BREAKS_BLOCK_RESIST:
+                self.dimension.add_block(self.position, self.BROKEN_BLOCK)
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+        self.inventory.write_to_network_buffer(buffer)
+        buffer.write_int(self.broken_count)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+        self.inventory.read_from_network_buffer(buffer)
+        self.broken_count = buffer.read_int()
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
+        return False
+
         # open the inv when needed
         if button == mouse.RIGHT and not modifiers & (
             key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
@@ -101,15 +115,12 @@ class Barrel(AbstractBlock.AbstractBlock):
                 self.facing = mcpython.util.enums.EnumSide[face.upper()]
             else:
                 self.facing = face
-        if "open" in state:
-            self.opened = str(state["open"]).lower() == "true"
 
     def get_model_state(self) -> dict:
         return {
             "facing": self.facing.normal_name
             if not isinstance(self.facing, str)
             else self.facing,
-            "open": str(self.opened).lower(),
         }
 
     @classmethod
@@ -119,13 +130,15 @@ class Barrel(AbstractBlock.AbstractBlock):
 
     def on_request_item_for_block(self, itemstack):
         if (
-            shared.window.keys[pyglet.window.key.LCTRL]
+            shared.window.keys[key.LCTRL]
             and shared.world.get_active_player().gamemode == 1
-            and shared.window.mouse_pressing[pyglet.window.mouse.MIDDLE]
+            and shared.window.mouse_pressing[mouse.MIDDLE]
         ):
             itemstack.item.inventory = self.inventory.copy()
 
     def on_block_remove(self, reason):
+        return
+
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             for slot in self.inventory.slots:
                 shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
@@ -133,3 +146,23 @@ class Barrel(AbstractBlock.AbstractBlock):
 
         shared.inventory_handler.hide(self.inventory)
         del self.inventory
+
+
+class Anvil(AbstractAnvil):
+    NAME = "minecraft:anvil"
+
+    BREAK_CHANCE = 0.12
+    BROKEN_BLOCK = "minecraft:chipped_anvil"
+
+
+class ChippedAnvil(AbstractAnvil):
+    NAME = "minecraft:chipped_anvil"
+
+    BREAK_CHANCE = 0.12
+    BROKEN_BLOCK = "minecraft:damaged_anvil"
+
+
+class DamagedAnvil(AbstractAnvil):
+    NAME = "minecraft:damaged_anvil"
+
+    BREAK_CHANCE = 0.12

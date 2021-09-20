@@ -54,6 +54,7 @@ def load():
     loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
     """
     from . import (
+        Anvil,
         Barrel,
         Carpet,
         Chest,
@@ -70,6 +71,9 @@ def load():
         Walls,
     )
 
+    block_registry.register(Anvil.Anvil)
+    block_registry.register(Anvil.ChippedAnvil)
+    block_registry.register(Anvil.DamagedAnvil)
     block_registry.register(GrassBlock.GrassBlock)
     block_registry.register(Dirt.Dirt)
     block_registry.register(CraftingTable.CraftingTable)
@@ -103,6 +107,7 @@ def load():
 
 if not shared.IS_TEST_ENV:
     import mcpython.common.mod.ModMcpython
+
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
         "stage:block:load", load, info="loading special blocks"
     )

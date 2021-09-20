@@ -150,6 +150,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     if i >= len(inventories):
                         break
 
+                    if inventories[i] is None:
+                        continue
+
                     save_file.read(
                         "minecraft:inventory",
                         inventory=inventories[i],
@@ -256,6 +259,10 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
                 # iterate over all inventories
                 for i, inventory in enumerate(block.get_inventories()):
+                    if inventory is None:
+                        block_data[3].append(None)
+                        continue
+
                     # only if we need data, load it
                     if not overridden:
                         save_file.dump_file_pickle(inv_file, {})

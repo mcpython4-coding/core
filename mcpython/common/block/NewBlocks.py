@@ -248,13 +248,6 @@ stone_like("andesite")
 
 DEFERRED_PIPE.create_later(
     BlockFactory()
-    .set_name("minecraft:anvil")
-    .set_solid(False)
-    .set_all_side_solid(False)
-    .set_default_model_state("facing=north")
-)
-DEFERRED_PIPE.create_later(
-    BlockFactory()
     .set_name("minecraft:azalea_leaves")
     .set_solid(False)
     .set_all_side_solid(False)
@@ -349,30 +342,56 @@ DEFERRED_PIPE.create_later(
     )
 )
 # todo: bubble column
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:budding_amethyst"))
+DEFERRED_PIPE.create_later(plant("minecraft:cactus"))
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:cake").set_default_model_state("bites=5")
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:calcite"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:campfire")
+    .set_default_model_state("facing=west,lit=true")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:candle")
+    .set_default_model_state("candles=2,lit=true")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:candle_cake")
+    .set_default_model_state("lit=true")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(plant("minecraft:carrots").set_default_model_state("age=3"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:cartography_table"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:carved_pumpkin").set_default_model_state("facing=south"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:cauldron")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+# todo: cave air
+DEFERRED_PIPE.create_later(plant("minecraft:cave_vines").set_default_model_state("berries=false"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:chain")
+    .set_log()
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+# todo: chain command block
 
 
 # All blocks, by blockstate
 """
-budding_amethyst
-cactus
-cake
-calcite
-campfire
-candle
-candle_cake
-carrots
-cartography_table
-carved_pumpkin
-cauldron
-cave_air
-cave_vines
-cave_vines_body
-cave_vines_head
-cave_vines_plant
-chain
-chain_command_block
-chest
-chipped_anvil
 chiseled_deepslate
 chiseled_grimstone
 chiseled_nether_bricks
@@ -450,7 +469,6 @@ cyan_stained_glass_pane
 cyan_terracotta
 cyan_wall_banner
 cyan_wool
-damaged_anvil
 dandelion
 dark_oak_button
 dark_oak_door

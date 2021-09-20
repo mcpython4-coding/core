@@ -159,9 +159,10 @@ class SetCount(ILootTableFunction):
 
     def apply(self, items: list, *args, **kwargs):
         for itemstack in items:
+            # todo: parse data in advance
             if "count" in self.data:
-                if type(self.data["count"]) == int:
-                    itemstack.set_amount(self.data["count"])
+                if type(self.data["count"]) in (int, float):
+                    itemstack.set_amount(int(self.data["count"]))
                 else:
                     if self.data["count"]["type"] == "minecraft:uniform":
                         count = random.randint(
