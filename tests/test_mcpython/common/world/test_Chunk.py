@@ -12,8 +12,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from unittest import TestCase
-from mcpython.common.factory.BlockFactory import BlockFactory
+
 import mcpython.common.block.BlockManager
+from mcpython.common.factory.BlockFactory import BlockFactory
 
 test_block = BlockFactory().set_name("test:block").finish()
 

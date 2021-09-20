@@ -121,8 +121,8 @@ class TestPlayerEntity(TestCase):
     def test_pickup_item(self):
         import mcpython.common.container.crafting.CraftingManager
         import mcpython.common.entity.PlayerEntity
-        from mcpython.common.container.ResourceStack import ItemStack
         from mcpython.client.gui.Slot import SlotCopy
+        from mcpython.common.container.ResourceStack import ItemStack
 
         shared.IS_CLIENT = False
 
@@ -135,7 +135,10 @@ class TestPlayerEntity(TestCase):
 
         for inventory in instance.inventory_order:
             for slot in inventory[0].slots:
-                if not isinstance(slot, SlotCopy) and slot.get_itemstack().get_item_name() == "fake:item":
+                if (
+                    not isinstance(slot, SlotCopy)
+                    and slot.get_itemstack().get_item_name() == "fake:item"
+                ):
                     count += slot.get_itemstack().amount
 
         self.assertEqual(count, 32)

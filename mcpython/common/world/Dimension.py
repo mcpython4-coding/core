@@ -64,9 +64,8 @@ class DimensionHandler:
         self.unfinished_dims = []
 
         from mcpython.common.mod.ModMcpython import mcpython
-        mcpython.eventbus.subscribe(
-            "stage:post", self.finish
-        )
+
+        mcpython.eventbus.subscribe("stage:post", self.finish)
 
     def finish(self):
         """
@@ -122,8 +121,9 @@ shared.dimension_handler = DimensionHandler()
 
 
 if not shared.IS_TEST_ENV:
-    from mcpython.common.mod.ModMcpython import mcpython
-    mcpython.eventbus.subscribe(
+    from mcpython.common.mod.ModMcpython import mcpython as mc
+
+    mc.eventbus.subscribe(
         "stage:dimension", shared.dimension_handler.add_default_dimensions
     )
 
