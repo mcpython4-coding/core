@@ -109,7 +109,7 @@ if not shared.IS_TEST_ENV:
     import mcpython.common.mod.ModMcpython
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-        "stage:block:load", load, info="loading special blocks"
+        "stage:block:factory:prepare", load, info="loading special blocks"
     )
 
     from . import Blocks, IFallingBlock, ILog

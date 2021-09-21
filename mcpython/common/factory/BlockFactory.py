@@ -62,6 +62,7 @@ def set_fall_able(instance: FactoryBuilder.IFactory):
 )
 def set_slab(instance: FactoryBuilder.IFactory):
     instance.base_classes.append(ISlab.ISlab)
+    instance.set_solid(False).set_all_side_solid(False)
     return instance
 
 

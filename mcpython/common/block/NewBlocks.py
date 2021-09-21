@@ -132,14 +132,14 @@ def stone_like(
             BlockFactory().set_name(f"minecraft:{fname}_slab").set_slab()
         )
     else:
-        instance.create_slab_block("_slab")
+        instance.create_slab_block(f"minecraft:{fname}_slab")
 
     if existing_wall:
         DEFERRED_PIPE.create_later(
             BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall()
         )
     else:
-        instance.create_wall("_wall")
+        instance.create_wall(f"minecraft:{fname}_wall")
 
     if existing_stairs:
         DEFERRED_PIPE.create_later(
@@ -157,7 +157,7 @@ def stone_like(
             BlockFactory().set_name(f"minecraft:{fname}_fence").set_fence()
         )
     else:
-        instance.create_fence("_fence")
+        instance.create_fence(f"minecraft:{fname}_fence")
 
 
 def colored(name: str):
@@ -388,148 +388,103 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
 )
 # todo: chain command block
+stone_like("chiseled_deepslate", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("chiseled_polished_blackstone", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("chiseled_quartz_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("chiseled_red_sandstone", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("chiseled_sandstone", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("chiseled_stone_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
+DEFERRED_PIPE.create_later(plant("minecraft:chorus_flower").set_default_model_state("age=3"))
+DEFERRED_PIPE.create_later(plant("minecraft:chorus_plant").set_default_model_state("north=false,south=false,east=false,west=false,up=false,down=false"))
+stone_like("clay", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("coal_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:coal_ore"))
+stone_like("coarse_dirt", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("cobbled_deepslate", existing_slab=True, existing_stairs=True, existing_wall=True)
+stone_like("cobblestone", existing_slab=True, existing_stairs=True, existing_wall=True)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:cobweb")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:cocoa")
+    .set_default_model_state("age=2,facing=east")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+# todo: command block
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:comparator")
+    .set_default_model_state("facing=north,mode=compare,powered=true")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:composter")
+    .set_default_model_state("level=2")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:conduit")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+stone_like("copper_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:copper_ore"))
+DEFERRED_PIPE.create_later(plant("cornflower"))
+stone_like("cracked_deepslate_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("cracked_deepslate_tiles", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("cracked_nether_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("cracked_polished_blackstone_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("cracked_stone_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
+# todo: creeper head & wall head
+wood("crimson", normal=False)
+stone_like("crying_obsidian", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False)
+stone_like("cut_red_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False)
+stone_like("cut_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False)
+colored("cyan")
+DEFERRED_PIPE.create_later(plant("dandelion"))
+wood("dark_oak")
+stone_like("dark_prismarine", existing_slab=True, existing_stairs=True, existing_wall=False)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:daylight_detector")
+    .set_default_model_state("inverted=false")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+stone_like("deepslate", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like("deepslate_bricks", existing_slab=True, existing_stairs=True, existing_wall=True)
+stone_like("deepslate_tiles", existing_slab=True, existing_stairs=True, existing_wall=True)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_coal_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_copper_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_diamond_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_emerald_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_gold_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_iron_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_lapis_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_redstone_ore"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:detector_rail")
+    .set_default_model_state("powered=false,shape=ascending_south")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+stone_like("diamond_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:diamond_ore"))
 
 
 # All blocks, by blockstate
 """
-chiseled_deepslate
-chiseled_grimstone
-chiseled_nether_bricks
-chiseled_polished_blackstone
-chiseled_quartz_block
-chiseled_red_sandstone
-chiseled_sandstone
-chiseled_stone_bricks
-chorus_flower
-chorus_plant
-clay
-coal_block
-coal_ore
-coarse_dirt
-cobbled_deepslate
-cobbled_deepslate_slab
-cobbled_deepslate_stairs
-cobbled_deepslate_wall
-cobblestone
-cobblestone_slab
-cobblestone_stairs
-cobblestone_wall
-cobweb
-cocoa
-command_block
-comparator
-composter
-conduit
-copper_block
-copper_ore
-cornflower
-cracked_deepslate_bricks
-cracked_deepslate_tiles
-cracked_nether_bricks
-cracked_polished_blackstone_bricks
-cracked_stone_bricks
-crafting_table
-creeper_head
-creeper_wall_head
-crimson_button
-crimson_door
-crimson_fence
-crimson_fence_gate
-crimson_fungus
-crimson_hyphae
-crimson_nylium
-crimson_planks
-crimson_pressure_plate
-crimson_roots
-crimson_sign
-crimson_slab
-crimson_stairs
-crimson_stem
-crimson_trapdoor
-crimson_wall_sign
-crying_obsidian
-cut_copper
-cut_copper_slab
-cut_copper_stairs
-cut_red_sandstone
-cut_red_sandstone_slab
-cut_sandstone
-cut_sandstone_slab
-cyan_banner
-cyan_bed
-cyan_candle
-cyan_candle_cake
-cyan_carpet
-cyan_concrete
-cyan_concrete_powder
-cyan_glazed_terracotta
-cyan_shulker_box
-cyan_stained_glass
-cyan_stained_glass_pane
-cyan_terracotta
-cyan_wall_banner
-cyan_wool
-dandelion
-dark_oak_button
-dark_oak_door
-dark_oak_fence
-dark_oak_fence_gate
-dark_oak_leaves
-dark_oak_log
-dark_oak_planks
-dark_oak_pressure_plate
-dark_oak_sapling
-dark_oak_sign
-dark_oak_slab
-dark_oak_stairs
-dark_oak_trapdoor
-dark_oak_wall_sign
-dark_oak_wood
-dark_prismarine
-dark_prismarine_slab
-dark_prismarine_stairs
-daylight_detector
-dead_brain_coral
-dead_brain_coral_block
-dead_brain_coral_fan
-dead_brain_coral_wall_fan
-dead_bubble_coral
-dead_bubble_coral_block
-dead_bubble_coral_fan
-dead_bubble_coral_wall_fan
-dead_bush
-dead_fire_coral
-dead_fire_coral_block
-dead_fire_coral_fan
-dead_fire_coral_wall_fan
-dead_horn_coral
-dead_horn_coral_block
-dead_horn_coral_fan
-dead_horn_coral_wall_fan
-dead_tube_coral
-dead_tube_coral_block
-dead_tube_coral_fan
-dead_tube_coral_wall_fan
-deepslate
-deepslate_bricks
-deepslate_brick_slab
-deepslate_brick_stairs
-deepslate_brick_wall
-deepslate_coal_ore
-deepslate_copper_ore
-deepslate_diamond_ore
-deepslate_emerald_ore
-deepslate_gold_ore
-deepslate_iron_ore
-deepslate_lapis_ore
-deepslate_redstone_ore
-deepslate_tiles
-deepslate_tile_slab
-deepslate_tile_stairs
-deepslate_tile_wall
-detector_rail
-diamond_block
-diamond_ore
 diorite
 diorite_slab
 diorite_stairs

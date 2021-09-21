@@ -556,7 +556,7 @@ class BlockStateDefinition:
         return self
 
     def bake(self):
-        if not self.loader.bake():
+        if self.loader and not self.loader.bake():
             shared.mod_loader.mods[self.name.split(":")[0]].eventbus.subscribe(
                 "stage:model:blockstate_bake",
                 self.bake,

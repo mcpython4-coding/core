@@ -64,6 +64,10 @@ changelog of snapshot <21w39a>, released on <29.09.2021> targeting <1.17>
     States:
         - states can now optionally define a state renderer which is only init-ed on clients
 
+    Blocks:
+        - a whole lot of new blocks, incuding variants not in the original game
+        - no detailed list arrival, see the diff of "/data view registry minecraft:block" command
+
     Issues fixed:
         - Chunk.remove_block with block instances
         - player /give command & API for picking up blocks

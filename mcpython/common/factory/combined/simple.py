@@ -110,7 +110,7 @@ class CombinedFactoryInstance:
             else self.target_base_name + "_" + suffix
             if not callable(suffix)
             else suffix(self.target_base_name)
-        )
+        ) if not suffix or ":" not in suffix else suffix
         self.create_block_simple(
             name,
             textures={"all": self.create_colored_texture(texture, color=color)},
@@ -226,7 +226,7 @@ class CombinedFactoryInstance:
             else self.target_base_name + "_" + suffix
             if not callable(suffix)
             else suffix(self.target_base_name)
-        )
+        ) if not suffix or ":" not in suffix else suffix
         front_texture = self.create_colored_texture(front_texture, color=color)
         side_texture = self.create_colored_texture(side_texture, color=color)
         textures = {"end": front_texture, "side": side_texture}
@@ -265,7 +265,7 @@ class CombinedFactoryInstance:
             else self.target_base_name + "_" + suffix
             if not callable(suffix)
             else suffix(self.target_base_name)
-        )
+        ) if not suffix or ":" not in suffix else suffix
         normal_model = "{}:block/{}_normal".format(*name.split(":"))
         pressed_model = "{}:block/{}_pressed".format(*name.split(":"))
         self.create_multi_variant_block(
@@ -316,7 +316,7 @@ class CombinedFactoryInstance:
             else self.target_base_name + "_" + suffix
             if not callable(suffix)
             else suffix(self.target_base_name)
-        )
+        ) if not suffix or ":" not in suffix else suffix
         texture = self.create_colored_texture(texture, color=color)
         slab_data = {"top": texture, "bottom": texture, "side": texture}
         self.create_multi_variant_block(
@@ -431,7 +431,7 @@ class CombinedFactoryInstance:
             else self.target_base_name + "_" + suffix
             if not callable(suffix)
             else suffix(self.target_base_name)
-        )
+        ) if not suffix or ":" not in suffix else suffix
         texture = self.create_colored_texture(texture, color=color)
         wall_textures = {"wall": texture}
         # todo: can we use some form of template here?
@@ -520,7 +520,7 @@ class CombinedFactoryInstance:
             else self.target_base_name + "_" + suffix
             if not callable(suffix)
             else suffix(self.target_base_name)
-        )
+        ) if not suffix or ":" not in suffix else suffix
         texture = self.create_colored_texture(texture, color=color)
         fence_textures = {"texture": texture}
         # todo: can we use some form of template here?
