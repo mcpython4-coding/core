@@ -51,7 +51,7 @@ def wood(name: str, normal=True):
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_door")
-        .set_default_model_state("facing=east,half=lower,hinge=left,open=false")
+        .set_button()
         .set_solid(False)
         .set_all_side_solid(False)
         .set_strength(0.5)

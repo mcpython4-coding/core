@@ -21,6 +21,7 @@ import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
 import mcpython.common.block.ILog as ILog
 import mcpython.common.block.ISlab as ISlab
+from mcpython.common.block.IButton import IButton
 import mcpython.common.block.Walls as BlockWall
 import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
@@ -100,6 +101,15 @@ def set_fence_gate(instance: FactoryBuilder.IFactory):
 )
 def set_horizontal_orientable(instance: FactoryBuilder.IFactory):
     instance.base_classes.append(IHorizontalOrientableBlock.IHorizontalOrientableBlock)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_button")
+)
+def set_button(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(IButton)
+    instance.set_solid(False).set_all_side_solid(False)
     return instance
 
 

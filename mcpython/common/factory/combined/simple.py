@@ -272,9 +272,7 @@ class CombinedFactoryInstance:
             name,
             block_state_parent="minecraft:button_template",
             block_state_alias={"normal": normal_model, "pressed": pressed_model},
-            block_factory_consumer=lambda _, instance: instance.set_default_model_state(
-                "face=ceiling,facing=east,powered=false"
-            )
+            block_factory_consumer=lambda _, instance: instance.set_button()
             == (
                 0
                 if "block_factory_consumer" not in consumers

@@ -1808,4 +1808,5 @@ b   [uuk]: fixed /tell command on dedicated server
 B*T [uuk]: fixed player not beeing able to pick up items (by the API method)
 BA  [uuk]: fixed Chunk.remove_block not accepting the block as an instance
 B   [uuk]: fixed NewBlocks.py beeing loaded to late for things to work with combined factories
+F   [uuk]: added dummy implementation for buttons
 

@@ -13,10 +13,17 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.util.enums
+from mcpython.common.block.PossibleBlockStateBuilder import PossibleBlockStateBuilder
 
 
 class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     MODEL_FACE_NAME = "facing"
+
+    DEBUG_WORLD_BLOCK_STATES = (
+        PossibleBlockStateBuilder()
+        .add_comby_side("facing")
+        .build()
+    )
 
     def __init__(self):
         super().__init__()
@@ -46,10 +53,3 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
     def set_model_state(self, state: dict):
         if self.MODEL_FACE_NAME in state:
             self.face = mcpython.util.enums.EnumSide[state["facing"].upper()]
-
-    @classmethod
-    def get_all_model_states(cls) -> list:
-        return [
-            {cls.MODEL_FACE_NAME: face.name}
-            for face in mcpython.util.enums.EnumSide.iterate()
-        ]
