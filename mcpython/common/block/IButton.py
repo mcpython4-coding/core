@@ -11,34 +11,39 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
-from mcpython.util.enums import EnumSide
 from mcpython import shared
-from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.util.enums import EnumSide
+
+from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
+from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 
 
 class IButton(IAllDirectionOrientableBlock):
     # todo: add a way to decide in advance if to allow setting the block
 
     DEBUG_WORLD_BLOCK_STATES = (
-        PossibleBlockStateBuilder()
-        .add_comby("face", "wall")
-        .add_comby_side_horizontal("facing")
-        .add_comby_bool("powered")
-        .build()
-    ) + (
-        PossibleBlockStateBuilder()
-        .add_comby("face", "floor")
-        .add_comby_side_horizontal("facing")
-        .add_comby_bool("powered")
-        .build()
-    ) + (
-        PossibleBlockStateBuilder()
-        .add_comby("face", "floor")
-        .add_comby_side_horizontal("facing")
-        .add_comby_bool("powered")
-        .build()
+        (
+            PossibleBlockStateBuilder()
+            .add_comby("face", "wall")
+            .add_comby_side_horizontal("facing")
+            .add_comby_bool("powered")
+            .build()
+        )
+        + (
+            PossibleBlockStateBuilder()
+            .add_comby("face", "floor")
+            .add_comby_side_horizontal("facing")
+            .add_comby_bool("powered")
+            .build()
+        )
+        + (
+            PossibleBlockStateBuilder()
+            .add_comby("face", "floor")
+            .add_comby_side_horizontal("facing")
+            .add_comby_bool("powered")
+            .build()
+        )
     )
 
     def __init__(self):
@@ -53,7 +58,7 @@ class IButton(IAllDirectionOrientableBlock):
         x, y, z = self.position
         dx, dy, dz = self.face.dx, self.face.dy, self.face.dz
 
-        block = self.dimension.get_block((x+dx, y+dy, z+dz), none_if_str=True)
+        block = self.dimension.get_block((x + dx, y + dy, z + dz), none_if_str=True)
 
         if block is None or not block.face_solid[self.face.invert()]:
             self.dimension.remove_block(self.position, block_update_self=False)
@@ -87,4 +92,3 @@ class IButton(IAllDirectionOrientableBlock):
         else:
             super().set_model_state(state)
         self.powered = state["powered"] == "true"
-

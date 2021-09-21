@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -12,15 +12,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import random
-from pyglet.window import key
-from pyglet.window import mouse
 
+import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-import mcpython.common.block.PossibleBlockStateBuilder
+from pyglet.window import key, mouse
 
-from . import IFallingBlock, AbstractBlock
+from . import AbstractBlock, IFallingBlock
 
 
 class AbstractAnvil(IFallingBlock.IFallingBlock):

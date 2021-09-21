@@ -20,9 +20,7 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
     MODEL_FACE_NAME = "facing"
 
     DEBUG_WORLD_BLOCK_STATES = (
-        PossibleBlockStateBuilder()
-        .add_comby_side("facing")
-        .build()
+        PossibleBlockStateBuilder().add_comby_side("facing").build()
     )
 
     def __init__(self):

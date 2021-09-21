@@ -371,7 +371,11 @@ DEFERRED_PIPE.create_later(
 )
 DEFERRED_PIPE.create_later(plant("minecraft:carrots").set_default_model_state("age=3"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:cartography_table"))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:carved_pumpkin").set_default_model_state("facing=south"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:carved_pumpkin")
+    .set_default_model_state("facing=south")
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:cauldron")
@@ -379,7 +383,9 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
 )
 # todo: cave air
-DEFERRED_PIPE.create_later(plant("minecraft:cave_vines").set_default_model_state("berries=false"))
+DEFERRED_PIPE.create_later(
+    plant("minecraft:cave_vines").set_default_model_state("berries=false")
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:chain")
@@ -388,19 +394,61 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
 )
 # todo: chain command block
-stone_like("chiseled_deepslate", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("chiseled_polished_blackstone", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("chiseled_quartz_block", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("chiseled_red_sandstone", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("chiseled_sandstone", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("chiseled_stone_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
-DEFERRED_PIPE.create_later(plant("minecraft:chorus_flower").set_default_model_state("age=3"))
-DEFERRED_PIPE.create_later(plant("minecraft:chorus_plant").set_default_model_state("north=false,south=false,east=false,west=false,up=false,down=false"))
+stone_like(
+    "chiseled_deepslate",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "chiseled_polished_blackstone",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "chiseled_quartz_block",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "chiseled_red_sandstone",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "chiseled_sandstone",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "chiseled_stone_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+DEFERRED_PIPE.create_later(
+    plant("minecraft:chorus_flower").set_default_model_state("age=3")
+)
+DEFERRED_PIPE.create_later(
+    plant("minecraft:chorus_plant").set_default_model_state(
+        "north=false,south=false,east=false,west=false,up=false,down=false"
+    )
+)
 stone_like("clay", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("coal_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "coal_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:coal_ore"))
-stone_like("coarse_dirt", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("cobbled_deepslate", existing_slab=True, existing_stairs=True, existing_wall=True)
+stone_like(
+    "coarse_dirt", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "cobbled_deepslate", existing_slab=True, existing_stairs=True, existing_wall=True
+)
 stone_like("cobblestone", existing_slab=True, existing_stairs=True, existing_wall=True)
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -436,24 +484,59 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
-stone_like("copper_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "copper_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:copper_ore"))
 DEFERRED_PIPE.create_later(plant("cornflower"))
-stone_like("cracked_deepslate_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("cracked_deepslate_tiles", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("cracked_nether_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("cracked_polished_blackstone_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("cracked_stone_bricks", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "cracked_deepslate_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "cracked_deepslate_tiles",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "cracked_nether_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "cracked_polished_blackstone_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "cracked_stone_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
 # todo: creeper head & wall head
 wood("crimson", normal=False)
-stone_like("crying_obsidian", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "crying_obsidian", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 stone_like("cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False)
-stone_like("cut_red_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False)
-stone_like("cut_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False)
+stone_like(
+    "cut_red_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "cut_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False
+)
 colored("cyan")
 DEFERRED_PIPE.create_later(plant("dandelion"))
 wood("dark_oak")
-stone_like("dark_prismarine", existing_slab=True, existing_stairs=True, existing_wall=False)
+stone_like(
+    "dark_prismarine", existing_slab=True, existing_stairs=True, existing_wall=False
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:daylight_detector")
@@ -462,8 +545,12 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
 )
 stone_like("deepslate", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("deepslate_bricks", existing_slab=True, existing_stairs=True, existing_wall=True)
-stone_like("deepslate_tiles", existing_slab=True, existing_stairs=True, existing_wall=True)
+stone_like(
+    "deepslate_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+stone_like(
+    "deepslate_tiles", existing_slab=True, existing_stairs=True, existing_wall=True
+)
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_coal_ore"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_copper_ore"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_diamond_ore"))
@@ -479,7 +566,9 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
-stone_like("diamond_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "diamond_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:diamond_ore"))
 
 
