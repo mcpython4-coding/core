@@ -271,6 +271,9 @@ class SimulatedResourceLoader(IResourceLoader):
             image.save(file)
 
     def provide_raw(self, name: str, raw: bytes):
+        if not isinstance(raw, bytes):
+            raise ValueError(raw)
+
         self.raw[name] = raw
 
     def provide_image(self, name: str, image: PIL_Image.Image):
@@ -487,7 +490,7 @@ def exists(file: str, transform=True):
     if transform:
         try:
             return exists(transform_name(file), transform=False)
-        except NotImplementedError:
+        except (NotImplementedError, FileNotFoundError):
             pass
 
     return False

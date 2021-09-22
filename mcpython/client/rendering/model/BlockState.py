@@ -83,30 +83,35 @@ class MultiPartDecoder(IBlockStateDecoder):
 
     def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
-            parent: BlockStateDefinition = BlockStateDefinition.get_or_load(self.parent)
-
-            if parent is None:
-                self.parent = None
-                return
-
-            if not parent.baked:
-                return False
-
-            if not issubclass(type(parent.loader), type(self)):
-                raise ValueError(
-                    "parent must be subclass of the current loader ({} is not a subclass of {})".format(
-                        type(self), type(parent.loader)
-                    )
+            try:
+                parent: BlockStateDefinition = BlockStateDefinition.get_or_load(
+                    self.parent
                 )
+            except FileNotFoundError:
+                self.parent = None
+            else:
+                if parent is None:
+                    self.parent = None
+                    return
 
-            self.parent = parent
-            self.model_alias = {
-                **self.parent.loader.model_alias.copy(),
-                **self.model_alias,
-            }
-            self.data["multipart"].extend(
-                copy.deepcopy(self.parent.loader.data["multipart"])
-            )
+                if not parent.baked:
+                    return False
+
+                if not issubclass(type(parent.loader), type(self)):
+                    raise ValueError(
+                        "parent must be subclass of the current loader ({} is not a subclass of {})".format(
+                            type(self), type(parent.loader)
+                        )
+                    )
+
+                self.parent = parent
+                self.model_alias = {
+                    **self.parent.loader.model_alias.copy(),
+                    **self.model_alias,
+                }
+                self.data["multipart"].extend(
+                    copy.deepcopy(self.parent.loader.data["multipart"])
+                )
 
         for model in self.model_alias.values():
             shared.model_handler.used_models.add(model)
@@ -556,13 +561,17 @@ class BlockStateDefinition:
         return self
 
     def bake(self):
-        if self.loader and not self.loader.bake():
-            shared.mod_loader.mods[self.name.split(":")[0]].eventbus.subscribe(
-                "stage:model:blockstate_bake",
-                self.bake,
-                info="loading block state {}".format(self.name),
-            )
-        else:
+        try:
+            if self.loader and not self.loader.bake():
+                shared.mod_loader.mods[self.name.split(":")[0]].eventbus.subscribe(
+                    "stage:model:blockstate_bake",
+                    self.bake,
+                    info="loading block state {}".format(self.name),
+                )
+            else:
+                self.baked = True
+        except:
+            logger.print_exception("during baking block state " + self.name)
             self.baked = True
 
     def add_face_to_batch(

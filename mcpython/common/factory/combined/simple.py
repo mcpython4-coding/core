@@ -35,6 +35,7 @@ class CombinedFactoryInstance:
     This is the simple variant, allowing for configuration and than single block construction
     todo: add a variant with template system for defining e.g. wood which than construct all needed wood items for
         it
+    todo: add a system to auto-add to creative tabs
     """
 
     FILE_COUNTER = 0
@@ -260,7 +261,7 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **consumers,
+            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
         )
         return self
 
@@ -290,7 +291,7 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **consumers,
+            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
         )
 
         if shared.IS_CLIENT:
@@ -359,7 +360,7 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **consumers,
+            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
         )
         return self
 
@@ -525,7 +526,7 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **consumers,
+            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
         )
         return self
 
@@ -588,7 +589,7 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **consumers,
+            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
         )
         return self
 

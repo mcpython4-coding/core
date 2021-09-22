@@ -59,7 +59,7 @@ else:
     parent = mcpython.common.event.api.IRegistryContent
 
 
-class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble):
+class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     """
     Abstract base class for all blocks
     All block classes should extend from this
@@ -72,6 +72,23 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble):
 
     todo: add custom properties to set_creation_properties() -> injected by add_block() call
     """
+
+    @classmethod
+    def bind_block_item_to_creative_tab(cls, tab_getter: typing.Callable):
+        @shared.mod_loader(
+            cls.NAME.split(":")[0],
+            "stage:item_groups:load",
+            info=f"adding block-item for {cls.NAME} to creative tabs",
+        )
+        def add():
+            from mcpython.common.container.ResourceStack import ItemStack
+
+            try:
+                (tab_getter() if callable(tab_getter) else tab_getter).group.add(
+                    ItemStack(cls.NAME)
+                )
+            except ValueError:
+                pass
 
     # Internal registry type name & capability buffer name; DO NOT CHANGE
     CAPABILITY_CONTAINER_NAME = "minecraft:block"

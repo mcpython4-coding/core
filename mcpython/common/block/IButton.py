@@ -50,18 +50,16 @@ class IButton(IAllDirectionOrientableBlock):
         super().__init__()
         self.powered = False
 
-    def on_block_added(self):
-        super().on_block_added()
-        self.check_block_behind()
-
     def check_block_behind(self):
         x, y, z = self.position
         dx, dy, dz = self.face.dx, self.face.dy, self.face.dz
 
-        block = self.dimension.get_block((x + dx, y + dy, z + dz), none_if_str=True)
+        dimension = shared.world.get_dimension(self.dimension)
+
+        block = dimension.get_block((x + dx, y + dy, z + dz), none_if_str=True)
 
         if block is None or not block.face_solid[self.face.invert()]:
-            self.dimension.remove_block(self.position, block_update_self=False)
+            dimension.remove_block(self.position, block_update_self=False)
 
             # todo: drop item into world
             if shared.IS_CLIENT:
@@ -85,10 +83,13 @@ class IButton(IAllDirectionOrientableBlock):
         return d
 
     def set_model_state(self, state: dict):
-        if state["face"] == "ceiling":
-            self.face = EnumSide.UP
-        elif state["face"] == "floor":
-            self.face = EnumSide.DOWN
-        else:
-            super().set_model_state(state)
-        self.powered = state["powered"] == "true"
+        if "face" in state:
+            if state["face"] == "ceiling":
+                self.face = EnumSide.UP
+            elif state["face"] == "floor":
+                self.face = EnumSide.DOWN
+            else:
+                super().set_model_state(state)
+
+        if "powered" in state:
+            self.powered = state["powered"] == "true"

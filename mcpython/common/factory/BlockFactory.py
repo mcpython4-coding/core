@@ -26,6 +26,9 @@ import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
 import mcpython.util.enums
+from mcpython.common.block.IAllDirectionOrientableBlock import (
+    IAllDirectionOrientableBlock,
+)
 from mcpython.common.block.IButton import IButton
 from mcpython.common.factory.FactoryBuilder import FactoryBuilder
 
@@ -93,6 +96,14 @@ def set_fence(instance: FactoryBuilder.IFactory, *types: str):
 def set_fence_gate(instance: FactoryBuilder.IFactory):
     instance.base_classes.append(BlockFence.AbstractFenceGate)
     instance.set_solid(False).set_all_side_solid(False)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_all_direction_orientable")
+)
+def set_all_direction_orientable(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(IAllDirectionOrientableBlock)
     return instance
 
 

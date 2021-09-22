@@ -114,6 +114,7 @@ def stone_like(
     existing_stairs=True,
     existing_fence=False,
     texture=None,
+    consumer=lambda _, __: None,
 ):
     fname = name.removesuffix("s")
     instance = CombinedFactoryInstance(
@@ -123,41 +124,49 @@ def stone_like(
     )
 
     if existing_full:
-        DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}"))
+        obj = BlockFactory().set_name(f"minecraft:{name}")
+        consumer(None, obj)
+        DEFERRED_PIPE.create_later(obj)
     else:
-        instance.create_full_block()
+        instance.create_full_block(block_factory_consumer=consumer)
 
     if existing_slab:
-        DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{fname}_slab").set_slab()
-        )
+        obj = BlockFactory().set_name(f"minecraft:{fname}_slab").set_slab()
+        consumer(None, obj)
+        DEFERRED_PIPE.create_later(obj)
     else:
-        instance.create_slab_block(f"minecraft:{fname}_slab")
+        instance.create_slab_block(
+            f"minecraft:{fname}_slab", block_factory_consumer=consumer
+        )
 
     if existing_wall:
-        DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall()
-        )
+        obj = BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall()
+        consumer(None, obj)
+        DEFERRED_PIPE.create_later(obj)
     else:
-        instance.create_wall(f"minecraft:{fname}_wall")
+        instance.create_wall(f"minecraft:{fname}_wall", block_factory_consumer=consumer)
 
     if existing_stairs:
-        DEFERRED_PIPE.create_later(
+        obj = (
             BlockFactory()
             .set_name(f"minecraft:{fname}_stairs")
             .set_default_model_state("facing=east,half=bottom,shape=inner_left")
             .set_solid(False)
             .set_all_side_solid(False)
         )
+        consumer(None, obj)
+        DEFERRED_PIPE.create_later(obj)
     else:
         pass  # todo: implement
 
     if existing_fence:
-        DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{fname}_fence").set_fence()
-        )
+        obj = BlockFactory().set_name(f"minecraft:{fname}_fence").set_fence()
+        consumer(None, obj)
+        DEFERRED_PIPE.create_later(obj)
     else:
-        instance.create_fence(f"minecraft:{fname}_fence")
+        instance.create_fence(
+            f"minecraft:{fname}_fence", block_factory_consumer=consumer
+        )
 
 
 def colored(name: str):
@@ -191,7 +200,12 @@ def colored(name: str):
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_concrete"))
+    stone_like(
+        f"{name}_concrete",
+        existing_slab=False,
+        existing_stairs=False,
+        existing_wall=False,
+    )
 
     DEFERRED_PIPE.create_later(
         BlockFactory().set_name(f"minecraft:{name}_concrete_powder").set_fall_able()
@@ -203,11 +217,12 @@ def colored(name: str):
         .set_default_model_state("facing=east")
     )
 
-    DEFERRED_PIPE.create_later(
-        BlockFactory()
-        .set_name(f"minecraft:{name}_stained_glass")
-        .set_solid(False)
-        .set_all_side_solid(False)
+    stone_like(
+        f"{name}_stained_glass",
+        existing_slab=False,
+        existing_stairs=False,
+        existing_wall=False,
+        consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
     )
 
     # todo: glass pane
@@ -221,7 +236,7 @@ def colored(name: str):
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_wool"))
+    stone_like(f"{name}_wool")
 
 
 wood("acacia")
@@ -570,107 +585,133 @@ stone_like(
     "diamond_block", existing_slab=False, existing_stairs=False, existing_wall=False
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:diamond_ore"))
+stone_like("diorite", existing_slab=True, existing_stairs=True, existing_wall=True)
+stone_like("dirt", existing_slab=False, existing_stairs=False, existing_wall=False)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:dirt_path")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:dispenser").set_all_direction_orientable()
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:dragon_egg")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+# todo: dragon head
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:dried_kelp_block"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:dripstone_block"))
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:dropper").set_all_direction_orientable()
+)
+stone_like(
+    "emerald_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:emerald_ore"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:enchanting_table")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:end_gateway")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:end_portal")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:end_portal_frame")
+    .set_default_model_state("eye=false,facing=south")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:end_rod")
+    .set_all_direction_orientable()
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+stone_like("end_stone", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "end_stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+stone_like(
+    "exposed_copper", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "exposed_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:farmland")
+    .set_default_model_state("moisture=0")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(plant("minecraft:fern"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:fire")
+    .set_default_model_state("north=false,east=false,west=false,south=false")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:fletching_table"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:flowering_azalea")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:flower_pot")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:frosted_ice")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+stone_like(
+    "gilded_blackstone", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "glass",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
+)
+# todo: glass pane
+stone_like("glowstone", existing_slab=False, existing_stairs=False, existing_wall=False)
+# todo: glow item frame and glow lichen
+stone_like("gold_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gold_ore"))
+stone_like("granite", existing_slab=True, existing_stairs=True, existing_wall=True)
+DEFERRED_PIPE.create_later(plant("grass"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gravel").set_fall_able())
+colored("gray")
+colored("green")
 
 
 # All blocks, by blockstate
 """
-diorite
-diorite_slab
-diorite_stairs
-diorite_wall
-dirt
-dirt_path
-dispenser
-dragon_egg
-dragon_head
-dragon_wall_head
-dried_kelp_block
-dripstone_block
-dropper
-emerald_block
-emerald_ore
-enchanting_table
-ender_chest
-end_gateway
-end_portal
-end_portal_frame
-end_rod
-end_stone
-end_stone_bricks
-end_stone_brick_slab
-end_stone_brick_stairs
-end_stone_brick_wall
-exposed_copper
-exposed_cut_copper
-exposed_cut_copper_slab
-exposed_cut_copper_stairs
-farmland
-fern
-fire
-fire_coral
-fire_coral_block
-fire_coral_fan
-fire_coral_wall_fan
-fletching_table
-flowering_azalea
-flower_pot
-frosted_ice
-furnace
-gilded_blackstone
-glass
-glass_pane
-glowstone
-glow_item_frame
-glow_lichen
-gold_block
-gold_ore
-granite
-granite_slab
-granite_stairs
-granite_wall
-grass
-grass_block
-gravel
-gray_banner
-gray_bed
-gray_candle
-gray_candle_cake
-gray_carpet
-gray_concrete
-gray_concrete_powder
-gray_glazed_terracotta
-gray_shulker_box
-gray_stained_glass
-gray_stained_glass_pane
-gray_terracotta
-gray_wall_banner
-gray_wool
-green_banner
-green_bed
-green_candle
-green_candle_cake
-green_carpet
-green_concrete
-green_concrete_powder
-green_glazed_terracotta
-green_shulker_box
-green_stained_glass
-green_stained_glass_pane
-green_terracotta
-green_wall_banner
-green_wool
-grimstone
-grimstone_bricks
-grimstone_brick_slab
-grimstone_brick_stairs
-grimstone_brick_wall
-grimstone_slab
-grimstone_stairs
-grimstone_tiles
-grimstone_tile_slab
-grimstone_tile_stairs
-grimstone_tile_wall
-grimstone_wall
 grindstone
 hanging_roots
 hay_block

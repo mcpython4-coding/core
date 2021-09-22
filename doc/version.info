@@ -1805,8 +1805,9 @@ B   [uuk]: fixed IFallingBlock recursive updating itself in some edge cases
 b   [uuk]: fixed chat input package not setting player correctly
 b   [uuk]: fixed command execution env not fetching the position from the entity when needed
 b   [uuk]: fixed /tell command on dedicated server
-B*T [uuk]: fixed player not beeing able to pick up items (by the API method)
+B*T [uuk]: fixed player not being able to pick up items (by the API method)
 BA  [uuk]: fixed Chunk.remove_block not accepting the block as an instance
-B   [uuk]: fixed NewBlocks.py beeing loaded to late for things to work with combined factories
+B   [uuk]: fixed NewBlocks.py being loaded to late for things to work with combined factories
 F   [uuk]: added dummy implementation for buttons
+b   [uuk]: combined factory calls with block_factory_consumer were crashing
 
