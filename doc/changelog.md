@@ -1,7 +1,12 @@
-Changelog since cleanup-branch of 31.01.2020
+# Changelog of mcpython-4
+Contains only some information, in ordered form, from the version.info file
 
+----
 
-planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
+# Planned
+See also tasks.md
+
+Planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
 - add data-driven factory system
 - move more game logic to tags [WIP]
@@ -27,40 +32,41 @@ planned for the future (in "[]", priority, with 1 the highest and positive inf l
     - rendering layer system [20]
     - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
 
-- launcher system to download mc assets separately [MP4-12]
 - entity AI system
 - make loot table system only load needed loot tables, etc.
 - BlockItemGenerator should be replaced by an in-game block renderer
 
-information on development:
-    - the development is split up into 2 phases: the dev-branch with changes to the code and the final releases pushed
-        to release-branch and published as a release on github
-    - developing happens also on feature branches were bigger features can be tested. It is not guaranteed that any
-        if this features will make its way into the final release.
-    - PR's should target dev or in some cases the feature branches, only for critical bug fixes the release-branch
-    - this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
-        for creating the entries. Every new snapshot Changelog starts with "Changelog of <type> <name>" with optional
-        following the theme of the snapshot, the release date and additional information. The Changelog should be
-        an grouped list of changes after topic in an logical order with all not noticeable changes removed
-        followed optional by an table of issues starting with "Fixed issues:" followed by an list of grouped after
-        first occurrence of the bug the list of issues with an short description and when based on an github bug report
-        its github id.
-    - developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
-        When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID of it
-    - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
+### Information on development
+- the development is split up into 2 phases: the dev-branch with changes to the code and the final releases pushed
+    to release-branch and published as a release on github
+- developing happens also on feature branches were bigger features can be tested. It is not guaranteed that any
+    if this features will make its way into the final release.
+- PR's should target dev or in some cases the feature branches, only for critical bug fixes the release-branch
+- this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
+    for creating the entries. Every new snapshot Changelog starts with "Changelog of <type> <name>" with optional
+    following the theme of the snapshot, the release date and additional information. The Changelog should be
+    an grouped list of changes after topic in an logical order with all not noticeable changes removed
+    followed optional by an table of issues starting with "Fixed issues:" followed by an list of grouped after
+    first occurrence of the bug the list of issues with an short description and when based on an github bug report
+    its github id.
+- developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
+    When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID of it
+- develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
+----
 
 # Changelog of snapshot <21w39a>
 Released on <29.09.2021> targeting <1.17>
+
+Backwards incompatible:
+- rendering system (events & management got reworked)
+
 
     Resource system:
         - optimised how mc source assets are linked at setup time
 
     Rendering:
-        - broke backwards compatibility COMPLETELY
-        - the old rendering events are GONE, handled now by a new rendering layer system
-        - removed the out-of-bounds events (really early & after cleanup rendering)
-        - this allows also some custom rendering stuff to specify their own rendering phase
+        - allow custom rendering events to be specified & staged correctly
         - optimised some rendering parts
 
     States:
@@ -79,6 +85,8 @@ Released on <29.09.2021> targeting <1.17>
 
 # Changelog of snapshot 21w37a
 Released on 15.09.2021 targeting 1.17
+
+Backwards compatible: mostly compatible
 
     Python:
         - allowing now python 3.10, as all our dependencies have upgraded their support
@@ -120,6 +128,12 @@ Released on 15.09.2021 targeting 1.17
 # Changelog of snapshot 21w35a 
 Released on 01.09.2021 targeting 1.17.1
 
+Backwards incompatible (most parts are changed):
+- JVM extraction
+- ModLoader discovery service
+- Big refactoring
+
+
     JVM:
         - a lot smaller stuff, fixes, more integration work
         - decoupled JVM from main code into separate repository
@@ -142,6 +156,8 @@ Released on 01.09.2021 targeting 1.17.1
 
 # Changelog of snapshot 21w23a
 Released on 9.6.2021 targeting 1.17
+
+Mostly backwards compatibility
 
     Networking:
         - further work on the network system
@@ -173,8 +189,10 @@ Released on 9.6.2021 targeting 1.17
 # Changelog of snapshot 21w20a 
 Released on 19.5.2021 targeting 21w19a
 
-This snapshot again breaks backwards compatibility.
-We have refactored again some stuff
+Backwards incompatibility:
+- integrated mod api framework (removed)
+- refactoring of some parts
+
 
     Test Framework:
         - tweaked some stuff
@@ -206,13 +224,14 @@ We have refactored again some stuff
 # Changelog of snapshot 21w17a
 Released on 28.04.2021 targeting 21w17a
 
-    This snapshot breaks again compatibility, mainly the following:
-        - reworked how the world generates
-        - reworked how the world stores data maps of chunks (e.g. heightmaps)
-        - broke with this world loading compatibility, did not add a DataFixer for it, so old worlds cannot be
-            loaded
-        - rewritten command system from ground
-        - refactored some important bits. This breaks block construction & rendering
+Backwards incompatibility:
+- reworked how the world generates
+- reworked how the world stores data maps of chunks (e.g. heightmaps)
+- broke with this world loading compatibility, did not add a DataFixer for it, so old worlds cannot be
+    loaded
+- rewritten command system from ground
+- refactored some important bits. This breaks block construction & rendering
+
 
     Commands:
         - rewritten how commands work internally
@@ -252,8 +271,7 @@ Released on 28.04.2021 targeting 21w17a
 # Changelog of snapshot 21w04a
 Released on 27.01.2021, targeting 21w03a
 
-This snapshot broke backwards compatibility, again...
-Namely (the most note-able):
+backwards incompatibility:
 - item factories
 - crafting recipes
 - behaviour changes of BlockFaceState, for better performance
