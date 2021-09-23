@@ -19,6 +19,15 @@ class AbstractExtensionPoint(ABC):
 
 
 class ModLoaderExtensionPoint(AbstractExtensionPoint):
+    """
+    Definition of a mod loader extension point
+    Allows you to define custom mod loaders
+
+    NAME: the name of the loader
+
+    The correct loading method will be invoked with the data; The extension point should do the needed stuff
+    """
+
     NAME: str = None
     ENABLE_MODS_TOML = False
     ENABLE_MOD_JSON = True

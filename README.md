@@ -181,4 +181,14 @@ It is not the best doc-generating software, but it is better than nothing.
 Due to out licence header update system, you cannot provide top-module-level documentation in multiline comments 
 starting with """. You may use block comments here.
 
+Unit tests
+-
+
+We provide a set of unit tests for the game in tests/. 
+Currently, only the real unit tests for python code are working, you can run them via
+```shell
+python -m unittest -m unittest discover --start-directory tests 
+```
+Or via your IDE
+
 
