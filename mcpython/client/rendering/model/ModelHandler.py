@@ -242,6 +242,39 @@ class ModelHandler:
 
         return vertex_list
 
+    def add_faces_to_batch(self, block, faces: typing.Iterable, batches: typing.List) -> typing.Iterable:
+        if not shared.IS_CLIENT:
+            return tuple()
+
+        if block.NAME not in self.blockstates:
+            if not self.hide_blockstate_errors:
+                logger.println(
+                    "[FATAL] block state for block '{}' not found!".format(block.NAME)
+                )
+
+            return self.blockstates["minecraft:missing_texture"].add_faces_to_batch(
+                block, batches, faces
+            )
+
+        blockstate = self.blockstates[block.NAME]
+
+        # todo: add custom block renderer check
+        if blockstate is None:
+            vertex_list = self.blockstates[
+                "minecraft:missing_texture"
+            ].add_faces_to_batch(block, batches, faces)
+        else:
+            vertex_list = list()
+            for face in faces:
+                vertex_list += blockstate.add_face_to_batch(block, batches, face)
+                if issubclass(
+                    type(block.face_state.custom_renderer),
+                    mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
+                ):
+                    block.face_state.custom_renderer.handle(block, vertex_list)
+
+        return vertex_list
+
     def add_raw_face_to_batch(
         self, position, state, block_state_name: str, batches, face
     ):

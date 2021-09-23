@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 from mcpython.util.annotation import onlyInClient
 
 
@@ -27,6 +28,8 @@ class ICustomBatchBlockRenderer:
 
 @onlyInClient()
 class ICustomDrawMethodRenderer:
+    DRAW_PHASE = NORMAL_WORLD.getRenderingEvent()
+
     def draw(self, position: typing.Tuple[int, int, int], block):
         pass
 

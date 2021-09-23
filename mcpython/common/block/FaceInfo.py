@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import copy
+import itertools
 import typing
 import weakref
 
@@ -31,7 +32,7 @@ class FaceInfo:
         x.normal_name: False for x in mcpython.util.enums.EnumSide.iterate()
     }
     DEFAULT_FACE_DATA = {
-        x.normal_name: [] for x in mcpython.util.enums.EnumSide.iterate()
+        x.normal_name: None for x in mcpython.util.enums.EnumSide.iterate()
     }
 
     def __init__(self, block):
@@ -53,7 +54,7 @@ class FaceInfo:
 
     def show_face(self, face: mcpython.util.enums.EnumSide):
         """
-        Shows an face
+        Shows a face
         :param face: the face of the block
         """
         if self.faces[face.normal_name]:
@@ -127,7 +128,7 @@ class FaceInfo:
             ):
                 if self.subscribed_renderer and not any(self.faces.values()):
                     mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                        NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
+                        self.custom_renderer.DRAW_PHASE, self._draw_custom_render
                     )
                     self.subscribed_renderer = False
         else:
@@ -181,7 +182,6 @@ class FaceInfo:
     def hide_all(self):
         """
         Will hide all faces
-        todo: can we optimize it
         """
         if (
             any(self.faces.values())
@@ -192,8 +192,19 @@ class FaceInfo:
             and self.subscribed_renderer
         ):
             mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
+                self.custom_renderer.DRAW_PHASE, self._draw_custom_render
             )
             self.subscribed_renderer = False
 
-        [self.hide_face(face) for face in mcpython.util.enums.EnumSide.iterate()]
+        if self.custom_renderer:
+            [self.hide_face(face) for face in mcpython.util.enums.EnumSide.iterate()]
+
+        # Only when it is shown we need to hide something...
+        elif self.face_data:
+            for element in itertools.chain.from_iterable(e for e in self.face_data.values() if e is not None):
+                element.delete()
+
+            for face in mcpython.util.enums.EnumSide.iterate():
+                self.faces[face.normal_name] = False
+
+            self.face_data = None

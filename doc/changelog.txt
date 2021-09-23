@@ -59,13 +59,15 @@ changelog of snapshot <21w39a>, released on <29.09.2021> targeting <1.17>
     Rendering:
         - broke backwards compatibility COMPLETELY
         - the old rendering events are GONE, handled now by a new rendering layer system
-        - removed the out-of-bounds events (realy early & after cleanup rendering)
+        - removed the out-of-bounds events (really early & after cleanup rendering)
+        - this allows also some custom rendering stuff to specify their own rendering phase
+        - optimised some rendering parts
 
     States:
         - states can now optionally define a state renderer which is only init-ed on clients
 
     Blocks:
-        - a whole lot of new blocks, incuding variants not in the original game
+        - a whole lot of new blocks, including variants not in the original game
         - no detailed list arrival, see the diff of "/data view registry minecraft:block" command
 
     Issues fixed:
