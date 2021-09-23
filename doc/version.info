@@ -1814,4 +1814,6 @@ I   [uuk]: blocks have now no face info on dedicated servers
 f   [uuk]: FaceInfo.hide_all is now more optimal for full blocks
 f   [uuk]: custom block renderers with draw mode can define now the event phase to render it
 I   [uuk]: fixed block default rendering state being empty lists, not None, which the underlying system accepts
+F   [uuk]: servers may send now a package for setting the user in a new state
+F   [uuk]: added server package for changing the server
 

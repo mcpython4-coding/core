@@ -18,10 +18,10 @@ import typing
 import mcpython.engine.network.AbstractPackage
 import mcpython.engine.network.Backend
 from mcpython import shared
-
-from ...common.world.AbstractInterface import IChunk
+from .util import ReadBuffer
+from .util import WriteBuffer
 from .. import logger
-from .util import ReadBuffer, WriteBuffer
+from ...common.world.AbstractInterface import IChunk
 
 
 class NetworkManager:
@@ -443,6 +443,8 @@ def load_packages():
         PlayerInfoPackages,
         RegistrySyncPackage,
         WorldDataExchangePackage,
+        ClientStateChangePackage,
+        ServerChangePackage,
     )
 
     shared.NETWORK_MANAGER.register_package_type(
@@ -494,6 +496,12 @@ def load_packages():
     )
     shared.NETWORK_MANAGER.register_package_type(
         PlayerChatPackage.PlayerMessageShowPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        ClientStateChangePackage.ClientStateChangePackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        ServerChangePackage.ServerChangePackage
     )
 
 

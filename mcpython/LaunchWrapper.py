@@ -131,6 +131,7 @@ class LaunchWrapper:
             shared.SERVER_NETWORK_HANDLER = (
                 mcpython.engine.network.Backend.ServerBackend()
             )
+            # todo: get server ip from argv
             shared.SERVER_NETWORK_HANDLER.connect()
 
         self.setup()
