@@ -42,7 +42,7 @@ class Furnace(
 
     def __init__(self):
         """
-        creates an furnace block in the world
+        Creates a furnace block
         """
         super().__init__()
         self.active = False

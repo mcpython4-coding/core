@@ -195,9 +195,10 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
             player.send_update_package_when_client()
         else:
-            for player in shared.world.players.values():
-                for _ in range(m):
-                    self.physics_update_internal(dt / m, player)
+            pass
+            # for player in shared.world.players.values():
+            #     for _ in range(m):
+            #         self.physics_update_internal(dt / m, player)
 
     def on_left_click_interaction_update(self, dt: float):
         if self.break_time is None:

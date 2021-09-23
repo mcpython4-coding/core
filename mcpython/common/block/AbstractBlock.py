@@ -171,7 +171,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         self.set_to: typing.Optional[typing.Tuple[float, float, float]] = None
         self.real_hit: typing.Optional[typing.Tuple[float, float, float]] = None
         self.face_state: mcpython.common.block.FaceInfo.FaceInfo = (
-            mcpython.common.block.FaceInfo.FaceInfo(self)
+            mcpython.common.block.FaceInfo.FaceInfo(self) if shared.IS_CLIENT else None
         )
         self.block_state: typing.Optional[int] = None
         self.set_by = None  # optional player

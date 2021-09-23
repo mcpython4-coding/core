@@ -25,7 +25,6 @@ from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 class FaceInfo:
     """
     Class for face state of the block
-    todo: merge data into AbstractBlock & make this a static class
     """
 
     DEFAULT_FACE_STATE = {
@@ -37,7 +36,7 @@ class FaceInfo:
 
     def __init__(self, block):
         """
-        Block face state
+        Block face state, client-sided container holding information for rendering
         """
         self.block = weakref.proxy(block)
         self.faces: typing.Optional[

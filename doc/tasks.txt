@@ -8,9 +8,8 @@ Issues:
 
 Pending for next non-snapshot release:
 - issues above
-- fix gamemode 0
+- fix gamemode 0 (partially done)
 - more unit tests
-- built pipe for jvm
 
 
 Toolchain:

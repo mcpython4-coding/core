@@ -1810,4 +1810,5 @@ BA  [uuk]: fixed Chunk.remove_block not accepting the block as an instance
 B   [uuk]: fixed NewBlocks.py being loaded to late for things to work with combined factories
 F   [uuk]: added dummy implementation for buttons
 b   [uuk]: combined factory calls with block_factory_consumer were crashing
+I   [uuk]: blocks have now no face info on dedicated servers
 
