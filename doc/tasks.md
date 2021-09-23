@@ -13,7 +13,7 @@ Pending for next non-snapshot release:
 
 
 Toolchain:
-- userconfig.json storing local information like:
+- user_config.json storing local information across versions, like:
     - path to launcher
     - user name
     - path to mc asset folder / archive
@@ -33,6 +33,7 @@ Data generation:
 
 Block Item Generator:
 - improve, cleanup, prepare for removal & export to in-inventory rendering [in progress]
+- add flag to each release for enabling cache invalidation when upgrading
 
 Data driver:
 - item, block, implementation for the other recipes

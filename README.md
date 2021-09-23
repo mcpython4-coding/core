@@ -6,8 +6,9 @@ This is the revision of a minecraft-like, python-written game based on fogleman'
 Watch us and submit to it at https://github.com/mcpython4-coding/core.
 
 You are looking at the development-section of the installation guide.
-You can use the launcher from https://github.com/mcpython4-coding/Launcher
-to automatically download and set up the latest version of mcpython4
+
+(You can use the launcher from https://github.com/mcpython4-coding/Launcher
+to automatically download and set up the latest version of mcpython4) Currently not updated, may be broken with latest versions
 
 How to set up?
 -----------------------------------------------------------------------------------------------------

@@ -632,7 +632,7 @@ DEFAULT_BUILD_INSTANCE.add_stage(
         FileFilterTask(
             lambda file: not (
                 file.startswith("tools/mdk")
-                or (file.startswith("doc") and "changelog.txt" not in file)
+                or (file.startswith("doc") and "changelog.md" not in file)
             )
         ),
         FilePrefixRenamerTask("doc/", ""),

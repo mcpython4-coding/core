@@ -1,38 +1,36 @@
 Changelog since cleanup-branch of 31.01.2020
-todo: make into an .md file
 
 
 planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
         before next stable release):
-    - add data-driven factory system
-    - move more game logic to tags [WIP]
-    - refactor event names [WIP]
-    - do not read inventory config for each inventory, load it ones & share
-    - add scoreboards with commands, execute command entry, ...
-    - make world gen more fail-save
-    - add ores & their gen
-    - tool level system based on tags were every block has a) a tag for the tool type and b) a tag for tool level
-        [tags exists by vanilla]
+- add data-driven factory system
+- move more game logic to tags [WIP]
+- refactor event names [WIP]
+- do not read inventory config for each inventory, load it ones & share
+- add scoreboards with commands, execute command entry, ...
+- make world gen more fail-save
+- add ores & their gen
+- tool level system based on tags were every block has a) a tag for the tool type and b) a tag for tool level [tags exists by vanilla]
 
-    - add an line into logging where the system searches for the location where the error occur and will link the mod
-        caused it into the log
+- add an line into logging where the system searches for the location where the error occur and will link the mod
+    caused it into the log
 
-    - parser for the new mc world gen config format
+- parser for the new mc world gen config format
 
-    - add an mode where the window opens only when the load is complete
+- add an mode where the window opens only when the load is complete
 
-    - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
+- add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
 
-    - upgrade to pyglet 2:
-        - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
-        - implement lighting [1000]
-        - rendering layer system [20]
-        - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
+- upgrade to pyglet 2:
+    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
+    - implement lighting [1000]
+    - rendering layer system [20]
+    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
 
-    - launcher system to download mc assets separately [MP4-12]
-    - entity AI system
-    - make loot table system only load needed loot tables, etc.
-    - BlockItemGenerator should be replaced by an in-game block renderer
+- launcher system to download mc assets separately [MP4-12]
+- entity AI system
+- make loot table system only load needed loot tables, etc.
+- BlockItemGenerator should be replaced by an in-game block renderer
 
 information on development:
     - the development is split up into 2 phases: the dev-branch with changes to the code and the final releases pushed
@@ -41,8 +39,8 @@ information on development:
         if this features will make its way into the final release.
     - PR's should target dev or in some cases the feature branches, only for critical bug fixes the release-branch
     - this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
-        for creating the entries. Every new snapshot changelog starts with "changelog of <type> <name>" with optional
-        following the theme of the snapshot, the release date and additional information. The changelog should be
+        for creating the entries. Every new snapshot Changelog starts with "Changelog of <type> <name>" with optional
+        following the theme of the snapshot, the release date and additional information. The Changelog should be
         an grouped list of changes after topic in an logical order with all not noticeable changes removed
         followed optional by an table of issues starting with "Fixed issues:" followed by an list of grouped after
         first occurrence of the bug the list of issues with an short description and when based on an github bug report
@@ -52,7 +50,9 @@ information on development:
     - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 
-changelog of snapshot <21w39a>, released on <29.09.2021> targeting <1.17>
+# Changelog of snapshot <21w39a>
+Released on <29.09.2021> targeting <1.17>
+
     Resource system:
         - optimised how mc source assets are linked at setup time
 
@@ -77,7 +77,9 @@ changelog of snapshot <21w39a>, released on <29.09.2021> targeting <1.17>
         - commands executed only by someone, not somewhere, would have None as position instead of the this.position
 
 
-changelog of snapshot 21w37a, released on 15.09.2021 targeting 1.17
+# Changelog of snapshot 21w37a
+Released on 15.09.2021 targeting 1.17
+
     Python:
         - allowing now python 3.10, as all our dependencies have upgraded their support
 
@@ -115,7 +117,9 @@ changelog of snapshot 21w37a, released on 15.09.2021 targeting 1.17
             a game instance
 
 
-changelog of snapshot 21w35a released on 01.09.2021 targeting 1.17.1
+# Changelog of snapshot 21w35a 
+Released on 01.09.2021 targeting 1.17.1
+
     JVM:
         - a lot smaller stuff, fixes, more integration work
         - decoupled JVM from main code into separate repository
@@ -136,7 +140,9 @@ changelog of snapshot 21w35a released on 01.09.2021 targeting 1.17.1
         - internal optimisations for the rendering system, refactored some bits, removed unneeded stuff
 
 
-changelog of snapshot 21w23a released on 9.6.2021 targeting 1.17
+# Changelog of snapshot 21w23a
+Released on 9.6.2021 targeting 1.17
+
     Networking:
         - further work on the network system
 
@@ -164,9 +170,11 @@ changelog of snapshot 21w23a released on 9.6.2021 targeting 1.17
         - improved general storage layout
 
 
-changelog of snapshot 21w20a released on 19.5.2021 targeting 21w19a
-    This snapshot again breaks backwards compatibility.
-    We have refactored again some stuff
+# Changelog of snapshot 21w20a 
+Released on 19.5.2021 targeting 21w19a
+
+This snapshot again breaks backwards compatibility.
+We have refactored again some stuff
 
     Test Framework:
         - tweaked some stuff
@@ -195,7 +203,9 @@ changelog of snapshot 21w20a released on 19.5.2021 targeting 21w19a
         - some smaller work on network handlers
 
 
-changelog of snapshot 21w17a released on 28.04.2021 targeting 21w17a
+# Changelog of snapshot 21w17a
+Released on 28.04.2021 targeting 21w17a
+
     This snapshot breaks again compatibility, mainly the following:
         - reworked how the world generates
         - reworked how the world stores data maps of chunks (e.g. heightmaps)
@@ -239,14 +249,17 @@ changelog of snapshot 21w17a released on 28.04.2021 targeting 21w17a
         - fixed function unsubscribing never working
 
 
-changelog of snapshot 21w04a released on 27.01.2021, targeting 21w03a
-    This snapshot broke backwards compatibility, again...
-    Namely (the most note-able):
-    - item factories
-    - crafting recipes
-    - behaviour changes of BlockFaceState, for better performance
-    - command system
-    - inventory system (pushed in direction of container separation)
+# Changelog of snapshot 21w04a
+Released on 27.01.2021, targeting 21w03a
+
+This snapshot broke backwards compatibility, again...
+Namely (the most note-able):
+- item factories
+- crafting recipes
+- behaviour changes of BlockFaceState, for better performance
+- command system
+- inventory system (pushed in direction of container separation)
+
 
     Commands:
         - added /blockinfo command giving information about the block currently looking at
@@ -287,13 +300,15 @@ changelog of snapshot 21w04a released on 27.01.2021, targeting 21w03a
         - fixed reload issues and general issues with in-memory data propitiation not over the default interface
 
 
-changelog of snapshot 21w01a, released on 06.01.2021, targeting 20w51a
-    Happy new year, 2021!
-    This time, breaks again some big parts
-    Affected are world generation and mod loading stage modifications, and loading-order-dependent stuff, beside
-        following some general structure [block models after blocks, etc.]
+# Changelog of snapshot 21w01a
+Released on 06.01.2021, targeting 20w51a
 
-    WARNING: this version has a major visual glitch which could not be fixed until today
+Happy new year, 2021!
+This time, breaks again some big parts
+Affected are world generation and mod loading stage modifications, and loading-order-dependent stuff, beside
+following some general structure [block models after blocks, etc.]
+
+WARNING: this version has a major visual glitch which could not be fixed until today
 
     API:
         If you see this, you know that something broke again...
@@ -341,17 +356,18 @@ changelog of snapshot 21w01a, released on 06.01.2021, targeting 20w51a
         - added foundation for a server launcher
 
 
-changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a
-    WARNING:  M A J O R  BREAKING VERSION!!!!
-    THIS VERSION CONTAINS HIGHLY BREAKING CHANGES. IT IS NOWHERE NEAR TO BEING COMPATIBLE
+# Changelog of snapshot 20w51a
+Released on 18.12.2020, targeting 20w51a
+WARNING:  M A J O R  BREAKING VERSION!!!!
+THIS VERSION CONTAINS HIGHLY BREAKING CHANGES. IT IS NOWHERE NEAR TO BEING COMPATIBLE
 
-    THIS ALSO ENDS SUPPORT FOR ALL OLD VERSIONS BEFORE THIS RELEASE
+THIS ALSO ENDS SUPPORT FOR ALL OLD VERSIONS BEFORE THIS RELEASE
 
-    BREAKING CHANGES MAY CONTINUE UNTIL STABLE RELEASE
+BREAKING CHANGES MAY CONTINUE UNTIL STABLE RELEASE
 
-    THIS SNAPSHOT FIXES A  L O T  OF ISSUES [partly by rewriting the parts, partly by code review]
+THIS SNAPSHOT FIXES A  L O T  OF ISSUES [partly by rewriting the parts, partly by code review]
 
-    this is nowhere near an complete list, see version.info for more, or the github logs
+this is nowhere near an complete list, see version.info for more, or the github logs
 
     refactoring:
         - refactored nearly everything..., multiple times...
@@ -396,19 +412,33 @@ changelog of snapshot 20w51a, released on 18.12.2020, targeting 20w51a
         [and a lot small ones during refactoring]
 
 
-changelog of snapshot 20w31a (theme: improvements)
-    - MDK has now an function to change the target version
-    - DataGenerator system allows now to add new data generators during data-gen-ing
-    - MDK can access now versions from an launcher instance
-    - MDK is now capable of building the mod into one final zipfile
-    - added data generators for more stuff
-    - improved crafting system
-    - added FallingBlockEntity
-    - IFallingBlock is now based around an entity instead of an simple block
-    - added data generator for language files and loot tables
-    - changed how the game is launching to an more modify-able way
-    - changed a lot of events
-    - block states can now have parents and alias model names
+# Changelog of snapshot 20w31a
+
+    Modding:
+        - MDK has now an function to change the target version
+        - MDK can access now versions from an launcher instance
+        - MDK is now capable of building the mod into one final zipfile
+
+    Data Generation:
+        - DataGenerator system allows now to add new data generators during data-gen-ing
+        - added data generators for more stuff
+        - added data generator for language files and loot tables
+
+    Crafting:
+        - improved crafting system
+
+    Blocks:
+        - added FallingBlockEntity
+        - IFallingBlock is now based around an entity instead of an simple block
+
+    Launch-Wrapper:
+        - changed how the game is launching to an more modify-able way
+
+    Events:
+        - changed a lot of events
+
+    States:
+        - block states can now have parents and alias model names
 
     fixed issues:
         - IHorizontalOrientableBlock was behaving incorrectly
@@ -422,7 +452,9 @@ changelog of snapshot 20w31a (theme: improvements)
             - command entry for blocks was not accepting air
 
 
-changelog of a1.0.0: (excluding the changes from the snapshots below)
+# Changelog of a1.0.0
+(excluding the changes from the snapshots below)
+
     Rendering:
         - added tooltip system for items with their backends at Item-class and factory methods at ItemFactory
         - improved entity model rendering code
@@ -464,8 +496,10 @@ changelog of a1.0.0: (excluding the changes from the snapshots below)
             - Chunk deserializer was not setting chunks properties properly leading into not rendering entities
 
 
-changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)
-    updated resources to 1.16 and added (some) content of the update
+# Changelog of snapshot 20w28a 
+Released on 08.07.2020 (theme: fixing stuff & upgrading base to 1.16)
+
+updated resources to 1.16 and added (some) content of the update
 
     Rendering:
         - improved rendering system by using MatrixStack's and RenderingHelper-instances
@@ -518,7 +552,9 @@ changelog of snapshot 20w28a released on 08.07.2020 (theme: fixing stuff & upgra
             - ItemFactory's template system was broken
             - changing dimension did not work in a lot of cases
 
-changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API improvements)
+# Changelog of snapshot 20w25a 
+Released on 18.06.2020 (theme: data fixers and API improvements)
+
     Rendering:
         - added state part serializer for progress bar
         - generation screens
@@ -558,21 +594,24 @@ changelog of snapshot 20w25a released on 18.06.2020 (theme: data fixers and API 
             - generator for recipe generator was not parsing output correctly leading into errors in the recipes
 
 
-changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data generators)
-    WARNING: this snapshot WILL break some backward-compatibility as it moved a lot of stuff around. Use the constants
-        in globals.py for allocation.
-    WARNING: this snapshot adds data generators. They are useful, but currently complicated to set up. We will add
-        in the future an mdk generator script for setting up an mdk package with all run-configurations,
-        launcher bindings and useful helper scripts like building it into an final zip file
-    WARNING: this snapshot changed the way how the dev-environment is packaged. This may lead into problems
-    WARNING: this snapshot changed the way how final end-user directories look like and what can be modified,
-        See globals.py for the locations, do NOT use G.local+"/build/[...]", use G.build+"/[...]"!!!!
-    WARNING: as data generators are now an thing, you can NOT rely on that your game will load up completely as an mod.
-        There is the extreme "--data-gen --exit-after-data-gen --no-window" mode in which no window will open
-        (and as so now draw-events or user interactions are called, only ticks) and the game will exit after the
+# Changelog of snapshot 20w24a 
+Released on 10.06.2020 (theme: refactoring & data generators)
+
+WARNING: this snapshot WILL break some backward-compatibility as it moved a lot of stuff around. Use the constants
+    in globals.py for allocation.
+WARNING: this snapshot adds data generators. They are useful, but currently complicated to set up. We will add
+    in the future an mdk generator script for setting up an mdk package with all run-configurations,
+    launcher bindings and useful helper scripts like building it into an final zip file
+WARNING: this snapshot changed the way how the dev-environment is packaged. This may lead into problems
+WARNING: this snapshot changed the way how final end-user directories look like and what can be modified,
+    See globals.py for the locations, do NOT use G.local+"/build/[...]", use G.build+"/[...]"!!!!
+WARNING: as data generators are now an thing, you can NOT rely on that your game will load up completely as an mod.
+    There is the extreme "--data-gen --exit-after-data-gen --no-window" mode in which no window will open
+    (and as so now draw-events or user interactions are called, only ticks) and the game will exit after the
         data gen is finished (via an extra loading stage)
 
-    - added system to build the project into one stand-alone zip-archive
+    Tool Chain:
+        - added system to build the project into one stand-alone zip-archive
 
     Modding:
         - changed version tuple builder for mcpython
@@ -608,7 +647,9 @@ changelog of snapshot 20w24a released on 10.06.2020 (theme: refactoring & data g
             - booleans where not correctly loaded
 
 
-changelog of snapshot 20w22a released on 30.05.2020 (theme: feature cleanup & improvements)
+# Changelog of snapshot 20w22a 
+Released on 30.05.2020 (theme: feature cleanup & improvements)
+
     Rendering:
         - optimized block rendering
         - re-ordered some UV-related stuff, you may want to update your own models
@@ -636,16 +677,18 @@ changelog of snapshot 20w22a released on 30.05.2020 (theme: feature cleanup & im
             - event "worldgen:chunk:finished" was not called in most cases
             - data packs may not get unloaded when they needed to
 
-changelog of release alpha 1.0.1
+# Changelog of release alpha 1.0.1
     fixed bugs:
         from previous release:
             - fixed crash on startup
             - when loading an world from an never save version, the game gives out an exception
 
 
-changelog of release alpha 1.0.0: (theme: bug fixing & system improvements)
-    during developing more features, the developer has decided to discard the progress. As some more difficulties had
-    occur [Covid-19], the development time for these dev-cycle was far longer than expected.
+# Changelog of release alpha 1.0.0
+(theme: bug fixing & system improvements)
+
+during developing more features, the developer has decided to discard the progress. As some more difficulties had
+occur [Covid-19], the development time for these dev-cycle was far longer than expected.
 
     Event-system:
         - resize-event is called after every state switch now
@@ -684,7 +727,8 @@ changelog of release alpha 1.0.0: (theme: bug fixing & system improvements)
             - a lot of normal fuels were not accepted by furnace as fuels
 
 
-changelog of snapshot 20w14a
+# Changelog of snapshot 20w14a
+
     Events:
         - added new event: "stage:blockitemfactory:finish"
         - changed some internal inventory interaction things
@@ -726,7 +770,9 @@ changelog of snapshot 20w14a
             - crash when inventory slot count decreases between two loads of an world
 
 
-changelog of snapshot 20w12b [released on 21.03.2020]
+# Changelog of snapshot 20w12b 
+Released on 21.03.2020
+
     Dimensions:
         - added dimension definition for nether and end
 
@@ -764,7 +810,9 @@ changelog of snapshot 20w12b [released on 21.03.2020]
             - multipart models failed to load when an entry had an list of models
 
 
-changelog of snapshot 20w12a [released on 16.03.2020]
+# Changelog of snapshot 20w12a
+Released on 16.03.2020
+
     Loot tables:
         - added class for LootTable, added sub-classes for generating the content
         - added base classes for loot table function and conditions
@@ -796,7 +844,9 @@ changelog of snapshot 20w12a [released on 16.03.2020]
             - shift crafting was duplicating output
 
 
-changelog of snapshot 20w11a [released on 12.03.2020]
+# Changelog of snapshot 20w11a 
+Released on 12.03.2020
+
     Rendering:
         - re-added support for custom block renderers
         - added support for OR-condition in block-states
@@ -848,8 +898,11 @@ changelog of snapshot 20w11a [released on 12.03.2020]
         - unbreakable blocks could be broken in gamemode 0
 
 
-changelog of snapshot 20w10a [released on 04.03.2020]
-    - updated libraries
+# Changelog of snapshot 20w10a 
+Released on 04.03.2020
+
+    Internals:
+        - updated libraries
 
     Datapacks:
         - added datapack support
@@ -880,7 +933,9 @@ changelog of snapshot 20w10a [released on 04.03.2020]
         - fixed exception on shift-clicking crafting output of main inventory
 
 
-changelog of snapshot 20w09a [released on 26.02.2020]
+# Changelog of snapshot 20w09a 
+Released on 26.02.2020
+
     Rendering:
         - changed TextureAtlas-block-addition system to be based on mod-based/texture size-based atlases
         - USE_MISSING_TEXTURES_ON_MISS_TEXTURE config option is now False by default
@@ -922,8 +977,10 @@ changelog of snapshot 20w09a [released on 26.02.2020]
             - crash when block-name-prefix is no mod-prefix
             - crash when model-name-prefix is no mod-prefix
 
-changelog of snapshot 20w07a [released on 10.02.2020]
-    based on: rendering update branch 1 & changes to master-branch
+# Changelog of snapshot 20w07a 
+Released on 10.02.2020
+
+based on: rendering update branch 1 & changes to master-branch
 
     Rendering:
         - block textures are now cut out to squares making animated textures load only the first texture, but not the
@@ -977,10 +1034,13 @@ changelog of snapshot 20w07a [released on 10.02.2020]
 
         - various crashes & exceptions in log
 
-changelog of snapshot 20w05a [released on 01.02.2020]
-    based on: cleanup-branch version 1 [merged on 01.02.2020 onto master]
-    - updated textures to 1.15.2
-    - upgraded libraries
+# Changelog of snapshot 20w05a 
+Released on 01.02.2020
+
+based on: cleanup-branch version 1 [merged on 01.02.2020 onto master]
+- updated textures to 1.15.2
+- upgraded libraries
+
 
     informal:
         - added an file called "events.list" storing every event ever called
