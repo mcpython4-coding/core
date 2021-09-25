@@ -96,7 +96,7 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         )
 
         if shared.IS_CLIENT:
-            self.face_state.update(redraw_complete=True)
+            self.face_info.update(redraw_complete=True)
 
     def set_model_state(self, state: dict):
         for key in state:
@@ -110,7 +110,7 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         if instance is None or type(instance) == str:
             return False
 
-        return instance.face_solid[face.invert()] or (
+        return instance.face_solid[face.invert().index] or (
             issubclass(type(instance), AbstractFence)
             and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME)) > 0
         )

@@ -74,7 +74,7 @@ class Barrel(AbstractBlock.AbstractBlock):
             elif dy < 0:
                 self.facing = "up"
             if shared.IS_CLIENT:
-                self.face_state.update()
+                self.face_info.update()
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple

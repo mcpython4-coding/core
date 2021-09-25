@@ -186,8 +186,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 faces[face.normal_name] = block is None or (
                     not isinstance(block, str)
                     and (
-                        not block.face_solid[face.invert()]
-                        or not instance.face_solid[face]
+                        not block.face_solid[face.invert().index]
+                        or not instance.face_solid[face.index]
                     )
                 )
 
@@ -224,8 +224,8 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                     or (
                         not isinstance(block, str)
                         and (
-                            not block.face_solid[face.invert()]
-                            or not instance.face_solid[face]
+                            not block.face_solid[face.invert().index]
+                            or not instance.face_solid[face.index]
                         )
                     )
                 ):
@@ -301,7 +301,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
                 lazy_setup(block)
 
             if shared.IS_CLIENT:
-                block.face_state.update()
+                block.face_info.update()
 
         # Create the block instance from the registry
         else:
@@ -328,7 +328,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self.mark_position_dirty(position)
 
         if immediate and shared.IS_CLIENT:
-            block.face_state.update()
+            block.face_info.update()
 
             if block_update:
                 self.on_block_updated(position, include_itself=block_update_self)
@@ -391,7 +391,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         self._world[position].on_block_remove(reason)
 
         if shared.IS_CLIENT:
-            self._world[position].face_state.hide_all()
+            self._world[position].face_info.hide_all()
 
         del self._world[position]
 
@@ -424,7 +424,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             if block is None:
                 continue
 
-            block.face_state.update(True)
+            block.face_info.update(True)
 
     def show_block(
         self,
@@ -447,7 +447,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             return
 
         if immediate:
-            self._world[position].face_state.update(redraw_complete=True)
+            self._world[position].face_info.update(redraw_complete=True)
         else:
             shared.world_generation_handler.task_handler.schedule_visual_update(
                 self, position
@@ -475,7 +475,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
         if immediate:
             if position not in self._world:
                 return
-            self._world[position].face_state.hide_all()
+            self._world[position].face_info.hide_all()
         else:
             shared.world_generation_handler.task_handler.schedule_visual_update(
                 self, position

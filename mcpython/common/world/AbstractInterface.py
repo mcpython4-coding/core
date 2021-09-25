@@ -314,9 +314,9 @@ class IChunk(ISupportWorldInterface, ABC):
     def update_all_rendering(self):
         for position, block in self._world.items():
             if not self.exposed(position):
-                block.face_state.hide_all()
+                block.face_info.hide_all()
             else:
-                block.face_state.update()
+                block.face_info.update()
 
     def show(self):
         """
@@ -333,7 +333,7 @@ class IChunk(ISupportWorldInterface, ABC):
 
     def update_visible_block(self, position: typing.Tuple[int, int, int]):
         """
-        Calls Block.face_state.update()
+        Calls Block.face_info.update()
         :param position: the position to update at
         """
         raise NotImplementedError

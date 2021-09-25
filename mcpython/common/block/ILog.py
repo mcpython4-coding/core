@@ -38,7 +38,7 @@ class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
             elif dz:
                 self.axis = LogAxis.Z
 
-            self.face_state.update(True)
+            self.face_info.update(True)
 
     def get_model_state(self):
         return {"axis": self.axis.name.lower()}

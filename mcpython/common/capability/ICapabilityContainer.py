@@ -58,7 +58,7 @@ class ICapabilityContainer(IBufferSerializeAble):
         if name not in self.capability_data:
             self.write_raw_capability_data(name, capability.attach(self))
 
-    def prepare_container(self):
+    def prepare_capability_container(self):
         if not hasattr(self, "capability_data"):
             self.capability_data = None
 

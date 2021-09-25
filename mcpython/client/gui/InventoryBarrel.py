@@ -44,7 +44,7 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         )
         self.block.opened = True
         if shared.IS_CLIENT:
-            self.block.face_state.update(True)
+            self.block.face_info.update(True)
 
     def on_deactivate(self):
         super().on_deactivate()
@@ -53,7 +53,7 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         )
         self.block.opened = False
         if shared.IS_CLIENT:
-            self.block.face_state.update(True)
+            self.block.face_info.update(True)
 
     # todo: move to container
     def create_slot_renderers(self) -> list:

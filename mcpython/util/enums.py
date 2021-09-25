@@ -41,12 +41,12 @@ class EnumSide(enum.Enum):
     Also used for defining axis where it points in the direction
     """
 
-    TOP = UP = U = (0, 1, 0, "up")
-    BOTTOM = DOWN = D = (0, -1, 0, "down")
-    NORTH = N = (-1, 0, 0, "north")
-    EAST = E = (0, 0, 1, "east")
-    SOUTH = S = (1, 0, 0, "south")
-    WEST = W = (0, 0, -1, "west")
+    TOP = UP = U = (0, 1, 0, "up", 0)
+    BOTTOM = DOWN = D = (0, -1, 0, "down", 1)
+    NORTH = N = (-1, 0, 0, "north", 2)
+    EAST = E = (0, 0, 1, "east", 3)
+    SOUTH = S = (1, 0, 0, "south", 4)
+    WEST = W = (0, 0, -1, "west", 5)
 
     @classmethod
     def iterate(cls):
@@ -55,7 +55,7 @@ class EnumSide(enum.Enum):
         """
         return FACE_ORDER
 
-    def __init__(self, dx: int, dy: int, dz: int, normal_name: str):
+    def __init__(self, dx: int, dy: int, dz: int, normal_name: str, index: int):
         """
         Constructs an new enum instance
         :param dx: the delta in x
@@ -65,6 +65,7 @@ class EnumSide(enum.Enum):
         """
         self.relative = self.dx, self.dy, self.dz = dx, dy, dz
         self.normal_name = normal_name
+        self.index = index
 
     def invert(self):
         """
@@ -78,10 +79,10 @@ class EnumSide(enum.Enum):
         return tuple([position[i] + relative[i] for i in range(3)])
 
     def __eq__(self, other):
-        return type(self) == type(other) and self.normal_name == other.normal_name
+        return type(self) == type(other) and self.index == other.index
 
     def __hash__(self):
-        return hash(self.relative)
+        return self.index
 
     def rotate(self, rotation: tuple):
         face = self

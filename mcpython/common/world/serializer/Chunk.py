@@ -249,7 +249,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             block_data = (
                 block.NAME,
                 block.dump_data(),
-                any(block.face_state.faces.values()),
+                any(block.face_info.faces.values()),
             )
 
             # inventory data

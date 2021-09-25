@@ -68,7 +68,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
                 self.facing = "south"
 
             if shared.IS_CLIENT:
-                self.face_state.update()
+                self.face_info.update()
 
     def on_anvil_use(self):
         if random.random() < self.BREAK_CHANCE:

@@ -335,7 +335,7 @@ class WorldGenerationTaskHandler:
 
                 elif not isinstance(block, str) and shared.IS_CLIENT:
                     try:
-                        block.face_state.update(redraw_complete=True)
+                        block.face_info.update(redraw_complete=True)
                     except:
                         logger.print_exception(f"during showing block {block}")
 

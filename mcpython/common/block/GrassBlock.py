@@ -45,8 +45,8 @@ class GrassBlock(AbstractBlock.AbstractBlock):
         else:
             instance = dim.get_block((x, y + 1, z), none_if_str=True)
             if instance is not None and (
-                instance.face_solid[mcpython.util.enums.EnumSide.UP]
-                or instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
+                instance.face_solid[0]
+                or instance.face_solid[1]
             ):
                 dim.get_chunk_for_position(self.position).add_block(
                     self.position, "minecraft:dirt"

@@ -23,6 +23,7 @@ import mcpython.common.container.ResourceStack
 import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.util.enums
+from mcpython.util.enums import EnumSide
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
@@ -137,15 +138,13 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     DEBUG_WORLD_BLOCK_STATES: typing.List[dict] = [{}]
 
     # internal helper properties; DO NOT CHANGE ON BASE CLASS!
-    DEFAULT_FACE_SOLID = {face: True for face in mcpython.util.enums.EnumSide.iterate()}
-    UNSOLID_FACE_SOLID = {
-        face: False for face in mcpython.util.enums.EnumSide.iterate()
-    }
+    DEFAULT_FACE_SOLID = tuple([True] * 6)
+    UNSOLID_FACE_SOLID = tuple([False] * 6)
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        cls.DEFAULT_FACE_SOLID = cls.DEFAULT_FACE_SOLID.copy()
-        cls.UNSOLID_FACE_SOLID = cls.UNSOLID_FACE_SOLID.copy()
+        cls.DEFAULT_FACE_SOLID = cls.DEFAULT_FACE_SOLID
+        cls.UNSOLID_FACE_SOLID = cls.UNSOLID_FACE_SOLID
 
     @classmethod
     def modify_block_item(cls, instance):
@@ -164,23 +163,32 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             - fill them with data in on_block_added
         """
         super(parent, self).__init__()
-        self.prepare_container()
+        self.prepare_capability_container()
 
         self.position: typing.Optional[typing.Tuple[float, float, float]] = None
         self.dimension = None  # dimension instance
+
         self.set_to: typing.Optional[typing.Tuple[float, float, float]] = None
         self.real_hit: typing.Optional[typing.Tuple[float, float, float]] = None
-        self.face_state: mcpython.common.block.FaceInfo.FaceInfo = (
+        self.set_by = None  # optional player
+
+        # Reference to the FaceInfo instance; Only present on server
+        self.face_info: mcpython.common.block.FaceInfo.FaceInfo = (
             mcpython.common.block.FaceInfo.FaceInfo(self) if shared.IS_CLIENT else None
         )
+
+        # The block state id, for deciding which model to use
+        # todo: make position based
         self.block_state: typing.Optional[int] = None
-        self.set_by = None  # optional player
-        self.face_solid: typing.Dict[
-            mcpython.util.enums.EnumSide, bool
-        ] = self.DEFAULT_FACE_SOLID
-        self.injected_redstone_power: typing.Dict[
-            mcpython.util.enums.EnumSide, int
-        ] = {}
+
+        # Which faces are solid
+        self.face_solid: typing.Tuple[bool] = self.DEFAULT_FACE_SOLID
+
+        # The redstone power values
+        self.injected_redstone_power = [0, 0, 0, 0, 0, 0]
+
+    def is_face_solid(self, face: EnumSide):
+        return self.face_solid[face.index]
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super(ICapabilityContainer, self).write_to_network_buffer(buffer)
@@ -411,7 +419,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         :param side: the side from which the redstone value comes
         :param level: the level of redstone, between 0 and 15
         """
-        self.injected_redstone_power[side] = level
+        self.injected_redstone_power[side.index] = level
 
     def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
         """
@@ -420,16 +428,19 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         :return: the value, as an integer between 0 and 15
         """
         return max(
-            self.get_redstone_source_power(side), *self.injected_redstone_power.values()
+            self.get_redstone_source_power(side), *self.injected_redstone_power
         )
 
-    def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide):
+    def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
         """
         Gets source power of an given side
         :param side: the side to use
         :return: an value between 0 and 15 representing the redstone value
         """
         return 0
+
+    def get_real_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
+        return max(self.get_redstone_source_power(side), self.injected_redstone_power[side.index])
 
     # Debug methods
 

@@ -162,7 +162,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
-            instance.face_state.update(redraw_complete=True)
+            instance.face_info.update(redraw_complete=True)
         except ValueError:  # if the block is not working, use the next
             self.block_index = 0
             logger.print_exception(
@@ -270,7 +270,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         block = dimension.get_block((0, 0, 0))
         if block is not None:
-            block.face_state.hide_all()
+            block.face_info.hide_all()
 
         try:
             instance = dimension.add_block(
@@ -278,7 +278,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
-            instance.face_state.update(redraw_complete=True)
+            instance.face_info.update(redraw_complete=True)
         except ValueError:
             logger.print_exception(
                 "[BLOCK ITEM GENERATOR][ERROR] block '{}' can't be added to world. Failed with "

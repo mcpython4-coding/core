@@ -31,6 +31,7 @@ from mcpython.common.block.IAllDirectionOrientableBlock import (
 )
 from mcpython.common.block.IButton import IButton
 from mcpython.common.factory.FactoryBuilder import FactoryBuilder
+from mcpython.util.enums import EnumSide
 
 block_factory_builder = FactoryBuilder(
     "minecraft:block", mcpython.common.block.AbstractBlock.AbstractBlock
@@ -163,6 +164,14 @@ def set_all_side_solid(instance: FactoryBuilder.IFactory, solid: bool):
 
 
 @block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_side_solid")
+)
+def set_side_solid(instance: FactoryBuilder.IFactory, side: EnumSide, solid: bool):
+    instance.config_table["solid_face_table"][side.index] = solid
+    return instance
+
+
+@block_factory_builder.register_configurator(
     FactoryBuilder.AnnotationFactoryConfigurator("set_default_model_state")
 )
 def set_default_model_state(
@@ -204,9 +213,9 @@ def build_class(
         if not isinstance(IS_BREAKABLE, bool):
             IS_BREAKABLE = True
 
-        DEFAULT_FACE_SOLID = configs.setdefault(
+        DEFAULT_FACE_SOLID = tuple(configs.setdefault(
             "solid_face_table", cls.DEFAULT_FACE_SOLID
-        )
+        ))
 
         CUSTOM_WALING_SPEED_MULTIPLIER = configs.setdefault(
             "speed_multiplier", cls.CUSTOM_WALING_SPEED_MULTIPLIER
@@ -268,7 +277,7 @@ def build_class_default_state(
             if not is_super_base:
                 super().__init__()
 
-            self.prepare_container()
+            self.prepare_capability_container()
 
             for base in bases:
                 base.__init__(self)
@@ -564,7 +573,7 @@ block_factory_builder.register_direct_copy_attributes(
 )
 
 block_factory_builder.register_direct_copy_attributes(
-    "solid_face_table", operation=lambda x: x
+    "solid_face_table", operation=lambda x: x.copy()
 )
 block_factory_builder.register_direct_copy_attributes(
     "debug_world_states",

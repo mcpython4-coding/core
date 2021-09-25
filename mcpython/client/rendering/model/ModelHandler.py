@@ -235,10 +235,10 @@ class ModelHandler:
         else:
             vertex_list = blockstate.add_face_to_batch(block, batches, face)
             if issubclass(
-                type(block.face_state.custom_renderer),
+                type(block.face_info.custom_renderer),
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
             ):
-                block.face_state.custom_renderer.handle(block, vertex_list)
+                block.face_info.custom_renderer.handle(block, vertex_list)
 
         return vertex_list
 
@@ -268,10 +268,10 @@ class ModelHandler:
             for face in faces:
                 vertex_list += blockstate.add_face_to_batch(block, batches, face)
                 if issubclass(
-                    type(block.face_state.custom_renderer),
+                    type(block.face_info.custom_renderer),
                     mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
                 ):
-                    block.face_state.custom_renderer.handle(block, vertex_list)
+                    block.face_info.custom_renderer.handle(block, vertex_list)
 
         return vertex_list
 

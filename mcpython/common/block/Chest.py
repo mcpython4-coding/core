@@ -103,14 +103,11 @@ class Chest(AbstractBlock.AbstractBlock):
             elif dz < 0 and abs(dx) < abs(dz):
                 self.front_side = mcpython.util.enums.EnumSide.W
 
-        self.face_solid = {
-            face: False for face in mcpython.util.enums.EnumSide.iterate()
-        }
-        self.face_state.custom_renderer = (
+        self.face_info.custom_renderer = (
             mcpython.client.rendering.blocks.TemporaryChestRenderer.TemporaryChestRenderer()
         )
         if shared.IS_CLIENT:
-            self.face_state.update(True)
+            self.face_info.update(True)
 
     def can_open_inventory(self) -> bool:
         """
@@ -124,7 +121,7 @@ class Chest(AbstractBlock.AbstractBlock):
         )
         return (
             instance is None
-            or not instance.face_solid[mcpython.util.enums.EnumSide.DOWN]
+            or not instance.face_solid[1]
         )
 
     def on_player_interaction(

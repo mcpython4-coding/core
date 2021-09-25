@@ -121,7 +121,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         self.recipe = None
         self.old_item_name = None
         if shared.IS_CLIENT:
-            self.block.face_state.update(True)
+            self.block.face_info.update(True)
 
     def update_status(self):
         if any(
@@ -180,7 +180,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             )
             self.block.active = True
             if shared.IS_CLIENT:
-                self.block.face_state.update()
+                self.block.face_info.update()
         else:
             self.reset()
 

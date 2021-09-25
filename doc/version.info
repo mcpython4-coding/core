@@ -1816,4 +1816,7 @@ f   [uuk]: custom block renderers with draw mode can define now the event phase 
 I   [uuk]: fixed block default rendering state being empty lists, not None, which the underlying system accepts
 F   [uuk]: servers may send now a package for setting the user in a new state
 F   [uuk]: added server package for changing the server
+A** [uuk]: redstone system changed on block side, breaking when not using getter/setter methods
+I   [uuk]: EnumSide will use now an "index" to remember the type of the side
+A** [uuk]: block solid face is now indicated by a tuple instead of a dict, making it mostly immutable
 

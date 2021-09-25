@@ -31,7 +31,7 @@ def register_block(registry, cls):
         block_registry.full_table[name.split(":")[-1]] = cls
         instance = cls()
         if cls.IS_SOLID is None:
-            cls.IS_SOLID = all(instance.face_solid.values())
+            cls.IS_SOLID = all(instance.face_solid)
 
         if cls.CAN_CONDUCT_REDSTONE_POWER is None:
             cls.CAN_CONDUCT_REDSTONE_POWER = cls.IS_SOLID

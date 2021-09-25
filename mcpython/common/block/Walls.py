@@ -67,19 +67,19 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         block_west = dim.get_block((x, y, z - 1), none_if_str=True)
 
         self.connections["east"] = block_north is not None and (
-            block_north.face_solid[mcpython.util.enums.EnumSide.SOUTH]
+            block_north.face_solid[mcpython.util.enums.EnumSide.SOUTH.index]
             or issubclass(type(block_north), AbstractWall)
         )
         self.connections["south"] = block_east is not None and (
-            block_east.face_solid[mcpython.util.enums.EnumSide.WEST]
+            block_east.face_solid[mcpython.util.enums.EnumSide.WEST.index]
             or issubclass(type(block_east), AbstractWall)
         )
         self.connections["west"] = block_south is not None and (
-            block_south.face_solid[mcpython.util.enums.EnumSide.NORTH]
+            block_south.face_solid[mcpython.util.enums.EnumSide.NORTH.index]
             or issubclass(type(block_south), AbstractWall)
         )
         self.connections["north"] = block_west is not None and (
-            block_west.face_solid[mcpython.util.enums.EnumSide.EAST]
+            block_west.face_solid[mcpython.util.enums.EnumSide.EAST.index]
             or issubclass(type(block_west), AbstractWall)
         )
         self.connections["up"] = False  # for next calculation, this must be False
@@ -91,13 +91,13 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         if (
             not self.connections["up"]
             and upper_block is not None
-            and upper_block.face_solid[mcpython.util.enums.EnumSide.DOWN]
+            and upper_block.face_solid[1]
             and not issubclass(type(upper_block), AbstractWall)
         ):
             self.connections["up"] = True
 
         if shared.IS_CLIENT:
-            self.face_state.update(redraw_complete=True)
+            self.face_info.update(redraw_complete=True)
 
     def set_model_state(self, state: dict):
         for key in state:
