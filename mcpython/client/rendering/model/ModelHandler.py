@@ -242,7 +242,9 @@ class ModelHandler:
 
         return vertex_list
 
-    def add_faces_to_batch(self, block, faces: typing.Iterable, batches: typing.List) -> typing.Iterable:
+    def add_faces_to_batch(
+        self, block, faces: typing.Iterable, batches: typing.List
+    ) -> typing.Iterable:
         if not shared.IS_CLIENT:
             return tuple()
 

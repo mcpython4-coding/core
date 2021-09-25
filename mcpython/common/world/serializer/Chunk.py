@@ -14,10 +14,10 @@ This project is not official by mojang and does not relate to it.
 import typing
 import uuid
 
-import mcpython.engine.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
+import mcpython.engine.world.AbstractInterface
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.world.serializer.util import (

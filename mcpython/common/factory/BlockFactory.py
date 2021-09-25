@@ -213,9 +213,9 @@ def build_class(
         if not isinstance(IS_BREAKABLE, bool):
             IS_BREAKABLE = True
 
-        DEFAULT_FACE_SOLID = tuple(configs.setdefault(
-            "solid_face_table", cls.DEFAULT_FACE_SOLID
-        ))
+        DEFAULT_FACE_SOLID = tuple(
+            configs.setdefault("solid_face_table", cls.DEFAULT_FACE_SOLID)
+        )
 
         CUSTOM_WALING_SPEED_MULTIPLIER = configs.setdefault(
             "speed_multiplier", cls.CUSTOM_WALING_SPEED_MULTIPLIER

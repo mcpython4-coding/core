@@ -23,11 +23,10 @@ import mcpython.common.container.ResourceStack
 import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.util.enums
-from mcpython.util.enums import EnumSide
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
-from mcpython.util.enums import BlockRotationType
+from mcpython.util.enums import BlockRotationType, EnumSide
 
 
 class BlockRemovalReason(enum.Enum):
@@ -427,9 +426,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         :param side: the side to use
         :return: the value, as an integer between 0 and 15
         """
-        return max(
-            self.get_redstone_source_power(side), *self.injected_redstone_power
-        )
+        return max(self.get_redstone_source_power(side), *self.injected_redstone_power)
 
     def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
         """
@@ -440,7 +437,10 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         return 0
 
     def get_real_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
-        return max(self.get_redstone_source_power(side), self.injected_redstone_power[side.index])
+        return max(
+            self.get_redstone_source_power(side),
+            self.injected_redstone_power[side.index],
+        )
 
     # Debug methods
 

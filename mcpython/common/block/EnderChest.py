@@ -17,7 +17,7 @@ from mcpython import shared
 from mcpython.common.block.Chest import BBOX
 from pyglet.window import key, mouse
 
-from . import IHorizontalOrientableBlock, AbstractBlock
+from . import AbstractBlock, IHorizontalOrientableBlock
 
 
 class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
@@ -68,4 +68,6 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
 
     def on_block_remove(self, reason):
         if shared.IS_CLIENT:
-            shared.inventory_handler.hide(shared.world.get_active_player().inventory_enderchest)
+            shared.inventory_handler.hide(
+                shared.world.get_active_player().inventory_enderchest
+            )

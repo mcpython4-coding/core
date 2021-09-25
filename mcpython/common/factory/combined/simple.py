@@ -261,7 +261,11 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
+            **{
+                key: value
+                for key, value in consumers.items()
+                if key != "block_factory_consumer"
+            },
         )
         return self
 
@@ -291,7 +295,11 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
+            **{
+                key: value
+                for key, value in consumers.items()
+                if key != "block_factory_consumer"
+            },
         )
 
         if shared.IS_CLIENT:
@@ -360,7 +368,11 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
+            **{
+                key: value
+                for key, value in consumers.items()
+                if key != "block_factory_consumer"
+            },
         )
         return self
 
@@ -526,7 +538,11 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
+            **{
+                key: value
+                for key, value in consumers.items()
+                if key != "block_factory_consumer"
+            },
         )
         return self
 
@@ -589,7 +605,11 @@ class CombinedFactoryInstance:
                 if "block_factory_consumer" not in consumers
                 else consumers["block_factory_consumer"](_, instance)
             ),
-            **{key: value for key, value in consumers.items() if key != "block_factory_consumer"},
+            **{
+                key: value
+                for key, value in consumers.items()
+                if key != "block_factory_consumer"
+            },
         )
         return self
 

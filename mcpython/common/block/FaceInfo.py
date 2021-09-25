@@ -201,7 +201,9 @@ class FaceInfo:
 
         # Only when it is shown we need to hide something...
         elif self.face_data:
-            for element in itertools.chain.from_iterable(e for e in self.face_data.values() if e is not None):
+            for element in itertools.chain.from_iterable(
+                e for e in self.face_data.values() if e is not None
+            ):
                 element.delete()
 
             for face in mcpython.util.enums.EnumSide.iterate():

@@ -15,9 +15,9 @@ import os
 import typing
 
 import mcpython.common.block.AbstractBlock
-import mcpython.engine.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.engine.rendering.util
+import mcpython.engine.world.AbstractInterface
 import mcpython.util.math
 import pyglet
 from mcpython import shared

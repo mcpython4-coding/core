@@ -22,10 +22,10 @@ import PIL.Image
 import pyglet
 from mcpython import shared
 from mcpython.client.gui.Slot import ISlot
+from mcpython.common.container.AbstractContainer import AbstractContainer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.util.annotation import onlyInClient
-from mcpython.common.container.AbstractContainer import AbstractContainer
 
 
 @onlyInClient()

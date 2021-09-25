@@ -119,10 +119,7 @@ class Chest(AbstractBlock.AbstractBlock):
         instance = shared.world.get_dimension_by_name(self.dimension).get_block(
             (x, y + 1, z)
         )
-        return (
-            instance is None
-            or not instance.face_solid[1]
-        )
+        return instance is None or not instance.face_solid[1]
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple

@@ -107,7 +107,9 @@ class TestChunk(TestCase):
         from mcpython.common.world.Chunk import Chunk
 
         instance = Chunk(FakeDim(), (0, 0))
-        self.assertRaises(ValueError, lambda:  instance.add_block((0, 0, 0.10), test_block))
+        self.assertRaises(
+            ValueError, lambda: instance.add_block((0, 0, 0.10), test_block)
+        )
 
     def test_add_block_air_via_None(self):
         from mcpython.common.world.Chunk import Chunk

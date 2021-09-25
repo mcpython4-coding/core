@@ -701,7 +701,9 @@ stone_like(
 # todo: glass pane
 stone_like("glowstone", existing_slab=False, existing_stairs=False, existing_wall=False)
 # todo: glow item frame and glow lichen
-stone_like("gold_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "gold_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gold_ore"))
 stone_like("granite", existing_slab=True, existing_stairs=True, existing_wall=True)
 DEFERRED_PIPE.create_later(plant("grass"))

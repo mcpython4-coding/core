@@ -15,8 +15,8 @@ import io
 import math
 import struct
 import typing
-from abc import ABC
 import uuid
+from abc import ABC
 
 INT = struct.Struct("!i")
 LONG = struct.Struct("!q")

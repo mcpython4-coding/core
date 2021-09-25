@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -21,6 +21,7 @@ class ClientStateChangePackage(AbstractPackage):
     """
     Package server -> client sending a request to change the current state
     """
+
     DISALLOWED_STATES = set()
 
     PACKAGE_NAME = "minecraft:client_state_change"
@@ -41,9 +42,12 @@ class ClientStateChangePackage(AbstractPackage):
 
     def handle_inner(self):
         if self.new_state in self.DISALLOWED_STATES:
-            logger.println(f"[NETWORK][FATAL] Server requested state change to state {self.new_state}, which is not allowed!")
-            logger.println("[NETWORK][FATAL] this results in an unplanned disconnection...")
+            logger.println(
+                f"[NETWORK][FATAL] Server requested state change to state {self.new_state}, which is not allowed!"
+            )
+            logger.println(
+                "[NETWORK][FATAL] this results in an unplanned disconnection..."
+            )
             shared.NETWORK_MANAGER.disconnect(self.sender_id)
         else:
             shared.state_handler.change_state(self.new_state)
-

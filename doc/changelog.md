@@ -60,6 +60,8 @@ Released on <29.09.2021> targeting <1.17>
 
 Backwards incompatible:
 - rendering system (events & management got reworked)
+- block face solid & redstone API
+- abstract interface for world
 
 
     Resource system:

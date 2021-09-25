@@ -63,7 +63,9 @@ class AbstractContainer(IBufferSerializeAble, ABC):
         self.uuid = buffer.read_uuid()
 
         if buffer.read_int() != len(self.slots):
-            logger.println(f"[SERIALIZER][WARN] Server and client don't agree on the slot count of inventory {self}, skipping slot deserializer...")
+            logger.println(
+                f"[SERIALIZER][WARN] Server and client don't agree on the slot count of inventory {self}, skipping slot deserializer..."
+            )
             return
 
         for slot in self.slots:
