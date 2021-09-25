@@ -12,29 +12,69 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import random
+import typing
+import uuid
 from abc import ABC
 
 from mcpython import shared
+from mcpython.engine import logger
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
 
-class AbstractContainer(ABC):
+class AbstractContainer(IBufferSerializeAble, ABC):
     """
     Base class for containers
-    Currently, unused
-    Later planned to be part of the inventory system; the shared part [the inventory is client-only]
-    Currently, the API is only a copy of Inventory parts for shared
-    todo: do more here!
+    Can assign a certain ContainerRenderer to render stuff here
     """
-
-    @classmethod
-    def create_renderer(cls):
-        """
-        Called when loading a client to create the renderer; this is the only part which should interact
-        with client-only code in this class
-        """
 
     def __init__(self):
         self.slots = []
+        self.custom_name = ""
+        self.uuid = uuid.uuid4()
+
+        shared.inventory_handler.add(self)
+
+        self.create_slots()
+        for slot in self.slots:
+            slot.assigned_inventory = self
+
+        if not shared.IS_CLIENT:
+            self.renderer = None
+        else:
+            self.renderer = self.create_renderer()
+            self.renderer.create_slot_rendering_information()
+
+    def create_slots(self):
+        """
+        Invoked during construction of the object; should fill the slots array with slot instances
+        """
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_string(self.custom_name)
+        buffer.write_uuid(self.uuid)
+
+        buffer.write_int(len(self.slots))
+
+        for slot in self.slots:
+            slot.write_to_network_buffer(buffer)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        self.custom_name = buffer.read_string()
+        self.uuid = buffer.read_uuid()
+
+        if buffer.read_int() != len(self.slots):
+            logger.println(f"[SERIALIZER][WARN] Server and client don't agree on the slot count of inventory {self}, skipping slot deserializer...")
+            return
+
+        for slot in self.slots:
+            slot.read_from_network_buffer(buffer)
+
+    def create_renderer(self) -> typing.Any:
+        """
+        Called when loading a client to create the renderer; this is the only part which should interact
+        with client-only code in this class
+        :return: A ContainerRenderer instance
+        """
 
     def tick(self, dt: float):
         pass
@@ -131,5 +171,5 @@ class AbstractContainer(ABC):
 
     def update_shift_container(self):
         """
-        called when the inventory should update the content of the ShiftContainer of the inventory-handler
+        Called when the inventory should update the content of the ShiftContainer of the inventory-handler
         """

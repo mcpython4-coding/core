@@ -24,6 +24,73 @@ from mcpython import shared
 from mcpython.client.gui.Slot import ISlot
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
+from mcpython.util.annotation import onlyInClient
+from mcpython.common.container.AbstractContainer import AbstractContainer
+
+
+@onlyInClient()
+class AbstractContainerRenderer(ABC):
+    """
+    Base class for a rendering adapter for an AbstractContainer
+    Create only on CLIENT! We do not guarantee the existence of pyglet on servers in the future!
+    """
+
+    def __init__(self):
+        self.container = None
+
+        self.bg_sprite: typing.Optional[pyglet.sprite.Sprite] = None
+        self.bg_anchor = "MM"
+        self.window_anchor = "MM"
+        self.position = (0, 0)
+        self.bg_image_pos = (0, 0)
+        self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
+        self.custom_name_label.anchor_y = "top"
+
+        self.slot_rendering_information = []
+
+    def create_slot_rendering_information(self):
+        self.slot_rendering_information.clear()
+
+    def get_position(self):
+        x, y = self.position
+        wx, wy = shared.window.get_size()
+        sx, sy = self.bg_image_size if self.bg_image_size is not None else (0, 0)
+
+        if self.bg_anchor[0] == "M":
+            x -= sx // 2
+        elif self.bg_anchor[0] == "R":
+            x -= sx
+        if self.bg_anchor[1] == "M":
+            y -= sy // 2
+        elif self.bg_anchor[1] == "U":
+            y -= sy
+        if self.window_anchor[0] == "M":
+            x += wx // 2
+        elif self.window_anchor[0] == "R":
+            x = wx - abs(x)
+        if self.window_anchor[1] == "M":
+            y += wy // 2
+        elif self.window_anchor[1] == "U":
+            y = wy - abs(y)
+
+        return x, y
+
+    def bind_container(self, container: AbstractContainer):
+        """
+        Invoked when a new container should be bound to this renderer
+        When multiple containers use the same renderer, this may get invoked more than one time
+        """
+        self.container = container
+
+    def draw(self):
+        position = self.get_position()
+
+        if self.bg_sprite is not None:
+            self.bg_sprite.position = position
+            self.bg_sprite.draw()
+
+        for slot_rendering in self.slot_rendering_information:
+            slot_rendering.draw(position)
 
 
 class ContainerRenderer(IBufferSerializeAble, ABC):

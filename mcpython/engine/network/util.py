@@ -16,6 +16,7 @@ import math
 import struct
 import typing
 from abc import ABC
+import uuid
 
 INT = struct.Struct("!i")
 LONG = struct.Struct("!q")
@@ -63,6 +64,10 @@ class ReadBuffer:
 
     def read_const_bytes(self, count: int):
         return self.stream.read(count)
+
+    def read_uuid(self):
+        data = self.read_long()
+        return uuid.UUID(int=data)
 
 
 class WriteBuffer:
@@ -119,6 +124,10 @@ class WriteBuffer:
 
     def write_const_bytes(self, data: bytes):
         self.data.append(data)
+        return self
+
+    def write_uuid(self, uid: uuid.UUID):
+        self.write_long(uid.int)
         return self
 
 
