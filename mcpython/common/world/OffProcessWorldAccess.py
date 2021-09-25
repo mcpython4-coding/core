@@ -18,11 +18,11 @@ import pickle
 import types
 import typing
 
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.util
 import mcpython.util.enums
 import mcpython.util.math
-from mcpython.common.world.AbstractInterface import IChunk
+from mcpython.engine.world.AbstractInterface import IChunk
 
 
 class OffProcessWorldHelper:
@@ -34,12 +34,12 @@ class OffProcessWorldHelper:
 
     class OffProcessWorldContext:
         def __init__(
-            self, world: mcpython.common.world.AbstractInterface.IWorld, helper
+            self, world: mcpython.engine.world.AbstractInterface.IWorld, helper
         ):
             self.world = world
             self.helper = helper
 
-        def get_world(self) -> mcpython.common.world.AbstractInterface.IWorld:
+        def get_world(self) -> mcpython.engine.world.AbstractInterface.IWorld:
             return self.world
 
         def get_helper(self) -> "OffProcessWorldHelper":
@@ -50,7 +50,7 @@ class OffProcessWorldHelper:
             self,
             instance: "OffProcessWorldHelper",
             process: multiprocessing.Process,
-            world: mcpython.common.world.AbstractInterface.IWorld,
+            world: mcpython.engine.world.AbstractInterface.IWorld,
         ):
             self.instance = instance
             self.process = process
@@ -91,7 +91,7 @@ class OffProcessWorldHelper:
 
     @classmethod
     def spawn_process(
-        cls, world: mcpython.common.world.AbstractInterface.IWorld
+        cls, world: mcpython.engine.world.AbstractInterface.IWorld
     ) -> "OffProcessWorldHelper.OffProcessWorldHelperReference":
         instance = cls()
         process = multiprocessing.Process(target=instance.run)
@@ -219,7 +219,7 @@ class OffProcessWorldHelper:
         )
 
 
-class OffProcessWorld(mcpython.common.world.AbstractInterface.IWorld):
+class OffProcessWorld(mcpython.engine.world.AbstractInterface.IWorld):
     def __init__(self, helper: OffProcessWorldHelper):
         self.helper = helper
         self.chunk_dimension_cache = {}
@@ -330,7 +330,7 @@ class OffProcessWorld(mcpython.common.world.AbstractInterface.IWorld):
         )
 
 
-class OffProcessDimension(mcpython.common.world.AbstractInterface.IDimension):
+class OffProcessDimension(mcpython.engine.world.AbstractInterface.IDimension):
     def __init__(
         self, helper: OffProcessWorldHelper, dimension_id: int, world: OffProcessWorld
     ):
@@ -474,7 +474,7 @@ class OffProcessDimension(mcpython.common.world.AbstractInterface.IDimension):
         )
 
 
-class OffProcessChunk(mcpython.common.world.AbstractInterface.IChunk):
+class OffProcessChunk(mcpython.engine.world.AbstractInterface.IChunk):
     def __init__(
         self, helper: OffProcessWorldHelper, position, dimension: OffProcessDimension
     ):

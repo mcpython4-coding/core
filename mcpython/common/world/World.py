@@ -18,7 +18,7 @@ import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
 import mcpython.common.state.GameViewStatePart
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
 import mcpython.common.world.GameRule
@@ -31,7 +31,7 @@ from mcpython import shared
 from mcpython.engine import logger
 
 
-class World(mcpython.common.world.AbstractInterface.IWorld):
+class World(mcpython.engine.world.AbstractInterface.IWorld):
     """
     Class holding all data of the world
     """
@@ -47,7 +47,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
         # todo: change for str-based
         self.dimensions: typing.Dict[
-            int, mcpython.common.world.AbstractInterface.IDimension
+            int, mcpython.engine.world.AbstractInterface.IDimension
         ] = {}
 
         self.dim_to_id: typing.Dict[str, int] = {}
@@ -165,7 +165,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
     def get_active_dimension(
         self,
-    ) -> typing.Union[mcpython.common.world.AbstractInterface.IDimension, None]:
+    ) -> typing.Union[mcpython.engine.world.AbstractInterface.IDimension, None]:
         """
         will return the dimension the player is in
         :return: the dimension or None if no dimension is set
@@ -179,12 +179,12 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
     def get_dimension_by_name(
         self, name: str
-    ) -> mcpython.common.world.AbstractInterface.IDimension:
+    ) -> mcpython.engine.world.AbstractInterface.IDimension:
         return self.dimensions[self.dim_to_id[name]]
 
     def add_dimension(
         self, dim_id: int, name: str, dim_config=None
-    ) -> mcpython.common.world.AbstractInterface.IDimension:
+    ) -> mcpython.engine.world.AbstractInterface.IDimension:
         """
         will add an new dimension into the system
         :param dim_id: the id to create under
@@ -225,7 +225,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
 
     def get_dimension(
         self, dim_id: int
-    ) -> mcpython.common.world.AbstractInterface.IDimension:
+    ) -> mcpython.engine.world.AbstractInterface.IDimension:
         """
         will get an dimension with an special id
         :param dim_id: the id to use
@@ -297,7 +297,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
     def show_chunk(
         self,
         chunk: typing.Union[
-            typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk
+            typing.Tuple[int, int], mcpython.engine.world.AbstractInterface.IChunk
         ],
     ):
         """
@@ -305,7 +305,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         drawn to the canvas.
         :param chunk: the chunk to show
         """
-        if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
+        if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
         if chunk is None:
             return
@@ -314,7 +314,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
     def hide_chunk(
         self,
         chunk: typing.Union[
-            typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk
+            typing.Tuple[int, int], mcpython.engine.world.AbstractInterface.IChunk
         ],
     ):
         """
@@ -322,7 +322,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         removed from the canvas.
         :param chunk: the chunk to hide
         """
-        if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
+        if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
         if chunk is None:
             return
@@ -423,7 +423,7 @@ class World(mcpython.common.world.AbstractInterface.IWorld):
         """
         self.active_dimension = 0
         for dimension in self.dimensions.values():
-            dimension: mcpython.common.world.AbstractInterface.IDimension
+            dimension: mcpython.engine.world.AbstractInterface.IDimension
             for chunk in dimension.chunks.values():
                 chunk.hide_all()
                 del chunk

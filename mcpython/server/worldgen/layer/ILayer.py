@@ -15,7 +15,7 @@ import typing
 
 import mcpython.common.event.api
 import mcpython.common.event.Registry
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 
 
 class LayerConfig:
@@ -25,7 +25,7 @@ class LayerConfig:
         for key in attr_config.keys():
             setattr(self, key, attr_config[key])
         self.dimension: typing.Optional[
-            mcpython.common.world.AbstractInterface.IDimension
+            mcpython.engine.world.AbstractInterface.IDimension
         ] = None
         self.world_generator_config = None
 

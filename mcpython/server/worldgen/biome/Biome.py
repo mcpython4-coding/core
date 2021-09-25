@@ -15,9 +15,7 @@ import typing
 from abc import ABC
 
 import mcpython.common.event.api
-import mcpython.common.event.Registry
-import mcpython.common.world.AbstractInterface
-import mcpython.server.worldgen.feature.IFeature
+import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.feature.IOre
 from mcpython.common.data.serializer.DataSerializationManager import ISerializeAble
 
@@ -76,7 +74,7 @@ class Biome(mcpython.common.event.api.IRegistryContent, ISerializeAble, ABC):
     def get_top_layer_height_range(
         cls,
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.Tuple[int, int]:
         return 3, 5
 
@@ -85,6 +83,6 @@ class Biome(mcpython.common.event.api.IRegistryContent, ISerializeAble, ABC):
         cls,
         height: int,
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.List[str]:
         return ["minecraft:dirt"] * (height - 1) + ["minecraft:grass_block"]

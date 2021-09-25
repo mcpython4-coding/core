@@ -11,11 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import os
 import typing
 
-import mcpython.common.world.AbstractInterface
-import mcpython.util.math
 from mcpython import shared
 
 from .Chunk import Chunk

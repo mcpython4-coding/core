@@ -16,7 +16,7 @@ import typing
 from abc import ABC
 
 import mcpython.common.data.serializer.DataSerializationManager
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.util.data
 from mcpython import shared
 from mcpython.common.data.serializer.DataSerializationManager import ISerializeAble
@@ -31,7 +31,7 @@ class ITopLayerConfigurator(ABC):
     def get_top_layer_height_range(
         self,
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.Tuple[int, int]:
         raise NotImplementedError()
 
@@ -39,7 +39,7 @@ class ITopLayerConfigurator(ABC):
         self,
         height: int,
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.List[str]:
         raise NotImplementedError()
 
@@ -67,7 +67,7 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
     def get_top_layer_height_range(
         self,
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.Tuple[int, int]:
         return self.height_range
 
@@ -75,7 +75,7 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
         self,
         height: int,
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.List[str]:
         data = [self.default_block] * height
         if self.top_extension[0] is not None:
@@ -146,7 +146,7 @@ class BiomeSerializer(
             def get_top_layer_height_range(
                 cls,
                 position: typing.Tuple[int, int],
-                dimension: mcpython.common.world.AbstractInterface.IDimension,
+                dimension: mcpython.engine.world.AbstractInterface.IDimension,
             ) -> typing.Tuple[int, int]:
                 return layer_config.get_top_layer_height_range(position, dimension)
 
@@ -155,7 +155,7 @@ class BiomeSerializer(
                 cls,
                 height: int,
                 position: typing.Tuple[int, int],
-                dimension: mcpython.common.world.AbstractInterface.IDimension,
+                dimension: mcpython.engine.world.AbstractInterface.IDimension,
             ):
                 return layer_config.get_top_layer_configuration(
                     height, position, dimension

@@ -15,8 +15,7 @@ import typing
 
 import mcpython.common.data.serializer.DataSerializationManager
 import mcpython.common.data.serializer.worldgen.WorldGenerationMode
-import mcpython.common.world.AbstractInterface
-import mcpython.server.worldgen.layer.DefaultBiomeLayer
+import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 from mcpython import shared
 
@@ -111,14 +110,14 @@ class IWorldGenConfig(
     @classmethod
     def on_chunk_prepare_generation(
         cls,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
         array: mcpython.server.worldgen.WorldGenerationTaskArrays.WorldGenerationTaskHandlerReference,
     ):
         pass
 
     @classmethod
     def on_chunk_generation_finished(
-        cls, chunk: mcpython.common.world.AbstractInterface.IChunk
+        cls, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ):
         pass
 

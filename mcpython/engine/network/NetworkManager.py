@@ -21,7 +21,7 @@ from mcpython import shared
 from .util import ReadBuffer
 from .util import WriteBuffer
 from .. import logger
-from ...common.world.AbstractInterface import IChunk
+from mcpython.engine.world.AbstractInterface import IChunk
 
 
 class NetworkManager:

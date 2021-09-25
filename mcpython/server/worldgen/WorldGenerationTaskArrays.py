@@ -17,7 +17,7 @@ import pickle
 import time
 import typing
 
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -30,7 +30,7 @@ class WorldGenerationTaskHandler:
     """
 
     def __init__(self):
-        self.chunks: typing.Set[mcpython.common.world.AbstractInterface.IChunk] = set()
+        self.chunks: typing.Set[mcpython.engine.world.AbstractInterface.IChunk] = set()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
     def get_total_task_stats(self) -> list:
@@ -47,7 +47,7 @@ class WorldGenerationTaskHandler:
         return stats
 
     def get_task_count_for_chunk(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> int:
         """
         Gets the total count of tasks for an given chunk as an int
@@ -73,7 +73,7 @@ class WorldGenerationTaskHandler:
 
     def schedule_invoke(
         self,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
         method,
         *args,
         **kwargs,
@@ -85,7 +85,7 @@ class WorldGenerationTaskHandler:
         :param args: the args to call with
         :param kwargs: the kwargs to call with
         """
-        if not issubclass(type(chunk), mcpython.common.world.AbstractInterface.IChunk):
+        if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
             raise ValueError("chunk must be sub-class of Chunk, not {}".format(chunk))
 
         if not callable(method):
@@ -100,7 +100,7 @@ class WorldGenerationTaskHandler:
 
     def schedule_block_add(
         self,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
         position: tuple,
         name: str,
         *args,
@@ -127,7 +127,7 @@ class WorldGenerationTaskHandler:
 
     def schedule_block_remove(
         self,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
         position: tuple,
         *args,
         on_remove=None,
@@ -152,7 +152,7 @@ class WorldGenerationTaskHandler:
         self.chunks.add(chunk)
 
     def schedule_block_show(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk, position: tuple
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
     ):
         """
         schedules an show of an block
@@ -165,7 +165,7 @@ class WorldGenerationTaskHandler:
         self.chunks.add(chunk)
 
     def schedule_block_hide(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk, position: tuple
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
     ):
         """
         schedules an hide of an block
@@ -178,7 +178,7 @@ class WorldGenerationTaskHandler:
         self.chunks.add(chunk)
 
     def schedule_visual_update(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk, position: tuple
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
     ):
         """
         schedules an visual update of an block (-> show/hide as needed)
@@ -243,7 +243,7 @@ class WorldGenerationTaskHandler:
             start = time.time()
 
     def process_chunk(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk, timer=None
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, timer=None
     ):
         start = time.time()
         flag = True
@@ -266,7 +266,7 @@ class WorldGenerationTaskHandler:
             chunk.loaded = True
 
     def _process_0_array(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?
         if chunk.get_dimension().get_dimension_id() in self.data_maps[0]:
@@ -288,7 +288,7 @@ class WorldGenerationTaskHandler:
         return False
 
     def _process_1_array(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?
         if chunk.get_dimension().get_dimension_id() in self.data_maps[1]:
@@ -312,7 +312,7 @@ class WorldGenerationTaskHandler:
         return False
 
     def _process_2_array(
-        self, chunk: mcpython.common.world.AbstractInterface.IChunk
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?
         if chunk.get_dimension().get_dimension_id() in self.data_maps[2]:
@@ -344,7 +344,7 @@ class WorldGenerationTaskHandler:
         return False
 
     def get_block(
-        self, position: tuple, chunk: mcpython.common.world.AbstractInterface.IChunk
+        self, position: tuple, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ):
         """
         Gets an generated block from the array
@@ -360,7 +360,7 @@ class WorldGenerationTaskHandler:
         except (KeyError, AttributeError):
             pass
 
-    def clear_chunk(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
+    def clear_chunk(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
         """
         Will remove all scheduled tasks from an given chunk
         :param chunk: the chunk
@@ -481,7 +481,7 @@ class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
     def __init__(
         self,
         handler: WorldGenerationTaskHandler,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
     ):
         self.handler = handler
         self.chunk = chunk
@@ -606,7 +606,7 @@ class RemoteTaskHandlerManager:
 
     def create(
         self,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
         default: WorldGenerationTaskHandlerReference,
     ) -> typing.Tuple[
         "ProcessSeparatedWorldGenerationTaskHandlerReference", OffProcessTaskHelper
@@ -639,7 +639,7 @@ class ProcessSeparatedWorldGenerationTaskHandlerReference(
     def __init__(
         self,
         shared_helper: OffProcessTaskHelper.OffProcessTaskHelperShared,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
     ):
         self.shared_helper = shared_helper
         self.chunk = chunk

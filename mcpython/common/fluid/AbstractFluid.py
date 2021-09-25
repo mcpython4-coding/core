@@ -15,8 +15,7 @@ import typing
 from abc import ABC
 
 import mcpython.common.event.api
-import mcpython.common.event.Registry
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 from mcpython import shared
 
 
@@ -74,7 +73,7 @@ class AbstractFluid(mcpython.common.event.api.IRegistryContent, ABC):
     @classmethod
     def get_flow_rate_at(
         cls,
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
         position: typing.Tuple[int, int, int],
     ) -> int:
         """
@@ -98,7 +97,7 @@ class AbstractFluid(mcpython.common.event.api.IRegistryContent, ABC):
     def on_fluids_touching(
         cls,
         other: typing.Type["AbstractFluid"],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
         position_this: typing.Optional[typing.Tuple[float, float, float]],
         position_that: typing.Optional[typing.Tuple[float, float, float]],
         is_fluid_block=(True, True),

@@ -15,8 +15,7 @@ import enum
 import random
 from abc import ABC
 
-import mcpython.common.world.AbstractInterface
-import mcpython.common.world.Dimension
+import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.feature.IFeature
 from mcpython import shared
 
@@ -30,7 +29,7 @@ def place_default(
     sz: int,
     blocks: list,
     replace: list,
-    dimension: mcpython.common.world.AbstractInterface.IDimension,
+    dimension: mcpython.engine.world.AbstractInterface.IDimension,
 ):
     for dx in range(sx, sx + 1):
         for dy in range(sy, sy + 1):

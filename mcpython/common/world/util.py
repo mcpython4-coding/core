@@ -16,7 +16,7 @@ import itertools
 import random
 import typing
 
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.util.math
 from mcpython import shared
 
@@ -137,7 +137,7 @@ def area_iterator(start: typing.Tuple[int, int, int], end: typing.Tuple[int, int
 
 
 def fill_area(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
     block: typing.Union[str, BlockSource],
@@ -149,7 +149,7 @@ def fill_area(
 
 
 def fill_area_replacing(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
     block: typing.Union[str, BlockSource],
@@ -166,7 +166,7 @@ def fill_area_replacing(
 
 
 def get_content(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
 ) -> typing.Dict[typing.Tuple[int, int, int], typing.Any]:
@@ -184,7 +184,7 @@ def get_content(
 
 
 def get_content_list(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
 ) -> typing.Iterable:
@@ -196,7 +196,7 @@ def get_content_list(
 
 
 def paste_content(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     data: typing.Dict[typing.Tuple[int, int, int], typing.Any],
     insert_air=True,
@@ -220,7 +220,7 @@ def paste_content(
 
 
 def paste_content_list(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
     data: typing.List[typing.Any],
@@ -244,7 +244,7 @@ def paste_content_list(
 
 
 def clone(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
     to: typing.Tuple[int, int, int],
@@ -274,7 +274,7 @@ def clone(
 
 
 def create_hollow_structure(
-    access: mcpython.common.world.AbstractInterface.ISupportWorldInterface,
+    access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
     block: typing.Union[str, BlockSource],

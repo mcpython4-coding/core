@@ -12,12 +12,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import os
-import sys
 import typing
 
-import deprecation
 import mcpython.common.block.AbstractBlock
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.engine.rendering.util
 import mcpython.util.math
@@ -128,7 +126,7 @@ if not shared.IS_TEST_ENV:
     )
 
 
-class Dimension(mcpython.common.world.AbstractInterface.IDimension):
+class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     """
     Class holding a whole dimension
     Default cross-side implementation
@@ -143,7 +141,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
 
     def __init__(
         self,
-        world_in: mcpython.common.world.AbstractInterface.IWorld,
+        world_in: mcpython.engine.world.AbstractInterface.IWorld,
         dim_id: int,
         name: str,
         gen_config=None,
@@ -163,7 +161,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         self.id = dim_id
         self.world = world_in
         self.chunks: typing.Dict[
-            typing.Tuple[int, int], mcpython.common.world.AbstractInterface.IChunk
+            typing.Tuple[int, int], mcpython.engine.world.AbstractInterface.IChunk
         ] = {}
 
         self.name = name
@@ -195,7 +193,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             if chunk.is_loaded():
                 chunk.tick()
 
-    def unload_chunk(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
+    def unload_chunk(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
         chunk.save()
         chunk.hide_all(True)
         del self.chunks[chunk.get_position()]
@@ -212,7 +210,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
         cz: int = None,
         generate: bool = True,
         create: bool = True,
-    ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
+    ) -> typing.Optional[mcpython.engine.world.AbstractInterface.IChunk]:
         """
         Used to get a chunk instance with a given chunk-position
         :param cx: the chunk x position or a tuple of (x, z)
@@ -246,7 +244,7 @@ class Dimension(mcpython.common.world.AbstractInterface.IDimension):
             mcpython.common.block.AbstractBlock.AbstractBlock,
         ],
         **kwargs,
-    ) -> typing.Optional[mcpython.common.world.AbstractInterface.IChunk]:
+    ) -> typing.Optional[mcpython.engine.world.AbstractInterface.IChunk]:
         """
         Gets a chunk for a block-position
         :param position: the position to use or the block instance to use

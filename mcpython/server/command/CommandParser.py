@@ -16,7 +16,7 @@ import typing
 import mcpython.common.data.DataPacks
 import mcpython.server.command.Builder
 from mcpython import shared
-from mcpython.common.world.AbstractInterface import IDimension
+from mcpython.engine.world.AbstractInterface import IDimension
 from mcpython.engine import logger
 
 

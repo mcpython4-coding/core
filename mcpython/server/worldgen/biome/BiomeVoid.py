@@ -13,8 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.config
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 from mcpython import shared
 
 from . import Biome
@@ -34,7 +33,7 @@ class Void(Biome.Biome):
     @staticmethod
     def get_top_layer_height_range(
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.Tuple[int, int]:
         return 0, 0
 
@@ -42,7 +41,7 @@ class Void(Biome.Biome):
     def get_top_layer_configuration(
         height: int,
         position: typing.Tuple[int, int],
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
     ) -> typing.List[str]:
         return []
 

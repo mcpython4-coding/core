@@ -16,7 +16,7 @@ import typing
 
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.common.world.Dimension
 import mcpython.server.worldgen.layer.ILayer
@@ -97,7 +97,7 @@ class WorldGenerationHandler:
 
     def add_chunk_to_generation_list(
         self,
-        chunk: mcpython.common.world.AbstractInterface.IChunk,
+        chunk: mcpython.engine.world.AbstractInterface.IChunk,
         dimension=None,
         force_generate=False,
         immediate=False,
@@ -135,7 +135,7 @@ class WorldGenerationHandler:
 
         chunk.loaded = True
 
-    def inner_add_chunk(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
+    def inner_add_chunk(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
         """
         internal implementation of the chunk generation code
         :param chunk: the chunk to schedule
@@ -183,7 +183,7 @@ class WorldGenerationHandler:
             )
 
     def setup_dimension(
-        self, dimension: mcpython.common.world.AbstractInterface.IDimension, config=None
+        self, dimension: mcpython.engine.world.AbstractInterface.IDimension, config=None
     ):
         """
         Sets up the layer configs for the given dimension
@@ -224,9 +224,9 @@ class WorldGenerationHandler:
 
     def generate_chunk(
         self,
-        chunk: typing.Union[mcpython.common.world.AbstractInterface.IChunk, tuple],
+        chunk: typing.Union[mcpython.engine.world.AbstractInterface.IChunk, tuple],
         dimension: typing.Union[
-            mcpython.common.world.AbstractInterface.IDimension, int, str, None
+            mcpython.engine.world.AbstractInterface.IDimension, int, str, None
         ] = None,
         check_chunk=True,
     ):
@@ -244,7 +244,7 @@ class WorldGenerationHandler:
         self.task_handler.process_chunk(chunk)
 
     def get_current_config(
-        self, dimension: mcpython.common.world.AbstractInterface.IDimension
+        self, dimension: mcpython.engine.world.AbstractInterface.IDimension
     ):
         """
         Helper method for getting the the world generation configuration for a given dimension
@@ -255,7 +255,7 @@ class WorldGenerationHandler:
         return self.configs[dimension.get_name()][config_name]
 
     def set_current_config(
-        self, dimension: mcpython.common.world.AbstractInterface.IDimension, config: str
+        self, dimension: mcpython.engine.world.AbstractInterface.IDimension, config: str
     ):
         """
         Writes a config name as the given into an dimension object
@@ -264,7 +264,7 @@ class WorldGenerationHandler:
         """
         dimension.set_world_generation_config_entry("configname", config)
 
-    def mark_finished(self, chunk: mcpython.common.world.AbstractInterface.IChunk):
+    def mark_finished(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
         """
         Internal helper for marking a chunk as finished. Will call the needed events.
         :param chunk: the chunk instance

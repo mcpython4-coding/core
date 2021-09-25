@@ -15,7 +15,7 @@ import datetime
 import typing
 
 import mcpython.common.block.AbstractBlock as Block
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
 import mcpython.util.math
@@ -23,7 +23,7 @@ from mcpython import shared
 from mcpython.engine import logger
 
 
-class Chunk(mcpython.common.world.AbstractInterface.IChunk):
+class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     """
     Default representation of a chunk in the world
 
@@ -36,7 +36,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
     def __init__(
         self,
-        dimension: mcpython.common.world.AbstractInterface.IDimension,
+        dimension: mcpython.engine.world.AbstractInterface.IDimension,
         position: typing.Tuple[int, int],
     ):
         """
@@ -73,7 +73,7 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
 
         # For all default chunks, we add such ticket. todo: remove & set only when needed
         self.add_chunk_load_ticket(
-            mcpython.common.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
+            mcpython.engine.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
         )
 
     def entity_iterator(self) -> typing.Iterable:
@@ -92,14 +92,14 @@ class Chunk(mcpython.common.world.AbstractInterface.IChunk):
             self, "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
         )
 
-    def as_shareable(self) -> mcpython.common.world.AbstractInterface.IChunk:
+    def as_shareable(self) -> mcpython.engine.world.AbstractInterface.IChunk:
         return self
 
     def mark_dirty(self):
         self.dirty = True
         return self
 
-    def get_dimension(self) -> mcpython.common.world.AbstractInterface.IDimension:
+    def get_dimension(self) -> mcpython.engine.world.AbstractInterface.IDimension:
         return self.dimension
 
     def get_position(self) -> typing.Tuple[int, int]:

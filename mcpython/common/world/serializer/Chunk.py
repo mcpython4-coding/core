@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 import uuid
 
-import mcpython.common.world.AbstractInterface
+import mcpython.engine.world.AbstractInterface
 import mcpython.common.world.Chunk
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
@@ -42,7 +42,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         except NotImplementedError:
             return
 
-        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
+        chunk_instance: mcpython.engine.world.AbstractInterface.IChunk = (
             shared.world.dimensions[dimension].get_chunk(
                 int(chunk[0]), int(chunk[1]), generate=False
             )
@@ -177,7 +177,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             return
 
         region = chunk2region(*chunk)
-        chunk_instance: mcpython.common.world.AbstractInterface.IChunk = (
+        chunk_instance: mcpython.engine.world.AbstractInterface.IChunk = (
             shared.world.dimensions[dimension].chunks[chunk]
         )
 
