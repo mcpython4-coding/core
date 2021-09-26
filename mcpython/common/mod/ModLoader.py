@@ -605,40 +605,8 @@ class ModLoader:
         :return: errors and mod-info-tuple
         """
         for mod in self.located_mods:
-            for depend in mod.depend_info[0]:
-                if not depend.arrival():
-                    if shared.event_handler.call_cancelable(
-                        "minecraft:modloader:missing_dependency", self, mod, depend
-                    ):
-                        self.error_builder.println(
-                            "- Mod '{}' needs mod {} which is not provided".format(
-                                mod.name, depend
-                            )
-                        )
-                        errors = True
-
-            for depend in mod.depend_info[2]:
-                if depend.arrival():
-                    if shared.event_handler.call_cancelable(
-                        "minecraft:modloader:incompatible_mod", self, mod, depend
-                    ):
-                        self.error_builder.println(
-                            "- Mod '{}' is incompatible with {} which is provided".format(
-                                mod.name, depend
-                            )
-                        )
-                        errors = True
-
-            # todo: do we want two more events here?
-            for depend in mod.depend_info[5]:
-                if not depend.arrival():
-                    del mod_info[mod.name]
-                    del self.mods[mod.name]
-
-            for depend in mod.depend_info[6]:
-                if depend.arrival():
-                    del mod_info[mod.name]
-                    del self.mods[mod.name]
+            if not mod.check_dependencies(self, mod_info):
+                errors = True
 
         return errors, mod_info
 

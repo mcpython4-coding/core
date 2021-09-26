@@ -20,14 +20,14 @@ from mcpython import shared
 
 class ModDependency:
     """
-    Class for an dependency-like reference to an mod
+    Class for a dependency-like reference to a mod
     """
 
     def __init__(self, name: str, version_min=None, version_max=None, versions=None):
         """
-        Creates an new mod dependency instance. need to be assigned with another mod. if no version(s) is/are specified,
-        all are allowed
-        :param name: the name of the mod
+        Creates a new mod dependency instance. Needs to be assigned to another mod. If no version is specified,
+        all versions match this dependency.
+        :param name: the name of the mod to depend on
         :param version_min: the minimum version to use, including
         :param version_max: the maximum version to use, including
         :param versions: set when an list of possible versions should be used. Can contain min-value and
@@ -72,7 +72,7 @@ class ModDependency:
     @classmethod
     def test_match(cls, version, args: tuple) -> bool:
         """
-        will test for the arrival of the dependency
+        Will test if the dependency is matching
         :param version: the version found
         :param args: optional args found
         """
@@ -85,15 +85,17 @@ class ModDependency:
         if len(args) == 2:
             return args[1] >= version >= args[0]
 
+        raise RuntimeError(version, args)
+
     def get_version(self):
         """
-        gets the real version of the mod specified by this
+        Getter for the real version of the mod specified by this
         """
         return shared.mod_loader.mods[self.name].version
 
     def __str__(self):
         """
-        returns an stringifies version dependency
+        Returns a string representing this class
         """
         if self.version_range[0] is not None:
             if self.version_range[1] is not None:
@@ -102,11 +104,14 @@ class ModDependency:
                     ".".join([str(e) for e in self.version_range[0]]),
                     ".".join([str(e) for e in self.version_range[1]]),
                 )
+
             return "'{}' in version starting from version {}".format(
                 self.name, ".".join([str(e) for e in self.version_range[0]])
             )
+
         if self.versions is None or len(self.versions) == 0:
             return "'{}' in any version".format(self.name)
+
         cond = []
         for entry in self.versions:
             if type(entry[0]) == int:
@@ -124,13 +129,15 @@ class ModDependency:
                 raise ValueError(
                     "can't cast entry '{}' to valid version identifier".format(entry)
                 )
+
         return "'{}' in version(s) {}".format(self.name, " or ".join(cond))
 
 
 class Mod:
     """
-    class for mods. For creating an new mod, create an instance of this or define an entry in the latest version in your
+    Class for mods. For creating a new mod, create an instance of this or define an entry in the latest version in your
     mod.json file.
+    Can be subclassed for custom mod specs
     """
 
     def __init__(
@@ -138,12 +145,15 @@ class Mod:
         name: str,
         version: typing.Union[tuple, str, set, list],
         version_name: str = None,
+        add_to_mod_loader=True,
     ):
         """
         Creates a new mod
         :param name: the name of the mod
         :param version: a tuple of CONSTANT length across ALL versions representing the version of the mod
+        :param add_to_mod_loader: if to register to the mod loader
         """
+        # Parse the version information
         if type(version) != tuple:
             if type(version) == str:
                 version = (
@@ -159,37 +169,43 @@ class Mod:
                         name, version
                     )
                 )
+
         self.name = name
+
+        # The mod event bus
         self.eventbus: mcpython.engine.event.EventBus.EventBus = (
             mcpython.engine.event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
                 crash_on_error=True
             )
         )
+
         # need, possible, not possible, before, after, only with, only without
         self.depend_info = [[] for _ in range(7)]
-        self.path = None
-        self.container = None
+
+        self.path = None  # the path this mod is loaded from
+        self.container = None  # the mod loader container this is in
         self.version = version  # the version of the mod, as an tuple
         self.version_name = version_name
         self.package = None  # the package where the mod-file was found
         self.resource_access = None  # where to load resources from
 
-        shared.mod_loader.add_to_add(self)
+        if add_to_mod_loader:
+            shared.mod_loader.add_to_add(self)
 
     def mod_string(self):
         """
-        will transform the mod into an string
+        Will transform the mod into a string for display purposes
         """
         return "{} ({})".format(self.name, ".".join([str(e) for e in self.version])) + (
             "" if self.version_name is None else " as " + self.version_name
         )
 
     def __repr__(self):
-        return "Mod({},{})".format(self.name, self.version)
+        return "Mod@{}({},{})".format(hex(id(self))[2:], self.name, self.version)
 
     def add_load_default_resources(self, path_name=None):
         """
-        adds the default resource locations for loading into the system
+        Adds the default resource locations for loading into the system
         :param path_name: optional: the namespace to load
         """
         if path_name is None:
@@ -207,18 +223,19 @@ class Mod:
 
     def add_dependency(self, depend: typing.Union[str, ModDependency]):
         """
-        will add an dependency into the system; The selected mod will be loaded before this one
+        Will add a dependency into the system; The selected mod will be loaded before this one
         :param depend: the mod to depend on
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
+
         self.depend_info[0].append(depend)
         self.depend_info[4].append(depend)
         return self
 
     def add_not_load_dependency(self, depend: typing.Union[str, ModDependency]):
         """
-        will add an dependency without setting load_after for this mod
+        Will add a dependency without setting load_after for this mod
         :param depend: the mod to depend on
         """
         if type(depend) == str:
@@ -228,7 +245,7 @@ class Mod:
 
     def add_not_compatible(self, depend: typing.Union[str, ModDependency]):
         """
-        sets an mod for not loadable together with another one (e.g. useful on mod rename)
+        Sets a mod for not loadable together with another one, meaning incompatibility, for example
         :param depend: the mod to not load with
         """
         if type(depend) == str:
@@ -262,7 +279,7 @@ class Mod:
 
     def add_load_only_when_arrival(self, depend: typing.Union[str, ModDependency]):
         """
-        Will only load the mod if another one is arrival, but will not cause an dependency error in case of not arrival
+        Will only load the mod if another one is arrival, but will not cause an dependency error when not arrival
         :param depend: the mod to check for
         """
         if type(depend) == str:
@@ -272,11 +289,48 @@ class Mod:
 
     def add_load_only_when_not_arrival(self, depend: typing.Union[str, ModDependency]):
         """
-        Will only load the mod if another one is not arrival, but will not cause an dependency error in case of arrival,
-        Useful for e.g. API's
+        Will only load the mod if another one is not arrival, but will not cause an dependency error when arrival,
         :param depend: the mod to check for
         """
         if type(depend) == str:
             depend = ModDependency(*depend.split("|"))
         self.depend_info[6].append(depend)
         return self
+
+    def check_dependencies(self, mod_loader, mod_info):
+        for depend in self.depend_info[0]:
+            if not depend.arrival():
+                if shared.event_handler.call_cancelable(
+                        "minecraft:modloader:missing_dependency", mod_loader, self, depend
+                ):
+                    mod_loader.error_builder.println(
+                        "- Mod '{}' needs mod {} which is not provided".format(
+                            self.name, depend
+                        )
+                    )
+                    return False
+
+        for depend in self.depend_info[2]:
+            if depend.arrival():
+                if shared.event_handler.call_cancelable(
+                        "minecraft:modloader:incompatible_mod", mod_loader, self, depend
+                ):
+                    mod_loader.error_builder.println(
+                        "- Mod '{}' is incompatible with {} which is provided".format(
+                            self.name, depend
+                        )
+                    )
+                    return False
+
+        # todo: do we want two more events here?
+        for depend in self.depend_info[5]:
+            if not depend.arrival():
+                del mod_info[self.name]
+                del mod_loader.mods[self.name]
+
+        for depend in self.depend_info[6]:
+            if depend.arrival():
+                del mod_info[self.name]
+                del mod_loader.mods[self.name]
+
+        return True
