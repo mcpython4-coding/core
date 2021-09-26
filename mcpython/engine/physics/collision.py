@@ -29,6 +29,9 @@ def collide(position: tuple, height: int, previous=None):
     todo: make player based
     todo: make account player & block hit box
     """
+    dimension = shared.world.get_active_dimension()
+    player = shared.world.get_active_player()
+
     previous_positions = (
         sum(get_colliding_blocks(previous, height), []) if previous is not None else []
     )
@@ -52,7 +55,7 @@ def collide(position: tuple, height: int, previous=None):
                 op = list(np)
                 op[1] -= dy
                 op[i] += face[i]
-                chunk = shared.world.get_active_dimension().get_chunk_for_position(
+                chunk = dimension.get_chunk_for_position(
                     tuple(op), generate=False
                 )
                 block = chunk.get_block(tuple(op))
@@ -71,7 +74,7 @@ def collide(position: tuple, height: int, previous=None):
                     and block.NO_ENTITY_COLLISION
                 ):
                     block.on_no_collision_collide(
-                        shared.world.get_active_player(),
+                        player,
                         block.position in previous_positions,
                     )
                     continue
@@ -86,14 +89,14 @@ def collide(position: tuple, height: int, previous=None):
                         shared.window.dy = 0
 
                 if face == (0, -1, 0):
-                    shared.world.get_active_player().flying = False
+                    player.flying = False
                     if (
-                        shared.world.get_active_player().gamemode in (0, 2)
-                        and shared.world.get_active_player().fallen_since_y is not None
+                        player.gamemode in (0, 2)
+                        and player.fallen_since_y is not None
                     ):
                         dy = (
-                            shared.world.get_active_player().fallen_since_y
-                            - shared.world.get_active_player().position[1]
+                            player.fallen_since_y
+                            - player.position[1]
                             - 3
                         )
 
@@ -103,9 +106,9 @@ def collide(position: tuple, height: int, previous=None):
                                 "fallDamage"
                             ].status.status
                         ):
-                            shared.world.get_active_player().damage(dy)
+                            player.damage(dy)
 
-                        shared.world.get_active_player().fallen_since_y = None
+                        player.fallen_since_y = None
                 break
 
     return tuple(p)
@@ -123,6 +126,7 @@ def get_colliding_blocks(position: tuple, height: int) -> tuple:
     pad = 0.1
     p = list(position)
     np = normalize(position)
+    dimension = shared.world.get_active_dimension()
 
     for face in ADVANCED_FACES:  # check all surrounding blocks
         for i in range(3):  # check each dimension independently
@@ -138,7 +142,7 @@ def get_colliding_blocks(position: tuple, height: int) -> tuple:
                 op = list(np)
                 op[1] -= dy
                 op[i] += face[i]
-                chunk = shared.world.get_active_dimension().get_chunk_for_position(
+                chunk = dimension.get_chunk_for_position(
                     tuple(op), generate=False
                 )
                 block = chunk.get_block(tuple(op))
