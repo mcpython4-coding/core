@@ -66,7 +66,7 @@ class ReadBuffer:
         return self.stream.read(count)
 
     def read_uuid(self):
-        data = self.read_long()
+        data = self.read_big_long()
         return uuid.UUID(int=data)
 
 
@@ -127,7 +127,7 @@ class WriteBuffer:
         return self
 
     def write_uuid(self, uid: uuid.UUID):
-        self.write_long(uid.int)
+        self.write_big_long(uid.int)
         return self
 
 
