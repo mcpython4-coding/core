@@ -55,9 +55,7 @@ def collide(position: tuple, height: int, previous=None):
                 op = list(np)
                 op[1] -= dy
                 op[i] += face[i]
-                chunk = dimension.get_chunk_for_position(
-                    tuple(op), generate=False
-                )
+                chunk = dimension.get_chunk_for_position(tuple(op), generate=False)
                 block = chunk.get_block(tuple(op))
                 blockstate = block is not None
 
@@ -90,15 +88,8 @@ def collide(position: tuple, height: int, previous=None):
 
                 if face == (0, -1, 0):
                     player.flying = False
-                    if (
-                        player.gamemode in (0, 2)
-                        and player.fallen_since_y is not None
-                    ):
-                        dy = (
-                            player.fallen_since_y
-                            - player.position[1]
-                            - 3
-                        )
+                    if player.gamemode in (0, 2) and player.fallen_since_y is not None:
+                        dy = player.fallen_since_y - player.position[1] - 3
 
                         if (
                             dy > 0
@@ -142,9 +133,7 @@ def get_colliding_blocks(position: tuple, height: int) -> tuple:
                 op = list(np)
                 op[1] -= dy
                 op[i] += face[i]
-                chunk = dimension.get_chunk_for_position(
-                    tuple(op), generate=False
-                )
+                chunk = dimension.get_chunk_for_position(tuple(op), generate=False)
                 block = chunk.get_block(tuple(op))
                 if block is None:
                     continue

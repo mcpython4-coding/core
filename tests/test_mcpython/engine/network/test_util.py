@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 import random
 import string
 import typing
-from unittest import TestCase
 import uuid
+from unittest import TestCase
 
 # These is a list of tests that we can execute on buffers, used for the multi test
 MULTI_TEST_POOL: typing.List[

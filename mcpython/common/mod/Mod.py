@@ -301,7 +301,7 @@ class Mod:
         for depend in self.depend_info[0]:
             if not depend.arrival():
                 if shared.event_handler.call_cancelable(
-                        "minecraft:modloader:missing_dependency", mod_loader, self, depend
+                    "minecraft:modloader:missing_dependency", mod_loader, self, depend
                 ):
                     mod_loader.error_builder.println(
                         "- Mod '{}' needs mod {} which is not provided".format(
@@ -313,7 +313,7 @@ class Mod:
         for depend in self.depend_info[2]:
             if depend.arrival():
                 if shared.event_handler.call_cancelable(
-                        "minecraft:modloader:incompatible_mod", mod_loader, self, depend
+                    "minecraft:modloader:incompatible_mod", mod_loader, self, depend
                 ):
                     mod_loader.error_builder.println(
                         "- Mod '{}' is incompatible with {} which is provided".format(
