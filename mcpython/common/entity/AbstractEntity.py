@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import traceback
+import typing
 import uuid
 from abc import ABC
 
@@ -56,7 +57,8 @@ class AbstractEntity(
     # Internal Region END
     # -------------------
 
-    SUMMON_ABLE = True  # if the entity can be used in /summom-command
+    # If the entity can be used in /summon-command
+    SUMMON_ABLE = True
 
     @classmethod
     def create_new(cls, position, *args, dimension=None, **kwargs):
@@ -130,11 +132,14 @@ class AbstractEntity(
 
         self.teleport(tuple((buffer.read_float() for _ in range(3))))
         self.rotation = list((buffer.read_float() for _ in range(3)))
-        self.uuid = uuid.UUID(hex=buffer.read_string())
+        self.uuid = buffer.read_uuid()
 
         # todo: do something with this!
-        parent_uuid = buffer.read_string()
-        child_uuid = buffer.read_string()
+        if buffer.read_bool():
+            parent_uuid = buffer.read_uuid()
+
+        if buffer.read_bool():
+            child_uuid = buffer.read_uuid()
 
         self.nbt_data["motion"] = tuple((buffer.read_float() for _ in range(3)))
         self.nbt_data["invulnerable"] = buffer.read_bool()
@@ -154,9 +159,15 @@ class AbstractEntity(
         for e in self.rotation:
             buffer.write_float(e)
 
-        buffer.write_string(self.uuid.hex)
-        buffer.write_string("" if self.parent is None else self.parent.uuid.hex)
-        buffer.write_string("" if self.child is None else self.child.uuid.hex)
+        buffer.write_uuid(self.uuid)
+
+        buffer.write_bool(self.parent is not None)
+        if self.parent is not None:
+            buffer.write_uuid(self.parent.uuid)
+
+        buffer.write_bool(self.child is not None)
+        if self.child is not None:
+            buffer.write_uuid(self.child.uuid)
 
         for e in self.nbt_data["motion"]:
             buffer.write_float(e)
@@ -297,8 +308,7 @@ class AbstractEntity(
         todo: drop items if selected
         todo: play kill animation if selected
         """
-        if self.chunk is not None and self in self.chunk.entities:
-            self.chunk.entities.remove(self)
+        self.remove_from_chunk()
 
         if (
             shared.entity_manager is not None
@@ -312,9 +322,10 @@ class AbstractEntity(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         """
-        Let the entity pick up an item and insert it into its inventory
+        Let the entity pick up a item and insert it into its inventory
         :param itemstack: the itemstack to use
         :return: if it was successful or not
+
         for moder: see world/player.py as an example how this could work
         Subclasses should implement this when they have an inventory for it
         """
@@ -326,44 +337,50 @@ class AbstractEntity(
         """
         Applies damage to the entity
         FOR MODER:
-            this function is an default implementation. for an working example, see the player entity
+            This function is a default implementation. For a working example, see the player entity
             - you may want to apply armor calculation code
-            - you may want to override this method for an custom implementation
+            - you may want to override this method for a custom implementation
         :param damage: the damage to apply
-        :param reason: the reason for the damage, as an DamageSource-instance
+        :param reason: the reason for the damage, as a DamageSource-instance, or None
         """
         self.hearts -= damage
         if self.hearts <= 0:
             self.kill()
 
-    def on_interact(self, player, button, modifiers, itemstack):
+    def on_interact(self, player, button: int, modifiers: int, itemstack) -> bool:
         """
-        Called when the player tries to interact with the entity
+        Called when the player tries to interact with the entity by clicking on it
+        Damage should not be calculated here
         :param player: the player doing so, WARNING: only type-hinted for entity, not world/player.py:Player
         :param button: the button used
         :param modifiers: the modifiers used
         :param itemstack: the itemstack held in hand
-        todo: make called
-        todo: damage entity when needed
-        for moder: should damage entity if needed
-        """
+        :return: if the normal behaviour should be canceled or not
 
-    def get_inventories(self) -> list:
+        todo: make called
+        """
+        return False
+
+    def get_inventories(self) -> typing.Iterable:
         """
         Will return an list of all currently arrival inventories for this entity
         """
-        return []
+        return tuple()
 
     def on_inventory_cleared(self):
         """
-        Called by /clear when the inventory of the entity should be cleared
+        Called when the entity inventory should be cleared
+        Defaults to clearing all inventories from get_inventories()
         """
+        for inv in self.get_inventories():
+            inv.clear()
 
     # system events
 
     def draw(self):
         """
-        Called to draw the entity
+        Called to draw the entity in the world
+        Invoked in the correct rendering phase
         """
 
     def tick(self, dt: float):
@@ -390,7 +407,8 @@ class AbstractEntity(
         """
         Loads data into the entity, previous saved
         For Moder:
-            you CAN include an version entry to make sure you can fix the data version
+            you CAN include a version entry to make sure you can fix the data version
         :param data: the data to load from
         The nbt data is auto-loaded before this event is called
+        WARNING: data may be None when dump() was at some point not implemented
         """
