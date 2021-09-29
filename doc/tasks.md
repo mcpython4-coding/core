@@ -17,7 +17,6 @@ Toolchain:
     - path to launcher
     - user name
     - path to mc asset folder / archive
-- installer .jar file linking in the installation.json file instead of extraction
 
 - obfuscator
 - System to dynamically migrate code from deobf <-> obf and up versions [only simple changes]

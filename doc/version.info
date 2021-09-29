@@ -1793,7 +1793,7 @@ F   [uuk]: added client-only, sever-only and client-executed command options
 I   [uuk]: reduced logging to hours, minutes & seconds; formatting now equal-length, filled with 0's
 G   [github]: released snapshot 21w37a
 
-G   [github]: start of development cycle for [21w39a]
+G   [github]: start of development cycle for 21w39a
 G*I [uuk]: changed how mc assets are stored; directly loaded from the .zip file now instead of extraction
 RA  [uuk]: moved state system from client-package to common-package preparing for rendering separation
 AI  [uuk]: split of state system from state rendering; States define now a StateRenderer rendering stuff for them
@@ -1819,4 +1819,5 @@ F   [uuk]: added server package for changing the server
 A** [uuk]: redstone system changed on block side, breaking when not using getter/setter methods
 I   [uuk]: EnumSide will use now an "index" to remember the type of the side
 A** [uuk]: block solid face is now indicated by a tuple instead of a dict, making it mostly immutable
+G   [github]: released snapshot 21w39a
 
