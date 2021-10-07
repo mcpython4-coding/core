@@ -1821,3 +1821,6 @@ I   [uuk]: EnumSide will use now an "index" to remember the type of the side
 A** [uuk]: block solid face is now indicated by a tuple instead of a dict, making it mostly immutable
 G   [github]: released snapshot 21w39a
 
+G    [github]: started development cycle for snapshot 21wXX
+F*T  [uuk]: added first bytecode manipulation helper in mcpython/mixin/PyBytecodeManipulator.py
+
