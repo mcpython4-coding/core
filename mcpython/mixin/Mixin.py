@@ -19,6 +19,11 @@ from .MixinMethodWrapper import mixin_return, capture_local
 
 
 class AbstractMixinProcessor:
+    """
+    Mixin processor class
+    Stuff that works on methods on a high level
+    """
+
     def canBeAppliedOnModified(
         self,
         handler: "MixinHandler",

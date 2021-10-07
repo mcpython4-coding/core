@@ -2,7 +2,6 @@ from unittest import TestCase, skip
 
 
 class TestMixinHandler(TestCase):
-    @skip
     def test_replace_function_body(self):
         from mcpython.mixin.Mixin import MixinHandler
         from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
@@ -18,7 +17,9 @@ class TestMixinHandler(TestCase):
 
         self.assertEqual(test(), 0)
 
-        handler.bound_mixin_processors["test"][0].apply(handler, FunctionPatcher(test))
+        patcher = FunctionPatcher(test)
+        handler.bound_mixin_processors["test"][0].apply(handler, patcher)
+        patcher.applyPatches()
 
         self.assertEqual(test(), 1)
 
