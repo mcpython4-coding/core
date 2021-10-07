@@ -11,11 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import importlib
 import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
 from .MixinMethodWrapper import mixin_return, capture_local
+from ..engine import logger
 
 
 class AbstractMixinProcessor:
@@ -90,6 +92,29 @@ class MixinHandler:
             str, typing.List[AbstractMixinProcessor]
         ] = {}
 
+    def applyMixins(self):
+        for target, mixins in self.bound_mixin_processors.items():
+            logger.println(f"[MIXIN][WARN] applying mixins of {self.processor_name} onto {target}")
+
+            patcher = mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(self.lookup_method(target))
+
+            for mixin in mixins:
+                logger.println("[MIXIN][WARN] applying mixin " + str(mixin))
+
+                mixin.apply(self, patcher)
+
+            patcher.applyPatches()
+
+    @staticmethod
+    def lookup_method(method: str):
+        module, path = method.split(":")
+        module = importlib.import_module(module)
+
+        for e in path.split("."):
+            module = getattr(module, e)
+
+        return module
+
     def replace_function_body(
         self, access_str: str
     ) -> typing.Callable[[types.FunctionType], types.FunctionType]:
@@ -146,3 +171,4 @@ class MixinHandler:
         :param inline: when True, will inline this annotated method into the target
         """
         return lambda e: e
+
