@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import dis
 from types import CodeType, FunctionType
 
 __all__ = ["FunctionPatcher"]
@@ -23,20 +22,32 @@ class FunctionPatcher:
 
     Wrapped class for handling __code__ objects at runtime,
     and writing the modified code back into the source function
+
+    See https://docs.python.org/3.10/library/inspect.html
     """
 
     def __init__(self, target: FunctionType):
         self.target = target
         self.code = self.target.__code__
 
+        # Number of real arguments, neither positional only nor keyword arguments
         self.argument_count = self.code.co_argcount
+
         self.positional_only_argument_count = self.code.co_posonlyargcount
         self.keyword_only_argument_count = self.code.co_kwonlyargcount
         self.number_of_locals = self.code.co_nlocals
         self.max_stack_size = self.code.co_stacksize
+
+        # Code flags, see https://docs.python.org/3.10/library/inspect.html#inspect-module-co-flags
         self.flags = self.code.co_flags
+
+        # The code string, transformed to a bytearray for manipulation
         self.code_string = bytearray(self.code.co_code)
-        self.constants = self.code.co_consts
+
+        # The constants in the code, use ensureConstant when wanting new ones
+        self.constants = list(self.code.co_consts)
+
+        # The local variable name table
         self.names = self.code.co_names
         self.variable_names = self.code.co_varnames
         self.filename = self.code.co_filename
@@ -59,7 +70,7 @@ class FunctionPatcher:
             self.max_stack_size,
             self.flags,
             bytes(self.code_string),
-            self.constants,
+            tuple(self.constants),
             self.names,
             self.variable_names,
             self.filename,
@@ -69,3 +80,36 @@ class FunctionPatcher:
             self.free_vars,
             self.cell_vars,
         )
+
+    def overrideFrom(self, patcher: "FunctionPatcher"):
+        """
+        Force-overrides the content of this patcher with the one from another one
+        """
+        self.argument_count = patcher.argument_count
+        self.positional_only_argument_count = patcher.positional_only_argument_count
+        self.keyword_only_argument_count = patcher.keyword_only_argument_count
+        self.number_of_locals = patcher.number_of_locals
+        self.max_stack_size = patcher.max_stack_size
+        self.flags = patcher.flags
+        self.code_string = patcher.code_string
+        self.constants = patcher.constants
+        self.names = patcher.names
+        self.variable_names = patcher.variable_names
+        self.first_line_number = patcher.first_line_number
+        self.line_number_table = patcher.line_number_table
+        self.free_vars = patcher.free_vars
+        self.cell_vars = patcher.cell_vars
+        return self
+
+    def ensureConstant(self, const) -> int:
+        """
+        Makes some constant arrival in the program
+        :param const: the constant
+        :return: the index into the constant table
+        """
+
+        if const in self.constants:
+            return self.constants.index(const)
+
+        self.constants.append(const)
+        return len(self.constants) - 1

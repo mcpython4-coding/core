@@ -44,3 +44,38 @@ class TestFunctionPatcher(TestCase):
         value = 0
         test_obj.wadd(3, 1)
         self.assertEqual(value, 1)
+
+    def test_library_mixin_with_constant(self):
+        import PIL.Image
+        from mcpython.mixin import PyBytecodeManipulator
+
+        def test():
+            return 0
+
+        replacement_code = bytearray(test.__code__.co_code)
+
+        image = PIL.Image.new("RGBA", (10, 10))
+
+        obj = PyBytecodeManipulator.FunctionPatcher(PIL.Image.Image.copy)
+        replacement_code[1] = obj.ensureConstant(0)
+        obj.code_string = replacement_code
+        obj.applyPatches()
+
+        self.assertEqual(image.copy(), 0)
+
+    def test_body_replacement(self):
+        from mcpython.mixin import PyBytecodeManipulator
+
+        def a():
+            return 0
+
+        def b():
+            return 1
+
+        self.assertEqual(a(), 0)
+
+        obj = PyBytecodeManipulator.FunctionPatcher(a)
+        obj.overrideFrom(PyBytecodeManipulator.FunctionPatcher(b))
+        obj.applyPatches()
+
+        self.assertEqual(a(), 1)
