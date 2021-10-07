@@ -11,9 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import dis
 from types import CodeType, FunctionType
 
 __all__ = ["FunctionPatcher"]
+
+import typing
+
+
+def null(): pass
 
 
 class FunctionPatcher:
@@ -81,6 +87,29 @@ class FunctionPatcher:
             self.cell_vars,
         )
 
+    def create_method_from(self):
+        return FunctionType(
+            CodeType(
+                self.argument_count,
+                self.positional_only_argument_count,
+                self.keyword_only_argument_count,
+                self.number_of_locals,
+                self.max_stack_size,
+                self.flags,
+                bytes(self.code_string),
+                tuple(self.constants),
+                self.names,
+                self.variable_names,
+                self.filename,
+                self.name,
+                self.first_line_number,
+                self.line_number_table,
+                self.free_vars,
+                self.cell_vars,
+            ),
+            globals(),
+        )
+
     def overrideFrom(self, patcher: "FunctionPatcher"):
         """
         Force-overrides the content of this patcher with the one from another one
@@ -101,6 +130,12 @@ class FunctionPatcher:
         self.cell_vars = patcher.cell_vars
         return self
 
+    def copy(self):
+        """
+        Creates a copy of this object WITHOUT method binding
+        """
+        return FunctionPatcher(null).overrideFrom(self)
+
     def ensureConstant(self, const) -> int:
         """
         Makes some constant arrival in the program
@@ -113,3 +148,19 @@ class FunctionPatcher:
 
         self.constants.append(const)
         return len(self.constants) - 1
+
+    def get_instruction_list(self) -> typing.List[dis.Instruction]:
+        return dis._get_instructions_bytes(
+            self.code_string,
+            self.variable_names,
+            self.names,
+            self.constants,
+            self.cell_vars + self.free_vars,
+        )
+
+    def instructionList2Code(self, instruction_list: typing.List[dis.Instruction]):
+        self.code_string.clear()
+
+        for instr in instruction_list:
+            self.code_string.append(instr.opcode)
+            self.code_string.append(instr.arg)
