@@ -22,7 +22,7 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 
 - parser for the new mc world gen config format
 
-- add an mode where the window opens only when the load is complete
+- add a mode where the window opens only when the load is complete
 
 - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
 
@@ -59,7 +59,10 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 Released on ??.??.2021 targeting 1.1?
 
     Modding:
-        Added bytecode manipulation framework
+        - Added bytecode manipulation framework
+
+    Issues fixed:
+        - Creative tab scrollbar was working the wrong way 'round
 
 # Changelog of snapshot 21w39a
 Released on 29.09.2021 targeting 1.17

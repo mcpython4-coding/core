@@ -2,7 +2,6 @@
 
 Issues:
 - non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
-- world generation progress is not displayed
 - biome map is not saved to save files or loaded not correctly somehow
 
 
@@ -16,7 +15,6 @@ Toolchain:
 - user_config.json storing local information across versions, like:
     - path to launcher
     - user name
-    - path to mc asset folder / archive
 
 - obfuscator
 - System to dynamically migrate code from deobf <-> obf and up versions [only simple changes]

@@ -76,7 +76,7 @@ class CreativeTabScrollbar:
             cx, cy = self.get_scrollbar_position()
             if self.is_hovered:
                 # todo: something better here!
-                self.on_mouse_scroll(0, 0, 0, -dy)
+                self.on_mouse_scroll(0, 0, 0, dy)
 
         self.on_mouse_move(x, y, dx, dy)
 
@@ -92,11 +92,13 @@ class CreativeTabScrollbar:
 
     def on_mouse_scroll(self, x, y, sx, sy):
         self.currently_scrolling = max(
-            1, min(self.currently_scrolling + math.copysign(1, sy), self.scroll_until)
+            1, min(self.currently_scrolling - math.copysign(1, sy), self.scroll_until)
         )
         self.callback(self.currently_scrolling)
 
     def on_key_press(self, symbol, modifiers):
+        # todo: while pressing, scroll further
+
         if shared.state_handler.global_key_bind_toggle:
             return
 
@@ -122,7 +124,7 @@ class CreativeTabScrollbar:
             y -= (self.height - sy) * (
                 (self.currently_scrolling - 1) / (self.scroll_until - 1)
             )
-        # print(self.position, self.SCROLLBAR_SIZE, self.height, self.currently_scrolling, self.scroll_until, x, y)
+
         return x, y
 
     def draw_at(self, lower_left: typing.Tuple[int, int], height: int):
@@ -133,18 +135,18 @@ class CreativeTabScrollbar:
             self.NON_SELECTED_SCROLLBAR if self.is_hovered else self.SELECTED_SCROLLBAR
         ).blit(*self.get_scrollbar_position())
 
-        # This is here for debugging where the bar is drawn
-        # draw_line_rectangle(lower_left, (self.SCROLLBAR_SIZE[0], height), (1, 0, 0))
-
     def activate(self):
         self.underlying_event_bus.activate()
+        self.is_hovered = False
+        self.on_mouse_move(*shared.window.mouse_position, 0, 0)
 
     def deactivate(self):
         self.underlying_event_bus.deactivate()
         self.is_hovered = False
 
     def set_max_value(self, value: int):
-        assert value >= 1, "value must be positive"
+        if value < 1:
+            raise ValueError("value must be positive")
 
         self.scroll_until = value
         self.currently_scrolling = min(self.currently_scrolling, value)
