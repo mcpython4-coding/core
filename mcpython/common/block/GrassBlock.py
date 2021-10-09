@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.util.enums
 from mcpython import shared
 
@@ -50,3 +52,8 @@ class GrassBlock(AbstractBlock.AbstractBlock):
                 dim.get_chunk_for_position(self.position).add_block(
                     self.position, "minecraft:dirt"
                 )
+
+    @staticmethod
+    def get_tint_for_index(index: int) -> typing.Tuple[float, float, float, float]:
+        # todo: make biome-based
+        return 91/255, 201/255, 59/255, 1

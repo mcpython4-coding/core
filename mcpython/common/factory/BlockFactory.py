@@ -513,7 +513,7 @@ def build_class_default_state(
                 function(self, itemstack)
 
         def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
-            self.injected_redstone_power[side] = level
+            self.injected_redstone_power[side.index] = level
 
             if not is_super_base:
                 super().inject_redstone_power(side, level)

@@ -1827,4 +1827,5 @@ F*T [uuk]: added basic mixin framework; When applying mixins onto methods, warni
 b   [uuk]: fixed creative tab scroll bar
 f   [uuk]: added redstone wire block with connection logic
 f*  [uuk]: block rendering allows now tinting the textures, this breaks anything touching block rendering
+F   [uuk]: grass blocks are now tinted
 
