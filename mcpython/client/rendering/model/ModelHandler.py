@@ -25,8 +25,8 @@ import mcpython.util.enums
 import mcpython.util.math
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
-from mcpython.util.enums import EnumSide
 from mcpython.engine import logger
+from mcpython.util.enums import EnumSide
 
 
 class ModelHandler:
@@ -213,7 +213,9 @@ class ModelHandler:
                 "error during loading model '{}' named '{}'".format(location, name)
             )
 
-    def add_face_to_batch(self, block: IBlockStateRenderingTarget, face: EnumSide, batches) -> typing.Iterable:
+    def add_face_to_batch(
+        self, block: IBlockStateRenderingTarget, face: EnumSide, batches
+    ) -> typing.Iterable:
         """
         Adds a single face of a block-like thing to a batch
         :return: a list of vertex lists
@@ -287,7 +289,13 @@ class ModelHandler:
         return vertex_list
 
     def add_raw_face_to_batch(
-        self, instance: IBlockStateRenderingTarget, position, state, block_state_name: str, batches, face
+        self,
+        instance: IBlockStateRenderingTarget,
+        position,
+        state,
+        block_state_name: str,
+        batches,
+        face,
     ):
         if block_state_name is None or block_state_name not in self.blockstates:
             vertex_list = self.blockstates[
@@ -295,7 +303,9 @@ class ModelHandler:
             ].add_raw_face_to_batch(instance, position, state, batches, face)
         else:
             blockstate = self.blockstates[block_state_name]
-            vertex_list = blockstate.add_raw_to_batch(instance, position, state, batches, face)
+            vertex_list = blockstate.add_raw_to_batch(
+                instance, position, state, batches, face
+            )
 
         return vertex_list
 

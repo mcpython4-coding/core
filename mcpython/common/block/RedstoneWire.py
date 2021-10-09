@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -13,13 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import mcpython.common.block.BoundingBox
 from mcpython import shared
+from mcpython.util.enums import EnumSide
 
 from . import AbstractBlock
 from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
-from mcpython.util.enums import EnumSide
-import mcpython.common.block.BoundingBox
-
 
 states = "none", "up", "side"
 
@@ -67,7 +66,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
 
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        block = dimension.get_block((x, y-1, z), none_if_str=True)
+        block = dimension.get_block((x, y - 1, z), none_if_str=True)
         if block is None or not block.face_solid[EnumSide.UP.index]:
             dimension.remove_block(self.position)
             return
@@ -78,25 +77,29 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         level = max(self.injected_redstone_power)
         if level != self.level:
             self.level = level
-            shared.world.get_dimension_by_name(self.dimension).on_block_updated(self.position, include_itself=False)
+            shared.world.get_dimension_by_name(self.dimension).on_block_updated(
+                self.position, include_itself=False
+            )
 
     def update_visual(self):
         x, y, z = self.position
 
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
-        block = dimension.get_block((x, y+1, z), none_if_str=True)
+        block = dimension.get_block((x, y + 1, z), none_if_str=True)
         non_solid_above = block is None or not block.face_solid[EnumSide.DOWN.index]
 
         for face in EnumSide.iterate()[2:]:
-            block = dimension.get_block((x+face.dx, y, z+face.dz), none_if_str=True)
+            block = dimension.get_block((x + face.dx, y, z + face.dz), none_if_str=True)
 
             if isinstance(block, AbstractBlock.AbstractBlock):
                 if block.is_connecting_to_redstone(face.invert()):
                     self.state[face] = "side"
 
                 elif not block.face_solid[EnumSide.DOWN.index]:
-                    block2 = dimension.get_block((x+face.dx, y-1, z+face.dz), none_if_str=True)
+                    block2 = dimension.get_block(
+                        (x + face.dx, y - 1, z + face.dz), none_if_str=True
+                    )
 
                     if isinstance(block2, RedstoneWire):
                         self.state[face] = "side"
@@ -111,7 +114,9 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
 
         if non_solid_above:
             for face in EnumSide.iterate()[2:]:
-                block = dimension.get_block((x + face.dx, y+1, z + face.dz), none_if_str=True)
+                block = dimension.get_block(
+                    (x + face.dx, y + 1, z + face.dz), none_if_str=True
+                )
                 if isinstance(block, RedstoneWire):
                     self.state[face] = "up"
 
@@ -123,7 +128,9 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
     def is_connecting_to_redstone(self, side: EnumSide) -> bool:
         return side != EnumSide.UP
 
-    def get_tint_for_index(self, index: int) -> typing.Tuple[float, float, float, float]:
+    def get_tint_for_index(
+        self, index: int
+    ) -> typing.Tuple[float, float, float, float]:
         f = (self.level + 1) / 16
         return f, 0, 0, 1
 

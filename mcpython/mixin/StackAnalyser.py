@@ -1,9 +1,22 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import builtins
 import dis
 import typing
 
-from .PyBytecodeManipulator import FunctionPatcher
 from .MixinMethodWrapper import MixinPatchHelper
+from .PyBytecodeManipulator import FunctionPatcher
 
 
 class StackAnalyser:
@@ -25,17 +38,35 @@ class StackAnalyser:
         self.opcode2stack = [None] * len(self.patcher.instruction_listing)
 
         visited_nodes = set()
-        self.visitCp(0, visited_nodes, [], [None] * self.patcher.patcher.number_of_locals, {})
+        self.visitCp(
+            0, visited_nodes, [], [None] * self.patcher.patcher.number_of_locals, {}
+        )
 
-    def visitCp(self, cp: int, visited: typing.Set[int], stack: list, local: list, named_locals: dict):
-        if cp in visited: return
+    def visitCp(
+        self,
+        cp: int,
+        visited: typing.Set[int],
+        stack: list,
+        local: list,
+        named_locals: dict,
+    ):
+        if cp in visited:
+            return
         visited.add(cp)
         self.opcode2stack[cp] = stack.copy(), local.copy(), named_locals.copy()
 
         instr: dis.Instruction = self.patcher.instruction_listing[cp]
 
-        if instr.opname in {"END_ASYNC_FOR", "BEFORE_ASYNC_WITH", "SETUP_ASYNC_WITH", "WITH_EXCEPT_START",
-                            "UNPACK_SEQUENCE", "UNPACK_EX", "COMPARE_OP", "RAISE_VARARGS"}:
+        if instr.opname in {
+            "END_ASYNC_FOR",
+            "BEFORE_ASYNC_WITH",
+            "SETUP_ASYNC_WITH",
+            "WITH_EXCEPT_START",
+            "UNPACK_SEQUENCE",
+            "UNPACK_EX",
+            "COMPARE_OP",
+            "RAISE_VARARGS",
+        }:
             return
 
         if instr.opname == "RETURN_VALUE":
@@ -43,28 +74,84 @@ class StackAnalyser:
             return
 
         # Instructions changing mostly nothing
-        if instr.opname in ("NOP", "UNARY_POSITIVE", "UNARY_NEGATIVE", "UNARY_NOT", "UNARY_INVERT", "SETUP_ANNOTATIONS",
-                            "POP_BLOCK", "POP_EXCEPT", "RERAISE", "LIST_TO_TUPLE", "SETUP_FINALLY"):
-            return self.visitCp(cp+1, visited, stack, local, named_locals)
+        if instr.opname in (
+            "NOP",
+            "UNARY_POSITIVE",
+            "UNARY_NEGATIVE",
+            "UNARY_NOT",
+            "UNARY_INVERT",
+            "SETUP_ANNOTATIONS",
+            "POP_BLOCK",
+            "POP_EXCEPT",
+            "RERAISE",
+            "LIST_TO_TUPLE",
+            "SETUP_FINALLY",
+        ):
+            return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
         # Instructions modifying the big stuff on the stack
-        if instr.opname in {"GET_ITER", "GET_YIELD_FROM_ITER", "GET_AWAITABLE", "GET_AITER", "GET_ANEXT", "SETUP_WITH",
-                            "GET_LEN", "MATCH_MAPPING", "MATCH_SEQUENCE", "MATCH_KEYS", "IMPORT_FROM"}:
+        if instr.opname in {
+            "GET_ITER",
+            "GET_YIELD_FROM_ITER",
+            "GET_AWAITABLE",
+            "GET_AITER",
+            "GET_ANEXT",
+            "SETUP_WITH",
+            "GET_LEN",
+            "MATCH_MAPPING",
+            "MATCH_SEQUENCE",
+            "MATCH_KEYS",
+            "IMPORT_FROM",
+        }:
             stack.pop(-1)
             stack.append(None)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
-        if instr.opname in {"POP_TOP", "BINARY_POWER", "BINARY_MULTIPLY", "BINARY_MATRIX_MULTIPLY",
-                            "BINARY_FLOOR_DIVIDE", "BINARY_TRUE_DIVIDE", "BINARY_MODULO",
-                            "BINARY_ADD", "BINARY_SUBTRACT", "BINARY_SUBSCR", "BINARY_LSHIFT",
-                            "BINARY_RSHIFT", "BINARY_AND", "BINARY_XOR", "BINARY_OR",
-                            "INPLACE_POWER", "INPLACE_MULTIPLY", "INPLACE_MATRIX_MULTIPLY",
-                            "INPLACE_FLOOR_DIVIDE", "INPLACE_TRUE_DIVIDE", "INPLACE_MODULO",
-                            "INPLACE_ADD", "INPLACE_SUBTRACT", "INPLACE_LSHIFT", "INPLACE_RSHIFT",
-                            "INPLACE_AND", "INPLACE_XOR", "INPLACE_OR", "PRINT_EXPR", "SET_ADD",
-                            "LIST_APPEND", "IMPORT_STAR", "COPY_DICT_WITHOUT_KEYS", "DELETE_ATTR",
-                            "STORE_GLOBAL", "DELETE_GLOBAL", "LIST_EXTEND", "SET_UPDATE", "DICT_UPDATE",
-                            "DICT_MERGE", "LOAD_ATTR", "IS_OP", "CONTAINS_OP"}:
+        if instr.opname in {
+            "POP_TOP",
+            "BINARY_POWER",
+            "BINARY_MULTIPLY",
+            "BINARY_MATRIX_MULTIPLY",
+            "BINARY_FLOOR_DIVIDE",
+            "BINARY_TRUE_DIVIDE",
+            "BINARY_MODULO",
+            "BINARY_ADD",
+            "BINARY_SUBTRACT",
+            "BINARY_SUBSCR",
+            "BINARY_LSHIFT",
+            "BINARY_RSHIFT",
+            "BINARY_AND",
+            "BINARY_XOR",
+            "BINARY_OR",
+            "INPLACE_POWER",
+            "INPLACE_MULTIPLY",
+            "INPLACE_MATRIX_MULTIPLY",
+            "INPLACE_FLOOR_DIVIDE",
+            "INPLACE_TRUE_DIVIDE",
+            "INPLACE_MODULO",
+            "INPLACE_ADD",
+            "INPLACE_SUBTRACT",
+            "INPLACE_LSHIFT",
+            "INPLACE_RSHIFT",
+            "INPLACE_AND",
+            "INPLACE_XOR",
+            "INPLACE_OR",
+            "PRINT_EXPR",
+            "SET_ADD",
+            "LIST_APPEND",
+            "IMPORT_STAR",
+            "COPY_DICT_WITHOUT_KEYS",
+            "DELETE_ATTR",
+            "STORE_GLOBAL",
+            "DELETE_GLOBAL",
+            "LIST_EXTEND",
+            "SET_UPDATE",
+            "DICT_UPDATE",
+            "DICT_MERGE",
+            "LOAD_ATTR",
+            "IS_OP",
+            "CONTAINS_OP",
+        }:
             stack.pop(-1)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
@@ -156,7 +243,7 @@ class StackAnalyser:
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
         if instr.opname == "BUILD_STRING":
-            del stack[-instr.arg:]
+            del stack[-instr.arg :]
             stack.append(None)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
@@ -165,26 +252,40 @@ class StackAnalyser:
 
         if instr.opname in ("POP_JUMP_IF_TRUE", "POP_JUMP_IF_FALSE"):
             stack.pop(-1)
-            self.visitCp(instr.argval, visited, stack.copy(), local.copy(), named_locals.copy())
+            self.visitCp(
+                instr.argval, visited, stack.copy(), local.copy(), named_locals.copy()
+            )
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
         if instr.opname == "JUMP_IF_NOT_EXC_MATCH":
             del stack[-2:]
-            self.visitCp(instr.argval, visited, stack.copy(), local.copy(), named_locals.copy())
+            self.visitCp(
+                instr.argval, visited, stack.copy(), local.copy(), named_locals.copy()
+            )
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
         if instr.opname in ("JUMP_IF_TRUE_OR_POP", "JUMP_IF_FALSE_OR_POP"):
-            self.visitCp(instr.argval, visited, stack.copy(), local.copy(), named_locals.copy())
+            self.visitCp(
+                instr.argval, visited, stack.copy(), local.copy(), named_locals.copy()
+            )
             stack.pop(-1)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
         if instr.opname == "FOR_ITER":
-            self.visitCp(cp + instr.argval, visited, stack.copy(), local.copy(), named_locals.copy())
+            self.visitCp(
+                cp + instr.argval,
+                visited,
+                stack.copy(),
+                local.copy(),
+                named_locals.copy(),
+            )
             stack.pop(-1)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
         if instr.opname == "JUMP_ABSOLUTE":
-            return self.visitCp(instr.argval, visited, stack.copy(), local.copy(), named_locals.copy())
+            return self.visitCp(
+                instr.argval, visited, stack.copy(), local.copy(), named_locals.copy()
+            )
 
         if instr.opname == "LOAD_FAST":
             local[instr.arg] = stack.pop(-1)
@@ -198,7 +299,12 @@ class StackAnalyser:
             local[instr.arg] = None
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
-        if instr.opname in ("LOAD_CLOSURE", "LOAD_CLASSDEREF", "STORE_DEREF", "DELETE_DREF"):
+        if instr.opname in (
+            "LOAD_CLOSURE",
+            "LOAD_CLASSDEREF",
+            "STORE_DEREF",
+            "DELETE_DREF",
+        ):
             return """
             index = instr.arg
             if index < len(self.patcher.patcher.cell_vars):
@@ -209,12 +315,11 @@ class StackAnalyser:
             return self.visitCp(cp + 1, visited, stack, local, named_locals)"""
 
         if instr.opname == "CALL_FUNCTION":
-            del stack[-(instr.arg+1):]
+            del stack[-(instr.arg + 1) :]
             stack.append(None)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
 
         if instr.opname == "CALL_FUNCTION_KW":
-            del stack[-(instr.arg+2):]
+            del stack[-(instr.arg + 2) :]
             stack.append(None)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
-

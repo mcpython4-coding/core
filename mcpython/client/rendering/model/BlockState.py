@@ -23,10 +23,13 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
 from mcpython import shared
-from mcpython.client.rendering.model.api import BlockStateNotNeeded, IBlockStateDecoder
+from mcpython.client.rendering.model.api import (
+    BlockStateNotNeeded,
+    IBlockStateDecoder,
+    IBlockStateRenderingTarget,
+)
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
-from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",
@@ -141,7 +144,13 @@ class MultiPartDecoder(IBlockStateDecoder):
             ([], [], [], None) if previous is None else (*previous, None)
         )
         box_model = self.prepare_rendering_data(
-            box_model, face, instance, prepared_texture, prepared_vertex, prepared_tint, state
+            box_model,
+            face,
+            instance,
+            prepared_texture,
+            prepared_vertex,
+            prepared_tint,
+            state,
         )
         return (
             tuple()
@@ -235,7 +244,14 @@ class MultiPartDecoder(IBlockStateDecoder):
             box_model.draw_prepared_data((prepared_vertex, prepared_texture))
 
     def prepare_rendering_data(
-        self, box_model, face, instance: IBlockStateRenderingTarget, prepared_texture, prepared_vertex, prepared_tint, state
+        self,
+        box_model,
+        face,
+        instance: IBlockStateRenderingTarget,
+        prepared_texture,
+        prepared_vertex,
+        prepared_tint,
+        state,
     ):
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
@@ -372,11 +388,15 @@ class DefaultDecoder(IBlockStateDecoder):
 
         return tuple()
 
-    def add_raw_face_to_batch(self, instance: IBlockStateRenderingTarget, position, state, batches, face):
+    def add_raw_face_to_batch(
+        self, instance: IBlockStateRenderingTarget, position, state, batches, face
+    ):
         state = state
         for keymap, blockstate in self.states:
             if keymap == state:
-                return blockstate.add_raw_face_to_batch(instance, position, batches, face)
+                return blockstate.add_raw_face_to_batch(
+                    instance, position, batches, face
+                )
 
         if not shared.model_handler.hide_blockstate_errors:
             logger.println(
@@ -501,9 +521,7 @@ class BlockStateContainer:
         cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, force=False
     ):
         try:
-            instance = cls(
-                name, immediate=immediate, force=force
-            ).parse_data(data)
+            instance = cls(name, immediate=immediate, force=force).parse_data(data)
             return instance
         except BlockStateNotNeeded:
             pass  # do we need this model?
@@ -585,8 +603,17 @@ class BlockStateContainer:
     ):
         return self.loader.add_face_to_batch(block, batch, face)
 
-    def add_raw_face_to_batch(self, instance: IBlockStateRenderingTarget, position: tuple, state, batches, face):
-        return self.loader.add_raw_face_to_batch(instance, position, state, batches, face)
+    def add_raw_face_to_batch(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: tuple,
+        state,
+        batches,
+        face,
+    ):
+        return self.loader.add_raw_face_to_batch(
+            instance, position, state, batches, face
+        )
 
     def draw_face(
         self,
@@ -647,7 +674,9 @@ class BlockState:
         )
         return result
 
-    def add_raw_face_to_batch(self, instance: IBlockStateRenderingTarget, position, batches, face):
+    def add_raw_face_to_batch(
+        self, instance: IBlockStateRenderingTarget, position, batches, face
+    ):
         block_state = self.models.index(
             random.choices(self.models, [e[2] for e in self.models])[0]
         )
@@ -659,8 +688,7 @@ class BlockState:
                 )
             return tuple()
         result = shared.model_handler.models[model].add_face_to_batch(
-            instance,
-            position, batches, config, face
+            instance, position, batches, config, face
         )
         return result
 

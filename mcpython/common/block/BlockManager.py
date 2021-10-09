@@ -67,9 +67,9 @@ def load():
         GrassBlock,
         NetherPortal,
         NewBlocks,
+        RedstoneWire,
         ShulkerBox,
         Walls,
-        RedstoneWire,
     )
 
     block_registry.register(Anvil.Anvil)

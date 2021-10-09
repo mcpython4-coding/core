@@ -56,4 +56,4 @@ class GrassBlock(AbstractBlock.AbstractBlock):
     @staticmethod
     def get_tint_for_index(index: int) -> typing.Tuple[float, float, float, float]:
         # todo: make biome-based
-        return 91/255, 201/255, 59/255, 1
+        return 91 / 255, 201 / 255, 59 / 255, 1

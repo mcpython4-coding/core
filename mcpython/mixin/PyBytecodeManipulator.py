@@ -19,7 +19,8 @@ __all__ = ["FunctionPatcher"]
 import typing
 
 
-def null(): pass
+def null():
+    pass
 
 
 class FunctionPatcher:

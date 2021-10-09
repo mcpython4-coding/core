@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -170,7 +170,11 @@ class MixinPatchHelper:
                     instr, arg=rebind_real(instr.arg)
                 )
 
-        self.instruction_listing = self.instruction_listing[:start - 1] + instructions + self.instruction_listing[start - 1:]
+        self.instruction_listing = (
+            self.instruction_listing[: start - 1]
+            + instructions
+            + self.instruction_listing[start - 1 :]
+        )
 
     def insertMethodAt(self, start: int, method: FunctionPatcher):
         """
@@ -182,7 +186,12 @@ class MixinPatchHelper:
         """
         method = self.prepare_method_for_insert(method)
 
-    def insertMethodMultipleTimesAt(self, start: typing.List[int], method: FunctionPatcher, force_multiple_inlines=False):
+    def insertMethodMultipleTimesAt(
+        self,
+        start: typing.List[int],
+        method: FunctionPatcher,
+        force_multiple_inlines=False,
+    ):
         pass
 
     @staticmethod
@@ -202,4 +211,3 @@ class MixinPatchHelper:
             instr = helper.instruction_listing[i]
 
         return method
-

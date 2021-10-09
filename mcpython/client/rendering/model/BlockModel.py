@@ -97,7 +97,10 @@ class Model:
         config: dict,
         face: mcpython.util.enums.EnumSide,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
-    ) -> typing.Tuple[typing.Tuple[typing.List[float], typing.List[float], typing.List[float]], typing.Any]:
+    ) -> typing.Tuple[
+        typing.Tuple[typing.List[float], typing.List[float], typing.List[float]],
+        typing.Any,
+    ]:
         """
         Collects the vertex and texture data for a block at the given position with given configuration
         :param instance: the instance to draw
@@ -147,7 +150,9 @@ class Model:
         Adds a given face to the batch
         Simply wraps a get_prepared_data_for call around the box_model.add_prepared_data_to_batch-call
         """
-        collected_data, box_model = self.get_prepared_data_for(instance, position, config, face)
+        collected_data, box_model = self.get_prepared_data_for(
+            instance, position, config, face
+        )
         if box_model is None:
             return tuple()
 

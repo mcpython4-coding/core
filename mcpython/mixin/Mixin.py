@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -16,8 +16,9 @@ import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
-from .MixinMethodWrapper import mixin_return, capture_local
+
 from ..engine import logger
+from .MixinMethodWrapper import capture_local, mixin_return
 
 
 class AbstractMixinProcessor:
@@ -94,9 +95,13 @@ class MixinHandler:
 
     def applyMixins(self):
         for target, mixins in self.bound_mixin_processors.items():
-            logger.println(f"[MIXIN][WARN] applying mixins of '{self.processor_name}' onto '{target}'")
+            logger.println(
+                f"[MIXIN][WARN] applying mixins of '{self.processor_name}' onto '{target}'"
+            )
 
-            patcher = mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(self.lookup_method(target))
+            patcher = mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(
+                self.lookup_method(target)
+            )
 
             for mixin in mixins:
                 logger.println("[MIXIN][WARN] applying mixin " + str(mixin))
@@ -171,4 +176,3 @@ class MixinHandler:
         :param inline: when True, will inline this annotated method into the target
         """
         return lambda e: e
-

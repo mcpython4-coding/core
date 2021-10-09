@@ -20,13 +20,15 @@ import mcpython.util.enums
 import mcpython.util.math
 import pyglet
 from mcpython import shared
-from mcpython.client.rendering.model.api import AbstractBoxModel
-from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
+from mcpython.client.rendering.model.api import (
+    AbstractBoxModel,
+    IBlockStateRenderingTarget,
+)
 from mcpython.client.rendering.model.util import SIDE_ORDER, UV_INDICES, UV_ORDER
 from mcpython.util.annotation import onlyInClient
+from mcpython.util.enums import EnumSide
 from mcpython.util.vertex import VertexProvider
 from pyglet.graphics.vertexdomain import VertexList
-from mcpython.util.enums import EnumSide
 
 
 @onlyInClient()
@@ -162,10 +164,7 @@ class BoxModel(AbstractBoxModel):
             atlas = self.model.texture_atlas
 
         up, down, north, east, south, west = array = tuple(
-            [
-                self.faces[i] if self.faces[i] is not None else (0, 0)
-                for i in range(6)
-            ]
+            [self.faces[i] if self.faces[i] is not None else (0, 0) for i in range(6)]
         )
 
         self.tex_data = mcpython.util.math.tex_coordinates_better(
@@ -209,7 +208,9 @@ class BoxModel(AbstractBoxModel):
         rotation: typing.Tuple[float, float, float] = (0, 0, 0),
         active_faces=None,
         uv_lock=False,
-        previous: typing.Tuple[typing.List[float], typing.List[float], typing.List[float]] = None,
+        previous: typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float]
+        ] = None,
     ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
         """
         Util method for getting the box data for a block (vertices and uv's)
@@ -256,13 +257,20 @@ class BoxModel(AbstractBoxModel):
 
                 collected_data[0].extend(vertex[i])
                 collected_data[1].extend(self.tex_data[i2])
-                collected_data[2].extend((1,)*16 if self.face_tint_index[face.index] == -1 else instance.get_tint_for_index(self.face_tint_index[face.index])*4)
+                collected_data[2].extend(
+                    (1,) * 16
+                    if self.face_tint_index[face.index] == -1
+                    else instance.get_tint_for_index(self.face_tint_index[face.index])
+                    * 4
+                )
 
         return collected_data
 
     def add_prepared_data_to_batch(
         self,
-        collected_data: typing.Tuple[typing.List[float], typing.List[float], typing.List[float]],
+        collected_data: typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float]
+        ],
         batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]],
     ) -> typing.Iterable[VertexList]:
         """
@@ -340,7 +348,7 @@ class BoxModel(AbstractBoxModel):
                 pyglet.gl.GL_QUADS,
                 ("v3f/static", collected_data[0]),
                 ("t2f/static", collected_data[1]),
-                ("c4f/static", collected_data[2])
+                ("c4f/static", collected_data[2]),
             )
             self.model.texture_atlas.group.unset_state()
 
@@ -366,7 +374,15 @@ class BoxModel(AbstractBoxModel):
         )
         self.draw_prepared_data(collected_data)
 
-    def add_face_to_batch(self, instance: IBlockStateRenderingTarget, position: typing.Tuple[float, float, float], batch, rotation: typing.Tuple[float, float, float], face: EnumSide, uv_lock=False):
+    def add_face_to_batch(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        batch,
+        rotation: typing.Tuple[float, float, float],
+        face: EnumSide,
+        uv_lock=False,
+    ):
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
         face = face.rotate(rotation)
@@ -380,7 +396,14 @@ class BoxModel(AbstractBoxModel):
             uv_lock=uv_lock,
         )
 
-    def draw_face(self, instance: IBlockStateRenderingTarget, position: typing.Tuple[float, float, float], rotation: typing.Tuple[float, float, float], face: EnumSide, uv_lock=False):
+    def draw_face(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        rotation: typing.Tuple[float, float, float],
+        face: EnumSide,
+        uv_lock=False,
+    ):
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
         face = face.rotate(rotation)
