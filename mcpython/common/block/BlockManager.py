@@ -69,6 +69,7 @@ def load():
         NewBlocks,
         ShulkerBox,
         Walls,
+        RedstoneWire,
     )
 
     block_registry.register(Anvil.Anvil)
@@ -98,6 +99,7 @@ def load():
     block_registry.register(Fence.NetherBrickFence)
     block_registry.register(Fence.WarpedFence)
     block_registry.register(Fence.AcaciaFence)
+    block_registry.register(RedstoneWire.RedstoneWire)
 
     Carpet.load()
     CoralBlocks.load()

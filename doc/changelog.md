@@ -61,6 +61,9 @@ Released on ??.??.2021 targeting 1.1?
     Modding:
         - Added bytecode manipulation framework
 
+    Blocks:
+        - added basic redstone wire block, should be MOSTLY functional beside coloring
+
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round
 

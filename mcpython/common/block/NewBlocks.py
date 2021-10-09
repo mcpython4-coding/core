@@ -1028,7 +1028,6 @@ redstone_lamp
 redstone_ore
 redstone_torch
 redstone_wall_torch
-redstone_wire
 red_banner
 red_bed
 red_candle

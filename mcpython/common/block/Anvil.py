@@ -37,12 +37,12 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         .add_comby_side("facing")
         .build()
     )
-    SOLID = False
 
     BREAK_CHANCE = 0
     BREAKS_BLOCK_RESIST = 0
     BROKEN_BLOCK = None
 
+    SOLID = False
     DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
 
     def __init__(self):

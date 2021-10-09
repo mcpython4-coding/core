@@ -414,7 +414,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
         """
-        Used to inject an redstone value into the system
+        Used to inject a redstone value into the system
         :param side: the side from which the redstone value comes
         :param level: the level of redstone, between 0 and 15
         """
@@ -430,9 +430,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
         """
-        Gets source power of an given side
+        Gets source power of a given side
         :param side: the side to use
-        :return: an value between 0 and 15 representing the redstone value
+        :return: a value between 0 and 15 representing the redstone value
         """
         return 0
 
@@ -441,6 +441,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             self.get_redstone_source_power(side),
             self.injected_redstone_power[side.index],
         )
+
+    def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
+        return False
 
     # Debug methods
 
