@@ -16,6 +16,7 @@ import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.block.Chest import BBOX
 from pyglet.window import key, mouse
+import mcpython.client.rendering.blocks.ChestRenderer
 
 from . import AbstractBlock, IHorizontalOrientableBlock
 
@@ -28,6 +29,9 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     """
 
     NAME = "minecraft:enderchest"
+    DEFAULT_DISPLAY_NAME = "Ender Chest"
+    MODEL_FACE_NAME = "side"
+
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
@@ -35,16 +39,19 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     MINIMUM_TOOL_LEVEL = 0
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
-    DEBUG_WORLD_BLOCK_STATES = (
-        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
-        .add_comby_side_horizontal("side")
-        .build()
+    CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+        "minecraft:entity/chest/ender"
     )
+
+    def on_block_added(self):
+        if shared.IS_CLIENT:
+            self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
+            player.inventory_enderchest.block = self
             if shared.IS_CLIENT:
                 shared.inventory_handler.show(player.inventory_enderchest)
             return True

@@ -12,13 +12,24 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import typing
+from abc import ABC
 
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
-from mcpython.util.annotation import onlyInClient
+import mcpython.engine.event.EventHandler
 
 
-@onlyInClient()
-class ICustomBatchBlockRenderer:
+class ICustomBlockRenderer(ABC):
+    def __init__(self):
+        self.block = None
+
+    def on_block_exposed(self, block):
+        pass
+
+    def on_block_fully_hidden(self, block):
+        pass
+
+
+class ICustomBatchBlockRenderer(ICustomBlockRenderer, ABC):
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
         raise NotImplementedError()
 
@@ -27,15 +38,27 @@ class ICustomBatchBlockRenderer:
             [e.delete() for e in data]
 
 
-@onlyInClient()
-class ICustomDrawMethodRenderer:
+class ICustomDrawMethodRenderer(ICustomBlockRenderer, ABC):
     DRAW_PHASE = NORMAL_WORLD.getRenderingEvent()
+
+    def on_block_exposed(self, block):
+        def draw():
+            self.draw(block.position, block)
+
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+            self.DRAW_PHASE, draw
+        )
+        block.face_info.bound_rendering_info = draw
+
+    def on_block_fully_hidden(self, block):
+        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
+            self.DRAW_PHASE, block.face_info.bound_rendering_info
+        )
 
     def draw(self, position: typing.Tuple[int, int, int], block):
         pass
 
 
-@onlyInClient()
-class ICustomBlockVertexManager:
+class ICustomBlockVertexManager(ICustomBlockRenderer):
     def handle(self, block, vertices, face, blockstate):
         pass

@@ -40,31 +40,29 @@ class Chest(
     """
 
     now: datetime = datetime.now()  # now
+
+    # if Christmas is today
     is_christmas: bool = (
         24 <= now.day <= 26 and now.month == 12
-    )  # if Christmas is today
+    )
 
-    NAME: str = "minecraft:chest"  # the name of the chest
-
-    IS_SOLID = False
+    NAME: str = "minecraft:chest"
+    MODEL_FACE_NAME = "side"
 
     HARDNESS = 2.5
     BLAST_RESISTANCE = 2.5
-
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
-    DEBUG_WORLD_BLOCK_STATES = (
-        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
-        .add_comby_side_horizontal("side")
-        .build()
-    )
-
+    IS_SOLID = False
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
 
     CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
         "minecraft:entity/chest/normal"
+    )
+    CHEST_BLOCK_RENDERER_CHRISTMAS = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+        "minecraft:entity/chest/christmas"
     )
 
     def __init__(self):
@@ -73,10 +71,9 @@ class Chest(
         """
         super().__init__()
 
-        self.front_side = mcpython.util.enums.EnumSide.N
         import mcpython.client.gui.InventoryChest as InventoryChest
 
-        self.inventory = InventoryChest.InventoryChest()
+        self.inventory = InventoryChest.InventoryChest(self)
         self.loot_table_link = None
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
@@ -95,10 +92,18 @@ class Chest(
         if self.loot_table_link == "":
             self.loot_table_link = None
 
-    def on_block_added(self):
-        self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
-        if shared.IS_CLIENT:
-            self.face_info.update(True)
+    # As this can be statically decided, we use this trick for some performance gain
+    if is_christmas:
+        def on_block_added(self):
+            if shared.IS_CLIENT:
+                self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
+                self.face_info.update(True)
+
+    else:
+        def on_block_added(self):
+            if shared.IS_CLIENT:
+                self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
+                self.face_info.update(True)
 
     def can_open_inventory(self) -> bool:
         """

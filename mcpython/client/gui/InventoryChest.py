@@ -49,10 +49,11 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def get_config_file() -> str or None:
         return "assets/config/inventory/block_inventory_chest.json"
 
-    def __init__(self):
+    def __init__(self, block=None):
         super().__init__()
-        if self.custom_name is None:
-            self.custom_name = "Chest"
+        self.block = None
+        if self.custom_name is None and block is not None:
+            self.custom_name = block.DEFAULT_DISPLAY_NAME
 
     def on_activate(self):
         super().on_activate()
@@ -60,11 +61,20 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             "user:keyboard:press", self.on_key_press
         )
 
+        if self.block is not None:
+            if self.custom_name is None:
+                self.custom_name = self.block.DEFAULT_DISPLAY_NAME
+
+            self.block.face_info.custom_renderer.play_open_animation(self.block)
+
     def on_deactivate(self):
         super().on_deactivate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
+
+        if self.block is not None:
+            self.block.face_info.custom_renderer.play_close_animation(self.block)
 
     # todo: move to container
     def create_slot_renderers(self) -> list:

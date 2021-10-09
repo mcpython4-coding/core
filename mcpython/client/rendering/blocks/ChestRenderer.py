@@ -17,12 +17,12 @@ import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython import shared
-from mcpython.client.rendering.model.BoxModel import RawBoxModel
+from mcpython.client.rendering.model.BoxModel import RawBoxModel, MutableRawBoxModel
 from mcpython.client.rendering.model.util import calculate_default_layout_uvs
 
 
 class IChestRendererSupport:
-    pass
+    DEFAULT_DISPLAY_NAME = "Chest"
 
 
 TEXTURE_COORDS_TOP = calculate_default_layout_uvs((64, 64), (15, 5, 15), (0, 64 - 18))
@@ -41,13 +41,15 @@ class ChestRenderer(
     """
 
     def __init__(self, texture_location: str):
+        super().__init__()
+
         self.texture_location = texture_location
         self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
             texture_location
         )
         self.group = pyglet.graphics.TextureGroup(self.texture.get_texture())
 
-        self.box_model_top = RawBoxModel(
+        self.box_model_top = MutableRawBoxModel(
             (0, 0.5 - 7 / 48, 0), (7 / 8, 7 / 24, 7 / 8), self.group, TEXTURE_COORDS_TOP
         )
         self.box_model_bottom = RawBoxModel(
@@ -60,3 +62,10 @@ class ChestRenderer(
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
         self.box_model_top.add_face_to_batch(batches[0], block.position, face)
         self.box_model_bottom.add_face_to_batch(batches[0], block.position, face)
+
+    # todo: implement these both animations
+    def play_open_animation(self, block: IChestRendererSupport):
+        pass
+
+    def play_close_animation(self, block: IChestRendererSupport):
+        pass

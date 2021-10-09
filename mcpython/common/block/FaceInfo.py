@@ -48,6 +48,7 @@ class FaceInfo:
         ] = None  # self.DEFAULT_FACE_DATA.copy()
         self.custom_renderer = None  # holds a custom block renderer
         self.subscribed_renderer: bool = False
+        self.bound_rendering_info = None
 
     def is_shown(self) -> bool:
         return any(self.faces.values())
@@ -66,6 +67,10 @@ class FaceInfo:
         self.faces[face.normal_name] = True
 
         if self.custom_renderer is not None:
+            if not self.subscribed_renderer:
+                self.custom_renderer.on_block_exposed(self.block)
+                self.subscribed_renderer = True
+
             if issubclass(
                 type(self.custom_renderer),
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
@@ -76,15 +81,6 @@ class FaceInfo:
                     face,
                     shared.world.get_dimension_by_name(self.block.dimension).batches,
                 )
-            elif issubclass(
-                type(self.custom_renderer),
-                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
-            ):
-                if not self.subscribed_renderer:
-                    mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-                        NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
-                    )
-                    self.subscribed_renderer = True
 
         else:
             if self.face_data[face.normal_name] is None:
@@ -112,6 +108,10 @@ class FaceInfo:
             return
 
         if self.custom_renderer is not None:
+            if self.subscribed_renderer and not any(self.faces.values()):
+                self.custom_renderer.on_block_fully_hidden(self.block)
+                self.subscribed_renderer = False
+
             if issubclass(
                 type(self.custom_renderer),
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
@@ -122,15 +122,6 @@ class FaceInfo:
                     self.face_data[face.normal_name],
                     face,
                 )
-            elif issubclass(
-                type(self.custom_renderer),
-                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
-            ):
-                if self.subscribed_renderer and not any(self.faces.values()):
-                    mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                        self.custom_renderer.DRAW_PHASE, self._draw_custom_render
-                    )
-                    self.subscribed_renderer = False
         else:
             for x in self.face_data[face.normal_name]:
                 try:

@@ -62,12 +62,14 @@ Backwards incompatible:
 - custom block rendering
 - custom block state & model loaders
 
+
     Modding:
         - Added bytecode manipulation framework
 
     Blocks:
         - added basic redstone wire block, should be MOSTLY functional
         - added tinting of blocks, including the new redstone wire and grass block
+        - added chest rendering with custom block renderers
 
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round

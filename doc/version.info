@@ -1830,6 +1830,8 @@ f*  [uuk]: block rendering allows now tinting the textures, this breaks anything
 F   [uuk]: grass blocks are now tinted
 R   [uuk]: moved bounding box to physics package
 F   [uuk]: added mutable box model class
-f   [uuk]: added chest renderer
+f   [uuk]: added chest renderer used for normal chests & ender chests
 fA  [uuk]: added util method for calculating texture coordinates for the mc layout
+IA* [uuk]: changed the way how custom block renderers are handled allowing for custom base implementations
+f   [uuk]: ender chests will display now correctly "ender chest" as their GUI name
 
