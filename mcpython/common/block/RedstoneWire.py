@@ -18,9 +18,13 @@ from mcpython import shared
 from . import AbstractBlock
 from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 from mcpython.util.enums import EnumSide
+import mcpython.common.block.BoundingBox
 
 
 states = "none", "up", "side"
+
+
+redstone_wire_bbox = mcpython.common.block.BoundingBox.BoundingBox((1, 1 / 16, 1))
 
 
 class RedstoneWire(AbstractBlock.AbstractBlock):
@@ -122,3 +126,6 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
     def get_tint_for_index(self, index: int) -> typing.Tuple[float, float, float, float]:
         f = (self.level + 1) / 16
         return f, 0, 0, 1
+
+    def get_view_bbox(self):
+        return redstone_wire_bbox
