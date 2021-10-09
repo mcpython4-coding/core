@@ -16,9 +16,9 @@ import random
 import typing
 
 import mcpython.client.rendering.model.api
-import mcpython.engine.physics.BoundingBox
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
+import mcpython.engine.physics.BoundingBox
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet

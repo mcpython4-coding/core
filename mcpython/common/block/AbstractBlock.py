@@ -17,11 +17,11 @@ import typing
 from abc import ABC
 
 import mcpython.client.gui.Slot
-import mcpython.engine.physics.BoundingBox
 import mcpython.common.block.FaceInfo
 import mcpython.common.container.ResourceStack
 import mcpython.common.event.api
 import mcpython.common.event.Registry
+import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer

@@ -548,7 +548,11 @@ class RawBoxModel(AbstractBoxModel):
         )
 
     def add_to_batch(
-        self, batch, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
     ):
         vertices = self.get_vertices(position, rotation, rotation_center)
         return batch.add(
@@ -560,12 +564,17 @@ class RawBoxModel(AbstractBoxModel):
         )
 
     def add_face_to_batch(
-        self, batch, position, face, rotation=(0, 0, 0), rotation_center=(0, 0, 0)
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        face: typing.Union[int, EnumSide],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
     ):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if not i ** 2 & face:
+            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
@@ -581,7 +590,12 @@ class RawBoxModel(AbstractBoxModel):
             )
         return result
 
-    def draw(self, position, rotation=(0, 0, 0), rotation_center=(0, 0, 0)):
+    def draw(
+        self,
+        position: typing.Tuple[float, float, float],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
         vertices = self.get_vertices(position, rotation, rotation_center)
 
         if self.texture is not None:
@@ -596,3 +610,74 @@ class RawBoxModel(AbstractBoxModel):
 
         if self.texture is not None:
             self.texture.unset_state()
+
+
+class MutableRawBoxModel(RawBoxModel):
+    def add_to_batch(
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        return batch.add(
+            4 * 6,
+            pyglet.gl.GL_QUADS,
+            self.texture,
+            ("v3f/dynamic", vertices),
+            ("t2f/dynamic", self.texture_cache),
+        )
+
+    def mutate_add_to_batch(
+        self,
+        previous: pyglet.graphics.vertexdomain.VertexList,
+        position: typing.Tuple[float, float, float],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        previous.vertices[:] = vertices
+
+    def add_face_to_batch(
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        face: typing.Union[int, EnumSide],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        result = []
+        for i in range(6):
+            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
+                continue
+
+            t = self.texture_cache[i * 8 : i * 8 + 8]
+            v = vertices[i * 12 : i * 12 + 12]
+            result.append(
+                batch.add(
+                    4,
+                    pyglet.gl.GL_QUADS,
+                    self.texture,
+                    ("v3f/dynamic", v),
+                    ("t2f/dynamic", t),
+                )
+            )
+        return result
+
+    def mutate_add_face_to_batch(
+        self,
+        previous: typing.List[pyglet.graphics.vertexdomain.VertexList],
+        position: typing.Tuple[float, float, float],
+        face: typing.Union[int, EnumSide],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        for i in range(6):
+            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
+                continue
+
+            v = vertices[i * 12 : i * 12 + 12]
+            previous.pop(0).vertices[:] = v

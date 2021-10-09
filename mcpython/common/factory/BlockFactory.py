@@ -15,7 +15,6 @@ import pickle
 import typing
 
 import mcpython.common.block.AbstractBlock
-import mcpython.engine.physics.BoundingBox
 import mcpython.common.block.Fence as BlockFence
 import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
@@ -25,6 +24,7 @@ import mcpython.common.block.Walls as BlockWall
 import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
+import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
 from mcpython.common.block.IAllDirectionOrientableBlock import (
     IAllDirectionOrientableBlock,

@@ -44,7 +44,12 @@ class AbstractBoundingBox(ABC):
         """
         raise NotImplementedError()
 
-    def get_collision_motion_vector(self, this_position: typing.Tuple[float, float, float], collision_with: "AbstractBoundingBox", that_position: typing.Tuple[float, float, float]) -> typing.Tuple[float, float, float]:
+    def get_collision_motion_vector(
+        self,
+        this_position: typing.Tuple[float, float, float],
+        collision_with: "AbstractBoundingBox",
+        that_position: typing.Tuple[float, float, float],
+    ) -> typing.Tuple[float, float, float]:
         """
         Optional method implementing an algorithm for collision, where self is the moving body, and
         the parameter is the stationary body
@@ -119,10 +124,20 @@ class BoundingBox(AbstractBoundingBox):
             )
         )
 
-    def get_collision_motion_vector(self, this_position: typing.Tuple[float, float, float], collision_with: "AbstractBoundingBox", that_position: typing.Tuple[float, float, float]):
+    def get_collision_motion_vector(
+        self,
+        this_position: typing.Tuple[float, float, float],
+        collision_with: "AbstractBoundingBox",
+        that_position: typing.Tuple[float, float, float],
+    ):
         if isinstance(collision_with, BoundingBox):
             return tuple(
-                self.get_collision_vector_component(this_position[i]+self.relative_position[i], self.size[i], that_position[i]+collision_with.relative_position[i], collision_with.size[i])
+                self.get_collision_vector_component(
+                    this_position[i] + self.relative_position[i],
+                    self.size[i],
+                    that_position[i] + collision_with.relative_position[i],
+                    collision_with.size[i],
+                )
                 for i in range(3)
             )
 
@@ -130,7 +145,9 @@ class BoundingBox(AbstractBoundingBox):
             raise RuntimeError
 
     @classmethod
-    def get_collision_vector_component(cls, x: float, sx: float, y: float, sy: float) -> float:
+    def get_collision_vector_component(
+        cls, x: float, sx: float, y: float, sy: float
+    ) -> float:
         # Distance between two centers less than the sum of both sizes
         if abs(x - y) < sx + sy:
             if x > y:

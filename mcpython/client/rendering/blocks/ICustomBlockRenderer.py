@@ -23,7 +23,8 @@ class ICustomBatchBlockRenderer:
         raise NotImplementedError()
 
     def remove(self, position: typing.Tuple[int, int, int], block, data, face):
-        [e.delete() for e in data]
+        if data is not None:
+            [e.delete() for e in data]
 
 
 @onlyInClient()

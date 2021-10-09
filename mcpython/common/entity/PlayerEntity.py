@@ -52,7 +52,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         "3": 3,
     }
 
-    BOUNDING_BOX = BoundingBox((.4, .9, .4), (.2, .45, .2))
+    BOUNDING_BOX = BoundingBox((0.4, 0.9, 0.4), (0.2, 0.45, 0.2))
 
     def __init__(self, name="unknown", dimension=None):
         self.is_in_init = True

@@ -13,24 +13,28 @@ This project is not official by mojang and does not relate to it.
 """
 from datetime import datetime
 
-import mcpython.client.rendering.blocks.TemporaryChestRenderer
-import mcpython.engine.physics.BoundingBox
+import mcpython.client.rendering.blocks.ChestRenderer
 import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.common.item.AbstractToolItem
+import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
 import pyglet
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from pyglet.window import key, mouse
 
-from ...engine.network.util import ReadBuffer, WriteBuffer
 from . import AbstractBlock
+from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
 BBOX = mcpython.engine.physics.BoundingBox.BoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
 )  # the bounding box of the chest
 
 
-class Chest(AbstractBlock.AbstractBlock):
+class Chest(
+    IHorizontalOrientableBlock,
+    mcpython.client.rendering.blocks.ChestRenderer.IChestRendererSupport,
+):
     """
     The Chest block class
     """
@@ -38,7 +42,7 @@ class Chest(AbstractBlock.AbstractBlock):
     now: datetime = datetime.now()  # now
     is_christmas: bool = (
         24 <= now.day <= 26 and now.month == 12
-    )  # if christmas is today
+    )  # if Christmas is today
 
     NAME: str = "minecraft:chest"  # the name of the chest
 
@@ -57,6 +61,10 @@ class Chest(AbstractBlock.AbstractBlock):
 
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
+
+    CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+        "minecraft:entity/chest/normal"
     )
 
     def __init__(self):
@@ -88,23 +96,7 @@ class Chest(AbstractBlock.AbstractBlock):
             self.loot_table_link = None
 
     def on_block_added(self):
-        if self.real_hit:
-            dx, dz = (
-                self.real_hit[0] - self.position[0],
-                self.real_hit[1] - self.position[1],
-            )
-            if dx > 0 and abs(dx) > abs(dz):
-                self.front_side = mcpython.util.enums.EnumSide.N
-            elif dx < 0 and abs(dx) > abs(dz):
-                self.front_side = mcpython.util.enums.EnumSide.S
-            elif dz > 0 and abs(dx) < abs(dz):
-                self.front_side = mcpython.util.enums.EnumSide.E
-            elif dz < 0 and abs(dx) < abs(dz):
-                self.front_side = mcpython.util.enums.EnumSide.W
-
-        self.face_info.custom_renderer = (
-            mcpython.client.rendering.blocks.TemporaryChestRenderer.TemporaryChestRenderer()
-        )
+        self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
         if shared.IS_CLIENT:
             self.face_info.update(True)
 
@@ -148,19 +140,6 @@ class Chest(AbstractBlock.AbstractBlock):
 
     def get_provided_slot_lists(self, side):
         return self.inventory.slots, self.inventory.slots
-
-    def set_model_state(self, state: dict):
-        if "side" in state:
-            face = state["side"]
-            if type(face) == str:
-                self.front_side = mcpython.util.enums.EnumSide[state["side"].upper()]
-            else:
-                self.front_side = face
-
-    def get_model_state(self) -> dict:
-        return {
-            "side": self.front_side.normal_name,
-        }
 
     def get_view_bbox(self):
         return BBOX

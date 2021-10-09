@@ -63,3 +63,42 @@ def decode_entry(data: typing.Dict[str, typing.Any]):
         {"rotation": rotations, "uv_lock": data.setdefault("uvlock", False)},
         1 if "weight" not in data else data["weight"],
     )
+
+
+def calculate_default_layout_uvs(
+    texture_size: typing.Tuple[int, int],
+    box_size: typing.Tuple[int, int, int],
+    offset: typing.Tuple[int, int],
+):
+    """
+    Util method for calculating uv's
+    Cache result whenever possible!
+    WARNING: currently not working correctly
+    :param texture_size: the size of the texture, a simple factor for the result
+    :param box_size: the sizes of the box
+    :param offset: an offset of the texture origin
+    :return: the uv's, to pass to e.g. box models
+    """
+
+    sx, sy = texture_size
+    dx, dy = offset
+    x, y, z = box_size
+
+    return list(
+        map(
+            lambda e: (
+                (e[0] + dx) / sx,
+                (e[3] + dy) / sy,
+                (e[2] + dx) / sx,
+                (e[1] + dy) / sy,
+            ),
+            [
+                (x, y, x + z, y + x),
+                (x + z, y, x + 2 * z, y + x),
+                (x, 0, x + z, y),
+                (x + 2 * z, 0, 2 * x + 2 * z, y),
+                (0, 0, z, x),
+                (x + z, 0, x + 2 * z, y),
+            ],
+        )
+    )

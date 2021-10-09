@@ -1829,4 +1829,7 @@ f   [uuk]: added redstone wire block with connection logic
 f*  [uuk]: block rendering allows now tinting the textures, this breaks anything touching block rendering
 F   [uuk]: grass blocks are now tinted
 R   [uuk]: moved bounding box to physics package
+F   [uuk]: added mutable box model class
+f   [uuk]: added chest renderer
+fA  [uuk]: added util method for calculating texture coordinates for the mc layout
 
