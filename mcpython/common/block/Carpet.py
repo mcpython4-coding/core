@@ -14,12 +14,12 @@ This project is not official by mojang and does not relate to it.
 from abc import ABC
 
 import mcpython.common.block.AbstractBlock
-import mcpython.common.block.BoundingBox
+import mcpython.engine.physics.BoundingBox
 import mcpython.common.container.ResourceStack
 import mcpython.util.enums
 from mcpython import shared
 
-carpet_bbox = mcpython.common.block.BoundingBox.BoundingBox((1, 1 / 16, 1))
+carpet_bbox = mcpython.engine.physics.BoundingBox.BoundingBox((1, 1 / 16, 1))
 
 
 class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):

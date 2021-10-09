@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.block.BoundingBox
+import mcpython.engine.physics.BoundingBox
 from mcpython import shared
 from mcpython.util.enums import EnumSide
 
@@ -23,7 +23,7 @@ from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 states = "none", "up", "side"
 
 
-redstone_wire_bbox = mcpython.common.block.BoundingBox.BoundingBox((1, 1 / 16, 1))
+redstone_wire_bbox = mcpython.engine.physics.BoundingBox.BoundingBox((1, 1 / 16, 1))
 
 
 class RedstoneWire(AbstractBlock.AbstractBlock):

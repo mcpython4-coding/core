@@ -14,7 +14,7 @@ This project is not official by mojang and does not relate to it.
 from abc import ABC
 
 import mcpython.common.block.AbstractBlock
-import mcpython.common.block.BoundingBox
+import mcpython.engine.physics.BoundingBox
 import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.util.enums
 from mcpython import shared

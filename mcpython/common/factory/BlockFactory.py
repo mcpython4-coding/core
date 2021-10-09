@@ -15,7 +15,7 @@ import pickle
 import typing
 
 import mcpython.common.block.AbstractBlock
-import mcpython.common.block.BoundingBox
+import mcpython.engine.physics.BoundingBox
 import mcpython.common.block.Fence as BlockFence
 import mcpython.common.block.IFallingBlock as FallingBlock
 import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientableBlock
@@ -487,7 +487,7 @@ def build_class_default_state(
             if len(bases) > 0:
                 return bases[-1].get_view_bbox(self)
 
-            return mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+            return mcpython.engine.physics.BoundingBox.FULL_BLOCK_BOUNDING_BOX
 
         def get_collision_bbox(self):
             if len(configs["get_collision_bbox"]) > 0:

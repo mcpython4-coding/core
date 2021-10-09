@@ -25,6 +25,7 @@ from mcpython import shared
 from mcpython.common.network.packages.PlayerInfoPackages import PlayerUpdatePackage
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.engine.physics.BoundingBox import BoundingBox
 
 
 @shared.registry
@@ -50,6 +51,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         "spectator": 3,
         "3": 3,
     }
+
+    BOUNDING_BOX = BoundingBox((.4, .9, .4), (.2, .45, .2))
 
     def __init__(self, name="unknown", dimension=None):
         self.is_in_init = True
@@ -114,6 +117,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.set_gamemode(1)
 
         self.is_in_init = False
+
+    def get_collision_box(self):
+        return self.BOUNDING_BOX
 
     def __repr__(self):
         return super().__repr__() + "::" + self.name
@@ -591,6 +597,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 )
 
         self.set_position_unsafe(old_position)
+
+        # self.BOUNDING_BOX.draw_outline(self.position)
 
     def __str__(self):
         return 'Player(dim={},pos={},rot={},name="{}",chunk={})'.format(

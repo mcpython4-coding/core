@@ -26,6 +26,7 @@ from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
+from mcpython.engine.physics.BoundingBox import EMPTY_BOUNDING_BOX
 
 
 class AbstractEntity(
@@ -122,6 +123,9 @@ class AbstractEntity(
         }
 
         self.dead = False
+
+    def get_collision_box(self):
+        return EMPTY_BOUNDING_BOX
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         super(ICapabilityContainer, self).read_from_network_buffer(buffer)

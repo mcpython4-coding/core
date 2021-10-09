@@ -22,7 +22,7 @@ from mcpython.util.vertex import VertexProvider
 
 class AbstractBoundingBox(ABC):
     """
-    Abstract base class for bounding-box like classes
+    Abstract base class for bounding-box like classes to use in the corresponding systems
     """
 
     def test_point_hit(
@@ -44,10 +44,19 @@ class AbstractBoundingBox(ABC):
         """
         raise NotImplementedError()
 
+    def get_collision_motion_vector(self, this_position: typing.Tuple[float, float, float], collision_with: "AbstractBoundingBox", that_position: typing.Tuple[float, float, float]) -> typing.Tuple[float, float, float]:
+        """
+        Optional method implementing an algorithm for collision, where self is the moving body, and
+        the parameter is the stationary body
+
+        Returns a motion vector for self to move to not collide with the body
+        """
+        raise RuntimeError
+
 
 class BoundingBox(AbstractBoundingBox):
     """
-    The basic bounding box - a cube
+    The basic bounding box - an axis aligned cube
     """
 
     def __init__(
@@ -110,10 +119,32 @@ class BoundingBox(AbstractBoundingBox):
             )
         )
 
+    def get_collision_motion_vector(self, this_position: typing.Tuple[float, float, float], collision_with: "AbstractBoundingBox", that_position: typing.Tuple[float, float, float]):
+        if isinstance(collision_with, BoundingBox):
+            return tuple(
+                self.get_collision_vector_component(this_position[i]+self.relative_position[i], self.size[i], that_position[i]+collision_with.relative_position[i], collision_with.size[i])
+                for i in range(3)
+            )
+
+        else:
+            raise RuntimeError
+
+    @classmethod
+    def get_collision_vector_component(cls, x: float, sx: float, y: float, sy: float) -> float:
+        # Distance between two centers less than the sum of both sizes
+        if abs(x - y) < sx + sy:
+            if x > y:
+                return sy - abs(x - y)
+            else:
+                return -(sy - abs(x - y))
+
+        # No collision
+        return 0
+
 
 class BoundingArea(AbstractBoundingBox):
     """
-    More options for hit-test by using an list of BoundBoxes. Has the same methods for interaction
+    More options for hit-test by using a list of BoundBoxes
     """
 
     def __init__(self):

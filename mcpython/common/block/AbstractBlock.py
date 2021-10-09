@@ -17,7 +17,7 @@ import typing
 from abc import ABC
 
 import mcpython.client.gui.Slot
-import mcpython.common.block.BoundingBox
+import mcpython.engine.physics.BoundingBox
 import mcpython.common.block.FaceInfo
 import mcpython.common.container.ResourceStack
 import mcpython.common.event.api
@@ -375,24 +375,18 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     def get_view_bbox(
         self,
-    ) -> typing.Union[
-        mcpython.common.block.BoundingBox.BoundingBox,
-        mcpython.common.block.BoundingBox.BoundingArea,
-    ]:
+    ) -> mcpython.engine.physics.BoundingBox.AbstractBoundingBox:
         """
         Used to get the bbox of the block for ray collision
         :return: the bbox instance
         """
         return (
-            mcpython.common.block.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+            mcpython.engine.physics.BoundingBox.FULL_BLOCK_BOUNDING_BOX
         )  # per default, every block is full
 
     def get_collision_bbox(
         self,
-    ) -> typing.Union[
-        mcpython.common.block.BoundingBox.BoundingBox,
-        mcpython.common.block.BoundingBox.BoundingArea,
-    ]:
+    ) -> mcpython.engine.physics.BoundingBox.AbstractBoundingBox:
         """
         Used to get the bbox of the block for physical body collision
         :return: the bbox instance

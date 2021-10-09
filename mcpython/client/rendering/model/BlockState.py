@@ -16,7 +16,7 @@ import random
 import typing
 
 import mcpython.client.rendering.model.api
-import mcpython.common.block.BoundingBox
+import mcpython.engine.physics.BoundingBox
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.ResourceLoader
@@ -201,7 +201,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
     ):
         state = instance.get_model_state()
-        bbox = mcpython.common.block.BoundingBox.BoundingArea()
+        bbox = mcpython.engine.physics.BoundingBox.BoundingArea()
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
@@ -210,7 +210,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model = shared.model_handler.models[model]
                     for box_model in model.box_models:
                         bbox.bounding_boxes.append(
-                            mcpython.common.block.BoundingBox.BoundingBox(
+                            mcpython.engine.physics.BoundingBox.BoundingBox(
                                 box_model.box_size,
                                 box_model.box_position,
                                 rotation=config["rotation"],
@@ -221,7 +221,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model = shared.model_handler.models[model]
                     for box_model in model.box_models:
                         bbox.bounding_boxes.append(
-                            mcpython.common.block.BoundingBox.BoundingBox(
+                            mcpython.engine.physics.BoundingBox.BoundingBox(
                                 box_model.box_size,
                                 box_model.box_position,
                                 rotation=config["rotation"],
@@ -413,7 +413,7 @@ class DefaultDecoder(IBlockStateDecoder):
         if instance.block_state is None:
             instance.block_state = 0
         data = instance.get_model_state()
-        bbox = mcpython.common.block.BoundingBox.BoundingArea()
+        bbox = mcpython.engine.physics.BoundingBox.BoundingArea()
 
         for keymap, blockstate in self.states:
             if keymap == data:
@@ -422,7 +422,7 @@ class DefaultDecoder(IBlockStateDecoder):
                 for box_model in model.box_models:
                     rotation = config["rotation"]
                     bbox.bounding_boxes.append(
-                        mcpython.common.block.BoundingBox.BoundingBox(
+                        mcpython.engine.physics.BoundingBox.BoundingBox(
                             box_model.box_size,
                             box_model.box_position,
                             rotation=rotation,
