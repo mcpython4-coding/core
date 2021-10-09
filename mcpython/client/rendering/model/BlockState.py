@@ -26,6 +26,7 @@ from mcpython import shared
 from mcpython.client.rendering.model.api import BlockStateNotNeeded, IBlockStateDecoder
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
+from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",
@@ -72,11 +73,11 @@ class MultiPartDecoder(IBlockStateDecoder):
                     shared.model_handler.used_models.add(d["model"])
 
         self.model_alias: typing.Dict[str, typing.Any] = {}
-        self.parent: typing.Union[str, "BlockStateDefinition", None] = None
+        self.parent: typing.Union[str, "BlockStateContainer", None] = None
 
         if "parent" in data:
             self.parent = data["parent"]
-            BlockStateDefinition.NEEDED.add(self.parent)
+            BlockStateContainer.NEEDED.add(self.parent)
 
         if "alias" in data:
             self.model_alias = data["alias"]
@@ -84,7 +85,7 @@ class MultiPartDecoder(IBlockStateDecoder):
     def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
             try:
-                parent: BlockStateDefinition = BlockStateDefinition.get_or_load(
+                parent: BlockStateContainer = BlockStateContainer.get_or_load(
                     self.parent
                 )
             except FileNotFoundError:
@@ -136,17 +137,17 @@ class MultiPartDecoder(IBlockStateDecoder):
         previous=None,
     ):
         state = instance.get_model_state()
-        prepared_vertex, prepared_texture, box_model = (
-            ([], [], None) if previous is None else (*previous, None)
+        prepared_vertex, prepared_texture, prepared_tint, box_model = (
+            ([], [], [], None) if previous is None else (*previous, None)
         )
         box_model = self.prepare_rendering_data(
-            box_model, face, instance, prepared_texture, prepared_vertex, state
+            box_model, face, instance, prepared_texture, prepared_vertex, prepared_tint, state
         )
         return (
             tuple()
             if box_model is None
             else box_model.add_prepared_data_to_batch(
-                (prepared_vertex, prepared_texture), batch
+                (prepared_vertex, prepared_texture, prepared_tint), batch
             )
         )
 
@@ -234,7 +235,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             box_model.draw_prepared_data((prepared_vertex, prepared_texture))
 
     def prepare_rendering_data(
-        self, box_model, face, instance, prepared_texture, prepared_vertex, state
+        self, box_model, face, instance: IBlockStateRenderingTarget, prepared_texture, prepared_vertex, prepared_tint, state
     ):
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
@@ -246,20 +247,22 @@ class MultiPartDecoder(IBlockStateDecoder):
                     _, box_model = shared.model_handler.models[
                         model
                     ].get_prepared_data_for(
+                        instance,
                         instance.position,
                         config,
                         face,
-                        previous=(prepared_vertex, prepared_texture),
+                        previous=(prepared_vertex, prepared_texture, prepared_tint),
                     )
                 else:
                     config, model = get_model_choice(data, instance)
                     _, box_model = shared.model_handler.models[
                         model
                     ].get_prepared_data_for(
+                        instance,
                         instance.position,
                         config,
                         face,
-                        previous=(prepared_vertex, prepared_texture),
+                        previous=(prepared_vertex, prepared_texture, prepared_tint),
                     )
         return box_model
 
@@ -309,14 +312,14 @@ class DefaultDecoder(IBlockStateDecoder):
 
         if "parent" in data:
             self.parent = data["parent"]
-            BlockStateDefinition.NEEDED.add(self.parent)
+            BlockStateContainer.NEEDED.add(self.parent)
 
         if "alias" in data:
             self.model_alias = data["alias"]
 
     def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
-            parent: BlockStateDefinition = BlockStateDefinition.get_or_load(self.parent)
+            parent: BlockStateContainer = BlockStateContainer.get_or_load(self.parent)
             if not parent.baked:
                 return False
 
@@ -369,11 +372,11 @@ class DefaultDecoder(IBlockStateDecoder):
 
         return tuple()
 
-    def add_raw_face_to_batch(self, position, state, batches, face):
+    def add_raw_face_to_batch(self, instance: IBlockStateRenderingTarget, position, state, batches, face):
         state = state
         for keymap, blockstate in self.states:
             if keymap == state:
-                return blockstate.add_raw_face_to_batch(position, batches, face)
+                return blockstate.add_raw_face_to_batch(instance, position, batches, face)
 
         if not shared.model_handler.hide_blockstate_errors:
             logger.println(
@@ -427,7 +430,7 @@ class DefaultDecoder(IBlockStateDecoder):
             )
 
 
-class BlockStateDefinition:
+class BlockStateContainer:
     TO_CREATE = set()
     LOOKUP_DIRECTORIES = set()
     RAW_DATA = []
@@ -498,7 +501,7 @@ class BlockStateDefinition:
         cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, force=False
     ):
         try:
-            instance = BlockStateDefinition(
+            instance = cls(
                 name, immediate=immediate, force=force
             ).parse_data(data)
             return instance
@@ -510,7 +513,7 @@ class BlockStateDefinition:
             )
 
     @classmethod
-    def get_or_load(cls, name: str) -> "BlockStateDefinition":
+    def get_or_load(cls, name: str) -> "BlockStateContainer":
         if name in shared.model_handler.blockstates:
             return shared.model_handler.blockstates[name]
 
@@ -582,8 +585,8 @@ class BlockStateDefinition:
     ):
         return self.loader.add_face_to_batch(block, batch, face)
 
-    def add_raw_face_to_batch(self, position: tuple, state, batches, face):
-        return self.loader.add_raw_face_to_batch(position, state, batches, face)
+    def add_raw_face_to_batch(self, instance: IBlockStateRenderingTarget, position: tuple, state, batches, face):
+        return self.loader.add_raw_face_to_batch(instance, position, state, batches, face)
 
     def draw_face(
         self,
@@ -640,11 +643,11 @@ class BlockState:
                 )
             return tuple()
         result = shared.model_handler.models[model].add_face_to_batch(
-            instance.position, batch, config, face
+            instance, instance.position, batch, config, face
         )
         return result
 
-    def add_raw_face_to_batch(self, position, batches, face):
+    def add_raw_face_to_batch(self, instance: IBlockStateRenderingTarget, position, batches, face):
         block_state = self.models.index(
             random.choices(self.models, [e[2] for e in self.models])[0]
         )
@@ -656,6 +659,7 @@ class BlockState:
                 )
             return tuple()
         result = shared.model_handler.models[model].add_face_to_batch(
+            instance,
             position, batches, config, face
         )
         return result
@@ -683,7 +687,7 @@ class BlockState:
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:blockstate_search",
-    BlockStateDefinition.from_directory,
+    BlockStateContainer.from_directory,
     "assets/minecraft/blockstates",
     "minecraft",
     info="searching for block states",

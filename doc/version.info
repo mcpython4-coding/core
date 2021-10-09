@@ -1826,4 +1826,5 @@ F*T [uuk]: added first bytecode manipulation helper in mcpython/mixin/PyBytecode
 F*T [uuk]: added basic mixin framework; When applying mixins onto methods, warnings are printed out to log
 b   [uuk]: fixed creative tab scroll bar
 f   [uuk]: added redstone wire block with connection logic
+f*  [uuk]: block rendering allows now tinting the textures, this breaks anything touching block rendering
 

@@ -58,11 +58,16 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 # Changelog of snapshot 21wXXa
 Released on ??.??.2021 targeting 1.1?
 
+Backwards incompatible:
+- custom block rendering
+- custom block state & model loaders
+
     Modding:
         - Added bytecode manipulation framework
 
     Blocks:
-        - added basic redstone wire block, should be MOSTLY functional beside coloring
+        - added basic redstone wire block, should be MOSTLY functional
+        - added tinting of blocks
 
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round

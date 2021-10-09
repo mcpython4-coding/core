@@ -35,7 +35,7 @@ def recipe_mapper(modname, pathname):
 
 
 def model_mapper(modname, pathname):
-    from mcpython.client.rendering.model.BlockState import BlockStateDefinition
+    from mcpython.client.rendering.model.BlockState import BlockStateContainer
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:model_search",
@@ -46,7 +46,7 @@ def model_mapper(modname, pathname):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:blockstate_search",
-        BlockStateDefinition.from_directory,
+        BlockStateContainer.from_directory,
         "assets/{}/blockstates".format(pathname),
         modname,
         info="searching for block states for mod {}".format(modname),

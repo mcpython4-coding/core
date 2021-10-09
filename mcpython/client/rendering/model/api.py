@@ -13,8 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
+import typing
+
 import mcpython.common.event.api
-import mcpython.common.event.Registry
 import mcpython.util
 import mcpython.util.enums
 import pyglet
@@ -30,9 +31,13 @@ class IBlockStateRenderingTarget:
     def __init__(self):
         self.block_state = None
         self.position = None
+        self.face_info = None
 
     def get_model_state(self):
         pass
+
+    def get_tint_for_index(self, index: int) -> typing.Tuple[float, float, float, float]:
+        return 1, 1, 1, 1
 
 
 class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
@@ -91,7 +96,7 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
     ) -> list:
         raise NotImplementedError()
 
-    def add_raw_face_to_batch(self, position, state, batches, faces):
+    def add_raw_face_to_batch(self, instance: IBlockStateRenderingTarget, position, state, batches, faces):
         return tuple()
 
     # optional: draws the BlockState direct without an batch

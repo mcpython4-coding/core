@@ -21,10 +21,12 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.client.rendering.model.api import AbstractBoxModel
+from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.client.rendering.model.util import SIDE_ORDER, UV_INDICES, UV_ORDER
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.vertex import VertexProvider
 from pyglet.graphics.vertexdomain import VertexList
+from mcpython.util.enums import EnumSide
 
 
 @onlyInClient()
@@ -48,14 +50,8 @@ class BoxModel(AbstractBoxModel):
         self.box_position = self.rotation = self.rotation_center = (0, 0, 0)
         self.box_size = 1, 1, 1
 
-        self.faces = {
-            mcpython.util.enums.EnumSide.U: None,
-            mcpython.util.enums.EnumSide.D: None,
-            mcpython.util.enums.EnumSide.N: None,
-            mcpython.util.enums.EnumSide.E: None,
-            mcpython.util.enums.EnumSide.S: None,
-            mcpython.util.enums.EnumSide.W: None,
-        }
+        self.faces = [None] * 6
+        self.face_tint_index = [-1] * 6
 
         self.texture_region: typing.List[typing.Tuple[float, float, float, float]] = [
             (0, 0, 1, 1)
@@ -126,7 +122,7 @@ class BoxModel(AbstractBoxModel):
             if name in data["faces"]:
                 f = data["faces"][name]
                 var = f["texture"]
-                self.faces[face] = (
+                self.faces[face.index] = (
                     model.get_texture_position(var) if model is not None else None
                 )
                 index = SIDE_ORDER.index(face)
@@ -149,6 +145,9 @@ class BoxModel(AbstractBoxModel):
                 if "rotation" in f:
                     self.texture_region_rotate[index] = f["rotation"]
 
+                if "tintindex" in f:
+                    self.face_tint_index[index] = f["tintindex"]
+
         if model is not None and model.drawable and self.model.texture_atlas:
             self.build()
 
@@ -164,8 +163,8 @@ class BoxModel(AbstractBoxModel):
 
         up, down, north, east, south, west = array = tuple(
             [
-                self.faces[x] if self.faces[x] is not None else (0, 0)
-                for x in mcpython.util.enums.EnumSide.iterate()
+                self.faces[i] if self.faces[i] is not None else (0, 0)
+                for i in range(6)
             ]
         )
 
@@ -205,14 +204,16 @@ class BoxModel(AbstractBoxModel):
 
     def get_prepared_box_data(
         self,
+        instance: IBlockStateRenderingTarget,
         position: typing.Tuple[float, float, float],
         rotation: typing.Tuple[float, float, float] = (0, 0, 0),
         active_faces=None,
         uv_lock=False,
-        previous=None,
-    ):
+        previous: typing.Tuple[typing.List[float], typing.List[float], typing.List[float]] = None,
+    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
         """
         Util method for getting the box data for a block (vertices and uv's)
+        :param instance: the instance to get information from to render
         :param position: the position of the block
         :param rotation: the rotation
         :param active_faces: the faces to get data for, None means all
@@ -220,7 +221,7 @@ class BoxModel(AbstractBoxModel):
         :param previous: previous data to add the new to, or None to create new
         """
         vertex = self.get_vertex_variant(rotation, position)
-        collected_data = ([], []) if previous is None else previous
+        collected_data = ([], [], []) if previous is None else previous
 
         for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:
@@ -255,12 +256,13 @@ class BoxModel(AbstractBoxModel):
 
                 collected_data[0].extend(vertex[i])
                 collected_data[1].extend(self.tex_data[i2])
+                collected_data[2].extend((1,)*16 if self.face_tint_index[face.index] == -1 else instance.get_tint_for_index(self.face_tint_index[face.index])*4)
 
         return collected_data
 
     def add_prepared_data_to_batch(
         self,
-        collected_data: typing.Tuple[typing.List[float], typing.List[float]],
+        collected_data: typing.Tuple[typing.List[float], typing.List[float], typing.List[float]],
         batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]],
     ) -> typing.Iterable[VertexList]:
         """
@@ -288,11 +290,13 @@ class BoxModel(AbstractBoxModel):
                 self.atlas.group,
                 ("v3d/static", collected_data[0]),
                 ("t2f/static", collected_data[1]),
+                ("c4f/static", collected_data[2]),
             ),
         )
 
     def add_to_batch(
         self,
+        instance: IBlockStateRenderingTarget,
         position: typing.Tuple[float, float, float],
         batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]],
         rotation: typing.Tuple[float, float, float],
@@ -305,6 +309,7 @@ class BoxModel(AbstractBoxModel):
         Internally wraps a get_prepared_box_data call around the add_prepared_data_to_batch method
 
         Use combined data where possible
+        :param instance: the instance to use for rendering
         :param position: the position based on
         :param batch: the batches to select from
         :param rotation: the rotation to use
@@ -314,7 +319,7 @@ class BoxModel(AbstractBoxModel):
         todo: make active_faces an dict of faces -> state, not an order-defined list
         """
         collected_data = self.get_prepared_box_data(
-            position, rotation, active_faces=active_faces, uv_lock=uv_lock
+            instance, position, rotation, active_faces=active_faces, uv_lock=uv_lock
         )
         return self.add_prepared_data_to_batch(collected_data, batch)
 
@@ -335,11 +340,13 @@ class BoxModel(AbstractBoxModel):
                 pyglet.gl.GL_QUADS,
                 ("v3f/static", collected_data[0]),
                 ("t2f/static", collected_data[1]),
+                ("c4f/static", collected_data[2])
             )
             self.model.texture_atlas.group.unset_state()
 
     def draw(
         self,
+        instance: IBlockStateRenderingTarget,
         position: typing.Tuple[float, float, float],
         rotation: typing.Tuple[float, float, float],
         active_faces: typing.List[bool] = None,
@@ -348,22 +355,24 @@ class BoxModel(AbstractBoxModel):
         """
         Draws the BoxModel direct into the world
         WARNING: use batches for better performance
+        :param instance: the instance to ues for rendering
         :param position: the position to draw on
         :param rotation: the rotation to draw with
         :param uv_lock: if the uv's should be locked in place or not
         :param active_faces: which faces to draw
         """
         collected_data = self.get_prepared_box_data(
-            position, rotation, active_faces=active_faces, uv_lock=uv_lock
+            instance, position, rotation, active_faces=active_faces, uv_lock=uv_lock
         )
         self.draw_prepared_data(collected_data)
 
-    def add_face_to_batch(self, position, batch, rotation, face, uv_lock=False):
+    def add_face_to_batch(self, instance: IBlockStateRenderingTarget, position: typing.Tuple[float, float, float], batch, rotation: typing.Tuple[float, float, float], face: EnumSide, uv_lock=False):
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
         face = face.rotate(rotation)
 
         return self.add_to_batch(
+            instance,
             position,
             batch,
             rotation,
@@ -371,12 +380,13 @@ class BoxModel(AbstractBoxModel):
             uv_lock=uv_lock,
         )
 
-    def draw_face(self, position, rotation, face, uv_lock=False):
+    def draw_face(self, instance: IBlockStateRenderingTarget, position: typing.Tuple[float, float, float], rotation: typing.Tuple[float, float, float], face: EnumSide, uv_lock=False):
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
         face = face.rotate(rotation)
 
         return self.draw(
+            instance,
             position,
             rotation,
             active_faces=face,

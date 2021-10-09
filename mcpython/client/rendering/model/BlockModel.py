@@ -18,6 +18,7 @@ import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.util.enums
 import pyglet
 from mcpython import shared
+from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.engine import logger
 from pyglet.graphics.vertexdomain import VertexList
 
@@ -91,13 +92,15 @@ class Model:
 
     def get_prepared_data_for(
         self,
+        instance: IBlockStateRenderingTarget,
         position: typing.Tuple[float, float, float],
         config: dict,
         face: mcpython.util.enums.EnumSide,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
-    ) -> typing.Tuple[typing.Tuple[typing.List[float], typing.List[float]], typing.Any]:
+    ) -> typing.Tuple[typing.Tuple[typing.List[float], typing.List[float], typing.List[float]], typing.Any]:
         """
         Collects the vertex and texture data for a block at the given position with given configuration
+        :param instance: the instance to draw
         :param position: the offset position
         :param config: the configuration
         :param face: the face
@@ -110,17 +113,18 @@ class Model:
             logger.println(
                 f"[BLOCK MODEL][FATAL] can't draw an model '{self.name}' which has not defined textures at {position}"
             )
-            return ([], []), None
+            return ([], [], []), None
 
         rotation = config["rotation"]
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
 
-        collected_data = ([], []) if previous is None else previous
+        collected_data = ([], [], []) if previous is None else previous
         box_model = None
 
         for box_model in self.box_models:
             box_model.get_prepared_box_data(
+                instance,
                 position,
                 rotation,
                 face.rotate((0, -90, 0))
@@ -133,6 +137,7 @@ class Model:
 
     def add_face_to_batch(
         self,
+        instance: IBlockStateRenderingTarget,
         position: typing.Tuple[float, float, float],
         batch: pyglet.graphics.Batch,
         config: dict,
@@ -142,7 +147,7 @@ class Model:
         Adds a given face to the batch
         Simply wraps a get_prepared_data_for call around the box_model.add_prepared_data_to_batch-call
         """
-        collected_data, box_model = self.get_prepared_data_for(position, config, face)
+        collected_data, box_model = self.get_prepared_data_for(instance, position, config, face)
         if box_model is None:
             return tuple()
 

@@ -24,6 +24,8 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import mcpython.util.math
 from mcpython import shared
+from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
+from mcpython.util.enums import EnumSide
 from mcpython.engine import logger
 
 
@@ -211,7 +213,12 @@ class ModelHandler:
                 "error during loading model '{}' named '{}'".format(location, name)
             )
 
-    def add_face_to_batch(self, block, face, batches) -> typing.Iterable:
+    def add_face_to_batch(self, block: IBlockStateRenderingTarget, face: EnumSide, batches) -> typing.Iterable:
+        """
+        Adds a single face of a block-like thing to a batch
+        :return: a list of vertex lists
+        """
+
         if not shared.IS_CLIENT:
             return tuple()
 
@@ -232,8 +239,10 @@ class ModelHandler:
             vertex_list = self.blockstates[
                 "minecraft:missing_texture"
             ].add_face_to_batch(block, batches, face)
+
         else:
             vertex_list = blockstate.add_face_to_batch(block, batches, face)
+
             if issubclass(
                 type(block.face_info.custom_renderer),
                 mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
@@ -278,15 +287,15 @@ class ModelHandler:
         return vertex_list
 
     def add_raw_face_to_batch(
-        self, position, state, block_state_name: str, batches, face
+        self, instance: IBlockStateRenderingTarget, position, state, block_state_name: str, batches, face
     ):
         if block_state_name is None or block_state_name not in self.blockstates:
             vertex_list = self.blockstates[
                 "minecraft:missing_texture"
-            ].add_raw_face_to_batch(position, state, batches, face)
+            ].add_raw_face_to_batch(instance, position, state, batches, face)
         else:
             blockstate = self.blockstates[block_state_name]
-            vertex_list = blockstate.add_raw_to_batch(position, state, batches, face)
+            vertex_list = blockstate.add_raw_to_batch(instance, position, state, batches, face)
 
         return vertex_list
 
@@ -326,16 +335,16 @@ class ModelHandler:
         logger.println("loading models...")
         # and now start reloading models...
         self.search()
-        mcpython.client.rendering.model.BlockState.BlockStateDefinition.TO_CREATE.clear()
-        mcpython.client.rendering.model.BlockState.BlockStateDefinition.NEEDED.clear()
+        mcpython.client.rendering.model.BlockState.BlockStateContainer.TO_CREATE.clear()
+        mcpython.client.rendering.model.BlockState.BlockStateContainer.NEEDED.clear()
 
         for (
             directory,
             modname,
         ) in (
-            mcpython.client.rendering.model.BlockState.BlockStateDefinition.LOOKUP_DIRECTORIES
+            mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
         ):
-            mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_directory(
+            mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
                 directory, modname, immediate=True
             )
 
@@ -343,8 +352,8 @@ class ModelHandler:
             data,
             name,
             force,
-        ) in mcpython.client.rendering.model.BlockState.BlockStateDefinition.RAW_DATA:
-            mcpython.client.rendering.model.BlockState.BlockStateDefinition.unsafe_from_data(
+        ) in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA:
+            mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
                 name, data, immediate=True, force=force
             )
 

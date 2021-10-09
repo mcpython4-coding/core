@@ -197,7 +197,7 @@ class CombinedFactoryInstance:
 
                 import mcpython.client.rendering.model.BlockState
 
-                mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_data(
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
                     name, data
                 )
 
@@ -441,7 +441,7 @@ class CombinedFactoryInstance:
 
                 import mcpython.client.rendering.model.BlockState
 
-                mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_data(
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
                     name, data
                 )
 
@@ -672,7 +672,7 @@ class CombinedFactoryInstance:
 
                 import mcpython.client.rendering.model.BlockState
 
-                mcpython.client.rendering.model.BlockState.BlockStateDefinition.from_data(
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
                     name, data
                 )
 

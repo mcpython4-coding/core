@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared
 
 from . import AbstractBlock
@@ -36,7 +38,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         .build()
     )
 
-    SOLID = False
+    IS_SOLID = False
     DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
 
     def __init__(self):
@@ -65,7 +67,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         if block is None or not block.face_solid[EnumSide.UP.index]:
             dimension.remove_block(self.position)
             return
-        elif block.SOLID:
+        elif block.IS_SOLID:
             block.inject_redstone_power(EnumSide.UP, self.level)
 
     def send_level_update(self):
@@ -116,3 +118,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
 
     def is_connecting_to_redstone(self, side: EnumSide) -> bool:
         return side != EnumSide.UP
+
+    def get_tint_for_index(self, index: int) -> typing.Tuple[float, float, float, float]:
+        f = (self.level + 1) / 16
+        return f, 0, 0, 1
