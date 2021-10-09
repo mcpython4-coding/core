@@ -15,6 +15,7 @@ import dis
 import functools
 import typing
 
+from mcpython.engine import logger
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
 
 

@@ -94,7 +94,7 @@ class MixinHandler:
 
     def applyMixins(self):
         for target, mixins in self.bound_mixin_processors.items():
-            logger.println(f"[MIXIN][WARN] applying mixins of {self.processor_name} onto {target}")
+            logger.println(f"[MIXIN][WARN] applying mixins of '{self.processor_name}' onto '{target}'")
 
             patcher = mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(self.lookup_method(target))
 

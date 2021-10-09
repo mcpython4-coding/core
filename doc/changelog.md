@@ -17,8 +17,8 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 - add ores & their gen
 - tool level system based on tags were every block has a) a tag for the tool type and b) a tag for tool level [tags exists by vanilla]
 
-- add an line into logging where the system searches for the location where the error occur and will link the mod
-    caused it into the log
+- add a line into logging where the system searches for the location where the error occur and will link the mod
+    caused it into the log [partially done via mod container]
 
 - parser for the new mc world gen config format
 
@@ -54,6 +54,12 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 - develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
 
 ----
+
+# Changelog of snapshot 21wXXa
+Released on ??.??.2021 targeting 1.1?
+
+    Modding:
+        Added bytecode manipulation framework
 
 # Changelog of snapshot 21w39a
 Released on 29.09.2021 targeting 1.17
