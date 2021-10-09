@@ -83,6 +83,9 @@ def calculate_default_layout_uvs(
     sx, sy = texture_size
     dx, dy = offset
     x, y, z = box_size
+    x -= 1
+    y -= 1
+    z -= 1
 
     return list(
         map(
@@ -93,12 +96,12 @@ def calculate_default_layout_uvs(
                 (e[1] + dy) / sy,
             ),
             [
-                (x, y, x + z, y + x),
                 (x + z, y, x + 2 * z, y + x),
-                (x, 0, x + z, y),
-                (x + 2 * z, 0, 2 * x + 2 * z, y),
-                (0, 0, z, x),
-                (x + z, 0, x + 2 * z, y),
+                (x, y, x + z, y + x),
+                (x, -1, x + z, y),
+                (x + 2 * z, -1, 2 * x + 2 * z, y),
+                (0, -1, z, y),
+                (x + z, -1, x + 2 * z, y),
             ],
         )
     )
