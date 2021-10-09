@@ -42,9 +42,7 @@ class Chest(
     now: datetime = datetime.now()  # now
 
     # if Christmas is today
-    is_christmas: bool = (
-        24 <= now.day <= 26 and now.month == 12
-    )
+    is_christmas: bool = 24 <= now.day <= 26 and now.month == 12
 
     NAME: str = "minecraft:chest"
     MODEL_FACE_NAME = "side"
@@ -61,8 +59,10 @@ class Chest(
     CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
         "minecraft:entity/chest/normal"
     )
-    CHEST_BLOCK_RENDERER_CHRISTMAS = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-        "minecraft:entity/chest/christmas"
+    CHEST_BLOCK_RENDERER_CHRISTMAS = (
+        mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+            "minecraft:entity/chest/christmas"
+        )
     )
 
     def __init__(self):
@@ -94,12 +94,14 @@ class Chest(
 
     # As this can be statically decided, we use this trick for some performance gain
     if is_christmas:
+
         def on_block_added(self):
             if shared.IS_CLIENT:
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
                 self.face_info.update(True)
 
     else:
+
         def on_block_added(self):
             if shared.IS_CLIENT:
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER

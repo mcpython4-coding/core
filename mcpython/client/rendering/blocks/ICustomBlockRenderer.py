@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 import mcpython.engine.event.EventHandler
+from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 
 
 class ICustomBlockRenderer(ABC):

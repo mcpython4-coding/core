@@ -11,12 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import mcpython.client.rendering.blocks.ChestRenderer
 import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.block.Chest import BBOX
 from pyglet.window import key, mouse
-import mcpython.client.rendering.blocks.ChestRenderer
 
 from . import AbstractBlock, IHorizontalOrientableBlock
 
