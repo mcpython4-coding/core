@@ -33,9 +33,18 @@ class ICustomBatchBlockRenderer(ICustomBlockRenderer, ABC):
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
         raise NotImplementedError()
 
+    def add_multi(self, position: typing.Tuple[int, int, int], block, faces, batches):
+        d = []
+        for face in faces:
+            d.extend(self.add(position, block, face, batches))
+        return d
+
     def remove(self, position: typing.Tuple[int, int, int], block, data, face):
         if data is not None:
             [e.delete() for e in data]
+
+    def remove_multi(self, position: typing.Tuple[int, int, int], block, data):
+        self.remove(position, block, data, None)
 
 
 class ICustomDrawMethodRenderer(ICustomBlockRenderer, ABC):

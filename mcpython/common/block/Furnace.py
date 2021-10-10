@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.client.gui.InventoryFurnace import InventoryFurnace
-from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
+from mcpython.client.gui.InventoryFurnace import InventoryFurnace
+from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide
 from pyglet.window import key, mouse

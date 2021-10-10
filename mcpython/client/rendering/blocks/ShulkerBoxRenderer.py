@@ -47,6 +47,11 @@ class ShulkerBoxRenderer(
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
         return self.box_model.add_face_to_batch(batches[0], block.position, face)
 
+    def add_multi(self, position: typing.Tuple[int, int, int], block, faces, batches):
+        return self.box_model.add_face_to_batch(
+            batches[1], block.position, [face.index for face in faces]
+        )
+
     # todo: implement these both animations
     def play_open_animation(self, block):
         pass

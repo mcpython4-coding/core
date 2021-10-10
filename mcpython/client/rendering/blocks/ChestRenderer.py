@@ -67,6 +67,12 @@ class ChestRenderer(
             batches[0], block.position, face
         ) + self.box_model_bottom.add_face_to_batch(batches[0], block.position, face)
 
+    def add_multi(self, position: typing.Tuple[int, int, int], block, faces, batches):
+        faces = [face.index for face in faces]
+        return self.box_model_top.add_face_to_batch(
+            batches[0], block.position, faces
+        ) + self.box_model_bottom.add_face_to_batch(batches[0], block.position, faces)
+
     # todo: implement these both animations
     def play_open_animation(self, block: IChestRendererSupport):
         pass

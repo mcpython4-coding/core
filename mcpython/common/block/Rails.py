@@ -15,12 +15,11 @@ import math
 import time
 from abc import ABC
 
-from mcpython.common.block.AbstractBlock import AbstractBlock
+import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
+from mcpython.common.block.AbstractBlock import AbstractBlock
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
-import mcpython.common.block.PossibleBlockStateBuilder
-
 
 SHAPES = [
     "north_south",
@@ -33,8 +32,8 @@ SHAPES = [
 
 
 class IRail(AbstractBlock, ABC):
-    HARDNESS = .5
-    BLAST_RESISTANCE = .5
+    HARDNESS = 0.5
+    BLAST_RESISTANCE = 0.5
 
     IS_SOLID = False
     DEFAULT_FACE_SOLID = AbstractBlock.UNSOLID_FACE_SOLID
@@ -62,7 +61,12 @@ class ActivatorRail(IRail):
         self.force_active = False
 
     def get_model_state(self) -> dict:
-        return {"shape": self.shape, "powered": str(any(self.injected_redstone_power) or self.force_active).lower()}
+        return {
+            "shape": self.shape,
+            "powered": str(
+                any(self.injected_redstone_power) or self.force_active
+            ).lower(),
+        }
 
     def set_model_state(self, state: dict):
         if "shape" in state:
@@ -77,16 +81,20 @@ class ActivatorRail(IRail):
 
         connecting_faces = set()
         for face in EnumSide.iterate()[2:]:
-            block = dimension.get_block((x+face.dx, y, z+face.dz))
-            if isinstance(block, IRail) and block.is_currently_orientated_for_side(face.invert()):
+            block = dimension.get_block((x + face.dx, y, z + face.dz))
+            if isinstance(block, IRail) and block.is_currently_orientated_for_side(
+                face.invert()
+            ):
                 connecting_faces.add(face)
 
         if self.shape in ("north_south", "ascending_south", "ascending_south"):
-            if not (EnumSide.EAST in connecting_faces or EnumSide.WEST in connecting_faces):
+            if not (
+                EnumSide.EAST in connecting_faces or EnumSide.WEST in connecting_faces
+            ):
                 self.shape = "east_west"
 
         elif self.shape in ("east_west", "ascending_east", "ascending_west"):
-            if not (EnumSide.NORTH in connecting_faces or EnumSide.SOUTH in connecting_faces):
+            if not (
+                EnumSide.NORTH in connecting_faces or EnumSide.SOUTH in connecting_faces
+            ):
                 self.shape = "north_south"
-
-

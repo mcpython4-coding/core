@@ -16,11 +16,15 @@ import itertools
 import typing
 import weakref
 
-import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.event.EventHandler
 import mcpython.util.enums
 from mcpython import shared
+from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
+    ICustomBatchBlockRenderer,
+    ICustomBlockRenderer,
+)
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
+from mcpython.util.enums import EnumSide
 
 
 class FaceInfo:
@@ -28,37 +32,35 @@ class FaceInfo:
     Class for face state of the block
     """
 
-    DEFAULT_FACE_STATE = {
-        x.normal_name: False for x in mcpython.util.enums.EnumSide.iterate()
-    }
-    DEFAULT_FACE_DATA = {
-        x.normal_name: None for x in mcpython.util.enums.EnumSide.iterate()
-    }
+    DEFAULT_FACE_STATE = {x.normal_name: False for x in EnumSide.iterate()}
+    DEFAULT_FACE_DATA = {x.normal_name: None for x in EnumSide.iterate()}
 
     def __init__(self, block):
         """
         Block face state, client-sided container holding information for rendering
         """
         self.block = weakref.proxy(block)
-        self.faces: typing.Optional[
-            mcpython.util.enums.EnumSide, bool
-        ] = self.DEFAULT_FACE_STATE.copy()
+        self.faces: typing.Optional[EnumSide, bool] = self.DEFAULT_FACE_STATE.copy()
         self.face_data: typing.Optional[
-            mcpython.util.enums.EnumSide, list
+            EnumSide, list
         ] = None  # self.DEFAULT_FACE_DATA.copy()
         self.custom_renderer = None  # holds a custom block renderer
         self.subscribed_renderer: bool = False
         self.bound_rendering_info = None
 
+        self.multi_data = None
+        self.multi_faces = set()
+
     def is_shown(self) -> bool:
         return any(self.faces.values())
 
-    def show_face(self, face: mcpython.util.enums.EnumSide):
+    def show_face(self, face: EnumSide, force=False):
         """
         Shows a face
         :param face: the face of the block
+        :param force: force the show, WARNING: internal only
         """
-        if self.faces[face.normal_name]:
+        if self.faces[face.normal_name] and not force:
             return
 
         if self.face_data is None:
@@ -71,9 +73,9 @@ class FaceInfo:
                 self.custom_renderer.on_block_exposed(self.block)
                 self.subscribed_renderer = True
 
-            if issubclass(
-                type(self.custom_renderer),
-                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
+            if isinstance(
+                self.custom_renderer,
+                ICustomBatchBlockRenderer,
             ):
                 self.face_data[face.normal_name] = self.custom_renderer.add(
                     self.block.position,
@@ -94,7 +96,70 @@ class FaceInfo:
                 )
             )
 
-    def hide_face(self, face: mcpython.util.enums.EnumSide):
+    def show_faces(self, faces: typing.List[str]):
+        """
+        Optimised show_face() for more than one face
+        Will do only something optimal when more than one face is passed in
+        """
+        for face in faces[:]:
+            if self.faces[face]:
+                faces.remove(face)
+            else:
+                self.faces[face] = True
+
+        if not faces:
+            return
+
+        if len(faces) == 1:
+            # print("short-circuiting show face for face", EnumSide[faces[0].upper()], "@", self.block.position)
+            self.show_face(EnumSide[faces[0].upper()], force=True)
+            return
+
+        if self.face_data is None:
+            self.face_data = copy.deepcopy(self.DEFAULT_FACE_DATA)
+
+        if self.multi_data:
+            self.hide_multi_data()
+            faces += self.multi_faces
+
+        if self.custom_renderer is not None:
+            if not self.subscribed_renderer:
+                self.custom_renderer.on_block_exposed(self.block)
+                self.subscribed_renderer = True
+
+            if isinstance(
+                self.custom_renderer,
+                ICustomBatchBlockRenderer,
+            ):
+                self.multi_data = self.custom_renderer.add_multi(
+                    self.block.position,
+                    self.block,
+                    faces,
+                    shared.world.get_dimension_by_name(self.block.dimension).batches,
+                )
+                self.multi_faces.update(faces)
+
+        else:
+            self.multi_data = shared.model_handler.add_faces_to_batch(
+                self.block,
+                [EnumSide[face.upper()] for face in faces],
+                shared.world.get_dimension_by_name(self.block.dimension).batches,
+            )
+
+    def hide_multi_data(self):
+        if self.custom_renderer is not None and isinstance(
+            self.custom_renderer,
+            ICustomBatchBlockRenderer,
+        ):
+            self.custom_renderer.remove_multi(
+                self.block.position, self.block, self.multi_data
+            )
+        else:
+            [e.delete() for e in self.multi_data]
+
+        self.multi_data = None
+
+    def hide_face(self, face: EnumSide):
         """
         Will hide an face
         :param face: the face to hide
@@ -112,22 +177,32 @@ class FaceInfo:
                 self.custom_renderer.on_block_fully_hidden(self.block)
                 self.subscribed_renderer = False
 
-            if issubclass(
-                type(self.custom_renderer),
-                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer,
-            ):
-                self.custom_renderer.remove(
-                    self.block.position,
-                    self.block,
-                    self.face_data[face.normal_name],
-                    face,
-                )
+        if face in self.multi_faces:
+            self.hide_multi_data()
+
+            self.multi_faces.remove(face)
+
+            if self.multi_faces:
+                self.show_faces(list(self.multi_faces))
+
         else:
-            for x in self.face_data[face.normal_name]:
-                try:
-                    x.delete()
-                except AssertionError:
-                    pass
+            if self.custom_renderer is not None:
+                if isinstance(
+                    self.custom_renderer,
+                    ICustomBatchBlockRenderer,
+                ):
+                    self.custom_renderer.remove(
+                        self.block.position,
+                        self.block,
+                        self.face_data[face.normal_name],
+                        face,
+                    )
+            else:
+                for x in self.face_data[face.normal_name]:
+                    try:
+                        x.delete()
+                    except AssertionError:
+                        pass
 
         self.face_data[face.normal_name] = None
         if all(value is None or len(value) == 0 for value in self.face_data.values()):
@@ -161,14 +236,13 @@ class FaceInfo:
 
         self.hide_all()
 
-        for key in state.keys():
-            if state[key]:
-                face = (
-                    key
-                    if not isinstance(key, str)
-                    else mcpython.util.enums.EnumSide[key.upper()]
-                )
-                self.show_face(face)
+        self.show_faces(
+            [
+                (key if isinstance(key, str) else key.normal_name)
+                for key, value in state.items()
+                if value
+            ]
+        )
 
     def hide_all(self):
         """
@@ -176,19 +250,23 @@ class FaceInfo:
         """
         if (
             any(self.faces.values())
-            and issubclass(
-                type(self.custom_renderer),
-                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomDrawMethodRenderer,
-            )
+            and self.custom_renderer is not None
             and self.subscribed_renderer
         ):
-            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
-                self.custom_renderer.DRAW_PHASE, self._draw_custom_render
-            )
+            self.custom_renderer.on_block_fully_hidden(self.block)
             self.subscribed_renderer = False
 
+        if self.multi_data:
+            self.hide_multi_data()
+            self.faces.update({key: False for key in self.multi_faces})
+            self.multi_faces.clear()
+
         if self.custom_renderer:
-            [self.hide_face(face) for face in mcpython.util.enums.EnumSide.iterate()]
+            [
+                self.hide_face(face)
+                for face in EnumSide.iterate()
+                if self.faces[face.normal_name]
+            ]
 
         # Only when it is shown we need to hide something...
         elif self.face_data:
@@ -197,7 +275,7 @@ class FaceInfo:
             ):
                 element.delete()
 
-            for face in mcpython.util.enums.EnumSide.iterate():
+            for face in EnumSide.iterate():
                 self.faces[face.normal_name] = False
 
             self.face_data = None

@@ -43,8 +43,8 @@ class EntityBoxInstance:
 
         def update(self):
             vertices, uvs = self.source.get_draw_info(self.position, self.rotation)
-            self.buffer.vertices = vertices
-            self.buffer.tex_coords = uvs
+            self.buffer.vertices[:] = vertices
+            self.buffer.tex_coords[:] = uvs
             return self
 
         def get_underlying(self) -> pyglet.graphics.vertexdomain.VertexList:

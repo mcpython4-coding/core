@@ -17,8 +17,8 @@ from abc import ABC
 import mcpython.common.block.AbstractBlock
 import mcpython.common.fluid.AbstractFluid
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.client.rendering.blocks.FluidRenderer import FluidRenderer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.texture import hex_to_color
 
 
@@ -40,14 +40,18 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     FLUID_RENDERER = None
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
     NO_ENTITY_COLLISION = True
-    CUSTOM_WALING_SPEED_MULTIPLIER = .3
+    CUSTOM_WALING_SPEED_MULTIPLIER = 0.3
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
         if cls.NAME is not None:
-            cls.FLUID_RENDERER = FluidRenderer("{}:block/{}_still".format(*cls.NAME.split(":")))
+            cls.FLUID_RENDERER = FluidRenderer(
+                "{}:block/{}_still".format(*cls.NAME.split(":"))
+            )
 
     def __init__(self):
         super().__init__()
@@ -80,7 +84,7 @@ class WaterFluidBlock(IFluidBlock):
 
 
 # todo: make biome based
-WATER_COLOR = tuple(e/255 for e in hex_to_color("3F76E4")) + (1,)
+WATER_COLOR = tuple(e / 255 for e in hex_to_color("3F76E4")) + (1,)
 WaterFluidBlock.FLUID_RENDERER.color = lambda *_: WATER_COLOR
 
 

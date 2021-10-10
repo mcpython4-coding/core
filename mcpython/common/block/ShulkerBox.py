@@ -14,11 +14,11 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.factory.ItemFactory
 import mcpython.util.enums
 from mcpython import shared
+from mcpython.client.rendering.blocks.ShulkerBoxRenderer import ShulkerBoxRenderer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from pyglet.window import key, mouse
 
-from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from . import AbstractBlock
-from mcpython.client.rendering.blocks.ShulkerBoxRenderer import ShulkerBoxRenderer
 
 
 def create_shulker_box(name):
@@ -34,7 +34,7 @@ def create_shulker_box(name):
         MINIMUM_TOOL_LEVEL = 0
         ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
-        RENDERER = ShulkerBoxRenderer("minecraft:block/"+name)
+        RENDERER = ShulkerBoxRenderer("minecraft:block/" + name)
 
         def __init__(self):
             super().__init__()
@@ -64,7 +64,7 @@ def create_shulker_box(name):
                 return False
 
         def get_inventories(self):
-            return self.inventory,
+            return (self.inventory,)
 
         def get_provided_slot_lists(self, side):
             return self.inventory.slots, self.inventory.slots

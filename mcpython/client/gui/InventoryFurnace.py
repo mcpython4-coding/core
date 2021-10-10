@@ -325,7 +325,10 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 mcpython.common.container.ResourceStack.ItemStack(self.recipe.output)
             )
         else:
-            if self.slots[2].get_itemstack().item.STACK_SIZE > self.slots[2].get_itemstack().amount:
+            if (
+                self.slots[2].get_itemstack().item.STACK_SIZE
+                > self.slots[2].get_itemstack().amount
+            ):
                 self.slots[2].get_itemstack().add_amount(1)
 
         self.slots[0].get_itemstack().add_amount(-1)

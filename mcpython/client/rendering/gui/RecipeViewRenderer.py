@@ -24,6 +24,10 @@ class NotEnoughItemsException(Exception):
 
 
 class AbstractRecipeViewRenderer(ABC):
+    """
+    Renderer system for displaying a recipe to the player in a JEI-like style
+    """
+
     def prepare_for_recipe(
         self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe
     ):

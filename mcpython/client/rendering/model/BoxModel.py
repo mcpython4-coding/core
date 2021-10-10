@@ -567,14 +567,14 @@ class RawBoxModel(AbstractBoxModel):
         self,
         batch: pyglet.graphics.Batch,
         position: typing.Tuple[float, float, float],
-        face: typing.Union[int, EnumSide],
+        face: typing.Union[typing.Iterable[int], EnumSide],
         rotation=(0, 0, 0),
         rotation_center=(0, 0, 0),
     ):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
+            if i in face if isinstance(face, int) else face.index == i:
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
@@ -643,14 +643,14 @@ class MutableRawBoxModel(RawBoxModel):
         self,
         batch: pyglet.graphics.Batch,
         position: typing.Tuple[float, float, float],
-        face: typing.Union[int, EnumSide],
+        face: typing.Union[typing.Iterable[int], EnumSide],
         rotation=(0, 0, 0),
         rotation_center=(0, 0, 0),
     ):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
+            if i not in face if isinstance(face, int) else face.index == i:
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
@@ -699,14 +699,14 @@ class ColoredRawBoxModel(RawBoxModel):
             self.texture,
             ("v3d/static", vertices),
             ("t2f/static", self.texture_cache),
-            ("c4f", color*24),
+            ("c4f", color * 24),
         )
 
     def add_face_to_batch(
         self,
         batch: pyglet.graphics.Batch,
         position: typing.Tuple[float, float, float],
-        face: typing.Union[int, EnumSide],
+        face: typing.Union[typing.Iterable[int], EnumSide],
         rotation=(0, 0, 0),
         rotation_center=(0, 0, 0),
         color=(1, 1, 1, 1),
@@ -714,7 +714,7 @@ class ColoredRawBoxModel(RawBoxModel):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
+            if i in face if isinstance(face, int) else face.index == i:
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
