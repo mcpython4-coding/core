@@ -48,7 +48,7 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        if cls.NAME is not None:
+        if cls.NAME is not None and cls.NAME != "minecraft:unknown_registry_content" and not shared.IS_TEST_ENV:
             cls.FLUID_RENDERER = FluidRenderer(
                 "{}:block/{}_still".format(*cls.NAME.split(":"))
             )
@@ -83,9 +83,10 @@ class WaterFluidBlock(IFluidBlock):
     UNDERLYING_FLUID = "minecraft:water"
 
 
-# todo: make biome based
-WATER_COLOR = tuple(e / 255 for e in hex_to_color("3F76E4")) + (1,)
-WaterFluidBlock.FLUID_RENDERER.color = lambda *_: WATER_COLOR
+if not shared.IS_TEST_ENV:
+    # todo: make biome based
+    WATER_COLOR = tuple(e / 255 for e in hex_to_color("3F76E4")) + (1,)
+    WaterFluidBlock.FLUID_RENDERER.color = lambda *_: WATER_COLOR
 
 
 class LavaFluidBlock(IFluidBlock):

@@ -21,6 +21,7 @@ import mcpython.common.block.IHorizontalOrientableBlock as IHorizontalOrientable
 import mcpython.common.block.ILog as ILog
 import mcpython.common.block.ISlab as ISlab
 import mcpython.common.block.Walls as BlockWall
+from mcpython.common.block.FluidBlock import IFluidBlock
 import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
@@ -97,6 +98,15 @@ def set_fence(instance: FactoryBuilder.IFactory, *types: str):
 )
 def set_fence_gate(instance: FactoryBuilder.IFactory):
     instance.base_classes.append(BlockFence.AbstractFenceGate)
+    instance.set_solid(False).set_all_side_solid(False)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_fluid_block")
+)
+def set_fluid_block(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(IFluidBlock)
     instance.set_solid(False).set_all_side_solid(False)
     return instance
 

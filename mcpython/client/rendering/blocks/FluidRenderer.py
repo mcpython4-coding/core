@@ -19,7 +19,7 @@ import pyglet
 from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
 
 # Used to prevent z-fighting with neighbor blocks on transparent fluids
-SOME_SMALL_VALUES = 1 / 100
+SOME_SMALL_VALUES = 1 / 1000
 
 
 class FluidRenderer(

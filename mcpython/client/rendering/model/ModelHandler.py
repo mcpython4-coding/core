@@ -265,17 +265,13 @@ class ModelHandler:
                     "[FATAL] block state for block '{}' not found!".format(block.NAME)
                 )
 
-            return self.blockstates["minecraft:missing_texture"].add_faces_to_batch(
-                block, batches, faces
-            )
+            return tuple()
 
         blockstate = self.blockstates[block.NAME]
 
         # todo: add custom block renderer check
         if blockstate is None:
-            vertex_list = self.blockstates[
-                "minecraft:missing_texture"
-            ].add_faces_to_batch(block, batches, faces)
+            return tuple()
         else:
             vertex_list = list()
             for face in faces:
@@ -285,8 +281,7 @@ class ModelHandler:
                     mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
                 ):
                     block.face_info.custom_renderer.handle(block, vertex_list)
-
-        return vertex_list
+            return vertex_list
 
     def add_raw_face_to_batch(
         self,

@@ -1838,4 +1838,5 @@ f   [uuk]: added some behaviour stuff to activator rail
 f   [uuk]: added custom block renderer for shulker boxes
 f   [uuk]: added fluid block renderer & water & lava block
 OV  [uuk]: optimised rendering of blocks by quit a bit when showing more than one face at a time
+f   [uuk]: BlockFactory supports now creating fluid blocks
 
