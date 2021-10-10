@@ -241,13 +241,6 @@ def colored(name: str):
 
 wood("acacia")
 
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:activator_rail")
-    .set_solid(False)
-    .set_all_side_solid(False)
-    .set_default_model_state("powered=false,shape=north_south")
-)
 DEFERRED_PIPE.create_later(plant("minecraft:allium"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:amethyst_block"))
 DEFERRED_PIPE.create_later(

@@ -1834,4 +1834,5 @@ f   [uuk]: added chest renderer used for normal chests & ender chests
 fA  [uuk]: added util method for calculating texture coordinates for the mc layout
 IA* [uuk]: changed the way how custom block renderers are handled allowing for custom base implementations
 f   [uuk]: ender chests will display now correctly "ender chest" as their GUI name
+f   [uuk]: added some behaviour stuff to activator rail
 

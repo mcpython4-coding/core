@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "alias:horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "alias:normal"
+    },
+    "axis=z": {
+      "model": "alias:horizontal",
+      "x": 90
+    }
+  }
+}

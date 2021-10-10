@@ -67,6 +67,7 @@ def load():
         GrassBlock,
         NetherPortal,
         NewBlocks,
+        Rails,
         RedstoneWire,
         ShulkerBox,
         Walls,
@@ -100,6 +101,7 @@ def load():
     block_registry.register(Fence.WarpedFence)
     block_registry.register(Fence.AcaciaFence)
     block_registry.register(RedstoneWire.RedstoneWire)
+    block_registry.register(Rails.ActivatorRail)
 
     Carpet.load()
     CoralBlocks.load()

@@ -3,18 +3,21 @@
 Issues:
 - non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
 - biome map is not saved to save files or loaded not correctly somehow
+- logs do not render when invalidating cache
+- hiding faces to rotated blocks like logs fails 
 
 
 Pending for next non-snapshot release:
 - issues above
 - fix gamemode 0 (partially done)
+- shulker box rendering
 - more unit tests
 
 
 Toolchain:
 - user_config.json storing local information across versions, like:
     - path to launcher
-    - user name
+    - username
 
 - obfuscator
 - System to dynamically migrate code from deobf <-> obf and up versions [only simple changes]

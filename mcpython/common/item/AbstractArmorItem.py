@@ -11,12 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from abc import ABC
+
 import mcpython.common.item.AbstractDamageBarItem
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class AbstractArmorItem(
-    mcpython.common.item.AbstractDamageBarItem.DefaultDamageBarItem
+    mcpython.common.item.AbstractDamageBarItem.DefaultDamageBarItem, ABC
 ):
     DURABILITY = 0
 
