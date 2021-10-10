@@ -34,9 +34,11 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         .build()
     )
 
+    IS_SOLID = False
+    DEFAULT_FACE_SOLID = mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+
     def __init__(self):
         super().__init__()
-        self.face_solid = self.UNSOLID_FACE_SOLID
         self.connections = {
             "north": False,
             "east": False,

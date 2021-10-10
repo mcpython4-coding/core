@@ -76,6 +76,7 @@ def set_slab(instance: FactoryBuilder.IFactory):
 )
 def set_wall(instance: FactoryBuilder.IFactory):
     instance.base_classes.append(BlockWall.AbstractWall)
+    instance.set_solid(False).set_all_side_solid(False)
     return instance
 
 
