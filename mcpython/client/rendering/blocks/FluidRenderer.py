@@ -16,40 +16,38 @@ import typing
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import pyglet
-from mcpython import shared
-from mcpython.client.rendering.model.BoxModel import RawBoxModel
+from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
 
 
-class ShulkerBoxRenderer(
+# Used to prevent z-fighting with neighbor blocks on transparent fluids
+SOME_SMALL_VALUES = 1 / 100
+
+
+class FluidRenderer(
     mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer
 ):
     """
-    Class defining how a shulker box is rendered
-
-    todo: add open / close animations
+    Class defining how a fluid block is rendered
     """
 
-    def __init__(self, texture_location: str):
+    def __init__(self, texture_location: str, color=lambda *_: (1, 1, 1, 1)):
         super().__init__()
 
         self.texture_location = texture_location
         self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
             texture_location
         )
+        self.texture = self.texture.get_region(0, 0, self.texture.width, self.texture.width)
         self.group = pyglet.graphics.TextureGroup(self.texture.get_texture())
 
-        self.box_model = RawBoxModel(
-            (0, 0, 0),
-            (1, 1, 1),
+        self.color = color
+
+        self.box_model = ColoredRawBoxModel(
+            (SOME_SMALL_VALUES / 2, -1/16+SOME_SMALL_VALUES/2, SOME_SMALL_VALUES / 2),
+            (1 - SOME_SMALL_VALUES, 7/8-SOME_SMALL_VALUES, 1-SOME_SMALL_VALUES),
             self.group,
+            texture_region=[(0, 0, 1, 1.), (0, 0, 1, 1)] + [(0, 0, 1, 7/8)] * 6
         )
 
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
-        return self.box_model.add_face_to_batch(batches[0], block.position, face)
-
-    # todo: implement these both animations
-    def play_open_animation(self, block):
-        pass
-
-    def play_close_animation(self, block):
-        pass
+        return self.box_model.add_face_to_batch(batches[1], block.position, face, color=self.color(block, face))

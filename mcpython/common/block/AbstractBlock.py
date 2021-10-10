@@ -127,10 +127,11 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     # if the random tick function should be called if needed or not
     ENABLE_RANDOM_TICKS: bool = False
 
-    NO_ENTITY_COLLISION: bool = False  # if entities should not collide with this block todo: make method with entity
-    ENTITY_FALL_MULTIPLIER: float = (
-        1  # entity gravity multiplier while in the block todo: merge with above
-    )
+    # if entities should not collide with this block todo: make method with entity
+    NO_ENTITY_COLLISION: bool = False
+
+    # entity gravity multiplier while in the block todo: merge with above
+    ENTITY_FALL_MULTIPLIER: float = 1
 
     # a list of block states used in debug world
     # todo: add a manager for it like mc

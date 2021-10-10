@@ -346,7 +346,7 @@ class BoxModel(AbstractBoxModel):
             pyglet.graphics.draw(
                 len(collected_data[0]) // 3,
                 pyglet.gl.GL_QUADS,
-                ("v3f/static", collected_data[0]),
+                ("v3d/static", collected_data[0]),
                 ("t2f/static", collected_data[1]),
                 ("c4f/static", collected_data[2]),
             )
@@ -559,7 +559,7 @@ class RawBoxModel(AbstractBoxModel):
             4 * 6,
             pyglet.gl.GL_QUADS,
             self.texture,
-            ("v3f/static", vertices),
+            ("v3d/static", vertices),
             ("t2f/static", self.texture_cache),
         )
 
@@ -584,7 +584,7 @@ class RawBoxModel(AbstractBoxModel):
                     4,
                     pyglet.gl.GL_QUADS,
                     self.texture,
-                    ("v3f/static", v),
+                    ("v3d/static", v),
                     ("t2f/static", t),
                 )
             )
@@ -604,7 +604,7 @@ class RawBoxModel(AbstractBoxModel):
         pyglet.graphics.draw(
             4 * 6,
             pyglet.gl.GL_QUADS,
-            ("v3f/static", vertices),
+            ("v3d/static", vertices),
             ("t2f/static", self.texture_cache),
         )
 
@@ -681,3 +681,75 @@ class MutableRawBoxModel(RawBoxModel):
 
             v = vertices[i * 12 : i * 12 + 12]
             previous.pop(0).vertices[:] = v
+
+
+class ColoredRawBoxModel(RawBoxModel):
+    def add_to_batch(
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+        color=(1, 1, 1, 1),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        return batch.add(
+            24,
+            pyglet.gl.GL_QUADS,
+            self.texture,
+            ("v3d/static", vertices),
+            ("t2f/static", self.texture_cache),
+            ("c4f", color*24),
+        )
+
+    def add_face_to_batch(
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        face: typing.Union[int, EnumSide],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+        color=(1, 1, 1, 1),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        result = []
+        for i in range(6):
+            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
+                continue
+
+            t = self.texture_cache[i * 8 : i * 8 + 8]
+            v = vertices[i * 12 : i * 12 + 12]
+            result.append(
+                batch.add(
+                    4,
+                    pyglet.gl.GL_QUADS,
+                    self.texture,
+                    ("v3d/static", v),
+                    ("t2f/static", t),
+                    ("c4f", color * 4),
+                )
+            )
+        return result
+
+    def draw(
+        self,
+        position: typing.Tuple[float, float, float],
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+        color=(1, 1, 1, 1),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+
+        if self.texture is not None:
+            self.texture.set_state()
+
+        pyglet.graphics.draw(
+            24,
+            pyglet.gl.GL_QUADS,
+            ("v3d/static", vertices),
+            ("t2f/static", self.texture_cache),
+            ("c4f", color * 24),
+        )
+
+        if self.texture is not None:
+            self.texture.unset_state()

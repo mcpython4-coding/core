@@ -1836,4 +1836,5 @@ IA* [uuk]: changed the way how custom block renderers are handled allowing for c
 f   [uuk]: ender chests will display now correctly "ender chest" as their GUI name
 f   [uuk]: added some behaviour stuff to activator rail
 f   [uuk]: added custom block renderer for shulker boxes
+f   [uuk]: added fluid block renderer & water & lava block
 

@@ -16,7 +16,10 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.fluid.AbstractFluid
+from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.client.rendering.blocks.FluidRenderer import FluidRenderer
+from mcpython.util.texture import hex_to_color
 
 
 class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
@@ -34,11 +37,28 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         mcpython.common.fluid.AbstractFluid.AbstractFluid
     ] = None
 
+    FLUID_RENDERER = None
+
+    IS_SOLID = False
+    DEFAULT_FACE_SOLID = mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    NO_ENTITY_COLLISION = True
+    CUSTOM_WALING_SPEED_MULTIPLIER = .3
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        if cls.NAME is not None:
+            cls.FLUID_RENDERER = FluidRenderer("{}:block/{}_still".format(*cls.NAME.split(":")))
+
     def __init__(self):
         super().__init__()
         self.is_flowing = False
         self.flow_direction = 0, 0
-        self.height = 0
+
+        self.height = 7
+
+    def on_block_added(self):
+        if shared.IS_CLIENT:
+            self.face_info.custom_renderer = self.FLUID_RENDERER
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
@@ -52,3 +72,18 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         self.is_flowing = buffer.read_bool()
         self.flow_direction = buffer.read_int(), buffer.read_int()
         self.height = buffer.read_int()
+
+
+class WaterFluidBlock(IFluidBlock):
+    NAME = "minecraft:water"
+    UNDERLYING_FLUID = "minecraft:water"
+
+
+# todo: make biome based
+WATER_COLOR = tuple(e/255 for e in hex_to_color("3F76E4")) + (1,)
+WaterFluidBlock.FLUID_RENDERER.color = lambda *_: WATER_COLOR
+
+
+class LavaFluidBlock(IFluidBlock):
+    NAME = "minecraft:lava"
+    UNDERLYING_FLUID = "minecraft:lava"
