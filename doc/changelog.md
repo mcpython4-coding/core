@@ -70,6 +70,7 @@ Backwards incompatible:
         - added basic redstone wire block, should be MOSTLY functional
         - added tinting of blocks, including the new redstone wire and grass block
         - added chest rendering with custom block renderers
+        - added shulker box renderer
 
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round

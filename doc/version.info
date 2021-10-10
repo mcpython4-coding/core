@@ -1835,4 +1835,5 @@ fA  [uuk]: added util method for calculating texture coordinates for the mc layo
 IA* [uuk]: changed the way how custom block renderers are handled allowing for custom base implementations
 f   [uuk]: ender chests will display now correctly "ender chest" as their GUI name
 f   [uuk]: added some behaviour stuff to activator rail
+f   [uuk]: added custom block renderer for shulker boxes
 
