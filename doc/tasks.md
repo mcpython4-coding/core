@@ -10,7 +10,6 @@ Issues:
 Pending for next non-snapshot release:
 - issues above
 - fix gamemode 0 (partially done)
-- shulker box rendering
 - more unit tests
 
 

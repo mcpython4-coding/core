@@ -81,6 +81,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     def __init__(self, block, types: typing.List[str]):
         super().__init__()
+
         self.block = block
         self.fuel_left = 0
         self.fuel_max = 0
@@ -90,6 +91,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         self.recipe = None
         self.progress = 0
         self.types = types
+
         if self.custom_name is None:
             self.custom_name = "Furnace"
 
@@ -126,7 +128,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def update_status(self):
         if any(
             [
-                self.slots[0].itemstack.get_item_name()
+                self.slots[0].get_itemstack().get_item_name()
                 in shared.crafting_handler.furnace_recipes[x]
                 for x in self.types
                 if x
@@ -134,26 +136,28 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             ]
         ):
             if self.fuel_left == 0:
-                if self.slots[1].itemstack.is_empty():
+                if self.slots[1].get_itemstack().is_empty():
                     self.reset()
                     return
                 # consume one fuel
                 try:
-                    fuel = self.slots[1].itemstack.item.FUEL
+                    fuel = self.slots[1].get_itemstack().item.FUEL
                     self.fuel_max = fuel
                     self.fuel_left += fuel
                 except AttributeError:
                     logger.println(
                         "[FUEL][WARNING] item '{}' was marked as fuel but did NOT have FUEL-attribute".format(
-                            self.slots[1].itemstack.get_item_name()
+                            self.slots[1].get_itemstack().get_item_name()
                         )
                     )
                     self.reset()
                     return
-                self.slots[1].itemstack.add_amount(-1)
-            if self.slots[0].itemstack.get_item_name() == self.old_item_name:
+                self.slots[1].get_itemstack().add_amount(-1)
+
+            if self.slots[0].get_itemstack().get_item_name() == self.old_item_name:
                 return
-            self.old_item_name = self.slots[0].itemstack.get_item_name()
+
+            self.old_item_name = self.slots[0].get_itemstack().get_item_name()
             self.smelt_start = time.time()
             for x in self.types:
                 if self.old_item_name in shared.crafting_handler.furnace_recipes[x]:
@@ -165,10 +169,11 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 logger.println("[ERROR] no recipe found")
                 self.reset()
                 return
-            if self.slots[2].itemstack.get_item_name() is not None and (
-                self.slots[2].itemstack.get_item_name() != recipe.output
-                or self.slots[2].itemstack.amount
-                >= self.slots[2].itemstack.item.STACK_SIZE
+
+            if self.slots[2].get_itemstack().get_item_name() is not None and (
+                self.slots[2].get_itemstack().get_item_name() != recipe.output
+                or self.slots[2].get_itemstack().amount
+                >= self.slots[2].get_itemstack().item.STACK_SIZE
             ):
                 # if not self.slots[2].itemstack.is_empty():
                 #     print(self.slots[2].itemstack.get_item_name() != recipe.output,
@@ -309,20 +314,21 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             self.progress = min(elapsed_time / self.recipe.time, 1)
             if self.progress >= 1:
                 self.finish()
-        elif not self.slots[0].itemstack.is_empty() and (
-            not self.slots[1].itemstack.is_empty() or self.fuel_left > 0
+        elif not self.slots[0].get_itemstack().is_empty() and (
+            not self.slots[1].get_itemstack().is_empty() or self.fuel_left > 0
         ):
             self.update_status()
 
     def finish(self):
-        if self.slots[2].itemstack.is_empty():
+        if self.slots[2].get_itemstack().is_empty():
             self.slots[2].set_itemstack(
                 mcpython.common.container.ResourceStack.ItemStack(self.recipe.output)
             )
         else:
-            if self.slots[2].itemstack.item.STACK_SIZE > self.slots[2].itemstack.amount:
-                self.slots[2].itemstack.add_amount(1)
-        self.slots[0].itemstack.add_amount(-1)
+            if self.slots[2].get_itemstack().item.STACK_SIZE > self.slots[2].get_itemstack().amount:
+                self.slots[2].get_itemstack().add_amount(1)
+
+        self.slots[0].get_itemstack().add_amount(-1)
         try:
             shared.world.get_active_player().add_xp(self.recipe.xp)
         except AttributeError:

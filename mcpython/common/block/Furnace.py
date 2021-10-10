@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.client.gui.InventoryFurnace
-import mcpython.common.block.IHorizontalOrientableBlock
+from mcpython.client.gui.InventoryFurnace import InventoryFurnace
+from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
@@ -20,16 +20,13 @@ from mcpython.util.enums import EnumSide
 from pyglet.window import key, mouse
 
 
-class Furnace(
-    mcpython.common.block.IHorizontalOrientableBlock.IHorizontalOrientableBlock
-):
+class Furnace(IHorizontalOrientableBlock):
     """
-    class for the furnace block
+    Class for the furnace block
     """
 
-    FURNACE_RECIPES: list = [
-        "minecraft:smelting"
-    ]  # the list of recipe groups to use for this furnace
+    # the list of recipe groups to use for this furnace
+    FURNACE_RECIPES = ["minecraft:smelting"]
 
     NAME: str = "minecraft:furnace"
 
@@ -47,9 +44,7 @@ class Furnace(
         super().__init__()
         self.active = False
 
-        self.inventory = mcpython.client.gui.InventoryFurnace.InventoryFurnace(
-            self, self.FURNACE_RECIPES
-        )
+        self.inventory = InventoryFurnace(self, self.FURNACE_RECIPES)
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
@@ -103,10 +98,10 @@ class Furnace(
 class BlastFurnace(Furnace):
     NAME: str = "minecraft:blast_furnace"
 
-    FURNACE_RECIPES: list = ["minecraft:blasting"]
+    FURNACE_RECIPES = ["minecraft:blasting"]
 
 
 class Smoker(Furnace):
     NAME: str = "minecraft:smoker"
 
-    FURNACE_RECIPES: list = ["minecraft:smoking"]
+    FURNACE_RECIPES = ["minecraft:smoking"]
