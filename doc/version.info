@@ -1841,4 +1841,5 @@ OV  [uuk]: optimised rendering of blocks by quit a bit when showing more than on
 f   [uuk]: BlockFactory supports now creating fluid blocks
 IA* [uuk]: cleaned up some stuff for the dedicated server
 IO  [uuk]: optimised chunk data storage by using new bool group handler
+SI  [uuk]: SaveFile will now use picklemagic for serialization such files
 

@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 import pickle
+
+import mcpython.util.picklemagic
 import sys
 
 import mcpython.common.event.Registry
@@ -465,7 +467,7 @@ class SaveFile:
             return
         try:
             with open(file, mode="rb") as f:
-                return pickle.load(f)
+                return mcpython.util.picklemagic.safe_loads(f.read())
         except (pickle.UnpicklingError, EOFError, ModuleNotFoundError):
             logger.print_exception(
                 "File '{}' seems to be corrupted. See error message for info, below the loading exception".format(
@@ -521,7 +523,7 @@ class SaveFile:
         if not os.path.isdir(d):
             os.makedirs(d)
         try:
-            data = pickle.dumps(data)
+            data = mcpython.util.picklemagic.safe_dumps(data)
             with open(file, mode="wb") as f:
                 return f.write(data)
         except:

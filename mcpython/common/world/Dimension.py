@@ -229,7 +229,9 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
         if (cx, cz) not in self.chunks:
             if not create:
                 return
+
             self.chunks[(cx, cz)] = mcpython.common.world.Chunk.Chunk(self, (cx, cz))
+
             if generate:
                 shared.world_generation_handler.add_chunk_to_generation_list(
                     self.chunks[(cx, cz)]

@@ -16,6 +16,7 @@ import multiprocessing
 import pickle
 import time
 import typing
+import weakref
 
 import mcpython.engine.world.AbstractInterface
 from mcpython import shared
@@ -30,7 +31,7 @@ class WorldGenerationTaskHandler:
     """
 
     def __init__(self):
-        self.chunks: typing.Set[mcpython.engine.world.AbstractInterface.IChunk] = set()
+        self.chunks: weakref.WeakSet[mcpython.engine.world.AbstractInterface.IChunk] = weakref.WeakSet()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
     def get_total_task_stats(self) -> list:

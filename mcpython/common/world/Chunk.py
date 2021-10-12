@@ -47,7 +47,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         WARNING: use Dimension.get_chunk() where possible [saver variant, will do some work in the background]
         """
         super().__init__()
-        self.dimension = weakref.proxy(dimension) if isinstance(dimension, mcpython.engine.world.AbstractInterface.IDimension) else dimension
+        self.dimension = dimension
 
         # The position of the chunk
         self.position = tuple(int(e) for e in position)
