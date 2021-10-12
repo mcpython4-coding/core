@@ -133,7 +133,7 @@ class MixinPatchHelper:
 
     def insertRegion(self, start: int, instructions: typing.List[dis.Instruction]):
         """
-        Inserts a list of instructions into the opcode list, resolving the jumps in code cirrectky
+        Inserts a list of instructions into the opcode list, resolving the jumps in code correctly
         """
         size = len(instructions)
 
@@ -193,6 +193,134 @@ class MixinPatchHelper:
         force_multiple_inlines=False,
     ):
         pass
+
+    def insertStaticMethodCallAt(self, offset: int, method: str, *args):
+        module, path = method.split(":")
+        real_name = path.split(".")[-1]
+
+        if path.count(".") > 0:
+            real_module = module + "." + ".".join(path.split(".")[:-1])
+        else:
+            real_module = module
+
+        instructions = [
+            dis.Instruction(
+                "LOAD_CONST",
+                100,
+                self.patcher.ensureConstant(0),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "LOAD_CONST",
+                100,
+                self.patcher.ensureConstant((real_name,)),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "IMPORT_NAME",
+                108,
+                self.patcher.ensure_name(real_module),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "IMPORT_FROM",
+                109,
+                self.patcher.ensure_name(real_name),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "STORE_FAST",
+                125,
+                self.patcher.ensure_name(real_module),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "POP_TOP",
+                1,
+                None,
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "LOAD_FAST",
+                124,
+                self.patcher.ensure_name(real_module),
+                None,
+                None,
+                False,
+                0,
+                0.0,
+            ),
+        ]
+
+        for arg in args:
+            instructions.append(
+                dis.Instruction(
+                    "LOAD_CONST",
+                    100,
+                    self.patcher.ensureConstant(arg),
+                    None,
+                    None,
+                    False,
+                    0,
+                    0,
+                )
+            )
+
+        instructions += [
+            dis.Instruction(
+                "CALL_FUNCTION",
+                131,
+                len(args),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "POP_TOP",
+                1,
+                0,
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+        ]
+
+        self.patcher.max_stack_size += max(2, len(args))
+        self.patcher.number_of_locals += 1
+        self.patcher.variable_names.append(real_name)
+
+        self.insertRegion(
+            offset,
+            instructions,
+        )
 
     @staticmethod
     def prepare_method_for_insert(method: FunctionPatcher) -> FunctionPatcher:

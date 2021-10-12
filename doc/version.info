@@ -1842,4 +1842,5 @@ f   [uuk]: BlockFactory supports now creating fluid blocks
 IA* [uuk]: cleaned up some stuff for the dedicated server
 IO  [uuk]: optimised chunk data storage by using new bool group handler
 SI  [uuk]: SaveFile will now use picklemagic for serialization such files
+F   [uuk]: mixin system allows now injecting static method calls
 

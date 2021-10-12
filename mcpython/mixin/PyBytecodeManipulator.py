@@ -55,8 +55,8 @@ class FunctionPatcher:
         self.constants = list(self.code.co_consts)
 
         # The local variable name table
-        self.names = self.code.co_names
-        self.variable_names = self.code.co_varnames
+        self.names = list(self.code.co_names)
+        self.variable_names = list(self.code.co_varnames)
         self.filename = self.code.co_filename
         self.name = self.code.co_name
         self.first_line_number = self.code.co_firstlineno
@@ -78,8 +78,8 @@ class FunctionPatcher:
             self.flags,
             bytes(self.code_string),
             tuple(self.constants),
-            self.names,
-            self.variable_names,
+            tuple(self.names),
+            tuple(self.variable_names),
             self.filename,
             self.name,
             self.first_line_number,
@@ -99,8 +99,8 @@ class FunctionPatcher:
                 self.flags,
                 bytes(self.code_string),
                 tuple(self.constants),
-                self.names,
-                self.variable_names,
+                tuple(self.names),
+                tuple(self.variable_names),
                 self.filename,
                 self.name,
                 self.first_line_number,
@@ -163,5 +163,21 @@ class FunctionPatcher:
         self.code_string.clear()
 
         for instr in instruction_list:
-            self.code_string.append(instr.opcode)
-            self.code_string.append(instr.arg)
+            try:
+                self.code_string.append(instr.opcode)
+
+                if instr.arg is not None:
+                    self.code_string.append(instr.arg)
+                else:
+                    self.code_string.append(0)
+
+            except:
+                print(instr)
+                raise
+
+    def ensure_name(self, name: str) -> int:
+        if name in self.names:
+            return self.names.index(name)
+
+        self.names.append(name)
+        return len(self.names) - 1

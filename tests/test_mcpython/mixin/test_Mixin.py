@@ -11,7 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from unittest import TestCase, skip
+from unittest import TestCase
+import test_mcpython.mixin.test_space
 
 
 def test():
@@ -60,3 +61,20 @@ class TestMixinHandler(TestCase):
         self.assertEqual(test(), 0)
         handler.applyMixins()
         self.assertEqual(test(), 1)
+
+    def test_mixin_static_method_call(self):
+        from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper, FunctionPatcher
+
+        def localtest():
+            return 0
+
+        patcher = FunctionPatcher(localtest)
+        helper = MixinPatchHelper(patcher)
+        helper.insertStaticMethodCallAt(1, "test_mcpython.mixin.test_space:test_for_invoke")
+        helper.store()
+        patcher.applyPatches()
+
+        count = test_mcpython.mixin.test_space.INVOKED
+        self.assertEqual(localtest(), 0)
+        self.assertEqual(test_mcpython.mixin.test_space.INVOKED, count + 1)
+
