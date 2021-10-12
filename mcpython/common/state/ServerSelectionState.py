@@ -21,7 +21,6 @@ from .ui.UIPartButton import UIPartButton
 from .ui.UIPartTextInput import UIPartTextInput
 
 
-@onlyInClient()
 class ServerSelectionState(AbstractState):
     NAME = "minecraft:server_selection"
 

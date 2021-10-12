@@ -20,7 +20,6 @@ from mcpython.util.annotation import onlyInClient
 from . import AbstractUIPart
 
 
-@onlyInClient()
 class UIPartProgressBar(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,

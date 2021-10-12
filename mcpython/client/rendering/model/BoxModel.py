@@ -612,6 +612,7 @@ class RawBoxModel(AbstractBoxModel):
             self.texture.unset_state()
 
 
+@onlyInClient()
 class MutableRawBoxModel(RawBoxModel):
     def add_to_batch(
         self,
@@ -683,6 +684,7 @@ class MutableRawBoxModel(RawBoxModel):
             previous.pop(0).vertices[:] = v
 
 
+@onlyInClient()
 class ColoredRawBoxModel(RawBoxModel):
     def add_to_batch(
         self,

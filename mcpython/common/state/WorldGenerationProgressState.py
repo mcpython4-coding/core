@@ -47,7 +47,6 @@ DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
 }
 
 
-@onlyInClient()
 class WorldGenerationProgress(AbstractState.AbstractState):
     NAME = "minecraft:world_generation"
 
@@ -287,7 +286,6 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 world_generation = None
 
 
-@onlyInClient()
 def create():
     global world_generation
     world_generation = WorldGenerationProgress()

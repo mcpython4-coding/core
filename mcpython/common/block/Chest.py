@@ -56,14 +56,28 @@ class Chest(
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
 
-    CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-        "minecraft:entity/chest/normal"
-    )
-    CHEST_BLOCK_RENDERER_CHRISTMAS = (
-        mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-            "minecraft:entity/chest/christmas"
+    if shared.IS_CLIENT:
+        CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+            "minecraft:entity/chest/normal"
         )
-    )
+        CHEST_BLOCK_RENDERER_CHRISTMAS = (
+            mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+                "minecraft:entity/chest/christmas"
+            )
+        )
+
+        # As this can be statically decided, we use this trick for some performance gain
+        if is_christmas:
+
+            def on_block_added(self):
+                self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
+                self.face_info.update(True)
+
+        else:
+
+            def on_block_added(self):
+                self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
+                self.face_info.update(True)
 
     def __init__(self):
         """
@@ -91,21 +105,6 @@ class Chest(
         self.loot_table_link = buffer.read_string()
         if self.loot_table_link == "":
             self.loot_table_link = None
-
-    # As this can be statically decided, we use this trick for some performance gain
-    if is_christmas:
-
-        def on_block_added(self):
-            if shared.IS_CLIENT:
-                self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
-                self.face_info.update(True)
-
-    else:
-
-        def on_block_added(self):
-            if shared.IS_CLIENT:
-                self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
-                self.face_info.update(True)
 
     def can_open_inventory(self) -> bool:
         """

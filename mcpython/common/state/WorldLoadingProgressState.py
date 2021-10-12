@@ -29,7 +29,6 @@ from ...engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from . import AbstractState
 
 
-@onlyInClient()
 class WorldLoadingProgress(AbstractState.AbstractState):
     NAME = "minecraft:world_loading"
 
@@ -180,7 +179,6 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 world_loading = None
 
 
-@onlyInClient()
 def create():
     global world_loading
     world_loading = WorldLoadingProgress()

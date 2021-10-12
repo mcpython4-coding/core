@@ -34,6 +34,15 @@ class ReadBuffer:
     def read_bool(self):
         return self.stream.read(1) == b"\xFF"
 
+    def read_bool_group(self, count: int):
+        for i in range(math.ceil(count/8)):
+            d = int.from_bytes(self.read_const_bytes(1), "big", signed=False)
+            s = bin(d)[2:]
+            s = "0" * (8-len(s)) + s
+            s = s[:min(8, count)]
+            yield from (e == "1" for e in s)
+            count -= 8
+
     def read_struct(self, structure: struct.Struct):
         return structure.unpack(self.stream.read(structure.size))
 
@@ -81,6 +90,12 @@ class WriteBuffer:
         # todo: add a way to compress together with following single-bool fields
         self.data.append(b"\xFF" if state else b"\x00")
         return self
+
+    def write_bool_group(self, bools: typing.List[bool]):
+        for i in range(math.ceil(len(bools)/8)):
+            bits = bools[i*8:i*8+8]
+            bits += [False] * (8-len(bits))
+            self.data.append(int("".join("0" if not e else "1" for e in bits), base=2).to_bytes(1, "big", signed=False))
 
     def write_struct(self, structure: struct.Struct, *data):
         self.data.append(structure.pack(*data))

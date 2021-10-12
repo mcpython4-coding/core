@@ -52,7 +52,6 @@ mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
 load_images()
 
 
-@onlyInClient()
 def draw_button(position, size, mode):
     if mode not in IMAGES:
         mode = ButtonMode.DISABLED
@@ -90,7 +89,6 @@ def draw_button(position, size, mode):
     )
 
 
-@onlyInClient()
 class UIPartButton(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,
@@ -196,7 +194,6 @@ class UIPartButton(AbstractUIPart.AbstractUIPart):
         self.lable.draw()
 
 
-@onlyInClient()
 class UIPartToggleButton(UIPartButton):
     def __init__(
         self,

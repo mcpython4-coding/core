@@ -22,7 +22,6 @@ from .ui import UIPartProgressBar
 from .util import update_memory_usage_bar
 
 
-@onlyInClient()
 class ModLoadingProgress(AbstractState.AbstractState):
     NAME = "minecraft:mod_loading"
 

@@ -38,7 +38,6 @@ from .ui import UIPartProgressBar
 from .util import update_memory_usage_bar
 
 
-@onlyInClient()
 class BlockItemGenerator(AbstractState.AbstractState):
     SETUP_TIME = 6
     CLEANUP_TIME = 4
@@ -361,7 +360,6 @@ class BlockItemGenerator(AbstractState.AbstractState):
 block_item_generator = None
 
 
-@onlyInClient()
 def create():
     global block_item_generator
     block_item_generator = BlockItemGenerator()

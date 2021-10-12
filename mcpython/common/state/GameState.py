@@ -24,7 +24,6 @@ from pyglet.window import key, mouse
 from . import AbstractState, GameViewStatePart
 
 
-@onlyInClient()
 class Game(AbstractState.AbstractState):
     NAME = "minecraft:game"
 
@@ -114,7 +113,6 @@ class Game(AbstractState.AbstractState):
 game = None
 
 
-@onlyInClient()
 def create():
     global game
     game = Game()

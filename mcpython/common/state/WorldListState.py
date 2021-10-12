@@ -50,20 +50,21 @@ WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
 )
 
 
-@onlyInClient()
 class WorldList(AbstractState.AbstractState):
     NAME = "minecraft:world_selection"
 
     def __init__(self):
         super().__init__()
-        self.world_data = (
-            []
-        )  # the data representing the world list; first goes first in list from above
+        # the data representing the world list; first goes in list from above
+        self.world_data = []
         self.selected_world = None
-        self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
-        self.scissor_group = mcpython.engine.rendering.RenderingGroups.ScissorGroup(
-            0, 0, 10, 10
-        )
+
+        if shared.IS_CLIENT:
+            self.selection_sprite = pyglet.sprite.Sprite(WORLD_SELECTION_SELECT)
+
+            self.scissor_group = mcpython.engine.rendering.RenderingGroups.ScissorGroup(
+                0, 0, 10, 10
+            )
 
     def create_state_renderer(self) -> typing.Any:
         from mcpython.client.state.WorldListRenderer import WorldListRenderer
@@ -271,7 +272,6 @@ class WorldList(AbstractState.AbstractState):
 world_selection = None
 
 
-@onlyInClient()
 def create():
     global world_selection
     world_selection = WorldList()

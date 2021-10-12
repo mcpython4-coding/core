@@ -18,7 +18,6 @@ from .ConfigBackgroundPart import ConfigBackground
 from .ui.UIPartLabel import UIPartLabel
 
 
-@onlyInClient()
 class ConnectingToServerState(AbstractState):
     NAME = "minecraft:server_connecting"
 

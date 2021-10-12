@@ -58,6 +58,11 @@ MULTI_TEST_POOL: typing.List[
         lambda buffer, v: buffer.write_uuid(v),
         lambda buffer, v: buffer.read_uuid() == v,
     ),
+    (
+        lambda: [bool(random.randint(0, 1)) for _ in range(random.randint(10, 50))],
+        lambda buffer, v: buffer.write_bool_group(v),
+        lambda buffer, v: list(buffer.read_bool_group(len(v))) == v
+    ),
 ]
 
 
@@ -94,6 +99,18 @@ class TestBuffer(TestCase):
         self.assertTrue(read.read_bool())
 
     # todo: some struct tests
+
+    def test_bool_group(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+        for _ in range(10):
+            group = [bool(random.randint(0, 1)) for _ in range(4, 40)]
+
+            write = WriteBuffer()
+            write.write_bool_group(group)
+
+            read = ReadBuffer(write.get_data())
+
+            self.assertEqual(list(read.read_bool_group(len(group))), group)
 
     def test_int(self):
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer

@@ -24,7 +24,6 @@ from .ui import UIPartButton
 from .util import update_memory_usage_bar
 
 
-@onlyInClient()
 class LoadingExceptionView(AbstractState.AbstractState):
     NAME = "minecraft:loading_exception"
 

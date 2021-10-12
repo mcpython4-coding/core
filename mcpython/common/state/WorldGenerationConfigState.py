@@ -29,7 +29,6 @@ from .ui import UIPartButton, UIPartTextInput
 from .ui.UIPartTextInput import INT_PATTERN
 
 
-@onlyInClient()
 class WorldGenerationConfig(AbstractState.AbstractState):
     NAME = "minecraft:world_generation_config"
 
@@ -198,7 +197,6 @@ class WorldGenerationConfig(AbstractState.AbstractState):
 world_generation_config = None
 
 
-@onlyInClient()
 def create():
     global world_generation_config
     world_generation_config = WorldGenerationConfig()

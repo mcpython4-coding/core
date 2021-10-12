@@ -23,7 +23,6 @@ from mcpython.util.annotation import onlyInClient
 from . import AbstractState
 
 
-@onlyInClient()
 class StateHandler:
     """
     Manager for states of the game.

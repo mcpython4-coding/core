@@ -19,11 +19,15 @@ import mcpython.util
 import mcpython.util.enums
 import pyglet
 
+from mcpython.util.annotation import onlyInClient
 
+
+@onlyInClient()
 class BlockStateNotNeeded(Exception):
     pass
 
 
+@onlyInClient()
 class IBlockStateRenderingTarget:
     NAME = None
 
@@ -41,6 +45,7 @@ class IBlockStateRenderingTarget:
         return 1, 1, 1, 1
 
 
+@onlyInClient()
 class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
     """
     Abstract base class for block state decoders
@@ -118,6 +123,7 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
         pass
 
 
+@onlyInClient()
 class IItemModelLoader:
     @classmethod
     def validate(cls, data: dict) -> bool:
@@ -128,6 +134,7 @@ class IItemModelLoader:
         raise NotImplementedError()
 
 
+@onlyInClient()
 class AbstractBoxModel(ABC):
     def copy(self) -> "AbstractBoxModel":
         raise NotImplementedError

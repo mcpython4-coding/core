@@ -142,6 +142,10 @@ class WorldInfoPackage(AbstractPackage):
                 logger.println(
                     "[NETWORK][WORLD] exchanging for a network sync-ed one..."
                 )
+
+                for chunk in dim.chunk_iterator():
+                    chunk.hide()
+
                 new_dim = shared.world.dimensions[
                     dim.get_dimension_id()
                 ] = NetworkSyncedDimension(
@@ -153,7 +157,6 @@ class WorldInfoPackage(AbstractPackage):
                 new_dim.world_generation_config_objects = (
                     dim.world_generation_config_objects
                 )
-                new_dim.batches = dim.batches
 
                 for entity in dim.entity_iterator():
                     entity.dimension = new_dim
@@ -220,10 +223,10 @@ class ChunkDataPackage(AbstractPackage):
 
         for b in self.blocks:
             if b is None:
-                buffer.write_string("")
+                buffer.write_bool_group([False, False])
             else:
+                buffer.write_bool_group([True, chunk.exposed(b.position)])
                 buffer.write_string(b.NAME)
-                buffer.write_bool(chunk.exposed(b.position))
                 b.write_to_network_buffer(buffer)
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
@@ -240,11 +243,12 @@ class ChunkDataPackage(AbstractPackage):
         for _ in range(16 * 256 * 16):
             name = buffer.read_string()
 
-            if name == "":
+            is_block, visible = buffer.read_bool_group(2)
+
+            if not is_block:
                 self.blocks.append(None)
             else:
                 instance = shared.registry.get_by_name("minecraft:block").get(name)()
-                visible = buffer.read_bool()
                 instance.read_from_network_buffer(buffer)
                 self.blocks.append((instance, visible))
 

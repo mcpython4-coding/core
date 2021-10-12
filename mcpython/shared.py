@@ -21,6 +21,7 @@ launch_wrapper = None
 
 invalidate_cache = "--invalidate-cache" in sys.argv
 dev_environment = True  # dynamical set on build
+NO_LOG_ESCAPE = "--no-log-escape" in sys.argv
 
 local = os.path.dirname(os.path.dirname(__file__)).replace("\\", "/")
 home = (
@@ -47,19 +48,22 @@ IS_CLIENT = True
 IS_NETWORKING = False
 IS_TEST_ENV = False
 
-# used by fml to store which mod is currently working
+# Used by the mod loading system to store the name of the mod doing stuff currently
+# Only updated when currently loading the game
 CURRENT_EVENT_SUB = None
+
+# The current mixin ref map, used by the JVM when needed
 CURRENT_REF_MAP = None
 
 STORAGE_VERSION = None  # the version of the storage format
 
-NO_LOG_ESCAPE = "--no-log-escape" in sys.argv
+# the window instance, client-only
+window = None
 
-window = None  # the window instance, client-only
+# the chat instance, client only todo: migrate to player
+chat = None
 
 world = None  # the world instance
-
-chat = None  # the chat instance todo: migrate to player
 
 event_handler = None  # the global event handler
 tick_handler = None  # the global tick handler
@@ -75,7 +79,7 @@ tag_handler = None  # the tag handler instance
 dimension_handler = None  # the dimension handler instance
 loot_table_handler = None  # the loot table manager instance
 entity_manager = None  # the entity manager instance
-capability_manager = None
+capability_manager = None  # the capability manager instance
 
 model_handler = None  # the model handler instance, client-only
 
@@ -84,6 +88,7 @@ mod_loader = None  # the mod loader instance
 
 try:
     # todo: move to separated file
+    # todo: do this only on the client!
     import mcpython.engine.rendering.RenderingHelper as _helper
 
     rendering_helper = _helper.RenderingHelper()

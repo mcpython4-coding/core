@@ -37,7 +37,8 @@ class LaunchWrapper:
 
         shared.launch_wrapper = self
 
-    def check_py_version(self):
+    @classmethod
+    def check_py_version(cls):
         # everything lower than python 3.9 is not supported, we are using python 3.9 features!
         if sys.version_info.major != 3 or sys.version_info.minor < 9:
             print(
@@ -276,9 +277,8 @@ class LaunchWrapper:
         Loads also the needed API
         todo: move more rendering setup code here
         """
-        assert (
-            shared.IS_CLIENT
-        ), "can only setup on client, this is set up for being a dedicated server"
+        if not shared.IS_CLIENT:
+            raise RuntimeError("OpenGL cannot be set up on dedicated server")
 
         import mcpython.engine.rendering.util
 
@@ -410,7 +410,8 @@ class LaunchWrapper:
 
         sys.exit(-1)
 
-    def clean(self):
+    @classmethod
+    def clean(cls):
         """
         Helper function for normal cleanup (not save, will hard-crash in some cases)
         MAY crash on non-fully stable systems

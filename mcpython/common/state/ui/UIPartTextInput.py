@@ -29,7 +29,6 @@ INT_PATTERN = "-0123456789."
 INT_PATTERN_POSITIVE = INT_PATTERN[1:]
 
 
-@onlyInClient()
 class UIPartTextInput(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,
@@ -129,7 +128,6 @@ class UIPartTextInput(AbstractUIPart.AbstractUIPart):
         self.entered_text = self.default_text
 
 
-@onlyInClient()
 class TextInputTabHandler(mcpython.common.state.AbstractStatePart.AbstractStatePart):
     def __init__(self, textinputs: list):
         super().__init__()

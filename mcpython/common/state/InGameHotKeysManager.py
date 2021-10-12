@@ -19,7 +19,6 @@ from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
 
-@onlyInClient()
 class HotKeyDefinitions(enum.Enum):
     # from https://minecraft.gamepedia.com/Debug_screen
     # todo: do NOT use a enum here, we need something extendable!

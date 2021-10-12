@@ -24,7 +24,6 @@ from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
 
-@onlyInClient()
 class IStateConfigEntry(mcpython.common.event.api.IRegistryContent):
     """
     base class for every entry in an config file
@@ -54,7 +53,6 @@ entry_registry = mcpython.common.event.Registry.Registry(
 )
 
 
-@onlyInClient()
 @shared.registry
 class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_button_default"
@@ -111,7 +109,6 @@ class UIButtonDefaultStateConfigEntry(IStateConfigEntry):
         )
 
 
-@onlyInClient()
 @shared.registry
 class UILableStateConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_lable_default"
@@ -159,7 +156,6 @@ class UILableStateConfigEntry(IStateConfigEntry):
         )
 
 
-@onlyInClient()
 @shared.registry
 class UIProgressBarConfigEntry(IStateConfigEntry):
     NAME = "minecraft:ui_progressbar"
@@ -196,7 +192,6 @@ class UIProgressBarConfigEntry(IStateConfigEntry):
         )
 
 
-@onlyInClient()
 @shared.registry
 class ConfigBackground(IStateConfigEntry):
     NAME = "minecraft:config_background"
@@ -223,14 +218,12 @@ class ConfigBackground(IStateConfigEntry):
 configs = {}
 
 
-@onlyInClient()
 def get_config(file: str):
     if file not in configs:
         configs[file] = StateConfigFile(file)
     return configs[file]
 
 
-@onlyInClient()
 class StateConfigFile:
     """
     Class for deserialize an config file for an state into an state

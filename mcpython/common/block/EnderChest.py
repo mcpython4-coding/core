@@ -39,12 +39,12 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     MINIMUM_TOOL_LEVEL = 0
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
-    CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-        "minecraft:entity/chest/ender"
-    )
+    if shared.IS_CLIENT:
+        CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+            "minecraft:entity/chest/ender"
+        )
 
-    def on_block_added(self):
-        if shared.IS_CLIENT:
+        def on_block_added(self):
             self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
 
     def on_player_interaction(

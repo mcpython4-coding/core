@@ -28,6 +28,7 @@ from mcpython.client.rendering.model.api import (
     IBlockStateDecoder,
     IBlockStateRenderingTarget,
 )
+from mcpython.client.rendering.model.BoxModel import MutableRawBoxModel
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
 
@@ -39,7 +40,6 @@ blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
 )
 
 
-@shared.registry
 class MultiPartDecoder(IBlockStateDecoder):
     """
     Decoder for mc multipart state files.
@@ -283,7 +283,6 @@ class MultiPartDecoder(IBlockStateDecoder):
         return box_model
 
 
-@shared.registry
 class DefaultDecoder(IBlockStateDecoder):
     """
     Decoder for mc block state files.
@@ -448,6 +447,11 @@ class DefaultDecoder(IBlockStateDecoder):
                     instance.NAME, instance.position, data, [e[0] for e in self.states]
                 )
             )
+
+
+if shared.IS_CLIENT:
+    shared.registry(MultiPartDecoder)
+    shared.registry(DefaultDecoder)
 
 
 class BlockStateContainer:

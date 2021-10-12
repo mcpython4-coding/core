@@ -18,7 +18,6 @@ from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 
-@onlyInClient()
 class StartMenu(mcpython.common.state.AbstractState.AbstractState):
     NAME = "minecraft:start_menu"
     CONFIG_LOCATION = "data/minecraft/states/start_menu.json"
@@ -56,7 +55,6 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
 start_menu = None
 
 
-@onlyInClient()
 def create():
     global start_menu
     start_menu = StartMenu()

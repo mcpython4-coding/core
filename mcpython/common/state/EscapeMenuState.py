@@ -27,7 +27,6 @@ from . import AbstractState, GameViewStatePart
 from .ui import UIPartButton, UIPartLabel
 
 
-@onlyInClient()
 class EscapeMenu(AbstractState.AbstractState):
     NAME = "minecraft:escape_menu"
 
@@ -115,7 +114,6 @@ class EscapeMenu(AbstractState.AbstractState):
 escape = None
 
 
-@onlyInClient()
 def create():
     global escape
     escape = EscapeMenu()

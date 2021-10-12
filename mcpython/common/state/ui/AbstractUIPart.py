@@ -18,7 +18,6 @@ from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
 
-@onlyInClient()
 class AbstractUIPart(mcpython.common.state.AbstractStatePart.AbstractStatePart, ABC):
     def __init__(
         self, position, bounding_box_size, anchor_element="WS", anchor_window="WS"

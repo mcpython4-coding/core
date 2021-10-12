@@ -32,7 +32,6 @@ scroll_inactive = mcpython.util.texture.to_pyglet_image(
 )
 
 
-@onlyInClient()
 class UIScrollBar(AbstractUIPart):
     """
     Class representing a scroll bar in a gui-state of the game

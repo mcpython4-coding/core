@@ -34,7 +34,11 @@ def create_shulker_box(name):
         MINIMUM_TOOL_LEVEL = 0
         ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
 
-        RENDERER = ShulkerBoxRenderer("minecraft:block/" + name)
+        if shared.IS_CLIENT:
+            RENDERER = ShulkerBoxRenderer("minecraft:block/" + name)
+
+            def on_block_added(self):
+                self.face_info.custom_renderer = self.RENDERER
 
         def __init__(self):
             super().__init__()
@@ -49,10 +53,6 @@ def create_shulker_box(name):
         def read_from_network_buffer(self, buffer: ReadBuffer):
             super().read_from_network_buffer(buffer)
             self.inventory.read_from_network_buffer(buffer)
-
-        def on_block_added(self):
-            if shared.IS_CLIENT:
-                self.face_info.custom_renderer = self.RENDERER
 
         def on_player_interaction(
             self, player, button: int, modifiers: int, hit_position: tuple

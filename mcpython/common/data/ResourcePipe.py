@@ -169,10 +169,12 @@ class ResourcePipeHandler:
         if mcpython.common.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
             shared.event_handler.call("data:shuffle:all")
 
-        shared.inventory_handler.reload_config()  # reloads inventory configuration
-        shared.model_handler.reload_models()
-        mcpython.engine.rendering.util.setup()
-        # todo: regenerate block item images, regenerate item atlases
+        if shared.IS_CLIENT:
+            shared.inventory_handler.reload_config()  # reloads inventory configuration
+            shared.model_handler.reload_models()
+            mcpython.engine.rendering.util.setup()
+
+            # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
         [

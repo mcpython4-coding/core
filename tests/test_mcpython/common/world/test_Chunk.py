@@ -83,7 +83,9 @@ class TestChunk(TestCase):
     def test_add_block_by_str(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         b = instance.add_block((0, 0, 0), "test:block")
         self.assertEqual(instance.get_block((0, 0, 0)), b)
 
@@ -92,21 +94,27 @@ class TestChunk(TestCase):
     def test_add_block_by_instance(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         b = instance.add_block((0, 0, 0), test_block)
         self.assertEqual(instance.get_block((0, 0, 0)), b)
 
     def test_add_block_out_of_bounds(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         instance.add_block((0, -10, 0), test_block)
         self.assertEqual(instance.get_block((0, -10, 0)), None)
 
     def test_add_block_non_integer(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         self.assertRaises(
             ValueError, lambda: instance.add_block((0, 0, 0.10), test_block)
         )
@@ -114,7 +122,9 @@ class TestChunk(TestCase):
     def test_add_block_air_via_None(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         instance.add_block((0, 0, 0), test_block)
         instance.add_block((0, 0, 0), None)
         self.assertEqual(instance.get_block((0, 0, 0)), None)
@@ -122,7 +132,9 @@ class TestChunk(TestCase):
     def test_add_block_air_via_name(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         instance.add_block((0, 0, 0), test_block)
         instance.add_block((0, 0, 0), "air")
         self.assertEqual(instance.get_block((0, 0, 0)), None)
@@ -130,7 +142,9 @@ class TestChunk(TestCase):
     def test_add_block_air_via_namespaced_name(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         instance.add_block((0, 0, 0), test_block)
         instance.add_block((0, 0, 0), "minecraft:air")
         self.assertEqual(instance.get_block((0, 0, 0)), None)
@@ -138,7 +152,9 @@ class TestChunk(TestCase):
     def test_add_block_invalid_name(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         instance.add_block((0, 0, 0), test_block)
         instance.add_block((0, 0, 0), "test:invalid")
         self.assertEqual(instance.get_block((0, 0, 0)), None)
@@ -146,7 +162,9 @@ class TestChunk(TestCase):
     def test_remove_block_by_position(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         instance.add_block((0, 0, 0), "test:block")
         instance.remove_block((0, 0, 0))
         self.assertEqual(instance.get_block((0, 0, 0)), None)
@@ -157,7 +175,9 @@ class TestChunk(TestCase):
     def test_remove_block_by_instance(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         b = instance.add_block((0, 0, 0), "test:block")
         instance.remove_block(b)
         self.assertEqual(instance.get_block((0, 0, 0)), None)
@@ -165,5 +185,7 @@ class TestChunk(TestCase):
     def test_safe_removal_when_not_in_world(self):
         from mcpython.common.world.Chunk import Chunk
 
-        instance = Chunk(FakeDim(), (0, 0))
+        dim = FakeDim()
+
+        instance = Chunk(dim, (0, 0))
         instance.remove_block((0, 0, 0))

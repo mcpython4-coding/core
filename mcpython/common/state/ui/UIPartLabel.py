@@ -21,7 +21,6 @@ from pyglet.window import mouse
 from . import AbstractUIPart
 
 
-@onlyInClient()
 class UIPartLabel(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,

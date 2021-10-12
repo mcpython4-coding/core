@@ -20,7 +20,6 @@ from pyglet.window import mouse
 from . import AbstractUIPart
 
 
-@onlyInClient()
 class UIPartImage(AbstractUIPart.AbstractUIPart):
     def __init__(
         self,
