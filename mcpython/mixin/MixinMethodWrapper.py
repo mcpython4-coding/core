@@ -46,13 +46,6 @@ def mixin_return(value=None):
     """
 
 
-def capture_local(name: str):
-    """
-    Invoke in a mixin injected method to get a local variable by name from the outer method
-    Will optimise into a load_fast call
-    """
-
-
 OFFSET_JUMPS = ("JUMP_FORWARD", "FOR_ITER", "SETUP_FINALLY")
 REAL_JUMPS = (
     "POP_JUMP_IF_TRUE",
@@ -84,7 +77,10 @@ class MixinPatchHelper:
         """
         Deletes a region from start (including) to end (excluding) of the code, rebinding jumps and similar calls
         outside the region
-        If safety is True, will ensure no direct jumps occur in this region
+        If safety is True, will ensure no direct jumps occur into this region
+        (This is done during code walking for jump resolving)
+
+        WARNING: the user is required to make sure that stack & variable constraints still hold
         """
         i = 0
         size = end - start
@@ -134,6 +130,8 @@ class MixinPatchHelper:
     def insertRegion(self, start: int, instructions: typing.List[dis.Instruction]):
         """
         Inserts a list of instructions into the opcode list, resolving the jumps in code correctly
+
+        WARNING: the user is required to make sure that stack & variable constraints still hold
         """
         size = len(instructions)
 
@@ -176,7 +174,7 @@ class MixinPatchHelper:
             + self.instruction_listing[start - 1 :]
         )
 
-    def insertMethodAt(self, start: int, method: FunctionPatcher):
+    def insertMethodAt(self, start: int, method: FunctionPatcher, force_inline=True):
         """
         Inserts a method body at the given position
         Does some magic for linking the code
@@ -184,7 +182,7 @@ class MixinPatchHelper:
 
         Will not modify the passed method. Will copy that object
         """
-        method = self.prepare_method_for_insert(method)
+        raise RuntimeError
 
     def insertMethodMultipleTimesAt(
         self,
@@ -192,9 +190,28 @@ class MixinPatchHelper:
         method: FunctionPatcher,
         force_multiple_inlines=False,
     ):
-        pass
+        """
+        Similar to insertMethodAt(), but is able to do some more optimisations in how to inject the method.
+        Works best when used with multiple injection targets
+        :param start: the start to inject at
+        :param method: the method to inject
+        :param force_multiple_inlines: if we should force multiple inlines for each method call, or if we can
+            optimise stuff
+        """
+        raise RuntimeError
 
     def insertStaticMethodCallAt(self, offset: int, method: str, *args):
+        """
+        Injects a static method call into another method
+        :param offset: the offset to inject at, from function head
+        :param method: the method address to inject, by module:path
+        :param args: the args to invoke with
+
+        WARNING: due to the need of a dynamic import instruction, the method to inject into cannot lie in the same
+            package as the method call to inject
+        todo: add option to load the method beforehand and inject as constant
+        """
+
         module, path = method.split(":")
         real_name = path.split(".")[-1]
 

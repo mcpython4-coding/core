@@ -18,7 +18,7 @@ import typing
 import mcpython.mixin.PyBytecodeManipulator
 
 from ..engine import logger
-from .MixinMethodWrapper import capture_local, mixin_return
+from .MixinMethodWrapper import mixin_return
 
 
 class AbstractMixinProcessor:

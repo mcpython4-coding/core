@@ -18,7 +18,6 @@ import mcpython.common.event.api
 import mcpython.util
 import mcpython.util.enums
 import pyglet
-
 from mcpython.util.annotation import onlyInClient
 
 

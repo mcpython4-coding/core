@@ -31,7 +31,9 @@ class WorldGenerationTaskHandler:
     """
 
     def __init__(self):
-        self.chunks: weakref.WeakSet[mcpython.engine.world.AbstractInterface.IChunk] = weakref.WeakSet()
+        self.chunks: weakref.WeakSet[
+            mcpython.engine.world.AbstractInterface.IChunk
+        ] = weakref.WeakSet()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
     def get_total_task_stats(self) -> list:

@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import enum
 import types
 import typing
+
 from mcpython import shared
 
 
@@ -24,14 +25,17 @@ def onlyInClient() -> typing.Callable:
     if shared.IS_CLIENT:
         return lambda a: a
     else:
+
         def annotate(obj):
             if isinstance(obj, types.FunctionType):
+
                 def replace(*_, **__):
                     raise NotImplementedError(obj, _, __)
 
                 return replace
 
             else:
+
                 class Replacement:
                     pass
 

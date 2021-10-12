@@ -40,8 +40,10 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
 
     if shared.IS_CLIENT:
-        CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-            "minecraft:entity/chest/ender"
+        CHEST_BLOCK_RENDERER = (
+            mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+                "minecraft:entity/chest/ender"
+            )
         )
 
         def on_block_added(self):

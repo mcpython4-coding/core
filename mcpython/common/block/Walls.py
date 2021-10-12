@@ -35,7 +35,9 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     )
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = (
+        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    )
 
     def __init__(self):
         super().__init__()

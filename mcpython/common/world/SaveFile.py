@@ -13,13 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 import pickle
-
-import mcpython.util.picklemagic
 import sys
 
 import mcpython.common.event.Registry
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
+import mcpython.util.picklemagic
 import simplejson as json
 from mcpython import shared
 from mcpython.engine import logger

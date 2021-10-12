@@ -48,7 +48,12 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        if cls.NAME is not None and cls.NAME != "minecraft:unknown_registry_content" and not shared.IS_TEST_ENV and shared.IS_CLIENT:
+        if (
+            cls.NAME is not None
+            and cls.NAME != "minecraft:unknown_registry_content"
+            and not shared.IS_TEST_ENV
+            and shared.IS_CLIENT
+        ):
             cls.FLUID_RENDERER = FluidRenderer(
                 "{}:block/{}_still".format(*cls.NAME.split(":"))
             )

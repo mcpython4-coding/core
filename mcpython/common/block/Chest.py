@@ -57,8 +57,10 @@ class Chest(
     )
 
     if shared.IS_CLIENT:
-        CHEST_BLOCK_RENDERER = mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-            "minecraft:entity/chest/normal"
+        CHEST_BLOCK_RENDERER = (
+            mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+                "minecraft:entity/chest/normal"
+            )
         )
         CHEST_BLOCK_RENDERER_CHRISTMAS = (
             mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
