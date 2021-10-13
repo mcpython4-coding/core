@@ -93,21 +93,20 @@ del _ADVANCED_FACES
 
 RANDOM_TICK_RANGE = 2  # how far to execute random ticks away from player
 
-USE_MISSING_TEXTURES_ON_MISS_TEXTURE = (
-    False  # if missing texture should be used when no texture was selected for an face
-)
+# if missing texture should be used when no texture was selected for an face
+USE_MISSING_TEXTURES_ON_MISS_TEXTURE = False
 
 USE_MIP_MAPPING = True
 
 CPU_USAGE_REFRESH_TIME = 0.8  # how often to refresh cpu usage indicator
 
-FOG_DISTANCE = (
-    60  # something like view distance, but will no force the chunks to generate
-)
+# something like view distance, but will not force the chunks to generate
+FOG_DISTANCE = 60
 
 
+# a dict of biome name: height range storing the internal height range
 BIOME_HEIGHT_RANGE_MAP = (
-    {  # an dict of biome name: height range storing the internal height range
+    {
         "minecraft:dessert": (10, 30),
         "minecraft:mountains": (10, 50),
     }
@@ -118,15 +117,8 @@ BIOME_HEIGHT_RANGE_MAP = (
 # CHUNK_GENERATION_RANGE * 2 + 1 -size
 CHUNK_GENERATION_RANGE = 1
 
-WRITE_NOT_FORMATTED_EXCEPTION = (
-    False  # if exceptions should be not formatted-printed to console by logger
-)
-
-ENABLE_PROFILING = False
-
-ENABLE_PROFILER_DRAW = True
-ENABLE_PROFILER_TICK = False
-ENABLE_PROFILER_GENERATION = False
+# if exceptions should be not formatted-printed to console by logger
+WRITE_NOT_FORMATTED_EXCEPTION = False
 
 SHUFFLE_DATA = False
 SHUFFLE_INTERVAL = -1
@@ -372,12 +364,6 @@ def load():
         BIOME_HEIGHT_RANGE_MAP["minecraft:plains"] = biomeconfig[
             "minecraft:plains"
         ].read()
-
-        global ENABLE_PROFILING, ENABLE_PROFILER_DRAW, ENABLE_PROFILER_TICK, ENABLE_PROFILER_GENERATION
-        ENABLE_PROFILING = profiler["enable"].read()
-        ENABLE_PROFILER_DRAW = profiler["total_draw"].read()
-        ENABLE_PROFILER_TICK = profiler["total_tick"].read()
-        ENABLE_PROFILER_GENERATION = profiler["generation"].read()
 
         global SHUFFLE_DATA, SHUFFLE_INTERVAL
         SHUFFLE_DATA = misc["enable_mixing_data"].read()

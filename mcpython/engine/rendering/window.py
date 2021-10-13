@@ -95,16 +95,8 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         # write window instance to globals.py for sharing
         shared.window = self
 
-        # Whether or not the window exclusively captures the mouse.
+        # Whether the window exclusively captures the mouse.
         self.exclusive = False
-
-        # Strafing is moving lateral to the direction you are facing,
-        # e.g. moving to the left or right while continuing to face forward.
-        #
-        # First element is -1 when moving forward, 1 when moving back, and 0
-        # otherwise. The second element is -1 when moving left, 1 when moving
-        # right, and 0 otherwise. todo: move to player's movement-attribute
-        self.strafe = [0, 0]
 
         # Which sector the player is currently in.
         self.sector = None  # todo: move to player
@@ -169,9 +161,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         }
         self.mouse_position = (0, 0)
 
-        self.draw_profiler = cProfile.Profile()  # todo: move to separated class
-        self.tick_profiler = cProfile.Profile()  # todo: move to separated class
-
         self.keys = key.KeyStateHandler()  # key handler from pyglet
 
         # todo: move to separated class
@@ -180,7 +169,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
     def load(self):
         # This call schedules the `update()` method to be called 20 times per sec. This is the main game event loop.
         pyglet.clock.schedule_interval(self.update, 0.05)
-        pyglet.clock.schedule_interval(self.print_profiler, 10)
 
         mcpython.common.state.StateHandler.load_states()
 
@@ -198,22 +186,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:copy_block_or_entity_data", self.get_block_entity_info
         )
-
-    def print_profiler(self, dt=None):
-        """
-        Will print the enabled profiler(s)
-        todo: move to separated Profiler class
-        """
-        if not mcpython.common.config.ENABLE_PROFILING:
-            return
-
-        if mcpython.common.config.ENABLE_PROFILER_DRAW:
-            self.draw_profiler.print_stats(1)
-            self.draw_profiler.clear()
-
-        if mcpython.common.config.ENABLE_PROFILER_TICK:
-            self.tick_profiler.print_stats(1)
-            self.tick_profiler.clear()
 
     def reset_caption(self):
         """
@@ -250,28 +222,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         dz = math.sin(math.radians(x - 90)) * m
         return dx, dy, dz
 
-    def get_motion_vector(self) -> tuple:
-        """
-        Returns the current motion vector indicating the velocity of the
-        player.
-        :return: vector: Tuple containing the velocity in x, y, and z respectively.
-        todo: integrate into player movement
-        """
-        if any(self.strafe):
-            x, y, _ = shared.world.get_active_player().rotation
-            strafe = math.degrees(math.atan2(*self.strafe))
-            y_angle = math.radians(y)
-            x_angle = math.radians(x + strafe)
-            dy = 0.0
-            dx = math.cos(x_angle)
-            dz = math.sin(x_angle)
-        else:
-            dy = 0.0
-            dx = 0.0
-            dz = 0.0
-
-        return dx, dy, dz
-
     def update(self, dt: float):
         """
         This method is scheduled to be called repeatedly by the pyglet clock.
@@ -279,11 +229,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         todo: move to TickHandler
         """
-        if (
-            mcpython.common.config.ENABLE_PROFILER_TICK
-            and mcpython.common.config.ENABLE_PROFILING
-        ):
-            self.tick_profiler.enable()
 
         shared.event_handler.call("gameloop:tick:start", dt)
 
@@ -317,12 +262,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             self.sector = sector
 
         shared.event_handler.call("tickhandler:general", dt)
-
-        if (
-            mcpython.common.config.ENABLE_PROFILER_TICK
-            and mcpython.common.config.ENABLE_PROFILING
-        ):
-            self.tick_profiler.disable()
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         """
@@ -438,13 +377,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         shared.rendering_helper.deleteSavedStates()  # make sure that everything is cleared
         # make sure that the state of the rendering helper is saved for later usage
         state = shared.rendering_helper.save_status(False)
-
-        # check for profiling
-        if (
-            mcpython.common.config.ENABLE_PROFILER_DRAW
-            and mcpython.common.config.ENABLE_PROFILING
-        ):
-            self.draw_profiler.enable()
 
         self.clear()  # clear the screen
         glClearColor(1, 1, 1, 1)

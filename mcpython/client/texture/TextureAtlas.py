@@ -22,9 +22,14 @@ import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
-MISSING_TEXTURE = mcpython.engine.ResourceLoader.read_image(
-    "assets/missing_texture.png"
-).resize((16, 16), PIL.Image.NEAREST)
+
+# We need the missing texture image only on the client, the server will never need this
+if shared.IS_CLIENT and not shared.IS_TEST_ENV:
+    MISSING_TEXTURE = mcpython.engine.ResourceLoader.read_image(
+        "assets/missing_texture.png"
+    ).resize((16, 16), PIL.Image.NEAREST)
+else:
+    MISSING_TEXTURE = PIL.Image.new("RGBA", (16, 16))
 
 
 @onlyInClient()
@@ -39,10 +44,11 @@ class TextureAtlasGenerator:
         self.atlases: typing.Dict[typing.Hashable, typing.List[TextureAtlas]] = {}
 
     def add_image(
-        self, image: PIL.Image.Image, identifier: typing.Hashable
+        self, image: PIL.Image.Image, identifier: typing.Hashable = None,
     ) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
         """
         Adds a single pillow image to the underlying atlas system
+        identifier is a 'namespace' this texture should be stored in
         """
         image = image.crop((0, 0, image.size[0], image.size[0]))
 
@@ -57,7 +63,7 @@ class TextureAtlasGenerator:
         )
 
     def add_image_file(
-        self, file: str, identifier: str
+        self, file: str, identifier: typing.Hashable = None,
     ) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
         """
         Adds a single image by file name (loadable by resource system!)
@@ -67,7 +73,7 @@ class TextureAtlasGenerator:
         )
 
     def add_images(
-        self, images: typing.List[PIL.Image.Image], identifier: str, single_atlas=True
+        self, images: typing.List[PIL.Image.Image], identifier: typing.Hashable = None, single_atlas=True
     ) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
         if len(images) == 0:
             return []
@@ -87,7 +93,7 @@ class TextureAtlasGenerator:
         return [(atlas.add_image(image), atlas) for image in images]
 
     def add_image_files(
-        self, files: list, identifier: str, single_atlas=True
+        self, files: list, identifier: typing.Hashable = None, single_atlas=True
     ) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
         return self.add_images(
             [mcpython.engine.ResourceLoader.read_image(x) for x in files],

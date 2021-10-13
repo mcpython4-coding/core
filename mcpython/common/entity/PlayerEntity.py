@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import math
 import typing
 
 import mcpython.client.gui.Slot
@@ -22,6 +23,7 @@ import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
 from mcpython import shared
+from mcpython.common.config import JUMP_SPEED
 from mcpython.common.network.packages.PlayerInfoPackages import PlayerUpdatePackage
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
@@ -80,6 +82,14 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         # how far did we fall?
         self.fallen_since_y: float = -1
 
+        # Strafing is moving lateral to the direction you are facing,
+        # e.g. moving to the left or right while continuing to face forward.
+        #
+        # First element is -1 when moving forward, 1 when moving back, and 0
+        # otherwise. The second element is -1 when moving left, 1 when moving
+        # right, and 0 otherwise.
+        self.strafe = [0, 0]
+
         # which slot is currently selected
         self.active_inventory_slot: int = 0
 
@@ -118,8 +128,33 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         self.is_in_init = False
 
+    def get_jump_speed(self):
+        return JUMP_SPEED
+
     def get_collision_box(self):
         return self.BOUNDING_BOX
+
+    def get_motion_vector(self) -> tuple:
+        """
+        Returns the current motion vector indicating the velocity of the
+        player.
+        :return: vector: Tuple containing the velocity in x, y, and z respectively.
+        todo: integrate into player movement
+        """
+        if any(self.strafe):
+            x, y, _ = shared.world.get_active_player().rotation
+            strafe = math.degrees(math.atan2(*self.strafe))
+            y_angle = math.radians(y)
+            x_angle = math.radians(x + strafe)
+            dy = 0.0
+            dx = math.cos(x_angle)
+            dz = math.sin(x_angle)
+        else:
+            dy = 0.0
+            dx = 0.0
+            dz = 0.0
+
+        return dx, dy, dz
 
     def __repr__(self):
         return super().__repr__() + "::" + self.name

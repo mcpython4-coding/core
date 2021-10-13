@@ -471,7 +471,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 speed *= block_inst.CUSTOM_WALING_SPEED_MULTIPLIER
 
         d = dt * speed  # distance covered this tick.
-        dx, dy, dz = shared.window.get_motion_vector()
+        dx, dy, dz = player.get_motion_vector()
         # New position in space, before accounting for gravity.
         dx, dy, dz = dx * d, dy * d, dz * d
         # gravity
@@ -538,10 +538,12 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 self.calculate_new_break_time()
 
     def on_key_press(self, symbol: int, modifiers: int):
+        player = shared.world.get_active_player()
+
         if not self.activate_keyboard:
             return
 
-        # does an hotkey override this key?
+        # does a hotkey override this key?
         for hotkey in self.active_hotkeys:
             if hotkey.blocks(symbol, modifiers):
                 return
@@ -550,39 +552,37 @@ class GameView(AbstractStatePart.AbstractStatePart):
             return
 
         if symbol == key.W and not shared.window.keys[key.S]:
-            shared.window.strafe[0] = -1
+            player.strafe[0] = -1
         elif symbol == key.S and not shared.window.keys[key.W]:
-            shared.window.strafe[0] = 1
+            player.strafe[0] = 1
         elif symbol == key.A and not shared.window.keys[key.D]:
-            shared.window.strafe[1] = -1
+            player.strafe[1] = -1
         elif symbol == key.D and not shared.window.keys[key.A]:
-            shared.window.strafe[1] = 1
+            player.strafe[1] = 1
 
         elif (
             symbol == key.SPACE
-            and shared.world.get_active_player().inventory_chat
+            and player.inventory_chat
             not in shared.inventory_handler.open_containers
         ):
             if (
                 self.double_space_cooldown
                 and time.time() - self.double_space_cooldown < 0.5
-                and shared.world.get_active_player().gamemode == 1
+                and player.gamemode == 1
             ):
-                shared.world.get_active_player().flying = (
-                    not shared.world.get_active_player().flying
-                )
+                player.flying = not player.flying
                 self.double_space_cooldown = None
             else:
                 if shared.window.dy == 0:
-                    shared.window.dy = JUMP_SPEED
+                    shared.window.dy = player.get_jump_speed()
 
         elif (
             symbol in shared.window.num_keys
-            and shared.world.get_active_player().gamemode in (0, 1)
+            and player.gamemode in (0, 1)
             and not modifiers & key.MOD_SHIFT
         ):
             index = symbol - shared.window.num_keys[0]
-            shared.world.get_active_player().set_active_inventory_slot(index)
+            player.set_active_inventory_slot(index)
             if shared.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_break_time()
 
@@ -590,23 +590,25 @@ class GameView(AbstractStatePart.AbstractStatePart):
         if not self.activate_keyboard:
             return
 
+        player = shared.world.get_active_player()
+
         # todo: make this configurable
         if symbol == key.W:
-            shared.window.strafe[0] = 0 if not shared.window.keys[key.S] else 1
+            player.strafe[0] = 0 if not shared.window.keys[key.S] else 1
         elif symbol == key.S:
-            shared.window.strafe[0] = 0 if not shared.window.keys[key.W] else -1
+            player.strafe[0] = 0 if not shared.window.keys[key.W] else -1
         elif symbol == key.A:
-            shared.window.strafe[1] = 0 if not shared.window.keys[key.D] else 1
+            player.strafe[1] = 0 if not shared.window.keys[key.D] else 1
         elif symbol == key.D:
-            shared.window.strafe[1] = 0 if not shared.window.keys[key.A] else -1
+            player.strafe[1] = 0 if not shared.window.keys[key.A] else -1
         elif symbol == key.SPACE:
             self.double_space_cooldown = time.time()
 
     def on_mouse_scroll(self, x: int, y: int, scroll_x: int, scroll_y: int):
         if self.activate_mouse and shared.window.exclusive:
-            shared.world.get_active_player().active_inventory_slot -= scroll_y
-            shared.world.get_active_player().active_inventory_slot = round(
-                abs(shared.world.get_active_player().active_inventory_slot % 9)
-            )
+            player = shared.world.get_active_player()
+
+            player.active_inventory_slot -= scroll_y
+            player.active_inventory_slot = round(abs(player.active_inventory_slot % 9))
             if shared.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_break_time()
