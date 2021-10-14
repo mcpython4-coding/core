@@ -46,8 +46,10 @@ class TestFaceInfo(TestCase):
         self.assertFalse(info.is_shown())
 
     def test_show_hide_face_custom_renderer(self):
+        from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
+            ICustomBlockRenderer,
+        )
         from mcpython.common.block.FaceInfo import FaceInfo
-        from mcpython.client.rendering.blocks.ICustomBlockRenderer import ICustomBlockRenderer
 
         block = Weakable()
 
@@ -78,4 +80,3 @@ class TestFaceInfo(TestCase):
         self.assertTrue(instance.hit_hide)
         self.assertFalse(info.subscribed_renderer)
         self.assertFalse(info.is_shown())
-

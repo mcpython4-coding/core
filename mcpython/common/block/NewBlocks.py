@@ -732,13 +732,55 @@ DEFERRED_PIPE.create_later(
 stone_like("ice")  # todo: melting
 
 # todo: add infection
-stone_like("infested_chiseled_stone_bricks", texture="minecraft:block/chiseled_stone_bricks")
-stone_like("infested_cobblestone", texture="minecraft:block/cobblestone")
-stone_like("infested_cracked_stone_bricks", texture="minecraft:block/cracked_stone_bricks")
-stone_like("infested_deepslate", texture="minecraft:block/deepslate")
-stone_like("infested_mossy_stone_bricks", texture="minecraft:block/mossy_stone_bricks")
-stone_like("infested_stone", texture="minecraft:block/stone")
-stone_like("infested_stone_bricks", texture="minecraft:block/stone_bricks")
+stone_like(
+    "infested_chiseled_stone_bricks",
+    texture="minecraft:block/chiseled_stone_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "infested_cobblestone",
+    texture="minecraft:block/cobblestone",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "infested_cracked_stone_bricks",
+    texture="minecraft:block/cracked_stone_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "infested_deepslate",
+    texture="minecraft:block/deepslate",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "infested_mossy_stone_bricks",
+    texture="minecraft:block/mossy_stone_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "infested_stone",
+    texture="minecraft:block/stone",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
+stone_like(
+    "infested_stone_bricks",
+    texture="minecraft:block/stone_bricks",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+)
 
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:iron_bars").set_fence())
 stone_like("iron_block")
