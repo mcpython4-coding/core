@@ -26,6 +26,7 @@ import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
 import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
+from mcpython.common.block.FlowerLikeBlock import FlowerLikeBlock
 from mcpython.common.block.FluidBlock import IFluidBlock
 from mcpython.common.block.IAllDirectionOrientableBlock import (
     IAllDirectionOrientableBlock,
@@ -132,6 +133,15 @@ def set_horizontal_orientable(instance: FactoryBuilder.IFactory):
 )
 def set_button(instance: FactoryBuilder.IFactory):
     instance.base_classes.append(IButton)
+    instance.set_solid(False).set_all_side_solid(False)
+    return instance
+
+
+@block_factory_builder.register_configurator(
+    FactoryBuilder.AnnotationFactoryConfigurator("set_flower_like")
+)
+def set_flower_like(instance: FactoryBuilder.IFactory):
+    instance.base_classes.append(FlowerLikeBlock)
     instance.set_solid(False).set_all_side_solid(False)
     return instance
 

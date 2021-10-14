@@ -1845,4 +1845,5 @@ SI  [uuk]: SaveFile will now use picklemagic for serialization such files
 F   [uuk]: mixin system allows now injecting static method calls
 f   [uuk]: ItemModels do now correctly decode the elements tag
 IR  [uuk]: IS_SOLID will now be not automatically set on the AbstractBlock instance on registration
+F   [uuk]: added base class for flower-like blocks
 

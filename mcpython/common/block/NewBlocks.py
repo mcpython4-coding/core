@@ -30,13 +30,11 @@ DEFERRED_PIPE: DeferredRegistry = shared.registry.get_by_name(
 
 
 def plant(name: str):
-    return (
-        BlockFactory()
-        .set_name(name)
-        .set_solid(False)
-        .set_all_side_solid(False)
-        .set_strength(0)
-    )
+    return BlockFactory().set_name(name).set_strength(0).set_flower_like()
+
+
+def large_plant(name: str):
+    return plant(name).set_default_model_state("half=lower")
 
 
 def wood(name: str, normal=True):
@@ -239,9 +237,25 @@ def colored(name: str):
     stone_like(f"{name}_wool")
 
 
+# Technical blocks
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:barrier")
+    .set_break_able_flag(False)
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+
+# Wood based
 wood("acacia")
 
-DEFERRED_PIPE.create_later(plant("minecraft:allium"))
+# Stone based
+stone_like("andesite")
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:basalt").set_log())
+
+# Value blocks
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:ancient_debris"))
+
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:amethyst_block"))
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -250,10 +264,10 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
     .set_default_model_state("facing=up")
 )
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:ancient_debris"))
 
-stone_like("andesite")
-
+# Nature blocks
+DEFERRED_PIPE.create_later(plant("minecraft:allium"))
+DEFERRED_PIPE.create_later(plant("minecraft:azure_bluet"))
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:azalea_leaves")
@@ -266,19 +280,13 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
-DEFERRED_PIPE.create_later(plant("minecraft:azure_bluet"))
 DEFERRED_PIPE.create_later(
     plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small")
 )
 DEFERRED_PIPE.create_later(plant("minecraft:bamboo_sapling"))
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:barrier")
-    .set_break_able_flag(False)
-    .set_all_side_solid(False)
-    .set_solid(False)
-)
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:basalt").set_log())
+
+# Unsorted
+
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:beacon")
@@ -787,104 +795,88 @@ stone_like("iron_block")
 # todo: iron door
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:iron_ore"))
 # todo: iron trapdoor, item frame
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:jack_o_lantern").set_horizontal_orientable()
+)
+# todo: jigsaw block
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:jukebox"))
+wood("jungle")
+DEFERRED_PIPE.create_later(plant("minecraft:kelp"))
+DEFERRED_PIPE.create_later(plant("minecraft:kelp_plant"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:ladder")
+    .set_horizontal_orientable()
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:lantern")
+    .set_default_model_state("hanging=false")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+stone_like(
+    "lapis_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:lapis_ore"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:large_amethyst_bud")
+    .set_all_direction_orientable()
+)
+DEFERRED_PIPE.create_later(large_plant("minecraft:large_fern"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:lava_cauldron")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:lectern")
+    .set_horizontal_orientable()
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:lever")
+    .set_default_model_state("face=ceiling,facing=north,powered=false")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+# todo: light
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:lightning_rod")
+    .set_default_model_state("facing=west,powered=false")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+colored("light_blue")
+colored("light_gray")
+# todo: light_weighted_pressure_plate
+DEFERRED_PIPE.create_later(large_plant("minecraft:lilac"))
+DEFERRED_PIPE.create_later(plant("minecraft:lily_of_the_valley"))
+DEFERRED_PIPE.create_later(plant("minecraft:lily_pad").set_horizontal_orientable())
+colored("lime")
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:lodestone"))
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:loom").set_horizontal_orientable()
+)
+colored("magenta")
+stone_like(
+    "magma_block",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    texture="minecraft:block/magma",
+)
 
 # All remaining blocks, by blockstate
 """
-jack_o_lantern
-jigsaw
-jukebox
-jungle_button
-jungle_door
-jungle_fence
-jungle_fence_gate
-jungle_leaves
-jungle_log
-jungle_planks
-jungle_pressure_plate
-jungle_sapling
-jungle_sign
-jungle_slab
-jungle_stairs
-jungle_trapdoor
-jungle_wall_sign
-jungle_wood
-kelp
-kelp_plant
-ladder
-lantern
-lapis_block
-lapis_ore
-large_amethyst_bud
-large_fern
-lava
-lava_cauldron
-lectern
-lever
-light
-lightning_rod
-light_blue_banner
-light_blue_bed
-light_blue_candle
-light_blue_candle_cake
-light_blue_carpet
-light_blue_concrete
-light_blue_concrete_powder
-light_blue_glazed_terracotta
-light_blue_shulker_box
-light_blue_stained_glass
-light_blue_stained_glass_pane
-light_blue_terracotta
-light_blue_wall_banner
-light_blue_wool
-light_gray_banner
-light_gray_bed
-light_gray_candle
-light_gray_candle_cake
-light_gray_carpet
-light_gray_concrete
-light_gray_concrete_powder
-light_gray_glazed_terracotta
-light_gray_shulker_box
-light_gray_stained_glass
-light_gray_stained_glass_pane
-light_gray_terracotta
-light_gray_wall_banner
-light_gray_wool
-light_weighted_pressure_plate
-lilac
-lily_of_the_valley
-lily_pad
-lime_banner
-lime_bed
-lime_candle
-lime_candle_cake
-lime_carpet
-lime_concrete
-lime_concrete_powder
-lime_glazed_terracotta
-lime_shulker_box
-lime_stained_glass
-lime_stained_glass_pane
-lime_terracotta
-lime_wall_banner
-lime_wool
-lodestone
-loom
-magenta_banner
-magenta_bed
-magenta_candle
-magenta_candle_cake
-magenta_carpet
-magenta_concrete
-magenta_concrete_powder
-magenta_glazed_terracotta
-magenta_shulker_box
-magenta_stained_glass
-magenta_stained_glass_pane
-magenta_terracotta
-magenta_wall_banner
-magenta_wool
-magma_block
 medium_amethyst_bud
 melon
 melon_stem
@@ -1238,7 +1230,6 @@ warped_stem
 warped_trapdoor
 warped_wall_sign
 warped_wart_block
-water
 water_cauldron
 waxed_copper_block
 waxed_cut_copper
