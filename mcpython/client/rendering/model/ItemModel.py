@@ -18,6 +18,8 @@ import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.client.rendering.model.api import IItemModelLoader
 from mcpython.engine import logger
+from .BoxModel import BoxModel
+from mcpython.client.texture import TextureAtlas
 
 
 class DefaultLoader(IItemModelLoader):
@@ -30,11 +32,12 @@ class DefaultLoader(IItemModelLoader):
         if "parent" in data:
             parent = data["parent"]
             if parent == "builtin/entity":
-                pass  # todo: add missing texture OR todo: implement entity rendering
+                pass  # todo: add missing texture OR implement entity rendering
             elif parent == "item/generated":
-                pass
+                model.is_layered = True
             else:
                 model.addParent(parent)
+
         if "display" in data:
             for name in data["display"]:
                 e = data["display"][name]
@@ -44,24 +47,36 @@ class DefaultLoader(IItemModelLoader):
                     e.setdefault("translation", (0, 0, 0)),
                     e.setdefault("scale", (1, 1, 1)),
                 )
-        texture_variables = {}
+
+        textures = []
+
         if "textures" in data:
             for name in data["textures"]:
                 if name.startswith("layer"):
-                    model.addTextureLayer(
-                        int(name.split("layer")[-1]), data["textures"][name]
-                    )
+                    if model.is_layered:
+                        model.addTextureLayer(
+                            int(name.split("layer")[-1]), data["textures"][name]
+                        )
+                elif data["textures"][name].startswith("#"):
+                    model.texture_variables[name] = data["textures"][name]
                 else:
-                    texture_variables[name] = data["textures"][name]
+                    textures.append((name, data["textures"][name]))
+
+        for e, pos in zip(textures, TextureAtlas.handler.add_image_files([x[1] for x in textures], model.name.split(":")[0])):
+            model.textures[e[0]] = pos
+            model.texture_atlas = pos[1]
+            model.drawable = True
+
         if "gui_light" in data:
             model.lighting = data["gui_light"]
+
         if "elements" in data:
-            logger.println(
-                "[FATAL] failed to decode elements tag of {} as it is NOT implemented!".format(
-                    model
-                )
-            )
-            # todo: implement!
+            if model.is_layered:
+                raise RuntimeError(f"Layered model {model.name} cannot be child of 'item/generated' and at the same time contain elements!")
+
+            for element in data["elements"]:
+                model.add_box(BoxModel().parse_mc_data(element, model))
+
         if "overrides" in data:
             for case in data["overrides"]:
                 model.addOverride(case["predicate"], case["model"])
@@ -84,12 +99,18 @@ class ItemModel:
         return model
 
     def __init__(self, item: str):
-        self.item = item
+        self.name = item
         self.parents = []
         self.lighting = "front"
         self.displays = {}
         self.layers = []
         self.overrides = []
+        self.texture_variables = {}
+        self.textures = {}
+
+        self.is_layered = False
+        self.drawable = False
+        self.texture_atlas = None
 
     def __repr__(self):
         return "ItemModel(of='{}')".format(self.item)
@@ -97,6 +118,26 @@ class ItemModel:
     def addParent(self, parent: str):
         self.parents.append(parent)
         return self
+
+    def add_box(self, box: BoxModel):
+        pass
+
+    def get_texture_position(self, name: str):
+        if name in self.textures:
+            return self.textures[name][0]
+
+        if name in self.texture_variables:
+            return self.get_texture_position(self.texture_variables[name])
+
+        if name.startswith("#"):
+            n = name[1:]
+            if n in self.textures:
+                return self.textures[n][0]
+
+            if n in self.texture_variables:
+                return self.get_texture_position(self.texture_variables[n])
+
+        return 0, 0
 
     def addDisplayTransform(
         self, name: str, rotation=(0, 0, 0), translation=(0, 0, 0), scale=(1, 1, 1)
@@ -118,7 +159,7 @@ class ItemModel:
         for i, texture in enumerate(self.layers):
             if texture is None:
                 continue
-            helper.atlas.add_file("{}#:{}".format(self.item, i), texture)
+            helper.atlas.add_file("{}#:{}".format(self.name, i), texture)
 
     def add_to_batch(
         self, position: tuple, batch, context: str, state: dict
@@ -131,10 +172,12 @@ class ItemModel:
             if context not in self.displays
             else self.displays[context]
         )"""
-        for i, layer in enumerate(self.layers):
-            handler.atlas.get_texture_info("{}#:{}".format(self.item, i)).blit(
-                *position
-            )
+        if self.is_layered:
+            for i, layer in enumerate(self.layers):
+                if layer is not None:
+                    handler.atlas.get_texture_info("{}#:{}".format(self.name, i)).blit(
+                        *position
+                    )
 
 
 class ItemModelHandler:

@@ -73,7 +73,8 @@ def calculate_default_layout_uvs(
     """
     Util method for calculating uv's
     Cache result whenever possible!
-    WARNING: currently not working correctly
+    WARNING: currently may not work correctly
+
     :param texture_size: the size of the texture, a simple factor for the result
     :param box_size: the sizes of the box
     :param offset: an offset of the texture origin

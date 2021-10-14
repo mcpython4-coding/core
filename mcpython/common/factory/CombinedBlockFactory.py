@@ -39,6 +39,7 @@ def generate_full_block_slab_wall(
     assert textures is None or (
         type(textures) in (list, set, tuple) and len(textures) <= 3
     ), "textures must be either None or iterable of length 3 or less"
+
     if texture is None:
         texture = "{}:block/{}".format(*name.split(":"))
     if slab_name is None:
