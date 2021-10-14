@@ -1,0 +1,81 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
+from unittest import TestCase
+
+from mcpython.util.enums import EnumSide
+
+
+class Weakable:
+    pass
+
+
+class TestFaceInfo(TestCase):
+    def test_module_import(self):
+        import mcpython.common.block.FaceInfo
+
+    def test_constructor(self):
+        from mcpython.common.block.FaceInfo import FaceInfo
+
+        block = Weakable()
+
+        info = FaceInfo(block)
+        self.assertEqual(info.faces, FaceInfo.DEFAULT_FACE_STATE)
+        self.assertEqual(info.face_data, None)
+        self.assertIsNone(info.custom_renderer)
+        self.assertFalse(info.subscribed_renderer)
+        self.assertIsNone(info.multi_data)
+        self.assertEqual(len(info.multi_faces), 0)
+
+    def test_is_shown(self):
+        from mcpython.common.block.FaceInfo import FaceInfo
+
+        block = Weakable()
+
+        info = FaceInfo(block)
+        self.assertFalse(info.is_shown())
+
+    def test_show_hide_face_custom_renderer(self):
+        from mcpython.common.block.FaceInfo import FaceInfo
+        from mcpython.client.rendering.blocks.ICustomBlockRenderer import ICustomBlockRenderer
+
+        block = Weakable()
+
+        class BlockRenderer(ICustomBlockRenderer):
+            hit = False
+            hit_hide = False
+
+            def on_block_exposed(s, b):
+                s.hit = True
+                self.assertEqual(b, block)
+
+            def on_block_fully_hidden(s, b):
+                s.hit_hide = True
+                self.assertEqual(b, block)
+
+        instance = BlockRenderer()
+
+        info = FaceInfo(block)
+        info.custom_renderer = instance
+        info.show_face(EnumSide.UP)
+
+        self.assertTrue(instance.hit)
+        self.assertTrue(info.subscribed_renderer)
+        self.assertTrue(info.is_shown())
+
+        info.hide_face(EnumSide.UP)
+
+        self.assertTrue(instance.hit_hide)
+        self.assertFalse(info.subscribed_renderer)
+        self.assertFalse(info.is_shown())
+

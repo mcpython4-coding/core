@@ -24,9 +24,11 @@ from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
     ICustomBlockRenderer,
 )
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
+from mcpython.util.annotation import onlyInClient
 from mcpython.util.enums import EnumSide
 
 
+@onlyInClient()
 class FaceInfo:
     """
     Class for face state of the block
