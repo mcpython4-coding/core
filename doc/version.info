@@ -1692,43 +1692,43 @@ A   [uuk]: added Items, Stone-item
     [uuk]: bumped target mc version to 1.17
     [uuk]: improved memory usage / block instance
 
-    [github]: start of development cycle for 21w35a
-    [uuk]: mod loader is now more efficient at loading mod info files from archives
-    [uuk]: exported java jvm with bridge and built-ins into separate repository
-    [uuk]: refactored the complete resource serialization system
-    [uuk]: resource system lookup uses now regex instead of some bad handling, preparing for better times
-    [uuk]: reworked some rendering bits, hopefully optimising them
-    [uuk]: when a child model overrides parent elements, the elements are not copied over and then discarded directly again,
+G   [github]: start of development cycle for 21w35a
+IO  [uuk]: mod loader is now more efficient at loading mod info files from archives
+LI  [uuk]: exported java jvm with bridge and built-ins into separate repository
+R   [uuk]: refactored the complete resource serialization system
+AI  [uuk]: resource system lookup uses now regex instead of some bad handling, preparing for better times
+VI  [uuk]: reworked some rendering bits, hopefully optimising them
+VA  [uuk]: when a child model overrides parent elements, the elements are not copied over and then discarded directly again,
            improving some loading performance
-    [uuk]: reworked sys.argv parsing
-    [uuk]: reworked how mods are discovered
-    [uuk]: fixed a rendering optimisation leading into elements of BlockModels not being created in some cases
-    [uuk]: mod loading order is now not longer stable and may change in bounds of the dependency-relations
-    [uuk]: added codeql-analysis for code analysis to the github
-    [uuk]: added dessert-hills and -lakes biomes
-    [uuk]: major refactoring: moved a bunch of code to mcpython/engine module
-    [uuk]: added mcpython/engine/asyncm-module storing a set of classes for async work around pyglet
-    [uuk]: BoxModel parsing is now done in a separate method, making it more flexible for re-usage
-    [uuk]: updated library versions
-    [uuk]: rewritten how vertex positions are calculated, introducing another class for vertex calculations, reducing
+A   [uuk]: reworked sys.argv parsing
+I   [uuk]: reworked how mods are discovered
+VB  [uuk]: fixed a rendering optimisation leading into elements of BlockModels not being created in some cases
+A*f [uuk]: mod loading order is now not longer stable and may change in bounds of the dependency-relations
+GH  [uuk]: added codeql-analysis for code analysis to the github
+F   [uuk]: added dessert-hills and -lakes biomes
+R   [uuk]: major refactoring: moved a bunch of code to mcpython/engine module
+LI  [uuk]: added mcpython/engine/asyncm-module storing a set of classes for async work around pyglet
+AV  [uuk]: BoxModel parsing is now done in a separate method, making it more flexible for re-usage
+L   [uuk]: updated library versions
+IV  [uuk]: rewritten how vertex positions are calculated, introducing another class for vertex calculations, reducing
            the content related to vertices in the BoxModel class
-    [uuk]: fixed some mistakes in the BoxModel class leading to unwanted behaviour
-    [uuk]: fixed some TextureAtlas stuff
-    [uuk]: removed support for args for all events of a event bus
-    [uuk]: removed --debug-events flag (was only partially implemented)
-    [uuk]: fixed a handful of possible crashes in command system
-    [uuk]: everything using the old vertex calculation is now using the new system with VertexProvider
-    [uuk]: relocated some bits of the model system
+b   [uuk]: fixed some mistakes in the BoxModel class leading to unwanted behaviour
+bV  [uuk]: fixed some TextureAtlas stuff
+A-  [uuk]: removed support for shared args for all events of a event bus
+A-  [uuk]: removed --debug-events flag (was only partially implemented)
+f   [uuk]: fixed a handful of possible crashes in command system
+f   [uuk]: everything using the old vertex calculation is now using the new system with VertexProvider
+R   [uuk]: relocated some bits of the model system
            Item model loaders must now be put in the array inside the ItemModel class
-    [uuk]: removed a handful of safety checks from BlockItemGenerator
-    [uuk]: BlockItemGenerator makes now sure that there is a draw() call in between each image take, so we don't collide
+I   [uuk]: removed a handful of safety checks from BlockItemGenerator
+Vf  [uuk]: BlockItemGenerator makes now sure that there is a draw() call in between each image take, so we don't collide
            with stuff
-    [uuk]: fixed crash when deleting the home folder due to ModLoader trying a lookup where nothing to look at is found
-    [uuk]: TagHandler.has_entry_tag will return now False when the tag does not exists instead of raising an exception
-    [uuk]: button texture is now reloaded when needed
-    [uuk]: fixed tag loading not working correctly, leading to empty creative tabs
-    [uuk]: added a mouse press event to ContainerRenderer, used in creative tabs for discarding items
-    [github]: released snapshot 21w35a
+b   [uuk]: fixed crash when deleting the home folder due to ModLoader trying a lookup where nothing to look at is found
+A*  [uuk]: TagHandler.has_entry_tag will return now False when the tag does not exists instead of raising an exception
+fb  [uuk]: button texture is now reloaded when needed
+B   [uuk]: fixed tag loading not working correctly, leading to empty creative tabs
+f   [uuk]: added a mouse press event to ContainerRenderer, used in creative tabs for discarding items
+G   [github]: released snapshot 21w35a
 
 G   [github]: start of development cycle for 21w37a
 L   [uuk]: dumped pillow version, allowing for python 3.10
@@ -1844,4 +1844,5 @@ IO  [uuk]: optimised chunk data storage by using new bool group handler
 SI  [uuk]: SaveFile will now use picklemagic for serialization such files
 F   [uuk]: mixin system allows now injecting static method calls
 f   [uuk]: ItemModels do now correctly decode the elements tag
+IR  [uuk]: IS_SOLID will now be not automatically set on the AbstractBlock instance on registration
 

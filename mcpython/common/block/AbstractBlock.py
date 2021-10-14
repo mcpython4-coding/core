@@ -66,15 +66,17 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     Defines interaction thingies for blocks with the environment
 
-    WARNING:
-        - During registration, one block instance is created but NEVER assigned to a world (so on_block_added is never
-            called). This is used for getting runtime-specific properties.
-
     todo: add custom properties to set_creation_properties() -> injected by add_block() call
+    todo: cache somehow the block state for rendering here (-> also custom relinking)
+    todo: optimise block state lookup by using a array internally & using integers for references
     """
 
     @classmethod
     def bind_block_item_to_creative_tab(cls, tab_getter: typing.Callable):
+        """
+        Util method for registering this block item to a specific CreativeTab
+        Will be removed when BlockItem's must be registered manually somewhere in the future
+        """
         @shared.mod_loader(
             cls.NAME.split(":")[0],
             "stage:item_groups:load",

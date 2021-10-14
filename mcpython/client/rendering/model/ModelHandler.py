@@ -330,12 +330,13 @@ class ModelHandler:
     def reload_models(self):
         logger.println("deleting content of models...")
 
-        # clear the list holding the data...
+        # clear the structures holding the data...
         self.models.clear()
         self.found_models.clear()
         self.dependence_list.clear()
         self.blockstates.clear()
-        gc.collect()  # ... and now delete the content
+
+        gc.collect()
 
         logger.println("loading models...")
         # and now start reloading models...
