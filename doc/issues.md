@@ -76,7 +76,7 @@
 
 - issue 175:
     - bug: structures overlapping into not-generated chunks are not shown when the chunks respecify are generated
-    - fix: add an special list of pre-generated blocks which is injected into actual generation task array when the chunk
+    - fix: add a special list of pre-generated blocks which is injected into actual generation task array when the chunk
            generation is requested
 
 - issue 176:
@@ -104,9 +104,6 @@
 - issue 199:
     - bug: dynamic generated dimension ids are not saved in saves leading into miss-matches when changing dimension list
     - fix: add them to the storage system and re-assign on load
-
-- issue 217:
-    bug: certain save data, including chest content, can get lost when loading a world [see warnings in log]
 
 - issue 235:
     bug: tools are CONSUMED when using them

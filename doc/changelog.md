@@ -58,6 +58,9 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 # Changelog of snapshot 21w<42>a
 Released on <20.10>.2021 targeting 1.<17>
 
+WARNING: this release includes a bytecode manipulation system which allows arbitrary code manipulation,
+         including code outside the game's scope (You cannot reach across processes, but still...)
+
 Backwards incompatible:
 - custom block rendering
 - custom block state & model loaders
@@ -65,6 +68,8 @@ Backwards incompatible:
 
     Modding:
         - Added bytecode manipulation framework
+        - started adding some more abstracted-away ways to manipulate bytecode,
+            but there is still a lot of stuff missing
 
     Blocks (and rendering):
         - added basic redstone wire block, should be MOSTLY functional
@@ -73,6 +78,7 @@ Backwards incompatible:
         - added shulker box renderer
         - added fluid block renderer (simple)
         - major optimisations to the rendering code of blocks
+        - added a few new blocks
 
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round

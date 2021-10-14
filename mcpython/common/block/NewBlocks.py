@@ -703,35 +703,51 @@ DEFERRED_PIPE.create_later(plant("grass"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gravel").set_fall_able())
 colored("gray")
 colored("green")
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:grindstone")
+    .set_all_side_solid(False)
+    .set_solid(False)
+    .set_default_model_state("face=ceiling,facing=north")
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:hanging_roots"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:hay_block").set_log())
+# todo: heavy_weighted_pressure_plate
+stone_like(
+    "honeycomb_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:honey_block")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:hopper")
+    .set_all_side_solid(False)
+    .set_solid(False)
+    .set_default_model_state("facing=east")
+)  # todo: create real block behaviour
+stone_like("ice")  # todo: melting
 
+# todo: add infection
+stone_like("infested_chiseled_stone_bricks", texture="minecraft:block/chiseled_stone_bricks")
+stone_like("infested_cobblestone", texture="minecraft:block/cobblestone")
+stone_like("infested_cracked_stone_bricks", texture="minecraft:block/cracked_stone_bricks")
+stone_like("infested_deepslate", texture="minecraft:block/deepslate")
+stone_like("infested_mossy_stone_bricks", texture="minecraft:block/mossy_stone_bricks")
+stone_like("infested_stone", texture="minecraft:block/stone")
+stone_like("infested_stone_bricks", texture="minecraft:block/stone_bricks")
 
-# All blocks, by blockstate
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:iron_bars").set_fence())
+stone_like("iron_block")
+# todo: iron door
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:iron_ore"))
+# todo: iron trapdoor, item frame
+
+# All remaining blocks, by blockstate
 """
-grindstone
-hanging_roots
-hay_block
-heavy_weighted_pressure_plate
-honeycomb_block
-honey_block
-hopper
-horn_coral
-horn_coral_block
-horn_coral_fan
-horn_coral_wall_fan
-ice
-infested_chiseled_stone_bricks
-infested_cobblestone
-infested_cracked_stone_bricks
-infested_deepslate
-infested_mossy_stone_bricks
-infested_stone
-infested_stone_bricks
-iron_bars
-iron_block
-iron_door
-iron_ore
-iron_trapdoor
-item_frame
 jack_o_lantern
 jigsaw
 jukebox
