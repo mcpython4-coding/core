@@ -105,12 +105,10 @@ FOG_DISTANCE = 60
 
 
 # a dict of biome name: height range storing the internal height range
-BIOME_HEIGHT_RANGE_MAP = (
-    {
-        "minecraft:dessert": (10, 30),
-        "minecraft:mountains": (10, 50),
-    }
-)
+BIOME_HEIGHT_RANGE_MAP = {
+    "minecraft:dessert": (10, 30),
+    "minecraft:mountains": (10, 50),
+}
 
 
 # how far to generate chunks on sector change, in chunks from the chunk the player is in, in an square with

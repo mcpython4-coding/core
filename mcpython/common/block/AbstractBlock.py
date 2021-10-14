@@ -77,6 +77,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         Util method for registering this block item to a specific CreativeTab
         Will be removed when BlockItem's must be registered manually somewhere in the future
         """
+
         @shared.mod_loader(
             cls.NAME.split(":")[0],
             "stage:item_groups:load",

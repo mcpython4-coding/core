@@ -22,7 +22,6 @@ import pyglet
 from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 
-
 # We need the missing texture image only on the client, the server will never need this
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
     MISSING_TEXTURE = mcpython.engine.ResourceLoader.read_image(
@@ -44,7 +43,9 @@ class TextureAtlasGenerator:
         self.atlases: typing.Dict[typing.Hashable, typing.List[TextureAtlas]] = {}
 
     def add_image(
-        self, image: PIL.Image.Image, identifier: typing.Hashable = None,
+        self,
+        image: PIL.Image.Image,
+        identifier: typing.Hashable = None,
     ) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
         """
         Adds a single pillow image to the underlying atlas system
@@ -63,7 +64,9 @@ class TextureAtlasGenerator:
         )
 
     def add_image_file(
-        self, file: str, identifier: typing.Hashable = None,
+        self,
+        file: str,
+        identifier: typing.Hashable = None,
     ) -> typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]:
         """
         Adds a single image by file name (loadable by resource system!)
@@ -73,7 +76,10 @@ class TextureAtlasGenerator:
         )
 
     def add_images(
-        self, images: typing.List[PIL.Image.Image], identifier: typing.Hashable = None, single_atlas=True
+        self,
+        images: typing.List[PIL.Image.Image],
+        identifier: typing.Hashable = None,
+        single_atlas=True,
     ) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
         if len(images) == 0:
             return []

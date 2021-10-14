@@ -562,8 +562,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         elif (
             symbol == key.SPACE
-            and player.inventory_chat
-            not in shared.inventory_handler.open_containers
+            and player.inventory_chat not in shared.inventory_handler.open_containers
         ):
             if (
                 self.double_space_cooldown

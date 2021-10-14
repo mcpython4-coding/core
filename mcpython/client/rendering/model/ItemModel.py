@@ -17,9 +17,10 @@ import mcpython.engine.rendering.BatchHelper
 import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.client.rendering.model.api import IItemModelLoader
-from mcpython.engine import logger
-from .BoxModel import BoxModel
 from mcpython.client.texture import TextureAtlas
+from mcpython.engine import logger
+
+from .BoxModel import BoxModel
 
 
 class DefaultLoader(IItemModelLoader):
@@ -62,7 +63,12 @@ class DefaultLoader(IItemModelLoader):
                 else:
                     textures.append((name, data["textures"][name]))
 
-        for e, pos in zip(textures, TextureAtlas.handler.add_image_files([x[1] for x in textures], model.name.split(":")[0])):
+        for e, pos in zip(
+            textures,
+            TextureAtlas.handler.add_image_files(
+                [x[1] for x in textures], model.name.split(":")[0]
+            ),
+        ):
             model.textures[e[0]] = pos
             model.texture_atlas = pos[1]
             model.drawable = True
@@ -72,7 +78,9 @@ class DefaultLoader(IItemModelLoader):
 
         if "elements" in data:
             if model.is_layered:
-                raise RuntimeError(f"Layered model {model.name} cannot be child of 'item/generated' and at the same time contain elements!")
+                raise RuntimeError(
+                    f"Layered model {model.name} cannot be child of 'item/generated' and at the same time contain elements!"
+                )
 
             for element in data["elements"]:
                 model.add_box(BoxModel().parse_mc_data(element, model))
