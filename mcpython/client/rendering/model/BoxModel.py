@@ -651,7 +651,11 @@ class MutableRawBoxModel(RawBoxModel):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if i not in face if isinstance(face, int) else (face is not None and face.index == i):
+            if (
+                i not in face
+                if isinstance(face, int)
+                else (face is not None and face.index == i)
+            ):
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
@@ -677,7 +681,11 @@ class MutableRawBoxModel(RawBoxModel):
     ):
         vertices = self.get_vertices(position, rotation, rotation_center)
         for i in range(6):
-            if i not in face if isinstance(face, int) else (face is not None and face.index == i):
+            if (
+                i not in face
+                if isinstance(face, int)
+                else (face is not None and face.index == i)
+            ):
                 continue
 
             v = vertices[i * 12 : i * 12 + 12]
@@ -716,7 +724,11 @@ class ColoredRawBoxModel(RawBoxModel):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if i not in face if isinstance(face, int) else (face is not None and face.index == i):
+            if (
+                i not in face
+                if isinstance(face, int)
+                else (face is not None and face.index == i)
+            ):
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]

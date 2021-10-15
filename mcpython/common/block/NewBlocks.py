@@ -94,6 +94,7 @@ def wood(name: str, normal=True):
             BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(2)
         )
         DEFERRED_PIPE.create_later(plant(f"minecraft:{name}_sapling"))
+        DEFERRED_PIPE.create_later(plant(f"minecraft:potted_{name}_sapling"))
 
     CombinedFactoryInstance(
         f"minecraft:{name}_wall",
@@ -111,6 +112,8 @@ def stone_like(
     existing_wall=True,
     existing_stairs=True,
     existing_fence=False,
+    existing_button=False,
+    existing_pressure_plate=False,
     texture=None,
     consumer=lambda _, __: None,
 ):
@@ -874,231 +877,219 @@ stone_like(
     existing_wall=False,
     texture="minecraft:block/magma",
 )
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:medium_amethyst_bud")
+    .set_all_direction_orientable()
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:melon"))
+DEFERRED_PIPE.create_later(
+    plant("minecraft:melon_stem").set_default_model_state("age=7")
+)
+stone_like(
+    "mossy_cobblestone", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+stone_like(
+    "mossy_stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+stone_like(
+    "moss_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:moss_carpet")
+    .set_all_side_solid(False)
+    .set_solid(False)
+)
+# todo: moving piston, mushroom stem
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:mycelium").set_default_model_state("snowy=false")
+)
+stone_like(
+    "netherite_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "netherrack", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "nether_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:nether_gold_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:nether_quartz_ore"))
+DEFERRED_PIPE.create_later(plant("minecraft:nether_sprouts"))
+DEFERRED_PIPE.create_later(
+    plant("minecraft:nether_wart").set_default_model_state("age=2")
+)
+stone_like(
+    "nether_wart_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:note_block"))
+wood("oak")
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:observerer")
+    .set_default_model_state("facing=north,powered=false")
+)
+stone_like("obsidian", existing_slab=False, existing_stairs=False, existing_wall=False)
+colored("orange")
+DEFERRED_PIPE.create_later(plant("minecraft:oxeye_daisy"))
+stone_like(
+    "oxidized_copper", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "oxidized_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False
+)
+stone_like(
+    "packed_ice", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(plant("minecraft:peony"))
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:petrified_oak_slab").set_slab()
+)
+colored("pink")
+DEFERRED_PIPE.create_later(plant("minecraft:pink_tulip"))
+# todo: piston, piston head, player head, player wall head
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:podzol").set_default_model_state("snowy=false")
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:pointed_dripstone")
+    .set_default_model_state("thickness=middle,vertical_direction=up")
+)
+stone_like(
+    "polished_andesite", existing_slab=True, existing_stairs=True, existing_wall=False
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:polished_basalt").set_log()
+)
+stone_like(
+    "polished_blackstone",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=True,
+    existing_button=True,
+    existing_pressure_plate=True,
+)
+stone_like(
+    "polished_blackstone_bricks",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=True,
+)
+stone_like(
+    "polished_deepslate", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+stone_like(
+    "polished_diorite", existing_slab=True, existing_stairs=True, existing_wall=False
+)
+stone_like(
+    "polished_granite", existing_slab=True, existing_stairs=True, existing_wall=False
+)
+DEFERRED_PIPE.create_later(plant("minecraft:poppy"))
+DEFERRED_PIPE.create_later(plant("minecraft:potatoes").set_default_model_state("age=4"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_allium"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_azure_bluet"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_bamboo"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_blue_orchid"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_brown_mushroom"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_cactus"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_cornflower"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_crimson_fungus"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_crimson_roots"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_dandelion"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_dead_bush"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_fern"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_lily_of_the_valley"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_orange_tulip"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_pink_tulip"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_oxeye_daisy"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_pink_tulip"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_poppy"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_red_mushroom"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_red_tulip"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_warped_fungus"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_warped_roots"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_white_tulip"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_wither_rose"))
+# todo: powder_snow
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:powder_snow_cauldron")
+    .set_solid(False)
+    .set_all_side_solid(False)
+    .set_default_model_state("level=2")
+)
+stone_like("prismarine", existing_slab=True, existing_stairs=True, existing_wall=True)
+stone_like(
+    "prismarine_bricks", existing_slab=True, existing_stairs=True, existing_wall=False
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:pumpkin"))
+DEFERRED_PIPE.create_later(
+    plant("minecraft:pumpkin_stem").set_default_model_state("age=2")
+)
+colored("purple")
+stone_like(
+    "purpur_block", existing_slab=True, existing_stairs=True, existing_wall=False
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:purpur_pillar").set_log())
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:quartz_block"))
+stone_like(
+    "quartz_bricks", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:quartz_pillar").set_log())
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:quartz_slab").set_slab())
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:quartz_stairs")
+    .set_default_model_state("facing=east,half=bottom,shape=inner_left")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:rail")
+    .set_default_model_state("shape=east_west")
+    .set_solid(False)
+    .set_all_side_solid(False)
+)
+stone_like(
+    "raw_copper_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "raw_gold_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "raw_iron_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "redstone_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:redstone_lamp")
+    .set_default_model_state("lit=false")
+)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:redstone_ore"))
+# todo: redstone torch & wall torch
+colored("red")
+DEFERRED_PIPE.create_later(plant("minecraft:red_mushroom"))
+# todo: red mushroom_block
+stone_like(
+    "red_nether_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:red_sand").set_fall_able()
+)
+stone_like(
+    "red_sandstone", existing_slab=True, existing_stairs=True, existing_wall=True
+)
+DEFERRED_PIPE.create_later(plant("minecraft:red_tulip"))
+# todo: repeater, repeating_command_block
+
 
 # All remaining blocks, by blockstate
 """
-medium_amethyst_bud
-melon
-melon_stem
-mossy_cobblestone
-mossy_cobblestone_slab
-mossy_cobblestone_stairs
-mossy_cobblestone_wall
-mossy_stone_bricks
-mossy_stone_brick_slab
-mossy_stone_brick_stairs
-mossy_stone_brick_wall
-moss_block
-moss_carpet
-moving_piston
-mushroom_stem
-mycelium
-netherite_block
-netherrack
-nether_bricks
-nether_brick_fence
-nether_brick_slab
-nether_brick_stairs
-nether_brick_wall
-nether_gold_ore
-nether_portal
-nether_quartz_ore
-nether_sprouts
-nether_wart
-nether_wart_block
-note_block
-oak_button
-oak_door
-oak_fence
-oak_fence_gate
-oak_leaves
-oak_log
-oak_planks
-oak_pressure_plate
-oak_sapling
-oak_sign
-oak_slab
-oak_stairs
-oak_trapdoor
-oak_wall_sign
-oak_wood
-observer
-obsidian
-orange_banner
-orange_bed
-orange_candle
-orange_candle_cake
-orange_carpet
-orange_concrete
-orange_concrete_powder
-orange_glazed_terracotta
-orange_shulker_box
-orange_stained_glass
-orange_stained_glass_pane
-orange_terracotta
-orange_tulip
-orange_wall_banner
-orange_wool
-oxeye_daisy
-oxidized_copper
-oxidized_cut_copper
-oxidized_cut_copper_slab
-oxidized_cut_copper_stairs
-packed_ice
-peony
-petrified_oak_slab
-pink_banner
-pink_bed
-pink_candle
-pink_candle_cake
-pink_carpet
-pink_concrete
-pink_concrete_powder
-pink_glazed_terracotta
-pink_shulker_box
-pink_stained_glass
-pink_stained_glass_pane
-pink_terracotta
-pink_tulip
-pink_wall_banner
-pink_wool
-piston
-piston_head
-player_head
-player_wall_head
-podzol
-pointed_dripstone
-polished_andesite
-polished_andesite_slab
-polished_andesite_stairs
-polished_basalt
-polished_blackstone
-polished_blackstone_bricks
-polished_blackstone_brick_slab
-polished_blackstone_brick_stairs
-polished_blackstone_brick_wall
-polished_blackstone_button
-polished_blackstone_pressure_plate
-polished_blackstone_slab
-polished_blackstone_stairs
-polished_blackstone_wall
-polished_deepslate
-polished_deepslate_slab
-polished_deepslate_stairs
-polished_deepslate_wall
-polished_diorite
-polished_diorite_slab
-polished_diorite_stairs
-polished_granite
-polished_granite_slab
-polished_granite_stairs
-polished_grimstone
-polished_grimstone_slab
-polished_grimstone_stairs
-polished_grimstone_wall
-poppy
-potatoes
-potted_acacia_sapling
-potted_allium
-potted_azure_bluet
-potted_bamboo
-potted_birch_sapling
-potted_blue_orchid
-potted_brown_mushroom
-potted_cactus
-potted_cornflower
-potted_crimson_fungus
-potted_crimson_roots
-potted_dandelion
-potted_dark_oak_sapling
-potted_dead_bush
-potted_fern
-potted_jungle_sapling
-potted_lily_of_the_valley
-potted_oak_sapling
-potted_orange_tulip
-potted_oxeye_daisy
-potted_pink_tulip
-potted_poppy
-potted_red_mushroom
-potted_red_tulip
-potted_spruce_sapling
-potted_warped_fungus
-potted_warped_roots
-potted_white_tulip
-potted_wither_rose
-powder_snow
-powder_snow_cauldron
-powered_rail
-prismarine
-prismarine_bricks
-prismarine_brick_slab
-prismarine_brick_stairs
-prismarine_slab
-prismarine_stairs
-prismarine_wall
-pumpkin
-pumpkin_stem
-purple_banner
-purple_bed
-purple_candle
-purple_candle_cake
-purple_carpet
-purple_concrete
-purple_concrete_powder
-purple_glazed_terracotta
-purple_shulker_box
-purple_stained_glass
-purple_stained_glass_pane
-purple_terracotta
-purple_wall_banner
-purple_wool
-purpur_block
-purpur_pillar
-purpur_slab
-purpur_stairs
-quartz_block
-quartz_bricks
-quartz_pillar
-quartz_slab
-quartz_stairs
-rail
-raw_copper_block
-raw_gold_block
-raw_iron_block
-redstone_block
-redstone_lamp
-redstone_ore
-redstone_torch
-redstone_wall_torch
-red_banner
-red_bed
-red_candle
-red_candle_cake
-red_carpet
-red_concrete
-red_concrete_powder
-red_glazed_terracotta
-red_mushroom
-red_mushroom_block
-red_nether_bricks
-red_nether_brick_slab
-red_nether_brick_stairs
-red_nether_brick_wall
-red_sand
-red_sandstone
-red_sandstone_slab
-red_sandstone_stairs
-red_sandstone_wall
-red_shulker_box
-red_stained_glass
-red_stained_glass_pane
-red_terracotta
-red_tulip
-red_wall_banner
-red_wool
-repeater
-repeating_command_block
 respawn_anchor
 rooted_dirt
 rose_bush

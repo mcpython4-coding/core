@@ -66,12 +66,24 @@ class ChestRenderer(
             TEXTURE_COORDS_BOTTOM,
         )
 
-    def add(self, position: typing.Tuple[int, int, int], block: IChestRendererSupport, face, batches):
+    def add(
+        self,
+        position: typing.Tuple[int, int, int],
+        block: IChestRendererSupport,
+        face,
+        batches,
+    ):
         return self.box_model_top.add_face_to_batch(
             batches[0], block.position, face
         ) + self.box_model_bottom.add_face_to_batch(batches[0], block.position, face)
 
-    def add_multi(self, position: typing.Tuple[int, int, int], block: IChestRendererSupport, faces, batches):
+    def add_multi(
+        self,
+        position: typing.Tuple[int, int, int],
+        block: IChestRendererSupport,
+        faces,
+        batches,
+    ):
         faces = [face.index for face in faces]
         return self.box_model_top.add_face_to_batch(
             batches[0], block.position, faces
