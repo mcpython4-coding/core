@@ -452,6 +452,7 @@ class CombinedFactoryInstance:
     def create_wall(self, suffix=None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
+
         name = (
             (
                 self.target_base_name
@@ -463,6 +464,7 @@ class CombinedFactoryInstance:
             if not suffix or ":" not in suffix
             else suffix
         )
+
         texture = self.create_colored_texture(texture, color=color)
         wall_textures = {"wall": texture}
         # todo: can we use some form of template here?

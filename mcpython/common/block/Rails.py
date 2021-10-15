@@ -43,37 +43,18 @@ class IRail(AbstractBlock, ABC):
         return False
 
 
-class ActivatorRail(IRail):
-    NAME = "minecraft:activator_rail"
-
-    DEBUG_WORLD_BLOCK_STATES = (
-        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
-        .combinations()
-        .add_comby_bool("powered")
-        .add_comby("shape", SHAPES)
-        .build()
-    )
-
+class IStraightRail(IRail, ABC):
     def __init__(self):
         super().__init__()
 
         self.shape = "north_south"
-        self.force_active = False
 
     def get_model_state(self) -> dict:
-        return {
-            "shape": self.shape,
-            "powered": str(
-                any(self.injected_redstone_power) or self.force_active
-            ).lower(),
-        }
+        return {"shape": self.shape}
 
     def set_model_state(self, state: dict):
         if "shape" in state:
             self.shape = state["shape"]
-
-        if "powered" in state:
-            self.force_active = state["powered"] == "true"
 
     def on_block_update(self):
         x, y, z = self.position
@@ -98,3 +79,38 @@ class ActivatorRail(IRail):
                 EnumSide.NORTH in connecting_faces or EnumSide.SOUTH in connecting_faces
             ):
                 self.shape = "north_south"
+
+        self.face_info.update(True)
+
+
+class ActivatorRail(IStraightRail):
+    NAME = "minecraft:activator_rail"
+
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+        .combinations()
+        .add_comby_bool("powered")
+        .add_comby("shape", SHAPES)
+        .build()
+    )
+
+    def __init__(self):
+        super().__init__()
+        self.force_active = False
+
+    def get_model_state(self) -> dict:
+        return super().get_model_state() | {
+            "powered": str(
+                any(self.injected_redstone_power) or self.force_active
+            ).lower(),
+        }
+
+    def set_model_state(self, state: dict):
+        super().set_model_state(state)
+
+        if "powered" in state:
+            self.force_active = state["powered"] == "true"
+
+
+class PoweredRail(ActivatorRail):
+    NAME = "minecraft:powered_rail"

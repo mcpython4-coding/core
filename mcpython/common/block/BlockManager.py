@@ -100,6 +100,7 @@ def load():
     block_registry.register(Fence.AcaciaFence)
     block_registry.register(RedstoneWire.RedstoneWire)
     block_registry.register(Rails.ActivatorRail)
+    block_registry.register(Rails.PoweredRail)
     block_registry.register(FluidBlock.WaterFluidBlock)
     block_registry.register(FluidBlock.LavaFluidBlock)
 
