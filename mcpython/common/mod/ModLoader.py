@@ -480,13 +480,21 @@ class ModLoader:
         containers = [ModContainer(path) for path in self.found_mod_files]
         self.mod_containers += containers
 
-        for container in containers:
+        for container in containers[:]:
             self.current_container = container
-            container.try_identify_mod_loader()
+            try:
+                container.try_identify_mod_loader()
+            except:
+                logger.print_exception(container)
+                containers.remove(container)
 
         for container in containers:
-            self.current_container = container
-            container.load_meta_files()
+            try:
+                self.current_container = container
+                container.load_meta_files()
+            except:
+                logger.print_exception(container)
+                containers.remove(container)
 
     def check_errors(self):
         if self.error_builder.areas[-1]:
