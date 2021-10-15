@@ -22,6 +22,10 @@ from mcpython.client.rendering.model.util import calculate_default_layout_uvs
 
 
 class IChestRendererSupport:
+    def __init__(self):
+        self.position = None
+        self.face_info = None
+
     DEFAULT_DISPLAY_NAME = "Chest"
 
 
@@ -62,12 +66,12 @@ class ChestRenderer(
             TEXTURE_COORDS_BOTTOM,
         )
 
-    def add(self, position: typing.Tuple[int, int, int], block, face, batches):
+    def add(self, position: typing.Tuple[int, int, int], block: IChestRendererSupport, face, batches):
         return self.box_model_top.add_face_to_batch(
             batches[0], block.position, face
         ) + self.box_model_bottom.add_face_to_batch(batches[0], block.position, face)
 
-    def add_multi(self, position: typing.Tuple[int, int, int], block, faces, batches):
+    def add_multi(self, position: typing.Tuple[int, int, int], block: IChestRendererSupport, faces, batches):
         faces = [face.index for face in faces]
         return self.box_model_top.add_face_to_batch(
             batches[0], block.position, faces
@@ -75,7 +79,19 @@ class ChestRenderer(
 
     # todo: implement these both animations
     def play_open_animation(self, block: IChestRendererSupport):
+        # self.box_model_top.mutate_add_face_to_batch(
+        #     block.face_info.multi_data,
+        #     block.position,
+        #     None,
+        #     rotation=(90, 0, 0),
+        # )
         pass
 
     def play_close_animation(self, block: IChestRendererSupport):
+        # self.box_model_top.mutate_add_face_to_batch(
+        #     block.face_info.multi_data,
+        #     block.position,
+        #     None,
+        #     rotation=(0, 0, 0),
+        # )
         pass

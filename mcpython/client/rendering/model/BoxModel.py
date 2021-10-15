@@ -567,7 +567,7 @@ class RawBoxModel(AbstractBoxModel):
         self,
         batch: pyglet.graphics.Batch,
         position: typing.Tuple[float, float, float],
-        face: typing.Union[typing.Iterable[int], EnumSide],
+        face: typing.Optional[typing.Union[typing.Iterable[int], EnumSide]],
         rotation=(0, 0, 0),
         rotation_center=(0, 0, 0),
     ):
@@ -644,14 +644,14 @@ class MutableRawBoxModel(RawBoxModel):
         self,
         batch: pyglet.graphics.Batch,
         position: typing.Tuple[float, float, float],
-        face: typing.Union[typing.Iterable[int], EnumSide],
+        face: typing.Optional[typing.Union[typing.Iterable[int], EnumSide]],
         rotation=(0, 0, 0),
         rotation_center=(0, 0, 0),
     ):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if i not in face if isinstance(face, int) else face.index == i:
+            if i not in face if isinstance(face, int) else (face is not None and face.index == i):
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
@@ -671,13 +671,13 @@ class MutableRawBoxModel(RawBoxModel):
         self,
         previous: typing.List[pyglet.graphics.vertexdomain.VertexList],
         position: typing.Tuple[float, float, float],
-        face: typing.Union[int, EnumSide],
+        face: typing.Optional[typing.Union[typing.Iterable[int], EnumSide]],
         rotation=(0, 0, 0),
         rotation_center=(0, 0, 0),
     ):
         vertices = self.get_vertices(position, rotation, rotation_center)
         for i in range(6):
-            if (not i ** 2 & face) if isinstance(face, int) else face.index == i:
+            if i not in face if isinstance(face, int) else (face is not None and face.index == i):
                 continue
 
             v = vertices[i * 12 : i * 12 + 12]
@@ -716,7 +716,7 @@ class ColoredRawBoxModel(RawBoxModel):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i in range(6):
-            if i in face if isinstance(face, int) else face.index == i:
+            if i not in face if isinstance(face, int) else (face is not None and face.index == i):
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
