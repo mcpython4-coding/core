@@ -1846,4 +1846,7 @@ F   [uuk]: mixin system allows now injecting static method calls
 f   [uuk]: ItemModels do now correctly decode the elements tag
 IR  [uuk]: IS_SOLID will now be not automatically set on the AbstractBlock instance on registration
 F   [uuk]: added base class for flower-like blocks
+B   [uuk]: change_chunks() was doing some weird stuff on client <-> server
+b   [uuk]: fixed client not omitting disconnection package correctly when closing the window
+b   [uuk]: fixed clients connected to a server doing weird stuff with local saves
 

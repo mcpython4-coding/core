@@ -198,7 +198,10 @@ class IChunk(ISupportWorldInterface, ABC):
                     if i != 15:
                         self.chunk_loaded_list[i + 1].append(ticket)
             flag = flag or len(layer)
+
         if not flag:
+            print("unloading chunk", self)
+            self.hide_all(True)
             self.get_dimension().unload_chunk(self)
 
     def get_dimension(self) -> "IDimension":

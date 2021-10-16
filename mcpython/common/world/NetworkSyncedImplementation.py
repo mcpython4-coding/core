@@ -42,6 +42,8 @@ class NetworkSyncedDimension(Dimension):
             if not create:
                 return
 
+            print(cx, cz, self.name, self)
+
             self.chunks[(cx, cz)] = NetworkSyncedChunk(self, (cx, cz))
 
             from mcpython.common.network.packages.WorldDataExchangePackage import (

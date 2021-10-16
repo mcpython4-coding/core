@@ -80,6 +80,9 @@ Backwards incompatible:
         - major optimisations to the rendering code of blocks
         - added a lot new blocks (Total >= 1152)
 
+    Dedicated servers:
+        - fixed some stuff, hopefully works better now
+
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round
 

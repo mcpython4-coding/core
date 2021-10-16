@@ -364,11 +364,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
             pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
-            if (
-                shared.world.get_active_dimension()
-                .get_chunk(*chunk, generate=False)
-                .loaded
-            ):
+            c = shared.world.get_active_dimension().get_chunk(*chunk, generate=False, create=False)
+
+            if c and c.loaded and not shared.IS_NETWORKING:
                 shared.tick_handler.schedule_once(
                     shared.world.save_file.dump,
                     None,
@@ -376,28 +374,32 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                     dimension=self.active_dimension,
                     chunk=chunk,
                 )
-        for chunk in after_set:
-            if (
-                self.get_active_dimension()
-                .get_chunk(*chunk, generate=False)
-                .is_visible()
-            ):
-                continue
-            pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
-            if not load_immediate:
-                pyglet.clock.schedule_once(
-                    lambda _: shared.world.save_file.read(
-                        "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
-                    ),
-                    0.1,
-                )
-            else:
-                shared.world.save_file.read(
-                    "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
-                )
 
-        if not after:
+        for chunk in after_set:
+            c = self.get_active_dimension().get_chunk(*chunk, generate=False, create=False)
+            if c and c.is_visible():
+                continue
+
+            pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
+
+            if not shared.IS_NETWORKING:
+                if not load_immediate:
+                    pyglet.clock.schedule_once(
+                        lambda _: shared.world.save_file.read(
+                            "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
+                        ),
+                        0.1,
+                    )
+                else:
+                    shared.world.save_file.read(
+                        "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
+                    )
+            else:
+                self.get_active_dimension().get_chunk(*chunk, generate=False)
+
+        if not after or shared.IS_NETWORKING:
             return
+
         for dx in range(-pad, pad + 1):
             for dz in range(-pad, pad + 1):
                 if (

@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import itertools
 import time
+import traceback
 import typing
 
 from mcpython import shared
@@ -45,6 +46,7 @@ class DataRequestPackage(AbstractPackage):
         return self
 
     def request_chunk(self, dimension: str, cx: int, cz: int):
+        # traceback.print_stack()
         self.requested_chunks.append((dimension, cx, cz))
         return self
 
@@ -241,13 +243,12 @@ class ChunkDataPackage(AbstractPackage):
         self.position = buffer.read_int(), buffer.read_int()
 
         for _ in range(16 * 256 * 16):
-            name = buffer.read_string()
-
             is_block, visible = buffer.read_bool_group(2)
 
             if not is_block:
                 self.blocks.append(None)
             else:
+                name = buffer.read_string()
                 instance = shared.registry.get_by_name("minecraft:block").get(name)()
                 instance.read_from_network_buffer(buffer)
                 self.blocks.append((instance, visible))

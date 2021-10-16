@@ -302,6 +302,8 @@ class NetworkManager:
         while buffer:
             try:
                 package = self.fetch_package_from_buffer(buffer)
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 logger.print_exception("during fetching package data @client")
                 self.disconnect()
@@ -314,6 +316,8 @@ class NetworkManager:
 
             try:
                 package.handle_inner()
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 logger.print_exception(f"during handling package {package} @client")
                 continue
@@ -333,6 +337,8 @@ class NetworkManager:
             while buffer:
                 try:
                     package = self.fetch_package_from_buffer(buffer)
+                except (SystemExit, KeyboardInterrupt):
+                    raise
                 except:
                     logger.print_exception(
                         f"during fetching data @server from @{client_id}"
@@ -347,6 +353,8 @@ class NetworkManager:
 
                 try:
                     package.handle_inner()
+                except (SystemExit, KeyboardInterrupt):
+                    raise
                 except:
                     logger.print_exception(
                         f"during handling package {package} @server from @{client_id}"

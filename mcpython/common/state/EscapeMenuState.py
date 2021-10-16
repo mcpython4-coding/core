@@ -89,9 +89,9 @@ class EscapeMenu(AbstractState.AbstractState):
 
         if shared.IS_NETWORKING:
             shared.NETWORK_MANAGER.disconnect()
-
-        # make sure that file size is as small as possible
-        shared.world.save_file.save_world(override=True)
+        else:
+            # make sure that file size is as small as possible
+            shared.world.save_file.save_world(override=True)
 
         shared.world.setup_by_filename("tmp")
         shared.world.cleanup()
@@ -108,7 +108,9 @@ class EscapeMenu(AbstractState.AbstractState):
 
     def activate(self):
         super().activate()
-        pyglet.clock.schedule_once(shared.world.save_file.save_world, 0.1)
+
+        if not shared.IS_NETWORKING:
+            pyglet.clock.schedule_once(shared.world.save_file.save_world, 0.1)
 
 
 escape = None

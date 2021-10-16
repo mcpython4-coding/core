@@ -516,9 +516,14 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             return
 
         if shared.world.world_loaded:
-            # have we an world which should be saved?
+            # have we a world which should be saved?
             shared.world.get_active_player().inventory_main.remove_items_from_crafting()
-            shared.world.save_file.save_world(override=True)
+
+            if shared.IS_NETWORKING:
+                shared.NETWORK_MANAGER.disconnect()
+            else:
+                # make sure that file size is as small as possible
+                shared.world.save_file.save_world(override=True)
 
         self.set_fullscreen(False)
         self.close()

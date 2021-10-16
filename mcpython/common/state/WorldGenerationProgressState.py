@@ -119,8 +119,6 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 
     def activate(self):
         super().activate()
-        if mcpython.common.config.ENABLE_PROFILER_GENERATION:
-            self.profiler.enable()
         self.status_table.clear()
 
         if os.path.exists(shared.world.save_file.directory):
@@ -244,11 +242,6 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             and mcpython.common.config.SHUFFLE_INTERVAL > 0
         ):
             shared.event_handler.call("data:shuffle:all")
-
-        if mcpython.common.config.ENABLE_PROFILER_GENERATION:
-            self.profiler.disable()
-            self.profiler.print_stats(1)
-            self.profiler.clear()
 
         # reload all the data-packs
         mcpython.common.data.DataPacks.datapack_handler.reload()
