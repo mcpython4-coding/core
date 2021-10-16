@@ -123,7 +123,7 @@ class EventBus:
                     **{**kwargs, **extra_kwargs},
                 )
 
-            except SystemExit:
+            except (SystemExit, KeyboardInterrupt):
                 raise
 
             except LoadingInterruptException:
@@ -216,7 +216,7 @@ class EventBus:
                 pyglet.app.exit()
                 print("closing due to missing memory")
                 sys.exit(-1)
-            except SystemExit:
+            except (SystemExit, KeyboardInterrupt):
                 raise
             except:
                 logger.print_exception(
@@ -287,7 +287,7 @@ class EventBus:
                         info,
                     )
                 )
-            except SystemExit:
+            except (SystemExit, KeyboardInterrupt):
                 raise
             except MemoryError:
                 import mcpython.common.state.LoadingExceptionViewState
