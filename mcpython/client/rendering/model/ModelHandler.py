@@ -208,6 +208,8 @@ class ModelHandler:
                     logger.print_exception(f"during decoding model {name} [{location}]")
                     self.models[name] = None
 
+        except (SystemExit, KeyboardInterrupt):
+            raise
         except:
             logger.print_exception(
                 "error during loading model '{}' named '{}'".format(location, name)

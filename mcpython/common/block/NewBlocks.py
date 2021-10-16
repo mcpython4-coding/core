@@ -99,7 +99,7 @@ def wood(name: str, normal=True):
     CombinedFactoryInstance(
         f"minecraft:{name}_wall",
         f"minecraft:block/{name}_planks",
-        deferred_registry=DEFERRED_PIPE,
+        block_phase="stage:block:load_late",
     ).create_wall(suffix="_wall")
 
     # todo: signs, stairs
@@ -121,7 +121,7 @@ def stone_like(
     instance = CombinedFactoryInstance(
         f"minecraft:{name}",
         f"minecraft:block/{name}" if texture is None else texture,
-        deferred_registry=DEFERRED_PIPE,
+        block_phase="stage:block:load_late",
     )
 
     if existing_full:
@@ -237,7 +237,13 @@ def colored(name: str):
         .set_all_side_solid(False)
     )
 
-    stone_like(f"{name}_wool")
+    stone_like(
+        f"{name}_wool",
+        existing_slab=False,
+        existing_stairs=False,
+        existing_wall=False,
+        consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
+    )
 
 
 # Technical blocks

@@ -508,6 +508,7 @@ class BlockStateContainer:
         # todo: check for correct process
         if store:
             cls.RAW_DATA.append((data, name, force))
+
         if immediate:
             cls.unsafe_from_data(name, data, force=force)
         else:

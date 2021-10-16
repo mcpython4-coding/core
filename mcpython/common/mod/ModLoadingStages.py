@@ -348,8 +348,9 @@ manager.add_stage(
     .add_event_stage("stage:block:factory_usage", "stage:block:factory:prepare")
     .add_event_stage("stage:block:factory:finish", "stage:block:factory_usage")
     .add_event_stage("stage:block:load", "stage:block:factory:finish")
+    .add_event_stage("stage:block:load_late", "stage:block:load")
     .add_event_stage(
-        "stage:block:overwrite", "stage:block:load", "stage:block:factory:finish"
+        "stage:block:overwrite", "stage:block:load_late", "stage:block:factory:finish"
     )
     .update_order()
 )

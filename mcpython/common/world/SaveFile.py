@@ -427,6 +427,8 @@ class SaveFile:
         """
         try:
             self.get_serializer_for(part).save(data, self, **kwargs)
+        except (SystemExit, KeyboardInterrupt):
+            raise
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, part))
 

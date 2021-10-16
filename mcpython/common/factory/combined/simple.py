@@ -54,6 +54,7 @@ class CombinedFactoryInstance:
             PIL.Image.Image,
         ] = colorize_texture,
         deferred_registry: DeferredRegistry = None,
+        block_phase="stage:block:factory_usage",
     ):
         """
         Creates a new CombinedFactoryInstance instance
@@ -67,6 +68,8 @@ class CombinedFactoryInstance:
         self.color = color
         self.color_texture_consumer = color_texture_consumer
         self.deferred_registry = deferred_registry
+
+        self.block_phase = block_phase
 
     def create_colored_texture(
         self, texture: typing.Union[PIL.Image.Image, str], color=None
@@ -159,7 +162,7 @@ class CombinedFactoryInstance:
             mod_name = "minecraft"
         model_name = "{}:block/{}".format(*name.split(":"))
 
-        @shared.mod_loader(mod_name, "stage:block:factory_usage")
+        @shared.mod_loader(mod_name, self.block_phase)
         def block_instance():
             import mcpython.common.factory.BlockFactory
 
@@ -198,7 +201,7 @@ class CombinedFactoryInstance:
                 import mcpython.client.rendering.model.BlockState
 
                 mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
-                    name, data
+                    name, data, immediate=True,
                 )
 
             # todo: implement item models here
@@ -394,7 +397,7 @@ class CombinedFactoryInstance:
             mod_name = "minecraft"
         model_name = "{}:block/{}".format(*name.split(":"))
 
-        @shared.mod_loader(mod_name, "stage:block:factory_usage")
+        @shared.mod_loader(mod_name, self.block_phase)
         def block_instance():
             import mcpython.common.factory.BlockFactory
 
@@ -442,7 +445,7 @@ class CombinedFactoryInstance:
                 import mcpython.client.rendering.model.BlockState
 
                 mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
-                    name, data
+                    name, data, immediate=True,
                 )
 
             # todo: implement item models here
@@ -631,7 +634,7 @@ class CombinedFactoryInstance:
             mod_name = "minecraft"
         model_name = "{}:block/{}".format(*name.split(":"))
 
-        @shared.mod_loader(mod_name, "stage:block:factory_usage")
+        @shared.mod_loader(mod_name, self.block_phase)
         def block_instance():
             import mcpython.common.factory.BlockFactory
 
@@ -675,7 +678,7 @@ class CombinedFactoryInstance:
                 import mcpython.client.rendering.model.BlockState
 
                 mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
-                    name, data
+                    name, data, immediate=True
                 )
 
             # todo: implement item models here
