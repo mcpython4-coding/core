@@ -64,7 +64,7 @@ def load():
         Furnace,
         GrassBlock,
         NetherPortal,
-        NewBlocks,
+        Blocks,
         Rails,
         RedstoneWire,
         ShulkerBox,
@@ -78,6 +78,7 @@ def load():
     block_registry.register(Dirt.Dirt)
     block_registry.register(CraftingTable.CraftingTable)
     block_registry.register(Chest.Chest)
+    block_registry.register(Chest.TrappedChest)
     block_registry.register(EnderChest.EnderChest)
     block_registry.register(NetherPortal.NetherPortalBlock)
     block_registry.register(Furnace.Furnace)
@@ -117,4 +118,4 @@ if not shared.IS_TEST_ENV:
         "stage:block:factory:prepare", load, info="loading special blocks"
     )
 
-    from . import Blocks, IFallingBlock, ILog
+    from . import IFallingBlock, ILog

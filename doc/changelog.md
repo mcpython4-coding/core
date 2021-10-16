@@ -78,7 +78,7 @@ Backwards incompatible:
         - added shulker box renderer
         - added fluid block renderer (simple)
         - major optimisations to the rendering code of blocks
-        - added a few new blocks
+        - added a lot new blocks (Total >= 1152)
 
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round

@@ -20,6 +20,7 @@ import mcpython.engine.ResourceLoader
 import PIL.Image
 import pyglet
 from mcpython import shared
+from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 
 # We need the missing texture image only on the client, the server will never need this
@@ -87,7 +88,12 @@ class TextureAtlasGenerator:
         if not single_atlas:
             return [self.add_image(x, identifier) for x in images]
 
-        images = [image.crop((0, 0, image.size[0], image.size[0])) for image in images]
+        for i, image in enumerate(images):
+            try:
+                images[i] = image.crop((0, 0, image.size[0], image.size[0]))
+            except:
+                images[i] = image.resize((image.size[0], image.size[0]), PIL.Image.NEAREST)
+
         m_size = max(images, key=lambda a: a.size[0] * a.size[1]).size
 
         for atlas in self.atlases.setdefault(identifier, []):

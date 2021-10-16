@@ -186,3 +186,10 @@ class Chest(
     def load_data(self, data):
         self.set_model_state(data["model"])
         self.loot_table_link = data["loot_table"]
+
+
+class TrappedChest(Chest):
+    NAME = "minecraft:trapped_chest"
+
+    # todo: add custom renderer
+    # todo: add redstone control

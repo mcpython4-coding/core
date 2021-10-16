@@ -191,6 +191,9 @@ class ModelHandler:
                         "block/" + location.split("/")[-1].split(".")[0],
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
                     )
+
+                except (SystemExit, KeyboardInterrupt):
+                    raise
                 except:
                     logger.print_exception(f"during decoding model {location}")
                     self.models[name] = None
@@ -204,6 +207,9 @@ class ModelHandler:
                         name,
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
                     )
+
+                except (SystemExit, KeyboardInterrupt):
+                    raise
                 except:
                     logger.print_exception(f"during decoding model {name} [{location}]")
                     self.models[name] = None
