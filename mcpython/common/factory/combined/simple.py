@@ -201,7 +201,9 @@ class CombinedFactoryInstance:
                 import mcpython.client.rendering.model.BlockState
 
                 mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
-                    name, data, immediate=True,
+                    name,
+                    data,
+                    immediate=True,
                 )
 
             # todo: implement item models here
@@ -445,7 +447,9 @@ class CombinedFactoryInstance:
                 import mcpython.client.rendering.model.BlockState
 
                 mcpython.client.rendering.model.BlockState.BlockStateContainer.from_data(
-                    name, data, immediate=True,
+                    name,
+                    data,
+                    immediate=True,
                 )
 
             # todo: implement item models here

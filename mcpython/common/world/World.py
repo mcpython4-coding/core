@@ -364,7 +364,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
             pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
-            c = shared.world.get_active_dimension().get_chunk(*chunk, generate=False, create=False)
+            c = shared.world.get_active_dimension().get_chunk(
+                *chunk, generate=False, create=False
+            )
 
             if c and c.loaded and not shared.IS_NETWORKING:
                 shared.tick_handler.schedule_once(
@@ -376,7 +378,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                 )
 
         for chunk in after_set:
-            c = self.get_active_dimension().get_chunk(*chunk, generate=False, create=False)
+            c = self.get_active_dimension().get_chunk(
+                *chunk, generate=False, create=False
+            )
             if c and c.is_visible():
                 continue
 
@@ -386,7 +390,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                 if not load_immediate:
                     pyglet.clock.schedule_once(
                         lambda _: shared.world.save_file.read(
-                            "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
+                            "minecraft:chunk",
+                            dimension=self.active_dimension,
+                            chunk=chunk,
                         ),
                         0.1,
                     )

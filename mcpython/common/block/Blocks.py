@@ -90,13 +90,19 @@ def wood(name: str, normal=True):
             BlockFactory().set_name(f"minecraft:{name}_log").set_log().set_strength(2)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:stripped_{name}_log").set_log().set_strength(2)
+            BlockFactory()
+            .set_name(f"minecraft:stripped_{name}_log")
+            .set_log()
+            .set_strength(2)
         )
         DEFERRED_PIPE.create_later(
             BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(2)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:stripped_{name}_wood").set_log().set_strength(2)
+            BlockFactory()
+            .set_name(f"minecraft:stripped_{name}_wood")
+            .set_log()
+            .set_strength(2)
         )
         DEFERRED_PIPE.create_later(plant(f"minecraft:{name}_sapling"))
         DEFERRED_PIPE.create_later(plant(f"minecraft:potted_{name}_sapling"))
@@ -105,13 +111,22 @@ def wood(name: str, normal=True):
             BlockFactory().set_name(f"minecraft:{name}_stem").set_log().set_strength(2)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:stripped_{name}_stem").set_log().set_strength(2)
+            BlockFactory()
+            .set_name(f"minecraft:stripped_{name}_stem")
+            .set_log()
+            .set_strength(2)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{name}_hyphae").set_log().set_strength(2)
+            BlockFactory()
+            .set_name(f"minecraft:{name}_hyphae")
+            .set_log()
+            .set_strength(2)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:stripped_{name}_hyphae").set_log().set_strength(2)
+            BlockFactory()
+            .set_name(f"minecraft:stripped_{name}_hyphae")
+            .set_log()
+            .set_strength(2)
         )
 
     CombinedFactoryInstance(
@@ -1110,13 +1125,15 @@ stone_like(
 )
 DEFERRED_PIPE.create_later(plant("minecraft:red_tulip"))
 # todo: repeater, repeating_command_block
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:respawn_anchor").set_default_model_state("charges=2"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:respawn_anchor")
+    .set_default_model_state("charges=2")
+)
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:rooted_dirt"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:rose_bush"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:sand").set_fall_able())
-stone_like(
-    "sandstone", existing_slab=True, existing_stairs=True, existing_wall=True
-)
+stone_like("sandstone", existing_slab=True, existing_stairs=True, existing_wall=True)
 # todo: scaffolding
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -1126,9 +1143,15 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
 )
 DEFERRED_PIPE.create_later(plant("minecraft:seagrass"))
-stone_like("sea_lantern", existing_slab=False, existing_stairs=False, existing_wall=False)
-DEFERRED_PIPE.create_later(plant("minecraft:sea_pickle").set_default_model_state("pickles=1,waterlogged=true"))
-stone_like("shroomlight", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "sea_lantern", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+DEFERRED_PIPE.create_later(
+    plant("minecraft:sea_pickle").set_default_model_state("pickles=1,waterlogged=true")
+)
+stone_like(
+    "shroomlight", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 # todo: skeleton skull
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -1149,11 +1172,33 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:smithing_table"))
-stone_like("smooth_basalt", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("smooth_quartz", existing_slab=True, existing_stairs=True, existing_wall=False, texture="minecraft:block/quartz_block_bottom")
-stone_like("smooth_red_sandstone", existing_slab=True, existing_stairs=True, existing_wall=False, texture="minecraft:block/red_sandstone_top")
-stone_like("smooth_sandstone", existing_slab=True, existing_stairs=True, existing_wall=False, texture="minecraft:block/sandstone_top")
-stone_like("smooth_stone", existing_slab=True, existing_stairs=False, existing_wall=False)
+stone_like(
+    "smooth_basalt", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "smooth_quartz",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    texture="minecraft:block/quartz_block_bottom",
+)
+stone_like(
+    "smooth_red_sandstone",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    texture="minecraft:block/red_sandstone_top",
+)
+stone_like(
+    "smooth_sandstone",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    texture="minecraft:block/sandstone_top",
+)
+stone_like(
+    "smooth_stone", existing_slab=True, existing_stairs=False, existing_wall=False
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:snow")
@@ -1195,8 +1240,17 @@ DEFERRED_PIPE.create_later(
 )
 wood("spruce")
 # todo: sticky piston
-stone_like("stone", existing_slab=True, existing_stairs=True, existing_wall=False, existing_button=True, existing_pressure_plate=True)
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:stonecutter").set_horizontal_orientable())
+stone_like(
+    "stone",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    existing_button=True,
+    existing_pressure_plate=True,
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:stonecutter").set_horizontal_orientable()
+)
 stone_like("stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True)
 # todo: structure block, structure void
 DEFERRED_PIPE.create_later(plant("minecraft:sugar_cane"))
@@ -1205,7 +1259,9 @@ DEFERRED_PIPE.create_later(plant("minecraft:sweet_berry_bush"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_grass"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_seagrass"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:target"))
-stone_like("terracotta", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "terracotta", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 stone_like(
     "tinted_glass",
     existing_slab=False,
@@ -1221,23 +1277,80 @@ wood("warped", normal=False)
 DEFERRED_PIPE.create_later(plant("minecraft:warped_fungus"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:warped_nylium"))
 DEFERRED_PIPE.create_later(plant("minecraft:warped_roots"))
-stone_like("warped_wart_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "warped_wart_block", existing_slab=False, existing_stairs=False, existing_wall=False
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:water_cauldron")
     .set_solid(False)
     .set_all_side_solid(False)
 )
-stone_like("waxed_copper_block", existing_slab=False, existing_stairs=False, existing_wall=False, texture="minecraft:block/copper_block")
-stone_like("waxed_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False, texture="minecraft:block/cut_copper")
-stone_like("waxed_exposed_copper", existing_slab=False, existing_stairs=False, existing_wall=False, texture="minecraft:block/exposed_copper")
-stone_like("waxed_exposed_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False, texture="minecraft:block/exposed_cut_copper")
-stone_like("waxed_oxidized_copper", existing_slab=False, existing_stairs=False, existing_wall=False, texture="minecraft:block/oxidized_copper")
-stone_like("waxed_oxidized_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False, texture="minecraft:block/oxidized_cut_copper")
-stone_like("waxed_weathered_copper", existing_slab=False, existing_stairs=False, existing_wall=False, texture="minecraft:block/weathered_copper")
-stone_like("waxed_weathered_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False, texture="minecraft:block/weathered_cut_copper")
-stone_like("weathered_copper", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like("weathered_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False)
+stone_like(
+    "waxed_copper_block",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    texture="minecraft:block/copper_block",
+)
+stone_like(
+    "waxed_cut_copper",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    texture="minecraft:block/cut_copper",
+)
+stone_like(
+    "waxed_exposed_copper",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    texture="minecraft:block/exposed_copper",
+)
+stone_like(
+    "waxed_exposed_cut_copper",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    texture="minecraft:block/exposed_cut_copper",
+)
+stone_like(
+    "waxed_oxidized_copper",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    texture="minecraft:block/oxidized_copper",
+)
+stone_like(
+    "waxed_oxidized_cut_copper",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    texture="minecraft:block/oxidized_cut_copper",
+)
+stone_like(
+    "waxed_weathered_copper",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    texture="minecraft:block/weathered_copper",
+)
+stone_like(
+    "waxed_weathered_cut_copper",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    texture="minecraft:block/weathered_cut_copper",
+)
+stone_like(
+    "weathered_copper", existing_slab=False, existing_stairs=False, existing_wall=False
+)
+stone_like(
+    "weathered_cut_copper",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+)
 # todo: weeping vines
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:wet_sponge"))
 DEFERRED_PIPE.create_later(plant("minecraft:wheat"))

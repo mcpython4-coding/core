@@ -53,6 +53,7 @@ def load():
     from . import (
         Anvil,
         Barrel,
+        Blocks,
         Carpet,
         Chest,
         CoralBlocks,
@@ -64,7 +65,6 @@ def load():
         Furnace,
         GrassBlock,
         NetherPortal,
-        Blocks,
         Rails,
         RedstoneWire,
         ShulkerBox,

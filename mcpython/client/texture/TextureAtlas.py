@@ -92,7 +92,9 @@ class TextureAtlasGenerator:
             try:
                 images[i] = image.crop((0, 0, image.size[0], image.size[0]))
             except:
-                images[i] = image.resize((image.size[0], image.size[0]), PIL.Image.NEAREST)
+                images[i] = image.resize(
+                    (image.size[0], image.size[0]), PIL.Image.NEAREST
+                )
 
         m_size = max(images, key=lambda a: a.size[0] * a.size[1]).size
 
