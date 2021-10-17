@@ -402,7 +402,12 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         del self._world[position]
 
         if block_update:
-            self.on_block_updated(position, include_itself=block_update_self)
+            try:
+                self.on_block_updated(position, include_itself=block_update_self)
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except:
+                logger.println("during calling block update")
 
         if immediate:
             self.check_neighbors(position)

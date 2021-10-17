@@ -5,12 +5,15 @@ Issues:
 - biome map is not saved to save files or loaded not correctly somehow
 - logs do not render when invalidating cache
 - hiding faces to rotated blocks like logs fails 
+- cannot swap currently bound to mouse item with slot item
 
 
-Pending for next non-snapshot release:
-- issues above
-- fix gamemode 0 (partially done)
-- more unit tests
+Pending for next full release (alpha 1.1.0):
+- most of the issues above
+- more unit tests [WIP]
+- optimisation: loading takes too long
+  - model baking
+- investigate the lag when crossing chunk boarders
 
 
 Toolchain:
@@ -36,12 +39,14 @@ Block Item Generator:
 
 Data driver:
 - item, block, implementation for the other recipes
+- reload data only when needed, so a resource pack / data pack change occured
 
 UI:
 - system to create your own WorldGenerationMode, which is dumped to a save-based file
 - registry view UI
 - config UI
 - mod list UI
+- breaking block overlay (util function in model handler?)
 
 dedicated servers:
 - split state system into two parts: the handling part and the visual part
@@ -49,7 +54,7 @@ dedicated servers:
 - split gui system into rendering & container
 
 Test System:
-The test system is a external tool developed along the game sitting on top of it. It uses
+The test system is an external tool developed along the game sitting on top of it. It uses
 a) The python import system, for loading single files and providing dummy files
 b) The custom LaunchWrapper system, for launching the game in-code
 c) The modding system, for injecting code into the game without needing LaunchWrapper directly
@@ -57,7 +62,7 @@ c) The modding system, for injecting code into the game without needing LaunchWr
     It would communicate via socket with the test process
 
 Split into 4 parts:
-- Unit tests: general functional tests
+- Unit tests: general functional tests [created]
 - Launch tests: tests executed during loading the game [registry injection tests, loading event tests, ...]
 - User interaction tests: simulation of user input over the event system
 - In-game tests: tests executed in-game automatically [see mc test framework], using structures and interaction paths

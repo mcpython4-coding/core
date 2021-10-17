@@ -275,12 +275,18 @@ class ChunkDataPackage(AbstractPackage):
         dx, dz = self.position
 
         i = 0
-        for x, y, z in itertools.product(range(dx*16, dx*16+16), range(256), range(dz*16,dz*16+16)):
+        for x, y, z in itertools.product(
+            range(dx * 16, dx * 16 + 16), range(256), range(dz * 16, dz * 16 + 16)
+        ):
             block = self.blocks[i]
 
             if block is not None:
                 chunk.add_block(
-                    (x, y, z), block[0], immediate=False, block_update=False, network_sync=False,
+                    (x, y, z),
+                    block[0],
+                    immediate=False,
+                    block_update=False,
+                    network_sync=False,
                 )
 
             i += 1
@@ -303,7 +309,9 @@ class ChunkBlockChangePackage(AbstractPackage):
         self.dimension = dimension
         return self
 
-    def change_position(self, position: typing.Tuple[int, int, int], block, update_only=False):
+    def change_position(
+        self, position: typing.Tuple[int, int, int], block, update_only=False
+    ):
         """
         Updates the block data at a given position
         :param position: the position
@@ -351,13 +359,16 @@ class ChunkBlockChangePackage(AbstractPackage):
 
                     if b is None:
                         logger.println(
-                            f"[WARM] got block internal update for block {position} in {self.dimension}, but no block is there!")
+                            f"[WARM] got block internal update for block {position} in {self.dimension}, but no block is there!"
+                        )
                         return
 
                     b.read_from_network_buffer(buffer)
 
                 else:
-                    instance = shared.registry.get_by_name("minecraft:block").get(name)()
+                    instance = shared.registry.get_by_name("minecraft:block").get(
+                        name
+                    )()
                     instance.read_from_network_buffer(buffer)
                     self.data.append((position, instance, update_only))
 

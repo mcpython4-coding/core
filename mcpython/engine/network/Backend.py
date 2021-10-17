@@ -69,7 +69,9 @@ class ClientBackend:
             except (KeyboardInterrupt, SystemExit):
                 raise
             except ConnectionResetError:
-                print("force-disconnecting from server, sever seems to have closed without noticing us")
+                print(
+                    "force-disconnecting from server, sever seems to have closed without noticing us"
+                )
                 self.disconnect()
                 shared.state_handler.change_state("minecraft:start_menu")
                 return
@@ -86,7 +88,9 @@ class ClientBackend:
             except BlockingIOError:
                 return
             except ConnectionResetError:
-                print("force-disconnecting from server, sever seems to have closed without noticing us")
+                print(
+                    "force-disconnecting from server, sever seems to have closed without noticing us"
+                )
                 self.disconnect()
                 shared.state_handler.change_state("minecraft:start_menu")
                 return

@@ -49,7 +49,7 @@ class Chest(
 
     HARDNESS = 2.5
     BLAST_RESISTANCE = 2.5
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     IS_SOLID = False
     DEFAULT_FACE_SOLID = (

@@ -298,7 +298,12 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
         )
 
     def remove_block(
-        self, position: tuple, immediate=True, block_update=True, block_update_self=True, network_sync=True,
+        self,
+        position: tuple,
+        immediate=True,
+        block_update=True,
+        block_update_self=True,
+        network_sync=True,
     ):
         chunk = self.get_chunk_for_position(position)
         chunk.remove_block(

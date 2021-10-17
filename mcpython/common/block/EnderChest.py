@@ -37,7 +37,7 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     )
     HARDNESS = 2.5
     MINIMUM_TOOL_LEVEL = 0
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
 
     if shared.IS_CLIENT:
         CHEST_BLOCK_RENDERER = (

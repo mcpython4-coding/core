@@ -27,7 +27,7 @@ class Dirt(AbstractBlock.AbstractBlock):
 
     HARDNESS = 0.5
     BLAST_RESISTANCE = 0.5
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.SHOVEL]
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.SHOVEL}
 
     ENABLE_RANDOM_TICKS = True
 

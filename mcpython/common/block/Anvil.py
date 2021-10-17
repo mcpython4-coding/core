@@ -30,7 +30,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
 
     HARDNESS = 5
     BLAST_RESISTANCE = 1200
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.PICKAXE]
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()

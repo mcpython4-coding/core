@@ -68,8 +68,9 @@ def load_item():
     template.set_name("ender_pearl").set_max_stack_size(16).finish()
     template.set_name("ender_eye").set_max_stack_size(16).finish()
 
-    def lambda_add_random_xp(instance):
+    def lambda_add_random_xp(instance, itemstack):
         shared.world.get_active_player().add_xp(random.randint(3, 11))
+        itemstack.add_amount(-1)
         return True
 
     template.set_name("experience_bottle").set_eat_callback(

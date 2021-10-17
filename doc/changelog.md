@@ -85,6 +85,10 @@ Backwards incompatible:
 
     Issues fixed:
         - Creative tab scrollbar was working the wrong way 'round
+        - tool system was completely broken
+        - gamemode 0 players could not break any blocks due to missing "not" in breakable condition
+        - block update was invoked twice when caused directly by the player
+        - factory builder's auto-copy operation was not working correctly
 
 # Changelog of snapshot 21w39a
 Released on 29.09.2021 targeting 1.17
@@ -732,14 +736,14 @@ Released on 30.05.2020 (theme: feature cleanup & improvements)
     fixed bugs:
         from previous release:
             - fixed crash on startup
-            - when loading an world from an never save version, the game gives out an exception
+            - when loading a world from an never save version, the game gives out an exception
 
 
 # Changelog of release alpha 1.0.0
 (theme: bug fixing & system improvements)
 
 during developing more features, the developer has decided to discard the progress. As some more difficulties had
-occur [Covid-19], the development time for these dev-cycle was far longer than expected.
+occurred [Covid-19], the development time for these dev-cycle was far longer than expected.
 
     Event-system:
         - resize-event is called after every state switch now
@@ -854,7 +858,7 @@ Released on 21.03.2020
         long-time issues:
             - icon for half hunger was not rendered correctly
             - BlockItemFactory failed to load block-items when not rebuilding for new blocks since last rebuild. This
-                occur only in first run due to missing _finish call of ItemFactory-instances
+                occured only in first run due to missing _finish call of ItemFactory-instances
 
         model system issues:
             - rotation of BlockModels was not working

@@ -166,7 +166,7 @@ def set_assigned_tools(instance: FactoryBuilder.IFactory, *tools, tool_level=Non
             tools = tools[0]
         else:
             tools = (tools,)
-    instance.config_table["assigned_tools"] = tools
+    instance.config_table["assigned_tools"] = set(tools)
     if tool_level is not None:
         instance.set_minimum_tool_level(tool_level)
     return instance
@@ -228,7 +228,7 @@ def build_class(
         MINIMUM_TOOL_LEVEL = configs.setdefault(
             "minimum_tool_level", cls.MINIMUM_TOOL_LEVEL
         )
-        ASSIGNED_TOOLS = configs.setdefault("assigned_tools", cls.ASSIGNED_TOOLS)
+        ASSIGNED_TOOLS = configs.setdefault("assigned_tools", set(cls.ASSIGNED_TOOLS))
 
         IS_BREAKABLE = configs.setdefault("break_able_flag", cls.IS_BREAKABLE)
         if not isinstance(IS_BREAKABLE, bool):
@@ -578,12 +578,12 @@ def build_class_default_state(
 block_factory_builder.register_direct_copy_attributes(
     "name",
     "global_name",
-    ("hardness", 0),
-    ("blast_resistance", 0),
+    ("hardness", 1),
+    ("blast_resistance", 2),
     ("minimum_tool_level", 0),
-    ("assigned_tools", tuple()),
+    ("assigned_tools", set()),
     ("break_able_flag", True),
-    ("speed_multiplier", 0),
+    ("speed_multiplier", -1),
     "solid",
     "can_conduct_redstone_power",
     "can_mobs_spawn_on",

@@ -21,7 +21,7 @@ class AbstractToolItem(mcpython.common.item.AbstractDamageBarItem.DamageOnUseIte
     STACK_SIZE = 1
 
     TOOL_LEVEL = 0
-    TOOL_TYPE = []
+    TOOL_TYPE = set()
 
     def __init__(self):
         super().__init__()

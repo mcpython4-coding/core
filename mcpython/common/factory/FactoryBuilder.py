@@ -396,11 +396,16 @@ class FactoryBuilder:
                 attribute, *default = attribute
                 self.register_configurator(
                     FactoryBuilder.InnerDefaultAttributeHelper(
-                        attribute, attribute, lambda: operation(default[0])
+                        attribute, attribute, create_operation(operation, default)
                     )
                 )
+
             self.register_copy_operation_handler(
                 FactoryBuilder.DefaultFactoryCopyOperation(
                     attribute, operation=operation
                 )
             )
+
+
+def create_operation(operation, default):
+    return lambda: operation(default[0])

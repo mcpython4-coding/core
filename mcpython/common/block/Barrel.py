@@ -37,7 +37,7 @@ class Barrel(AbstractBlock.AbstractBlock):
     )
 
     HARDNESS = 2.5
-    ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     def __init__(self):
         """

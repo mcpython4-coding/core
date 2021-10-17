@@ -433,6 +433,7 @@ class IChunk(ISupportWorldInterface, ABC):
 
 class IDimension(ISupportWorldInterface, ABC):
     def __init__(self):
+        self.chunks = {}
         self.loaded = True
 
     def get_world_height_range(self) -> typing.Tuple[int, int]:
@@ -480,7 +481,12 @@ class IDimension(ISupportWorldInterface, ABC):
         raise NotImplementedError
 
     def remove_block(
-        self, position: tuple, immediate=True, block_update=True, block_update_self=True, network_sync=True,
+        self,
+        position: tuple,
+        immediate=True,
+        block_update=True,
+        block_update_self=True,
+        network_sync=True,
     ):
         raise NotImplementedError
 

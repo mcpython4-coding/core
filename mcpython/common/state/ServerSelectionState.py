@@ -81,7 +81,9 @@ class ServerSelectionState(AbstractState):
         )
 
         shared.NETWORK_MANAGER.send_package(
-            Client2ServerHandshake().setup("test:player"+str(random.randint(10, 1000)))
+            Client2ServerHandshake().setup(
+                "test:player" + str(random.randint(10, 1000))
+            )
         )
 
         shared.state_handler.change_state("minecraft:server_connecting")

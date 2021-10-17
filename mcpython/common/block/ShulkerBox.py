@@ -32,7 +32,7 @@ def create_shulker_box(name):
 
         HARDNESS = 2.5
         MINIMUM_TOOL_LEVEL = 0
-        ASSIGNED_TOOLS = [mcpython.util.enums.ToolType.AXE]
+        ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
         if shared.IS_CLIENT:
             RENDERER = ShulkerBoxRenderer("minecraft:block/" + name)

@@ -220,11 +220,11 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         self.active_dimension = dim_id
         logger.println("loading new chunks...")
         self.change_chunks(None, sector)
-        shared.event_handler.call("dimension:chane:post", old, dim_id)
+        shared.event_handler.call("dimension:change:post", old, dim_id)
         logger.println("finished!")
 
     def get_dimension(
-        self, dim_id: int
+        self, dim_id: typing.Union[int, str]
     ) -> mcpython.engine.world.AbstractInterface.IDimension:
         """
         will get an dimension with an special id
@@ -253,15 +253,16 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         typing.Tuple[None, None, None],
     ]:
         """
-        Line of sight search from current position. If a block is
-        intersected it is returned, along with the block previously in the line
-        of sight. If no block is found, return None, None, None
+        Line of sight search from current position.
+        If a block is intersected it is returned, along with the block previously in the line of sight.
+        If no block is found, return None, None, None
 
-        Will check for bounding boxes of blocks
+        Will check for bounding boxes of blocks (get_view_bbox())
 
         :param position: The (x, y, z) position to check visibility from
-        :param vector: The line of sight vector
-        :param max_distance: How many blocks away to search for a hit
+        :param vector: The line of sight vector, as (dx, dy, dz)
+        :param max_distance: How many blocks away at max to search for a hit, will stop the ray after
+            the amount of blocks
 
         todo: cache the bbox of the block
         todo: move to dimension
@@ -269,29 +270,34 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         todo: cache when possible
         todo: add variant for entities
         """
-        m = shared.world.gamerule_handler.table[
-            "hitTestSteps"
-        ].status.status  # get m from the gamerule
+        # get m from the gamerule
+        m = shared.world.gamerule_handler.table["hitTestSteps"].status.status
+
         x, y, z = position
         dx, dy, dz = vector
         dx /= m
         dy /= m
         dz /= m
         previous = None
+
         for _ in range(max_distance * m):
             key = mcpython.util.math.normalize((x, y, z))
             block = self.get_active_dimension().get_block(key)
+
             if (
                 block
                 and type(block) != str
                 and block.get_view_bbox().test_point_hit((x, y, z), block.position)
             ):
                 return key, previous, (x, y, z)
+
             if key != previous:
                 previous = key
+
             x += dx
             y += dy
             z += dz
+
         return None, None, None
 
     def show_chunk(
@@ -307,8 +313,10 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         """
         if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
+
         if chunk is None:
             return
+
         chunk.show()
 
     def hide_chunk(
@@ -324,8 +332,10 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         """
         if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
             chunk = self.get_active_dimension().get_chunk(*chunk, generate=False)
+
         if chunk is None:
             return
+
         chunk.hide()
 
     def change_chunks(
@@ -359,6 +369,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                     x, z = after
                     if (dx + x) ** 2 + (dz + z) ** 2 <= (pad + 1) ** 2:
                         after_set.add((x + dx, z + dz))
+
         # show = after_set - before_set
         hide = before_set - after_set
         for chunk in hide:
@@ -435,14 +446,17 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             for chunk in dimension.chunks.values():
                 chunk.hide_all()
                 del chunk
-            dimension.chunks = {}
+            dimension.chunks.clear()
+
         if remove_dims:
             self.dimensions.clear()
             shared.dimension_handler.init_dims()
+
         [
             inventory.on_world_cleared()
             for inventory in shared.inventory_handler.containers
         ]
+
         self.reset_config()
 
         if shared.IS_CLIENT:
@@ -454,8 +468,10 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         shared.world_generation_handler.task_handler.clear()
         shared.entity_manager.clear()
         self.players.clear()
+
         if filename is not None:
             self.setup_by_filename(filename)
+
         mcpython.common.data.DataPacks.datapack_handler.cleanup()
         shared.event_handler.call("world:clean")
 

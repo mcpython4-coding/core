@@ -225,7 +225,7 @@ class SaveFile:
             self.dump(None, "minecraft:registry_info_serializer")
 
             for dimension in shared.world.dimensions.values():
-                logger.println("saving dimension "+dimension.get_name())
+                logger.println("saving dimension " + dimension.get_name())
 
                 for chunk in dimension.chunks:
                     # todo: save all loaded dimension, not only the active one

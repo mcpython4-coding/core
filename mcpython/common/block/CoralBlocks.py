@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
-import mcpython.common.factory.BlockFactory
+import mcpython.util.enums
 from mcpython import shared
 
 
@@ -22,6 +22,7 @@ class ICoralBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
 
     ENABLE_RANDOM_TICKS = True
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
 
     def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
@@ -71,21 +72,23 @@ class TubeCoralBlock(ICoralBlock):
 
 
 def load():
+    from mcpython.common.factory.BlockFactory import BlockFactory
+
     # the dead variants, todo: add attributes like hardness
-    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
-        "minecraft:dead_brain_coral_block"
+    BlockFactory().set_name("minecraft:dead_brain_coral_block").set_assigned_tools(
+        mcpython.util.enums.ToolType.PICKAXE
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
-        "minecraft:dead_bubble_coral_block"
+    BlockFactory().set_name("minecraft:dead_bubble_coral_block").set_assigned_tools(
+        mcpython.util.enums.ToolType.PICKAXE
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
-        "minecraft:dead_fire_coral_block"
+    BlockFactory().set_name("minecraft:dead_fire_coral_block").set_assigned_tools(
+        mcpython.util.enums.ToolType.PICKAXE
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
-        "minecraft:dead_horn_coral_block"
+    BlockFactory().set_name("minecraft:dead_horn_coral_block").set_assigned_tools(
+        mcpython.util.enums.ToolType.PICKAXE
     ).finish()
-    mcpython.common.factory.BlockFactory.BlockFactory().set_name(
-        "minecraft:dead_tube_coral_block"
+    BlockFactory().set_name("minecraft:dead_tube_coral_block").set_assigned_tools(
+        mcpython.util.enums.ToolType.PICKAXE
     ).finish()
 
 

@@ -98,12 +98,18 @@ def set_durability(instance, value):
     FactoryBuilder.AnnotationFactoryConfigurator("set_tool_type")
 )
 def set_tool_type(instance, *value):
-    if len(value) == 0:
-        if type(value[0]) in (list, set, tuple):
-            value = value[0]
+    if len(value) != 0:
+        if isinstance(value[0], (list, set, tuple)):
+            value = set(value[0])
         else:
-            value = (value,)
-    instance.config_table.setdefault("tool_type", []).extend(value)
+            value = set(value)
+
+    try:
+        instance.config_table.setdefault("tool_type", set()).update(set(value))
+    except TypeError:
+        print(value)
+        raise
+
     instance.add_base_class(mcpython.common.item.AbstractToolItem.AbstractToolItem)
 
 
@@ -172,8 +178,8 @@ def build_class(
 
         if "eat_callback" in configs:
 
-            def on_eat(self):
-                configs["eat_callback"](self)
+            def on_eat(self, itemstack):
+                configs["eat_callback"](self, itemstack)
 
         if "durability" in configs:
             DURABILITY = configs["durability"]

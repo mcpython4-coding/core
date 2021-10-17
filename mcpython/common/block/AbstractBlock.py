@@ -113,9 +113,8 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     MINIMUM_TOOL_LEVEL: int = (
         0  # The minimum tool level; todo: make str & add lookup table at global space
     )
-    ASSIGNED_TOOLS: typing.List[
-        mcpython.util.enums.ToolType
-    ] = []  # the tools best to break
+    # the tools best to break
+    ASSIGNED_TOOLS: typing.Set[mcpython.util.enums.ToolType] = set()
 
     # If the block is solid; None is unset and set by system by checking face_solid on a default block instance
     IS_SOLID: typing.Optional[bool] = None
@@ -210,11 +209,14 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     def schedule_network_update(self):
         if shared.IS_NETWORKING:
-            from mcpython.common.network.packages.WorldDataExchangePackage import ChunkBlockChangePackage
+            from mcpython.common.network.packages.WorldDataExchangePackage import (
+                ChunkBlockChangePackage,
+            )
 
             shared.NETWORK_MANAGER.send_package_to_all(
-                ChunkBlockChangePackage().set_dimension(self.dimension).change_position(self.position, self,
-                                                                                        update_only=True),
+                ChunkBlockChangePackage()
+                .set_dimension(self.dimension)
+                .change_position(self.position, self, update_only=True),
                 not_including=shared.NETWORK_MANAGER.client_id,
             )
 

@@ -45,6 +45,7 @@ def wood(name: str, normal=True):
         .set_all_side_solid(False)
         .set_strength(0.5)
     )
+
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_door")
@@ -53,9 +54,11 @@ def wood(name: str, normal=True):
         .set_all_side_solid(False)
         .set_strength(0.5)
     )
+
     DEFERRED_PIPE.create_later(
         BlockFactory().set_name(f"minecraft:{name}_fence").set_fence().set_strength(0.5)
     )
+
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_fence_gate")

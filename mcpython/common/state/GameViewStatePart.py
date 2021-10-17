@@ -38,9 +38,11 @@ def get_block_break_time(block, itemstack):
         type(itemstack.item), ItemTool.AbstractToolItem
     )
     tool_level = itemstack.item.TOOL_LEVEL if is_tool else 0
-    if not is_tool or not any(
-        [x in block.ASSIGNED_TOOLS for x in itemstack.item.TOOL_TYPE]
-    ):
+
+    if not isinstance(block.ASSIGNED_TOOLS, set):
+        raise ValueError(block)
+
+    if not is_tool or not block.ASSIGNED_TOOLS.intersection(itemstack.item.TOOL_TYPE):
         return (1.5 if block.MINIMUM_TOOL_LEVEL <= tool_level else 5) * hardness
     else:
         return (
@@ -99,6 +101,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         super().__init__()
         if active_hotkeys is None:
             active_hotkeys = ALL_KEY_COMBOS
+
         self.activate_physics = activate_physics
         self.__activate_mouse = activate_mouse
         self.activate_keyboard = activate_keyboard
@@ -201,22 +204,18 @@ class GameView(AbstractStatePart.AbstractStatePart):
             #         self.physics_update_internal(dt / m, player)
 
     def on_left_click_interaction_update(self, dt: float):
-        if self.break_time is None:
-            self.calculate_new_break_time()
+        if shared.window.exclusive and shared.window.mouse_pressing[mouse.LEFT]:
 
-        player = shared.world.get_active_player()
-        selected_itemstack: mcpython.common.container.ResourceStack.ItemStack = (
-            player.get_active_inventory_slot().get_itemstack()
-        )
-        if shared.window.exclusive and any(shared.window.mouse_pressing.values()):
+            player = shared.world.get_active_player()
+
             vector = shared.window.get_sight_vector()
             block_position, previous, hit_position = shared.world.hit_test(
                 player.position, vector
             )
-            if shared.window.mouse_pressing[mouse.LEFT] and block_position:
-                block = shared.world.get_active_dimension().get_block(block_position)
-                if block is None:
-                    return
+
+            if block_position:
+                if self.break_time is None:
+                    self.calculate_new_break_time()
 
                 chunk = shared.world.get_active_dimension().get_chunk(
                     *mcpython.util.math.position_to_chunk(block_position)
@@ -226,19 +225,26 @@ class GameView(AbstractStatePart.AbstractStatePart):
                     if self.mouse_press_time >= 0.10:
                         # todo: check for special break behaviour (chests, etc.)
                         chunk.remove_block(block_position)
-                        chunk.on_block_updated(block_position)
-                        chunk.check_neighbors(block_position)
 
                 elif player.gamemode in (0, 2):
-                    if (
-                        not isinstance(block, str)
-                        and self.mouse_press_time >= self.break_time
-                        and block.IS_BREAKABLE
-                    ):
+                    selected_itemstack: mcpython.common.container.ResourceStack.ItemStack = (
+                        player.get_active_inventory_slot().get_itemstack()
+                    )
+
+                    block = shared.world.get_active_dimension().get_block(
+                        block_position, none_if_str=True
+                    )
+                    if block is None:
+                        return
+
+                    if self.mouse_press_time >= self.break_time and block.IS_BREAKABLE:
+
                         if (
                             not selected_itemstack.is_empty()
-                            and selected_itemstack.item.check_can_destroy(block, player)
-                        ) or (selected_itemstack.is_empty() and player.gamemode == 2):
+                            and not selected_itemstack.item.check_can_destroy(
+                                block, player
+                            )
+                        ):
                             return
 
                         if shared.world.gamerule_handler.table[
@@ -254,8 +260,6 @@ class GameView(AbstractStatePart.AbstractStatePart):
                             player.pick_up_item(items)
 
                         chunk.remove_block(block_position)
-                        chunk.on_block_updated(block_position)
-                        chunk.check_neighbors(block_position)
 
                         if not selected_itemstack.is_empty():
                             selected_itemstack.item.on_block_broken_with(
@@ -263,21 +267,20 @@ class GameView(AbstractStatePart.AbstractStatePart):
                             )
 
     def on_right_click_interaction_update(self, dt: float):
+        if not shared.window.mouse_pressing[mouse.RIGHT]:
+            return
+
         player = shared.world.get_active_player()
-        active_itemstack = player.get_active_inventory_slot().get_itemstack()
-        if (
-            shared.window.exclusive
-            and any(shared.window.mouse_pressing.values())
-            and time.time() - self.set_cooldown > 1
-        ):
-            if active_itemstack.item and isinstance(
-                active_itemstack.item,
-                ItemFood.AbstractFoodItem,
+        slot = player.get_active_inventory_slot()
+        active_itemstack = slot.get_itemstack()
+
+        if shared.window.exclusive and time.time() - self.set_cooldown > 1:
+            if not active_itemstack.is_empty() and isinstance(
+                active_itemstack.item, ItemFood.AbstractFoodItem
             ):
-                item_food = active_itemstack.item
-                if item_food.on_eat():
+                food = active_itemstack.item
+                if food.on_eat(active_itemstack):
                     self.set_cooldown = time.time() - 1
-                    active_itemstack.add_amount(-1)
                     return
 
             vector = shared.window.get_sight_vector()
@@ -285,65 +288,65 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 player.position, vector
             )
 
-            if block_position:
-                if shared.window.mouse_pressing[mouse.RIGHT] and previous:
-                    slot = player.get_active_inventory_slot()
-                    if (
-                        slot.get_itemstack().item
-                        and slot.get_itemstack().item.HAS_BLOCK
-                        and self.mouse_press_time > 0.10
-                        and player.gamemode in (0, 1, 2)
+            if block_position and previous:
+                if (
+                    active_itemstack.item
+                    and active_itemstack.item.HAS_BLOCK
+                    and self.mouse_press_time > 0.10
+                    and player.gamemode in (0, 1, 2)
+                ):
+                    x, y, z = previous
+                    px, _, pz = mcpython.util.math.normalize(player.position)
+                    py = math.ceil(player.position[1])
+
+                    # Check if the block is in the player todo: use the bounding box
+                    if not (
+                        x == px and z == pz and py - 1 <= y <= py
+                    ) and not shared.world.get_active_dimension().get_block(
+                        previous, none_if_str=True
                     ):
-                        x, y, z = previous
-                        px, _, pz = mcpython.util.math.normalize(player.position)
-                        py = math.ceil(player.position[1])
-                        if not (
-                            x == px and z == pz and py - 1 <= y <= py
-                        ) and not shared.world.get_active_dimension().get_block(
-                            previous
+                        chunk = (
+                            shared.world.get_active_dimension().get_chunk_for_position(
+                                previous, generate=False
+                            )
+                        )
+
+                        if not active_itemstack.item.check_can_be_set_on(
+                            chunk.get_block(block_position), player
                         ):
-                            chunk = shared.world.get_active_dimension().get_chunk_for_position(
-                                previous
-                            )
-
-                            if not slot.get_itemstack().item.check_can_be_set_on(
-                                chunk.get_block(block_position), player
-                            ):
-                                self.mouse_press_time = 0
-                                return
-
-                            instance = chunk.add_block(
-                                previous,
-                                slot.get_itemstack().item.get_block(),
-                                lazy_setup=lambda block: block.set_creation_properties(
-                                    set_to=block_position,
-                                    real_hit=hit_position,
-                                    player=player,
-                                ),
-                            )
-
-                            chunk.on_block_updated(previous)
-                            slot.get_itemstack().item.on_set_from_item(instance)
-                            if player.gamemode == 0:
-                                slot.get_itemstack().add_amount(-1)
                             self.mouse_press_time = 0
+                            return
+
+                        instance = chunk.add_block(
+                            previous,
+                            slot.get_itemstack().item.get_block(),
+                            lazy_setup=lambda block: block.set_creation_properties(
+                                set_to=block_position,
+                                real_hit=hit_position,
+                                player=player,
+                            ),
+                        )
+
+                        active_itemstack.item.on_set_from_item(instance)
+
+                        if player.gamemode == 0:
+                            slot.get_itemstack().add_amount(-1)
+
+                        self.mouse_press_time = 0
 
     def on_middle_click_interaction_update(self, dt: float):
         player = shared.world.get_active_player()
         if (
             shared.window.exclusive
-            and any(shared.window.mouse_pressing.values())
+            and shared.window.mouse_pressing[mouse.MIDDLE]
             and time.time() - self.set_cooldown > 1
         ):
             vector = shared.window.get_sight_vector()
             block_position, previous, hit_position = shared.world.hit_test(
                 player.position, vector
             )
-            if (
-                shared.window.mouse_pressing[mouse.MIDDLE]
-                and block_position
-                and self.mouse_press_time > 0.1
-            ):
+
+            if block_position and self.mouse_press_time > 0.1:
                 chunk = shared.world.get_active_dimension().get_chunk_for_position(
                     block_position
                 )
