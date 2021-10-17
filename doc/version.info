@@ -626,7 +626,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: added ender chest
     [uuk]: Inventory has now an clear method
     [uuk]: added on_request_item_for_block-function of Block & on_set_from_item-function of Item to manipulate data
-    [uuk]: Slot has now an can_set_item-function which is used rather than direct check
+    [uuk]: Slot has now an is_item_allowed-function which is used rather than direct check
     [uuk]: added shulker boxes
     [uuk]: fixed bug: crash when loading an mod-zipfile without an mod.json file due to wrong exception handling
     [uuk]: mod-file based mods are stored now as imported files in G.modloader.mods[<modname>].package
@@ -1867,4 +1867,5 @@ b   [uuk]: fixed issue with assigned tool being an int leading into an exception
 b   [uuk]: -> fixed issue in FactoryBuilder with direct copy attributes (lambda lazy lookup)
 G   [github]: end of feature period for snapshot 21w<42>a
 I   [uuk]: speed up BlockItemGenerator massively
+BI  [uuk]: fixed some inventory slot stuff
 

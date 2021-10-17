@@ -68,7 +68,7 @@ class ISlot(IBufferSerializeAble, ABC):
     def draw_label(self, x=None, y=None):
         pass
 
-    def can_set_item(
+    def is_item_allowed(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         raise NotImplementedError()
@@ -298,16 +298,17 @@ class Slot(ISlot):
             self.amount_label.y = self.sprite.y if y is None else y
             self.amount_label.draw()
 
-    def can_set_item(
+    def is_item_allowed(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
                 return False
-        flag1 = (
+
+        any_tag_set = (
             self.allowed_item_tags is not None or self.disallowed_item_tags is not None
         )
-        flag2 = itemstack.item is not None and (
+        has_correct_tag = itemstack.item is not None and (
             (
                 self.allowed_item_tags is not None
                 and any([x in itemstack.item.TAGS for x in self.allowed_item_tags])
@@ -318,19 +319,11 @@ class Slot(ISlot):
                     [x not in itemstack.item.TAGS for x in self.disallowed_item_tags]
                 )
             )
-            or itemstack.get_item_name() is None
         )
-        flag3 = self.allowed_item_func is not None
-        flag4 = flag3 and self.allowed_item_func(itemstack)
-        try:
-            return not (flag1 or flag3) or (flag1 and flag2) or (flag3 and flag4)
-        except:
-            logger.print_exception(
-                "[GUI][ERROR] error during executing check func '{}'".format(
-                    self.allowed_item_func
-                )
-            )
-            return False
+        has_allowed_func = self.allowed_item_func is not None
+        check_allowed_func = has_allowed_func and self.allowed_item_func(itemstack)
+
+        return not (any_tag_set or has_allowed_func) or (any_tag_set and has_correct_tag) or check_allowed_func
 
     def save(self):
         d = {
@@ -348,6 +341,7 @@ class Slot(ISlot):
                 data["itemstack"]["itemname"], data["itemstack"]["amount"]
             )
         )
+
         if not self.itemstack.is_empty():
             self.itemstack.item.set_data(data["itemstack"]["data"])
 
@@ -451,8 +445,8 @@ class SlotCopy(ISlot):
             y if y is not None else self.slot_position[1] + self.position[1],
         )
 
-    def can_set_item(self, itemstack) -> bool:
-        return self.master.can_set_item(itemstack)
+    def is_item_allowed(self, itemstack) -> bool:
+        return self.master.is_item_allowed(itemstack)
 
     def save(self):
         return self.master.save()
@@ -574,7 +568,7 @@ class SlotInfiniteStack(Slot):
     def __str__(self):
         return repr(self)
 
-    def can_set_item(
+    def is_item_allowed(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         return True

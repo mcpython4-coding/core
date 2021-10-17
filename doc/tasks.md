@@ -4,7 +4,6 @@ Issues:
 - non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
 - biome map is not saved to save files or loaded not correctly somehow
 - hiding faces to rotated blocks like logs fails
-- cannot swap currently bound to mouse item with slot item
 
 
 Pending for next full release (alpha 1.1.0):
