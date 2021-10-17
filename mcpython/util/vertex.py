@@ -89,7 +89,13 @@ class VertexProvider:
             key, cls(offset, size, base_rotation_center, base_rotation)
         )
 
-    def __init__(self, offset, size, base_rotation_center, base_rotation):
+    def __init__(
+        self,
+        offset: typing.Tuple[float, float, float],
+        size: typing.Tuple[float, float, float],
+        base_rotation_center: typing.Tuple[float, float, float],
+        base_rotation: typing.Tuple[float, float, float],
+    ):
         self.offset = offset
         self.size = size
         self.base_rotation = base_rotation

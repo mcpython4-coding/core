@@ -57,7 +57,7 @@ class EnumSide(enum.Enum):
 
     def __init__(self, dx: int, dy: int, dz: int, normal_name: str, index: int):
         """
-        Constructs an new enum instance
+        Constructs a new enum instance
         :param dx: the delta in x
         :param dy: the delta in y
         :param dz: the delta in z

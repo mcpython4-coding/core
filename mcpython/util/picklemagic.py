@@ -15,12 +15,10 @@ This project is not official by mojang and does not relate to it.
 
 # This module provides tools for safely analyzing pickle files programmatically
 
-import sys
-
 import pickle
 import struct
+import sys
 import types
-
 from io import BytesIO as StringIO
 
 __all__ = [

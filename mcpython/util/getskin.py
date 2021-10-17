@@ -56,7 +56,7 @@ def store_missing_texture(path: str):
 
 def download_skin(username: str, store: str):
     """
-    will download skin data for an user name
+    Will download skin data for a username
     :param username: the user to download for
     :param store: where to store the data
     :raises ValueError: raised when an error occurred during retrieving the data
