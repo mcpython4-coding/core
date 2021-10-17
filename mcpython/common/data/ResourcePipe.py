@@ -167,7 +167,7 @@ class ResourcePipeHandler:
         shared.event_handler.call("data:shuffle:clear")
 
         if mcpython.common.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
-            shared.event_handler.call("data:shuffle:all")
+            shared.event_handler.call("minecraft:data:shuffle:all")
 
         if shared.IS_CLIENT:
             shared.inventory_handler.reload_config()  # reloads inventory configuration

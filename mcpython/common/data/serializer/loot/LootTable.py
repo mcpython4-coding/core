@@ -56,7 +56,7 @@ class LootTableHandler:
 
         self.relink_table = {}
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "data:shuffle:all", self.shuffle_data
+            "minecraft:data:shuffle:all", self.shuffle_data
         )
 
         self.mod_names_to_load = set()

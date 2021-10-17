@@ -86,7 +86,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
                 mcpython.common.config.SHUFFLE_DATA
                 and mcpython.common.config.SHUFFLE_INTERVAL > 0
             ):
-                shared.event_handler.call("data:shuffle:all")
+                shared.event_handler.call("minecraft:data:shuffle:all")
 
         self.parts[1].text = "{}%".format(
             round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10

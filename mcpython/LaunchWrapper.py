@@ -209,7 +209,7 @@ class LaunchWrapper:
 
         self.setup_registries()
 
-        shared.event_handler.call("game:startup")
+        shared.event_handler.call("minecraft:game:startup")
 
         return self
 
@@ -356,12 +356,13 @@ class LaunchWrapper:
                     mcpython.engine.ResourceLoader.read_pyglet_image("icon_16x16.png"),
                     mcpython.engine.ResourceLoader.read_pyglet_image("icon_32x32.png"),
                 )
-                shared.event_handler.call("game:gameloop_startup")
             except:
                 logger.print_exception("[FATAL] failed to load window images")
                 sys.exit(-1)
         else:
             shared.SERVER_NETWORK_HANDLER.enable_server()
+
+        shared.event_handler.call("minecraft:game:gameloop_startup")
 
         try:
             import pyglet.app
@@ -421,5 +422,4 @@ class LaunchWrapper:
         import mcpython.engine.ResourceLoader
 
         mcpython.engine.ResourceLoader.close_all_resources()
-        shared.event_handler.call("game:close")
         shared.tmp.cleanup()

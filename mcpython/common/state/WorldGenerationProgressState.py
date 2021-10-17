@@ -241,7 +241,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             mcpython.common.config.SHUFFLE_DATA
             and mcpython.common.config.SHUFFLE_INTERVAL > 0
         ):
-            shared.event_handler.call("data:shuffle:all")
+            shared.event_handler.call("minecraft:data:shuffle:all")
 
         # reload all the data-packs
         mcpython.common.data.DataPacks.datapack_handler.reload()

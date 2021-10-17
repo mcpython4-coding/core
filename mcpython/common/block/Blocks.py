@@ -205,6 +205,19 @@ def stone_like(
             f"minecraft:{fname}_fence", block_factory_consumer=consumer
         )
 
+    if existing_button:
+        DEFERRED_PIPE.create_later(
+            BlockFactory()
+            .set_name(f"minecraft:{fname}_button")
+            .set_button()
+            .set_solid(False)
+            .set_all_side_solid(False)
+        )
+    else:
+        # instance.create_button_block(f"minecraft:{fname}_button", block_factory_consumer=consumer)
+        # todo: implement
+        pass
+
 
 def colored(name: str):
     DEFERRED_PIPE.create_later(
