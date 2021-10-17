@@ -375,7 +375,7 @@ def load():
 
                 if shared.world.world_loaded:
                     logger.println("shuffling data...")
-                    shared.event_handler.call("data:shuffle:all")
+                    shared.event_handler.call("minecraft:data:shuffle:all")
 
             pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
 

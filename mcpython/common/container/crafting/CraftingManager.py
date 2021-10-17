@@ -45,7 +45,7 @@ class CraftingManager:
         self.loaded_mod_dirs = set()
 
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "data:shuffle:all", self.shuffle_data
+            "minecraft:data:shuffle:all", self.shuffle_data
         )
 
     def shuffle_data(self):

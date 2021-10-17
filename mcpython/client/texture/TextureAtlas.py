@@ -118,7 +118,7 @@ class TextureAtlasGenerator:
     def output(self):
         # todo: add per-mod, at end of every processing of models
 
-        shared.event_handler.call("textures:atlas:build:pre")
+        shared.event_handler.call("minecraft:textures:atlas:build", self)
         os.makedirs(shared.tmp.name + "/texture_atlases", exist_ok=True)
 
         for identifier in self.atlases:
@@ -133,8 +133,6 @@ class TextureAtlasGenerator:
                 atlas.group = pyglet.graphics.TextureGroup(
                     pyglet.image.load(location).get_texture()
                 )
-
-        shared.event_handler.call("textures:atlas:build:post")
 
 
 @onlyInClient()

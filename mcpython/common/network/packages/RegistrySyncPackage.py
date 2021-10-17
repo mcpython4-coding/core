@@ -20,6 +20,11 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class RegistrySyncInitPackage(AbstractPackage):
+    """
+    Sync init package send during the Server2ClientHandshake-handle
+    Send client -> server
+    """
+
     PACKAGE_NAME = "minecraft:registry_sync_init"
 
     def __init__(self):
@@ -30,6 +35,9 @@ class RegistrySyncInitPackage(AbstractPackage):
         for registry_name, instance in shared.registry.registries.items():
             if instance.sync_via_network:
                 self.registries.append(registry_name)
+
+        shared.event_handler.call("minecraft:network:registry_sync:setup", self)
+
         return self
 
     def read_from_buffer(self, buffer: ReadBuffer):
@@ -42,7 +50,8 @@ class RegistrySyncInitPackage(AbstractPackage):
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"] = {
             e: -1 for e in self.registries
         }
-        shared.event_handler.call("network:registry_sync:init", self)
+
+        shared.event_handler.call("minecraft:network:registry_sync:init", self)
 
         for name in self.registries:
             registry = shared.registry.get_by_name(name)
@@ -60,6 +69,11 @@ class RegistrySyncInitPackage(AbstractPackage):
 
 
 class RegistrySyncPackage(AbstractPackage):
+    """
+    Package send server -> client as a response on the RegistrySyncInitPackage
+    Send for each requested registry
+    """
+
     PACKAGE_NAME = "minecraft:registry_sync_content"
 
     def __init__(self):
@@ -74,6 +88,8 @@ class RegistrySyncPackage(AbstractPackage):
             self.content.append(
                 (entry.NAME, entry.INFO if entry.INFO is not None else "")
             )
+
+        shared.event_handler.call("minecraft:network:registry_sync:setup", self)
 
         return self
 
@@ -96,6 +112,8 @@ class RegistrySyncPackage(AbstractPackage):
             for entry in shared.registry.get_by_name(self.name).entries.values()
         )
 
+        shared.event_handler.call("minecraft:network:registry_sync:data_recv", self, entries_here, entries_there)
+
         if entries_here.symmetric_difference(entries_there):
             logger.write_into_container(
                 [
@@ -110,12 +128,13 @@ class RegistrySyncPackage(AbstractPackage):
             )
 
             self.answer(RegistrySyncResultPackage().setup(self.name, False))
-            shared.event_handler.call("network:registry_sync:fail", self)
-        else:
-            logger.println(
-                f"[REGISTRY][SYNC] registry {self.name} seems to be equal in client & server"
-            )
-            self.answer(RegistrySyncResultPackage().setup(self.name, True))
+            if not shared.event_handler.call_cancelable("minecraft:network:registry_sync:fail", self, entries_here, entries_there):
+                return
+
+        logger.println(
+            f"[REGISTRY][SYNC] registry {self.name} seems to be equal in client & server"
+        )
+        self.answer(RegistrySyncResultPackage().setup(self.name, True))
 
 
 class RegistrySyncResultPackage(AbstractPackage):
@@ -148,33 +167,34 @@ class RegistrySyncResultPackage(AbstractPackage):
                 logger.println(
                     "[NETWORK][INFO] registry compare results are back from server, everything fine"
                 )
-                shared.event_handler.call("network:registry_sync:success")
+                if shared.event_handler.call_cancelable("minecraft:network:registry_sync:success", self):
+                    logger.println("[NETWORK][INFO] requesting world now...")
+                    from .WorldDataExchangePackage import DataRequestPackage
 
-                logger.println("[NETWORK][INFO] requesting world now...")
-                from .WorldDataExchangePackage import DataRequestPackage
+                    def handle(*_):
+                        logger.println(
+                            "[NETWORK][WORLD] world data received successful, handing over to user..."
+                        )
+                        shared.state_handler.change_state("minecraft:game")
+                        shared.world.get_active_player().teleport((0, 100, 0))
+                        shared.world.get_active_dimension().get_chunk(0, 0).update_visible()
 
-                def handle(*_):
-                    logger.println(
-                        "[NETWORK][WORLD] world data received successful, handing over to user..."
+                    package = (
+                        DataRequestPackage().request_player_info().request_world_info()
                     )
-                    shared.state_handler.change_state("minecraft:game")
-                    shared.world.get_active_player().teleport((0, 100, 0))
-                    shared.world.get_active_dimension().get_chunk(0, 0).update_visible()
+                    shared.NETWORK_MANAGER.register_answer_handler(package, handle)
+                    self.answer(package)
 
-                package = (
-                    DataRequestPackage().request_player_info().request_world_info()
-                )
-                shared.NETWORK_MANAGER.register_answer_handler(package, handle)
-                self.answer(package)
+                    return
 
-                return
             else:
                 logger.println("[NETWORK][WARN] registry sync FAILED on server side")
-                self.answer(
-                    DisconnectionInitPackage().set_reason("registry sync fatal")
-                )
-                shared.event_handler.call("network:registry_sync:fail")
-                return
+                shared.event_handler.call("minecraft:network:registry_sync:fail", self)
+
+            self.answer(
+                DisconnectionInitPackage().set_reason("registry sync fatal")
+            )
+            return
 
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"][
             self.name

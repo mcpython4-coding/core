@@ -133,7 +133,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         os.makedirs(shared.build + "/generated_items", exist_ok=True)
 
-        # If we do not do a all-redo, check what is needed
+        # If we do not do an all-redo, check what is needed
         if not shared.invalidate_cache:
             self.load_previous_data()
 
@@ -146,7 +146,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         # todo: add command line option to disable
         shared.model_handler.hide_blockstate_errors = True
 
-        # Update the progress bar progress
+        # Update the progress bar
         self.status_bar.progress_max = len(self.tasks)
         self.status_bar.progress = 1
 

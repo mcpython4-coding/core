@@ -65,7 +65,7 @@ class ModelHandler:
             if name not in self.models:
                 self.found_models[name] = data
 
-        shared.event_handler.call("modelhandler:searched")
+        shared.event_handler.call("minecraft:model_handler:searched")
 
     def add_from_data(self, name: str, data: dict, store=True):
         """
@@ -371,10 +371,12 @@ class ModelHandler:
                 name, data, immediate=True, force=force
             )
 
-        shared.event_handler.call("data:blockstates:custom_injection", self)
-        shared.event_handler.call("data:models:custom_injection", self)
+        shared.event_handler.call("minecraft:data:blockstates:custom_injection", self)
+        shared.event_handler.call("minecraft:data:models:custom_injection", self)
+
         self.build(immediate=True)
         self.process_models(immediate=True)
+
         logger.println("finished!")
 
 

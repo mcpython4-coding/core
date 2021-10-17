@@ -212,18 +212,19 @@ class ItemModelHandler:
             self.models[item] = ItemModel.from_file(file, item)
 
     def bake(self):
-        shared.event_handler.call("item:on_bake:pre", self)
         self.atlas.load()
         for model in self.models.values():
             try:
                 model.bake(self)
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 logger.print_exception(
                     "error during baking item model for '{}'".format(model.item)
                 )
+
         self.atlas.build()
         self.atlas.dump()
-        shared.event_handler.call("item:on_bake:post", self)
 
     def add_to_batch(
         self, item_name, *args, **kwargs
