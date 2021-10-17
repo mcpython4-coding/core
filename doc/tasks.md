@@ -3,8 +3,7 @@
 Issues:
 - non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
 - biome map is not saved to save files or loaded not correctly somehow
-- logs do not render when invalidating cache
-- hiding faces to rotated blocks like logs fails 
+- hiding faces to rotated blocks like logs fails
 - cannot swap currently bound to mouse item with slot item
 
 
@@ -14,6 +13,7 @@ Pending for next full release (alpha 1.1.0):
 - optimisation: loading takes too long
   - model baking
 - investigate the lag when crossing chunk boarders
+- some more dedicated servers work
 
 
 Toolchain:

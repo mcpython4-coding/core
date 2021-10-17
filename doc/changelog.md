@@ -64,6 +64,7 @@ WARNING: this release includes a bytecode manipulation system which allows arbit
 Backwards incompatible:
 - custom block rendering
 - custom block state & model loaders
+- food items with custom on_eat() implementation (signature & behaviour change)
 
 
     Optimisation:

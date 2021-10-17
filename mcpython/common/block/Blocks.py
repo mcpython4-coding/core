@@ -40,7 +40,7 @@ def wood(name: str, normal=True):
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_button")
-        .set_default_model_state("face=ceiling,facing=east,powered=false")
+        .set_button()
         .set_solid(False)
         .set_all_side_solid(False)
         .set_strength(0.5)
@@ -49,7 +49,7 @@ def wood(name: str, normal=True):
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_door")
-        .set_button()
+        .set_default_model_state("facing=east,half=upper,hinge=left,open=false")
         .set_solid(False)
         .set_all_side_solid(False)
         .set_strength(0.5)
@@ -321,7 +321,7 @@ DEFERRED_PIPE.create_later(
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
-    .set_name("minecraft:azalea_leaves_flowers")
+    .set_name("minecraft:flowering_azalea_leaves")
     .set_solid(False)
     .set_all_side_solid(False)
 )
@@ -605,7 +605,7 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
-stone_like("deepslate", existing_slab=False, existing_stairs=False, existing_wall=False)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate").set_log())
 stone_like(
     "deepslate_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
 )
@@ -731,6 +731,7 @@ DEFERRED_PIPE.create_later(
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:frosted_ice")
+    .set_default_model_state("age=1")
     .set_solid(False)
     .set_all_side_solid(False)
 )
@@ -806,13 +807,7 @@ stone_like(
     existing_stairs=False,
     existing_wall=False,
 )
-stone_like(
-    "infested_deepslate",
-    texture="minecraft:block/deepslate",
-    existing_slab=False,
-    existing_stairs=False,
-    existing_wall=False,
-)
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:infested_deepslate").set_log())
 stone_like(
     "infested_mossy_stone_bricks",
     texture="minecraft:block/mossy_stone_bricks",
@@ -905,7 +900,7 @@ colored("light_gray")
 # todo: light_weighted_pressure_plate
 DEFERRED_PIPE.create_later(large_plant("minecraft:lilac"))
 DEFERRED_PIPE.create_later(plant("minecraft:lily_of_the_valley"))
-DEFERRED_PIPE.create_later(plant("minecraft:lily_pad").set_horizontal_orientable())
+DEFERRED_PIPE.create_later(plant("minecraft:lily_pad"))
 colored("lime")
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:lodestone"))
 DEFERRED_PIPE.create_later(
@@ -984,7 +979,7 @@ stone_like(
 stone_like(
     "packed_ice", existing_slab=False, existing_stairs=False, existing_wall=False
 )
-DEFERRED_PIPE.create_later(plant("minecraft:peony"))
+DEFERRED_PIPE.create_later(large_plant("minecraft:peony"))
 DEFERRED_PIPE.create_later(
     BlockFactory().set_name("minecraft:petrified_oak_slab").set_slab()
 )
@@ -1258,7 +1253,7 @@ stone_like("stone_bricks", existing_slab=True, existing_stairs=True, existing_wa
 # todo: structure block, structure void
 DEFERRED_PIPE.create_later(plant("minecraft:sugar_cane"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:sunflower"))
-DEFERRED_PIPE.create_later(plant("minecraft:sweet_berry_bush"))
+DEFERRED_PIPE.create_later(plant("minecraft:sweet_berry_bush").set_default_model_state("age=2"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_grass"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_seagrass"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:target"))
@@ -1286,6 +1281,7 @@ stone_like(
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:water_cauldron")
+    .set_default_model_state("level=2")
     .set_solid(False)
     .set_all_side_solid(False)
 )
@@ -1356,7 +1352,7 @@ stone_like(
 )
 # todo: weeping vines
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:wet_sponge"))
-DEFERRED_PIPE.create_later(plant("minecraft:wheat"))
+DEFERRED_PIPE.create_later(plant("minecraft:wheat").set_default_model_state("age=3"))
 colored("white")
 DEFERRED_PIPE.create_later(plant("minecraft:white_tulip"))
 DEFERRED_PIPE.create_later(plant("minecraft:wither_rose"))
