@@ -1865,4 +1865,6 @@ b   [uuk]: fixed some tool type assignment doing wrong stuff (due to python's dy
 b   [uuk]: fixed issue with assigned tool being an int leading into an exception when breaking that block
            -> checked now during block construction
 b   [uuk]: -> fixed issue in FactoryBuilder with direct copy attributes (lambda lazy lookup)
+G   [github]: end of feature period for snapshot 21w<42>a
+I   [uuk]: speed up BlockItemGenerator massively
 

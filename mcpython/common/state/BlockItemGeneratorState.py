@@ -111,8 +111,13 @@ class BlockItemGenerator(AbstractState.AbstractState):
         self.status_bar.size = (w - 20, 20)
         self.memory_bar.position = (10, h - 40)
 
+    def tick(self, _):
+        pass
+
     def activate(self):
         super().activate()
+
+        pyglet.clock.schedule_interval(self.tick, 1/400)
 
         world = shared.world
         item_registry = shared.registry.get_by_name("minecraft:item")
@@ -210,6 +215,8 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
     def deactivate(self):
         super().deactivate()
+
+        pyglet.clock.unschedule(self.tick)
 
         # We want to enable this again
         shared.model_handler.hide_blockstate_errors = False

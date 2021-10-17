@@ -66,6 +66,9 @@ Backwards incompatible:
 - custom block state & model loaders
 
 
+    Optimisation:
+        - speed up BlockItemGenerator by a lot
+
     Modding:
         - Added bytecode manipulation framework
         - started adding some more abstracted-away ways to manipulate bytecode,

@@ -39,7 +39,7 @@ Block Item Generator:
 
 Data driver:
 - item, block, implementation for the other recipes
-- reload data only when needed, so a resource pack / data pack change occured
+- reload data only when needed, so a resource pack / data pack change occurred
 
 UI:
 - system to create your own WorldGenerationMode, which is dumped to a save-based file
