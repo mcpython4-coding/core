@@ -13,21 +13,15 @@ This project is not official by mojang and does not relate to it.
 """
 # Copyright (c) 2015 CensoredUsername
 
-# This module provides tools for safely analyizing pickle files programmatically
+# This module provides tools for safely analyzing pickle files programmatically
 
 import sys
-
-PY3 = sys.version_info >= (3, 0)
-PY2 = not PY3
 
 import pickle
 import struct
 import types
 
-if PY3:
-    from io import BytesIO as StringIO
-else:
-    from cStringIO import StringIO
+from io import BytesIO as StringIO
 
 __all__ = [
     "load",
@@ -470,7 +464,7 @@ class FakeUnpicklingError(pickle.UnpicklingError):
     pass
 
 
-class FakeUnpickler(pickle.Unpickler if PY2 else pickle._Unpickler):
+class FakeUnpickler(pickle._Unpickler):
     """
     A forgiving unpickler. On uncountering references to class definitions
     in the pickle stream which it cannot locate, it will create fake classes
@@ -489,20 +483,9 @@ class FakeUnpickler(pickle.Unpickler if PY2 else pickle._Unpickler):
     ``pickle._Unpickler``)
     """
 
-    if PY2:
-
-        def __init__(self, file, class_factory=None, encoding="bytes", errors="strict"):
-            pickle.Unpickler.__init__(
-                self,
-                file,
-            )
-            self.class_factory = class_factory or FakeClassFactory()
-
-    else:
-
-        def __init__(self, file, class_factory=None, encoding="bytes", errors="strict"):
-            super().__init__(file, fix_imports=False, encoding=encoding, errors=errors)
-            self.class_factory = class_factory or FakeClassFactory()
+    def __init__(self, file, class_factory=None, encoding="bytes", errors="strict"):
+        super().__init__(file, fix_imports=False, encoding=encoding, errors=errors)
+        self.class_factory = class_factory or FakeClassFactory()
 
     def find_class(self, module, name):
         mod = sys.modules.get(module, None)
@@ -584,7 +567,7 @@ class SafeUnpickler(FakeUnpickler):
             return self.class_factory("extension_code_{0}".format(code), "copyreg")
 
 
-class SafePickler(pickle.Pickler if PY2 else pickle._Pickler):
+class SafePickler(pickle._Pickler):
     """
     A pickler which can repickle object hierarchies containing objects created by SafeUnpickler.
     Due to reasons unknown, pythons pickle implementation will normally check if a given class
