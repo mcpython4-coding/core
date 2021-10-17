@@ -81,6 +81,7 @@ class IStraightRail(IRail, ABC):
                 self.shape = "north_south"
 
         self.face_info.update(True)
+        self.schedule_network_update()
 
 
 class ActivatorRail(IStraightRail):

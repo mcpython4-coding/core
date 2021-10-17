@@ -282,6 +282,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
         lazy_setup: typing.Callable = None,
         check_build_range=True,
         block_state=None,
+        network_sync=True,
     ):
         chunk = self.get_chunk_for_position(position, generate=False)
         return chunk.add_block(
@@ -293,10 +294,11 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
             lazy_setup=lazy_setup,
             check_build_range=check_build_range,
             block_state=block_state,
+            network_sync=network_sync,
         )
 
     def remove_block(
-        self, position: tuple, immediate=True, block_update=True, block_update_self=True
+        self, position: tuple, immediate=True, block_update=True, block_update_self=True, network_sync=True,
     ):
         chunk = self.get_chunk_for_position(position)
         chunk.remove_block(
@@ -304,6 +306,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
             immediate=immediate,
             block_update=block_update,
             block_update_self=block_update_self,
+            network_sync=network_sync,
         )
 
     def check_neighbors(self, position: typing.Tuple[int, int, int]):

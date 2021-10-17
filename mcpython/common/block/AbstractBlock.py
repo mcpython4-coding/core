@@ -208,6 +208,16 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         }
         self.set_model_state(state)
 
+    def schedule_network_update(self):
+        if shared.IS_NETWORKING:
+            from mcpython.common.network.packages.WorldDataExchangePackage import ChunkBlockChangePackage
+
+            shared.NETWORK_MANAGER.send_package_to_all(
+                ChunkBlockChangePackage().set_dimension(self.dimension).change_position(self.position, self,
+                                                                                        update_only=True),
+                not_including=shared.NETWORK_MANAGER.client_id,
+            )
+
     def set_creation_properties(
         self, set_to=None, real_hit=None, player=None, state=None
     ):

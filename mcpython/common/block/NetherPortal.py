@@ -76,6 +76,8 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             if self.check_valid_block((x, y, z - 1)):
                 return
 
+        self.schedule_network_update()
+
     def check_valid_block(self, position: tuple, chunk=None):
         if chunk is None:
             chunk = shared.world.get_dimension_by_name(

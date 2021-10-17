@@ -70,12 +70,16 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
             if shared.IS_CLIENT:
                 self.face_info.update()
 
+            self.schedule_network_update()
+
     def on_anvil_use(self):
         if random.random() < self.BREAK_CHANCE:
             self.broken_count += 1
 
             if self.broken_count >= self.BREAKS_BLOCK_RESIST:
                 self.dimension.add_block(self.position, self.BROKEN_BLOCK)
+
+            self.schedule_network_update()
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)

@@ -73,8 +73,11 @@ class Barrel(AbstractBlock.AbstractBlock):
                 self.facing = "down"
             elif dy < 0:
                 self.facing = "up"
+
             if shared.IS_CLIENT:
                 self.face_info.update()
+
+            self.schedule_network_update()
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple
@@ -101,6 +104,7 @@ class Barrel(AbstractBlock.AbstractBlock):
                 self.facing = mcpython.util.enums.EnumSide[face.upper()]
             else:
                 self.facing = face
+
         if "open" in state:
             self.opened = str(state["open"]).lower() == "true"
 

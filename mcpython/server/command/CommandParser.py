@@ -95,6 +95,8 @@ class CommandParser:
 
         try:
             node.run(env, data)
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             logger.print_exception(
                 f"command parser: during running {string} in {env} using {node}"
@@ -182,6 +184,7 @@ def load_commands():
         CommandInfo,
         CommandKill,
         CommandReload,
+        CommandServer,
         CommandSetblock,
         CommandSummon,
         CommandTeleport,
@@ -212,6 +215,7 @@ def load_commands():
     handler.register_command(CommandDatapack.datapack)
     handler.register_command(CommandSummon.summon)
     handler.register_command(CommandTeleport.teleport)
+    handler.register_command(CommandServer.server)
 
 
 if not shared.IS_TEST_ENV:

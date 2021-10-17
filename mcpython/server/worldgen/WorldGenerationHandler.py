@@ -283,7 +283,7 @@ class WorldGenerationHandler:
 
             shared.NETWORK_MANAGER.send_package_to_all(
                 ChunkDataPackage().setup(
-                    chunk.get_dimension().get_name(), chunk.get_position()
+                    chunk.get_dimension().get_name(), chunk.get_position(), force=True
                 )
             )
 

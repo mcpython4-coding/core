@@ -497,13 +497,16 @@ def load_packages():
         WorldDataExchangePackage.ChunkDataPackage
     )
     shared.NETWORK_MANAGER.register_package_type(
-        WorldDataExchangePackage.ChunkUpdatePackage
+        WorldDataExchangePackage.ChunkBlockChangePackage
     )
     shared.NETWORK_MANAGER.register_package_type(
         PlayerChatPackage.PlayerChatInputPackage
     )
     shared.NETWORK_MANAGER.register_package_type(
         PlayerChatPackage.PlayerMessageShowPackage
+    )
+    shared.NETWORK_MANAGER.register_package_type(
+        PlayerChatPackage.PlayerClientCommandExecution
     )
     shared.NETWORK_MANAGER.register_package_type(
         ClientStateChangePackage.ClientStateChangePackage

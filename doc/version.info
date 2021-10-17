@@ -1849,4 +1849,10 @@ F   [uuk]: added base class for flower-like blocks
 B   [uuk]: change_chunks() was doing some weird stuff on client <-> server
 b   [uuk]: fixed client not omitting disconnection package correctly when closing the window
 b   [uuk]: fixed clients connected to a server doing weird stuff with local saves
+f   [uuk]: when client -> server connected, block updates are send now to the server
+f   [uuk]: ChunkDataPackage can now be force-added to the client world
+b   [uuk]: fixed chunk data package handling not doing what it should
+F   [uuk]: added new /server command:
+           /server stop will stop the server
+           /server save will save the current world
 

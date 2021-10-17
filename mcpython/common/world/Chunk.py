@@ -255,6 +255,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         check_build_range=True,
         block_state=None,
         replace_existing=True,
+        network_sync=True,
     ):
         """
         Adds a block to the given position
@@ -267,6 +268,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         :param check_build_range: if the build limits should be checked
         :param block_state: the block state to create in, or None if not set
         :param replace_existing: if existing blocks should be replaced
+        :param network_sync: do network sync or not
         :return: the block instance or None if it could not be created
         """
         # check if it is in build range
@@ -288,6 +290,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                 immediate=immediate,
                 block_update=block_update,
                 block_update_self=block_update_self,
+                network_sync=network_sync,
             )
 
         if block_name in [None, "air", "minecraft:air"]:
@@ -372,6 +375,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         immediate: bool = True,
         block_update: bool = True,
         block_update_self: bool = True,
+        network_sync=True,
         reason=Block.BlockRemovalReason.UNKNOWN,
     ):
         """
@@ -381,6 +385,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         :param block_update: Whether an block-update should be called or not
         :param block_update_self: Whether the block to remove should get an block-update or not
         :param reason: the reason why the block was removed
+        :param network_sync: if to send an update over the network or not
         todo: remove from scheduled world generation if needed
         """
         if issubclass(type(position), Block.AbstractBlock):

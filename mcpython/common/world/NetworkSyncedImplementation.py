@@ -58,4 +58,37 @@ class NetworkSyncedDimension(Dimension):
 
 
 class NetworkSyncedChunk(Chunk):
-    pass
+    def add_block(
+        self,
+        *args,
+        network_sync=True,
+        **kwargs,
+    ):
+        b = super().add_block(*args, **kwargs, network_sync=False)
+
+        if network_sync:
+            from mcpython.common.network.packages.WorldDataExchangePackage import ChunkBlockChangePackage
+
+            shared.NETWORK_MANAGER.send_package_to_all(
+                ChunkBlockChangePackage().set_dimension(self.dimension.get_name()).change_position(b.position, b),
+                not_including=shared.NETWORK_MANAGER.client_id,
+            )
+
+        return b
+
+    def remove_block(
+        self,
+        *args,
+        network_sync=True,
+        **kwargs
+    ):
+        super().remove_block(*args, network_sync=False, **kwargs)
+
+        if network_sync:
+            from mcpython.common.network.packages.WorldDataExchangePackage import ChunkBlockChangePackage
+
+            shared.NETWORK_MANAGER.send_package_to_all(
+                ChunkBlockChangePackage().set_dimension(self.dimension.get_name()).change_position(args[0], None),
+                not_including=shared.NETWORK_MANAGER.client_id,
+            )
+

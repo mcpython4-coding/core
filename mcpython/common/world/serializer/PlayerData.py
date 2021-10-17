@@ -81,7 +81,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
             data[player.name] = {
                 "position": player.position,
                 "rotation": player.rotation,
-                "dimension": shared.world.get_active_player().dimension.id,
+                "dimension": player.dimension.id,
                 "gamemode": player.gamemode,
                 "hearts": player.hearts,
                 "hunger": player.hunger,
@@ -89,7 +89,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                 "xp level": player.xp_level,
                 "fallen since y": player.fallen_since_y,
                 "active inventory slot": player.active_inventory_slot,
-                "flying": shared.world.get_active_player().flying,
+                "flying": player.flying,
                 "dimension_data": {
                     "nether_portal": {
                         "portal_inner_time": (

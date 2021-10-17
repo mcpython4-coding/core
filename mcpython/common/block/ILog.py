@@ -39,6 +39,7 @@ class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
                 self.axis = LogAxis.Z
 
             self.face_info.update(True)
+            self.schedule_network_update()
 
     def get_model_state(self):
         return {"axis": self.axis.name.lower()}

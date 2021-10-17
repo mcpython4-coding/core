@@ -46,6 +46,8 @@ class ClientBackend:
         except ConnectionRefusedError:
             logger.println("[NETWORK] No server at the other side to reach")
             return False
+        except (KeyboardInterrupt, SystemExit):
+            raise
 
         self.connected = True
         shared.IS_NETWORKING = True
@@ -62,7 +64,16 @@ class ClientBackend:
         self.socket.setblocking(True)
 
         for package in self.scheduled_packages:
-            self.socket.send(package)
+            try:
+                self.socket.send(package)
+            except (KeyboardInterrupt, SystemExit):
+                raise
+            except ConnectionResetError:
+                print("force-disconnecting from server, sever seems to have closed without noticing us")
+                self.disconnect()
+                shared.state_handler.change_state("minecraft:start_menu")
+                return
+
         self.scheduled_packages.clear()
 
         self.socket.setblocking(False)
@@ -70,7 +81,14 @@ class ClientBackend:
         while True:
             try:
                 d = self.socket.recv(4096)
+            except (KeyboardInterrupt, SystemExit):
+                raise
             except BlockingIOError:
+                return
+            except ConnectionResetError:
+                print("force-disconnecting from server, sever seems to have closed without noticing us")
+                self.disconnect()
+                shared.state_handler.change_state("minecraft:start_menu")
                 return
 
             self.data_stream += d
@@ -193,6 +211,8 @@ class ServerBackend:
                     return
 
                 self.data_by_client[client_id] += data
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             if client_id not in self.pending_thread_stops:
                 logger.print_exception(f"in client handler (recv) {client_id}")
@@ -213,6 +233,8 @@ class ServerBackend:
 
                 self.scheduled_packages_by_client.clear()
                 self.client_locks[client_id].release()
+        except (KeyboardInterrupt, SystemExit):
+            raise
         except:
             if client_id not in self.pending_thread_stops:
                 logger.print_exception(f"in client handler (send) {client_id}")

@@ -15,6 +15,7 @@ import asyncio
 import marshal
 import multiprocessing
 import pickle
+import sys
 import types
 import typing
 
@@ -154,7 +155,11 @@ class OffProcessWorldHelper:
         self.running = False
 
     def run(self):
-        asyncio.run(self.main())
+        try:
+            asyncio.run(self.main())
+        except (SystemExit, KeyboardInterrupt):
+            self.run_on_main(lambda ctx: sys.exit(1))
+            self.stop()
 
     async def main(self):
         context = OffProcessWorldHelper.OffProcessWorldContext(

@@ -47,6 +47,7 @@ class ISupportWorldInterface(ABC):
         lazy_setup: typing.Callable[[typing.Any], None] = None,
         check_build_range=True,
         block_state=None,
+        network_sync=True,
     ) -> typing.Optional[typing.Any]:
         raise NotImplementedError
 
@@ -59,6 +60,7 @@ class ISupportWorldInterface(ABC):
         immediate: bool = True,
         block_update: bool = True,
         block_update_self: bool = True,
+        network_sync=True,
         reason=None,
     ):
         raise NotImplementedError
@@ -259,6 +261,7 @@ class IChunk(ISupportWorldInterface, ABC):
         lazy_setup: typing.Callable[[typing.Any], None] = None,
         check_build_range=True,
         block_state=None,
+        network_sync=True,
     ) -> typing.Optional[typing.Any]:
         """
         Adds a block to the given position
@@ -270,6 +273,7 @@ class IChunk(ISupportWorldInterface, ABC):
         :param lazy_setup: an callable for setting up the block instance
         :param check_build_range: if the build limits should be checked
         :param block_state: the block state to create in, or None if not set
+        :param network_sync: if to send a chunk update package over the network or not (only affected when networking)
         :return: the block instance or None if it could not be created for some reason
         todo: add method which raises an exception on fail
         """
@@ -292,6 +296,7 @@ class IChunk(ISupportWorldInterface, ABC):
         immediate: bool = True,
         block_update: bool = True,
         block_update_self: bool = True,
+        network_sync=True,
         reason=None,
     ):
         """
@@ -470,11 +475,12 @@ class IDimension(ISupportWorldInterface, ABC):
         lazy_setup: typing.Callable = None,
         check_build_range=True,
         block_state=None,
+        network_sync=True,
     ):
         raise NotImplementedError
 
     def remove_block(
-        self, position: tuple, immediate=True, block_update=True, block_update_self=True
+        self, position: tuple, immediate=True, block_update=True, block_update_self=True, network_sync=True,
     ):
         raise NotImplementedError
 

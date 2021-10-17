@@ -191,12 +191,14 @@ class ChunkDataPackage(AbstractPackage):
         super().__init__()
         self.dimension = "overworld"
         self.position = 0, 0
+        self.force = False
 
         self.blocks = []
 
-    def setup(self, dim: str, position: typing.Tuple[int, int]):
+    def setup(self, dim: str, position: typing.Tuple[int, int], force=False):
         self.dimension = dim
         self.position = position
+        self.force = force
 
         chunk = shared.world.get_dimension_by_name(dim).get_chunk(position)
 
@@ -222,6 +224,7 @@ class ChunkDataPackage(AbstractPackage):
 
         buffer.write_string(self.dimension)
         buffer.write_int(self.position[0]).write_int(self.position[1])
+        buffer.write_bool(self.force)
 
         for b in self.blocks:
             if b is None:
@@ -241,6 +244,7 @@ class ChunkDataPackage(AbstractPackage):
 
         self.dimension = buffer.read_string()
         self.position = buffer.read_int(), buffer.read_int()
+        self.force = buffer.read_bool()
 
         for _ in range(16 * 256 * 16):
             is_block, visible = buffer.read_bool_group(2)
@@ -264,29 +268,103 @@ class ChunkDataPackage(AbstractPackage):
             self.position
         )
 
-        if chunk.loaded:
+        if chunk.loaded and not self.force:
             logger.println("-> skipping as chunk exists in game")
             return
 
         dx, dz = self.position
 
         i = 0
-        for x, y, z in itertools.product(range(16), range(256), range(16)):
-            x += dx
-            z += dz
-
+        for x, y, z in itertools.product(range(dx*16, dx*16+16), range(256), range(dz*16,dz*16+16)):
             block = self.blocks[i]
 
             if block is not None:
                 chunk.add_block(
-                    (x, y, z), block[0], immediate=block[1], block_update=False
+                    (x, y, z), block[0], immediate=False, block_update=False, network_sync=False,
                 )
 
             i += 1
+
+        chunk.update_all_rendering()
 
         logger.println(f"-> chunk data fully added (took {time.time()-start}s)")
         chunk.loaded = True
 
 
-class ChunkUpdatePackage(AbstractPackage):
-    PACKAGE_NAME = "minecraft:chunk_update"
+class ChunkBlockChangePackage(AbstractPackage):
+    PACKAGE_NAME = "minecraft:chunk_block_update"
+
+    def __init__(self):
+        super().__init__()
+        self.dimension = None
+        self.data = []
+
+    def set_dimension(self, dimension: str):
+        self.dimension = dimension
+        return self
+
+    def change_position(self, position: typing.Tuple[int, int, int], block, update_only=False):
+        """
+        Updates the block data at a given position
+        :param position: the position
+        :param block: the block instance
+        :param update_only: if to only update the block, not add a new one
+        """
+        self.data.append((position, block, update_only))
+        return self
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_string(self.dimension)
+
+        def write(e):
+            position, block, update_only = e
+            buffer.write_long(position[0])
+            buffer.write_long(position[1])
+            buffer.write_long(position[2])
+
+            if block is None:
+                buffer.write_bool_group([False, False])
+            else:
+                buffer.write_bool_group([True, update_only])
+                buffer.write_string(block.NAME)
+                block.write_to_network_buffer(buffer)
+
+        buffer.write_list(self.data, write)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        self.dimension = buffer.read_string()
+
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+
+        def read():
+            position = tuple((buffer.read_long() for _ in range(3)))
+
+            is_block, update_only = buffer.read_bool_group(2)
+
+            if not is_block:
+                self.data.append((position, None, update_only))
+            else:
+                name = buffer.read_string()
+
+                if update_only:
+                    b = dimension.get_block(position, none_if_str=True)
+
+                    if b is None:
+                        logger.println(
+                            f"[WARM] got block internal update for block {position} in {self.dimension}, but no block is there!")
+                        return
+
+                    b.read_from_network_buffer(buffer)
+
+                else:
+                    instance = shared.registry.get_by_name("minecraft:block").get(name)()
+                    instance.read_from_network_buffer(buffer)
+                    self.data.append((position, instance, update_only))
+
+        buffer.read_list(read)
+
+    def handle_inner(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+
+        for position, block, update_only in self.data:
+            dimension.add_block(position, block, network_sync=False, block_update=False)

@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import random
+
 from mcpython import shared
 from mcpython.common.network.connection import connectClient2Server
 from mcpython.util.annotation import onlyInClient
@@ -79,7 +81,7 @@ class ServerSelectionState(AbstractState):
         )
 
         shared.NETWORK_MANAGER.send_package(
-            Client2ServerHandshake().setup("test:player")
+            Client2ServerHandshake().setup("test:player"+str(random.randint(10, 1000)))
         )
 
         shared.state_handler.change_state("minecraft:server_connecting")

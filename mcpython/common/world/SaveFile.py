@@ -224,28 +224,38 @@ class SaveFile:
             self.dump(None, "minecraft:gamerule")
             self.dump(None, "minecraft:registry_info_serializer")
 
-            for chunk in shared.world.get_active_dimension().chunks:
-                # todo: save all loaded dimension, not only the active one
-                if shared.world.get_active_dimension().get_chunk(*chunk).loaded:
-                    self.dump(
-                        None,
-                        "minecraft:chunk",
-                        dimension=shared.world.get_active_player().dimension.id,
-                        chunk=chunk,
-                        override=override,
-                    )
+            for dimension in shared.world.dimensions.values():
+                logger.println("saving dimension "+dimension.get_name())
+
+                for chunk in dimension.chunks:
+                    # todo: save all loaded dimension, not only the active one
+                    if dimension.get_chunk(*chunk).loaded:
+                        self.dump(
+                            None,
+                            "minecraft:chunk",
+                            dimension=dimension.id,
+                            chunk=chunk,
+                            override=override,
+                        )
 
             logger.println("save complete!")
 
             # And open the system again
             shared.world_generation_handler.enable_generation = True
             self.save_in_progress = False
+        except (SystemExit, KeyboardInterrupt):
+            raise
         except:
-            logger.print_exception(
-                "Exception during saving world. Falling back to start menu"
-            )
-            shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:start_menu")
+            if shared.IS_CLIENT:
+                logger.print_exception(
+                    "Exception during saving world. Falling back to start menu"
+                )
+                shared.world.cleanup()
+                shared.state_handler.change_state("minecraft:start_menu")
+            else:
+                logger.print_exception("Exception during saving world")
+                shared.NETWORK_MANAGER.disconnect()
+                sys.exit(-1)
 
     def apply_storage_fixer(self, name: str, *args, **kwargs):
         """

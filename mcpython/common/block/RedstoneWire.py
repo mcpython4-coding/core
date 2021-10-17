@@ -70,8 +70,11 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         if block is None or not block.face_solid[EnumSide.UP.index]:
             dimension.remove_block(self.position)
             return
+
         elif block.IS_SOLID:
             block.inject_redstone_power(EnumSide.UP, self.level)
+
+        self.schedule_network_update()
 
     def send_level_update(self):
         level = max(self.injected_redstone_power)

@@ -45,6 +45,8 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
             elif dy < 0:
                 self.face = mcpython.util.enums.EnumSide.DOWN
 
+            self.schedule_network_update()
+
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}
 
