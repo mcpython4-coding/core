@@ -8,12 +8,12 @@
     - possible fix: rewrite this part of the method of the Chunk-class
 
 - issue 34:
-    - bug: jumping from downwards into an block, you get damage
+    - bug: jumping from downwards into a block, you get damage
     - since: block damage was introduced
     - fix: rewrite collision system & check for overlap value
 
 - issue 35:
-    - bug: going inside an non-full block will give you damage instead of bouncing of the block (e.g. glass)
+    - bug: going inside a non-full block will give you damage instead of bouncing of the block (e.g. glass)
     - since: block damage was introduced
     - fix: check for solid block
     - better fix: use rewritten collision system based on AABB's to determine if you are in an block or not
@@ -67,11 +67,11 @@
     - 3rd fix: move to other process
 
 - issue 165:
-    - bug: changing chunks in an big world takes a long time due to internal re-calculations
+    - bug: changing chunks in a big world takes a long time due to internal re-calculations
     - fix: see issue 164
 
 - issue 168:
-    - bug: when starting in-game generation, game hangs for an moment
+    - bug: when starting in-game generation, game hangs for a moment
     - fix: make generation off-thread
 
 - issue 175:
@@ -104,8 +104,5 @@
 - issue 199:
     - bug: dynamic generated dimension ids are not saved in saves leading into miss-matches when changing dimension list
     - fix: add them to the storage system and re-assign on load
-
-- issue 235:
-    bug: tools are CONSUMED when using them
 
 [1001]
