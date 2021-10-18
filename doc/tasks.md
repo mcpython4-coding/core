@@ -6,7 +6,7 @@ Issues:
 - hiding faces to rotated blocks like logs fails
 
 
-Pending for next full release (alpha 1.1.0):
+Pending for next full release (alpha 1.2.0):
 - most of the issues above
 - more unit tests [WIP]
 - optimisation: loading takes too long

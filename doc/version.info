@@ -363,12 +363,11 @@ A   [uuk]: added Items, Stone-item
     [xkcdjerry]: removed old unused code in __main__->try->main
     [uuk]: added setup tasks
 
-    [github]: started day 26 as 14th of September, 2019; last date in this file;
-              means not everything was done on the same day :-)
+G   [github]: started day 26 as 14th of September, 2019
     [uuk]: finished prebuild system to an runnable point
-    [uuk]: fixed bug: space / shift for flying works in chat
-    [uuk]: fixed bug: /help-command does not work (#1)
-    [uuk]: fixed bugs around command parsing which were causing /give and /give @s raising exceptions (#4)
+b   [uuk]: fixed bug: space / shift for flying works in chat
+b   [uuk]: fixed bug: /help-command does not work (#1)
+b   [uuk]: fixed bugs around command parsing which were causing /give and /give @s raising exceptions (#4)
     [uuk]: optimized crafting system & fixed bugs around it (#1)
     [uuk]: fixed bug: only-items were not loaded (this was the reason for recipes not working)
     [uuk]: fixed bug: ResourceLocator can't load right from item-directory
@@ -727,7 +726,8 @@ A   [uuk]: added Items, Stone-item
     [uuk]: ResourceLocator's directory method uses now os.walk rather than os.listdir, fixing incompatibilities between
            source-mods & zipped-mods
     [uuk]: tag handler accepts now sub-direction-tag-storing
-    [github]
+G    [github]
+
     [uuk]: started cleaning up stuff
     [uuk]: moved issues out of this files into issues.list-file
     [uuk]: removed all todo's from this file
@@ -770,7 +770,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: added support for DELETE, END and BEGIN in chat
     [uuk]: when you change cursor position by arrow-keys in chat, you will now go around if you go to far
     [uuk]: fixed an small bug when build-folder does not exists
-    [github] released snapshot 20w05a
+G   [github] released snapshot 20w05a
 
     [uuk]: added new class: BlockFaceState
     [uuk]: removed ICustomBlockRenderer-class
@@ -806,7 +806,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: fixed issue 50, 74
     [uuk]: util.opengl's draw_rectangle-function accepts now also alpha-colors
     [uuk]: chat has now transparency
-    [github] released snapshot 20w07a
+G   [github] released snapshot 20w07a
 
     [uuk] updated changelog.txt to include fully release of snapshot 20w05a
     [uuk]: changed the way how TextureAtlases for blocks are created
@@ -856,7 +856,8 @@ A   [uuk]: added Items, Stone-item
     [uuk]: command /registryinfo includes now also the key the item was registered under
     [uuk]: fixed issue 75, 97
     [uuk]: changed some internals on TextureAtlas system
-    [github]: released 20w09a
+G   [github]: released 20w09a
+
     [uuk]: updated library pyglet to 1.5.0 and psutil to 5.7.0
     [uuk]: added datapack support with various helper events [the datapacks are stored globally, not per-world]
     [uuk]: added /function command
@@ -902,7 +903,8 @@ A   [uuk]: added Items, Stone-item
     [uuk]: removed time stamp from logs reducing log size
     [uuk]: decreased asset file size by removing sound files
     [uuk]: added config option for fog distance
-    [github]: released snapshot 20w10a
+G   [github]: released snapshot 20w10a
+
     [uuk]: changed code from using the tmp-directory located in project-home to use the tempfile-library (see #5)
     [uuk]: re-implemented API for creating custom block renderers
     [uuk]: added support for using OR-condition in block models
@@ -1102,11 +1104,11 @@ A   [uuk]: added Items, Stone-item
              Block.CONDUCTS_REDSTONE_POWER, Block.SOLID, dynamic Block.injected_redstone_power, Block.get_redstone_output(),
              Block.get_redstone_source_power(), Block.CAN_MOBS_SPAWN_ON,
              Entity.movement [implemented in tick() as default impl.]
-    [github]: released alpha 1.0.0
+G   [github]: released alpha 1.0.0
 
     [uuk]: fixed load-crash
     [uuk]: fixed issue when loading newer versions (they were not handled correctly)
-    [github]: released alpha 1.0.1
+G   [github]: released alpha 1.0.1
 
     [uuk]: preparations for next snapshot(s)
     [uuk]: deprecated BoxModel.copy & BoxModel.data
@@ -1141,7 +1143,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: deprecated a lot of functions, specified the old deprecations more
     [uuk]: code improvements
     [uuk]: Dimension.get_chunk() accepts now also an tuple as position, not only two numbers
-    [github]: released snapshot 20w22a
+G   [github]: released snapshot 20w22a
 
     [uuk]: fixed issue 194: loading of empty dicts from config file failed
     [uuk]: added profiler system with config system
@@ -1173,7 +1175,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: added "--no-window"-flag for opening no window [useful for data gen]
     [uuk]: deprecated old factories for models, block states and recipes
     [uuk]: implemented data generators for block models and block state files, tags and entities
-    [github]: released snapshot 20w24a
+G   [github]: released snapshot 20w24a
 
     [uuk]: added rendering_helper attribute to globals.py which is reset after every draw cycle
     [uuk]: added state part serializer for progress bar
@@ -1203,7 +1205,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: added scroll bar UI element
     [uuk]: changed StateWorldSelection screen look
     [uuk]: implemented some more functionality
-    [github]: released snapshot 20w25a
+G   [github]: released snapshot 20w25a
 
     [uuk]: changed system to apply an 3d view of the world to use MatrixStack-instances
     [uuk]: fixed ordering of world selection list (issue 213)
@@ -1247,7 +1249,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: /teleport will now teleport the player also into the new dimension when needed
     [uuk]: added helper functions to RenderingHelper for setting alpha on/off
     [uuk]: prebuilding will now enable data gen
-    [uuk]: released snapshot 20w28a
+G   [github]: released snapshot 20w28a
 
     [uuk]: added ToolTips to items which are translated (if possible), can be colored, ...
     [uuk]: added corresponding extension functions to Item-class and ItemFactory-system
@@ -1275,7 +1277,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: /reload will now NOT re-run data gens
     [uuk]: tooltip contains now full qualified registry name
     [uuk]: added api management system
-    [uuk]: released a1.1.0
+G   [github]: released a1.1.0
 
     [uuk]: mdk has now an script for changing the target version
     [uuk]: data generators can now also add new data generators
@@ -1300,7 +1302,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: fixed slabs not generating correctly (issue 242)
     [uuk]: BlockStateLoaders have now an build() method
     [uuk]: BlockStates now are able to define an parent and model aliases
-    [github]: released snapshot 20w31a
+G   [github]: released snapshot 20w31a
 
     [uuk]: added the following event functions:
            - Block.on_player_interaction(self, player, button: int, modifiers: int, hit_position: tuple) -> bool
@@ -1412,7 +1414,7 @@ A   [uuk]: added Items, Stone-item
     [B] [uuk]: fixed main inventory rendering issue
         [uuk]: optimised recipe lookup
     [B] [uuk]: fixed build system not working correctly
-    [github]: end of phase for internal changes, on 14.12.2020
+G   [github]: end of phase for internal changes, on 14.12.2020
 
     [uuk]: fixed issue 204: start chest was generating in non-default-overworld-dimensions
     [uuk]: re-implemented chest renderer
@@ -1425,7 +1427,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: rewritten how default-loaders for assets are declared using now an "ResourcePipe"
     [uuk]: added internal resource loader for in-memory data storage
     [uuk]: targeting now 20w51a
-    [github]: released snapshot 20w51a
+G   [github]: released snapshot 20w51a
 
     [uuk]: implemented NoiseManager system for generating noises
     [uuk]: added injection point for other noise backends
@@ -1469,7 +1471,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: rewritten factory system, starting with BlockFactory. It will break any existing code using its API's
     [uuk]: this is by far the most breaking thing for this snapshot
     [uuk]: nothing may work!
-    [github]: released snapshot 21w01a
+G   [github]: released snapshot 21w01a
 
     [uuk]: fixed issue 248: log escape derp
     [uuk]: BoxModel is using now only one entry instead of the amount of visible sides
@@ -1523,7 +1525,7 @@ A   [uuk]: added Items, Stone-item
     [uuk]: WARNING: this compiler takes LONG time on first compilation
     [uuk]: compilation is handled by dev/generate_binary.py
     [uuk]: added RemoteWorldAccess dummy file for defining async world access
-    [github]: released snapshot 21w04a
+G   [github]: released snapshot 21w04a
 
     [uuk]: implemented RemoteWorldAccess async implementation and process management using asyncio
     [uuk]: added /worldgendebug command, for debugging the world gen system [and the process system]
@@ -1615,83 +1617,82 @@ A   [uuk]: added Items, Stone-item
 G   [github]: released snapshot 21w17a
 
 G   [github]: started development for snapshot 21w20a
-    [uuk]: tweaked test framework a little bit
-    [uuk]: written some more tests for the bases of the system
-    [uuk]: window is now spawned during client setup instead of some time after, preparing for future rendering stuff
-    [uuk]: added system to output chunk data maps to files
-    [uuk]: fixed /chunk generate area command crashing due to wrong argument parsing
-    [uuk]: added /chunk delete all command
-    [uuk]: removed APIManager
-    [uuk]: fixed wrong override condition in Registry.py
-    [uuk]: EntityManager.spawn_entity() accepts now also an entity instance
-    [uuk]: extended visualupdate and save subcommand of /chunk to have an "all" variant
-    [uuk]: exported some more version constants to version.json
-    [uuk]: EntityRenderer is now more open to render without a real entity instance, only with the position,
+I   [uuk]: tweaked test framework a little bit
+T   [uuk]: written some more tests for the bases of the system
+IA  [uuk]: window is now spawned during client setup instead of some time after, preparing for future rendering stuff
+f   [uuk]: added system to output chunk data maps to files
+b   [uuk]: fixed /chunk generate area command crashing due to wrong argument parsing
+b   [uuk]: added /chunk delete all command
+A-  [uuk]: removed APIManager
+b   [uuk]: fixed wrong override condition in Registry.py
+f   [uuk]: EntityManager.spawn_entity() accepts now also an entity instance
+f   [uuk]: extended visual update and save subcommand of /chunk to have an "all" variant
+I   [uuk]: exported some more version constants to version.json
+VA  [uuk]: EntityRenderer is now more open to render without a real entity instance, only with the position,
            as most of the functions require only the position
-    [uuk]: toolchain contains now a stage for import refactoring
-    [uuk]: slightly improved mod loading stage system
-    [uuk]: tweaked some mod loading stuff
-    [uuk]: changed events, added events.md documentation of the new events
-    [uuk]: some minor improvements
-    [uuk]: started implementing creative tabs, finally!
-    [uuk]: fixed some minor hiccups around some slot stuff
-    [uuk]: made creative tab content data-drive-able via tags
-    [uuk]: fixed another minor issue with slots introduced during inventory setup for creative tabs
-    [uuk]: creative tabs are tag-driven now
-    [uuk]: fixed opengl helpers not correctly cleaning up afterwards after drawing
-    [uuk]: implemented scrollbar system for inventories, used currently in creative tabs
-    [uuk]: improved creative tab system by adding system to switch between tabs
-    [uuk]: tabs get now highlighted when hovering over them or selecting them
-    [uuk]: page buttons will scroll now whole creative tab pages
-    [uuk]: added SlotCopy variant for dynamic slot referencing
-    [uuk]: maybe fixed normal SlotCopy
-    [uuk]: E closes now also the inventory
-    [uuk]: N and M are now switching between the creative tab pages [not single tabs]
-    [uuk]: bumped target mc version to 21w19a
-    [uuk]: implemented some button rendering code
-    [uuk]: added buttons to switch pages
-    [uuk]: implemented player inventory tab
-    [uuk]: fixed some other small stuff
-    [uuk]: ItemGroups have now a "filter" function
-    [uuk]: added ui helper for search fields
-    [uuk]: added search-based item tab
-    [uuk]: added a way to disable certain keybinds
-    [uuk]: creative item tab content loaded from tags is now filtered
-    [uuk]: added LazyClassLoadItemstack class for lazy-init-ing ItemStack's
+T   [uuk]: toolchain contains now a stage for import refactoring
+I   [uuk]: slightly improved mod loading stage system
+I   [uuk]: tweaked some mod loading stuff
+E   [uuk]: changed events, added events.md documentation of the new events
+O   [uuk]: some minor improvements
+VF* [uuk]: started implementing creative tabs, finally!
+AB* [uuk]: fixed some minor hiccups around some slot stuff
+A   [uuk]: made creative tab content data-drive-able via tags
+b   [uuk]: fixed another minor issue with slots introduced during inventory setup for creative tabs
+b   [uuk]: fixed opengl helpers not correctly cleaning up afterwards after drawing
+f   [uuk]: implemented scrollbar system for inventories, used currently in creative tabs
+F   [uuk]: improved creative tab system by adding system to switch between tabs
+f   [uuk]: tabs get now highlighted when hovering over them or selecting them
+f   [uuk]: page buttons will scroll now whole creative tab pages
+f   [uuk]: added SlotCopy variant for dynamic slot referencing
+b   [uuk]: maybe fixed normal SlotCopy
+f   [uuk]: E closes now also the inventory
+f   [uuk]: N and M are now switching between the creative tab pages [not single tabs]
+L   [uuk]: bumped target mc version to 21w19a
+VA  [uuk]: implemented some button rendering code
+VF  [uuk]: added buttons to switch pages
+f   [uuk]: implemented player inventory tab
+b   [uuk]: fixed some other small stuff
+f   [uuk]: ItemGroups have now a "filter" function
+f   [uuk]: added ui helper for search fields
+F   [uuk]: added search-based item tab
+f   [uuk]: added a way to disable certain keybinds
+I   [uuk]: creative item tab content loaded from tags is now filtered
+Af  [uuk]: added LazyClassLoadItemstack class for lazy-init-ing ItemStack's
            This is used in creative tabs; This fixes mods beeing unable to add blocks to their creative tabs
-    [uuk]: added "/data creative missing" command for checking tabs for lazy item stacks with missing items
-    [uuk]: elytra can now be also put into chestplate slot
-    [uuk]: added extension point for mod loaders
-    [uuk]: mod loader will now not CRASH when an invalid loader name is specified in a mod.json file
-    [uuk]: added a few new blocks
-    [uuk]: fixed experience bottle not working correctly
-    [uuk]: started adding some networking code
+f   [uuk]: added "/data creative missing" command for checking tabs for lazy item stacks with missing items
+f   [uuk]: elytra can now be also put into chestplate slot
+fA  [uuk]: added extension point for mod loaders
+IA- [uuk]: mod loader will now not CRASH when an invalid loader name is specified in a mod.json file
+F   [uuk]: added a few new blocks
+b   [uuk]: fixed experience bottle not working correctly
+F** [uuk]: started adding some networking code
 G   [github]: released snapshot 21w20a
 
 G   [github]: started new development cycle for snapshot 21w23a scheduled for lasting 21 days (3 weeks)
-    [uuk]: some more networking stuff
-    [uuk]: dumped target mc version to 21w20a
-    [uuk]: moved url for download source to version.json file
-    [uuk]: moved ExtensionPoint class to mod folder
-    [uuk]: EventBus.subscribe allows now for multiple subscriptions with the same "signature"
-    [uuk]: EventBus.unsubscribe will now unsubscribe all functions to an event, not only the first found one
-    [uuk]: some minor cleanup at EventBus
-    [uuk]: fixed some minor stuff in the world generation serializer
-    [uuk]: deleted reload stage system from mod loader (not the reload pipe, the old one)
-    [uuk]: improved how block palette is stored and entity data is stored
-    [uuk]: cleaned up some storage stuff
-    [uuk]: fixed DamageSource __eq__ not checking for defined attributes, only for custom
-    [uuk]: implemented a handful of unit tests for entities
-    [uuk]: cleaned up some code which was running on the server
-    [uuk]: tooltip renderer will now use item name rather than item class name when missing translation component
-    [uuk]: ModLoader will switch to a special state when error occurs during mod loading
-    [uuk]: loading exceptions are now mostly FATAL and cannot be skipped
-    [uuk]: ModLoader assigns now the resource access to each Mod instance when loading
-    [github]: end of feature period of snapshot 21w23a
-    [uuk]: fixed chat history index not resetting after entering a command
-    [uuk]: fixed uv horizontal rendering of blocks
-    [uuk]: bumped target mc version to 1.17
-    [uuk]: improved memory usage / block instance
+F   [uuk]: some more networking stuff
+L   [uuk]: dumped target mc version to 21w20a
+I   [uuk]: moved url for download source to version.json file
+A   [uuk]: moved ExtensionPoint class to mod folder
+Af  [uuk]: EventBus.subscribe allows now for multiple subscriptions with the same "signature"
+Af  [uuk]: EventBus.unsubscribe will now unsubscribe all functions to an event, not only the first found one
+Hr  [uuk]: some minor cleanup at EventBus
+b   [uuk]: fixed some minor stuff in the world generation serializer
+A-  [uuk]: deleted reload stage system from mod loader (not the reload pipe, the old one)
+O   [uuk]: improved how block palette is stored and entity data is stored
+H   [uuk]: cleaned up some storage stuff
+b   [uuk]: fixed DamageSource __eq__ not checking for defined attributes, only for custom
+T   [uuk]: implemented a handful of unit tests for entities
+I   [uuk]: cleaned up some code which was running on the server
+VI  [uuk]: tooltip renderer will now use item name rather than item class name when missing translation component
+F   [uuk]: ModLoader will switch to a special state when error occurs during mod loading
+f   [uuk]: loading exceptions are now mostly FATAL and cannot be skipped
+f   [uuk]: ModLoader assigns now the resource access to each Mod instance when loading
+G   [github]: end of feature period of snapshot 21w23a
+b   [uuk]: fixed chat history index not resetting after entering a command
+B   [uuk]: fixed uv horizontal rendering of blocks
+L   [uuk]: bumped target mc version to 1.17
+O   [uuk]: improved memory usage / block instance
 G   [github]: released snapshot 21w23a
 
 G   [github]: start of development cycle for 21w35a
