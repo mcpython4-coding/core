@@ -820,7 +820,9 @@ stone_like(
     existing_stairs=False,
     existing_wall=False,
 )
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:infested_deepslate").set_log())
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:infested_deepslate").set_log()
+)
 stone_like(
     "infested_mossy_stone_bricks",
     texture="minecraft:block/mossy_stone_bricks",
@@ -1266,7 +1268,9 @@ stone_like("stone_bricks", existing_slab=True, existing_stairs=True, existing_wa
 # todo: structure block, structure void
 DEFERRED_PIPE.create_later(plant("minecraft:sugar_cane"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:sunflower"))
-DEFERRED_PIPE.create_later(plant("minecraft:sweet_berry_bush").set_default_model_state("age=2"))
+DEFERRED_PIPE.create_later(
+    plant("minecraft:sweet_berry_bush").set_default_model_state("age=2")
+)
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_grass"))
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_seagrass"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:target"))

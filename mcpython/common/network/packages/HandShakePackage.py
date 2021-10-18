@@ -55,7 +55,9 @@ class Client2ServerHandshake(AbstractPackage):
 
         # todo: some better lookup with compatible network lookup
         if self.game_version != mcpython.common.config.VERSION_ID:
-            logger.println(f"[HANDSHAKE] denied connection to {self.player_name} due to incompatible versions")
+            logger.println(
+                f"[HANDSHAKE] denied connection to {self.player_name} due to incompatible versions"
+            )
             self.answer(
                 Server2ClientHandshake().setup_deny(
                     f"Incompatible game version: {self.game_version}; expected: {mcpython.common.config.VERSION_ID}"
@@ -64,7 +66,9 @@ class Client2ServerHandshake(AbstractPackage):
             return
 
         if self.player_name in shared.NETWORK_MANAGER.client_profiles:
-            logger.println(f"[HANDSHAKE] denied connection due to duplicate player name {self.player_name}")
+            logger.println(
+                f"[HANDSHAKE] denied connection due to duplicate player name {self.player_name}"
+            )
             self.answer(
                 Server2ClientHandshake().setup_deny(
                     f"Invalid player name: Player with same name already connected to this server"

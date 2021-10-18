@@ -1867,7 +1867,7 @@ b   [uuk]: fixed issue with assigned tool being an int leading into an exception
 b   [uuk]: -> fixed issue in FactoryBuilder with direct copy attributes (lambda lazy lookup)
 G   [github]: end of feature period for snapshot 21w<42>a
 I   [uuk]: speed up BlockItemGenerator massively
-BI  [uuk]: fixed some inventory slot stuff
+BIT [uuk]: fixed some inventory slot stuff
 f   [uuk]: mods can declare now server-only dependency preventing them from being send to the client
 E   [uuk]: added new event: minecraft:modlist:sync:setup
 

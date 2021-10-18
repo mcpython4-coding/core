@@ -117,7 +117,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
     def activate(self):
         super().activate()
 
-        pyglet.clock.schedule_interval(self.tick, 1/400)
+        pyglet.clock.schedule_interval(self.tick, 1 / 400)
 
         world = shared.world
         item_registry = shared.registry.get_by_name("minecraft:item")

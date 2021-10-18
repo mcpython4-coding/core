@@ -29,7 +29,9 @@ data = (
         CommandNode(DefinedString("shuffle"))
         .of_name("shuffle")
         .info("shuffles the internal data links for fun; only for fun")
-        .on_execution(lambda env, d: shared.event_handler.call("minecraft:data:shuffle:all"))
+        .on_execution(
+            lambda env, d: shared.event_handler.call("minecraft:data:shuffle:all")
+        )
     )
     .than(
         CommandNode(DefinedString("view"))

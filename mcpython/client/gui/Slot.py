@@ -323,7 +323,11 @@ class Slot(ISlot):
         has_allowed_func = self.allowed_item_func is not None
         check_allowed_func = has_allowed_func and self.allowed_item_func(itemstack)
 
-        return not (any_tag_set or has_allowed_func) or (any_tag_set and has_correct_tag) or check_allowed_func
+        return (
+            not (any_tag_set or has_allowed_func)
+            or (any_tag_set and has_correct_tag)
+            or check_allowed_func
+        )
 
     def save(self):
         d = {

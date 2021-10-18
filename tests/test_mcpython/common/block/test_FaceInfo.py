@@ -13,7 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import TestCase
 
+from mcpython import shared
 from mcpython.util.enums import EnumSide
+
+shared.IS_CLIENT = True
 
 
 class Weakable:

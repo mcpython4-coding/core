@@ -60,10 +60,12 @@ class OpenedInventoryStatePart(
             shared.inventory_handler.remove_one_from_stack()
 
         x, y = shared.window.mouse_position
-        slot = self._get_slot_for(x, y)
+        slot, inventory = self._get_slot_inventory_for(x, y)
 
         if slot is not None and slot.on_button_press is not None:
-            slot.on_button_press(x, y, symbol, modifiers)
+            px, py = inventory.get_position()
+
+            slot.on_button_press(x - px, y - py, symbol, modifiers)
 
     def on_draw_2d(self):
         hovering_slot, hovering_inventory = self._get_slot_inventory_for(
@@ -130,7 +132,9 @@ class OpenedInventoryStatePart(
                 if 0 <= x - sx <= 32 and 0 <= y - sy <= 32:
                     return slot
 
-    def _get_slot_inventory_for(self, x: int, y: int) -> typing.Union[mcpython.client.gui.Slot.Slot, typing.Any]:
+    def _get_slot_inventory_for(
+        self, x: int, y: int
+    ) -> typing.Union[mcpython.client.gui.Slot.Slot, typing.Any]:
         """
         Gets inventory of the slot for the position
         :param x: the x position
@@ -215,7 +219,15 @@ class OpenedInventoryStatePart(
 
         return False
 
-    def handle_middle_click(self, button: int, modifiers: int, moving_itemstack: ItemStack, slot, x: int, y: int):
+    def handle_middle_click(
+        self,
+        button: int,
+        modifiers: int,
+        moving_itemstack: ItemStack,
+        slot,
+        x: int,
+        y: int,
+    ):
         if (
             moving_itemstack.is_empty()
             and shared.world.get_active_player().gamemode == 1
@@ -234,7 +246,15 @@ class OpenedInventoryStatePart(
 
         return True
 
-    def handle_right_click(self, button: int, modifiers: int, moving_itemstack: ItemStack, slot, x: int, y: int):
+    def handle_right_click(
+        self,
+        button: int,
+        modifiers: int,
+        moving_itemstack: ItemStack,
+        slot,
+        x: int,
+        y: int,
+    ):
         if moving_itemstack.is_empty() and slot.allow_half_getting:
             if not slot.interaction_mode[0]:
                 return False
@@ -246,7 +266,10 @@ class OpenedInventoryStatePart(
             slot.itemstack.set_amount(amount // 2)
             slot.call_update(True)
 
-        elif slot.is_item_allowed(moving_itemstack) and (slot.itemstack.is_empty() or slot.itemstack.contains_same_resource(moving_itemstack)):
+        elif slot.is_item_allowed(moving_itemstack) and (
+            slot.itemstack.is_empty()
+            or slot.itemstack.contains_same_resource(moving_itemstack)
+        ):
             self.mode = 2
             self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
@@ -255,7 +278,15 @@ class OpenedInventoryStatePart(
 
         return True
 
-    def handle_left_click(self, button: int, modifiers: int, moving_itemstack: ItemStack, slot, x: int, y: int):
+    def handle_left_click(
+        self,
+        button: int,
+        modifiers: int,
+        moving_itemstack: ItemStack,
+        slot,
+        x: int,
+        y: int,
+    ):
         # Is the current stack held by the player empty?
         if self.moving_itemstack.is_empty():
             if not slot.interaction_mode[0]:
@@ -265,7 +296,10 @@ class OpenedInventoryStatePart(
             slot.clean_itemstack()
             slot.call_update(True)
 
-        elif slot.is_item_allowed(moving_itemstack) and (slot.itemstack.is_empty() or slot.itemstack.contains_same_resource(moving_itemstack)):
+        elif slot.is_item_allowed(moving_itemstack) and (
+            slot.itemstack.is_empty()
+            or slot.itemstack.contains_same_resource(moving_itemstack)
+        ):
             self.mode = 1
             self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
@@ -441,7 +475,7 @@ class InventoryHandler:
     def __init__(self):
         self.open_containers = []
         self.always_open_containers = []
-        self.containers = []
+        self.containers = []  # todo: can we make this weak?
         self.moving_slot: mcpython.client.gui.Slot.Slot = mcpython.client.gui.Slot.Slot(
             allow_player_add_to_free_place=False,
             allow_player_insert=False,

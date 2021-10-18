@@ -112,7 +112,12 @@ class RegistrySyncPackage(AbstractPackage):
             for entry in shared.registry.get_by_name(self.name).entries.values()
         )
 
-        shared.event_handler.call("minecraft:network:registry_sync:data_recv", self, entries_here, entries_there)
+        shared.event_handler.call(
+            "minecraft:network:registry_sync:data_recv",
+            self,
+            entries_here,
+            entries_there,
+        )
 
         if entries_here.symmetric_difference(entries_there):
             logger.write_into_container(
@@ -128,7 +133,12 @@ class RegistrySyncPackage(AbstractPackage):
             )
 
             self.answer(RegistrySyncResultPackage().setup(self.name, False))
-            if not shared.event_handler.call_cancelable("minecraft:network:registry_sync:fail", self, entries_here, entries_there):
+            if not shared.event_handler.call_cancelable(
+                "minecraft:network:registry_sync:fail",
+                self,
+                entries_here,
+                entries_there,
+            ):
                 return
 
         logger.println(
@@ -167,7 +177,9 @@ class RegistrySyncResultPackage(AbstractPackage):
                 logger.println(
                     "[NETWORK][INFO] registry compare results are back from server, everything fine"
                 )
-                if shared.event_handler.call_cancelable("minecraft:network:registry_sync:success", self):
+                if shared.event_handler.call_cancelable(
+                    "minecraft:network:registry_sync:success", self
+                ):
                     logger.println("[NETWORK][INFO] requesting world now...")
                     from .WorldDataExchangePackage import DataRequestPackage
 
@@ -177,7 +189,9 @@ class RegistrySyncResultPackage(AbstractPackage):
                         )
                         shared.state_handler.change_state("minecraft:game")
                         shared.world.get_active_player().teleport((0, 100, 0))
-                        shared.world.get_active_dimension().get_chunk(0, 0).update_visible()
+                        shared.world.get_active_dimension().get_chunk(
+                            0, 0
+                        ).update_visible()
 
                     package = (
                         DataRequestPackage().request_player_info().request_world_info()
@@ -191,9 +205,7 @@ class RegistrySyncResultPackage(AbstractPackage):
                 logger.println("[NETWORK][WARN] registry sync FAILED on server side")
                 shared.event_handler.call("minecraft:network:registry_sync:fail", self)
 
-            self.answer(
-                DisconnectionInitPackage().set_reason("registry sync fatal")
-            )
+            self.answer(DisconnectionInitPackage().set_reason("registry sync fatal"))
             return
 
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"][
