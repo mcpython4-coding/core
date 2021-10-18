@@ -1,4 +1,9 @@
 # mcpython-4
+
+
+[![CodeFactor](https://www.codefactor.io/repository/github/mcpython4-coding/core/badge)](https://www.codefactor.io/repository/github/mcpython4-coding/core)
+
+
 This is the revision of a minecraft-like, python-written game based on fogleman's code (https://github.com/fogleman/Minecraft).
 
 **Like it?**
