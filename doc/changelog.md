@@ -10,12 +10,8 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
         before next stable release):
 - add data-driven factory system
 - move more game logic to tags [WIP]
-- refactor event names [WIP]
 - do not read inventory config for each inventory, load it ones & share
 - add scoreboards with commands, execute command entry, ...
-- make world gen more fail-save
-- add ores & their gen
-- tool level system based on tags were every block has a) a tag for the tool type and b) a tag for tool level [tags exists by vanilla]
 
 - add a line into logging where the system searches for the location where the error occur and will link the mod
     caused it into the log [partially done via mod container]

@@ -1,12 +1,22 @@
 
 
+Features scheduled for implementation for alpha 1.2.0, planned to be released sometime in december 2021
+- abstraction of direct rendering calls to some higher level (-> pyglet 2.0 preparations)
+- reload data only when needed, so a resource pack / data pack change occurred
+- breaking block overlay (util function in model handler?)
+- split gui system into rendering & container
+- add ore gen
+- refactor event names
+- moved tool system to tags (see mc)
+
+
 Issues:
 - non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
 - biome map is not saved to save files or loaded not correctly somehow
 - hiding faces to rotated blocks like logs fails
 
 
-Pending for next full release (alpha 1.2.0):
+Pending for next full release:
 - most of the issues above
 - more unit tests [WIP]
 - optimisation: loading takes too long
@@ -38,19 +48,12 @@ Block Item Generator:
 
 Data driver:
 - item, block, implementation for the other recipes
-- reload data only when needed, so a resource pack / data pack change occurred
 
 UI:
 - system to create your own WorldGenerationMode, which is dumped to a save-based file
 - registry view UI
 - config UI
 - mod list UI
-- breaking block overlay (util function in model handler?)
-
-dedicated servers:
-- split state system into two parts: the handling part and the visual part
-    (so we can split of the visual part into client-only)
-- split gui system into rendering & container
 
 Test System:
 The test system is an external tool developed along the game sitting on top of it. It uses
