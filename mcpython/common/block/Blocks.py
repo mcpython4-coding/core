@@ -16,12 +16,10 @@ from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
 from mcpython.common.factory.combined.simple import CombinedFactoryInstance
 
-"""
-Missing:
-air
-attached_melon_stem
-attached_pumpkin_stem
-"""
+# Missing:
+# air
+# attached_melon_stem
+# attached_pumpkin_stem
 
 DEFERRED_PIPE: DeferredRegistry = shared.registry.get_by_name(
     "minecraft:block"

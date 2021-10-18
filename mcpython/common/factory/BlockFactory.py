@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import pickle
+from mcpython.util import picklemagic
 import typing
 
 import mcpython.common.block.AbstractBlock
@@ -411,7 +411,7 @@ def build_class_default_state(
                 return super().dump_data()
             if len(bases) > 0:
                 return bases[-1].dump_data(self)
-            return pickle.dumps(self.get_save_data())
+            return picklemagic.safe_dumps(self.get_save_data())
 
         def load_data(self, data):
             if len(configs["load_data"]) > 0:
@@ -433,7 +433,7 @@ def build_class_default_state(
             if len(bases) > 0:
                 return bases[-1].inject(self, data)
 
-            self.load_data(pickle.loads(data) if type(data) == bytes else data)
+            self.load_data(picklemagic.safe_loads(data) if type(data) == bytes else data)
 
         def get_item_saved_state(self):
             if len(configs["get_item_save_data"]) > 0:
