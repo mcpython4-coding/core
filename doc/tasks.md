@@ -71,7 +71,7 @@ Split into 4 parts:
 FML
 - make the exception screen scrollable
 - load JavaFML only when needed (e.g. via a flag, maybe --enable-fml)
-- implement all of the instructions
+- implement all the instructions
 - runtime mod reload
 - an attachable debugger for certain functions / opcode regions with ui [maybe in second window?]
 - a bytecode viewer for debugging single instructions [in-game, via some callback and continue system]

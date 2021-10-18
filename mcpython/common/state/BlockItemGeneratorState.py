@@ -152,7 +152,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         self.prepare_window()
 
-        # Setup the player view, todo: make configurable by block
+        # Setup the player view, todo: make configurable by block model / state
         player = world.get_active_player()
         player.position = (1.5, 2, 1.5)
         player.rotation = (-45, -45, 0)

@@ -31,6 +31,7 @@ class FakeModLoader:
 class FakeMod:
     name = "minecraft"
     version = "0.10.0"
+    server_only = False
 
 
 class TestClient2ServerHandshake(TestCase):

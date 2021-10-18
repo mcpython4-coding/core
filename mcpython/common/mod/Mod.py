@@ -189,6 +189,8 @@ class Mod:
         self.package = None  # the package where the mod-file was found
         self.resource_access = None  # where to load resources from
 
+        self.server_only = False
+
         if add_to_mod_loader:
             shared.mod_loader.add_to_add(self)
 

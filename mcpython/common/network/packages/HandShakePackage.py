@@ -50,15 +50,24 @@ class Client2ServerHandshake(AbstractPackage):
 
     def handle_inner(self):
         logger.println(
-            f"client named {self.player_name} (game version: {self.game_version}) is connecting to this server"
+            f"client named '{self.player_name}' (game version: {self.game_version}) is connecting to this server"
         )
 
-        # todo: some better lookup
+        # todo: some better lookup with compatible network lookup
         if self.game_version != mcpython.common.config.VERSION_ID:
-            logger.println("denied connection due to incompatible versions")
+            logger.println(f"[HANDSHAKE] denied connection to {self.player_name} due to incompatible versions")
             self.answer(
                 Server2ClientHandshake().setup_deny(
                     f"Incompatible game version: {self.game_version}; expected: {mcpython.common.config.VERSION_ID}"
+                )
+            )
+            return
+
+        if self.player_name in shared.NETWORK_MANAGER.client_profiles:
+            logger.println(f"[HANDSHAKE] denied connection due to duplicate player name {self.player_name}")
+            self.answer(
+                Server2ClientHandshake().setup_deny(
+                    f"Invalid player name: Player with same name already connected to this server"
                 )
             )
             return
@@ -72,10 +81,10 @@ class Client2ServerHandshake(AbstractPackage):
 
         shared.world.add_player(self.player_name)
 
-        logger.println("sending mod list...")
+        logger.println(f"[HANDSHAKE] sending mod list to {self.player_name}")
         self.answer(Server2ClientHandshake().setup_accept())
 
-        logger.println("syncing up package id lists...")
+        logger.println(f"[HANDSHAKE] syncing up package id lists to {self.player_name}")
         self.answer(PackageIDSync().setup())
 
 
@@ -103,7 +112,11 @@ class Server2ClientHandshake(AbstractPackage):
     def setup_accept(self):
         mod_info = []
         for mod in shared.mod_loader.mods.values():
-            mod_info.append((mod.name, str(mod.version)))
+
+            if not mod.server_only:
+                mod_info.append((mod.name, str(mod.version)))
+
+        shared.event_handler.call("minecraft:modlist:sync:setup", self, mod_info)
         self.mod_list = mod_info
         return self
 
@@ -141,9 +154,11 @@ class Server2ClientHandshake(AbstractPackage):
         for modname, version in self.mod_list:
             if modname not in shared.mod_loader.mods:
                 miss_matches.append(f"missing mod: {modname}")
+
             elif str(shared.mod_loader[modname].version) != version:
                 miss_matches.append(
-                    f"mod {modname} version miss-match: {version} (server) != {shared.mod_loader[modname].version} (client)"
+                    f"mod {modname} version miss-match: {version} (server) != "
+                    f"{shared.mod_loader[modname].version} (client)"
                 )
 
         if miss_matches:
@@ -152,11 +167,14 @@ class Server2ClientHandshake(AbstractPackage):
             from .DisconnectionPackage import DisconnectionInitPackage
 
             shared.NETWORK_MANAGER.send_package(
-                DisconnectionInitPackage().set_reason("mod missmatch")
+                DisconnectionInitPackage().set_reason("mod mismatch")
             )
             return
 
-        logger.println("[SERVER-MSG][INFO] connection successful")
+        logger.println(
+            f"[SERVER-MSG][INFO] connection successful; compared {len(self.mod_list)} "
+            f"mods and they seem equal"
+        )
 
         logger.println("[CLIENT][INFO] starting registry compare...")
         from .RegistrySyncPackage import RegistrySyncInitPackage

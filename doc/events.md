@@ -92,6 +92,10 @@ Disclaimer: during this phase of transition, not all events may be listed here
 
 ## Networking
 
+- minecraft:modlist:sync:setup(Server2ClientHandshake, modlist: list) [server-only]
+
+    Invoked when the server prepares to send the mod list to the client. Can be used for modifications.
+
 - minecraft:network:registry_sync:setup(RegistrySyncInitPackage) [client-only]
 
     Invoked by the RegistrySyncInitPackage when setup() is invoked. In normal lifecycle, invoked only on the 

@@ -36,7 +36,7 @@ if shared.dev_environment:
 
         VERSION_NAME = f"{repo.active_branch} - {str(sha)[:10]}"
         VERSION_TYPE = "dev-version"
-    except:
+    except (ModuleNotFoundError, ImportError):
         traceback.print_exc()
 
 FULL_VERSION_NAME = "mcpython version {} ({}) based on mc version {}".format(

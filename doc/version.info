@@ -1868,4 +1868,6 @@ b   [uuk]: -> fixed issue in FactoryBuilder with direct copy attributes (lambda 
 G   [github]: end of feature period for snapshot 21w<42>a
 I   [uuk]: speed up BlockItemGenerator massively
 BI  [uuk]: fixed some inventory slot stuff
+f   [uuk]: mods can declare now server-only dependency preventing them from being send to the client
+E   [uuk]: added new event: minecraft:modlist:sync:setup
 
