@@ -47,10 +47,14 @@ class FluidRenderer(
             ColoredRawBoxModel(
                 (
                     SOME_SMALL_VALUES / 2,
-                    -(.5 - i / 16) + SOME_SMALL_VALUES / 2,
+                    -(0.5 - i / 16) + SOME_SMALL_VALUES / 2,
                     SOME_SMALL_VALUES / 2,
                 ),
-                (1 - SOME_SMALL_VALUES, i / 8 - SOME_SMALL_VALUES, 1 - SOME_SMALL_VALUES),
+                (
+                    1 - SOME_SMALL_VALUES,
+                    i / 8 - SOME_SMALL_VALUES,
+                    1 - SOME_SMALL_VALUES,
+                ),
                 self.group,
                 texture_region=[(0, 0, 1, 1.0), (0, 0, 1, 1)] + [(0, 0, 1, i / 8)] * 6,
             )
@@ -58,12 +62,12 @@ class FluidRenderer(
         ]
 
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
-        return self.layered_models[block.height-1].add_face_to_batch(
+        return self.layered_models[block.height - 1].add_face_to_batch(
             batches[1], block.position, face, color=self.color(block, face)
         )
 
     def add_multi(self, position: typing.Tuple[int, int, int], block, faces, batches):
-        return self.layered_models[block.height-1].add_face_to_batch(
+        return self.layered_models[block.height - 1].add_face_to_batch(
             batches[1],
             block.position,
             [face.index for face in faces],

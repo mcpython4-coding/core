@@ -337,7 +337,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 shared.profiler.enable()
             else:
                 shared.profiler.disable()
-                shared.profiler.print_stats('cumtime')
+                shared.profiler.print_stats("cumtime")
                 # os.makedirs(shared.build+"/profiles", exist_ok=True)
                 # shared.profiler.dump_stats(shared.build+"/profiles/"+str(time.time())+".txt")
                 shared.profiler = None

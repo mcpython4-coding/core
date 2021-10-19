@@ -21,7 +21,7 @@ class Lifecycle(pyglet.app.EventLoop):
 
         platform_event_loop = pyglet.app.platform_event_loop
         platform_event_loop.start()
-        self.dispatch_event('on_enter')
+        self.dispatch_event("on_enter")
         self.is_running = True
 
         while not self.has_exit:
@@ -29,6 +29,5 @@ class Lifecycle(pyglet.app.EventLoop):
             platform_event_loop.step(timeout)
 
         self.is_running = False
-        self.dispatch_event('on_exit')
+        self.dispatch_event("on_exit")
         platform_event_loop.stop()
-

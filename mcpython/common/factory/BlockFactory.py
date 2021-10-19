@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.util import picklemagic
 import typing
 
 import mcpython.common.block.AbstractBlock
@@ -33,6 +32,7 @@ from mcpython.common.block.IAllDirectionOrientableBlock import (
 )
 from mcpython.common.block.IButton import IButton
 from mcpython.common.factory.FactoryBuilder import FactoryBuilder
+from mcpython.util import picklemagic
 from mcpython.util.enums import EnumSide
 
 block_factory_builder = FactoryBuilder(
@@ -433,7 +433,9 @@ def build_class_default_state(
             if len(bases) > 0:
                 return bases[-1].inject(self, data)
 
-            self.load_data(picklemagic.safe_loads(data) if type(data) == bytes else data)
+            self.load_data(
+                picklemagic.safe_loads(data) if type(data) == bytes else data
+            )
 
         def get_item_saved_state(self):
             if len(configs["get_item_save_data"]) > 0:
