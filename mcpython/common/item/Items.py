@@ -147,6 +147,7 @@ def load_item():
     template.set_name("totem_of_undying").set_max_stack_size(1).finish()
     template.set_name("tropical_fish").set_food_value(1).finish()
     template.set_name("water_bucket").set_max_stack_size(1).finish()
+    template.set_name("lava_bucket").set_max_stack_size(1).finish()
     template.set_name("wheat").finish()
 
     # tools

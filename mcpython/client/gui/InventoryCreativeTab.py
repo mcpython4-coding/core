@@ -702,22 +702,22 @@ def init():
     )
     Decoration = CreativeItemTab(
         "Decoration",
-        ItemStack("minecraft:barrier"),
+        ItemStack("minecraft:peony"),
         linked_tag="#minecraft:tab_decoration",
     )
     Redstone = CreativeItemTab(
         "Redstone",
-        ItemStack("minecraft:redstone_block"),
+        ItemStack("minecraft:redstone"),
         linked_tag="#minecraft:tab_redstone",
     )
     Transportation = CreativeItemTab(
         "Transportation",
-        ItemStack("minecraft:barrier"),
+        ItemStack("minecraft:powered_rail"),
         linked_tag="#minecraft:tab_transportation",
     )
     Miscellaneous = CreativeItemTab(
         "Miscellaneous",
-        ItemStack("minecraft:stick"),
+        ItemStack("minecraft:lava_bucket"),
         linked_tag="#minecraft:tab_miscellaneous",
     )
     Food = CreativeItemTab(
@@ -728,7 +728,7 @@ def init():
     )
     Weapons = CreativeItemTab(
         "Weapons",
-        ItemStack("minecraft:iron_sword"),
+        ItemStack("minecraft:golden_sword"),
         linked_tag="#minecraft:tab_weapons",
     )
     Brewing = CreativeItemTab(
