@@ -365,9 +365,11 @@ class LaunchWrapper:
         shared.event_handler.call("minecraft:game:gameloop_startup")
 
         try:
-            import pyglet.app
+            import mcpython.engine.Lifecycle
+            import pyglet
 
-            pyglet.app.run()
+            pyglet.app.event_loop = mcpython.engine.Lifecycle.Lifecycle()
+            pyglet.app.event_loop.run()
         except SystemExit:
             # sys.exit() should not be handled
             raise
