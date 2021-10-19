@@ -34,6 +34,8 @@ TEXTURE_COORDS_BOTTOM = calculate_default_layout_uvs(
     (64, 64), (15, 10, 15), (0, 64 - 42)
 )
 
+TEXTURE_COORDS_LOCK = calculate_default_layout_uvs((64, 64), (1, 2, 2), (0, 64-4))
+
 
 class ChestRenderer(
     mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer
@@ -65,6 +67,12 @@ class ChestRenderer(
             self.group,
             TEXTURE_COORDS_BOTTOM,
         )
+        self.lock_model = RawBoxModel(
+            (0.4+1/16, 1/8, 0),
+            (1/16, 1/8, 1/8),
+            self.group,
+            TEXTURE_COORDS_LOCK,
+        )
 
     def add(
         self,
@@ -75,7 +83,9 @@ class ChestRenderer(
     ):
         return self.box_model_top.add_face_to_batch(
             batches[0], block.position, face
-        ) + self.box_model_bottom.add_face_to_batch(batches[0], block.position, face)
+        ) + self.box_model_bottom.add_face_to_batch(
+            batches[0], block.position, face
+        ) + self.lock_model.add_face_to_batch(batches[0], block.position, face)
 
     def add_multi(
         self,
@@ -87,7 +97,11 @@ class ChestRenderer(
         faces = [face.index for face in faces]
         return self.box_model_top.add_face_to_batch(
             batches[0], block.position, faces
-        ) + self.box_model_bottom.add_face_to_batch(batches[0], block.position, faces)
+        ) + self.box_model_bottom.add_face_to_batch(
+            batches[0], block.position, faces
+        ) + self.lock_model.add_face_to_batch(
+            batches[0], block.position, faces
+        )
 
     # todo: implement these both animations
     def play_open_animation(self, block: IChestRendererSupport):
