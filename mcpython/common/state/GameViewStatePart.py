@@ -421,10 +421,11 @@ class GameView(AbstractStatePart.AbstractStatePart):
         # If below y=-10, and he has flown more than the cooldown, he should get damaged
         # todo: add property for y level
         if y < -10 and time.time() - self.void_damage_cooldown > 0.25:
-            player.damage(1, check_gamemode=False)
+            player.damage(1)
             self.void_damage_cooldown = time.time()
 
-        self.update_player_chunks(before, player)
+        # todo: this does not perform well, can we activate it again somewhere in the future?
+        # self.update_player_chunks(before, player)
         self.calculate_player_hearts(dt, player)
 
     def calculate_player_hearts(self, dt, player):
@@ -437,14 +438,16 @@ class GameView(AbstractStatePart.AbstractStatePart):
             player.hearts += 1
             player.hunger -= 0.5
             self.regenerate_cooldown = time.time()
+
         if player.hunger == 0 and time.time() - self.hunger_heart_cooldown > 1:
             player.damage(1)
             self.hunger_heart_cooldown = time.time()
+
         nx, _, nz = mcpython.util.math.normalize(player.position)
         ny = math.ceil(player.position[1])
-        if player.gamemode in (0, 2) and shared.world.get_active_dimension().get_block(
-            (nx, ny, nz)
-        ):
+
+        block = shared.world.get_active_dimension().get_block((nx, ny, nz), none_if_str=True)
+        if player.gamemode in (0, 2) and block and block.IS_SOLID:
             player.damage(dt)
 
     def update_player_chunks(self, before, player):

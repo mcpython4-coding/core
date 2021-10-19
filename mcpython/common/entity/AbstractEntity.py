@@ -243,10 +243,10 @@ class AbstractEntity(
 
     def teleport(self, position, dimension=None, force_chunk_save_update=False):
         """
-        called when the entity should be teleported
+        Called when the entity should be teleported
         :param position: the position to teleport to
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
-        :param force_chunk_save_update: if the system should force to update were player data is stored
+        :param force_chunk_save_update: if the system should force updating were player data is stored
         """
         if not shared.event_handler.call_cancelable(
             "world:entity:teleport", self, dimension, force_chunk_save_update

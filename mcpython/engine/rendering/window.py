@@ -253,15 +253,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         ):
             shared.world_generation_handler.task_handler.process_tasks(timer=0.02)
 
-        sector = position_to_chunk(shared.world.get_active_player().position)
-        if sector != self.sector:
-            pyglet.clock.schedule_once(
-                lambda _: shared.world.change_chunks(self.sector, sector), 0.1
-            )
-            if self.sector is None:
-                shared.world_generation_handler.task_handler.process_tasks()
-            self.sector = sector
-
         shared.event_handler.call("tickhandler:general", dt)
 
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):

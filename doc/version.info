@@ -1875,4 +1875,5 @@ f   [uuk]: improved chest rendering
 f   [uuk]: improved fluid block rendering
 f   [uuk]: added custom event loop system based on the pyglet internal one
 b   [uuk]: creative tabs are now using correct item for display when arrival
+B   [uuk]: partially fixed lag when crossing chunk boarders
 

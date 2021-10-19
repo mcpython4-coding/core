@@ -4,7 +4,6 @@ Stuff pending for the release of alpha 1.2.0, scheduled for release in weak 42 o
 Branched of snapshot 21w42a
 - non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
 - optimisation: loading takes too long
-- investigate the lag when crossing chunk boarders
 
 
 Features scheduled for implementation for alpha 1.3.0, planned to be released sometime in december 2021
@@ -26,9 +25,6 @@ Toolchain:
 - user_config.json storing local information across versions, like:
     - path to launcher
     - username
-
-- obfuscator
-- System to dynamically migrate code from deobf <-> obf and up versions [only simple changes]
 
 - Better custom LaunchWrapper use system [in progress]
 - PyCharm launch Configuration setup handler for dev env and mdk

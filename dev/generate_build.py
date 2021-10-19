@@ -602,7 +602,7 @@ DEFAULT_BUILD_INSTANCE.add_stage(
             or ".idea" in file
             or file.startswith("dev/build")
             or "__pycache__" in file
-            or file == "tools/source.zip"
+            or file == "source.zip"
         )
     )
 )

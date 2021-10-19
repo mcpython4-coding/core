@@ -51,11 +51,14 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 
 ----
 
-# Changelog of snapshot 21w<42>a
-Released on <20.10>.2021 targeting 1.<17>
+# Changelog of snapshot 21w42a
+Released on 20.10.2021 targeting 1.17
 
 WARNING: this release includes a bytecode manipulation system which allows arbitrary code manipulation,
          including code outside the game's scope (You cannot reach across processes, but still...)
+         This increases security risk not by much (as mods could do anything they want before that),
+         but mods can do stuff which makes it hard to track down the root cause of it. 
+         As by the nature of python, there is no way to prevent bad usage of the system introduced.
 
 Backwards incompatible:
 - custom block rendering
@@ -89,6 +92,7 @@ Backwards incompatible:
         - gamemode 0 players could not break any blocks due to missing "not" in breakable condition
         - block update was invoked twice when caused directly by the player
         - factory builder's auto-copy operation was not working correctly
+        - lag when crossing chunk boarders
 
 # Changelog of snapshot 21w39a
 Released on 29.09.2021 targeting 1.17
