@@ -116,6 +116,8 @@ class EntityManager:
         for entity in list(self.entity_map.values()):
             try:
                 entity.kill(internal=True, force=True)
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except:
                 logger.print_exception(
                     "during unloading entity {} with uuid {}".format(

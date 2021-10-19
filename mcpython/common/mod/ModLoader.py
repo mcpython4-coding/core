@@ -682,6 +682,8 @@ class ModLoader:
             try:
                 if stage.call_one(astate):
                     return
+            except (SystemExit, KeyboardInterrupt):
+                raise
             except LoadingInterruptException:
                 print("stopping loading cycle")
                 return

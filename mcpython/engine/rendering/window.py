@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 
 import cProfile
+import time
 
 import mcpython.common.config
 import mcpython.common.event.TickHandler
@@ -329,6 +330,17 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         :param modifiers: Number representing any modifying keys that were pressed.
         """
         shared.event_handler.call("user:keyboard:press", symbol, modifiers)
+
+        if symbol == key.P:
+            if shared.profiler is None:
+                shared.profiler = cProfile.Profile()
+                shared.profiler.enable()
+            else:
+                shared.profiler.disable()
+                shared.profiler.print_stats('cumtime')
+                # os.makedirs(shared.build+"/profiles", exist_ok=True)
+                # shared.profiler.dump_stats(shared.build+"/profiles/"+str(time.time())+".txt")
+                shared.profiler = None
 
     def on_key_release(self, symbol, modifiers):
         """
