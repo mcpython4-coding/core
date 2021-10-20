@@ -1824,7 +1824,7 @@ I   [uuk]: EnumSide will use now an "index" to remember the type of the side
 A** [uuk]: block solid face is now indicated by a tuple instead of a dict, making it mostly immutable
 G   [github]: released snapshot 21w39a
 
-G   [github]: started development cycle for snapshot 21w<42a>
+G   [github]: started development cycle for snapshot 21w42a
 F*T [uuk]: added first bytecode manipulation helper in mcpython/mixin/PyBytecodeManipulator.py
 F*T [uuk]: added basic mixin framework; When applying mixins onto methods, warnings are printed out to log
 b   [uuk]: fixed creative tab scroll bar
@@ -1880,6 +1880,8 @@ Ib  [uuk]: applying now a small mixin into pillow's default resize mode
 b   [uuk]: fixed gamemode 2 and 3 players not being able to use num keys to select item
 f   [uuk]: Block.on_player_interaction takes now also the ItemStack interacted with
 f   [uuk]: GrassBlock can now be transformed into grass path
+G   [github]: released snapshot 21w42a
 
+G   [github]: started development cycle for snapshot 21w<44>a
 L   [uuk]: upgraded asset source to 21w41a
 

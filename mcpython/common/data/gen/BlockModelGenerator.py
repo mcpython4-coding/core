@@ -373,7 +373,7 @@ class ModelDisplay(IDataGenerator):
 
 class BlockModel(IDataGenerator):
     """
-    Generator for an block model
+    Generator for a block model
     """
 
     def __init__(

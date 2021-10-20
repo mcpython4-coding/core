@@ -1,11 +1,5 @@
 
 
-Stuff pending for the release of alpha 1.2.0, scheduled for release in weak 42 or 43 of 2021
-Branched of snapshot 21w42a
-- non-stable generation seed across sessions, but stable in a session ("[WARN] seed map is empty!" is printed out)
-- optimisation: loading takes too long
-
-
 Features scheduled for implementation for alpha 1.3.0, planned to be released sometime in december 2021
 - abstraction of direct rendering calls to some higher level (-> pyglet 2.0 preparations)
 - reload data only when needed, so a resource pack / data pack change occurred
