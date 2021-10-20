@@ -48,7 +48,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         )
         size = texture.size
 
-        texture_bg = texture.crop((0, 0, 176 / 255 * size[0], 166 / 255 * size[1]))
+        texture_bg = texture.crop((0, 0, 175 / 255 * size[0], 166 / 255 * size[1]))
         size = texture_bg.size
         texture_bg = texture_bg.resize((size[0] * 2, size[1] * 2), PIL.Image.NEAREST)
         cls.TEXTURE_BG = mcpython.util.texture.to_pyglet_image(texture_bg)
