@@ -57,7 +57,8 @@ class LaunchWrapper:
 
         if sys.version_info.minor >= 11:
             print(
-                f"[VERSION DETECTOR][WARN] Detected python version 3.{sys.version_info.minor}, which is >= 11, which may break at any point"
+                f"[VERSION DETECTOR][WARN] Detected python version 3.{sys.version_info.minor}, "
+                f"which is >= 11, which may not work"
             )
 
     def set_client(self):
@@ -65,6 +66,9 @@ class LaunchWrapper:
 
     def set_server(self):
         self.is_client = False
+
+    def apply_mixins(self):
+        import mcpython.util.libmodifiers
 
     def full_launch(self):
         """
@@ -81,6 +85,8 @@ class LaunchWrapper:
         logger.println("[LAUNCH WRAPPER][INFO] starting loading cycle")
         self.print_header()
         self.parse_argv()
+
+        self.apply_mixins()
 
         shared.IS_CLIENT = self.is_client
 
