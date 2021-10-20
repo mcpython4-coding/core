@@ -1879,4 +1879,5 @@ B   [uuk]: partially fixed lag when crossing chunk boarders
 Ib  [uuk]: applying now a small mixin into pillow's default resize mode
 b   [uuk]: fixed gamemode 2 and 3 players not being able to use num keys to select item
 f   [uuk]: Block.on_player_interaction takes now also the ItemStack interacted with
+f   [uuk]: GrassBlock can now be transformed into grass path
 

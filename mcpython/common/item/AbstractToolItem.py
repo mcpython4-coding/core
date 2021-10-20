@@ -48,3 +48,6 @@ class AbstractToolItem(mcpython.common.item.AbstractDamageBarItem.DamageOnUseIte
             self.damage = int(data)
         except ValueError:
             pass
+
+    def add_damage(self, damage: int) -> bool:
+        return False

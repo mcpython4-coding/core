@@ -509,7 +509,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
             player.position, vector
         )
         block = (
-            shared.world.get_active_dimension().get_block(block_position)
+            shared.world.get_active_dimension().get_block(block_position, none_if_str=True)
             if block_position
             else None
         )
@@ -521,7 +521,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
             ):
                 cancel = True
 
-        if block and type(block) != str:
+        if block:
             if not cancel and block.on_player_interaction(
                 player, button, modifiers, hit_position, player.get_active_inventory_slot().get_itemstack()
             ):
