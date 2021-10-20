@@ -1,7 +1,7 @@
 {
-  "name": "test build for 21w42a 4",
-  "id": 74,
-  "preview_build_counter": 4,
+  "name": "release preperation for alpha 1.3.0",
+  "id": 73,
+  "preview_build_counter": 0,
   "mc_version": "1.17",
   "mc_version_url": "https://launcher.mojang.com/v1/objects/fe88ac6c8a0bedc9a48e5c9b48eb0f4dc24ccc79/client.jar",
   "version_type": "snapshot",

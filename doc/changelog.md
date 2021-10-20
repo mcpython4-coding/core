@@ -51,6 +51,10 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 
 ----
 
+
+# Changelog of alpha 1.3.0, compared to 21w42a
+
+
 # Changelog of snapshot 21w42a
 Released on 20.10.2021 targeting 1.17
 
