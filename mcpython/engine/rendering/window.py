@@ -322,7 +322,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         """
         shared.event_handler.call("user:keyboard:press", symbol, modifiers)
 
-        if symbol == key.P:
+        if symbol == key.P and modifiers & key.MOD_ALT:
             if shared.profiler is None:
                 shared.profiler = cProfile.Profile()
                 shared.profiler.enable()
