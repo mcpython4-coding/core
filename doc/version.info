@@ -1877,4 +1877,5 @@ f   [uuk]: added custom event loop system based on the pyglet internal one
 b   [uuk]: creative tabs are now using correct item for display when arrival
 B   [uuk]: partially fixed lag when crossing chunk boarders
 Ib  [uuk]: applying now a small mixin into pillow's default resize mode
+b   [uuk]: fixed gamemode 2 and 3 players not being able to use num keys to select item
 

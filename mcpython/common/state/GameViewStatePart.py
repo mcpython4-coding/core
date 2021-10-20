@@ -583,7 +583,6 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         elif (
             symbol in shared.window.num_keys
-            and player.gamemode in (0, 1)
             and not modifiers & key.MOD_SHIFT
         ):
             index = symbol - shared.window.num_keys[0]

@@ -68,6 +68,7 @@ Backwards incompatible:
 
     Optimisation:
         - speed up BlockItemGenerator by a lot
+        - added profiler activateable via ALT+P
 
     Modding:
         - Added bytecode manipulation framework
@@ -93,6 +94,8 @@ Backwards incompatible:
         - block update was invoked twice when caused directly by the player
         - factory builder's auto-copy operation was not working correctly
         - lag when crossing chunk boarders
+        - furnace inventory teture was slightly wrong renderered
+        - fixed gamemode 2 and 3 players not beeing able to use num keys to switch selected item
 
 # Changelog of snapshot 21w39a
 Released on 29.09.2021 targeting 1.17
