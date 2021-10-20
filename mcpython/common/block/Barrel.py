@@ -80,7 +80,7 @@ class Barrel(AbstractBlock.AbstractBlock):
             self.schedule_network_update()
 
     def on_player_interaction(
-        self, player, button: int, modifiers: int, hit_position: tuple
+        self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         # open the inv when needed
         if button == mouse.RIGHT and not modifiers & (

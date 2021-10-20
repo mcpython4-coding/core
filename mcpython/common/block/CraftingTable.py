@@ -29,7 +29,7 @@ class CraftingTable(AbstractBlock.AbstractBlock):
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     def on_player_interaction(
-        self, player, button: int, modifiers: int, hit_position: tuple
+        self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             shared.inventory_handler.show(

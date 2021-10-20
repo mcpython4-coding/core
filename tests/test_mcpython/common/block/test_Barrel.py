@@ -98,13 +98,13 @@ class TestBarrel(TestCase):
 
         instance = mcpython.common.block.Barrel.Barrel()
 
-        instance.on_player_interaction(None, mouse.RIGHT, 0, None)
+        instance.on_player_interaction(None, mouse.RIGHT, 0, None, None)
 
         self.assertTrue(FakeInventoryHandler.SHOWN)
 
         FakeInventoryHandler.SHOWN = False
 
-        instance.on_player_interaction(None, mouse.RIGHT, key.MOD_SHIFT, None)
+        instance.on_player_interaction(None, mouse.RIGHT, key.MOD_SHIFT, None, None)
 
         self.assertFalse(FakeInventoryHandler.SHOWN)
 

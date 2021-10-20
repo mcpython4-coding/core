@@ -62,7 +62,7 @@ class Furnace(IHorizontalOrientableBlock):
         if "lit" in state:
             self.active = state["lit"] == "true"
 
-    def on_player_interaction(self, player, button, modifiers, exact_hit) -> bool:
+    def on_player_interaction(self, player, button, modifiers, exact_hit, itemstack) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             if shared.IS_CLIENT:
                 shared.inventory_handler.show(self.inventory)

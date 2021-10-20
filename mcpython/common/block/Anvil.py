@@ -92,7 +92,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         self.broken_count = buffer.read_int()
 
     def on_player_interaction(
-        self, player, button: int, modifiers: int, hit_position: tuple
+        self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         return False
 

@@ -276,7 +276,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         """
 
     def on_player_interaction(
-        self, player, button: int, modifiers: int, hit_position: tuple
+        self, player, button: int, modifiers: int, hit_position: tuple, itemstack,
     ):
         """
         Called when the player pressed on mouse button on the block.
@@ -284,6 +284,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         :param button: the button pressed
         :param modifiers: the modifiers hold during press
         :param hit_position: where the block was hit at
+        :param itemstack: the itemstack hit with
         :return: if default logic should be interrupted or not
         """
         return False

@@ -523,7 +523,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         if block and type(block) != str:
             if not cancel and block.on_player_interaction(
-                player, button, modifiers, hit_position
+                player, button, modifiers, hit_position, player.get_active_inventory_slot().get_itemstack()
             ):
                 cancel = True
 

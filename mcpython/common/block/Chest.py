@@ -121,7 +121,7 @@ class Chest(
         return instance is None or not instance.face_solid[1]
 
     def on_player_interaction(
-        self, player, button: int, modifiers: int, hit_position: tuple
+        self, player, button: int, modifiers: int, hit_position: tuple, itemstack,
     ):
         if (
             button == mouse.RIGHT
