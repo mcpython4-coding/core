@@ -55,7 +55,12 @@ def create_shulker_box(name):
             self.inventory.read_from_network_buffer(buffer)
 
         def on_player_interaction(
-            self, player, button: int, modifiers: int, hit_position: tuple, itemstack,
+            self,
+            player,
+            button: int,
+            modifiers: int,
+            hit_position: tuple,
+            itemstack,
         ):
             if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
                 shared.inventory_handler.show(self.inventory)

@@ -211,3 +211,9 @@ class SetNBT(ILootTableFunction):
 class SetStewEffect(ILootTableFunction):
     NAME = "minecraft:set_stew_effect"
     # todo: implement
+
+
+@shared.registry
+class SetPotion(ILootTableFunction):
+    NAME = "minecraft:set_potion"
+    # todo: implement

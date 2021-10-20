@@ -15,10 +15,9 @@ import typing
 
 import mcpython.util.enums
 from mcpython import shared
-
-from ..item.AbstractToolItem import AbstractToolItem
 from mcpython.util.enums import ToolType
 
+from ..item.AbstractToolItem import AbstractToolItem
 from . import AbstractBlock
 
 
@@ -62,14 +61,24 @@ class GrassBlock(AbstractBlock.AbstractBlock):
         return 91 / 255, 201 / 255, 59 / 255, 1
 
     def on_player_interaction(
-            self, player, button: int, modifiers: int, hit_position: tuple, itemstack,
+        self,
+        player,
+        button: int,
+        modifiers: int,
+        hit_position: tuple,
+        itemstack,
     ):
-        if itemstack.is_empty() or not isinstance(itemstack.item,
-                                                  AbstractToolItem) or itemstack.item.TOOL_TYPE != ToolType.SHOVEL:
+        if (
+            itemstack.is_empty()
+            or not isinstance(itemstack.item, AbstractToolItem)
+            or itemstack.item.TOOL_TYPE != ToolType.SHOVEL
+        ):
             return False
 
         if not itemstack.item.add_damage(1):
             itemstack.clean()
 
-        shared.world.get_dimension_by_name(self.dimension).add_block(self.position, "minecraft:dirt_path")
+        shared.world.get_dimension_by_name(self.dimension).add_block(
+            self.position, "minecraft:dirt_path"
+        )
         return True

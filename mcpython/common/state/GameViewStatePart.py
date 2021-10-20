@@ -446,7 +446,9 @@ class GameView(AbstractStatePart.AbstractStatePart):
         nx, _, nz = mcpython.util.math.normalize(player.position)
         ny = math.ceil(player.position[1])
 
-        block = shared.world.get_active_dimension().get_block((nx, ny, nz), none_if_str=True)
+        block = shared.world.get_active_dimension().get_block(
+            (nx, ny, nz), none_if_str=True
+        )
         if player.gamemode in (0, 2) and block and block.IS_SOLID:
             player.damage(dt)
 
@@ -509,7 +511,9 @@ class GameView(AbstractStatePart.AbstractStatePart):
             player.position, vector
         )
         block = (
-            shared.world.get_active_dimension().get_block(block_position, none_if_str=True)
+            shared.world.get_active_dimension().get_block(
+                block_position, none_if_str=True
+            )
             if block_position
             else None
         )
@@ -523,7 +527,11 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         if block:
             if not cancel and block.on_player_interaction(
-                player, button, modifiers, hit_position, player.get_active_inventory_slot().get_itemstack()
+                player,
+                button,
+                modifiers,
+                hit_position,
+                player.get_active_inventory_slot().get_itemstack(),
             ):
                 cancel = True
 
@@ -581,10 +589,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 if shared.window.dy == 0:
                     shared.window.dy = player.get_jump_speed()
 
-        elif (
-            symbol in shared.window.num_keys
-            and not modifiers & key.MOD_SHIFT
-        ):
+        elif symbol in shared.window.num_keys and not modifiers & key.MOD_SHIFT:
             index = symbol - shared.window.num_keys[0]
             player.set_active_inventory_slot(index)
             if shared.window.mouse_pressing[mouse.LEFT]:
