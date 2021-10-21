@@ -82,20 +82,27 @@ class DamageSourceProperties(ILootTableCondition):
     def __init__(self, data):
         super().__init__(data)
         self.source = mcpython.common.entity.DamageSource.DamageSource()
+
         if "bypasses_armor" in data:
             self.source.setAttribute("bypasses_armor", data["bypasses_armor"])
+
         if "bypasses_invulnerability" in data:
             self.source.setAttribute(
                 "bypasses_invulnerability", data["bypasses_invulnerability"]
             )
+
         if "bypasses_magic" in data:
             self.source.setAttribute("bypasses_magic", data["bypasses_magic"])
+
         if "is_explosion" in data:
             self.source.setAttribute("is_explosion", data["is_explosion"])
+
         if "is_magic" in data:
             self.source.setAttribute("is_magic", data["is_magic"])
+
         if "is_projectile" in data:
             self.source.setAttribute("is_projectile", data["is_projectile"])
+
         if "is_lightning" in data:
             self.source.setAttribute("is_lightning", data["is_lightning"])
 
@@ -104,6 +111,7 @@ class DamageSourceProperties(ILootTableCondition):
     def check(self, source, *args, damage_source=None, **kwargs) -> bool:
         if damage_source is None:
             return False
+
         return self.source == damage_source
 
 

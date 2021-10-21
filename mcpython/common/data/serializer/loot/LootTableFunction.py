@@ -108,15 +108,16 @@ class FurnaceSmelt(ILootTableFunction):
 
     def apply(self, items: list, *args, **kwargs):
         for i, itemstack in enumerate(items.copy()):
-            itemname = itemstack.get_item_name()
-            if itemname is None:
+            item_name: str = itemstack.get_item_name()
+            if item_name is None:
                 continue
+
             if (
-                itemname
+                item_name
                 in shared.crafting_handler.furnace_recipes["minecraft:smelting"]
             ):
                 result = shared.crafting_handler.furnace_recipes["minecraft:smelting"][
-                    itemname
+                    item_name
                 ]
                 items[i] = mcpython.common.container.ResourceStack.ItemStack(
                     result.output, itemstack.amount

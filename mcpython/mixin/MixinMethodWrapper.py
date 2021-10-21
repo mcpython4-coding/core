@@ -73,6 +73,10 @@ class MixinPatchHelper:
     def store(self):
         self.patcher.instructionList2Code(self.instruction_listing)
 
+    def re_eval_instructions(self):
+        self.store()
+        self.instruction_listing[:] = list(self.patcher.get_instruction_list())
+
     def deleteRegion(self, start: int, end: int, safety=True):
         """
         Deletes a region from start (including) to end (excluding) of the code, rebinding jumps and similar calls

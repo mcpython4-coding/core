@@ -192,20 +192,27 @@ class LootTablePoolEntry:
             obj.conditions = [
                 handler.parse_condition(cond) for cond in data["conditions"]
             ]
+
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
             while None in obj.functions:
                 obj.functions.remove(None)
+
         if "name" in data:
             obj.name = data["name"]
+
         if "children" in data:
             obj.children = [cls.from_data(pool, d) for d in data["children"]]
+
         if "expand" in data:
             obj.expand = data["expand"]
+
         if "weight" in data:
             obj.weight = data["weight"]
+
         if "quality" in data:
             obj.quality = data["quality"]
+
         return obj
 
     def __init__(self, entry_type=LootTablePoolEntryType.UNSET):
@@ -222,11 +229,14 @@ class LootTablePoolEntry:
     def roll(self, *args, **kwargs):
         if self.entry_type == LootTablePoolEntryType.UNSET:
             raise ValueError("type not set")
+
         if not all([cond.check(self, *args, **kwargs) for cond in self.conditions]):
             return None
+
         items = []
         if self.entry_type == LootTablePoolEntryType.ITEM:
             items.append(mcpython.common.container.ResourceStack.ItemStack(self.name))
+
         elif self.entry_type == LootTablePoolEntryType.TAG:
             if self.expand:
                 items.append(
@@ -241,14 +251,17 @@ class LootTablePoolEntry:
                     mcpython.common.container.ResourceStack.ItemStack(name)
                     for name in shared.tag_handler.get_tag_for(self.name, "items")
                 ]
+
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:
             items += handler.roll(self.name, *args, **kwargs)
+
         elif self.entry_type == LootTablePoolEntryType.GROUP:
             [
                 items.extend(e.roll(*args, **kwargs))
                 for e in self.children
                 if e is not None
             ]
+
         elif self.entry_type == LootTablePoolEntryType.ALTERNATIVES:
             for entry in self.children:
                 if entry is None:
@@ -258,6 +271,7 @@ class LootTablePoolEntry:
                     continue
                 items += item
                 break
+
         elif self.entry_type == LootTablePoolEntryType.SEQUENCE:
             for entry in self.children:
                 if entry is None:
@@ -266,8 +280,10 @@ class LootTablePoolEntry:
                 if item is None:
                     break
                 items += item
+
         elif self.entry_type == LootTablePoolEntryType.DYNAMIC:
             raise NotImplementedError()
+
         [func.apply(items, *args, **kwargs) for func in self.functions]
         return items
 
@@ -281,18 +297,22 @@ class LootTablePool:
             obj.conditions = [
                 handler.parse_condition(cond) for cond in data["conditions"]
             ]
+
         if "functions" in data:
             obj.functions = [handler.parse_function(func) for func in data["functions"]]
+
         if "entries" in data:
             obj.entries = [
                 LootTablePoolEntry.from_data(obj, d) for d in data["entries"]
             ]
             obj.entry_weights = [entry.weight for entry in obj.entries]
+
         if "rolls" in data:
             if type(data["rolls"]) in (int, float):
                 obj.roll_range = (data["rolls"], data["rolls"])
             else:
                 obj.roll_range = (data["rolls"]["min"], data["rolls"]["max"])
+
         return obj
 
     def __init__(self):
