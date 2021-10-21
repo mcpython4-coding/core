@@ -50,7 +50,12 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
             self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
 
     def on_player_interaction(
-        self, player, button: int, modifiers: int, hit_position: tuple, itemstack,
+        self,
+        player,
+        button: int,
+        modifiers: int,
+        hit_position: tuple,
+        itemstack,
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             player.inventory_enderchest.block = self

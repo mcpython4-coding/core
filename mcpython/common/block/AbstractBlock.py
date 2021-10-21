@@ -276,7 +276,12 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         """
 
     def on_player_interaction(
-        self, player, button: int, modifiers: int, hit_position: tuple, itemstack,
+        self,
+        player,
+        button: int,
+        modifiers: int,
+        hit_position: tuple,
+        itemstack,
     ):
         """
         Called when the player pressed on mouse button on the block.

@@ -52,7 +52,8 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 ----
 
 
-# Changelog of alpha 1.3.0, compared to 21w42a
+# Changelog of alpha 1.2.0, compared to 21w42a
+No further changes
 
 
 # Changelog of snapshot 21w42a
