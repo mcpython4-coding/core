@@ -1881,6 +1881,7 @@ b   [uuk]: fixed gamemode 2 and 3 players not being able to use num keys to sele
 f   [uuk]: Block.on_player_interaction takes now also the ItemStack interacted with
 f   [uuk]: GrassBlock can now be transformed into grass path
 G   [github]: released snapshot 21w42a
+G   [github]: released alpha 1.2.0
 
 G   [github]: started development cycle for snapshot 21w<44>a
 L   [uuk]: upgraded asset source to 21w42a
