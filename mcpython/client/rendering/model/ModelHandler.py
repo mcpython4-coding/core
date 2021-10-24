@@ -189,7 +189,9 @@ class ModelHandler:
                     ] = mcpython.client.rendering.model.BlockModel.Model(
                         "block/" + location.split("/")[-1].split(".")[0],
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
-                    ).parse_from_data(model_data.copy())
+                    ).parse_from_data(
+                        model_data.copy()
+                    )
 
                 except (SystemExit, KeyboardInterrupt):
                     raise
@@ -204,7 +206,9 @@ class ModelHandler:
                     ] = mcpython.client.rendering.model.BlockModel.Model(
                         name,
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
-                    ).parse_from_data(location.copy())
+                    ).parse_from_data(
+                        location.copy()
+                    )
 
                 except (SystemExit, KeyboardInterrupt):
                     raise

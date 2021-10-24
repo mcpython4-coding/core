@@ -51,10 +51,11 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 
 ----
 
-# Changelog of snapshot 21w<XX>a
+# Changelog of snapshot 21w<45>a
+targeting 21w42a
 
     Library
-         requiring now python 3.10
+        - requiring now python 3.10
 
 
 # Changelog of alpha 1.2.0, compared to 21w42a

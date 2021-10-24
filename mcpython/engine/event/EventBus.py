@@ -46,7 +46,7 @@ class EventBus:
     ):
         """
         Creates a new EventBus instance
-        :param crash_on_error: if an crash should be triggered on an exception of an func
+        :param crash_on_error: if an crash should be triggered on an exception of a function
         """
         self.id = shared.NEXT_EVENT_BUS_ID
         shared.NEXT_EVENT_BUS_ID += 1
@@ -72,8 +72,8 @@ class EventBus:
         Adds a function to the event bus by event name. Dynamically creates underlying data structure for new
         event names
 
-        :param event_name: the event to listen to on this bis
-        :param function: the function that should be called when event is send
+        :param event_name: the event to listen to on this bus
+        :param function: the function that should be called when event is sent
         :param args: the args to give
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller

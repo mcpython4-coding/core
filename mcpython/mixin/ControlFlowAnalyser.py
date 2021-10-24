@@ -1,13 +1,25 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import dis
 import types
 import typing
 import weakref
 from collections import defaultdict
 
-from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
-from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 import pyglet
-
+from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
+from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
 
 # RETURN_VALUE, RAISE_VARARGS
 FLOW_INTERRUPT = [83, 130]
@@ -41,7 +53,10 @@ class Branch:
 
 
 class ControlFlowAnalyser:
-    def __init__(self, target: typing.Union[types.FunctionType, FunctionPatcher, MixinPatchHelper]):
+    def __init__(
+        self,
+        target: typing.Union[types.FunctionType, FunctionPatcher, MixinPatchHelper],
+    ):
         if isinstance(target, types.FunctionType):
             self.helper = MixinPatchHelper(FunctionPatcher(target))
         elif isinstance(target, FunctionPatcher):
@@ -62,7 +77,8 @@ class ControlFlowAnalyser:
             op = pending_ops.pop()
             branch = self.offset2branch[op]
 
-            if branch in done: continue
+            if branch in done:
+                continue
 
             # print("new branch")
 
@@ -90,9 +106,9 @@ class ControlFlowAnalyser:
                     new = instr.argval
                     # print("+", new)
                     pending_ops.add(new)
-                    pending_ops.add(op+1)
+                    pending_ops.add(op + 1)
                     branch.following_branches.add(self.offset2branch[new])
-                    branch.following_branches.add(self.offset2branch[op+2])
+                    branch.following_branches.add(self.offset2branch[op + 2])
                     break
 
                 if instr.opcode in FLOW_JUMP_CONDITIONAL_OFFSET:
@@ -134,4 +150,3 @@ if __name__ == "__main__":
 
     obj.calculate_branches()
     print(obj)
-

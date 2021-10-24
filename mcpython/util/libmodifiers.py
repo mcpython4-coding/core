@@ -59,4 +59,3 @@ def removeLaunchWrapperPyVersionCheck():
 
 if shared.IS_CLIENT:
     applyPillowPatches()
-

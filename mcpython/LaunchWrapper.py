@@ -349,6 +349,7 @@ class LaunchWrapper:
         if shared.IS_CLIENT:
             try:
                 import mcpython.engine.ResourceLoader
+
                 # todo: sometimes, this does not work correctly
                 shared.window.set_icon(
                     mcpython.engine.ResourceLoader.read_pyglet_image("icon_16x16.png"),
@@ -419,6 +420,7 @@ class LaunchWrapper:
         Also invokes the event for closing the game, stops the world generation process, ...
         """
         import mcpython.engine.ResourceLoader
+
         shared.world.world_generation_process.stop()
         import mcpython.engine.ResourceLoader
 
