@@ -187,10 +187,9 @@ class ModelHandler:
                     self.models[
                         name
                     ] = mcpython.client.rendering.model.BlockModel.Model(
-                        model_data.copy(),
                         "block/" + location.split("/")[-1].split(".")[0],
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
-                    )
+                    ).parse_from_data(model_data.copy())
 
                 except (SystemExit, KeyboardInterrupt):
                     raise
@@ -203,10 +202,9 @@ class ModelHandler:
                     self.models[
                         name
                     ] = mcpython.client.rendering.model.BlockModel.Model(
-                        location.copy(),
                         name,
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
-                    )
+                    ).parse_from_data(location.copy())
 
                 except (SystemExit, KeyboardInterrupt):
                     raise

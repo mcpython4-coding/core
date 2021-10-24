@@ -28,27 +28,34 @@ class Model:
     Class representing a (block) model from the file system
     """
 
-    def __init__(self, data: dict, name: str, modname: str):
-        self.data = data
+    def __init__(self, name: str, modname: str):
         self.name = name
-        self.parent = data["parent"] if "parent" in data else None
+        self.modname = modname
+        self.parent = None
         self.used_textures = {}
         self.texture_addresses = {}
         self.texture_names = {}
         self.drawable = True
+        self.texture_atlas = None
+        self.box_models = []
+
+    def parse_from_data(self, data: dict):
+        self.parent = data["parent"] if "parent" in data else None
 
         # do some parent copying stuff
         if self.parent is not None:
             if ":" not in self.parent:
                 self.parent = "minecraft:" + self.parent
-                if "minecraft" not in name and ":" in name:
+                if "minecraft" not in self.name and ":" in self.name:
                     logger.println(
                         "[WARN] unsafe access to model '{}' from '{}'".format(
-                            self.parent, name
+                            self.parent, self.name
                         )
                     )
+
             if self.parent not in shared.model_handler.models:
                 shared.model_handler.load_model(self.parent)
+
             self.parent = shared.model_handler.models[self.parent]
             self.used_textures = self.parent.used_textures.copy()
             self.texture_names = self.parent.texture_names.copy()
@@ -67,8 +74,7 @@ class Model:
         to_add = []
         for name in self.used_textures:
             to_add.append((name, self.used_textures[name]))
-        add = TextureAtlas.handler.add_image_files([x[1] for x in to_add], modname)
-        self.texture_atlas = None
+        add = TextureAtlas.handler.add_image_files([x[1] for x in to_add], self.modname)
 
         for i, (name, _) in enumerate(to_add):
             self.texture_addresses[name] = add[i][0]
@@ -89,6 +95,8 @@ class Model:
                         element, self
                     )
                 )
+
+        return self
 
     def get_prepared_data_for(
         self,

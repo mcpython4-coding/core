@@ -417,6 +417,7 @@ class BoxModel(AbstractBoxModel):
         )
 
     def copy(self, new_model=None):
+        # todo: do we really need to re-parse the model data?
         return BoxModel().parse_mc_data(
             self.data, new_model if new_model is not None else self.model
         )
