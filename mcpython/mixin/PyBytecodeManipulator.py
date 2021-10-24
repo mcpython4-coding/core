@@ -12,6 +12,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import dis
+import sys
+import types
 from types import CodeType, FunctionType
 
 __all__ = ["FunctionPatcher"]
@@ -31,6 +33,8 @@ class FunctionPatcher:
     and writing the modified code back into the source function
 
     See https://docs.python.org/3.10/library/inspect.html
+
+    todo: add different wrapper types for different versions
     """
 
     def __init__(self, target: FunctionType):

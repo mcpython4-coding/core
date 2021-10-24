@@ -18,6 +18,7 @@ import traceback
 import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
+wrapper.apply_mixins()
 wrapper.check_py_version()
 
 

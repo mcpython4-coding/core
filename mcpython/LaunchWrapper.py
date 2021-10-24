@@ -11,12 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import dis
 import os
 import sys
 import traceback
 import typing
 
-import mcpython.engine.ResourceLoader
 import mcpython.common.config
 from mcpython import shared
 from mcpython.engine import logger
@@ -37,23 +37,15 @@ class LaunchWrapper:
 
         shared.launch_wrapper = self
 
-    @classmethod
-    def check_py_version(cls):
-        # everything lower than python 3.9 is not supported, we are using python 3.9 features!
-        if sys.version_info.major != 3 or sys.version_info.minor < 9:
+    @staticmethod
+    def check_py_version():
+        # everything lower than python 3.10 is not supported, we are using python 3.10 features!
+        if sys.version_info.major < 3 or sys.version_info.minor < 10:
             print(
                 "[VERSION DETECTOR][FATAL] you are using an not supported version of python. "
                 "You need at least python 3.9 in order to run the game!"
             )
             sys.exit(-1)
-
-        if sys.version_info.minor == 9:
-            print(
-                "[INTERNAL][WARN] You are using python 3.9 which will be unsupported in a handful of released"
-            )
-            print(
-                "                 We made our game compatible with python 3.10 some releases ago, so please update!"
-            )
 
         if sys.version_info.minor >= 11:
             print(
@@ -85,8 +77,6 @@ class LaunchWrapper:
         logger.println("[LAUNCH WRAPPER][INFO] starting loading cycle")
         self.print_header()
         self.parse_argv()
-
-        self.apply_mixins()
 
         shared.IS_CLIENT = self.is_client
 
@@ -309,6 +299,7 @@ class LaunchWrapper:
         """
         Setup for certain files in the system.
         """
+        import mcpython.engine.ResourceLoader
 
         if not os.path.exists(shared.home + "/datapacks"):
             os.makedirs(shared.home + "/datapacks")
@@ -357,6 +348,7 @@ class LaunchWrapper:
 
         if shared.IS_CLIENT:
             try:
+                import mcpython.engine.ResourceLoader
                 # todo: sometimes, this does not work correctly
                 shared.window.set_icon(
                     mcpython.engine.ResourceLoader.read_pyglet_image("icon_16x16.png"),
@@ -426,6 +418,7 @@ class LaunchWrapper:
         MAY crash on non-fully stable systems
         Also invokes the event for closing the game, stops the world generation process, ...
         """
+        import mcpython.engine.ResourceLoader
         shared.world.world_generation_process.stop()
         import mcpython.engine.ResourceLoader
 
