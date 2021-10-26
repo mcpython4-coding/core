@@ -60,14 +60,16 @@ History of save versions:
 - 7: introduced: 12.12.2020, outdated since: 21.05.2021, not loadable since: 21.05.2021
     - major code refactoring breaking nearly everything
     - player data reformat
-- 10: introduced: 21.05.2021, outdated since: -, not loadable since: -
+- 10: introduced: 21.05.2021, outdated since: 26.10.2021, not loadable since: 26.10.2021
     - improved block palette
     - improved entity storage
     - removed some sanity checks for backwards compatibility
+- 11: introduced: 26.10.2021, outdated since: -, not loadable since: -
+    - chunk block data is now serialized via the network API, not the old storage API
 """
 
 # the latest version, used for upgrading
-shared.STORAGE_VERSION = LATEST_VERSION = 10
+shared.STORAGE_VERSION = LATEST_VERSION = 11
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (

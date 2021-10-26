@@ -185,13 +185,6 @@ class Chest(
     def modify_block_item(cls, factory):
         factory.set_fuel_level(15)
 
-    def get_save_data(self):
-        return {"model": self.get_model_state(), "loot_table": self.loot_table_link}
-
-    def load_data(self, data):
-        self.set_model_state(data["model"])
-        self.loot_table_link = data["loot_table"]
-
 
 class TrappedChest(Chest):
     NAME = "minecraft:trapped_chest"

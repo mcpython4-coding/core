@@ -393,50 +393,6 @@ def build_class_default_state(
             for function in configs["on_no_collision_collide"]:
                 function(self, *args, **kwargs)
 
-        def get_save_data(self):
-            if len(configs["get_save_data"]) > 0:
-                return configs["get_save_data"][-1](self)
-
-            if not is_super_base:
-                return super().get_save_data()
-            if len(bases) > 0:
-                return bases[-1].get_save_data(self)
-            return self.get_model_state()
-
-        def dump_data(self):
-            if len(configs["dump_data"]) > 0:
-                return configs["dump_data"][-1](self)
-
-            if not is_super_base:
-                return super().dump_data()
-            if len(bases) > 0:
-                return bases[-1].dump_data(self)
-            return picklemagic.safe_dumps(self.get_save_data())
-
-        def load_data(self, data):
-            if len(configs["load_data"]) > 0:
-                return configs["load_data"][-1](self, data)
-
-            if not is_super_base:
-                return super().load_data(data)
-            if len(bases) > 0:
-                return bases[-1].load_data(self, data)
-
-            self.set_model_state(data)
-
-        def inject(self, data: bytes):
-            if len(configs["on_data_inject"]) > 0:
-                return configs["on_data_inject"][-1](self, data)
-
-            if not is_super_base:
-                return super().inject(data)
-            if len(bases) > 0:
-                return bases[-1].inject(self, data)
-
-            self.load_data(
-                picklemagic.safe_loads(data) if type(data) == bytes else data
-            )
-
         def get_item_saved_state(self):
             if len(configs["get_item_save_data"]) > 0:
                 return configs["get_item_save_data"][-1](self)
@@ -607,8 +563,6 @@ block_factory_builder.register_direct_copy_attributes(
     "on_redstone_update",
     "on_player_interaction",
     "on_no_collision_collide",
-    "get_save_data",
-    "dump_data",
     "load_data",
     "on_data_inject",
     "get_item_save_data",
@@ -724,18 +678,6 @@ block_factory_builder.register_configurator(
     FactoryBuilder.FunctionStackedAnnotator(
         "on_no_collision_collide", "on_no_collision_collide"
     )
-)
-block_factory_builder.register_configurator(
-    FactoryBuilder.FunctionStackedAnnotator("get_save_data", "get_save_data")
-)
-block_factory_builder.register_configurator(
-    FactoryBuilder.FunctionStackedAnnotator("dump_data", "dump_data")
-)
-block_factory_builder.register_configurator(
-    FactoryBuilder.FunctionStackedAnnotator("load_data", "load_data")
-)
-block_factory_builder.register_configurator(
-    FactoryBuilder.FunctionStackedAnnotator("on_data_inject", "on_data_inject")
 )
 block_factory_builder.register_configurator(
     FactoryBuilder.FunctionStackedAnnotator("get_item_save_data", "get_item_save_data")

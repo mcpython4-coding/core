@@ -335,8 +335,10 @@ class Slot(ISlot):
             "amount": self.itemstack.amount,
             "data": None,
         }
+
         if not self.itemstack.is_empty():
             d["data"] = self.itemstack.item.get_data()
+
         return {"itemstack": d}
 
     def load(self, data):

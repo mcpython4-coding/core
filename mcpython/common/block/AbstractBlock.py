@@ -208,6 +208,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         version = buffer.read_int()
+        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
 
         # Apply these fixers locally
         if version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
@@ -221,7 +222,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
                 buffer = ReadBuffer(write.get_data())
                 version = fixer.AFTER_VERSION
 
-        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         state = {
             buffer.read_string(): buffer.read_string() for _ in range(buffer.read_int())
         }
@@ -320,48 +320,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         :param entity: the entity entering the block
         :param previous: if the player was in the block before
         """
-
-    # todo: rewrite below storage functions
-    def get_save_data(self):
-        """
-        Helper function for saving pickle-able data on block save
-        """
-        return self.get_model_state()
-
-    def dump_data(self):
-        """
-        API function for chunk serialization
-        :return: bytes representing the whole block, not including inventories
-        """
-        return self.get_save_data(), self.serialize_container()
-
-    def load_data(self, data: typing.Optional):
-        """
-        Loads block data
-        :param data:  the data saved by get_save_data()
-        WARNING: if not providing DataFixers for old mod versions, these data may get very old and lead into errors!
-        todo: add an saver way of doing this!
-        """
-        if data is None:
-            return
-
-        self.set_model_state(data)
-
-    def inject(self, data):
-        """
-        Loads block data from bytes
-        :param data:  the data saved by dump_data()
-        WARNING: if not providing DataFixers for old mod versions, these data may get very old and lead into errors!
-        todo: way to disable the pickle load as it is unsafe
-        """
-        if isinstance(data, bytes):
-            data = pickle.loads(data)
-
-        elif isinstance(data, tuple):
-            self.deserialize_container(data[1])
-            data = data[0]
-
-        return self.load_data(data)
 
     def get_item_saved_state(self) -> typing.Any:
         """

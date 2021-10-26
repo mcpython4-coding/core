@@ -26,6 +26,8 @@ from mcpython.common.world.serializer.util import (
     write_region_data,
 )
 from mcpython.engine import logger
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 @shared.registry
@@ -142,23 +144,12 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             if instance is None:
                 return
 
-            instance.inject(d[1])
-
-            if len(d) > 3:
-                inventories = instance.get_inventories()
-                for i, path in enumerate(d[3]):
-                    if i >= len(inventories):
-                        break
-
-                    if inventories[i] is None:
-                        continue
-
-                    save_file.read(
-                        "minecraft:inventory",
-                        inventory=inventories[i],
-                        path=path,
-                        file=inv_file,
-                    )
+            if isinstance(d[1], bytes):
+                buffer = ReadBuffer(d[1])
+                instance.read_from_network_buffer(buffer)
+            else:
+                logger.println("[WARN][DISCARD] discarding block data for block", instance)
+                logger.println(repr(d[1])[:300])
 
         flag = d[2]
         if immediate:
@@ -246,41 +237,16 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
                 continue
 
+            buffer = WriteBuffer()
+            block.write_to_network_buffer(buffer)
+
             block_data = (
                 block.NAME,
-                block.dump_data(),
+                buffer.get_data(),
                 any(block.face_info.faces.values())
                 if block.face_info is not None
                 else False,
             )
-
-            # inventory data
-            # todo: move to custom function in Block-class
-            if block.get_inventories() is not None:  # have we any inventory of stuff
-                block_data = block_data + ([],)
-
-                # iterate over all inventories
-                for i, inventory in enumerate(block.get_inventories()):
-                    if inventory is None:
-                        block_data[3].append(None)
-                        continue
-
-                    # only if we need data, load it
-                    if not overridden:
-                        save_file.dump_file_pickle(inv_file, {})
-                        overridden = True
-
-                    # were to locate in the file
-                    path = "blockinv/{}_{}_{}/{}".format(*rel_position, i)
-
-                    save_file.dump(
-                        None,
-                        "minecraft:inventory",
-                        inventory=inventory,
-                        path=path,
-                        file=inv_file,
-                    )
-                    block_data[3].append(path)
 
             # Dump into the palette table
             if block_data in palette:
