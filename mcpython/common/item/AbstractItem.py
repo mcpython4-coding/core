@@ -33,6 +33,10 @@ class AbstractItem(
     HAS_BLOCK = True
     ITEM_NAME_COLOR = "white"
 
+    # Attribute storing an AbstractItemRenderer instance for rendering this item
+    # May only be set on client due to loading pyglet
+    BOUND_ITEM_RENDERER = None
+
     @classmethod
     def get_used_texture_files(
         cls,
@@ -108,15 +112,15 @@ class AbstractItem(
 
     # events
 
-    def on_player_interact(self, player, block, button, modifiers) -> bool:
+    def on_player_interact(self, player, block, button: int, modifiers: int) -> bool:
         """
-        called when the player tries to use the item
+        Called when the player tries to use the item by pressing a mouse button
         :param player: the player interacting
-        :param block: the block in focus, may be None
+        :param block: the block in focus, may be None if no block is in range
         :param button: the button used
         :param modifiers: the modifiers used
         :return: if default logic should be interrupted
-        todo: add an exact_hit-parameter
+        todo: pass full hit info into here
         """
         return False
 

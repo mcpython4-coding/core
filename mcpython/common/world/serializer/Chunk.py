@@ -26,8 +26,7 @@ from mcpython.common.world.serializer.util import (
     write_region_data,
 )
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 @shared.registry
@@ -148,7 +147,9 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 buffer = ReadBuffer(d[1])
                 instance.read_from_network_buffer(buffer)
             else:
-                logger.println("[WARN][DISCARD] discarding block data for block", instance)
+                logger.println(
+                    "[WARN][DISCARD] discarding block data for block", instance
+                )
                 logger.println(repr(d[1])[:300])
 
         flag = d[2]

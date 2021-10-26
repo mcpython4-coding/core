@@ -1890,4 +1890,5 @@ L   [uuk]: removed support for python 3.9
 A*  [uuk]: block serialization to network buffers contains now a network serializer version set by block
            so we can data fix single block packages; This makes servers incompatible with previous versions!
 AI  [uuk]: save system for blocks now uses the network serializer code, not the old serializer code
+A   [uuk]: added code for custom item renderer (only API currently)
 

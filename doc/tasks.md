@@ -10,6 +10,11 @@ Features scheduled for implementation for alpha 1.3.0, planned to be released so
 - moved tool system to tags (see mc)
 
 
+Animated textures:
+- New atlases for textures with animation, where for each frame a new one is created, so we can switch between them 
+each rendering frame (So, for each frame count & timing, a new one is needed)
+
+
 Issues:
 - biome map is not saved to save files or loaded not correctly somehow
 - hiding faces to rotated blocks like logs fails
