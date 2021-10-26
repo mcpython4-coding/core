@@ -25,6 +25,7 @@ import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
+from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.util.enums import BlockRotationType, EnumSide
 
@@ -96,6 +97,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     # Internal registry type name & capability buffer name; DO NOT CHANGE
     CAPABILITY_CONTAINER_NAME = "minecraft:block"
     TYPE: str = "minecraft:block_registry"
+
+    NETWORK_BUFFER_SERIALIZER_VERSION = 0
+    NETWORK_BUFFER_DATA_FIXERS: typing.Dict[int, BlockDataFixer] = {}
 
     # Used when the player walks in a different speed when on this block
     CUSTOM_WALING_SPEED_MULTIPLIER: typing.Optional[float] = None
@@ -193,6 +197,8 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         return self.face_solid[face.index]
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_int(self.NETWORK_BUFFER_SERIALIZER_VERSION)
+
         super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
 
@@ -201,6 +207,20 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             buffer.write_string(key).write_string(value)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
+        version = buffer.read_int()
+
+        # Apply these fixers locally
+        if version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
+            while version in self.NETWORK_BUFFER_DATA_FIXERS:
+                fixer = self.NETWORK_BUFFER_DATA_FIXERS[version]
+                write = WriteBuffer()
+
+                if fixer.apply2stream(self, buffer, write) is True:
+                    return
+
+                buffer = ReadBuffer(write.get_data())
+                version = fixer.AFTER_VERSION
+
         super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         state = {
             buffer.read_string(): buffer.read_string() for _ in range(buffer.read_int())

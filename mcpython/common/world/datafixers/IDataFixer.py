@@ -35,9 +35,8 @@ class IStorageVersionFixer(IDataFixer, ABC):
 
     TYPE = "minecraft:storage_version_fixer"
 
-    GROUP_FIXER_NAMES = (
-        []
-    )  # an list of (name_of_group_fixer, args, kwargs) to apply when trying to load
+    # a list of (name_of_group_fixer, args, kwargs) to apply when trying to load
+    GROUP_FIXER_NAMES = []
 
 
 class IModVersionFixer(IDataFixer, ABC):
@@ -54,12 +53,10 @@ class IModVersionFixer(IDataFixer, ABC):
 
     MOD_NAME = None  # the mod name to fix under
 
-    GROUP_FIXER_NAMES = (
-        []
-    )  # an list of (name_of_group_fixer, args, kwargs) to apply when trying to load
-    PART_FIXER_NAMES = (
-        []
-    )  # an list of (name_of_part_fixer, args, kwargs) to apply when trying to load
+    # a list of (name_of_group_fixer, args, kwargs) to apply when trying to load
+    GROUP_FIXER_NAMES = []
+    # a list of (name_of_part_fixer, args, kwargs) to apply when trying to load
+    PART_FIXER_NAMES = []
 
 
 class IGroupFixer(IDataFixer, ABC):

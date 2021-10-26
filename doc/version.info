@@ -1887,4 +1887,6 @@ G   [github]: started development cycle for snapshot 21w<45>a
 L   [uuk]: upgraded asset source to 21w42a
 OA- [uuk]: improved block model memory usage
 L   [uuk]: removed support for python 3.9
+A*  [uuk]: block serialization to network buffers contains now a network serializer version set by block
+           so we can data fix single block packages; This makes servers incompatible with previous versions!
 
