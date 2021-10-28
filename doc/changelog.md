@@ -1,5 +1,5 @@
 # Changelog of mcpython-4
-Contains only some information, in ordered form, from the version.info file
+Contains only some information, in ordered form, in a better form for the end user than the version.info file.
 
 ----
 
@@ -15,10 +15,12 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 
 - add a line into logging where the system searches for the location where the error occur and will link the mod
     caused it into the log [partially done via mod container]
+-> also display potential mixins into code by mods
 
 - parser for the new mc world gen config format
 
 - add a mode where the window opens only when the load is complete
+- add a mode where a world is directly loaded and then displayed (combine-able with above)
 
 - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
 
@@ -31,27 +33,31 @@ Planned for the future (in "[]", priority, with 1 the highest and positive inf l
 - entity AI system
 - make loot table system only load needed loot tables, etc.
 - BlockItemGenerator should be replaced by an in-game block renderer
+- develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
+
 
 ### Information on development
-- the development is split up into 2 phases: the dev-branch with changes to the code and the final releases pushed
-    to release-branch and published as a release on github
+- the development is split up into 2 phases: the dev-branch with changes to the code and after a full release,
+    the "maintain" branch of that release, for hotfixes for versions. Version maintain branches may be deleted 
+    at a later date.
 - developing happens also on feature branches were bigger features can be tested. It is not guaranteed that any
     if this features will make its way into the final release.
-- PR's should target dev or in some cases the feature branches, only for critical bug fixes the release-branch
+- PR's should target dev or in some cases the feature branches, only for critical bug fixes the maintain-branch,
+    after a PR to the dev or for fixes only applicable to the target release, not the latest dev
 - this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
     for creating the entries. Every new snapshot Changelog starts with "Changelog of <type> <name>" with optional
     following the theme of the snapshot, the release date and additional information. The Changelog should be
     an grouped list of changes after topic in an logical order with all not noticeable changes removed
     followed optional by an table of issues starting with "Fixed issues:" followed by an list of grouped after
-    first occurrence of the bug the list of issues with an short description and when based on an github bug report
+    first occurrence of the bug the list of issues with an short description and when based on a github bug report
     its github id.
 - developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
-    When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID of it
-- develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
+    When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID counter
 
 ----
 
 # Changelog of snapshot 21w<45>a
+Planned to be released on 10.11.2021
 targeting 21w42a
 
     Library

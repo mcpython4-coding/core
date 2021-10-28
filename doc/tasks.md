@@ -3,7 +3,6 @@
 Features scheduled for implementation for alpha 1.3.0, planned to be released sometime in december 2021
 - abstraction of direct rendering calls to some higher level (-> pyglet 2.0 preparations)
 - reload data only when needed, so a resource pack / data pack change occurred
-- breaking block overlay (util function in model handler?)
 - split gui system into rendering & container
 - add ore gen
 - refactor event names
