@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import gc
 import json
+import math
 import traceback
 import typing
 
@@ -25,6 +26,7 @@ import mcpython.util.enums
 import mcpython.util.math
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
+from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 
@@ -39,6 +41,60 @@ class ModelHandler:
         self.dependence_list = []
         self.hide_blockstate_errors = False
         self.raw_models = []
+
+        # todo: reload these textures on normal reload
+        self.break_stages = [
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_0.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_1.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_2.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_3.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_4.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_5.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_6.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_7.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_8.png",
+            ),
+            ColoredRawBoxModel(
+                (0, 0, 0),
+                (1.02, 1.02, 1.02),
+                "assets/minecraft/textures/block/destroy_stage_9.png",
+            ),
+        ]
 
     def add_from_mod(self, modname: str):
         """
@@ -380,6 +436,17 @@ class ModelHandler:
         self.process_models(immediate=True)
 
         logger.println("finished!")
+
+    def draw_block_break_overlay(
+        self, position: typing.Tuple[float, float, float], progress: float
+    ):
+        stage = math.floor(progress * 10)
+
+        if stage == 0:
+            return
+
+        model = self.break_stages[stage - 1]
+        model.draw(position, color=(1, 1, 1, 0.7))
 
 
 shared.model_handler = ModelHandler()

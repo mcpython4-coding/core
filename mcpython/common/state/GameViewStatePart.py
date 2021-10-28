@@ -542,6 +542,11 @@ class GameView(AbstractStatePart.AbstractStatePart):
             self.calculate_new_break_time()
 
     def on_mouse_motion(self, x: int, y: int, dx: int, dy: int):
+        vector = shared.window.get_sight_vector()
+        previous_block = shared.world.hit_test(
+            shared.world.get_active_player().position, vector
+        )[0]
+
         if shared.window.exclusive and self.activate_mouse:
             m = 0.15
             x, y, _ = shared.world.get_active_player().rotation
@@ -550,6 +555,14 @@ class GameView(AbstractStatePart.AbstractStatePart):
             shared.world.get_active_player().rotation = (x, y, 0)
             if shared.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_break_time()
+
+            vector = shared.window.get_sight_vector()
+            new_block = shared.world.hit_test(
+                shared.world.get_active_player().position, vector
+            )[0]
+
+            if previous_block and new_block != previous_block:
+                self.mouse_press_time = 0
 
     def on_key_press(self, symbol: int, modifiers: int):
         player = shared.world.get_active_player()

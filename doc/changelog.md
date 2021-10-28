@@ -57,6 +57,13 @@ targeting 21w42a
     Library
         - requiring now python 3.10
 
+    Rendering:
+        - added block breaking overlay
+
+    Storage:
+        - using now the network serializer versions for saving block data to disk
+        - this makes it incompatible with old saves, so we removed support for them
+
 
 # Changelog of alpha 1.2.0, compared to 21w42a
 Released on 22.10.2021 targeting 1.17

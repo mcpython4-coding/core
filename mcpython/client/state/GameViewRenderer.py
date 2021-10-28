@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import pyglet
 from mcpython import shared
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
+from pyglet.window import mouse
 
 from ...engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 from .AbstractStateRenderer import AbstractStateRenderer
@@ -45,4 +46,26 @@ class GameViewRenderer(AbstractStateRenderer):
                 and shared.world.get_active_player().gamemode != 3
             ):
                 # todo: move this method to player
-                shared.window.draw_focused_block()
+                block = shared.window.draw_focused_block()
+
+                if (
+                    block is not None
+                    and (
+                        block.IS_BREAKABLE
+                        or shared.world.get_active_player().gamemode == 1
+                    )
+                    and self.assigned_state.break_time
+                    and shared.window.mouse_pressing[mouse.LEFT]
+                ):
+                    shared.rendering_helper.enableAlpha()
+                    shared.model_handler.draw_block_break_overlay(
+                        block.position,
+                        max(
+                            min(
+                                self.assigned_state.mouse_press_time
+                                / self.assigned_state.break_time,
+                                1,
+                            ),
+                            0,
+                        ),
+                    )

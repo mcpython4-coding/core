@@ -402,6 +402,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             block = shared.world.get_active_dimension().get_block(block)
             if block:
                 block.get_view_bbox().draw_outline(block.position)
+                return block
 
     def draw_label(self):
         """
