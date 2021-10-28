@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
+from pyglet.window import mouse
+
 import mcpython.common.block.AbstractBlock
 import mcpython.common.fluid.AbstractFluid
 from mcpython import shared
@@ -45,6 +47,8 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     )
     NO_ENTITY_COLLISION = True
     CUSTOM_WALING_SPEED_MULTIPLIER = 0.3
+
+    IS_BREAKABLE = False
 
     @classmethod
     def __init_subclass__(cls, **kwargs):

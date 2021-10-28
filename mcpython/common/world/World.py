@@ -29,6 +29,7 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.util.annotation import onlyInClient
 
 
 class World(mcpython.engine.world.AbstractInterface.IWorld):
@@ -122,6 +123,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             self.players[name].create_inventories()
         return self.players[name]
 
+    @onlyInClient()
     def get_active_player(
         self, create: bool = True
     ) -> typing.Union[mcpython.common.entity.PlayerEntity.PlayerEntity, None]:
@@ -163,14 +165,13 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         shared.event_handler.call("world:reset_config")
         self.gamerule_handler = mcpython.common.world.GameRule.GameRuleHandler(self)
 
+    @onlyInClient()
     def get_active_dimension(
         self,
     ) -> typing.Union[mcpython.engine.world.AbstractInterface.IDimension, None]:
         """
-        will return the dimension the player is in
+        Will return the dimension the current player is in
         :return: the dimension or None if no dimension is set
-
-        todo: move to player
         """
         return self.get_dimension(self.active_dimension)
 
@@ -180,6 +181,11 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
     def get_dimension_by_name(
         self, name: str
     ) -> mcpython.engine.world.AbstractInterface.IDimension:
+
+        if isinstance(name, mcpython.engine.world.AbstractInterface.IDimension):
+            logger.print_stack("invoked get_dimension_by_name() with dimension instance as name; this seems not right!")
+            return name
+
         return self.dimensions[self.dim_to_id[name]]
 
     def add_dimension(

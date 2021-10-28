@@ -117,7 +117,7 @@ items.item_index_table = {}
 
 
 def load_items():
-    pass
+    from . import BucketItem
 
 
 if not shared.IS_TEST_ENV:

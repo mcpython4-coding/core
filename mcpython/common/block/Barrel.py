@@ -36,7 +36,7 @@ class Barrel(AbstractBlock.AbstractBlock):
         .build()
     )
 
-    HARDNESS = 2.5
+    HARDNESS = BLAST_RESISTANCE = 2.5
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     def __init__(self):

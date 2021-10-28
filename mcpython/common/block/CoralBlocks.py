@@ -22,6 +22,9 @@ class ICoralBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
 
     ENABLE_RANDOM_TICKS = True
+
+    HARDNESS = 1.5
+    BLAST_RESISTANCE = 6
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
 
     def on_random_update(self):

@@ -17,7 +17,7 @@ import mcpython.util.enums
 from mcpython import shared
 from mcpython.util.enums import ToolType
 
-from ..item.AbstractToolItem import AbstractToolItem
+from mcpython.common.item.AbstractToolItem import AbstractToolItem
 from . import AbstractBlock
 
 
@@ -28,8 +28,7 @@ class GrassBlock(AbstractBlock.AbstractBlock):
 
     NAME = "minecraft:grass_block"
 
-    HARDNESS = 0.5
-    BLAST_RESISTANCE = 0.5
+    HARDNESS = BLAST_RESISTANCE = 0.5
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.SHOVEL}
 
     ENABLE_RANDOM_TICKS = True

@@ -42,7 +42,6 @@ def load_item():
     template.set_name("bread").set_food_value(5).finish()
     template.set_name("brick").finish()
     template.set_name("broken_elytra").set_max_stack_size(1).finish()
-    template.set_name("bucket").set_max_stack_size(16).finish()
     template.set_name("carrot").set_food_value(3).finish()
     template.set_name("charcoal").set_fuel_level(80).finish()
     template.set_name("chicken").set_food_value(2).finish()
@@ -146,8 +145,6 @@ def load_item():
     template.set_name("spider_eye").set_food_value(2).finish()
     template.set_name("totem_of_undying").set_max_stack_size(1).finish()
     template.set_name("tropical_fish").set_food_value(1).finish()
-    template.set_name("water_bucket").set_max_stack_size(1).finish()
-    template.set_name("lava_bucket").set_max_stack_size(1).finish()
     template.set_name("wheat").finish()
 
     # tools

@@ -35,8 +35,9 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
-    HARDNESS = 2.5
-    MINIMUM_TOOL_LEVEL = 0
+    HARDNESS = 22.5
+    BLAST_RESISTANCE = 600
+    MINIMUM_TOOL_LEVEL = 1
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
 
     if shared.IS_CLIENT:

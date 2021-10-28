@@ -43,9 +43,9 @@ class AbstractItem(
     ):  # WARNING: will be removed during item rendering update; todo: make attribute
         return [cls.get_default_item_image_location()]
 
-    @staticmethod
-    def get_default_item_image_location() -> str:  # WARNING: will be removed during item rendering update
-        raise NotImplementedError()
+    @classmethod
+    def get_default_item_image_location(cls) -> str:  # WARNING: will be removed during item rendering update
+        return "assets/{}/textures/item/{}.png".format(*cls.NAME.split(":"))
 
     def __init__(self):
         super().__init__()
@@ -112,13 +112,15 @@ class AbstractItem(
 
     # events
 
-    def on_player_interact(self, player, block, button: int, modifiers: int) -> bool:
+    def on_player_interact(self, player, block, button: int, modifiers: int, itemstack, previous) -> bool:
         """
         Called when the player tries to use the item by pressing a mouse button
         :param player: the player interacting
         :param block: the block in focus, may be None if no block is in range
         :param button: the button used
         :param modifiers: the modifiers used
+        :param itemstack: the itemstack used
+        :param previous: the precious block position hit with, or None if no block was hit
         :return: if default logic should be interrupted
         todo: pass full hit info into here
         """

@@ -25,8 +25,7 @@ class Dirt(AbstractBlock.AbstractBlock):
 
     NAME: str = "minecraft:dirt"
 
-    HARDNESS = 0.5
-    BLAST_RESISTANCE = 0.5
+    HARDNESS = BLAST_RESISTANCE = 0.5
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.SHOVEL}
 
     ENABLE_RANDOM_TICKS = True

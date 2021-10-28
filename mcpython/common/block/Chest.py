@@ -47,8 +47,7 @@ class Chest(
     NAME: str = "minecraft:chest"
     MODEL_FACE_NAME = "side"
 
-    HARDNESS = 2.5
-    BLAST_RESISTANCE = 2.5
+    HARDNESS = BLAST_RESISTANCE = 2.5
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     IS_SOLID = False

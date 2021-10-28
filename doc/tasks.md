@@ -13,12 +13,16 @@ Features scheduled for implementation for alpha 1.3.0, planned to be released so
 Animated textures:
 - New atlases for textures with animation, where for each frame a new one is created, so we can switch between them 
 each rendering frame (So, for each frame count & timing, a new one is needed)
+- WARNING: for that to work, we need to add a way for block models to prevent optimisation for mass-addition 
+    as animated textures need their own texture atlas & group, not the same as the normals
 
 
 Issues:
 - biome map is not saved to save files or loaded not correctly somehow
 - hiding faces to rotated blocks like logs fails
 - shift-clicking and shift-moving over slots does not move the items to "the other" area of the inventory
+- tools are consumed when right-clicking on a block
+- you can create ItemStacks with more than allowed items by combining two item stacks
 
 
 Toolchain:
@@ -31,6 +35,15 @@ Toolchain:
 
 Library backend:
 - upgrade to pyglet 2.0 [For consideration]
+
+Blocks:
+- add anvil UI
+- fluid system around blocks should provide a way to customize 
+a) Fluid bucket name (on FluidBlock)
+b) Fluid block name (on Bucket)
+c) events for above @ Fluid class
+- real stairs
+- collision detection based on physic bounding boxes
 
 Data generation:
 - attribute for data generator instances for name, so we don't need to set it at submitting, but in advance

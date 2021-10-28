@@ -45,6 +45,9 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         .build()
     )
 
+    HARDNESS = 2
+    BLAST_RESISTANCE = 3
+
     IS_SOLID = False
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID

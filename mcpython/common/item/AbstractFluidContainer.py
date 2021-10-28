@@ -16,6 +16,7 @@ from abc import ABC
 
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractItem
+from mcpython.common.container.ResourceStack import ItemStack, FluidStack
 
 
 class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC):
@@ -25,8 +26,8 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
 
     @classmethod
     def get_underlying_fluid_stacks(
-        cls, itemstack: mcpython.common.container.ResourceStack.ItemStack
-    ) -> typing.Iterable[mcpython.common.container.ResourceStack.FluidStack]:
+        cls, itemstack: ItemStack
+    ) -> typing.Iterable[FluidStack]:
         """
         Informal method for getting the fluids in the container [All of them]
         """
@@ -35,8 +36,8 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
     @classmethod
     def could_accept(
         cls,
-        itemstack: mcpython.common.container.ResourceStack.ItemStack,
-        fluidstack: mcpython.common.container.ResourceStack.FluidStack,
+        itemstack: ItemStack,
+        fluidstack: FluidStack,
     ) -> bool:
         """
         Checks if the container could in theory accept the fluid given.
@@ -47,20 +48,21 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
     @classmethod
     def accept(
         cls,
-        itemstack: mcpython.common.container.ResourceStack.ItemStack,
-        fluidstack: mcpython.common.container.ResourceStack.FluidStack,
+        itemstack: ItemStack,
+        fluidstack: FluidStack,
         insert_parts=True,
     ) -> bool:
         """
         Inserts a certain amount of fluid
         The fluidstack may contain remaining liquid if not everything could be accepted if insert_parts is True
         """
+        return False
 
     @classmethod
     def can_provide(
         cls,
-        itemstack: mcpython.common.container.ResourceStack.ItemStack,
-        fluidstack: mcpython.common.container.ResourceStack.FluidStack,
+        itemstack: ItemStack,
+        fluidstack: FluidStack,
     ) -> bool:
         """
         Checks if the given fluid container can provide the given fluid with the given amount
@@ -70,8 +72,8 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
     @classmethod
     def provide(
         cls,
-        itemstack: mcpython.common.container.ResourceStack.ItemStack,
-        fluidstack: mcpython.common.container.ResourceStack.FluidStack,
+        itemstack: ItemStack,
+        fluidstack: FluidStack,
         extract_parts=True,
     ) -> bool:
         """

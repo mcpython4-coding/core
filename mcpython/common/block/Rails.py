@@ -87,6 +87,9 @@ class IStraightRail(IRail, ABC):
 class ActivatorRail(IStraightRail):
     NAME = "minecraft:activator_rail"
 
+    BLAST_RESISTANCE = HARDNESS = .7
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
+
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
         .combinations()
@@ -115,3 +118,6 @@ class ActivatorRail(IStraightRail):
 
 class PoweredRail(ActivatorRail):
     NAME = "minecraft:powered_rail"
+
+    BLAST_RESISTANCE = HARDNESS = .7
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}

@@ -25,7 +25,7 @@ class CraftingTable(AbstractBlock.AbstractBlock):
     """
 
     NAME: str = "minecraft:crafting_table"
-    HARDNESS = 2.5
+    HARDNESS = BLAST_RESISTANCE = 2.5
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     def on_player_interaction(

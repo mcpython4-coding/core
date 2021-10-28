@@ -29,8 +29,7 @@ redstone_wire_bbox = mcpython.engine.physics.BoundingBox.BoundingBox((1, 1 / 16,
 class RedstoneWire(AbstractBlock.AbstractBlock):
     NAME: str = "minecraft:redstone_wire"
 
-    HARDNESS = 0
-    BLAST_RESISTANCE = 0
+    HARDNESS = BLAST_RESISTANCE = 0
 
     DEBUG_WORLD_BLOCK_STATES = (
         PossibleBlockStateBuilder()
@@ -43,6 +42,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
 
     IS_SOLID = False
     DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    NO_ENTITY_COLLISION = True
 
     def __init__(self):
         super().__init__()

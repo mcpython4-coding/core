@@ -37,6 +37,9 @@ class Furnace(IHorizontalOrientableBlock):
         .build()
     )
 
+    HARDNESS = BLAST_RESISTANCE = 3.5
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
+
     def __init__(self):
         """
         Creates a furnace block

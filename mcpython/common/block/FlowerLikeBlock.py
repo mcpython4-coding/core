@@ -23,6 +23,8 @@ class FlowerLikeBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     SUPPORT_BLOCK_TAG = "#minecraft:plant_support"
 
+    HARDNESS = BLAST_RESISTANCE = 0
+
     def on_block_update(self):
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
