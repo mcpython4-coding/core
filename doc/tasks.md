@@ -18,6 +18,7 @@ each rendering frame (So, for each frame count & timing, a new one is needed)
 Issues:
 - biome map is not saved to save files or loaded not correctly somehow
 - hiding faces to rotated blocks like logs fails
+- shift-clicking and shift-moving over slots does not move the items to "the other" area of the inventory
 
 
 Toolchain:

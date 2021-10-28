@@ -17,7 +17,11 @@ to automatically download and set up the latest version of mcpython4) Currently 
 
 How to set up?
 -----------------------------------------------------------------------------------------------------
-Install python 3.9 or higher (currently, only 3.9 works as some dependencies we use are not arrival for python 3.10)
+Install python 3.10 (recommended) or higher (make sure for higher versions that all dependencies have been updated to
+support that version).
+
+When using the launcher, the meta file defines which version can be used, and it will warn you if it doesn't find the 
+needed version.
 
 Download this project, unzip it, open a console in its directory and type:
 
@@ -29,16 +33,26 @@ This will set up all required libraries and download resources needed.
 It will take some time depending on your internet connection speed. We plan on optimizing some parts,
 but it is WIP.
 
+Alternatively, you can use git to get the code, by typing the following in your git console:
+
+```shell script
+git clone https://github.com/mcpython4-coding/core
+```
+
+And than run above installer.
+
 The python command crashes in the pip-section! (This section's instructions are under the assumption that you have already installed python)
 ----------------------------------------------------------------------------------------------------
-If python crashes with an error that says something about syntax, then you have got the wrong version: use python 3.9, not 2.X, not 3.8 or lower.
+If python crashes with an error that says something about syntax, then you have got the wrong version: use python 3.10, not 2.X, not 3.9 or lower.
 (On Linux/UNIX,this can be done by replacing "python" with "python3 -3.9" and "pip" with "pip3" in the bash commands)
 If only the pip command crashes, then you haven't installed pip! This is only a problem on Linux/UNIX, a quick fix is to use:
+
 ```bash
 sudo apt-get install python3-pip
 ```
-If both fails with error like "command not found",then it means you've not added python to PATH (This is a problem only on Windows). The fast fix is:
-Run the installer file again, click "Modify",then check the box called "Add to PATH", then the click OK.
+
+If both fails with error like "command not found",then it means you've not added python to PATH (This is a problem only on Windows). 
+The fast fix is: Run the installer file again, click "Modify",then check the box called "Add to PATH", then the click OK.
 
 How to run?
 -----------------------------------------------------------------------------------------------------
@@ -47,7 +61,7 @@ Client:
 python __main__.py
 ```
 
-Dedicated server (Unstable, NOT recommended currently, client cannot connect):
+Dedicated server (Unstable, NOT recommended currently, currently only local server):
 ```shell script
 python launch_server.py
 ```
@@ -127,6 +141,14 @@ You can use the "--saves-directory <directory>"-flag to change where your save f
 
 The flags can be combined, the simply do everything at once.
 
+
+Operating system
+-
+
+We currently test the game windows-11-only (old versions on Windows 10), but it should work with
+any operating system supported by the required python version and all our dependencies.
+
+If you still encounter issues with another operating system, feel free to open an issue on out GitHub page.
 
 ---
 
