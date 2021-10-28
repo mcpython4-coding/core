@@ -73,11 +73,13 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
     def on_update(self, dt):
         shared.world_generation_handler.task_handler.process_tasks(timer=0.8)
-        for chunk in self.status_table:
-            c = shared.world_generation_handler.task_handler.get_task_count_for_chunk(
-                shared.world.get_active_dimension().get_chunk(*chunk)
-            )
-            self.status_table[chunk] = 1 / c if c > 0 else -1
+
+        if shared.IS_CLIENT:
+            for chunk in self.status_table:
+                c = shared.world_generation_handler.task_handler.get_task_count_for_chunk(
+                    shared.world.get_active_dimension().get_chunk(*chunk)
+                )
+                self.status_table[chunk] = 1 / c if c > 0 else -1
 
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
             shared.state_handler.change_state("minecraft:game")
@@ -105,6 +107,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         shared.dimension_handler.init_dims()
         try:
             shared.world.save_file.load_world()
+
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
             logger.println(
                 "failed to load world. data-fixer failed with NoDataFixerFoundException"
@@ -112,6 +115,10 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")
             return
+
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+
         except:
             logger.print_exception("failed to load world")
             shared.world.cleanup()

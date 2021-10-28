@@ -282,6 +282,10 @@ class WorldGenerationTaskHandler:
                 data = m.pop(0)
                 try:
                     data[0](*data[1], **data[2])
+
+                except (SystemExit, KeyboardInterrupt, OSError):
+                    raise
+
                 except:
                     logger.print_exception(
                         "during invoking '{}' with *{} and **{}".format(*data)

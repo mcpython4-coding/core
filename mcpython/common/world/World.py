@@ -101,7 +101,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         self.world_generation_process.run_tasks()
 
     def add_player(
-        self, name: str, add_inventories: bool = True, override: bool = True
+        self, name: str, add_inventories: bool = True, override: bool = True, dimension=0,
     ):
         """
         Will add a new player into the world
@@ -117,7 +117,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             return self.players[name]
 
         self.players[name] = shared.entity_manager.spawn_entity(
-            "minecraft:player", (0, 0, 0), name
+            "minecraft:player", (0, 0, 0), name, dimension=dimension,
         )
         if add_inventories:
             self.players[name].create_inventories()
@@ -350,6 +350,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         after: typing.Union[typing.Tuple[int, int], None],
         generate_chunks=True,
         load_immediate=True,
+        dimension=None,
     ):
         """
         Move from chunk `before` to chunk `after`
@@ -359,8 +360,11 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         :param load_immediate: if chunks should be loaded immediate if needed
         todo: move to dimension
         """
-        if self.get_active_dimension() is None:
+        if shared.IS_CLIENT and self.get_active_dimension() is None:
             return
+
+        if dimension is None:
+            dimension = self.get_active_dimension()
 
         before_set = set()
         after_set = set()
@@ -395,13 +399,13 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                 )
 
         for chunk in after_set:
-            c = self.get_active_dimension().get_chunk(
-                *chunk, generate=False, create=False
-            )
+            c = dimension.get_chunk(*chunk, generate=False, create=False)
+
             if c and c.is_visible():
                 continue
 
-            pyglet.clock.schedule_once(lambda _: self.show_chunk(chunk), 0.1)
+            c = dimension.get_chunk(*chunk, generate=False)
+            pyglet.clock.schedule_once(lambda _: self.show_chunk(c), 0.1)
 
             if not shared.IS_NETWORKING:
                 if not load_immediate:
@@ -418,7 +422,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                         "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
                     )
             else:
-                self.get_active_dimension().get_chunk(*chunk, generate=False)
+                dimension.get_chunk(*chunk, generate=False)
 
         if not after or shared.IS_NETWORKING:
             return
@@ -431,7 +435,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                     and abs(dz) <= mcpython.common.config.CHUNK_GENERATION_RANGE
                     and self.config["enable_auto_gen"]
                 ):
-                    chunk = self.get_active_dimension().get_chunk(
+                    chunk = dimension.get_chunk(
                         dx + after[0], dz + after[1], generate=False
                     )
                     if not chunk.is_generated():

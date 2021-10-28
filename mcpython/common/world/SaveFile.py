@@ -169,7 +169,11 @@ class SaveFile:
                         )
                     )
                     shared.world.cleanup()
-                    shared.state_handler.change_state("minecraft:start_menu")
+
+                    if shared.IS_CLIENT:
+                        shared.state_handler.change_state("minecraft:start_menu")
+                    else:
+                        sys.exit(-1)
                     return
 
                 fixers = self.storage_version_fixers[self.version]
@@ -198,6 +202,9 @@ class SaveFile:
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:world_selection")
             return
+
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
 
         except:
             shared.world.cleanup()

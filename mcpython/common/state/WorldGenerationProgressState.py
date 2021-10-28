@@ -100,8 +100,10 @@ class WorldGenerationProgress(AbstractState.AbstractState):
     def on_update(self, dt):
         shared.world_generation_handler.task_handler.process_tasks(timer=0.4)
 
+        overworld = shared.world.get_dimension(0)
+
         for chunk in self.status_table:
-            c = shared.world.get_active_dimension().get_chunk(*chunk)
+            c = overworld.get_chunk(*chunk)
             if c not in shared.world_generation_handler.task_handler.chunks:
                 self.status_table[chunk] = -1
             else:
@@ -157,25 +159,29 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
                 shared.world_generation_handler.add_chunk_to_generation_list(
-                    (cx, cz), force_generate=True
+                    (cx, cz), force_generate=True, dimension=0,
                 )
                 self.status_table[(cx, cz)] = 0
 
     def finish(self):
         # read in the config
 
+        overworld = shared.world.get_dimension(0)
+
         for pos in self.status_table:
-            chunk = shared.world.get_active_dimension().get_chunk(*pos)
+            chunk = overworld.get_chunk(*pos)
             chunk.is_ready = True
             chunk.visible = True
 
         shared.event_handler.call("on_game_generation_finished")
         logger.println("[WORLD GENERATION] finished world generation")
+
         player_name = self.world_gen_config["player_name"]
         if player_name == "":
             player_name = "unknown"
+
         if player_name not in shared.world.players:
-            shared.world.add_player(player_name)
+            shared.world.add_player(player_name, dimension=0)
 
         # setup skin
         try:
@@ -201,7 +207,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 
         # todo: this is also only client code
         shared.world.local_player = player_name
-        shared.world.get_active_player().teleport_to_spawn_point()
+        shared.world.get_player_by_name(player_name).teleport_to_spawn_point()
         shared.world.config["enable_auto_gen"] = self.world_gen_config[
             "auto_gen_enabled"
         ]
@@ -212,10 +218,10 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         if shared.world_generation_handler.get_current_config(
             shared.world.get_dimension(0)
         ).GENERATES_START_CHEST:
-            chunk = shared.world.get_active_dimension().get_chunk((0, 0))
+            chunk = overworld.get_chunk((0, 0))
             x, z = random.randint(0, 15), random.randint(0, 15)
             height = chunk.get_maximum_y_coordinate_from_generation(x, z)
-            block_chest = shared.world.get_active_dimension().add_block(
+            block_chest = overworld.add_block(
                 (x, height + 1, z), "minecraft:chest"
             )
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
@@ -226,13 +232,14 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         shared.world.change_chunks(
             None,
             mcpython.util.math.position_to_chunk(
-                shared.world.get_active_player().position
+                shared.world.get_player_by_name(player_name).position
             ),
+            dimension=shared.world.get_dimension(0),
         )
         shared.world.save_file.save_world()
 
         # set player position
-        player = shared.world.get_active_player()
+        player = shared.world.get_player_by_name(player_name)
         player.teleport(player.position, force_chunk_save_update=True)
 
         shared.world.world_loaded = True
@@ -248,7 +255,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:load",
             mcpython.server.command.CommandParser.CommandExecutionEnvironment(
-                dimension=shared.world.get_active_dimension()
+                dimension=shared.world.get_dimension(0)
             ),
         )
         shared.state_handler.change_state("minecraft:game", immediate=False)

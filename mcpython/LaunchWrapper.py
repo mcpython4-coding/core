@@ -252,7 +252,9 @@ class LaunchWrapper:
 
             import mcpython.common.event.TickHandler
 
-        import mcpython.client.rendering.model.ModelHandler
+        else:
+            import mcpython.client.rendering.model.ModelHandler
+
         import mcpython.common.data.serializer.tags.TagHandler
 
         import mcpython.client.rendering.model.ItemModel
