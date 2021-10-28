@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared
 from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
@@ -20,6 +22,7 @@ from mcpython.common.factory.combined.simple import CombinedFactoryInstance
 # air
 # attached_melon_stem
 # attached_pumpkin_stem
+from mcpython.util.enums import ToolType
 
 DEFERRED_PIPE: DeferredRegistry = shared.registry.get_by_name(
     "minecraft:block"
@@ -42,6 +45,7 @@ def wood(name: str, normal=True):
         .set_solid(False)
         .set_all_side_solid(False)
         .set_strength(0.5)
+        .set_assigned_tools(ToolType.AXE)
     )
 
     DEFERRED_PIPE.create_later(
@@ -51,10 +55,15 @@ def wood(name: str, normal=True):
         .set_solid(False)
         .set_all_side_solid(False)
         .set_strength(0.5)
+        .set_assigned_tools(ToolType.AXE)
     )
 
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_fence").set_fence().set_strength(0.5)
+        BlockFactory()
+        .set_name(f"minecraft:{name}_fence")
+        .set_fence()
+        .set_strength(0.5)
+        .set_assigned_tools(ToolType.AXE)
     )
 
     DEFERRED_PIPE.create_later(
@@ -62,10 +71,14 @@ def wood(name: str, normal=True):
         .set_name(f"minecraft:{name}_fence_gate")
         .set_fence_gate()
         .set_strength(0.5)
+        .set_assigned_tools(ToolType.AXE)
     )
 
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_planks").set_strength(2)
+        BlockFactory()
+        .set_name(f"minecraft:{name}_planks")
+        .set_strength(2)
+        .set_assigned_tools(ToolType.AXE)
     )
     DEFERRED_PIPE.create_later(
         BlockFactory()
@@ -74,9 +87,14 @@ def wood(name: str, normal=True):
         .set_solid(False)
         .set_all_side_solid(False)
         .set_strength(0.5)
+        .set_assigned_tools(ToolType.AXE)
     )
     DEFERRED_PIPE.create_later(
-        BlockFactory().set_name(f"minecraft:{name}_slab").set_slab().set_strength(2)
+        BlockFactory()
+        .set_name(f"minecraft:{name}_slab")
+        .set_slab()
+        .set_strength(2)
+        .set_assigned_tools(ToolType.AXE)
     )
 
     if normal:
@@ -86,15 +104,21 @@ def wood(name: str, normal=True):
             .set_solid(False)
             .set_all_side_solid(False)
             .set_strength(0.2)
+            .set_assigned_tools(ToolType.SHEAR)
         )
         DEFERRED_PIPE.create_later(
-            BlockFactory().set_name(f"minecraft:{name}_log").set_log().set_strength(2)
+            BlockFactory()
+            .set_name(f"minecraft:{name}_log")
+            .set_log()
+            .set_strength(2)
+            .set_assigned_tools(ToolType.AXE)
         )
         DEFERRED_PIPE.create_later(
             BlockFactory()
             .set_name(f"minecraft:stripped_{name}_log")
             .set_log()
             .set_strength(2)
+            .set_assigned_tools(ToolType.AXE)
         )
         DEFERRED_PIPE.create_later(
             BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(2)
@@ -104,6 +128,7 @@ def wood(name: str, normal=True):
             .set_name(f"minecraft:stripped_{name}_wood")
             .set_log()
             .set_strength(2)
+            .set_assigned_tools(ToolType.AXE)
         )
         DEFERRED_PIPE.create_later(plant(f"minecraft:{name}_sapling"))
         DEFERRED_PIPE.create_later(plant(f"minecraft:potted_{name}_sapling"))
@@ -116,25 +141,33 @@ def wood(name: str, normal=True):
             .set_name(f"minecraft:stripped_{name}_stem")
             .set_log()
             .set_strength(2)
+            .set_assigned_tools(ToolType.AXE)
         )
         DEFERRED_PIPE.create_later(
             BlockFactory()
             .set_name(f"minecraft:{name}_hyphae")
             .set_log()
             .set_strength(2)
+            .set_assigned_tools(ToolType.AXE)
         )
         DEFERRED_PIPE.create_later(
             BlockFactory()
             .set_name(f"minecraft:stripped_{name}_hyphae")
             .set_log()
             .set_strength(2)
+            .set_assigned_tools(ToolType.AXE)
         )
 
     CombinedFactoryInstance(
         f"minecraft:{name}_wall",
         f"minecraft:block/{name}_planks",
         block_phase="stage:block:load_late",
-    ).create_wall(suffix="_wall")
+    ).create_wall(
+        suffix="_wall",
+        block_factory_consumer=lambda _, instance: instance.set_strength(
+            0.5
+        ).set_assigned_tools(ToolType.AXE),
+    )
 
     # todo: signs, stairs
 
@@ -150,7 +183,15 @@ def stone_like(
     existing_pressure_plate=False,
     texture=None,
     consumer=lambda _, __: None,
+    strength: typing.Union[float, typing.Tuple[float, float]] = 2,
+    tool=ToolType.PICKAXE,
 ):
+    consumer = (
+        lambda _, inst: tool
+        == inst.set_strength(strength).set_assigned_tools((tool,))
+        == consumer(_, inst)
+    )
+
     fname = name.removesuffix("s")
     instance = CombinedFactoryInstance(
         f"minecraft:{name}",
@@ -306,19 +347,37 @@ DEFERRED_PIPE.create_later(
 wood("acacia")
 
 # Stone based
-stone_like("andesite")
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:basalt").set_log())
+stone_like("andesite", strength=(1.5, 6))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:basalt")
+    .set_log()
+    .set_strength(1.25, 4.2)
+    .set_assigned_tools(ToolType.PICKAXE)
+)
 
 # Value blocks
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:ancient_debris"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:ancient_debris")
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_strength(30, 1200)
+)
 
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:amethyst_block"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:amethyst_block")
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_strength(1.5)
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:amethyst_cluster")
     .set_solid(False)
     .set_all_side_solid(False)
     .set_default_model_state("facing=up")
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_strength(1.5)
 )
 
 # Nature blocks
@@ -329,12 +388,16 @@ DEFERRED_PIPE.create_later(
     .set_name("minecraft:azalea_leaves")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_assigned_tools(ToolType.SHEAR)
+    .set_strength(0.2)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:flowering_azalea_leaves")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_assigned_tools(ToolType.SHEAR)
+    .set_strength(0.2)
 )
 DEFERRED_PIPE.create_later(
     plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small")
@@ -348,15 +411,20 @@ DEFERRED_PIPE.create_later(
     .set_name("minecraft:beacon")
     .set_all_side_solid(False)
     .set_solid(False)
+    .set_strength(3)
 )
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:bedrock").set_break_able_flag(False)
+    BlockFactory()
+    .set_name("minecraft:bedrock")
+    .set_break_able_flag(False)
+    .set_strength(-1, 3600000)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:beehive")
     .set_default_model_state("facing=east,honey_level=3")
     .set_strength(0.6)
+    .set_assigned_tools(ToolType.AXE)
 )
 DEFERRED_PIPE.create_later(
     plant("minecraft:beetroots").set_default_model_state("age=2")
@@ -366,6 +434,7 @@ DEFERRED_PIPE.create_later(
     .set_name("minecraft:bee_nest")
     .set_default_model_state("facing=east,honey_level=2")
     .set_strength(0.3)
+    .set_assigned_tools(ToolType.AXE)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -373,6 +442,8 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("attachment=ceiling,facing=north")
     .set_all_side_solid(False)
     .set_solid(False)
+    .set_strength(5)
+    .set_assigned_tools(ToolType.PICKAXE)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -380,6 +451,8 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("facing=east,tilt=none")
     .set_all_side_solid(False)
     .set_solid(False)
+    .set_strength(0.1)
+    .set_assigned_tools(ToolType.AXE)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -387,23 +460,51 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("facing=south")
     .set_all_side_solid(False)
     .set_solid(False)
+    .set_strength(0.1)
+    .set_assigned_tools(ToolType.AXE)
 )
 wood("birch")
-stone_like("blackstone", existing_fence=False)
+stone_like("blackstone", existing_fence=False, strength=6)
 colored("black")
 colored("blue")
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:blue_ice"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:blue_ice")
+    .set_strength(2.8)
+    .set_assigned_tools(ToolType.PICKAXE)
+)
 DEFERRED_PIPE.create_later(plant("minecraft:blue_orchid"))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:bone_block").set_log())
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:bookshelf"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:bone_block")
+    .set_log()
+    .set_strength(2.0)
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_minimum_tool_level(1)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:bookshelf")
+    .set_strength(1.5)
+    .set_assigned_tools(ToolType.AXE)
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:brewing_stand")
     .set_default_model_state("has_bottle_0=false,has_bottle_1=false,has_bottle_2=false")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(0.5)
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_minimum_tool_level(1)
 )
-stone_like("bricks", existing_slab=True, existing_wall=True, existing_stairs=True)
+stone_like(
+    "bricks",
+    existing_slab=True,
+    existing_wall=True,
+    existing_stairs=True,
+    strength=(6, 2),
+)
 colored("brown")
 DEFERRED_PIPE.create_later(plant("minecraft:brown_mushroom"))
 DEFERRED_PIPE.create_later(
@@ -412,20 +513,38 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state(
         "up=false,down=false,north=false,east=false,south=false,west=false"
     )
+    .set_strength(0.2)
+    .set_assigned_tools(ToolType.AXE)
 )
 # todo: bubble column
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:budding_amethyst"))
-DEFERRED_PIPE.create_later(plant("minecraft:cactus"))
 DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:cake").set_default_model_state("bites=5")
+    BlockFactory()
+    .set_name("minecraft:budding_amethyst")
+    .set_strength(1.5)
+    .set_assigned_tools(ToolType.PICKAXE)
 )
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:calcite"))
+DEFERRED_PIPE.create_later(plant("minecraft:cactus").set_strength(0.4))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:cake")
+    .set_default_model_state("bites=5")
+    .set_strength(0.5)
+)
+stone_like(
+    "calcite",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=0.75,
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:campfire")
     .set_default_model_state("facing=west,lit=true")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(2)
+    .set_assigned_tools(ToolType.AXE)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -433,6 +552,7 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("candles=2,lit=true")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(0.1)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -440,19 +560,29 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("lit=true")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(0.5)
 )
 DEFERRED_PIPE.create_later(plant("minecraft:carrots").set_default_model_state("age=3"))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:cartography_table"))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:cartography_table")
+    .set_strength(2.5)
+    .set_assigned_tools(ToolType.AXE)
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:carved_pumpkin")
-    .set_default_model_state("facing=south")
+    .set_horizontal_orientable()
+    .set_strength(1)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:cauldron")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(2)
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_minimum_tool_level(1)
 )
 # todo: cave air
 DEFERRED_PIPE.create_later(
@@ -464,6 +594,9 @@ DEFERRED_PIPE.create_later(
     .set_log()
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(5, 6)
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_minimum_tool_level(1)
 )
 # todo: chain command block
 stone_like(
@@ -471,62 +604,117 @@ stone_like(
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(3, 6),
+    tool=ToolType.PICKAXE,
 )
 stone_like(
     "chiseled_polished_blackstone",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(1.5, 6),
+    tool=ToolType.PICKAXE,
 )
 stone_like(
     "chiseled_quartz_block",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=0.8,
+    tool=ToolType.PICKAXE,
 )
 stone_like(
     "chiseled_red_sandstone",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=0.8,
+    tool=ToolType.PICKAXE,
 )
 stone_like(
     "chiseled_sandstone",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=0.8,
+    tool=ToolType.PICKAXE,
 )
 stone_like(
     "chiseled_stone_bricks",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(1.5, 6),
+    tool=ToolType.PICKAXE,
 )
 DEFERRED_PIPE.create_later(
-    plant("minecraft:chorus_flower").set_default_model_state("age=3")
+    plant("minecraft:chorus_flower")
+    .set_default_model_state("age=3")
+    .set_strength(0.4)
+    .set_assigned_tools(ToolType.AXE)
 )
 DEFERRED_PIPE.create_later(
-    plant("minecraft:chorus_plant").set_default_model_state(
+    plant("minecraft:chorus_plant")
+    .set_default_model_state(
         "north=false,south=false,east=false,west=false,up=false,down=false"
     )
-)
-stone_like("clay", existing_slab=False, existing_stairs=False, existing_wall=False)
-stone_like(
-    "coal_block", existing_slab=False, existing_stairs=False, existing_wall=False
-)
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:coal_ore"))
-stone_like(
-    "coarse_dirt", existing_slab=False, existing_stairs=False, existing_wall=False
+    .set_strength(0.4)
+    .set_assigned_tools(ToolType.AXE)
 )
 stone_like(
-    "cobbled_deepslate", existing_slab=True, existing_stairs=True, existing_wall=True
+    "clay",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=0.6,
+    tool=ToolType.SHOVEL,
 )
-stone_like("cobblestone", existing_slab=True, existing_stairs=True, existing_wall=True)
+stone_like(
+    "coal_block",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=(5, 6),
+    tool=ToolType.PICKAXE,
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:coal_ore")
+    .set_strength(3)
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_minimum_tool_level(1)
+)
+stone_like(
+    "coarse_dirt",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=0.5,
+    tool=ToolType.SHOVEL,
+)
+stone_like(
+    "cobbled_deepslate",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=True,
+    strength=(3.5, 6),
+    tool=ToolType.PICKAXE,
+)
+stone_like(
+    "cobblestone",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=True,
+    strength=(2, 6),
+    tool=ToolType.PICKAXE,
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:cobweb")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(4)
+    .set_assigned_tools((ToolType.SHEAR, ToolType.SWORD))
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -534,6 +722,8 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("age=2,facing=east")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(.2, 3)
+    .set_assigned_tools((ToolType.AXE))
 )
 # todo: command block
 DEFERRED_PIPE.create_later(
@@ -542,6 +732,7 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("facing=north,mode=compare,powered=true")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(0)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -549,47 +740,56 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("level=2")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(.6)
+    .set_assigned_tools(ToolType.AXE)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:conduit")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_strength(3)
+    .set_assigned_tools(ToolType.PICKAXE)
 )
 stone_like(
-    "copper_block", existing_slab=False, existing_stairs=False, existing_wall=False
+    "copper_block", existing_slab=False, existing_stairs=False, existing_wall=False, strength=(3, 6)
 )
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:copper_ore"))
+DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:copper_ore").set_strength(3).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(2))
 DEFERRED_PIPE.create_later(plant("cornflower"))
 stone_like(
     "cracked_deepslate_bricks",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(3, 6),
 )
 stone_like(
     "cracked_deepslate_tiles",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(3, 6),
 )
 stone_like(
     "cracked_nether_bricks",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(2, 6),
 )
 stone_like(
     "cracked_polished_blackstone_bricks",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(1.5, 6),
 )
 stone_like(
     "cracked_stone_bricks",
     existing_slab=False,
     existing_stairs=False,
     existing_wall=False,
+    strength=(1.5, 6),
 )
 # todo: creeper head & wall head
 wood("crimson", normal=False)

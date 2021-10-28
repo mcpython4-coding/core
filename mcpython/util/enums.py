@@ -153,10 +153,16 @@ class ToolType(enum.Enum):
     AXE = 2
     SHOVEL = 3
     SHEAR = 4
-    SWORD = 5  # not real an tool, but internally handled as one of it
-    HOE = 6  # not real an tool, but internally handled as one of it
+    SWORD = 5  # not real a tool, but internally handled as one of it
+    HOE = 6  # not real a tool, but internally handled as one of it
 
     # tool levels (from 0 to 6): hand, wood, stone, iron, gold, diamond, netherite
+
+    def __hash__(self):
+        return self.value
+
+    def __eq__(self, other):
+        return isinstance(other, ToolType) and self.name == other.name
 
 
 class SlabModes(enum.Enum):

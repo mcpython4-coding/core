@@ -22,6 +22,7 @@ Issues:
 - shift-clicking and shift-moving over slots does not move the items to "the other" area of the inventory
 - tools are consumed when right-clicking on a block
 - you can create ItemStacks with more than allowed items by combining two item stacks
+- you can fall through blocks when digging down
 
 
 Toolchain:

@@ -159,7 +159,9 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
                 shared.world_generation_handler.add_chunk_to_generation_list(
-                    (cx, cz), force_generate=True, dimension=0,
+                    (cx, cz),
+                    force_generate=True,
+                    dimension=0,
                 )
                 self.status_table[(cx, cz)] = 0
 
@@ -221,9 +223,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             chunk = overworld.get_chunk((0, 0))
             x, z = random.randint(0, 15), random.randint(0, 15)
             height = chunk.get_maximum_y_coordinate_from_generation(x, z)
-            block_chest = overworld.add_block(
-                (x, height + 1, z), "minecraft:chest"
-            )
+            block_chest = overworld.add_block((x, height + 1, z), "minecraft:chest")
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
 
         shared.event_handler.call("on_game_enter")

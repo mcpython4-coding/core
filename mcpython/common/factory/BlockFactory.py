@@ -150,8 +150,13 @@ def set_flower_like(instance: FactoryBuilder.IFactory):
     FactoryBuilder.AnnotationFactoryConfigurator("set_strength")
 )
 def set_strength(
-    instance: FactoryBuilder.IFactory, hardness: float, blast_resistance: float = None
+    instance: FactoryBuilder.IFactory,
+    hardness: float | typing.Tuple[float, float],
+    blast_resistance: float = None,
 ):
+    if isinstance(hardness, tuple):
+        hardness, blast_resistance = hardness
+
     instance.config_table["hardness"] = hardness
     instance.config_table["blast_resistance"] = blast_resistance
     return instance
@@ -166,6 +171,7 @@ def set_assigned_tools(instance: FactoryBuilder.IFactory, *tools, tool_level=Non
             tools = tools[0]
         else:
             tools = (tools,)
+
     instance.config_table["assigned_tools"] = set(tools)
     if tool_level is not None:
         instance.set_minimum_tool_level(tool_level)

@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import sys
+
 import mcpython.common.block.AbstractBlock
 import mcpython.common.data.serializer.tags.TagGroup
 import mcpython.common.event.Registry
@@ -63,28 +65,33 @@ block_registry.full_table = {}  # an table of localized & un-localized block nam
 
 def load():
     """
-    loads all blocks that should be loaded, only the ones for blocks may be loaded somewhere else
+    Loads all blocks that should be loaded into the game
+    Most registration should happen here so mods cannot load stuff too early into registries
     """
-    from . import (
-        Anvil,
-        Barrel,
-        Blocks,
-        Carpet,
-        Chest,
-        CoralBlocks,
-        CraftingTable,
-        Dirt,
-        EnderChest,
-        Fence,
-        FluidBlock,
-        Furnace,
-        GrassBlock,
-        NetherPortal,
-        Rails,
-        RedstoneWire,
-        ShulkerBox,
-        Walls,
-    )
+    try:
+        from . import (
+            Anvil,
+            Barrel,
+            Blocks,
+            Carpet,
+            Chest,
+            CoralBlocks,
+            CraftingTable,
+            Dirt,
+            EnderChest,
+            Fence,
+            FluidBlock,
+            Furnace,
+            GrassBlock,
+            NetherPortal,
+            Rails,
+            RedstoneWire,
+            ShulkerBox,
+            Walls,
+        )
+    except:
+        logger.print_exception()
+        sys.exit(-1)
 
     block_registry.register(Anvil.Anvil)
     block_registry.register(Anvil.ChippedAnvil)

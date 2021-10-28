@@ -16,7 +16,7 @@ from abc import ABC
 
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractItem
-from mcpython.common.container.ResourceStack import ItemStack, FluidStack
+from mcpython.common.container.ResourceStack import FluidStack, ItemStack
 
 
 class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC):

@@ -31,7 +31,7 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
 
-    HARDNESS = BLAST_RESISTANCE = .1
+    HARDNESS = BLAST_RESISTANCE = 0.1
 
     def on_block_update(self):
         x, y, z = self.position

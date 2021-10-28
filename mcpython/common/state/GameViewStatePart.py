@@ -521,7 +521,12 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         if not slot.get_itemstack().is_empty():
             if slot.get_itemstack().item.on_player_interact(
-                player, block, button, modifiers, slot.get_itemstack(), previous,
+                player,
+                block,
+                button,
+                modifiers,
+                slot.get_itemstack(),
+                previous,
             ):
                 cancel = True
 

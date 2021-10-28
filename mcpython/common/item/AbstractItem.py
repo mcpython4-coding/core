@@ -44,7 +44,9 @@ class AbstractItem(
         return [cls.get_default_item_image_location()]
 
     @classmethod
-    def get_default_item_image_location(cls) -> str:  # WARNING: will be removed during item rendering update
+    def get_default_item_image_location(
+        cls,
+    ) -> str:  # WARNING: will be removed during item rendering update
         return "assets/{}/textures/item/{}.png".format(*cls.NAME.split(":"))
 
     def __init__(self):
@@ -112,7 +114,9 @@ class AbstractItem(
 
     # events
 
-    def on_player_interact(self, player, block, button: int, modifiers: int, itemstack, previous) -> bool:
+    def on_player_interact(
+        self, player, block, button: int, modifiers: int, itemstack, previous
+    ) -> bool:
         """
         Called when the player tries to use the item by pressing a mouse button
         :param player: the player interacting

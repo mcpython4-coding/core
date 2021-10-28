@@ -15,9 +15,9 @@ import typing
 
 import mcpython.util.enums
 from mcpython import shared
+from mcpython.common.item.AbstractToolItem import AbstractToolItem
 from mcpython.util.enums import ToolType
 
-from mcpython.common.item.AbstractToolItem import AbstractToolItem
 from . import AbstractBlock
 
 

@@ -101,7 +101,11 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         self.world_generation_process.run_tasks()
 
     def add_player(
-        self, name: str, add_inventories: bool = True, override: bool = True, dimension=0,
+        self,
+        name: str,
+        add_inventories: bool = True,
+        override: bool = True,
+        dimension=0,
     ):
         """
         Will add a new player into the world
@@ -117,7 +121,10 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             return self.players[name]
 
         self.players[name] = shared.entity_manager.spawn_entity(
-            "minecraft:player", (0, 0, 0), name, dimension=dimension,
+            "minecraft:player",
+            (0, 0, 0),
+            name,
+            dimension=dimension,
         )
         if add_inventories:
             self.players[name].create_inventories()
@@ -183,7 +190,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
     ) -> mcpython.engine.world.AbstractInterface.IDimension:
 
         if isinstance(name, mcpython.engine.world.AbstractInterface.IDimension):
-            logger.print_stack("invoked get_dimension_by_name() with dimension instance as name; this seems not right!")
+            logger.print_stack(
+                "invoked get_dimension_by_name() with dimension instance as name; this seems not right!"
+            )
             return name
 
         return self.dimensions[self.dim_to_id[name]]

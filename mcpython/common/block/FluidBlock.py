@@ -14,14 +14,13 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-from pyglet.window import mouse
-
 import mcpython.common.block.AbstractBlock
 import mcpython.common.fluid.AbstractFluid
 from mcpython import shared
 from mcpython.client.rendering.blocks.FluidRenderer import FluidRenderer
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.texture import hex_to_color
+from pyglet.window import mouse
 
 
 class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
