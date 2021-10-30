@@ -454,7 +454,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
     def cleanup(self, remove_dims=False, filename=None):
         """
-        will clean up the world
+        Will clean up the world
         :param remove_dims: if dimensions should be cleared
         :param filename: the new filename if it changes
         todo: make split up into smaller functions

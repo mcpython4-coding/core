@@ -48,7 +48,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             shared.state_handler.change_state("minecraft:world_loading")
 
     def load_world_from(self, name: str):
-        shared.world.cleanup()
+        logger.println(f"[WORLD LOADING][INFO] starting loading world '{name}'")
         shared.world.setup_by_filename(name)
         shared.state_handler.change_state("minecraft:world_loading")
 
@@ -97,20 +97,27 @@ class WorldLoadingProgress(AbstractState.AbstractState):
     def activate(self):
         super().activate()
 
-        shared.event_handler.call("data:reload:work")
-        import mcpython.common.data.ResourcePipe
+        # todo: add a check if we need this
+        # logger.println("[WORLD LOADING][INFO] reloading assets...")
+        #
+        # shared.event_handler.call("data:reload:work")
+        # import mcpython.common.data.ResourcePipe
 
-        mcpython.common.data.ResourcePipe.handler.reload_content()
+        # mcpython.common.data.ResourcePipe.handler.reload_content()
 
         shared.world_generation_handler.enable_generation = False
         self.status_table.clear()
+
+        logger.println("[WORLD LOADING][INFO] initializing dimension info")
         shared.dimension_handler.init_dims()
+
+        logger.println("(WORLD LOADING)[INFO] preparing for world loading...")
         try:
             shared.world.save_file.load_world()
 
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
             logger.println(
-                "failed to load world. data-fixer failed with NoDataFixerFoundException"
+                "Failed to load world. data-fixer Failed with NoDataFixerFoundException"
             )
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")
@@ -120,10 +127,11 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             raise
 
         except:
-            logger.print_exception("failed to load world")
+            logger.print_exception("Failed to load world; Failed in inital loading")
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")
             return
+
         for cx in range(-3, 4):
             for cz in range(-3, 4):
                 self.status_table[(cx, cz)] = 0

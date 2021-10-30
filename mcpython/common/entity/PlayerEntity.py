@@ -486,7 +486,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.inventory_hotbar.free()
 
         sector = mcpython.util.math.position_to_chunk(self.position)
-        shared.world.change_chunks(sector, None)
+
+        if not internal:
+            shared.world.change_chunks(sector, None)
+
         self.reset_moving_slot()
         if (
             not shared.world.gamerule_handler.table["keepInventory"].status.status
@@ -522,7 +525,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.armor_level = 0
         self.armor_toughness = 0
 
-        if shared.IS_CLIENT:
+        if shared.IS_CLIENT and not internal:
             sector = mcpython.util.math.position_to_chunk(self.position)
             shared.world.change_chunks(None, sector)
 

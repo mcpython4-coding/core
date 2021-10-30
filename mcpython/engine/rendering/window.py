@@ -324,9 +324,12 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         if symbol == key.P and modifiers & key.MOD_ALT:
             if shared.profiler is None:
+                print("enabling profiler")
                 shared.profiler = cProfile.Profile()
                 shared.profiler.enable()
+
             else:
+                print("stopping profiler & printing results")
                 shared.profiler.disable()
                 shared.profiler.print_stats("cumtime")
                 # os.makedirs(shared.build+"/profiles", exist_ok=True)

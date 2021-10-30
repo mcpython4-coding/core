@@ -60,6 +60,9 @@ UI:
 - registry view UI
 - config UI
 - mod list UI
+- some style information for UI elements (dark mode, round edges, ...)
+-> Round button corners & colors
+-> World selection list round white outline 
 
 Test System:
 The test system is an external tool developed along the game sitting on top of it. It uses

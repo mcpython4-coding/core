@@ -129,6 +129,7 @@ class WorldList(AbstractState.AbstractState):
     def on_mouse_press(self, x, y, button, modifiers):
         if not button == mouse.LEFT:
             return
+
         wx, _ = shared.window.get_size()
         wx -= 120
         for i, (_, icon, _, _) in enumerate(self.world_data):
@@ -142,6 +143,7 @@ class WorldList(AbstractState.AbstractState):
                     else:
                         self.enter_world(i)
                 return
+
         self.selected_world = None
 
     def on_scroll(self, x, y, dx, dy, button, mod, status):
@@ -208,6 +210,7 @@ class WorldList(AbstractState.AbstractState):
             os.makedirs(mcpython.common.world.SaveFile.SAVE_DIRECTORY)
         wx, wy = shared.window.get_size()
         self.world_data.clear()
+
         for directory in os.listdir(mcpython.common.world.SaveFile.SAVE_DIRECTORY):
             path = os.path.join(
                 mcpython.common.world.SaveFile.SAVE_DIRECTORY, directory
@@ -217,9 +220,11 @@ class WorldList(AbstractState.AbstractState):
                     icon = pyglet.image.load(path + "/icon.png")
                 else:
                     icon = MISSING_TEXTURE
+
                 sprite = pyglet.sprite.Sprite(icon)
                 with open(path + "/level.json") as f:
                     data = json.load(f)
+
                 edit_date = datetime.datetime.fromtimestamp(
                     os.path.getmtime(path + "/level.json")
                 )
@@ -228,6 +233,7 @@ class WorldList(AbstractState.AbstractState):
                     edit = "{} days ago".format(diff.days)
                 else:
                     edit = "on {}".format(edit_date.isoformat())
+
                 labels = [
                     pyglet.text.Label(directory),
                     pyglet.text.Label(
@@ -242,6 +248,7 @@ class WorldList(AbstractState.AbstractState):
                     ),
                 ]
                 self.world_data.append((edit_date, sprite, labels, path))
+
         self.world_data.sort(key=lambda d: -d[0].timestamp())
         self.recalculate_sprite_position()
         self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
@@ -255,12 +262,14 @@ class WorldList(AbstractState.AbstractState):
     def on_delete_press(self, *_):
         if self.selected_world is None:
             return
+
         shutil.rmtree(self.world_data[self.selected_world][3])
         self.reload_world_icons()
 
     def on_world_load_press(self, *_):
         if self.selected_world is None:
             return
+
         self.enter_world(self.selected_world)
 
     def enter_world(self, number: int):

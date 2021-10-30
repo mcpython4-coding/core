@@ -92,6 +92,10 @@ class TickHandler:
             func, args, kwargs = tuple(self.execute_array.pop(0))
             try:
                 func(*args, **kwargs)
+
+            except (SystemExit, KeyboardInterrupt, OSError):
+                raise
+
             except:
                 logger.print_exception(
                     "exception during invoking",
