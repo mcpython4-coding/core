@@ -722,7 +722,7 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("age=2,facing=east")
     .set_solid(False)
     .set_all_side_solid(False)
-    .set_strength(.2, 3)
+    .set_strength(0.2, 3)
     .set_assigned_tools((ToolType.AXE))
 )
 # todo: command block
@@ -740,7 +740,7 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("level=2")
     .set_solid(False)
     .set_all_side_solid(False)
-    .set_strength(.6)
+    .set_strength(0.6)
     .set_assigned_tools(ToolType.AXE)
 )
 DEFERRED_PIPE.create_later(
@@ -752,9 +752,19 @@ DEFERRED_PIPE.create_later(
     .set_assigned_tools(ToolType.PICKAXE)
 )
 stone_like(
-    "copper_block", existing_slab=False, existing_stairs=False, existing_wall=False, strength=(3, 6)
+    "copper_block",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=(3, 6),
 )
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:copper_ore").set_strength(3).set_assigned_tools(ToolType.PICKAXE).set_minimum_tool_level(2))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:copper_ore")
+    .set_strength(3)
+    .set_assigned_tools(ToolType.PICKAXE)
+    .set_minimum_tool_level(2)
+)
 DEFERRED_PIPE.create_later(plant("cornflower"))
 stone_like(
     "cracked_deepslate_bricks",
