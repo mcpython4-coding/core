@@ -7,6 +7,7 @@ Features scheduled for implementation for alpha 1.3.0, planned to be released so
 - add ore gen
 - refactor event names
 - moved tool system to tags (see mc)
+- do not read inventory config for each inventory, load it ones & share
 
 
 Animated textures:
@@ -32,6 +33,9 @@ Toolchain:
 
 - Better custom LaunchWrapper use system [in progress]
 - PyCharm launch Configuration setup handler for dev env and mdk
+- create docker files of the project during building
+- add a mode where the window opens only when the load is complete
+- add a mode where a world is directly loaded and then displayed (combine-able with above)
 
 Library backend:
 - upgrade to pyglet 2.0 [For consideration]
@@ -53,10 +57,16 @@ Block Item Generator:
 - add flag to each release for enabling cache invalidation when upgrading
 
 Data driver:
-- item, block, implementation for the other recipes
+- implementation for the other recipes
+- add data-driven factory system
+- move more game logic to tags
+- add scoreboards with commands, execute command entry, ...
+- parser for the new mc world gen config format
+- add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
+- make loot table system only load needed loot tables, etc.
 
 UI:
-- system to create your own WorldGenerationMode, which is dumped to a save-based file
+- system for the end user to create your own WorldGenerationMode, which is dumped to a save-based file
 - registry view UI
 - config UI
 - mod list UI
@@ -72,20 +82,10 @@ c) The modding system, for injecting code into the game without needing LaunchWr
     [This can be used after with b) the LaunchWrapper is known-good]
     It would communicate via socket with the test process
 
-Split into 4 parts:
+Split into 2 parts:
 - Unit tests: general functional tests [created]
-- Launch tests: tests executed during loading the game [registry injection tests, loading event tests, ...]
-- User interaction tests: simulation of user input over the event system
-- In-game tests: tests executed in-game automatically [see mc test framework], using structures and interaction paths
-    for game behaviour, can be mixed with user interaction tests
-
-
-FML
-- make the exception screen scrollable
-- load JavaFML only when needed (e.g. via a flag, maybe --enable-fml)
-- implement all the instructions
-- runtime mod reload
-- an attachable debugger for certain functions / opcode regions with ui [maybe in second window?]
-- a bytecode viewer for debugging single instructions [in-game, via some callback and continue system]
-- jvm exception handling [currently not implemented]
+- In-Game tests, either:
+  - User interaction tests: simulation of user input over the event system
+  - In-game tests: tests executed in-game automatically [see mc test framework], using structures and interaction paths
+      for game behaviour, can be mixed with user interaction tests
 

@@ -1,40 +1,6 @@
 # Changelog of mcpython-4
 Contains only some information, in ordered form, in a better form for the end user than the version.info file.
 
-----
-
-# Planned
-See also tasks.md
-
-Planned for the future (in "[]", priority, with 1 the highest and positive inf lowest and an marker for implementation
-        before next stable release):
-- add data-driven factory system
-- move more game logic to tags [WIP]
-- do not read inventory config for each inventory, load it ones & share
-- add scoreboards with commands, execute command entry, ...
-
-- add a line into logging where the system searches for the location where the error occur and will link the mod
-    caused it into the log [partially done via mod container]
--> also display potential mixins into code by mods
-
-- parser for the new mc world gen config format
-
-- add a mode where the window opens only when the load is complete
-- add a mode where a world is directly loaded and then displayed (combine-able with above)
-
-- add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
-
-- upgrade to pyglet 2:
-    - implement glsl language adapter (see https://www.pythonstuff.org/glsl/example_2_glsl_with_pyglet.html)
-    - implement lighting [1000]
-    - rendering layer system [20]
-    - rendering helper class for setting up things like 3d rendering, alpha usage, ... [more functionality]
-
-- entity AI system
-- make loot table system only load needed loot tables, etc.
-- BlockItemGenerator should be replaced by an in-game block renderer
-- develop a PyCharm plugin for FactoryBuilder type hints, and mod dev stuff
-
 
 ### Information on development
 - the development is split up into 2 phases: the dev-branch with changes to the code and after a full release,

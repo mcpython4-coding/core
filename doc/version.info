@@ -1897,4 +1897,6 @@ b   [uuk]: fixed hardness / blast resistance level of of few blocks
 F   [uuk]: buckets are now finally working
 A-  [uuk]: get_active_player() and get_active_dimension() is now only arrival on clients, not ded. servers
 I   [uuk]: server will now crash when world data fixing failed
+f   [uuk]: added void world generator mode, used in structure tests
+T   [uuk]: added some more stuff for the structure test system; added first example configuration file
 

@@ -345,6 +345,7 @@ def load_modes():
         DefaultNetherWorldGenerator,
         DefaultOverWorldGenerator,
         EndWorldGenerator,
+        VoidWorldGenerator,
     )
 
 

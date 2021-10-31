@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import os
 import sys
+import typing
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -31,9 +32,39 @@ test_mod = mcpython.common.mod.Mod.Mod(
 ).add_dependency(mcpython.common.mod.Mod.ModDependency("minecraft"))
 
 
+class AbstractStructureTestEnvironmentPart:
+    TYPE_NAME: str = None
+
+    def setup(self):
+        pass
+
+    def clean(self):
+        pass
+
+    def get_comparable_identifier(self):
+        raise NotImplementedError
+
+
 class StructureTest:
     def decode_from_data(self, data: dict):
         pass
+
+
+class StructureTestManager:
+    def register_requirement_loader(self, name: str, loader: typing.Callable):
+        pass
+
+    def register_test_env_part(self, part: typing.Type[AbstractStructureTestEnvironmentPart]):
+        pass
+
+    def register_test_validator(self, validator):
+        pass
+
+    def start_tests(self):
+        pass
+
+
+manager = StructureTestManager()
 
 
 def intercept_loading(handler):
@@ -42,7 +73,7 @@ def intercept_loading(handler):
     world_config_state = shared.state_handler.states["minecraft:world_generation"]
     world_config_state.generate_world(
         {
-            "world_config_name": "minecraft:default_overworld",  # todo: empty world
+            "world_config_name": "minecraft:void_world_generator",
             "world_size": (1, 1),
             "seed_source": "minecraft:open_simplex_noise",
             "seed": 0,
@@ -53,6 +84,16 @@ def intercept_loading(handler):
     )
 
     shared.state_handler.change_state("minecraft:world_generation")
+
+    from mcpython.engine.event.EventHandler import PUBLIC_EVENT_BUS
+
+    @PUBLIC_EVENT_BUS.subscribe("on_game_enter")
+    def on_game_enter():
+        player = shared.world.get_active_player()
+        player.position = (0, 0, 0)
+        player.set_gamemode(3)
+
+        manager.start_tests()
 
 
 @shared.mod_loader("structure_test_system", "stage:mod:init")

@@ -66,7 +66,12 @@ class EventBus:
         self.sub_buses = []
 
     def subscribe(
-        self, event_name: str, function: typing.Callable, *args, info=None, **kwargs
+        self,
+        event_name: str,
+        function: typing.Callable = None,
+        *args,
+        info=None,
+        **kwargs,
     ):
         """
         Adds a function to the event bus by event name. Dynamically creates underlying data structure for new
@@ -78,6 +83,11 @@ class EventBus:
         :param kwargs: the kwargs to give
         :param info: an info to give for the caller
         """
+        if function is None:
+            return lambda func: self.subscribe(
+                event_name, func, *args, info=info, **kwargs
+            )
+
         self.event_subscriptions.setdefault(event_name, []).append(
             (function, args, kwargs, info)
         )
