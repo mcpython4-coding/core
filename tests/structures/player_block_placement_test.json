@@ -28,7 +28,8 @@
       {
         "type": "minecraft:player:controller:mouse_button_press",
         "button": "right",
-        "press_time": 0.1
+        "press_time": 0.1,
+        "delay_after": 2
       }
     ]
   ],
@@ -39,15 +40,15 @@
       "positions": [
         {
           "position": [0, 0, 0],
-          "block name": "minecraft:stone"
+          "block_name": "minecraft:stone"
         },
         {
           "position": [0, 1, 0],
-          "block name": "minecraft:dirt"
+          "block_name": "minecraft:dirt"
         },
         {
           "position": [0, 2, 0],
-          "block name": null
+          "block_name": null
         }
       ]
     }
