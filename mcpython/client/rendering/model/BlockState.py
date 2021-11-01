@@ -715,7 +715,9 @@ class BlockState:
                     )
                 )
             return
-        shared.model_handler.models[model].draw_face(instance, instance.position, config, face)
+        shared.model_handler.models[model].draw_face(
+            instance, instance.position, config, face
+        )
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(

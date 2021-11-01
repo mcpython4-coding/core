@@ -14,9 +14,9 @@ This project is not official by mojang and does not relate to it.
 import random
 
 import mcpython.common.block.PossibleBlockStateBuilder
-import mcpython.util.enums
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.util.enums import EnumSide, ToolType
 from pyglet.window import key, mouse
 
 from . import AbstractBlock, IFallingBlock
@@ -26,11 +26,15 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
     """
     Base class for all anvils
     Mods are allowed to implement this for their own anvils
+
+    todo: add inventory & enable saving of it (with data fixer for it)
     """
+
+    NETWORK_BUFFER_SERIALIZER_VERSION = 1
 
     HARDNESS = 5
     BLAST_RESISTANCE = 1200
-    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
+    ASSIGNED_TOOLS = {ToolType.PICKAXE}
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
@@ -50,7 +54,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
 
         self.opened: bool = False  # if the barrel is open
         self.inventory = None  # todo: add anvil inventory
-        self.facing: str = "north"  # the direction the block faces to
+        self.facing: str | EnumSide = "north"  # the direction the block faces to
 
         self.broken_count = 0
 
@@ -83,27 +87,31 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
-        self.inventory.write_to_network_buffer(buffer)
+
+        # self.inventory.write_to_network_buffer(buffer)
         buffer.write_int(self.broken_count)
+        buffer.write_int(EnumSide[self.facing].index)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         super().read_from_network_buffer(buffer)
-        self.inventory.read_from_network_buffer(buffer)
+
+        # self.inventory.read_from_network_buffer(buffer)
         self.broken_count = buffer.read_int()
+        self.facing = EnumSide.by_index(buffer.read_int()).normal_name
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         return False
 
-        # open the inv when needed
+    """ # open the inv when needed
         if button == mouse.RIGHT and not modifiers & (
             key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
         ):
             shared.inventory_handler.show(self.inventory)
             return True
         else:
-            return False
+            return False"""
 
     def get_inventories(self):
         return [self.inventory]
@@ -114,10 +122,11 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
     def set_model_state(self, state: dict):
         if "facing" in state:
             face = state["facing"]
+
             if type(face) == str:
-                self.facing = mcpython.util.enums.EnumSide[face.upper()]
-            else:
                 self.facing = face
+            else:
+                self.facing = face.normal_name
 
     def get_model_state(self) -> dict:
         return {

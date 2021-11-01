@@ -581,5 +581,4 @@ class SaveFile:
 
 @shared.mod_loader("minecraft", "stage:datafixer:general")
 def load_elements():
-    # from mcpython.common.world.datafixers import
-    pass
+    from mcpython.common.world.datafixers.versions import blocks

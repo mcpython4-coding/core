@@ -37,7 +37,9 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.pickup_delay = pickup_delay
 
         # only for test reasons here
-        self.test_block = shared.registry.get_by_name("minecraft:block")["minecraft:red_carpet"]()
+        self.test_block = shared.registry.get_by_name("minecraft:block")[
+            "minecraft:red_carpet"
+        ]()
 
     def draw(self):
         self.test_block.position = self.position

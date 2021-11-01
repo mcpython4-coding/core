@@ -94,7 +94,8 @@ class Furnace(IHorizontalOrientableBlock):
             dimension = shared.world.get_dimension_by_name(self.dimension)
 
             for slot in self.inventory.slots:
-                if slot.get_itemstack().is_empty(): continue
+                if slot.get_itemstack().is_empty():
+                    continue
 
                 dimension.spawn_itemstack_in_world(
                     slot.get_itemstack().copy(), self.position

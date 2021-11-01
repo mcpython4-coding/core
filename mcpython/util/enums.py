@@ -55,6 +55,10 @@ class EnumSide(enum.Enum):
         """
         return FACE_ORDER
 
+    @classmethod
+    def by_index(cls, index: int):
+        return FACE_ORDER_BY_INDEX[index]
+
     def __init__(self, dx: int, dy: int, dz: int, normal_name: str, index: int):
         """
         Constructs a new enum instance
@@ -114,6 +118,15 @@ FACE_ORDER: typing.List[EnumSide] = [
     EnumSide.NORTH,
     EnumSide.SOUTH,
     EnumSide.EAST,
+    EnumSide.WEST,
+]
+
+FACE_ORDER_BY_INDEX: typing.List[EnumSide] = [
+    EnumSide.UP,
+    EnumSide.DOWN,
+    EnumSide.NORTH,
+    EnumSide.EAST,
+    EnumSide.SOUTH,
     EnumSide.WEST,
 ]
 

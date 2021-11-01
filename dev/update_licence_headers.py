@@ -22,10 +22,16 @@ def update_licence_headers_in_project(project_home, header):
                 file.endswith(".py")
                 and "mods" not in root
                 and not file.replace("\\", "/").endswith("mdk/tools/mod.py")
+                and "venv/" not in root.replace("\\", "/")
             ):
                 cfile = os.path.join(root, file)
                 with open(cfile) as f:
-                    data = f.read()
+                    try:
+                        data = f.read()
+                    except:
+                        print(cfile)
+                        raise
+
                 if not data.startswith(header):
                     if data.startswith("'''"):
                         data = header + data[data.index("'''", 3) + 3 :]

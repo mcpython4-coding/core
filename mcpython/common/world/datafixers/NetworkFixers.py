@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
 from abc import ABC
 
 from mcpython import shared
@@ -51,11 +52,17 @@ class BlockDataFixer(AbstractNetworkFixer, ABC):
              you don't need to do yourself, but instead you use super().read_from_network_buffer(...)
     """
 
-    BLOCK_NAME: str = None
+    BLOCK_NAME: str | typing.List[str] = None
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
         if cls.BLOCK_NAME is not None:
-            shared.registry.get_by_name("minecraft:block")[
-                cls.BLOCK_NAME
-            ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
+            if isinstance(cls.BLOCK_NAME, str):
+                shared.registry.get_by_name("minecraft:block")[
+                    cls.BLOCK_NAME
+                ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
+            else:
+                for name in cls.BLOCK_NAME:
+                    shared.registry.get_by_name("minecraft:block")[
+                        name
+                    ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
