@@ -252,7 +252,7 @@ class SaveFile:
             # And open the system again
             shared.world_generation_handler.enable_generation = True
             self.save_in_progress = False
-        except (SystemExit, KeyboardInterrupt):
+        except (SystemExit, KeyboardInterrupt, OSError):
             raise
         except:
             if shared.IS_CLIENT:
@@ -285,6 +285,8 @@ class SaveFile:
             fixer.apply(self, *args, **kwargs)
             for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
                 self.apply_group_fixer(*args, **kwargs)
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
         except:
             logger.print_exception(
                 "during data-fixing storage version '{}'".format(name)
@@ -311,6 +313,8 @@ class SaveFile:
             for name, args, kwargs in fixer.PART_FIXER_NAMES:
                 self.apply_part_fixer(name, *args, **kwargs)
 
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
         except:
             logger.print_exception(
                 "During data-fixing group fixer '{}' (FATAL)".format(name)
@@ -389,6 +393,8 @@ class SaveFile:
                     self.apply_part_fixer(name, *args, **kwargs)
                     for (name, args, kwargs) in fixer.PART_FIXER_NAMES
                 ]
+            except (SystemExit, KeyboardInterrupt, OSError):
+                raise
             except:
                 logger.print_exception(
                     "during data-fixing mod {} from {} to {} (fatal)".format(
@@ -430,6 +436,8 @@ class SaveFile:
         """
         try:
             return self.get_serializer_for(part).load(self, **kwargs)
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
         except mcpython.common.world.serializer.IDataSerializer.InvalidSaveException:
             logger.print_exception(
                 "during reading part '{}' from save files under '{}' with arguments {}".format(
@@ -446,7 +454,7 @@ class SaveFile:
         """
         try:
             self.get_serializer_for(part).save(data, self, **kwargs)
-        except (SystemExit, KeyboardInterrupt):
+        except (SystemExit, KeyboardInterrupt, OSError):
             raise
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, part))
@@ -468,6 +476,8 @@ class SaveFile:
             with open(file) as f:
                 return json.load(f)
 
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
         except json.decoder.JSONDecodeError:
             logger.print_exception(
                 "File '{}' seems to be corrupted, below the loader exception".format(
@@ -495,6 +505,8 @@ class SaveFile:
                 )
             )
             return
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
         except AttributeError:
             logger.print_exception(
                 "Module changed in between code systems, leading into corrupted file {}".format(
@@ -529,6 +541,8 @@ class SaveFile:
             data = json.dumps(data, indent="  ")
             with open(file, mode="w") as f:
                 f.write(data)
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 
@@ -546,6 +560,8 @@ class SaveFile:
             data = mcpython.util.picklemagic.safe_dumps(data)
             with open(file, mode="wb") as f:
                 return f.write(data)
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 

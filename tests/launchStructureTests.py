@@ -121,7 +121,8 @@ class StructureTest:
 
     def next_stage(self, dt=None):
         self.current_stage += 1
-        if self.current_stage >= len(self.stages) + 1: return
+        if self.current_stage >= len(self.stages) + 1:
+            return
 
         stage = self.stages[self.current_stage]
         stage.run_actions()
@@ -137,15 +138,21 @@ class StructureTestManager:
 
         self.requirements: typing.Dict[str, typing.Callable[[StructureTest], None]] = {}
         self.actions: typing.Dict[str, typing.Type[AbstractStructureTestAction]] = {}
-        self.validators: typing.Dict[str, typing.Type[AbstractStructureTestValidator]] = {}
+        self.validators: typing.Dict[
+            str, typing.Type[AbstractStructureTestValidator]
+        ] = {}
 
-    def register_requirement_loader(self, name: str, loader: typing.Callable[[StructureTest], None]):
+    def register_requirement_loader(
+        self, name: str, loader: typing.Callable[[StructureTest], None]
+    ):
         self.requirements[name] = loader
 
     def register_test_action(self, part: typing.Type[AbstractStructureTestAction]):
         self.actions[part.TYPE_NAME] = part
 
-    def register_test_validator(self, validator: typing.Type[AbstractStructureTestValidator]):
+    def register_test_validator(
+        self, validator: typing.Type[AbstractStructureTestValidator]
+    ):
         self.validators[validator.TYPE_NAME] = validator
 
     def register_test(self, test: StructureTest):
@@ -157,7 +164,8 @@ class StructureTestManager:
 
     def next_test(self):
         self.current_test += 1
-        if self.current_test >= len(self.tests) - 1: return
+        if self.current_test >= len(self.tests) - 1:
+            return
 
         self.tests[self.current_test].begin()
 
@@ -180,11 +188,28 @@ class PlayerController:
 
 
 manager = StructureTestManager()
-manager.register_requirement_loader("chunk", lambda test: test.set_env_variable("operating_chunk", manager.look_for_empty_chunk()))
-manager.register_requirement_loader("chunk:blocks", lambda test: importlib.import_module("mcpython.common.block.BlockManager").load())
-manager.register_requirement_loader("player", lambda test: test.set_env_variable("operating_player", manager.get_free_player()))
-manager.register_requirement_loader("player:controller", lambda test: test.set_env_variable("player_controller", PlayerController(test)))
-manager.register_requirement_loader("player:inventory", lambda test: test.get_env_variable("player_controller").prepareInventory())
+manager.register_requirement_loader(
+    "chunk",
+    lambda test: test.set_env_variable(
+        "operating_chunk", manager.look_for_empty_chunk()
+    ),
+)
+manager.register_requirement_loader(
+    "chunk:blocks",
+    lambda test: importlib.import_module("mcpython.common.block.BlockManager").load(),
+)
+manager.register_requirement_loader(
+    "player",
+    lambda test: test.set_env_variable("operating_player", manager.get_free_player()),
+)
+manager.register_requirement_loader(
+    "player:controller",
+    lambda test: test.set_env_variable("player_controller", PlayerController(test)),
+)
+manager.register_requirement_loader(
+    "player:inventory",
+    lambda test: test.get_env_variable("player_controller").prepareInventory(),
+)
 
 
 def intercept_loading(handler):

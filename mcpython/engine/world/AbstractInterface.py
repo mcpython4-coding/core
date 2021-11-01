@@ -79,6 +79,11 @@ class ISupportWorldInterface(ABC):
     ) -> typing.Union[typing.Any, str, None]:
         raise NotImplementedError
 
+    def spawn_itemstack_in_world(
+        self, itemstack, position: typing.Tuple[float, float, float], pickup_delay=0
+    ):
+        raise NotImplementedError
+
 
 class IChunk(ISupportWorldInterface, ABC):
     """

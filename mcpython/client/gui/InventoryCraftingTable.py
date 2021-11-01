@@ -74,7 +74,7 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
         for slot in self.slots[:-1]:
             shared.world.get_active_player().pick_up_item(slot.get_itemstack().copy())
             slot.get_itemstack().clean()
-        self.slots[-1].itemstack.clean()
+
         self.slots[-1].get_itemstack().clean()
         shared.world.get_active_player().reset_moving_slot()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(

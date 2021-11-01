@@ -14,9 +14,9 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.entity.AbstractEntity
 import mcpython.util.math
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
-@shared.registry
 class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     """
     Class for the falling block entity
@@ -53,3 +53,23 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             else:
                 self.chunk.add_block((x, y, z), self.block)
                 self.kill()
+
+    def write_to_network_buffer(self, buffer: WriteBuffer):
+        super().write_to_network_buffer(buffer)
+
+        if self.block is not None:
+            buffer.write_bool(True)
+            buffer.write_string(self.block.NAME)
+            self.block.write_to_network_buffer(buffer)
+        else:
+            buffer.write_bool(False)
+
+    def read_from_network_buffer(self, buffer: ReadBuffer):
+        super().read_from_network_buffer(buffer)
+
+        has_block = buffer.read_bool()
+        if has_block:
+            self.block = shared.registry.get_by_name("minecraft:block")[
+                buffer.read_string()
+            ]()
+            self.block.read_from_network_buffer(buffer)

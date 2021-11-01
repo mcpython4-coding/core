@@ -131,9 +131,15 @@ class Barrel(AbstractBlock.AbstractBlock):
 
     def on_block_remove(self, reason):
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
+            dimension = shared.world.get_dimension_by_name(self.dimension)
+
             for slot in self.inventory.slots:
-                shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
-                slot.itemstack.clean()
+                if slot.get_itemstack().is_empty(): continue
+
+                dimension.spawn_itemstack_in_world(
+                    slot.get_itemstack().copy(), self.position
+                )
+                slot.get_itemstack().clean()
 
         shared.inventory_handler.hide(self.inventory)
         del self.inventory

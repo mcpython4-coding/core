@@ -21,6 +21,8 @@ import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
 import mcpython.util.math
 from mcpython import shared
+from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.common.entity.ItemEntity import ItemEntity
 from mcpython.engine import logger
 
 
@@ -608,3 +610,17 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     def dump_debug_maps(self, file_formatter: str):
         for m in self.data_maps.values():
             m.dump_debug_info(file_formatter.format(m.NAME.replace(":", "_")))
+
+    def spawn_itemstack_in_world(
+        self,
+        itemstack: ItemStack,
+        position: typing.Tuple[float, float, float],
+        pickup_delay=0,
+    ):
+        entity = ItemEntity.create_new(
+            position,
+            dimension=self.dimension,
+            representing_item_stack=itemstack,
+            pickup_delay=pickup_delay,
+        )
+        shared.entity_manager.spawn_entity(entity, position)

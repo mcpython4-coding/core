@@ -132,7 +132,10 @@ class EntityManager:
 
 
 def load():
-    from mcpython.common.entity import AbstractEntity, FallingBlockEntity
+    from mcpython.common.entity import AbstractEntity, FallingBlockEntity, ItemEntity
+
+    shared.registry(FallingBlockEntity.FallingBlockEntity)
+    shared.registry(ItemEntity.ItemEntity)
 
 
 # This check is here as test env don't want to import this stuff

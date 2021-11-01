@@ -1899,4 +1899,5 @@ A-  [uuk]: get_active_player() and get_active_dimension() is now only arrival on
 I   [uuk]: server will now crash when world data fixing failed
 f   [uuk]: added void world generator mode, used in structure tests
 T   [uuk]: added some more stuff for the structure test system; added first example configuration file
+fA  [uuk]: added experimental item entity and spawn helpers in Chunk and Dimension
 

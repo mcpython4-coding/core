@@ -21,6 +21,8 @@ import mcpython.engine.world.AbstractInterface
 import mcpython.util.math
 import pyglet
 from mcpython import shared
+from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.common.entity.ItemEntity import ItemEntity
 
 
 class DimensionDefinition:
@@ -376,3 +378,17 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
 
     def chunk_iterator(self):
         return self.chunks.values()
+
+    def spawn_itemstack_in_world(
+        self,
+        itemstack: ItemStack,
+        position: typing.Tuple[float, float, float],
+        pickup_delay=0,
+    ):
+        entity = ItemEntity.create_new(
+            position,
+            dimension=self,
+            representing_item_stack=itemstack,
+            pickup_delay=pickup_delay,
+        )
+        shared.entity_manager.spawn_entity(entity, position)

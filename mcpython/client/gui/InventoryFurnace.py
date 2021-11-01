@@ -219,7 +219,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             slot.itemstack.set_amount(slot_copy.itemstack.amount)
 
     def on_input_update(self, player=False):
-        if self.slots[0].itemstack.is_empty():
+        if self.slots[0].get_itemstack().is_empty():
             self.reset()
         else:
             self.update_status()

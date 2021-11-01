@@ -169,6 +169,7 @@ class Model:
 
     def draw_face(
         self,
+        instance,
         position: typing.Tuple[float, float, float],
         config: dict,
         face: mcpython.util.enums.EnumSide,
@@ -177,7 +178,7 @@ class Model:
         Similar to add_face_to_batch, but does it in-place without a batches
         Use batches wherever possible!
         """
-        collected_data, box_model = self.get_prepared_data_for(position, config, face)
+        collected_data, box_model = self.get_prepared_data_for(instance, position, config, face)
         if box_model is None:
             return
 
