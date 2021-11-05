@@ -42,56 +42,58 @@ class ModelHandler:
         self.hide_blockstate_errors = False
         self.raw_models = []
 
+        SIZE = (1.002,) * 3
+
         # todo: reload these textures on normal reload
         self.break_stages = [
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_0.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_1.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_2.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_3.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_4.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_5.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_6.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_7.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_8.png",
             ),
             ColoredRawBoxModel(
                 (0, 0, 0),
-                (1.02, 1.02, 1.02),
+                SIZE,
                 "assets/minecraft/textures/block/destroy_stage_9.png",
             ),
         ]

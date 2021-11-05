@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import random
+import sys
 
 import mcpython.common.config
 import mcpython.common.data.DataPacks
@@ -93,8 +94,9 @@ class TickHandler:
             try:
                 func(*args, **kwargs)
 
-            except (SystemExit, KeyboardInterrupt, OSError):
-                raise
+            except (SystemExit, KeyboardInterrupt, OSError) as e:
+                print(e)
+                sys.exit(-1)
 
             except:
                 logger.print_exception(
