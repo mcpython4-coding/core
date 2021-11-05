@@ -19,10 +19,10 @@ from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from pyglet.window import key, mouse
 
-from . import AbstractBlock
+from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
 
 
-class Barrel(AbstractBlock.AbstractBlock):
+class Barrel(IAllDirectionOrientableBlock):
     """
     Class for the Barrel-Block
     """
@@ -47,7 +47,6 @@ class Barrel(AbstractBlock.AbstractBlock):
 
         self.opened: bool = False  # if the barrel is open
         self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
-        self.facing: str = "up"  # the direction the block faces to
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
@@ -56,28 +55,6 @@ class Barrel(AbstractBlock.AbstractBlock):
     def read_from_network_buffer(self, buffer: ReadBuffer):
         super().read_from_network_buffer(buffer)
         self.inventory.read_from_network_buffer(buffer)
-
-    def on_block_added(self):
-        # only if this is set, decode it
-        if self.set_to is not None:
-            dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
-            if dx > 0:
-                self.facing = "west"
-            elif dz > 0:
-                self.facing = "north"
-            elif dx < 0:
-                self.facing = "east"
-            elif dz < 0:
-                self.facing = "south"
-            elif dy > 0:
-                self.facing = "down"
-            elif dy < 0:
-                self.facing = "up"
-
-            if shared.IS_CLIENT:
-                self.face_info.update()
-
-            self.schedule_network_update()
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
@@ -98,23 +75,13 @@ class Barrel(AbstractBlock.AbstractBlock):
         return self.inventory.slots, self.inventory.slots
 
     def set_model_state(self, state: dict):
-        if "facing" in state:
-            face = state["facing"]
-            if type(face) == str:
-                self.facing = mcpython.util.enums.EnumSide[face.upper()]
-            else:
-                self.facing = face
+        super().set_model_state(state)
 
         if "open" in state:
             self.opened = str(state["open"]).lower() == "true"
 
     def get_model_state(self) -> dict:
-        return {
-            "facing": self.facing.normal_name
-            if not isinstance(self.facing, str)
-            else self.facing,
-            "open": str(self.opened).lower(),
-        }
+        return super().get_model_state() | {"open": str(self.opened).lower()}
 
     @classmethod
     def set_block_data(cls, item, block):

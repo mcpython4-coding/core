@@ -78,13 +78,13 @@ class TestBarrel(TestCase):
 
         instance.on_block_added()
 
-        self.assertEqual(instance.facing, "down")
+        self.assertEqual(instance.face.normal_name, "down")
 
         instance.set_to = 0, 0, 1
 
         instance.on_block_added()
 
-        self.assertEqual(instance.facing, "south")
+        self.assertEqual(instance.face.normal_name, "south")
 
         shared.world = None
 

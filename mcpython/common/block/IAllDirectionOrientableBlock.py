@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.util.enums
+from mcpython import shared
 from mcpython.common.block.PossibleBlockStateBuilder import PossibleBlockStateBuilder
 
 
@@ -32,6 +33,7 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
             sx, sy, sz = self.set_to
             px, py, pz = self.position
             dx, dy, dz = sx - px, sy - py, sz - pz
+
             if dx > 0:
                 self.face = mcpython.util.enums.EnumSide.EAST
             elif dx < 0:
@@ -44,6 +46,9 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
                 self.face = mcpython.util.enums.EnumSide.UP
             elif dy < 0:
                 self.face = mcpython.util.enums.EnumSide.DOWN
+
+            if shared.IS_CLIENT:
+                self.face_info.update(True)
 
             self.schedule_network_update()
 

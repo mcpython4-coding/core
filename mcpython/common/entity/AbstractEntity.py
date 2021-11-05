@@ -256,6 +256,7 @@ class AbstractEntity(
             sector_before = mcpython.util.math.position_to_chunk(self.position)
         else:
             sector_before = self.chunk.position
+
         if self.chunk is None:
             before_dim = None
         else:
