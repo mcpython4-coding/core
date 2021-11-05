@@ -344,6 +344,10 @@ def vector_negate(vector: typing.Tuple[float, ...]) -> typing.Tuple[float, ...]:
     return tuple(-e for e in vector)
 
 
+def vector_distance(a, b):
+    return math.sqrt(sum((a[i] - b[i]) ** 2 for i in range(len(a))))
+
+
 def sort_components(a: typing.Tuple[float, ...], b: typing.Tuple[float, ...]):
     """
     Util method for sorting two vectors

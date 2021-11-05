@@ -236,12 +236,12 @@ class MultiPartDecoder(IBlockStateDecoder):
         previous=None,
     ):
         state = instance.get_model_state()
-        prepared_vertex, prepared_texture, box_model = [], [], None
+        prepared_vertex, prepared_texture, prepared_tint, box_model = [], [], [], None
         box_model = self.prepare_rendering_data(
-            box_model, face, instance, prepared_texture, prepared_vertex, state
+            box_model, face, instance, prepared_texture, prepared_vertex, prepared_tint, state
         )
         if box_model is not None:
-            box_model.draw_prepared_data((prepared_vertex, prepared_texture))
+            box_model.draw_prepared_data((prepared_vertex, prepared_texture, prepared_tint))
 
     def prepare_rendering_data(
         self,

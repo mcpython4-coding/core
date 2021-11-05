@@ -17,6 +17,7 @@ import pyglet
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.util.math import vector_distance, vector_negate, vector_offset
 
 
 class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
@@ -29,6 +30,11 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     NAME = "minecraft:item_entity"
     SUMMON_ABLE = False
 
+    # todo: make this decidable by the item
+    ATTRACTION_DISTANCE = 8
+    PICKUP_DISTANCE = 1
+    ATTRACTION_SPEED = 4
+
     def __init__(
         self, *args, representing_item_stack: ItemStack = None, pickup_delay=0, **kwargs
     ):
@@ -38,7 +44,7 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         # only for test reasons here
         self.test_block = shared.registry.get_by_name("minecraft:block")[
-            "minecraft:red_carpet"
+            "minecraft:oak_fence"
         ]()
 
     def draw(self):
@@ -48,8 +54,32 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def tick(self, dt):
         super().tick(dt)
 
+        if self.pickup_delay > 0:
+            self.pickup_delay -= dt
+
+            self.pickup_delay = max(self.pickup_delay, 0)
+
         if self.item_stack.is_empty():
             self.kill(force=True)
+
+        for player in self.dimension.get_world().player_iterator():
+            if player.dimension == self.dimension:
+                p = player.position
+                p = p[0], p[1] - 1, p[2]
+
+                d = vector_distance(self.position, p)
+
+                # Attract the item to the player
+                if d <= self.ATTRACTION_DISTANCE:
+                    v = vector_offset(p, self.position)
+
+                    v = tuple(e / self.ATTRACTION_SPEED * dt for e in v)
+
+                    self.position = vector_offset(self.position, vector_negate(v))
+
+                if d <= self.PICKUP_DISTANCE and self.pickup_delay == 0:
+                    player.pick_up_item(self.item_stack)
+                    self.kill()
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)

@@ -98,7 +98,7 @@ class Furnace(IHorizontalOrientableBlock):
                     continue
 
                 dimension.spawn_itemstack_in_world(
-                    slot.get_itemstack().copy(), self.position
+                    slot.get_itemstack().copy(), self.position, pickup_delay=4
                 )
                 slot.get_itemstack().clean()
 

@@ -332,7 +332,7 @@ class BoxModel(AbstractBoxModel):
         return self.add_prepared_data_to_batch(collected_data, batch)
 
     def draw_prepared_data(
-        self, collected_data: typing.Tuple[typing.List[float], typing.List[float]]
+        self, collected_data: typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]
     ):
         """
         Draws prepared data to the screen

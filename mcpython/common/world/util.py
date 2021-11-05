@@ -323,9 +323,7 @@ def create_hollow_structure(
     fill_area(access, start, (x + dx, y + outline_size, z + dz), block)
 
     # top
-    fill_area(
-        access, (x, y + dy, z), (x + dx, y + dy - outline_size, z + dz), block
-    )
+    fill_area(access, (x, y + dy, z), (x + dx, y + dy - outline_size, z + dz), block)
 
     # left
     fill_area(
