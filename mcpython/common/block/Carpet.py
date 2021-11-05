@@ -15,6 +15,7 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.container.ResourceStack
+from mcpython.common.container.ResourceStack import ItemStack
 import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
 from mcpython import shared
@@ -44,9 +45,10 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
             dim.get_chunk_for_position((x, y, z)).remove_block(
                 (x, y, z), block_update=False
             )
-            shared.world.get_active_player().pick_up_item(
-                mcpython.common.container.ResourceStack.ItemStack("minecraft:carpet")
-            )  # todo: drop in world
+
+            shared.world.get_dimension_by_name(self.dimension).spawn_itemstack_in_world(
+                ItemStack("minecraft:carpet"), self.position, pickup_delay=4
+            )
 
     def get_view_bbox(self):
         return carpet_bbox

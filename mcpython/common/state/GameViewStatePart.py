@@ -257,7 +257,12 @@ class GameView(AbstractStatePart.AbstractStatePart):
                                 block.on_request_item_for_block(itemstack)
                                 for itemstack in items
                             ]
-                            player.pick_up_item(items)
+
+                            dimension = shared.world.get_dimension_by_name(block.dimension)
+                            for stack in items:
+                                dimension.spawn_itemstack_in_world(
+                                    stack.copy(), block.position, pickup_delay=0
+                                )
 
                         chunk.remove_block(block_position)
 

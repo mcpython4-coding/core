@@ -24,7 +24,10 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     """
     Class for the item entity in the world
 
-    Highly experimental!
+    Experimental!
+
+    todo: add real item rendering
+    todo: check during attraction for collisions with blocks
     """
 
     NAME = "minecraft:item_entity"
@@ -33,7 +36,7 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     # todo: make this decidable by the item
     ATTRACTION_DISTANCE = 8
     PICKUP_DISTANCE = 1
-    ATTRACTION_SPEED = 4
+    ATTRACTION_SPEED = 1
 
     def __init__(
         self, *args, representing_item_stack: ItemStack = None, pickup_delay=0, **kwargs

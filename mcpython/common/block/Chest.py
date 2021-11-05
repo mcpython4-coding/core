@@ -171,9 +171,14 @@ class Chest(
 
     def on_block_remove(self, reason):
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
+            dimension = shared.world.get_dimension_by_name(self.dimension)
+
             for slot in self.inventory.slots:
-                shared.world.get_active_player().pick_up_item(
-                    slot.get_itemstack().copy()
+                if slot.get_itemstack().is_empty():
+                    continue
+
+                dimension.spawn_itemstack_in_world(
+                    slot.get_itemstack().copy(), self.position, pickup_delay=4
                 )
                 slot.get_itemstack().clean()
 

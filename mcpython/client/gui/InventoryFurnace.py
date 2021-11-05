@@ -213,6 +213,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     @staticmethod
     def on_shift(slot, x, y, button, mod, player):
         slot_copy = slot.itemstack.copy()
+
         if shared.world.get_active_player().pick_up_item(slot_copy):
             slot.itemstack.clean()  # if we successfully added the itemstack, we have to clear it
         else:

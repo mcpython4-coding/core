@@ -1902,4 +1902,6 @@ T   [uuk]: added some more stuff for the structure test system; added first exam
 fA  [uuk]: added experimental item entity and spawn helpers in Chunk and Dimension
 f   [uuk]: world/util/clone() accepts now optionally another world access for source, so you can clone across
            dimensions now
+F   [uuk]: breaking blocks will now spawn an actual ItemEntity, instead of adding the item directly into the player
+           inventory
 
