@@ -28,7 +28,7 @@ from mcpython.engine.world.AbstractInterface import IChunk
 
 class OffProcessWorldHelper:
     """
-    Some really big, complex system for asynchronous world-access-able multiprocessing.
+    Some huge, complex system for asynchronous world-access-able multiprocessing.
     Use OffProcessWorldHelper.spawn_process(World) for creating a new process linke to the given world.
     You MUST call run_tasks() regular on your RemoteWorldHelperReference to process tasks to run on main!
     """

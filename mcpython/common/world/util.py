@@ -108,7 +108,7 @@ def filter_values(
     """
 
     for key, value in data.items():
-        if matcher.contains(value) == inverted:
+        if matcher.contains(value) is inverted:
             data[key] = to
 
     return data
@@ -126,7 +126,7 @@ def filter_list(
     """
 
     for i, value in enumerate(data):
-        if matcher.contains(value) == inverted:
+        if matcher.contains(value) is inverted:
             data[i] = to
 
     return data
@@ -250,15 +250,33 @@ def clone(
     to: typing.Tuple[int, int, int],
     block_filter=AnyBlock.INSTANCE,
     replaces=AnyBlock.INSTANCE,
+    source_access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface = None,
     insert_air=True,
     remove_start=False,
 ):
+    """
+    Clones a specific block region
+    :param access: the access to clone into
+    :param start: where to start
+    :param end: where to end
+    :param to: where to paste to
+    :param block_filter: a block filter for the blocks to clone
+    :param replaces: if to replace non-air blocks in the target
+    :param source_access: optional, set if not equal to access, the access to clone from
+    :param insert_air: if to add air blocks into target where source is air
+    :param remove_start: if source region should be filled with air afterwards
+    """
+
+    if source_access is not None:
+        source_access = access
+
     replaces = AnyBlock.from_any(replaces)
     block_filter = AnyBlock.from_any(block_filter)
 
     start_2, end_2 = mcpython.util.math.sort_components(start, end)
-    block_list = list(get_content_list(access, start_2, end_2))
+    block_list = list(get_content_list(source_access, start_2, end_2))
     block_list = filter_list(block_list, block_filter)
+
     paste_content_list(
         access,
         to,
@@ -269,8 +287,9 @@ def clone(
         insert_air=insert_air,
         replaces=replaces,
     )
+
     if remove_start:
-        fill_area(access, start_2, end_2, "minecraft:air")
+        fill_area(source_access, start_2, end_2, "minecraft:air")
 
 
 def create_hollow_structure(
@@ -299,34 +318,46 @@ def create_hollow_structure(
 
     x, y, z = start
     dx, dy, dz = mcpython.util.math.vector_offset(start, end)
-    fill_area(access, start, (x + dx, y + outline_size, z + dz), block)  # bottom
+
+    # bottom
+    fill_area(access, start, (x + dx, y + outline_size, z + dz), block)
+
+    # top
     fill_area(
         access, (x, y + dy, z), (x + dx, y + dy - outline_size, z + dz), block
-    )  # top
+    )
+
+    # left
     fill_area(
         access,
         (x, y + outline_size + 1, z),
         (x + dx, y + dy - outline_size - 1, z + outline_size),
         block,
-    )  # left
+    )
+
+    # right
     fill_area(
         access,
         (x, y + outline_size + 1, z + dz),
         (x + dx, y + dy - outline_size - 1, z + dz - outline_size),
         block,
-    )  # right
+    )
+
+    # front
     fill_area(
         access,
         (x, y + outline_size + 1, z + outline_size + 1),
         (x + outline_size, y + dy - outline_size - 1, z + dz - outline_size - 1),
         block,
-    )  # front
+    )
+
+    # back
     fill_area(
         access,
         (x + dx, y + outline_size + 1, z + outline_size + 1),
         (x + dx - outline_size, y + dy - outline_size - 1, z + dz - outline_size - 1),
         block,
-    )  # back
+    )
 
     if fill_center:
         outline_size += 1  # here we need + 1, as we want the inner
