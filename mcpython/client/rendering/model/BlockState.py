@@ -314,6 +314,48 @@ class MultiPartDecoder(IBlockStateDecoder):
                     )
         return box_model
 
+    def prepare_rendering_data_scaled(
+        self,
+        box_model,
+        face,
+        instance: IBlockStateRenderingTarget,
+        prepared_texture,
+        prepared_vertex,
+        prepared_tint,
+        state,
+        scale: float,
+    ):
+        for entry in self.data["multipart"]:
+            if "when" not in entry or self._test_for(state, entry["when"]):
+                data = entry["apply"]
+                if type(data) == dict:
+                    model, config, _ = decode_entry(data)
+                    if model not in shared.model_handler.models:
+                        continue
+                    _, box_model = shared.model_handler.models[
+                        model
+                    ].get_prepared_data_for_scaled(
+                        instance,
+                        instance.position,
+                        config,
+                        face,
+                        scale,
+                        previous=(prepared_vertex, prepared_texture, prepared_tint),
+                    )
+                else:
+                    config, model = get_model_choice(data, instance)
+                    _, box_model = shared.model_handler.models[
+                        model
+                    ].get_prepared_data_for_scaled(
+                        instance,
+                        instance.position,
+                        config,
+                        face,
+                        scale,
+                        previous=(prepared_vertex, prepared_texture, prepared_tint),
+                    )
+        return box_model
+
 
 class DefaultDecoder(IBlockStateDecoder):
     """

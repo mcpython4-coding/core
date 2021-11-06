@@ -381,6 +381,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         :param itemstack: the itemstack to add
         :return: either successful or not
         """
+
+        if itemstack is None:
+            return True
+
         if not shared.event_handler.call_cancelable(
             "gameplay:player:pick_up_item", self, itemstack
         ):
@@ -394,6 +398,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         if not itemstack.item or itemstack.amount == 0:
             return True
+
         for inventory, reverse in self.inventory_order:
             slots = inventory.slots
             if reverse:

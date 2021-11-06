@@ -385,6 +385,8 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
         position: typing.Tuple[float, float, float],
         pickup_delay=0,
     ):
+        if itemstack.is_empty(): return
+
         entity = ItemEntity.create_new(
             position,
             dimension=self,

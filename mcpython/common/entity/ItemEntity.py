@@ -66,8 +66,9 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
             self.pickup_delay = max(self.pickup_delay, 0)
 
-        if self.item_stack.is_empty():
+        if self.item_stack is None or self.item_stack.is_empty():
             self.kill(force=True)
+            return
 
         for player in self.dimension.get_world().player_iterator():
             if player.dimension == self.dimension:
