@@ -251,7 +251,11 @@ class Model:
         Use batches wherever possible!
         """
         collected_data, box_model = self.get_prepared_data_for_scaled(
-            instance, position, config, face, scale,
+            instance,
+            position,
+            config,
+            face,
+            scale,
         )
         if box_model is None:
             return

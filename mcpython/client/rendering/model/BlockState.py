@@ -238,10 +238,18 @@ class MultiPartDecoder(IBlockStateDecoder):
         state = instance.get_model_state()
         prepared_vertex, prepared_texture, prepared_tint, box_model = [], [], [], None
         box_model = self.prepare_rendering_data(
-            box_model, face, instance, prepared_texture, prepared_vertex, prepared_tint, state
+            box_model,
+            face,
+            instance,
+            prepared_texture,
+            prepared_vertex,
+            prepared_tint,
+            state,
         )
         if box_model is not None:
-            box_model.draw_prepared_data((prepared_vertex, prepared_texture, prepared_tint))
+            box_model.draw_prepared_data(
+                (prepared_vertex, prepared_texture, prepared_tint)
+            )
 
     def draw_face_scaled(
         self,
@@ -253,10 +261,19 @@ class MultiPartDecoder(IBlockStateDecoder):
         state = instance.get_model_state()
         prepared_vertex, prepared_texture, prepared_tint, box_model = [], [], [], None
         box_model = self.prepare_rendering_data_scaled(
-            box_model, face, instance, prepared_texture, prepared_vertex, prepared_tint, state, scale
+            box_model,
+            face,
+            instance,
+            prepared_texture,
+            prepared_vertex,
+            prepared_tint,
+            state,
+            scale,
         )
         if box_model is not None:
-            box_model.draw_prepared_data((prepared_vertex, prepared_texture, prepared_tint))
+            box_model.draw_prepared_data(
+                (prepared_vertex, prepared_texture, prepared_tint)
+            )
 
     def prepare_rendering_data(
         self,
@@ -781,7 +798,11 @@ class BlockState:
                 )
             return
         shared.model_handler.models[model].draw_face_scaled(
-            instance, instance.position, config, face, scale=scale,
+            instance,
+            instance.position,
+            config,
+            face,
+            scale=scale,
         )
 
 

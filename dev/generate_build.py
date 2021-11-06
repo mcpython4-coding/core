@@ -598,6 +598,7 @@ DEFAULT_BUILD_INSTANCE.add_stage(
             or file.startswith("data")
             or file.startswith("home")
             or file.startswith("dev")
+            or file.startswith("venv")
             or ".git" in file
             or ".idea" in file
             or file.startswith("dev/build")

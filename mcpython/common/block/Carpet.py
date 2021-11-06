@@ -15,10 +15,10 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.container.ResourceStack
-from mcpython.common.container.ResourceStack import ItemStack
 import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
 from mcpython import shared
+from mcpython.common.container.ResourceStack import ItemStack
 
 carpet_bbox = mcpython.engine.physics.BoundingBox.BoundingBox((1, 1 / 16, 1))
 

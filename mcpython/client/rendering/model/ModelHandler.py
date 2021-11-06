@@ -410,7 +410,10 @@ class ModelHandler:
         [self.draw_face(block, face) for face in mcpython.util.enums.EnumSide.iterate()]
 
     def draw_block_scaled(self, block, scale: float):
-        [self.draw_face_scaled(block, face, scale) for face in mcpython.util.enums.EnumSide.iterate()]
+        [
+            self.draw_face_scaled(block, face, scale)
+            for face in mcpython.util.enums.EnumSide.iterate()
+        ]
 
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)

@@ -50,7 +50,7 @@ def rotate_data(
 
 
 def scale_data(data, scale: float):
-    return ((tuple(e*scale for e in x) for x in y) for y in data)
+    return ((tuple(e * scale for e in x) for x in y) for y in data)
 
 
 class VertexProvider:
@@ -117,7 +117,9 @@ class VertexProvider:
         # The cache is a structure holding
         self.cache: typing.Dict[
             typing.Tuple[
-                typing.Tuple[float, float, float], typing.Tuple[float, float, float], float
+                typing.Tuple[float, float, float],
+                typing.Tuple[float, float, float],
+                float,
             ],
             typing.Iterable,
         ] = {}
@@ -133,7 +135,9 @@ class VertexProvider:
 
         return list(
             offset_data(
-                self.cache[(element_rotation, element_rotation_center or (0, 0, 0), scale)],
+                self.cache[
+                    (element_rotation, element_rotation_center or (0, 0, 0), scale)
+                ],
                 element_position,
             )
         )
@@ -153,12 +157,19 @@ class VertexProvider:
             if scale == 1:
                 return self.cache.setdefault(
                     key,
-                    tuple(tuple(e) for e in rotate_data(self.default, center, rotation)),
+                    tuple(
+                        tuple(e) for e in rotate_data(self.default, center, rotation)
+                    ),
                 )
             else:
                 return self.cache.setdefault(
                     key,
-                    tuple(tuple(e) for e in scale_data(rotate_data(self.default, center, rotation), scale)),
+                    tuple(
+                        tuple(e)
+                        for e in scale_data(
+                            rotate_data(self.default, center, rotation), scale
+                        )
+                    ),
                 )
 
         return self.cache[key]

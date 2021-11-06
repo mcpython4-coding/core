@@ -186,11 +186,17 @@ class OpenedInventoryStatePart(
 
             if self.get_inventory_for(x, y) is None and shared.IS_CLIENT:
                 if button == mouse.LEFT:
-                    dimension.spawn_itemstack_in_world(moving_itemstack.copy(), player.position, pickup_delay=10)
+                    dimension.spawn_itemstack_in_world(
+                        moving_itemstack.copy(), player.position, pickup_delay=10
+                    )
                     moving_itemstack.clean()
 
                 elif button == mouse.RIGHT:
-                    dimension.spawn_itemstack_in_world(moving_itemstack.copy().set_amount(1), player.position, pickup_delay=10)
+                    dimension.spawn_itemstack_in_world(
+                        moving_itemstack.copy().set_amount(1),
+                        player.position,
+                        pickup_delay=10,
+                    )
                     moving_itemstack.add_amount(-1)
 
             return

@@ -192,7 +192,9 @@ class BoxModel(AbstractBoxModel):
         # todo: can we upload vertices to GPU in advance and use some clever code for drawing?
         # todo: can we pre-calculated rotated variants for faster draw times later down the road
 
-    def get_vertex_variant(self, rotation: tuple, position: tuple, scale: float = 1) -> list:
+    def get_vertex_variant(
+        self, rotation: tuple, position: tuple, scale: float = 1
+    ) -> list:
         """
         Implementation to get the vertex data for a rotated block
         :param rotation: the rotation to use
@@ -400,7 +402,10 @@ class BoxModel(AbstractBoxModel):
         return self.add_prepared_data_to_batch(collected_data, batch)
 
     def draw_prepared_data(
-        self, collected_data: typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]
+        self,
+        collected_data: typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float]
+        ],
     ):
         """
         Draws prepared data to the screen
@@ -462,7 +467,12 @@ class BoxModel(AbstractBoxModel):
         :param active_faces: which faces to draw
         """
         collected_data = self.get_prepared_box_data_scaled(
-            instance, position, rotation, scale, active_faces=active_faces, uv_lock=uv_lock
+            instance,
+            position,
+            rotation,
+            scale,
+            active_faces=active_faces,
+            uv_lock=uv_lock,
         )
         self.draw_prepared_data(collected_data)
 

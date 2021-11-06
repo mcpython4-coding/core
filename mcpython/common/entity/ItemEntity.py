@@ -47,12 +47,16 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         # only for test reasons here
         self.test_block = shared.registry.get_by_name("minecraft:block")[
-            "minecraft:oak_fence" if self.item_stack is None or self.item_stack.is_empty() or not self.item_stack.item.HAS_BLOCK else self.item_stack.get_item_name()
+            "minecraft:oak_fence"
+            if self.item_stack is None
+            or self.item_stack.is_empty()
+            or not self.item_stack.item.HAS_BLOCK
+            else self.item_stack.get_item_name()
         ]()
 
     def draw(self):
         self.test_block.position = self.position
-        shared.model_handler.draw_block_scaled(self.test_block, .2)
+        shared.model_handler.draw_block_scaled(self.test_block, 0.2)
 
     def tick(self, dt):
         super().tick(dt)
