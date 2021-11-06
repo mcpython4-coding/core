@@ -618,6 +618,17 @@ class GameView(AbstractStatePart.AbstractStatePart):
             if shared.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_break_time()
 
+        elif symbol == key.Q:
+            slot = player.get_active_inventory_slot()
+            itemstack = slot.get_itemstack()
+
+            if modifiers & key.MOD_SHIFT:
+                player.dimension.spawn_itemstack_in_world(itemstack.copy(), player.position, pickup_delay=10)
+                itemstack.clean()
+            else:
+                player.dimension.spawn_itemstack_in_world(itemstack.copy().set_amount(1), player.position, pickup_delay=10)
+                itemstack.add_amount(-1)
+
     def on_key_release(self, symbol: int, modifiers: int):
         if not self.activate_keyboard:
             return

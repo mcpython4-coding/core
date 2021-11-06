@@ -22,8 +22,8 @@ Contains only some information, in ordered form, in a better form for the end us
 
 ----
 
-# Changelog of snapshot 21w<45>a
-Planned to be released on 10.11.2021
+# Changelog of snapshot 21w<46>a
+Planned to be released on 17.11.2021
 targeting 21w42a
 
     Library
@@ -35,6 +35,13 @@ targeting 21w42a
     Storage:
         - using now the network serializer versions for saving block data to disk
         - this makes it incompatible with old saves, so we removed support for them
+
+    Items:
+        - added ItemEntities 
+        - created when breaking blocks (both the block drops and inventory drops)
+        - can be dropped from player inventory & Q hotkey
+        - can be picked up
+        - currently do not render correct for non-block items
 
 
 # Changelog of alpha 1.2.0, compared to 21w42a

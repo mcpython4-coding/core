@@ -1883,7 +1883,7 @@ f   [uuk]: GrassBlock can now be transformed into grass path
 G   [github]: released snapshot 21w42a
 G   [github]: released alpha 1.2.0
 
-G   [github]: started development cycle for snapshot 21w<45>a
+G   [github]: started development cycle for snapshot 21w<46>a
 L   [uuk]: upgraded asset source to 21w42a
 OA- [uuk]: improved block model memory usage
 L   [uuk]: removed support for python 3.9
@@ -1905,4 +1905,5 @@ f   [uuk]: world/util/clone() accepts now optionally another world access for so
 F   [uuk]: breaking blocks will now spawn an actual ItemEntity, instead of adding the item directly into the player
            inventory
 f   [uuk]: you can now drop items into the world when clicking with an ItemStack outside of the inventory zone
+f   [uuk]: added Q hotkey
 
