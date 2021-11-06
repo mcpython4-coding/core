@@ -315,6 +315,12 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
         return x, y
 
+    def is_mouse_in_range(self, x: int, y: int) -> bool:
+        px, py = self.get_position()
+        sx, sy = self.bg_image_size if self.bg_image_size is not None else (0, 0)
+
+        return 0 <= x - px <= sx and 0 <= y - py <= sy
+
     def on_activate(self):
         """
         Called when the inventory is shown

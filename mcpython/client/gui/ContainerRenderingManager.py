@@ -112,7 +112,7 @@ class OpenedInventoryStatePart(
                 hovering_slot.get_itemstack(), (x + ix + 32, y + iy + 32)
             )
 
-    def _get_slot_for(self, x: int, y: int) -> mcpython.client.gui.Slot.Slot:
+    def _get_slot_for(self, x: int, y: int) -> mcpython.client.gui.Slot.Slot | None:
         """
         Gets slot for position
         :param x: the x position
@@ -132,9 +132,17 @@ class OpenedInventoryStatePart(
                 if 0 <= x - sx <= 32 and 0 <= y - sy <= 32:
                     return slot
 
+    def get_inventory_for(self, x: int, y: int):
+        for inventory in itertools.chain(
+            shared.inventory_handler.open_containers,
+            shared.inventory_handler.always_open_containers,
+        ):
+            if inventory.is_mouse_in_range(x, y):
+                return inventory
+
     def _get_slot_inventory_for(
         self, x: int, y: int
-    ) -> typing.Union[mcpython.client.gui.Slot.Slot, typing.Any]:
+    ) -> typing.Tuple[mcpython.client.gui.Slot.Slot | None, typing.Any]:
         """
         Gets inventory of the slot for the position
         :param x: the x position
@@ -172,6 +180,19 @@ class OpenedInventoryStatePart(
                 return
 
         if slot is None:
+
+            player = shared.world.get_active_player()
+            dimension = player.dimension
+
+            if self.get_inventory_for(x, y) is None and shared.IS_CLIENT:
+                if button == mouse.LEFT:
+                    dimension.spawn_itemstack_in_world(moving_itemstack.copy(), player.position, pickup_delay=10)
+                    moving_itemstack.clean()
+
+                elif button == mouse.RIGHT:
+                    dimension.spawn_itemstack_in_world(moving_itemstack.copy().set_amount(1), player.position, pickup_delay=10)
+                    moving_itemstack.add_amount(-1)
+
             return
 
         if modifiers & key.MOD_SHIFT:
