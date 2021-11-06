@@ -389,8 +389,28 @@ class ModelHandler:
             self.blockstates["minecraft:missing_texture"].draw_face(block, face)
         blockstate.draw_face(block, face)
 
+    def draw_face_scaled(self, block, face, scale: float):
+        if not shared.IS_CLIENT:
+            return
+
+        if block.NAME not in self.blockstates:
+            if not self.hide_blockstate_errors:
+                logger.println(
+                    "[FATAL] block state for block '{}' not found!".format(block.NAME)
+                )
+            return
+
+        blockstate = self.blockstates[block.NAME]
+        # todo: add custom block renderer check
+        if blockstate is None:
+            self.blockstates["minecraft:missing_texture"].draw_face(block, face)
+        blockstate.draw_face_scaled(block, face, scale)
+
     def draw_block(self, block):
         [self.draw_face(block, face) for face in mcpython.util.enums.EnumSide.iterate()]
+
+    def draw_block_scaled(self, block, scale: float):
+        [self.draw_face_scaled(block, face, scale) for face in mcpython.util.enums.EnumSide.iterate()]
 
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)

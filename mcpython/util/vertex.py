@@ -49,6 +49,10 @@ def rotate_data(
     return ((rotate_point(e, origin, rotation) for e in x) for x in data)
 
 
+def scale_data(data, scale: float):
+    return ((tuple(e*scale for e in x) for x in y) for y in data)
+
+
 class VertexProvider:
     """
     Class doing some magic for vertices calculation
@@ -113,7 +117,7 @@ class VertexProvider:
         # The cache is a structure holding
         self.cache: typing.Dict[
             typing.Tuple[
-                typing.Tuple[float, float, float], typing.Tuple[float, float, float]
+                typing.Tuple[float, float, float], typing.Tuple[float, float, float], float
             ],
             typing.Iterable,
         ] = {}
@@ -123,12 +127,13 @@ class VertexProvider:
         element_position: typing.Tuple[float, float, float],
         element_rotation: typing.Tuple[float, float, float] = (0, 0, 0),
         element_rotation_center: typing.Tuple[float, float, float] = None,
+        scale: float = 1,
     ):
-        self.ensure_prepared_rotation(element_rotation, element_rotation_center)
+        self.ensure_prepared_rotation(element_rotation, element_rotation_center, scale)
 
         return list(
             offset_data(
-                self.cache[(element_rotation, element_rotation_center or (0, 0, 0))],
+                self.cache[(element_rotation, element_rotation_center or (0, 0, 0), scale)],
                 element_position,
             )
         )
@@ -137,17 +142,24 @@ class VertexProvider:
         self,
         rotation: typing.Tuple[float, float, float],
         center: typing.Tuple[float, float, float] = None,
+        scale: float = 1,
     ):
         if center is None:
             center = 0, 0, 0
 
-        key = rotation, center
+        key = rotation, center, scale
 
         if key not in self.cache:
-            return self.cache.setdefault(
-                key,
-                tuple(tuple(e) for e in rotate_data(self.default, center, rotation)),
-            )
+            if scale == 1:
+                return self.cache.setdefault(
+                    key,
+                    tuple(tuple(e) for e in rotate_data(self.default, center, rotation)),
+                )
+            else:
+                return self.cache.setdefault(
+                    key,
+                    tuple(tuple(e) for e in scale_data(rotate_data(self.default, center, rotation), scale)),
+                )
 
         return self.cache[key]
 

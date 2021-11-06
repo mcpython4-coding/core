@@ -147,6 +147,58 @@ class Model:
 
         return collected_data, box_model
 
+    def get_prepared_data_for_scaled(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        config: dict,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
+        previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
+    ) -> typing.Tuple[
+        typing.Tuple[typing.List[float], typing.List[float], typing.List[float]],
+        typing.Any,
+    ]:
+        """
+        Collects the vertex and texture data for a block at the given position with given configuration
+        :param instance: the instance to draw
+        :param position: the offset position
+        :param config: the configuration
+        :param face: the face
+        :param scale: the scale to get the data for
+        :param previous: previous collected data, as a tuple of vertices, texture coords
+        :return: a tuple of vertices and texture coords, and an underlying BoxModel for some identification stuff
+        """
+
+        # If this is true, we cannot render this model as stuff is not fully linked
+        if not self.drawable:
+            logger.println(
+                f"[BLOCK MODEL][FATAL] can't draw the model '{self.name}' "
+                f"(which has not defined textures) at {position}"
+            )
+            return ([], [], []) if previous is None else previous, None
+
+        rotation = config["rotation"]
+        if rotation == (90, 90, 0):
+            rotation = (0, 0, 90)
+
+        collected_data = ([], [], []) if previous is None else previous
+        box_model = None
+
+        for box_model in self.box_models:
+            box_model.get_prepared_box_data_scaled(
+                instance,
+                position,
+                rotation,
+                scale,
+                face.rotate((0, -90, 0))
+                if rotation[1] % 180 != 90
+                else face.rotate((0, 90, 0)),
+                previous=collected_data,
+            )
+
+        return collected_data, box_model
+
     def add_face_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
@@ -180,6 +232,26 @@ class Model:
         """
         collected_data, box_model = self.get_prepared_data_for(
             instance, position, config, face
+        )
+        if box_model is None:
+            return
+
+        box_model.draw_prepared_data(collected_data)
+
+    def draw_face_scaled(
+        self,
+        instance,
+        position: typing.Tuple[float, float, float],
+        config: dict,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
+    ):
+        """
+        Similar to add_face_to_batch, but does it in-place without a batches
+        Use batches wherever possible!
+        """
+        collected_data, box_model = self.get_prepared_data_for_scaled(
+            instance, position, config, face, scale,
         )
         if box_model is None:
             return

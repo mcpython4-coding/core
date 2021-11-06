@@ -106,11 +106,19 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
     ):
         return tuple()
 
-    # optional: draws the BlockState direct without an batch
+    # optional: draws the BlockState direct without a batch
     def draw_face(
         self,
         instance: IBlockStateRenderingTarget,
         face: mcpython.util.enums.EnumSide,
+    ):
+        pass
+
+    def draw_face_scaled(
+        self,
+        instance: IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
     ):
         pass
 

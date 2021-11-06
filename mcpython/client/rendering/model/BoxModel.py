@@ -192,13 +192,14 @@ class BoxModel(AbstractBoxModel):
         # todo: can we upload vertices to GPU in advance and use some clever code for drawing?
         # todo: can we pre-calculated rotated variants for faster draw times later down the road
 
-    def get_vertex_variant(self, rotation: tuple, position: tuple) -> list:
+    def get_vertex_variant(self, rotation: tuple, position: tuple, scale: float = 1) -> list:
         """
         Implementation to get the vertex data for a rotated block
         :param rotation: the rotation to use
         :param position: the position of the vertex cube
+        :param scale: the scale to use
         """
-        vertices = self.vertex_provider.get_vertex_data(position, rotation)
+        vertices = self.vertex_provider.get_vertex_data(position, rotation, scale=scale)
         return [sum(x, tuple()) for x in vertices]
 
     def get_prepared_box_data(
@@ -222,6 +223,73 @@ class BoxModel(AbstractBoxModel):
         :param previous: previous data to add the new to, or None to create new
         """
         vertex = self.get_vertex_variant(rotation, position)
+        collected_data = ([], [], []) if previous is None else previous
+
+        for face in mcpython.util.enums.EnumSide.iterate():
+            if uv_lock:
+                face = face.rotate(rotation)
+
+            i = UV_ORDER.index(face)
+            i2 = SIDE_ORDER.index(face)
+
+            if (
+                active_faces is None
+                or (
+                    active_faces == face.rotate(rotation)
+                    if hasattr(face, "rotate")
+                    else False
+                )
+                or (
+                    # todo: this seems wrong
+                    (
+                        active_faces[i]
+                        if type(active_faces) == list
+                        else (i in active_faces and active_faces[i])
+                    )
+                    if type(face) in (list, dict, set, tuple)
+                    else False
+                )
+            ):
+                if (
+                    not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
+                    and self.inactive[face.rotate(rotation)]
+                ):
+                    continue
+
+                collected_data[0].extend(vertex[i])
+                collected_data[1].extend(self.tex_data[i2])
+                collected_data[2].extend(
+                    (1,) * 16
+                    if self.face_tint_index[face.index] == -1
+                    else instance.get_tint_for_index(self.face_tint_index[face.index])
+                    * 4
+                )
+
+        return collected_data
+
+    def get_prepared_box_data_scaled(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        rotation: typing.Tuple[float, float, float] = (0, 0, 0),
+        scale: float = 1,
+        active_faces=None,
+        uv_lock=False,
+        previous: typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float]
+        ] = None,
+    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
+        """
+        Util method for getting the box data for a block (vertices and uv's)
+        :param instance: the instance to get information from to render
+        :param position: the position of the block
+        :param rotation: the rotation
+        :param scale: the scale to draw with
+        :param active_faces: the faces to get data for, None means all
+        :param uv_lock: ?
+        :param previous: previous data to add the new to, or None to create new
+        """
+        vertex = self.get_vertex_variant(rotation, position, scale)
         collected_data = ([], [], []) if previous is None else previous
 
         for face in mcpython.util.enums.EnumSide.iterate():
@@ -374,6 +442,30 @@ class BoxModel(AbstractBoxModel):
         )
         self.draw_prepared_data(collected_data)
 
+    def draw_scaled(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        rotation: typing.Tuple[float, float, float],
+        scale: float,
+        active_faces: typing.List[bool] = None,
+        uv_lock: bool = False,
+    ):
+        """
+        Draws the BoxModel direct into the world
+        WARNING: use batches for better performance
+        :param instance: the instance to ues for rendering
+        :param position: the position to draw on
+        :param rotation: the rotation to draw with
+        :param scale: the scale to draw in
+        :param uv_lock: if the uv's should be locked in place or not
+        :param active_faces: which faces to draw
+        """
+        collected_data = self.get_prepared_box_data_scaled(
+            instance, position, rotation, scale, active_faces=active_faces, uv_lock=uv_lock
+        )
+        self.draw_prepared_data(collected_data)
+
     def add_face_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
@@ -412,6 +504,28 @@ class BoxModel(AbstractBoxModel):
             instance,
             position,
             rotation,
+            active_faces=face,
+            uv_lock=uv_lock,
+        )
+
+    def draw_face_scaled(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        rotation: typing.Tuple[float, float, float],
+        face: EnumSide,
+        scale: float,
+        uv_lock=False,
+    ):
+        if rotation == (90, 90, 0):
+            rotation = (0, 0, 90)
+        face = face.rotate(rotation)
+
+        return self.draw_scaled(
+            instance,
+            position,
+            rotation,
+            scale,
             active_faces=face,
             uv_lock=uv_lock,
         )

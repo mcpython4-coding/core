@@ -243,6 +243,21 @@ class MultiPartDecoder(IBlockStateDecoder):
         if box_model is not None:
             box_model.draw_prepared_data((prepared_vertex, prepared_texture, prepared_tint))
 
+    def draw_face_scaled(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
+        previous=None,
+    ):
+        state = instance.get_model_state()
+        prepared_vertex, prepared_texture, prepared_tint, box_model = [], [], [], None
+        box_model = self.prepare_rendering_data_scaled(
+            box_model, face, instance, prepared_texture, prepared_vertex, prepared_tint, state, scale
+        )
+        if box_model is not None:
+            box_model.draw_prepared_data((prepared_vertex, prepared_texture, prepared_tint))
+
     def prepare_rendering_data(
         self,
         box_model,
@@ -448,6 +463,25 @@ class DefaultDecoder(IBlockStateDecoder):
                 )
             )
 
+    def draw_face_scaled(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
+    ):
+        data = instance.get_model_state()
+        for keymap, blockstate in self.states:
+            if keymap == data:
+                blockstate.draw_face_scaled(instance, face, scale)
+                return
+
+        if not shared.model_handler.hide_blockstate_errors:
+            logger.println(
+                "[WARN][INVALID] invalid state mapping for block {} at {}: {} (possible: {}".format(
+                    instance.NAME, instance.position, data, [e[0] for e in self.states]
+                )
+            )
+
 
 if shared.IS_CLIENT:
     shared.registry(MultiPartDecoder)
@@ -627,6 +661,14 @@ class BlockStateContainer:
     ):
         self.loader.draw_face(block, face)
 
+    def draw_face_scaled(
+        self,
+        block: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
+    ):
+        self.loader.draw_face_scaled(block, face, scale)
+
 
 class BlockState:
     def __init__(self):
@@ -717,6 +759,29 @@ class BlockState:
             return
         shared.model_handler.models[model].draw_face(
             instance, instance.position, config, face
+        )
+
+    def draw_face_scaled(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
+    ):
+        if instance.block_state is None:
+            instance.block_state = self.models.index(
+                random.choices(self.models, [e[2] for e in self.models])[0]
+            )
+        model, config, _ = self.models[instance.block_state]
+        if model not in shared.model_handler.models:
+            if not shared.model_handler.hide_blockstate_errors:
+                logger.println(
+                    "can't find model named '{}' to add at {}".format(
+                        model, instance.position
+                    )
+                )
+            return
+        shared.model_handler.models[model].draw_face_scaled(
+            instance, instance.position, config, face, scale=scale,
         )
 
 
