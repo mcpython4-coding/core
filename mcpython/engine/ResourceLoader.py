@@ -573,6 +573,9 @@ def read_image(file: str):
         if x.is_in_path(file):
             try:
                 return x.read_image(file)
+
+            except (SystemExit, KeyboardInterrupt):
+                sys.exit(-1)
             except:
                 logger.print_exception(
                     "exception during loading file '{}'".format(file)

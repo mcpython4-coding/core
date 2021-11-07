@@ -1905,5 +1905,5 @@ f   [uuk]: world/util/clone() accepts now optionally another world access for so
 F   [uuk]: breaking blocks will now spawn an actual ItemEntity, instead of adding the item directly into the player
            inventory
 f   [uuk]: you can now drop items into the world when clicking with an ItemStack outside of the inventory zone
-f   [uuk]: added Q hotkey
+f   [uuk]: added Q hotkey in world & inventory
 

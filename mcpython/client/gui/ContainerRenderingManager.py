@@ -62,7 +62,26 @@ class OpenedInventoryStatePart(
         x, y = shared.window.mouse_position
         slot, inventory = self._get_slot_inventory_for(x, y)
 
-        if slot is not None and slot.on_button_press is not None:
+        if slot and symbol == key.Q:
+            player = shared.world.get_active_player()
+            dimension = shared.world.get_active_dimension()
+            itemstack = slot.get_itemstack()
+
+            if modifiers & key.MOD_SHIFT:
+                dimension.spawn_itemstack_in_world(
+                    itemstack.copy(), player.position, pickup_delay=10
+                )
+                itemstack.clean()
+
+            else:
+                dimension.spawn_itemstack_in_world(
+                    itemstack.copy().set_amount(1),
+                    player.position,
+                    pickup_delay=10,
+                )
+                itemstack.add_amount(-1)
+
+        elif slot is not None and slot.on_button_press is not None:
             px, py = inventory.get_position()
 
             slot.on_button_press(x - px, y - py, symbol, modifiers)
