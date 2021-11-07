@@ -278,6 +278,8 @@ class FactoryBuilder:
             if cls not in self.base_classes:
                 self.base_classes.append(cls)
 
+            return self
+
         def __copy__(self):
             return self.copy()
 
