@@ -43,6 +43,9 @@ targeting 21w42a
         - can be picked up
         - currently do not render correct for non-block items
 
+    Blocks:
+        - candles and candle cake are now functional
+
 
 # Changelog of alpha 1.2.0, compared to 21w42a
 Released on 22.10.2021 targeting 1.17

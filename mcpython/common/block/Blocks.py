@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared
+from mcpython.common.block.Candle import ICandleCake
 from mcpython.common.block.Candle import ICandleGroup
 from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
@@ -285,7 +286,7 @@ def colored(name: str):
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_candle_cake")
-        .set_default_model_state("lit=false")
+        .add_base_class(ICandleCake)
         .set_solid(False)
         .set_all_side_solid(False)
     )

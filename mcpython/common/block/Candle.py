@@ -11,20 +11,19 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from pyglet.window import key
 from pyglet.window import mouse
 
+from mcpython import shared
 from mcpython.common.block import AbstractBlock
 from mcpython.common.block.FlowerLikeBlock import FlowerLikeBlock
 import mcpython.common.block.PossibleBlockStateBuilder
 
 
-class ICandleGroup(FlowerLikeBlock):
+class ICandleGroup(AbstractBlock.AbstractBlock):
     """
     Base class for the candle block system
     """
-
-    # We do ignore the block type underneath, it should be only full
-    SUPPORT_BLOCK_TAG = None
 
     IS_SOLID = False
     DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
@@ -62,6 +61,7 @@ class ICandleGroup(FlowerLikeBlock):
         if itemstack.get_item_name() != self.NAME: return False
         if self.count == 4: return False
         if button != mouse.RIGHT: return False
+        if modifiers & key.MOD_SHIFT: return False
 
         # Don't add candles when the player is in gamemode 1
         if player.gamemode == 3: return False
@@ -73,4 +73,53 @@ class ICandleGroup(FlowerLikeBlock):
             itemstack.add_amount(-1)
 
         return True
+
+
+class ICandleCake(FlowerLikeBlock):
+    SUPPORT_BLOCK_TAG = None
+
+    IS_SOLID = False
+    DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+
+    DEBUG_WORLD_BLOCK_STATES = (
+        mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
+            .add_comby_bool("lit")
+            .build()
+    )
+
+    def __init__(self):
+        super().__init__()
+        self.lit = True
+
+    def get_model_state(self):
+        return {"lit": str(self.lit).lower()}
+
+    def set_model_state(self, state: dict):
+        if "lit" in state:
+            self.lit = state["lit"] == "true"
+
+    def on_player_interaction(
+            self,
+            player,
+            button: int,
+            modifiers: int,
+            hit_position: tuple,
+            itemstack,
+    ):
+        if button != mouse.RIGHT: return False
+        if modifiers & key.MOD_SHIFT: return False
+        if player.gamemode == 3: return False
+
+        if player.gamemode == 1:
+            self.consum_bite()
+            return True
+
+        elif player.hunger < 20 and player.gamemode == 0:
+            player.hunger = min(player.hunger + 4)
+            self.consum_bite()
+            return
+
+    def consume_bite(self):
+        # todo: consume bite on target
+        shared.world.get_dimension_by_name(self.dimension).add_block(self.position, "minecraft:cake") #.consume_bite()
 
