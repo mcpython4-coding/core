@@ -1907,4 +1907,5 @@ F   [uuk]: breaking blocks will now spawn an actual ItemEntity, instead of addin
 f   [uuk]: you can now drop items into the world when clicking with an ItemStack outside of the inventory zone
 f   [uuk]: added Q hotkey in world & inventory
 f   [uuk]: candle block & candle cake are now fully working
+f   [uuk]: added in Lifecycle.py a queue for async invocation
 

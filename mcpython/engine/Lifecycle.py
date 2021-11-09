@@ -11,7 +11,24 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import queue
+import time
+
 import pyglet.app
+import asyncio
+
+from mcpython.engine import logger
+
+
+def schedule_task(task):
+    if not asyncio.iscoroutine(task):
+        ASYNC_INVOKE_QUEUE.put(task())
+    else:
+        ASYNC_INVOKE_QUEUE.put(task)
+    return task
+
+
+ASYNC_INVOKE_QUEUE = queue.SimpleQueue()
 
 
 class Lifecycle(pyglet.app.EventLoop):
@@ -28,6 +45,23 @@ class Lifecycle(pyglet.app.EventLoop):
             timeout = self.idle()
             platform_event_loop.step(timeout)
 
+            self.handle_some_async()
+
         self.is_running = False
         self.dispatch_event("on_exit")
         platform_event_loop.stop()
+
+    def handle_some_async(self):
+        start = time.time()
+
+        # todo: make time configurable
+        while time.time() - start < 1 / 60 and not ASYNC_INVOKE_QUEUE.empty():
+            task: asyncio.Task = ASYNC_INVOKE_QUEUE.get()
+            asyncio.get_event_loop().run_until_complete(task)
+
+            ex = task.exception()
+            if ex is not None:
+                try:
+                    raise ex
+                except:
+                    logger.print_exception(f"During invoking task {task}")

@@ -65,6 +65,10 @@ Data driver:
 - add TranslationComponent-class supported by buttons, labels, ... to dynamic cache the translation
 - make loot table system only load needed loot tables, etc.
 
+Parallelization:
+- When python releases the GIL better across threads, use another thread for our world gen process
+- Use threads for async workflow currently done in Lifecycle
+
 UI:
 - system for the end user to create your own WorldGenerationMode, which is dumped to a save-based file
 - registry view UI
