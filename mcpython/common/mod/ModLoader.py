@@ -421,7 +421,7 @@ class ModLoader:
         :return: a callable, used for regisering
 
         Example:
-        @shared.modloader("minecraft", "stage:mod:init")
+        @shared.mod_loader("minecraft", "stage:mod:init")
         def test():
             print("Hello world!")
         """

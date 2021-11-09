@@ -38,6 +38,12 @@ def applyPillowPatches():
     method.applyPatches()
 
 
+def patchAsyncSystem():
+    import asyncio.proactor_events
+
+    method = FunctionPatcher(asyncio.proactor_events.BaseProactorEventLoop.close)
+
+
 def removeLaunchWrapperPyVersionCheck():
     """
     Util method to be invoked by the launcher to disable the python version checker on launch.
@@ -55,6 +61,9 @@ def removeLaunchWrapperPyVersionCheck():
     method.code_string[3] = 0
 
     method.applyPatches()
+
+
+patchAsyncSystem()
 
 
 if shared.IS_CLIENT:

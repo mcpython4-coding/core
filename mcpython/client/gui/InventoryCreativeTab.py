@@ -692,8 +692,7 @@ Brewing = None
 Test = None
 
 
-@shared.mod_loader("minecraft", "stage:item_groups:load")
-def init():
+async def init():
     global BuildingBlocks, Decoration, Redstone, Transportation, Miscellaneous, Food, Tools, Weapons, Brewing, Test
     BuildingBlocks = CreativeItemTab(
         "Building Blocks",
@@ -740,3 +739,6 @@ def init():
     ).add_tab(Miscellaneous).add_tab(Food).add_tab(Tools).add_tab(Weapons).add_tab(
         Brewing
     )
+
+
+shared.mod_loader("minecraft", "stage:item_groups:load")(init())

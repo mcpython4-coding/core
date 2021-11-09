@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import sys
 import traceback
 import typing
@@ -55,7 +56,7 @@ class EventBus:
         self.event_subscriptions: typing.Dict[
             str,
             typing.List[
-                typing.Tuple[typing.Callable, typing.Iterable, typing.Dict, typing.Any]
+                typing.Tuple[typing.Callable | typing.Awaitable, typing.Iterable, typing.Dict, typing.Any]
             ],
         ] = {}
         self.popped_event_subscriptions = {}
@@ -68,7 +69,7 @@ class EventBus:
     def subscribe(
         self,
         event_name: str,
-        function: typing.Callable = None,
+        function: typing.Callable | typing.Awaitable = None,
         *args,
         info=None,
         **kwargs,
@@ -92,7 +93,7 @@ class EventBus:
             (function, args, kwargs, info)
         )
 
-    def unsubscribe(self, event_name: str, function: typing.Callable):
+    def unsubscribe(self, event_name: str, function: typing.Callable | typing.Awaitable):
         """
         Remove a function from the event bus from a given event
         :param event_name: the event name the function was registered to
@@ -123,15 +124,25 @@ class EventBus:
         if event_name not in self.event_subscriptions:
             return
 
+        # todo: run all async stuff parallel
+
         exception_occ = False
         for function, extra_args, extra_kwargs, info in self.event_subscriptions[
             event_name
         ]:
             try:
-                function(
-                    *list(args) + list(extra_args),
-                    **{**kwargs, **extra_kwargs},
-                )
+                if asyncio.iscoroutine(function):
+                    function = asyncio.get_event_loop().create_task(function)
+                    asyncio.get_event_loop().run_until_complete(function)
+
+                    ex = function.exception()
+                    if ex:
+                        raise ex
+                else:
+                    function(
+                        *list(args) + list(extra_args),
+                        **{**kwargs, **extra_kwargs},
+                    )
 
             except (SystemExit, KeyboardInterrupt):
                 raise
@@ -209,14 +220,27 @@ class EventBus:
         if event_name not in self.event_subscriptions:
             return
 
+        # todo: run all async stuff parallel
+
         for function, extra_args, extra_kwargs, info in self.event_subscriptions[
             event_name
         ]:
             try:
-                result = function(
-                    *list(args) + list(extra_args),
-                    **{**kwargs, **extra_kwargs},
-                )
+                if asyncio.iscoroutine(function):
+                    function = asyncio.get_event_loop().create_task(function)
+
+                    asyncio.get_event_loop().run_until_complete(function)
+
+                    result = function.result()
+
+                    ex = function.exception()
+                    if ex:
+                        raise ex
+                else:
+                    result = function(
+                        *list(args) + list(extra_args),
+                        **{**kwargs, **extra_kwargs},
+                    )
 
                 if check_function(result):
                     return result
@@ -226,8 +250,10 @@ class EventBus:
                 pyglet.app.exit()
                 print("closing due to missing memory")
                 sys.exit(-1)
+
             except (SystemExit, KeyboardInterrupt):
                 raise
+
             except:
                 logger.print_exception(
                     "during calling function: {} with arguments: {}, {}".format(
@@ -279,6 +305,8 @@ class EventBus:
                 )
             )
 
+        # todo: run all async stuff parallel
+
         for _ in range(amount):
             function, extra_args, extra_kwargs, info = d = self.event_subscriptions[
                 event_name
@@ -288,15 +316,25 @@ class EventBus:
                 self.popped_event_subscriptions.setdefault(event_name, []).append(d)
 
             try:
-                result.append(
-                    (
-                        function(
-                            *list(args) + list(extra_args),
-                            **{**kwargs, **extra_kwargs},
-                        ),
-                        info,
+                if asyncio.iscoroutine(function):
+                    function = asyncio.get_event_loop().create_task(function)
+                    asyncio.get_event_loop().run_until_complete(function)
+
+                    ex = function.exception()
+                    if ex:
+                        raise ex
+
+                    result.append(function.result())
+                else:
+                    result.append(
+                        (
+                            function(
+                                *list(args) + list(extra_args),
+                                **{**kwargs, **extra_kwargs},
+                            ),
+                            info,
+                        )
                     )
-                )
             except (SystemExit, KeyboardInterrupt):
                 raise
             except MemoryError:
