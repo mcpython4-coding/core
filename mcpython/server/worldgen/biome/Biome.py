@@ -45,7 +45,7 @@ class Biome(mcpython.common.event.api.IRegistryContent, ISerializeAble, ABC):
             typing.Tuple[int, int, int],
             typing.Callable[[], typing.Tuple[int, int, int]],
         ]
-    ] = None
+    ] = 91, 201, 59
     WATER_COLOR: typing.Optional[
         typing.Union[
             typing.Tuple[int, int, int],

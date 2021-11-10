@@ -49,8 +49,6 @@ class DefaultFeatureLayer(ILayer):
 
         # todo: rename to structure blocking info or something similar
         treemap = chunk.get_map("minecraft:feature_map")
-        if not treemap.get_at_xz(x, z, "minecraft:tree"):
-            return  # is an tree nearby?
 
         # the various maps
         biome = shared.biome_handler.biomes[
@@ -66,6 +64,9 @@ class DefaultFeatureLayer(ILayer):
 
             if count <= 0 or len(features) == 0:
                 continue
+
+            if treemap.get_at_xz(x, z, group):
+                return  # is a tree nearby?
 
             for _ in range(count):
                 # should we use this position?
@@ -89,3 +90,5 @@ class DefaultFeatureLayer(ILayer):
                     z,
                     feature_def.config,
                 )
+
+                treemap.set_at_xz(x, z, group)

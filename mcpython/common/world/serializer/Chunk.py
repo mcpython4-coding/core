@@ -71,7 +71,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             if d[0] not in shared.registry.get_by_name("minecraft:block").entries:
                 # todo: add missing texture block -> insert here
                 logger.println(
-                    "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block".format(
+                    "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block, but found in palette".format(
                         d[0], chunk, dimension
                     )
                 )

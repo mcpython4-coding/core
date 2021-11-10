@@ -30,6 +30,12 @@
       "group_spawn_count": [-3, 1]
     },
     {
+      "type": "minecraft:oak_tree_feature",
+      "weight": 20,
+      "group": "trees",
+      "group_spawn_count": [-3, 1]
+    },
+    {
       "type": "minecraft:plains_village_feature" ,
       "weight": 1,
       "group": "villages",

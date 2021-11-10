@@ -20,6 +20,7 @@ import mcpython.engine.world.AbstractInterface
 import mcpython.util.data
 from mcpython import shared
 from mcpython.common.data.serializer.DataSerializationManager import ISerializeAble
+from mcpython.util.texture import hex_to_color
 
 
 class ITopLayerConfigurator(ABC):
@@ -119,8 +120,15 @@ class BiomeSerializer(
                 data.setdefault("ambient_spawns", {})
             )
 
-            GRASS_COLOR = data.setdefault("grass_color", None)
+            GRASS_COLOR = data.setdefault("grass_color", (91, 201, 59))
+            if isinstance(GRASS_COLOR, str):
+                if GRASS_COLOR.startswith("#"):
+                    GRASS_COLOR = hex_to_color(GRASS_COLOR[1:])
+
             WATER_COLOR = data.setdefault("water_color", None)
+            if isinstance(WATER_COLOR, str):
+                if WATER_COLOR.startswith("#"):
+                    WATER_COLOR = hex_to_color(WATER_COLOR[1:])
 
             FEATURES = [
                 cls.decode_feature(feature)

@@ -1913,4 +1913,7 @@ fA* [uuk]: save file read/write/data fixer methods are now async, including thei
            some methods interacting with save files got a second set of methods for async work.
            WARNING: invoking an method with an async variant in an async context can result in a crash
            (Somehow, this decreased loading/saving times at my pc by a lot)
+b   [uuk]: fixed features never generating due to multiple mistakes in DefaultFeatureLayer
+f   [uuk]: grass color is now read from the biome
+f   [uuk]: added forest biome
 

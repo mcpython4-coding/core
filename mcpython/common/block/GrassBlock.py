@@ -54,10 +54,14 @@ class GrassBlock(AbstractBlock.AbstractBlock):
                     self.position, "minecraft:dirt"
                 )
 
-    @staticmethod
-    def get_tint_for_index(index: int) -> typing.Tuple[float, float, float, float]:
+    def get_tint_for_index(self, index: int) -> typing.Tuple[float, float, float, float]:
+        x, y, z = self.position
+        biome_map = shared.world.get_dimension_by_name(self.dimension).get_chunk_for_position(self.position).get_map("minecraft:biome_map")
+        biome_name = biome_map.get_at_xz(x, z)
+        biome = shared.biome_handler.biomes[biome_name]
+
         # todo: make biome-based
-        return 91 / 255, 201 / 255, 59 / 255, 1
+        return tuple(e / 255 for e in biome.GRASS_COLOR) + (1,)
 
     def on_player_interaction(
         self,

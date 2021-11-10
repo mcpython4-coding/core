@@ -23,7 +23,7 @@ class FeatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
     def __init__(self, chunk):
         super().__init__(chunk)
-        self.temperature_map: typing.Dict[typing.Tuple[int, int, int], float] = {}
+        self.map_map: typing.Dict[typing.Tuple[str, int, int], bool] = {}
 
     def load_from_saves(self, data):
         pass
@@ -31,8 +31,8 @@ class FeatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     def dump_for_saves(self):
         pass
 
-    def get_at_xz(self, x: int, z: int, group: str) -> str:
-        pass
+    def get_at_xz(self, x: int, z: int, group: str) -> bool:
+        return self.map_map.setdefault((group, x, z), False)
 
-    def set_at_xz(self, x: int, z: int, biome: str, group: str):
-        pass
+    def set_at_xz(self, x: int, z: int, group: str):
+        self.map_map[(group, x, z)] = True

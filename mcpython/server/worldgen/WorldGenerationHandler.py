@@ -360,6 +360,7 @@ def load_features():
         PlantFeature,
         SpruceTreeFeature,
         SurfaceLake,
+        BirchTreeFeature,
     )
     from .feature.village import VillageFeatureDefinition
 
