@@ -104,7 +104,9 @@ class ChunkDataFixer(IPartFixer):
             for chunk in data:
                 if chunk == "version":
                     continue
-                data[chunk] = await cls.fix(save_file, dim, region, chunk, data["chunk"])
+                data[chunk] = await cls.fix(
+                    save_file, dim, region, chunk, data["chunk"]
+                )
             await write_region_data(save_file, dim, region, data)
 
 

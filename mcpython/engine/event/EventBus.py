@@ -56,7 +56,12 @@ class EventBus:
         self.event_subscriptions: typing.Dict[
             str,
             typing.List[
-                typing.Tuple[typing.Callable | typing.Awaitable, typing.Iterable, typing.Dict, typing.Any]
+                typing.Tuple[
+                    typing.Callable | typing.Awaitable,
+                    typing.Iterable,
+                    typing.Dict,
+                    typing.Any,
+                ]
             ],
         ] = {}
         self.popped_event_subscriptions = {}
@@ -93,7 +98,9 @@ class EventBus:
             (function, args, kwargs, info)
         )
 
-    def unsubscribe(self, event_name: str, function: typing.Callable | typing.Awaitable):
+    def unsubscribe(
+        self, event_name: str, function: typing.Callable | typing.Awaitable
+    ):
         """
         Remove a function from the event bus from a given event
         :param event_name: the event name the function was registered to

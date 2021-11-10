@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -18,7 +18,6 @@ import sys
 
 import aiofiles
 import deprecation
-
 import mcpython.common.event.Registry
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer
@@ -230,7 +229,9 @@ class SaveFile:
 
     @deprecation.deprecated()
     def save_world(self, *_, override=False):
-        task = asyncio.get_event_loop().create_task(self.save_world_async(*_, override=override))
+        task = asyncio.get_event_loop().create_task(
+            self.save_world_async(*_, override=override)
+        )
         asyncio.get_event_loop().run_until_complete(task)
 
         if task.exception():
@@ -294,7 +295,9 @@ class SaveFile:
 
     @deprecation.deprecated()
     def apply_storage_fixer(self, name: str, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(self.apply_storage_fixer_async(name, *args, **kwargs))
+        task = asyncio.get_event_loop().create_task(
+            self.apply_storage_fixer_async(name, *args, **kwargs)
+        )
         asyncio.get_event_loop().run_until_complete(task)
 
         if task.exception():
@@ -329,7 +332,9 @@ class SaveFile:
 
     @deprecation.deprecated()
     def apply_group_fixer(self, name: str, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(self.apply_group_fixer_async(name, *args, **kwargs))
+        task = asyncio.get_event_loop().create_task(
+            self.apply_group_fixer_async(name, *args, **kwargs)
+        )
         asyncio.get_event_loop().run_until_complete(task)
 
         if task.exception():
@@ -366,7 +371,9 @@ class SaveFile:
 
     @deprecation.deprecated()
     def apply_part_fixer(self, name: str, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(self.apply_part_fixer_async(name, *args, **kwargs))
+        task = asyncio.get_event_loop().create_task(
+            self.apply_part_fixer_async(name, *args, **kwargs)
+        )
         asyncio.get_event_loop().run_until_complete(task)
 
         if task.exception():
@@ -396,13 +403,17 @@ class SaveFile:
 
     @deprecation.deprecated()
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(self.apply_mod_fixer_async(modname, source_version, *args, **kwargs))
+        task = asyncio.get_event_loop().create_task(
+            self.apply_mod_fixer_async(modname, source_version, *args, **kwargs)
+        )
         asyncio.get_event_loop().run_until_complete(task)
 
         if task.exception():
             raise task.exception()
 
-    async def apply_mod_fixer_async(self, modname: str, source_version: tuple, *args, **kwargs):
+    async def apply_mod_fixer_async(
+        self, modname: str, source_version: tuple, *args, **kwargs
+    ):
         """
         Applies an mod fixer(list) to the system
         :param modname: the mod name

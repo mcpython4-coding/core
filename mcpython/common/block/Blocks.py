@@ -14,8 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 from mcpython import shared
-from mcpython.common.block.Candle import ICandleCake
-from mcpython.common.block.Candle import ICandleGroup
+from mcpython.common.block.Candle import ICandleCake, ICandleGroup
 from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
 from mcpython.common.factory.combined.simple import CombinedFactoryInstance

@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,13 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from pyglet.window import key
-from pyglet.window import mouse
-
+import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
 from mcpython.common.block import AbstractBlock
 from mcpython.common.block.FlowerLikeBlock import FlowerLikeBlock
-import mcpython.common.block.PossibleBlockStateBuilder
+from pyglet.window import key, mouse
 
 
 class ICandleGroup(AbstractBlock.AbstractBlock):
@@ -58,13 +56,18 @@ class ICandleGroup(AbstractBlock.AbstractBlock):
         hit_position: tuple,
         itemstack,
     ):
-        if itemstack.get_item_name() != self.NAME: return False
-        if self.count == 4: return False
-        if button != mouse.RIGHT: return False
-        if modifiers & key.MOD_SHIFT: return False
+        if itemstack.get_item_name() != self.NAME:
+            return False
+        if self.count == 4:
+            return False
+        if button != mouse.RIGHT:
+            return False
+        if modifiers & key.MOD_SHIFT:
+            return False
 
         # Don't add candles when the player is in gamemode 1
-        if player.gamemode == 3: return False
+        if player.gamemode == 3:
+            return False
 
         self.count += 1
         self.face_info.update(True)
@@ -83,8 +86,8 @@ class ICandleCake(FlowerLikeBlock):
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
-            .add_comby_bool("lit")
-            .build()
+        .add_comby_bool("lit")
+        .build()
     )
 
     def __init__(self):
@@ -99,16 +102,19 @@ class ICandleCake(FlowerLikeBlock):
             self.lit = state["lit"] == "true"
 
     def on_player_interaction(
-            self,
-            player,
-            button: int,
-            modifiers: int,
-            hit_position: tuple,
-            itemstack,
+        self,
+        player,
+        button: int,
+        modifiers: int,
+        hit_position: tuple,
+        itemstack,
     ):
-        if button != mouse.RIGHT: return False
-        if modifiers & key.MOD_SHIFT: return False
-        if player.gamemode == 3: return False
+        if button != mouse.RIGHT:
+            return False
+        if modifiers & key.MOD_SHIFT:
+            return False
+        if player.gamemode == 3:
+            return False
 
         if player.gamemode == 1:
             self.consum_bite()
@@ -121,5 +127,6 @@ class ICandleCake(FlowerLikeBlock):
 
     def consume_bite(self):
         # todo: consume bite on target
-        shared.world.get_dimension_by_name(self.dimension).add_block(self.position, "minecraft:cake") #.consume_bite()
-
+        shared.world.get_dimension_by_name(self.dimension).add_block(
+            self.position, "minecraft:cake"
+        )  # .consume_bite()

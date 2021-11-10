@@ -109,14 +109,16 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                 ],
             }
 
-            await asyncio.gather(*[
-                save_file.dump_async(
-                    None,
-                    "minecraft:inventory",
-                    inventory=inventory,
-                    path="players/{}/inventory/{}".format(player.name, i),
-                )
-                for i, inventory in enumerate(player.get_inventories())
-            ])
+            await asyncio.gather(
+                *[
+                    save_file.dump_async(
+                        None,
+                        "minecraft:inventory",
+                        inventory=inventory,
+                        path="players/{}/inventory/{}".format(player.name, i),
+                    )
+                    for i, inventory in enumerate(player.get_inventories())
+                ]
+            )
 
         await save_file.dump_file_json_async("players.json", data)

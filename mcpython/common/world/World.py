@@ -15,7 +15,6 @@ import random
 import typing
 
 import deprecation
-
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
@@ -33,6 +32,7 @@ from mcpython import shared
 from mcpython.engine import logger
 from mcpython.engine.Lifecycle import schedule_task
 from mcpython.util.annotation import onlyInClient
+from mcpython.util.callbacks import wrap_method
 
 
 class World(mcpython.engine.world.AbstractInterface.IWorld):
@@ -422,7 +422,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         hide = before_set - after_set
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
-            pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
+            pyglet.clock.schedule_once(wrap_method(self.hide_chunk, chunk), 0.1)
             c = shared.world.get_active_dimension().get_chunk(
                 *chunk, generate=False, create=False
             )
@@ -443,7 +443,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                 continue
 
             c = dimension.get_chunk(*chunk, generate=False)
-            pyglet.clock.schedule_once(lambda _: self.show_chunk(c), 0.1)
+            pyglet.clock.schedule_once(wrap_method(self.show_chunk, c), 0.1)
 
             if not shared.IS_NETWORKING:
                 if not load_immediate:
@@ -521,13 +521,20 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         hide = before_set - after_set
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
-            pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
+            pyglet.clock.schedule_once(wrap_method(self.hide_chunk, chunk), 0.1)
             c = shared.world.get_active_dimension().get_chunk(
                 *chunk, generate=False, create=False
             )
 
             if c and c.loaded and not shared.IS_NETWORKING:
-                schedule_task(shared.world.save_file.dump_async(None, "minecraft:chunk", dimension=self.active_dimension, chunk=chunk))
+                schedule_task(
+                    shared.world.save_file.dump_async(
+                        None,
+                        "minecraft:chunk",
+                        dimension=self.active_dimension,
+                        chunk=chunk,
+                    )
+                )
 
         for chunk in after_set:
             c = dimension.get_chunk(*chunk, generate=False, create=False)
@@ -536,13 +543,17 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                 continue
 
             c = dimension.get_chunk(*chunk, generate=False)
-            pyglet.clock.schedule_once(lambda _: self.show_chunk(c), 0.1)
+            pyglet.clock.schedule_once(wrap_method(self.show_chunk, c), 0.1)
 
             if not shared.IS_NETWORKING:
                 if not load_immediate:
-                    schedule_task(shared.world.save_file.read_async("minecraft:chunk",
+                    schedule_task(
+                        shared.world.save_file.read_async(
+                            "minecraft:chunk",
                             dimension=self.active_dimension,
-                            chunk=chunk))
+                            chunk=chunk,
+                        )
+                    )
                 else:
                     await shared.world.save_file.read_async(
                         "minecraft:chunk", dimension=self.active_dimension, chunk=chunk

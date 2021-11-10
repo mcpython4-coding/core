@@ -32,5 +32,8 @@ class FlowerLikeBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
         dimension = shared.world.get_dimension_by_name(self.dimension)
         block_under = dimension.get_block((x, y - 1, z), none_if_str=True)
 
-        if block_under is None or (self.SUPPORT_BLOCK_TAG not in block_under.TAGS and self.SUPPORT_BLOCK_TAG is not None):
+        if block_under is None or (
+            self.SUPPORT_BLOCK_TAG not in block_under.TAGS
+            and self.SUPPORT_BLOCK_TAG is not None
+        ):
             dimension.remove_block(self, block_update_self=False)

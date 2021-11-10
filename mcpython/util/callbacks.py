@@ -17,3 +17,7 @@ import webbrowser
 def open_github_project():
     # todo: merge into usages
     webbrowser.open("https://github.com/mcpython4-coding/core")
+
+
+def wrap_method(method, *args, **kwargs):
+    return lambda *_, **__: method(*args, **kwargs)

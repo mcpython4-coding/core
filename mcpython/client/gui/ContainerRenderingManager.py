@@ -203,7 +203,11 @@ class OpenedInventoryStatePart(
             player = shared.world.get_active_player()
             dimension = player.dimension
 
-            if self.get_inventory_for(x, y) is None and shared.IS_CLIENT and not moving_itemstack.is_empty():
+            if (
+                self.get_inventory_for(x, y) is None
+                and shared.IS_CLIENT
+                and not moving_itemstack.is_empty()
+            ):
                 if button == mouse.LEFT:
                     dimension.spawn_itemstack_in_world(
                         moving_itemstack.copy(), player.position, pickup_delay=10

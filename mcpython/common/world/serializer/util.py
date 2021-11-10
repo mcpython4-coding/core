@@ -37,4 +37,6 @@ async def write_region_data(
     region,
     data,
 ):
-    await save_file.dump_file_pickle_async("dim/{}/{}_{}.region".format(dimension, *region), data)
+    await save_file.dump_file_pickle_async(
+        "dim/{}/{}_{}.region".format(dimension, *region), data
+    )
