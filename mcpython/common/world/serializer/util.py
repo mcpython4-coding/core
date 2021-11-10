@@ -19,22 +19,22 @@ def chunk2region(cx, cz):
     return round(cx) >> 5, round(cz) >> 5
 
 
-def access_region_data(
+async def access_region_data(
     save_file,
     dimension: int,
     region: tuple,
 ):
     if dimension not in shared.world.dimensions:
         return
-    return save_file.access_file_pickle(
+    return await save_file.access_file_pickle_async(
         "dim/{}/{}_{}.region".format(dimension, *region)
     )
 
 
-def write_region_data(
+async def write_region_data(
     save_file,
     dimension: int,
     region,
     data,
 ):
-    save_file.dump_file_pickle("dim/{}/{}_{}.region".format(dimension, *region), data)
+    await save_file.dump_file_pickle_async("dim/{}/{}_{}.region".format(dimension, *region), data)

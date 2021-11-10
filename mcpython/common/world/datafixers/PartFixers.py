@@ -32,13 +32,13 @@ class GameRuleFixer(IPartFixer):
 
     @classmethod
     async def apply(cls, save_file, *args):
-        data = save_file.access_file_json("gamerules.json")
+        data = await save_file.access_file_json_async("gamerules.json")
         if data is None:
             return
         for name in data:
             if name in cls.TARGET_GAMERULE_NAME:
                 data[name] = await cls.fix(save_file, data[name])
-        save_file.dump_file_json("gamerules.json", data)
+        await save_file.dump_file_json_async("gamerules.json", data)
 
 
 class GameRuleRemovalFixer(IPartFixer):
@@ -52,13 +52,13 @@ class GameRuleRemovalFixer(IPartFixer):
 
     @classmethod
     async def apply(cls, save_file, *args):
-        data = save_file.access_file_json("gamerules.json")
+        data = await save_file.access_file_json_async("gamerules.json")
         if data is None:
             return
         for name in data:
             if name in cls.TARGET_GAMERULE_NAME:
                 del data[name]
-        save_file.dump_file_json("gamerules.json", data)
+        await save_file.dump_file_json_async("gamerules.json", data)
 
 
 class WorldConfigFixer(IPartFixer):
@@ -74,7 +74,7 @@ class WorldConfigFixer(IPartFixer):
 
     @classmethod
     async def apply(cls, save_file, *args):
-        data = save_file.access_file_json("level.json")
+        data = await save_file.access_file_json_async("level.json")
         data["config"] = await cls.fix(save_file, data["config"])
         save_file.write_file_json("level.json", data)
 
@@ -92,7 +92,7 @@ class WorldGeneralFixer(IPartFixer):
 
     @classmethod
     async def apply(cls, save_file, *args):
-        data = save_file.access_file_json("level.json")
+        data = await save_file.access_file_json_async("level.json")
         data = await cls.fix(save_file, data)
         save_file.write_file_json("level.json", data)
 
@@ -116,7 +116,7 @@ class PlayerDataFixer(IPartFixer):
 
     @classmethod
     async def apply(cls, save_file, *args):
-        data = save_file.access_file_json("players.json")
+        data = await save_file.access_file_json_async("players.json")
 
         for name in data:
             player_data = data[name]
@@ -126,4 +126,4 @@ class PlayerDataFixer(IPartFixer):
             player_data = await cls.fix(save_file, player, player_data)
             data[name] = player_data
 
-        save_file.dump_file_json("players.json", data)
+        await save_file.dump_file_json_async("players.json", data)

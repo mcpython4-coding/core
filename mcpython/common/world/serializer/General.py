@@ -29,7 +29,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
     @classmethod
     async def load(cls, save_file):
-        data = save_file.access_file_json("level.json")
+        data = await save_file.access_file_json_async("level.json")
         if data is None:
             raise mcpython.common.world.serializer.IDataSerializer.MissingSaveException(
                 "level.json not found!"
@@ -175,4 +175,4 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 ),
             },
         }
-        save_file.dump_file_json("level.json", data)
+        await save_file.dump_file_json_async("level.json", data)

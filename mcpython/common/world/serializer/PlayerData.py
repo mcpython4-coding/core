@@ -26,7 +26,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
     @classmethod
     async def load(cls, save_file, **_):
         # todo: gather
-        data = save_file.access_file_json("players.json")
+        data = await save_file.access_file_json_async("players.json")
 
         if data is None:
             return
@@ -75,7 +75,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
 
     @classmethod
     async def save(cls, data, save_file, **_):
-        data = save_file.access_file_json("players.json")
+        data = await save_file.access_file_json_async("players.json")
         if data is None:
             data = {}
 
@@ -119,4 +119,4 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                 for i, inventory in enumerate(player.get_inventories())
             ])
 
-        save_file.dump_file_json("players.json", data)
+        await save_file.dump_file_json_async("players.json", data)

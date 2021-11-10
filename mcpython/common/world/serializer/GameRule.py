@@ -21,7 +21,7 @@ class GameRule(mcpython.common.world.serializer.IDataSerializer.IDataSerializer)
 
     @classmethod
     async def load(cls, save_file):
-        data = save_file.access_file_json("gamerules.json")
+        data = await save_file.access_file_json_async("gamerules.json")
         if data is None:
             pass
 
@@ -34,4 +34,4 @@ class GameRule(mcpython.common.world.serializer.IDataSerializer.IDataSerializer)
             gamerule.NAME: gamerule.status.save()
             for gamerule in shared.world.gamerule_handler.table.values()
         }
-        save_file.dump_file_json("gamerules.json", data)
+        await save_file.dump_file_json_async("gamerules.json", data)

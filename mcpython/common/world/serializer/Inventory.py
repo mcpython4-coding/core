@@ -47,7 +47,7 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
         """
         if file is None:
             file = "inventories.dat"
-        data = save_file.access_file_pickle(file)
+        data = await save_file.access_file_pickle_async(file)
 
         if data is None:
             return
@@ -77,7 +77,7 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
     ):
         if file is None:
             file = "inventories.dat"
-        data = save_file.access_file_pickle(file) if not override else None
+        data = await save_file.access_file_pickle_async(file) if not override else None
         if data is None:
             data = {}
 
@@ -87,4 +87,4 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
             "slots": [slot.save() for slot in inventory.slots],
         }
         data[path] = idata
-        save_file.dump_file_pickle(file, data)
+        await save_file.dump_file_pickle_async(file, data)

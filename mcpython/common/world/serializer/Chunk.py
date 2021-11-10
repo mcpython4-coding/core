@@ -39,7 +39,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     ):
         region = chunk2region(*chunk)
         try:
-            data = access_region_data(save_file, dimension, region)
+            data = await access_region_data(save_file, dimension, region)
         except NotImplementedError:
             return
 
@@ -173,7 +173,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             shared.world.dimensions[dimension].chunks[chunk]
         )
 
-        data = save_file.access_file_pickle(
+        data = await save_file.access_file_pickle_async(
             "dim/{}/{}_{}.region".format(dimension, *region)
         )
 
@@ -278,7 +278,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 cdata["maps"][data_map.NAME] = data_map.dump_for_saves()
 
         data[chunk] = cdata  # dump the chunk into the region
-        write_region_data(
+        await write_region_data(
             save_file, dimension, region, data
         )  # and dump the region to the file
 

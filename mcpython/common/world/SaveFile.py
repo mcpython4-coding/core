@@ -16,6 +16,7 @@ import os
 import pickle
 import sys
 
+import aiofiles
 import deprecation
 
 import mcpython.common.event.Registry
@@ -568,6 +569,7 @@ class SaveFile:
     # Helper functions for fixers, loaders and savers
     # todo: add nbt serializer
 
+    @deprecation.deprecated()
     def access_file_json(self, file: str):
         """
         Access a saved json file
@@ -592,6 +594,31 @@ class SaveFile:
             )
             return
 
+    async def access_file_json_async(self, file: str):
+        """
+        Access a saved json file
+        :param file: the file to load
+        :return: the data of the file or None if an error has occur
+        """
+        file = os.path.join(self.directory, file)
+        if not os.path.isfile(file):
+            return
+
+        try:
+            async with aiofiles.open(file) as f:
+                return json.loads(await f.read())
+
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+        except json.decoder.JSONDecodeError:
+            logger.print_exception(
+                "File '{}' seems to be corrupted, below the loader exception".format(
+                    file
+                )
+            )
+            return
+
+    @deprecation.deprecated()
     def access_file_pickle(self, file: str):
         """
         Access save a pickle file
@@ -620,6 +647,35 @@ class SaveFile:
                 )
             )
 
+    async def access_file_pickle_async(self, file: str):
+        """
+        Access save a pickle file
+        :param file: the file to load
+        :return: the data of the file or None if an error has occurred
+        """
+        file = os.path.join(self.directory, file)
+        if not os.path.isfile(file):
+            return
+        try:
+            async with aiofiles.open(file, mode="rb") as f:
+                return mcpython.util.picklemagic.safe_loads(await f.read())
+        except (pickle.UnpicklingError, EOFError, ModuleNotFoundError):
+            logger.print_exception(
+                "File '{}' seems to be corrupted. See error message for info, below the loading exception".format(
+                    file
+                )
+            )
+            return
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+        except AttributeError:
+            logger.print_exception(
+                "Module changed in between code systems, leading into corrupted file {}".format(
+                    file
+                )
+            )
+
+    @deprecation.deprecated()
     def access_raw(self, file: str):
         """
         Access save a file in binary mode
@@ -633,6 +689,20 @@ class SaveFile:
         with open(file, mode="rb") as f:
             return f.read()
 
+    async def access_raw_async(self, file: str):
+        """
+        Access save a file in binary mode
+        :param file: the file to load
+        :return: the data of the file or None if an error has occurred
+        """
+        file = os.path.join(self.directory, file)
+        if not os.path.isfile(file):
+            return
+
+        async with aiofiles.open(file, mode="rb") as f:
+            return await f.read()
+
+    @deprecation.deprecated()
     def dump_file_json(self, file: str, data):
         """
         saves stuff with json into the system
@@ -652,6 +722,26 @@ class SaveFile:
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 
+    async def dump_file_json_async(self, file: str, data):
+        """
+        saves stuff with json into the system
+        :param file: the file to save to
+        :param data: the data to save
+        """
+        file = os.path.join(self.directory, file)
+        d = os.path.dirname(file)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        try:
+            data = json.dumps(data, indent="  ")
+            async with aiofiles.open(file, mode="w") as f:
+                await f.write(data)
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+        except:
+            logger.print_exception("during dumping {} to '{}'".format(data, file))
+
+    @deprecation.deprecated()
     def dump_file_pickle(self, file: str, data):
         """
         saves stuff with pickle into the system
@@ -671,6 +761,26 @@ class SaveFile:
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 
+    async def dump_file_pickle_async(self, file: str, data):
+        """
+        Saves stuff with pickle into the system
+        :param file: the file to save to
+        :param data: the data to save
+        """
+        file = os.path.join(self.directory, file)
+        d = os.path.dirname(file)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        try:
+            data = mcpython.util.picklemagic.safe_dumps(data)
+            async with aiofiles.open(file, mode="wb") as f:
+                await f.write(data)
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+        except:
+            logger.print_exception("during dumping {} to '{}'".format(data, file))
+
+    @deprecation.deprecated()
     def dump_raw(self, file: str, data: bytes):
         """
         saves bytes into the system
@@ -683,6 +793,19 @@ class SaveFile:
             os.makedirs(d)
         with open(file, mode="wb") as f:
             return f.write(data)
+
+    async def dump_raw_async(self, file: str, data: bytes):
+        """
+        saves bytes into the system
+        :param file: the file to save to
+        :param data: the data to save
+        """
+        file = os.path.join(self.directory, file)
+        d = os.path.dirname(file)
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        async with aiofiles.open(file, mode="wb") as f:
+            await f.write(data)
 
 
 @shared.mod_loader("minecraft", "stage:datafixer:general")

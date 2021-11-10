@@ -56,7 +56,7 @@ class BlockPartFixer(IPartFixer):
             else (cls.TARGET_BLOCK_NAME,)
         )
         for dim, region in save_file.region_iterator():
-            data = access_region_data(save_file, dim, region)
+            data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
             for chunk in data:
@@ -66,7 +66,7 @@ class BlockPartFixer(IPartFixer):
                 for i, entry in enumerate(palette):
                     if entry["name"] in blocks:
                         palette[i] = await cls.fix(save_file, dim, region, chunk, entry)
-            write_region_data(save_file, dim, region, data)
+            await write_region_data(save_file, dim, region, data)
 
 
 class ChunkDataFixer(IPartFixer):
@@ -98,14 +98,14 @@ class ChunkDataFixer(IPartFixer):
     @classmethod
     async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
-            data = access_region_data(save_file, dim, region)
+            data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
             for chunk in data:
                 if chunk == "version":
                     continue
                 data[chunk] = await cls.fix(save_file, dim, region, chunk, data["chunk"])
-            write_region_data(save_file, dim, region, data)
+            await write_region_data(save_file, dim, region, data)
 
 
 class RegionDataFixer(IPartFixer):
@@ -135,11 +135,11 @@ class RegionDataFixer(IPartFixer):
     @classmethod
     async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
-            data = access_region_data(save_file, dim, region)
+            data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
             data = await cls.fix(save_file, dim, region, data)
-            write_region_data(save_file, dim, region, data)
+            await write_region_data(save_file, dim, region, data)
 
 
 class BlockRemovalFixer(IPartFixer):
@@ -176,7 +176,7 @@ class BlockRemovalFixer(IPartFixer):
             else (cls.TARGET_BLOCK_NAMES,)
         )
         for dim, region in save_file.region_iterator():
-            data = access_region_data(save_file, dim, region)
+            data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
             for chunk in data:
@@ -188,7 +188,7 @@ class BlockRemovalFixer(IPartFixer):
                         palette[i] = await cls.on_replace(
                             save_file, dim, chunk, palette[i], cls.REPLACE
                         )
-            write_region_data(save_file, dim, region, data)
+            await write_region_data(save_file, dim, region, data)
 
 
 class EntityDataFixer(IPartFixer):
@@ -220,7 +220,7 @@ class EntityDataFixer(IPartFixer):
     @classmethod
     async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
-            data = access_region_data(save_file, dim, region)
+            data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
             for chunk in data:
@@ -230,7 +230,7 @@ class EntityDataFixer(IPartFixer):
                 for entity_data in cdata["entities"]:
                     if entity_data["type"] == cls.TARGET_ENTITY_NAME:
                         await cls.fix(save_file, dim, region, chunk, entity_data)
-            write_region_data(save_file, dim, region, data)
+            await write_region_data(save_file, dim, region, data)
 
 
 class EntityRemovalFixer(IPartFixer):
@@ -255,7 +255,7 @@ class EntityRemovalFixer(IPartFixer):
     @classmethod
     async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
-            data = access_region_data(save_file, dim, region)
+            data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
             for chunk in data:
@@ -266,7 +266,7 @@ class EntityRemovalFixer(IPartFixer):
                     if entity_data["type"] == cls.TARGET_ENTITY_NAME:
                         cdata["entities"].remove(entity_data)
                         await cls.on_replace(save_file, dim, chunk, entity_data, cdata)
-            write_region_data(save_file, dim, region, data)
+            await write_region_data(save_file, dim, region, data)
 
 
 class ChunkMapDataFixer(IPartFixer):
@@ -297,7 +297,7 @@ class ChunkMapDataFixer(IPartFixer):
     @classmethod
     async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
-            data = access_region_data(save_file, dim, region)
+            data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
             for chunk in data:
@@ -305,4 +305,4 @@ class ChunkMapDataFixer(IPartFixer):
                     continue
                 cdata = data[chunk]
                 await cls.fix(save_file, dim, region, chunk, cdata["maps"])
-            write_region_data(save_file, dim, region, data)
+            await write_region_data(save_file, dim, region, data)

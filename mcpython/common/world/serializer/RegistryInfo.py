@@ -26,7 +26,7 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
 
     @classmethod
     async def load(cls, save_file):
-        data = save_file.access_file_pickle("registries.dat")
+        data = await save_file.access_file_pickle_async("registries.dat")
         if data is None:
             return
 
@@ -85,4 +85,4 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
             for obj in registry.entries.values():
                 rdata.append(obj.compressed_info())
             data[registry.name] = rdata
-        save_file.dump_file_pickle("registries.dat", data)
+        await save_file.dump_file_pickle_async("registries.dat", data)
