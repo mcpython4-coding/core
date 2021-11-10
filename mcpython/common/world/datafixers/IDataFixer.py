@@ -23,7 +23,7 @@ class IDataFixer(mcpython.common.event.api.IRegistryContent):
     FIXES_TO = None
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         pass
 
 
@@ -83,7 +83,7 @@ class IPartFixer(IDataFixer, ABC):
     TARGET_SERIALIZER_NAME = None  # the name of the fixer dedicated to these part
 
     @classmethod
-    def apply(cls, save_file, *args, **kwargs):
+    async def apply(cls, save_file, *args, **kwargs):
         """
         default implementation of the IPartFixer apply() calling apply_part_fixer(cls) on the SERIALIZER specified
         by TARGET_SERIALIZER_NAME

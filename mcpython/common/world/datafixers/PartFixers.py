@@ -27,17 +27,17 @@ class GameRuleFixer(IPartFixer):
     TARGET_GAMERULE_NAME = []  # which game rules to apply to
 
     @classmethod
-    def fix(cls, save_file, data) -> dict:
+    async def fix(cls, save_file, data) -> dict:
         pass
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         data = save_file.access_file_json("gamerules.json")
         if data is None:
             return
         for name in data:
             if name in cls.TARGET_GAMERULE_NAME:
-                data[name] = cls.fix(save_file, data[name])
+                data[name] = await cls.fix(save_file, data[name])
         save_file.dump_file_json("gamerules.json", data)
 
 
@@ -51,7 +51,7 @@ class GameRuleRemovalFixer(IPartFixer):
     TARGET_GAMERULE_NAME = []  # which game rules to apply to
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         data = save_file.access_file_json("gamerules.json")
         if data is None:
             return
@@ -69,13 +69,13 @@ class WorldConfigFixer(IPartFixer):
     TARGET_SERIALIZER_NAME = "minecraft:general_config"
 
     @classmethod
-    def fix(cls, save_file, data: dict) -> dict:
+    async def fix(cls, save_file, data: dict) -> dict:
         raise NotImplementedError()
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         data = save_file.access_file_json("level.json")
-        data["config"] = cls.fix(save_file, data["config"])
+        data["config"] = await cls.fix(save_file, data["config"])
         save_file.write_file_json("level.json", data)
 
 
@@ -87,13 +87,13 @@ class WorldGeneralFixer(IPartFixer):
     TARGET_SERIALIZER_NAME = "minecraft:general"
 
     @classmethod
-    def fix(cls, save_file, data: dict) -> dict:
+    async def fix(cls, save_file, data: dict) -> dict:
         raise NotImplementedError()
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         data = save_file.access_file_json("level.json")
-        data = cls.fix(save_file, data)
+        data = await cls.fix(save_file, data)
         save_file.write_file_json("level.json", data)
 
 
@@ -105,7 +105,7 @@ class PlayerDataFixer(IPartFixer):
     TARGET_SERIALIZER_NAME = "minecraft:player_data"
 
     @classmethod
-    def fix(cls, savefile, player, data) -> dict:
+    async def fix(cls, savefile, player, data) -> dict:
         """
         will apply the fix
         :param savefile: the savefile to use
@@ -115,13 +115,15 @@ class PlayerDataFixer(IPartFixer):
         """
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         data = save_file.access_file_json("players.json")
+
         for name in data:
             player_data = data[name]
             player = (
                 shared.world.players[name] if name not in shared.world.players else None
             )
-            player_data = cls.fix(save_file, player, player_data)
+            player_data = await cls.fix(save_file, player, player_data)
             data[name] = player_data
+
         save_file.dump_file_json("players.json", data)

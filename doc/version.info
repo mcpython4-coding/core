@@ -1909,4 +1909,8 @@ f   [uuk]: added Q hotkey in world & inventory
 f   [uuk]: candle block & candle cake are now fully working
 f   [uuk]: added in Lifecycle.py a queue for async invocation
 f   [uuk]: EventBus accepts now coroutines as event subscriptions
+fA* [uuk]: save file read/write/data fixer methods are now async, including their implementation API,
+           some methods interacting with save files got a second set of methods for async work.
+           WARNING: invoking an method with an async variant in an async context can result in a crash
+           (Somehow, this decreased loading/saving times at my pc by a lot)
 

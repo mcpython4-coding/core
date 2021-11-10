@@ -34,7 +34,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
 
     @classmethod
-    def load(
+    async def load(
         cls, save_file, dimension: int, chunk: typing.Tuple[int, int], immediate=False
     ):
         region = chunk2region(*chunk)
@@ -49,7 +49,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
         )
 
-        # So, in some cases we cannot load the chunk
+        # So, in some cases we should not load the chunk
         if chunk_instance.loaded:
             return
         if data is None:
@@ -57,7 +57,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         if chunk not in data:
             return
 
-        # Don't do this when we are saving stuff
+        # Don't generate stuff while we are saving stuff
         shared.world_generation_handler.enable_generation = False
 
         data = data[chunk]
@@ -161,7 +161,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
 
     @classmethod
-    def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):
+    async def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):
         if dimension not in shared.world.dimensions:
             return
 

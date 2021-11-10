@@ -28,7 +28,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:general"
 
     @classmethod
-    def load(cls, save_file):
+    async def load(cls, save_file):
         data = save_file.access_file_json("level.json")
         if data is None:
             raise mcpython.common.world.serializer.IDataSerializer.MissingSaveException(
@@ -130,7 +130,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             )
 
         if "active_dimension" in data and shared.IS_CLIENT:
-            shared.world.join_dimension(data["active_dimension"])
+            await shared.world.join_dimension_async(data["active_dimension"])
 
         wd = data["world_gen_info"]
         mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = wd[
@@ -145,7 +145,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
 
     @classmethod
-    def save(cls, data, save_file):
+    async def save(cls, data, save_file):
         data = {
             "storage version": save_file.version,  # the storage version stored in
             "player name": shared.world.get_active_player().name

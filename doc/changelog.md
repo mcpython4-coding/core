@@ -26,6 +26,10 @@ Contains only some information, in ordered form, in a better form for the end us
 Planned to be released on 17.11.2021
 targeting 21w42a
 
+Backwards incompatible changes:
+- async system for world saves
+
+
     Library
         - requiring now python 3.10
 
@@ -35,6 +39,7 @@ targeting 21w42a
     Storage:
         - using now the network serializer versions for saving block data to disk
         - this makes it incompatible with old saves, so we removed support for them
+        - using now an async foundation for world saving (saves remain compatible)
 
     Items:
         - added ItemEntities 

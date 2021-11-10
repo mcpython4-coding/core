@@ -20,7 +20,7 @@ class GameRule(mcpython.common.world.serializer.IDataSerializer.IDataSerializer)
     PART = NAME = "minecraft:gamerule"
 
     @classmethod
-    def load(cls, save_file):
+    async def load(cls, save_file):
         data = save_file.access_file_json("gamerules.json")
         if data is None:
             pass
@@ -29,7 +29,7 @@ class GameRule(mcpython.common.world.serializer.IDataSerializer.IDataSerializer)
             shared.world.gamerule_handler.table[name].status.load(data[name])
 
     @classmethod
-    def save(cls, data, save_file):
+    async def save(cls, data, save_file):
         data = {
             gamerule.NAME: gamerule.status.save()
             for gamerule in shared.world.gamerule_handler.table.values()

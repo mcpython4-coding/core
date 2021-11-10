@@ -25,7 +25,7 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
     PART = NAME = "minecraft:registry_info_serializer"
 
     @classmethod
-    def load(cls, save_file):
+    async def load(cls, save_file):
         data = save_file.access_file_pickle("registries.dat")
         if data is None:
             return
@@ -76,7 +76,7 @@ class RegistryInfo(mcpython.common.world.serializer.IDataSerializer.IDataSeriali
                 )
 
     @classmethod
-    def save(cls, data, save_file):
+    async def save(cls, data, save_file):
         data = {}
         for registry in shared.registry.registries.values():
             if not registry.dump_content_in_saves:

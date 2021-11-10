@@ -30,7 +30,7 @@ class BlockPartFixer(IPartFixer):
     TARGET_BLOCK_NAME = None  # on which block(s) to apply
 
     @classmethod
-    def fix(
+    async def fix(
         cls,
         save_file,
         dimension: int,
@@ -49,7 +49,7 @@ class BlockPartFixer(IPartFixer):
         """
 
     @classmethod
-    def apply(cls, save_file, *args, **kwargs):
+    async def apply(cls, save_file, *args, **kwargs):
         blocks = (
             cls.TARGET_BLOCK_NAME
             if type(cls.TARGET_BLOCK_NAME) in (list, tuple, set)
@@ -65,7 +65,7 @@ class BlockPartFixer(IPartFixer):
                 palette = data[chunk]["block_palette"]
                 for i, entry in enumerate(palette):
                     if entry["name"] in blocks:
-                        palette[i] = cls.fix(save_file, dim, region, chunk, entry)
+                        palette[i] = await cls.fix(save_file, dim, region, chunk, entry)
             write_region_data(save_file, dim, region, data)
 
 
@@ -77,7 +77,7 @@ class ChunkDataFixer(IPartFixer):
     TARGET_SERIALIZER_NAME = "minecraft:chunk"
 
     @classmethod
-    def fix(
+    async def fix(
         cls,
         save_file,
         dimension: int,
@@ -96,7 +96,7 @@ class ChunkDataFixer(IPartFixer):
         """
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
             data = access_region_data(save_file, dim, region)
             if data is None:
@@ -104,7 +104,7 @@ class ChunkDataFixer(IPartFixer):
             for chunk in data:
                 if chunk == "version":
                     continue
-                data[chunk] = cls.fix(save_file, dim, region, chunk, data["chunk"])
+                data[chunk] = await cls.fix(save_file, dim, region, chunk, data["chunk"])
             write_region_data(save_file, dim, region, data)
 
 
@@ -116,7 +116,7 @@ class RegionDataFixer(IPartFixer):
     TARGET_SERIALIZER_NAME = "minecraft:chunk"
 
     @classmethod
-    def fix(
+    async def fix(
         cls,
         save_file,
         dimension: int,
@@ -133,12 +133,12 @@ class RegionDataFixer(IPartFixer):
         """
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
             data = access_region_data(save_file, dim, region)
             if data is None:
                 continue
-            data = cls.fix(save_file, dim, region, data)
+            data = await cls.fix(save_file, dim, region, data)
             write_region_data(save_file, dim, region, data)
 
 
@@ -158,7 +158,7 @@ class BlockRemovalFixer(IPartFixer):
     }  # the block data to replace with
 
     @classmethod
-    def on_replace(
+    async def on_replace(
         cls,
         save_file,
         dimension: int,
@@ -169,7 +169,7 @@ class BlockRemovalFixer(IPartFixer):
         return target
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         blocks = (
             cls.TARGET_BLOCK_NAMES
             if type(cls.TARGET_BLOCK_NAMES) in (list, tuple, set)
@@ -185,7 +185,7 @@ class BlockRemovalFixer(IPartFixer):
                 palette = data[chunk]["block_palette"]
                 for i, entry in enumerate(palette):
                     if entry["name"] in blocks:
-                        palette[i] = cls.on_replace(
+                        palette[i] = await cls.on_replace(
                             save_file, dim, chunk, palette[i], cls.REPLACE
                         )
             write_region_data(save_file, dim, region, data)
@@ -200,7 +200,7 @@ class EntityDataFixer(IPartFixer):
     TARGET_ENTITY_NAME = None  # which entity to apply to
 
     @classmethod
-    def fix(
+    async def fix(
         cls,
         save_file,
         dimension: int,
@@ -218,7 +218,7 @@ class EntityDataFixer(IPartFixer):
         """
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
             data = access_region_data(save_file, dim, region)
             if data is None:
@@ -229,7 +229,7 @@ class EntityDataFixer(IPartFixer):
                 cdata = data[chunk]
                 for entity_data in cdata["entities"]:
                     if entity_data["type"] == cls.TARGET_ENTITY_NAME:
-                        cls.fix(save_file, dim, region, chunk, entity_data)
+                        await cls.fix(save_file, dim, region, chunk, entity_data)
             write_region_data(save_file, dim, region, data)
 
 
@@ -242,7 +242,7 @@ class EntityRemovalFixer(IPartFixer):
     TARGET_ENTITY_NAME = None  # which entity to apply to
 
     @classmethod
-    def on_replace(
+    async def on_replace(
         cls,
         save_file,
         dimension: int,
@@ -253,7 +253,7 @@ class EntityRemovalFixer(IPartFixer):
         pass
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
             data = access_region_data(save_file, dim, region)
             if data is None:
@@ -265,7 +265,7 @@ class EntityRemovalFixer(IPartFixer):
                 for entity_data in cdata["entities"].copy():
                     if entity_data["type"] == cls.TARGET_ENTITY_NAME:
                         cdata["entities"].remove(entity_data)
-                        cls.on_replace(save_file, dim, chunk, entity_data, cdata)
+                        await cls.on_replace(save_file, dim, chunk, entity_data, cdata)
             write_region_data(save_file, dim, region, data)
 
 
@@ -277,7 +277,7 @@ class ChunkMapDataFixer(IPartFixer):
     TARGET_SERIALIZER_NAME = "minecraft:chunk"
 
     @classmethod
-    def fix(
+    async def fix(
         cls,
         save_file,
         dimension: int,
@@ -286,7 +286,7 @@ class ChunkMapDataFixer(IPartFixer):
         data,
     ):
         """
-        will apply the fix
+        Will apply the fix
         :param save_file: the save-file to use
         :param dimension: the dimension in
         :param region: the region in
@@ -295,7 +295,7 @@ class ChunkMapDataFixer(IPartFixer):
         """
 
     @classmethod
-    def apply(cls, save_file, *args):
+    async def apply(cls, save_file, *args):
         for dim, region in save_file.region_iterator():
             data = access_region_data(save_file, dim, region)
             if data is None:
@@ -304,5 +304,5 @@ class ChunkMapDataFixer(IPartFixer):
                 if chunk == "version":
                     continue
                 cdata = data[chunk]
-                cls.fix(save_file, dim, region, chunk, cdata["maps"])
+                await cls.fix(save_file, dim, region, chunk, cdata["maps"])
             write_region_data(save_file, dim, region, data)

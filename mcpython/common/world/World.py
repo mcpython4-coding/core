@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import random
 import typing
 
+import deprecation
+
 import mcpython.common.config
 import mcpython.common.data.DataPacks
 import mcpython.common.entity.PlayerEntity
@@ -29,6 +31,7 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.Lifecycle import schedule_task
 from mcpython.util.annotation import onlyInClient
 
 
@@ -216,6 +219,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         shared.world_generation_handler.setup_dimension(dim, dim_config)
         return dim
 
+    @deprecation.deprecated()
     def join_dimension(self, dim_id: int):
         """
         will change the dimension of the active player
@@ -235,6 +239,30 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         self.active_dimension = dim_id
         logger.println("loading new chunks...")
         self.change_chunks(None, sector)
+        shared.event_handler.call("dimension:change:post", old, dim_id)
+        logger.println("finished!")
+
+    async def join_dimension_async(self, dim_id: int):
+        """
+        Will change the dimension of the active player
+        :param dim_id: the dimension to change to todo: make str
+        todo: move to player
+
+        todo: event calls must be async-ed
+        """
+        logger.println("changing dimension to '{}'...".format(dim_id))
+
+        shared.event_handler.call("dimension:change:pre", self.active_dimension, dim_id)
+
+        sector = mcpython.util.math.position_to_chunk(
+            shared.world.get_active_player().position
+        )
+        logger.println("unloading chunks...")
+        await self.change_chunks_async(sector, None)
+        old = self.active_dimension
+        self.active_dimension = dim_id
+        logger.println("loading new chunks...")
+        await self.change_chunks_async(None, sector)
         shared.event_handler.call("dimension:change:post", old, dim_id)
         logger.println("finished!")
 
@@ -353,6 +381,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
         chunk.hide()
 
+    @deprecation.deprecated()
     def change_chunks(
         self,
         before: typing.Union[typing.Tuple[int, int], None],
@@ -428,6 +457,94 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                     )
                 else:
                     shared.world.save_file.read(
+                        "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
+                    )
+            else:
+                dimension.get_chunk(*chunk, generate=False)
+
+        if not after or shared.IS_NETWORKING:
+            return
+
+        for dx in range(-pad, pad + 1):
+            for dz in range(-pad, pad + 1):
+                if (
+                    generate_chunks
+                    and abs(dx) <= mcpython.common.config.CHUNK_GENERATION_RANGE
+                    and abs(dz) <= mcpython.common.config.CHUNK_GENERATION_RANGE
+                    and self.config["enable_auto_gen"]
+                ):
+                    chunk = dimension.get_chunk(
+                        dx + after[0], dz + after[1], generate=False
+                    )
+                    if not chunk.is_generated():
+                        shared.world_generation_handler.add_chunk_to_generation_list(
+                            chunk
+                        )
+
+    async def change_chunks_async(
+        self,
+        before: typing.Union[typing.Tuple[int, int], None],
+        after: typing.Union[typing.Tuple[int, int], None],
+        generate_chunks=True,
+        load_immediate=True,
+        dimension=None,
+    ):
+        """
+        Move from chunk `before` to chunk `after`
+        :param before: the chunk before
+        :param after: the chunk after
+        :param generate_chunks: if chunks should be generated
+        :param load_immediate: if chunks should be loaded immediate if needed
+        todo: move to dimension
+        """
+        if shared.IS_CLIENT and self.get_active_dimension() is None:
+            return
+
+        if dimension is None:
+            dimension = self.get_active_dimension()
+
+        before_set = set()
+        after_set = set()
+        pad = 4
+        for dx in range(-pad, pad + 1):
+            for dz in range(-pad, pad + 1):
+                if before is not None:
+                    x, z = before
+                    if (dx + x) ** 2 + (dz + z) ** 2 <= (pad + 1) ** 2:
+                        before_set.add((x + dx, z + dz))
+                if after is not None:
+                    x, z = after
+                    if (dx + x) ** 2 + (dz + z) ** 2 <= (pad + 1) ** 2:
+                        after_set.add((x + dx, z + dz))
+
+        # show = after_set - before_set
+        hide = before_set - after_set
+        for chunk in hide:
+            # todo: fix this, this was previously hiding chunks randomly....
+            pyglet.clock.schedule_once(lambda _: self.hide_chunk(chunk), 0.1)
+            c = shared.world.get_active_dimension().get_chunk(
+                *chunk, generate=False, create=False
+            )
+
+            if c and c.loaded and not shared.IS_NETWORKING:
+                schedule_task(shared.world.save_file.dump_async(None, "minecraft:chunk", dimension=self.active_dimension, chunk=chunk))
+
+        for chunk in after_set:
+            c = dimension.get_chunk(*chunk, generate=False, create=False)
+
+            if c and c.is_visible():
+                continue
+
+            c = dimension.get_chunk(*chunk, generate=False)
+            pyglet.clock.schedule_once(lambda _: self.show_chunk(c), 0.1)
+
+            if not shared.IS_NETWORKING:
+                if not load_immediate:
+                    schedule_task(shared.world.save_file.read_async("minecraft:chunk",
+                            dimension=self.active_dimension,
+                            chunk=chunk))
+                else:
+                    await shared.world.save_file.read_async(
                         "minecraft:chunk", dimension=self.active_dimension, chunk=chunk
                     )
             else:

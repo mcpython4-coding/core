@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence 
+mcpython - a minecraft clone written in python licenced under the MIT-licence
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,9 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import os
 import pickle
 import sys
+
+import deprecation
 
 import mcpython.common.event.Registry
 import mcpython.common.world.datafixers.IDataFixer
@@ -152,14 +155,22 @@ class SaveFile:
             for region in os.listdir(self.directory + "/dim/" + dim):
                 yield dim, region
 
+    @deprecation.deprecated()
     def load_world(self):
         """
         Loads all setup-data into the world
         """
+        task = asyncio.get_event_loop().create_task(self.load_world_async())
+        asyncio.get_event_loop().run_until_complete(task)
+
+        if task.exception():
+            raise task.exception()
+
+    async def load_world_async(self):
         shared.world.cleanup()  # make sure everything is removed before we start
 
         try:
-            self.read("minecraft:general")
+            await self.read_async("minecraft:general")
 
             while self.version != LATEST_VERSION:
                 if self.version not in self.storage_version_fixers:
@@ -184,14 +195,16 @@ class SaveFile:
                     fixer = fixers[0]
 
                 self.apply_storage_fixer(fixer.NAME)
-                self.read("minecraft:general")
+                await self.read_async("minecraft:general")
                 self.version = fixer.FIXES_TO
 
-            self.dump(None, "minecraft:general")
+            await self.dump_async(None, "minecraft:general")
 
-            self.read("minecraft:player_data")
-            self.read("minecraft:gamerule")
-            self.read("minecraft:registry_info_serializer")
+            await asyncio.gather(
+                self.read_async("minecraft:player_data"),
+                self.read_async("minecraft:gamerule"),
+                self.read_async("minecraft:registry_info_serializer"),
+            )
 
         except mcpython.common.world.serializer.IDataSerializer.MissingSaveException:
             logger.println(
@@ -214,7 +227,15 @@ class SaveFile:
             )
             return
 
+    @deprecation.deprecated()
     def save_world(self, *_, override=False):
+        task = asyncio.get_event_loop().create_task(self.save_world_async(*_, override=override))
+        asyncio.get_event_loop().run_until_complete(task)
+
+        if task.exception():
+            raise task.exception()
+
+    async def save_world_async(self, *_, override=False):
         """
         Save all base-data into the system
         :param _: used when used by special event triggers
@@ -222,16 +243,20 @@ class SaveFile:
         """
         if self.save_in_progress:
             raise IOError("can't save world. save in process")
+
         try:
             # Make sure that nothing else is going on...
             self.save_in_progress = True
             shared.world_generation_handler.enable_generation = False
 
             logger.println("saving world...")
-            self.dump(None, "minecraft:general")
-            self.dump(None, "minecraft:player_data")
-            self.dump(None, "minecraft:gamerule")
-            self.dump(None, "minecraft:registry_info_serializer")
+            await self.dump_async(None, "minecraft:general")
+
+            await asyncio.gather(
+                self.dump_async(None, "minecraft:player_data"),
+                self.dump_async(None, "minecraft:gamerule"),
+                self.dump_async(None, "minecraft:registry_info_serializer"),
+            )
 
             for dimension in shared.world.dimensions.values():
                 logger.println("saving dimension " + dimension.get_name())
@@ -239,7 +264,7 @@ class SaveFile:
                 for chunk in dimension.chunks:
                     # todo: save all loaded dimension, not only the active one
                     if dimension.get_chunk(*chunk).loaded:
-                        self.dump(
+                        await self.dump_async(
                             None,
                             "minecraft:chunk",
                             dimension=dimension.id,
@@ -266,9 +291,17 @@ class SaveFile:
                 shared.NETWORK_MANAGER.disconnect()
                 sys.exit(-1)
 
+    @deprecation.deprecated()
     def apply_storage_fixer(self, name: str, *args, **kwargs):
+        task = asyncio.get_event_loop().create_task(self.apply_storage_fixer_async(name, *args, **kwargs))
+        asyncio.get_event_loop().run_until_complete(task)
+
+        if task.exception():
+            raise task.exception()
+
+    async def apply_storage_fixer_async(self, name: str, *args, **kwargs):
         """
-        Will apply an fixer to fix the storage version
+        Will apply a fixer to fix the storage version
         :param name: the name of the fixer to use
         :param args: the args to send
         :param kwargs: the kwargs to use
@@ -282,9 +315,9 @@ class SaveFile:
         )
 
         try:
-            fixer.apply(self, *args, **kwargs)
+            await fixer.apply(self, *args, **kwargs)
             for name, args, kwargs in fixer.GROUP_FIXER_NAMES:
-                self.apply_group_fixer(*args, **kwargs)
+                await self.apply_group_fixer_async(*args, **kwargs)
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
         except:
@@ -293,9 +326,17 @@ class SaveFile:
             )
             shared.state_handler.change_state("minecraft:start_menu")
 
+    @deprecation.deprecated()
     def apply_group_fixer(self, name: str, *args, **kwargs):
+        task = asyncio.get_event_loop().create_task(self.apply_group_fixer_async(name, *args, **kwargs))
+        asyncio.get_event_loop().run_until_complete(task)
+
+        if task.exception():
+            raise task.exception()
+
+    async def apply_group_fixer_async(self, name: str, *args, **kwargs):
         """
-        will apply an group fixer to the system
+        Will apply a group fixer to the system
         :param name: the name of the group fixer to use
         :param args: the args to use
         :param kwargs: the kwargs to use
@@ -309,9 +350,9 @@ class SaveFile:
         )
 
         try:
-            fixer.apply(self, *args, **kwargs)
+            await fixer.apply(self, *args, **kwargs)
             for name, args, kwargs in fixer.PART_FIXER_NAMES:
-                self.apply_part_fixer(name, *args, **kwargs)
+                await self.apply_part_fixer_async(name, *args, **kwargs)
 
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
@@ -322,9 +363,17 @@ class SaveFile:
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")
 
+    @deprecation.deprecated()
     def apply_part_fixer(self, name: str, *args, **kwargs):
+        task = asyncio.get_event_loop().create_task(self.apply_part_fixer_async(name, *args, **kwargs))
+        asyncio.get_event_loop().run_until_complete(task)
+
+        if task.exception():
+            raise task.exception()
+
+    async def apply_part_fixer_async(self, name: str, *args, **kwargs):
         """
-        Will apply an part fixer to the system
+        Will apply a part fixer to the system
         :param name: the name to use
         :param args: the args to send
         :param kwargs: the kwargs
@@ -338,13 +387,21 @@ class SaveFile:
         )
 
         try:
-            fixer.apply(self, *args, **kwargs)
+            await fixer.apply(self, *args, **kwargs)
         except:
             logger.print_exception("During data-fixing part '{}' (fatal)".format(name))
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")
 
+    @deprecation.deprecated()
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
+        task = asyncio.get_event_loop().create_task(self.apply_mod_fixer_async(modname, source_version, *args, **kwargs))
+        asyncio.get_event_loop().run_until_complete(task)
+
+        if task.exception():
+            raise task.exception()
+
+    async def apply_mod_fixer_async(self, modname: str, source_version: tuple, *args, **kwargs):
         """
         Applies an mod fixer(list) to the system
         :param modname: the mod name
@@ -384,7 +441,7 @@ class SaveFile:
                 )
 
             try:
-                fixer.apply(self, *args, **kwargs)
+                await fixer.apply(self, *args, **kwargs)
                 [
                     self.apply_group_fixer(name, *args, **kwargs)
                     for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES
@@ -427,15 +484,24 @@ class SaveFile:
 
         raise ValueError("can't find serializer named '{}'".format(part))
 
+    @deprecation.deprecated()
     def read(self, part, **kwargs):
         """
-        Reads an part of the save-file
+        Reads a part of the save-file
         :param part: the part to load
         :param kwargs: kwargs given to the loader
         :return: whatever the loader returns
+        todo: use async variant when possible!!!!
         """
         try:
-            return self.get_serializer_for(part).load(self, **kwargs)
+            task = self.get_serializer_for(part).load(self, **kwargs)
+            task = asyncio.get_event_loop().create_task(task)
+            try:
+                asyncio.get_event_loop().run_until_complete(task)
+            except RuntimeError:
+                asyncio.get_running_loop().run_until_complete(task)
+
+            return task.result()
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
         except mcpython.common.world.serializer.IDataSerializer.InvalidSaveException:
@@ -445,7 +511,47 @@ class SaveFile:
                 )
             )
 
+    async def read_async(self, part, **kwargs):
+        """
+        Reads a part of the save-file
+        :param part: the part to load
+        :param kwargs: kwargs given to the loader
+        :return: whatever the loader returns
+        """
+        try:
+            return await self.get_serializer_for(part).load(self, **kwargs)
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+        except mcpython.common.world.serializer.IDataSerializer.InvalidSaveException:
+            logger.print_exception(
+                "during reading part '{}' from save files under '{}' with arguments {}".format(
+                    part, self.directory, kwargs
+                )
+            )
+
+    @deprecation.deprecated()
     def dump(self, data, part, **kwargs):
+        """
+        Similar to read(...), but the other way round.
+        :param data: the data to store, optional, may be None
+        :param part: the part to save
+        :param kwargs: the kwargs to give the saver
+        todo: use async variant when possible!!!!
+        """
+        try:
+            task = self.get_serializer_for(part).save(data, self, **kwargs)
+            task = asyncio.get_event_loop().create_task(task)
+            asyncio.get_event_loop().run_until_complete(task)
+
+            if task.exception():
+                raise task.exception()
+
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+        except:
+            logger.print_exception("during dumping {} to '{}'".format(data, part))
+
+    async def dump_async(self, data, part, **kwargs):
         """
         Similar to read(...), but the other way round.
         :param data: the data to store, optional, may be None
@@ -453,7 +559,7 @@ class SaveFile:
         :param kwargs: the kwargs to give the saver
         """
         try:
-            self.get_serializer_for(part).save(data, self, **kwargs)
+            await self.get_serializer_for(part).save(data, self, **kwargs)
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
         except:

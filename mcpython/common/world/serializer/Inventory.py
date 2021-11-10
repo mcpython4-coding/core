@@ -32,7 +32,7 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
     PART = NAME = "minecraft:inventory"
 
     @classmethod
-    def load(
+    async def load(
         cls,
         save_file,
         inventory: mcpython.client.gui.ContainerRenderer.ContainerRenderer,
@@ -66,7 +66,7 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
         inventory.post_load(data["custom data"])
 
     @classmethod
-    def save(
+    async def save(
         cls,
         data,
         save_file,

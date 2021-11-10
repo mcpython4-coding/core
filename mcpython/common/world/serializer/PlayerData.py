@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import time
 import typing
 
@@ -23,7 +24,8 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
     PART = NAME = "minecraft:player_data"
 
     @classmethod
-    def load(cls, save_file, **_):
+    async def load(cls, save_file, **_):
+        # todo: gather
         data = save_file.access_file_json("players.json")
 
         if data is None:
@@ -32,15 +34,16 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
         if shared.IS_CLIENT:
             if shared.world.get_active_player().name in data:
                 player = shared.world.get_active_player()
-                cls.load_player_data(data, player, save_file)
-                shared.world.join_dimension(data[player.name]["dimension"])
+                await cls.load_player_data(data, player, save_file)
+                # await shared.world.join_dimension_async(data[player.name]["dimension"])
+
         else:
             for name in data.keys():
                 player = shared.world.get_player_by_name(name)
-                cls.load_player_data(data, player, save_file)
+                await cls.load_player_data(data, player, save_file)
 
     @classmethod
-    def load_player_data(cls, data, player, save_file):
+    async def load_player_data(cls, data, player, save_file):
         pd = data[player.name]
         player.set_gamemode(pd["gamemode"])
         player.hearts = pd["hearts"]
@@ -57,7 +60,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
         for i, (name, inventory) in enumerate(
             zip(pd["inventory_data"], player.get_inventories())
         ):
-            save_file.read(
+            await save_file.read_async(
                 "minecraft:inventory",
                 inventory=inventory,
                 path="players/{}/inventory/{}".format(player.name, i),
@@ -71,7 +74,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
         ]["portal_need_leave_before_change"]
 
     @classmethod
-    def save(cls, data, save_file, **_):
+    async def save(cls, data, save_file, **_):
         data = save_file.access_file_json("players.json")
         if data is None:
             data = {}
@@ -106,14 +109,14 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
                 ],
             }
 
-            [
-                save_file.dump(
+            await asyncio.gather(*[
+                save_file.dump_async(
                     None,
                     "minecraft:inventory",
                     inventory=inventory,
                     path="players/{}/inventory/{}".format(player.name, i),
                 )
                 for i, inventory in enumerate(player.get_inventories())
-            ]
+            ])
 
         save_file.dump_file_json("players.json", data)

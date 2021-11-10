@@ -34,7 +34,7 @@ class IDataSerializer(mcpython.common.event.api.IRegistryContent):
     PART = None  # which part it can serialize
 
     @classmethod
-    def load(cls, save_file, *args, **kwargs):
+    async def load(cls, save_file, *args, **kwargs):
         """
         Loads stuff into the game
         :param save_file: the SaveFile object to use
@@ -42,7 +42,7 @@ class IDataSerializer(mcpython.common.event.api.IRegistryContent):
         raise NotImplementedError()
 
     @classmethod
-    def save(cls, data, save_file, *args, **kwargs):
+    async def save(cls, data, save_file, *args, **kwargs):
         """
         Saves data into the storage file
         :param data: the data to save
