@@ -51,6 +51,10 @@ Backwards incompatible changes:
     Blocks:
         - candles and candle cake are now functional
 
+    World generation:
+        - biome features are generating again
+        - added new biomes: forest, wooded hillds, flower forest
+
 
 # Changelog of alpha 1.2.0, compared to 21w42a
 Released on 22.10.2021 targeting 1.17

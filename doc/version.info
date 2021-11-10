@@ -1915,5 +1915,5 @@ fA* [uuk]: save file read/write/data fixer methods are now async, including thei
            (Somehow, this decreased loading/saving times at my pc by a lot)
 b   [uuk]: fixed features never generating due to multiple mistakes in DefaultFeatureLayer
 f   [uuk]: grass color is now read from the biome
-f   [uuk]: added forest biome
+f   [uuk]: added forest, wooded hills, flower forest biomes
 

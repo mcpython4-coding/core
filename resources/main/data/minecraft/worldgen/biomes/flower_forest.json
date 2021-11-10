@@ -1,0 +1,59 @@
+{
+  "name": "minecraft:flower_forest",
+  "mass": "land",
+  "passive_spawns": {
+    "minecraft:sheep": [12, 4],
+    "minecraft:pigs": [10, 4],
+    "minecraft:chicken": [10, 4],
+    "minecraft:cow": [8, 4],
+    "minecraft:wolf": [5, 4]
+  },
+  "hostile_spawns": {
+    "minecraft:zombie": [95, 4],
+    "minecraft:spider": [100, 4],
+    "minecraft:zombie_villager": [5, 1],
+    "minecraft:skeleton": [100, 4],
+    "minecraft:creeper": [100, 4],
+    "minecraft:slime": [100, 4],
+    "minecraft:enderman": [10, [1, 4]],
+    "minecraft:witch": [5, 1],
+    "minecraft:spider_jockey": [1, 1],
+    "minecraft:chicken_jockey": [0.25, 1]
+  },
+  "ambient_spawns": {"minecraft:bat": [10, 8]},
+  "weight": 4,
+  "height_range": [10, 30],
+  "features": [
+    {
+      "type": "minecraft:oak_tree_feature_bees",
+      "weight": 1,
+      "group": "trees",
+      "group_spawn_count": [-6, 1]
+    },
+    {
+      "type": "minecraft:oak_tree_feature",
+      "weight": 20,
+      "group": "trees",
+      "group_spawn_count": [1, 4]
+    },
+    {
+      "type": "minecraft:birch_tree_feature",
+      "weight": 20,
+      "group": "trees",
+      "group_spawn_count": [1, 4]
+    },
+    {
+      "type": "minecraft:plant_feature",
+      "weight": 1,
+      "group": "flowers",
+      "blocks": [
+        "minecraft:rose_bush",
+        "minecraft:lilac",
+        "minecraft:peony",
+        "minecraft:lily_of_the_valley"
+      ]
+    }
+  ],
+  "grass_color": "#79C05A",
+  "water_color": "#3F76E4"
+}
