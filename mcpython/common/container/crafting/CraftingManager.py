@@ -21,6 +21,7 @@ import mcpython.common.item.ItemManager
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 from mcpython import shared
+from mcpython.common.container.crafting import IRecipe
 from mcpython.engine import logger
 
 
@@ -176,7 +177,7 @@ class CraftingManager:
 
         # all shapeless recipes sorted after item count
         self.crafting_recipes_shapeless = {}
-        # all shaped recipes sorted after item count and than size
+        # all shaped recipes sorted after item count and then size
         self.crafting_recipes_shaped = {}
         # all smelting outputs sorted after ingredient
         self.furnace_recipes = {}
@@ -195,19 +196,23 @@ class CraftingManager:
 
         shared.event_handler.call("crafting_manager:reload:end", self)
 
-    def show_to_player(self, recipe_name: str):
+    def show_to_player(self, recipe_name: str | IRecipe.IRecipe):
         # todo: show error messages in chat
 
-        if recipe_name not in self.recipe_table:
-            logger.println(f"recipe '{recipe_name}' was not found!")
-            return
+        if isinstance(recipe_name, str):
+            if recipe_name not in self.recipe_table:
+                logger.println(f"recipe '{recipe_name}' was not found!")
+                return
 
-        recipe = self.recipe_table[recipe_name]
+            recipe = self.recipe_table[recipe_name]
+        else:
+            recipe = recipe_name
+
         if recipe.RECIPE_VIEW is None:
             logger.println(f"recipe {recipe_name} does not support showing")
             return
 
-        if self.RECIPE_VIEW_INVENTORY is None:
+        if self.RECIPE_VIEW_INVENTORY is None or not isinstance(self.RECIPE_VIEW_INVENTORY, mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView):
             self.RECIPE_VIEW_INVENTORY = (
                 mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
             )
@@ -216,6 +221,44 @@ class CraftingManager:
             self.RECIPE_VIEW_INVENTORY.set_renderer(
                 recipe.RECIPE_VIEW.prepare_for_recipe(recipe)
             )
+        )
+
+    def show_to_player_from_output(self, output_name: str):
+        recipes = []
+
+        for array in self.crafting_recipes_shapeless.values():
+            for recipe in array:
+                if recipe.output[0] == output_name:
+                    recipes.append(recipe)
+
+        for array1 in self.crafting_recipes_shaped.values():
+            for array2 in array1.values():
+                for recipe in array2:
+                    if recipe.output[0] == output_name:
+                        recipes.append(recipe)
+
+        if not recipes:
+            logger.println(f"[WARN] no recipes found outputting {output_name}")
+            return
+
+        self.RECIPE_VIEW_INVENTORY = (
+            mcpython.client.gui.InventoryRecipeView.InventoryMultiRecipeView()
+        )
+
+        for recipe in recipes[:]:
+            while recipes.count(recipe) > 1:
+                recipes.remove(recipe)
+
+        for recipe in recipes:
+            self.RECIPE_VIEW_INVENTORY.add_recipe_renderer(recipe.RECIPE_VIEW.copy().prepare_for_recipe(recipe))
+
+            if recipe.RECIPE_VIEW is None:
+                logger.println(f"recipe {recipe.name} does not support showing")
+                self.RECIPE_VIEW_INVENTORY = None
+                return
+
+        shared.inventory_handler.show(
+            self.RECIPE_VIEW_INVENTORY
         )
 
 

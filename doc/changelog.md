@@ -55,6 +55,9 @@ Backwards incompatible changes:
         - biome features are generating again
         - added new biomes: forest, wooded hillds, flower forest
 
+    Commands:
+        - added /data view recipe output <item name> command displaying all recipes yielding into the set item
+
 
 # Changelog of alpha 1.2.0, compared to 21w42a
 Released on 22.10.2021 targeting 1.17

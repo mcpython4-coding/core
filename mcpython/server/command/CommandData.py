@@ -20,6 +20,7 @@ from mcpython.server.command.Builder import (
     Command,
     CommandNode,
     DefinedString,
+    Item,
 )
 
 data = (
@@ -41,8 +42,20 @@ data = (
             CommandNode(DefinedString("recipe"), execute_on_client=True)
             .of_name("recipe")
             .than(
+                CommandNode(DefinedString("output"))
+                .of_name("output")
+                .than(
+                    CommandNode(Item())
+                    .of_name("output item type")
+                    .info("displays all recipes outputting said item")
+                    .on_execution(
+                        lambda env, d: shared.crafting_handler.show_to_player_from_output(d[4].NAME)
+                    )
+                )
+            )
+            .than(
                 CommandNode(AnyString.INSTANCE)
-                .of_name("recipe")
+                .of_name("recipe name")
                 .info("creates a view for the given recipe")
                 .on_execution(
                     lambda env, d: shared.crafting_handler.show_to_player(d[3])

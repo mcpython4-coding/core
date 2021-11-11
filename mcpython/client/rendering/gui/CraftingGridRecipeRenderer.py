@@ -130,6 +130,7 @@ class CraftingTableLikeRecipeViewRenderer(
             for x, row in enumerate(self.grid):
                 for y, entries in enumerate(row):
                     if entries is not None and len(entries) > 0:
+                        # todo: can we do better than setting each second another item here...
                         self.slots[i].set_itemstack(
                             entries[next(self.mutation_iterator[i])]
                         )

@@ -1916,4 +1916,6 @@ fA* [uuk]: save file read/write/data fixer methods are now async, including thei
 b   [uuk]: fixed features never generating due to multiple mistakes in DefaultFeatureLayer
 f   [uuk]: grass color is now read from the biome
 f   [uuk]: added forest, wooded hills, flower forest biomes
+F   [uuk]: added "/data view recipe output <item name>" command
+A   [uuk]: added an inventory for displaying multiple recipes at ones
 
