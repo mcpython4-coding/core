@@ -42,10 +42,16 @@ class StoneCutter(IHorizontalOrientableBlock):
     IS_SOLID = False
     DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
 
+    INVENTORY = None
+
     def __init__(self):
         super().__init__()
 
-        self.inventory = None  # todo: add stone cutter
+        if StoneCutter.INVENTORY is None:
+            from mcpython.client.gui.StoneCutterContainerRenderer import StoneCutterContainerRenderer
+            self.inventory = StoneCutter.INVENTORY = StoneCutterContainerRenderer()
+        else:
+            self.inventory = StoneCutter.INVENTORY
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         super().write_to_network_buffer(buffer)
@@ -56,16 +62,17 @@ class StoneCutter(IHorizontalOrientableBlock):
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
-        return False
-
-    """ # open the inv when needed
         if button == mouse.RIGHT and not modifiers & (
             key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
         ):
             shared.inventory_handler.show(self.inventory)
             return True
         else:
-            return False"""
+            return False
+
+    def on_block_remove(self, reason):
+        shared.inventory_handler.hide(self.inventory)
+        self.inventory = None
 
     def get_inventories(self):
         return [self.inventory]

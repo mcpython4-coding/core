@@ -53,6 +53,7 @@
     "minecraft:chain",
     "minecraft:cauldron",
     "minecraft:cornflower",
-    "minecraft:water"
+    "minecraft:water",
+    "minecraft:stonecutter"
   ]
 }
