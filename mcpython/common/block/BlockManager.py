@@ -86,6 +86,7 @@ def load():
             NetherPortal,
             Rails,
             RedstoneWire,
+            StoneCutter,
             ShulkerBox,
             Walls,
         )
@@ -126,6 +127,7 @@ def load():
     block_registry.register(Rails.PoweredRail)
     block_registry.register(FluidBlock.WaterFluidBlock)
     block_registry.register(FluidBlock.LavaFluidBlock)
+    block_registry.register(StoneCutter.StoneCutter)
 
     Carpet.load()
     CoralBlocks.load()

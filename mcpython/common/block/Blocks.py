@@ -1472,9 +1472,6 @@ stone_like(
     existing_button=True,
     existing_pressure_plate=True,
 )
-DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:stonecutter").set_horizontal_orientable()
-)
 stone_like("stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True)
 # todo: structure block, structure void
 DEFERRED_PIPE.create_later(plant("minecraft:sugar_cane"))
