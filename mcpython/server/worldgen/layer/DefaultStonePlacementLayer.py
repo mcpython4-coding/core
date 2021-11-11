@@ -27,7 +27,7 @@ class DefaultStonePlacementLayer(ILayer):
     NAME = "minecraft:stone_default"
 
     @classmethod
-    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         heightmap = reference.chunk.get_map("minecraft:height_map")
 

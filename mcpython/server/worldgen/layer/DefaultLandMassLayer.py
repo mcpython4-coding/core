@@ -40,7 +40,7 @@ class DefaultLandMassLayer(ILayer):
             config.masses = config.world_generator_config.LANDMASSES
 
     @classmethod
-    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
         land_map = chunk.get_map("minecraft:landmass_map")

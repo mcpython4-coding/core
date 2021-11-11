@@ -42,7 +42,7 @@ class DefaultTemperatureLayer(ILayer):
             config.temperature_max = 2.0
 
     @classmethod
-    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
 

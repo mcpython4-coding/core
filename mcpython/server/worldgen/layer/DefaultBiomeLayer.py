@@ -42,7 +42,7 @@ class DefaultBiomeMapLayer(ILayer):
     ]
 
     @classmethod
-    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.get_position()
 

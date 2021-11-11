@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import marshal
 import multiprocessing
 import pickle
@@ -77,12 +78,12 @@ class WorldGenerationTaskHandler:
     def schedule_invoke(
         self,
         chunk: mcpython.engine.world.AbstractInterface.IChunk,
-        method,
+        method: typing.Callable | typing.Awaitable,
         *args,
         **kwargs,
     ):
         """
-        Schedules an callable-invoke for the future
+        Schedules a callable-invoke for the future or an await on such a task
         :param chunk: the chunk to link to
         :param method: the method to call
         :param args: the args to call with
@@ -91,9 +92,9 @@ class WorldGenerationTaskHandler:
         if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
             raise ValueError("chunk must be sub-class of Chunk, not {}".format(chunk))
 
-        if not callable(method):
+        if not callable(method) and not asyncio.iscoroutine(method):
             raise ValueError(
-                "method must be callable in order to be invoked by WorldGenerationTaskHandler"
+                "method must be callable or awaitable in order to be invoked by WorldGenerationTaskHandler"
             )
 
         self.chunks.add(chunk)
@@ -171,7 +172,7 @@ class WorldGenerationTaskHandler:
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
     ):
         """
-        schedules an hide of an block
+        Schedules hiding a block
         :param chunk: the chunk
         :param position: the position of the block
         """
@@ -184,7 +185,7 @@ class WorldGenerationTaskHandler:
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
     ):
         """
-        schedules an visual update of an block (-> show/hide as needed)
+        Schedules a visual update of a block (-> show/hide as needed)
         :param chunk: the chunk
         :param position: the position of the block
         """
@@ -195,7 +196,7 @@ class WorldGenerationTaskHandler:
 
     def process_one_task(self, chunk=None, log_msg=False) -> int:
         """
-        processes one task from an semi-random chunk or an given one
+        Processes one task from a semi-random chunk or a given one
         :param chunk: the chunk or None to select one
         :param log_msg: if messages for extra info should be logged
         """
@@ -205,10 +206,12 @@ class WorldGenerationTaskHandler:
                 return 1
             chunk = self.chunks.pop()
             self.chunks.add(chunk)
+
         if log_msg:
             logger.println("[WORLD][HANDLER] processing chunk {}".format(chunk))
+
         if (
-            self._process_0_array(chunk)
+            self.unsafe_process_0_array(chunk)
             or self._process_1_array(chunk)
             or self._process_2_array(chunk)
         ):
@@ -217,11 +220,13 @@ class WorldGenerationTaskHandler:
                     "executing took {}s in chunk {}".format(time.time() - start, chunk)
                 )
             return 2
+
         if self.get_task_count_for_chunk(chunk) == 0:
             self.chunks.remove(chunk)
             chunk.generated = True
             chunk.finished = True
             chunk.loaded = True
+
         return 3
 
     def process_tasks(self, chunks=None, timer=None):
@@ -238,12 +243,17 @@ class WorldGenerationTaskHandler:
             chunks = list(self.chunks)
 
         chunks.sort(key=lambda c: abs(c.position[0] * c.position[1]))
-        for chunk in chunks:
-            self.process_chunk(chunk)
-            timer -= time.time() - start
-            if timer < 0:
-                return
-            start = time.time()
+
+        if timer is not None:
+            for chunk in chunks:
+                self.process_chunk(chunk, timer=timer)
+                timer -= time.time() - start
+                if timer < 0:
+                    return
+                start = time.time()
+        else:
+            for chunk in chunks:
+                self.process_chunk(chunk)
 
     def process_chunk(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk, timer=None
@@ -271,28 +281,38 @@ class WorldGenerationTaskHandler:
     def _process_0_array(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> bool:
-        # todo: can we optimize this?
-        if chunk.get_dimension().get_dimension_id() in self.data_maps[0]:
-            dim_map = self.data_maps[0][chunk.get_dimension().get_dimension_id()]
+        dimension = chunk.get_dimension().get_dimension_id()
+        if dimension in self.data_maps[0]:
+            dim_map = self.data_maps[0][dimension]
             if chunk.get_position() in dim_map:
-                m: list = dim_map[chunk.get_position()]
-                if len(m) == 0:
-                    return False
-
-                data = m.pop(0)
-                try:
-                    data[0](*data[1], **data[2])
-
-                except (SystemExit, KeyboardInterrupt, OSError):
-                    raise
-
-                except:
-                    logger.print_exception(
-                        "during invoking '{}' with *{} and **{}".format(*data)
-                    )
-                return True
-
+                return self.unsafe_process_0_array(chunk, dim_map=dim_map)
         return False
+
+    def unsafe_process_0_array(self, chunk, dim_map: dict = None) -> bool:
+        if dim_map is None:
+            dim_map = self.data_maps[0][chunk.get_dimension().get_dimension_id()]
+
+        m: list = dim_map[chunk.get_position()]
+        if len(m) == 0:
+            return False
+
+        data = m.pop(0)
+        try:
+            if asyncio.iscoroutine(data[0]):
+                task = asyncio.get_event_loop().create_task(data[0])
+                asyncio.get_event_loop().run_until_complete(task)
+
+                if task.exception():
+                    raise task.exception()
+            else:
+                data[0](*data[1], **data[2])
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
+        except:
+            logger.print_exception(
+                "during invoking '{}' with *{} and **{} during world generation".format(*data)
+            )
+        return True
 
     def _process_1_array(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk
@@ -481,7 +501,7 @@ class IWorldGenerationTaskHandlerReference:
 class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
     """
     reference class to an WorldGenerationTaskHandler for setting the chunk globally
-    all scheduling functions are the same of WorldGenerationTaskHandler exept the chunk-parameter is missing.
+    all scheduling functions are the same of WorldGenerationTaskHandler except the chunk-parameter is missing.
     It is set on construction
     """
 

@@ -59,5 +59,5 @@ class ILayer(mcpython.common.event.api.IRegistryContent):
     NAME = "minecraft:unknown_layer"
 
     @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(config: LayerConfig, reference):
         raise NotImplementedError()

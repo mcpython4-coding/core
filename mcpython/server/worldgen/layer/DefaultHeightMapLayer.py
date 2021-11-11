@@ -42,7 +42,7 @@ class DefaultHeightMapLayer(ILayer):
             config.max_height_factor = 1
 
     @classmethod
-    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
         height_map = chunk.get_map("minecraft:height_map")

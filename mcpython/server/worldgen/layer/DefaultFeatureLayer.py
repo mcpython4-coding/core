@@ -27,7 +27,7 @@ class DefaultFeatureLayer(ILayer):
     NAME = "minecraft:feature_default"
 
     @staticmethod
-    def add_generate_functions_to_chunk(config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.position
         cx *= 16

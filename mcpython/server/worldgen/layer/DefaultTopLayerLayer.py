@@ -34,7 +34,7 @@ class DefaultTopLayerLayer(ILayer):
     )
 
     @classmethod
-    def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
+    async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
