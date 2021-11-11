@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.engine.ResourceLoader
 import python_nbt.nbt as nbt
 from mcpython import shared
+import mcpython.server.worldgen.WorldGenerationTaskArrays
 
 
 class StructureNBTHelper:
@@ -25,4 +26,54 @@ class StructureNBTHelper:
         return cls(nbt.read_from_nbt_file(shared.tmp.name + "/tmp.nbt").json_obj())
 
     def __init__(self, data: dict):
-        pass
+        data = data["value"]
+
+        self.entities = data["entities"]["value"]
+
+        self.blocks = {}
+
+        for block_data in data["palette"]["value"][:]:
+            if "Properties" in block_data:
+                state = block_data["Properties"]["value"]
+                state = {key: value["value"] if isinstance(value["value"], dict) else value["value"] for key, value in state.items()}
+                block_data["Properties"] = state
+            else:
+                block_data["Properties"] = {}
+
+        for block in data["blocks"]["value"]:
+            pos = tuple(block["pos"]["value"])
+            index = block["state"]["value"]
+
+            block_data = data["palette"]["value"][index]
+            name = block_data["Name"]["value"]
+            state = block_data["Properties"]
+
+            self.blocks[pos] = name, state
+
+    def place(self, dimension, x: int, y: int, z: int, config):
+        for pos, (name, state) in self.blocks.items():
+            dx, dy, dz = pos
+            block = dimension.add_block((x+dx, y+dy, z+dz), name)
+
+            if block is not None:
+                block.set_model_state(state)
+                block.face_info.update(True)
+
+    def place_array(
+        self,
+        array: mcpython.server.worldgen.WorldGenerationTaskArrays.IWorldGenerationTaskHandlerReference,
+        x: int,
+        y: int,
+        z: int,
+        config,
+    ):
+        def callback(s):
+            def setup(block):
+                block.set_model_state(s)
+                block.face_info.update(True)
+
+            return setup
+
+        for pos, (name, state) in self.blocks.items():
+            dx, dy, dz = pos
+            array.schedule_block_add((x+dx, y+dy, z+dz), name, on_add=callback(state))

@@ -54,6 +54,8 @@ Backwards incompatible changes:
     World generation:
         - biome features are generating again
         - added new biomes: forest, wooded hillds, flower forest
+        - added basic spawn code for pillage outposts
+        - added support for loading nbt structures for world generation
 
     Commands:
         - added /data view recipe output <item name> command displaying all recipes yielding into the set item

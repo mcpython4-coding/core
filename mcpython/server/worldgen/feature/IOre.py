@@ -61,7 +61,7 @@ class IOre(mcpython.server.worldgen.feature.IFeature.IFeature):
     @staticmethod
     def get_ore_block() -> str or list:
         """
-        :return: an orename or an list of orenames or an {orename: chance} table
+        :return: an ore-name or a list of ore-names or a {ore-name: chance} table
         """
         raise NotImplementedError()
 
