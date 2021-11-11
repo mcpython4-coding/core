@@ -49,7 +49,9 @@ data = (
                     .of_name("output item type")
                     .info("displays all recipes outputting said item")
                     .on_execution(
-                        lambda env, d: shared.crafting_handler.show_to_player_from_output(d[4].NAME)
+                        lambda env, d: shared.crafting_handler.show_to_player_from_output(
+                            d[4].NAME
+                        )
                     )
                 )
             )
@@ -61,7 +63,9 @@ data = (
                     .of_name("item to use")
                     .info("displays all recipes using the given item")
                     .on_execution(
-                        lambda env, d: shared.crafting_handler.show_to_player_from_input(d[4].NAME)
+                        lambda env, d: shared.crafting_handler.show_to_player_from_input(
+                            d[4].NAME
+                        )
                     )
                 )
             )

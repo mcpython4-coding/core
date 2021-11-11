@@ -351,6 +351,7 @@ def load_modes():
 
 def load_features():
     from .feature import (
+        BirchTreeFeature,
         CactusFeature,
         DessertTempleFeature,
         DessertWellFeature,
@@ -360,7 +361,6 @@ def load_features():
         PlantFeature,
         SpruceTreeFeature,
         SurfaceLake,
-        BirchTreeFeature,
     )
     from .feature.village import VillageFeatureDefinition
 

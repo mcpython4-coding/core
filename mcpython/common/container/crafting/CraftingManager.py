@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 import json
 import random
 import sys
-
 import typing
 
 import mcpython.client.gui.InventoryRecipeView
@@ -214,7 +213,10 @@ class CraftingManager:
             logger.println(f"recipe {recipe_name} does not support showing")
             return
 
-        if self.RECIPE_VIEW_INVENTORY is None or not isinstance(self.RECIPE_VIEW_INVENTORY, mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView):
+        if self.RECIPE_VIEW_INVENTORY is None or not isinstance(
+            self.RECIPE_VIEW_INVENTORY,
+            mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView,
+        ):
             self.RECIPE_VIEW_INVENTORY = (
                 mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
             )
@@ -236,7 +238,10 @@ class CraftingManager:
         for array1 in self.crafting_recipes_shaped.values():
             for array2 in array1.values():
                 for recipe in array2:
-                    if any(any(x[0] == input_name for x in e) for e in recipe.inputs.values()):
+                    if any(
+                        any(x[0] == input_name for x in e)
+                        for e in recipe.inputs.values()
+                    ):
                         recipes.append(recipe)
 
         if not recipes:
@@ -275,16 +280,16 @@ class CraftingManager:
                 recipes.remove(recipe)
 
         for recipe in recipes:
-            self.RECIPE_VIEW_INVENTORY.add_recipe_renderer(recipe.RECIPE_VIEW.copy().prepare_for_recipe(recipe))
+            self.RECIPE_VIEW_INVENTORY.add_recipe_renderer(
+                recipe.RECIPE_VIEW.copy().prepare_for_recipe(recipe)
+            )
 
             if recipe.RECIPE_VIEW is None:
                 logger.println(f"recipe {recipe.name} does not support showing")
                 self.RECIPE_VIEW_INVENTORY = None
                 return
 
-        shared.inventory_handler.show(
-            self.RECIPE_VIEW_INVENTORY
-        )
+        shared.inventory_handler.show(self.RECIPE_VIEW_INVENTORY)
 
 
 shared.crafting_handler = CraftingManager()

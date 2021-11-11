@@ -122,7 +122,9 @@ class GridShaped(AbstractCraftingGridRecipe):
     @classmethod
     def from_data(cls, data: dict, file: str):
         pattern = data["pattern"]
-        table: typing.Dict[typing.Tuple[int, int], typing.List[typing.Tuple[str, int]]] = {}
+        table: typing.Dict[
+            typing.Tuple[int, int], typing.List[typing.Tuple[str, int]]
+        ] = {}
         for item in data["key"]:
             item_list = transform_to_item_stack(data["key"][item], file)
             if len(item_list) == 0:
@@ -143,7 +145,9 @@ class GridShaped(AbstractCraftingGridRecipe):
 
     def __init__(
         self,
-        inputs: typing.Dict[typing.Tuple[int, int], typing.List[typing.Tuple[str, int]]],
+        inputs: typing.Dict[
+            typing.Tuple[int, int], typing.List[typing.Tuple[str, int]]
+        ],
         output: typing.Tuple[str, int],
     ):
         super().__init__()
