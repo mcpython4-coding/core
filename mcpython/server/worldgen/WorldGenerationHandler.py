@@ -35,7 +35,7 @@ class WorldGenerationHandler:
 
     def __init__(self):
         # registry table for layers
-        self.layers = {}
+        self.layers: typing.Dict[str, mcpython.server.worldgen.layer.ILayer.ILayer] = {}
 
         # a config table: dimension name -> config list
         self.configs = {}
@@ -61,7 +61,7 @@ class WorldGenerationHandler:
 
         self.chunk_maps = {}
 
-    def setup_chunk_maps(self, chunk):
+    def setup_chunk_maps(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
         chunk.data_maps.update(
             {
                 name: chunk_map.init_on(chunk)
@@ -107,7 +107,7 @@ class WorldGenerationHandler:
         Will set the loaded-flag of the chunk during the process
         Will schedule the internal inner_add_chunk function
         :param chunk: the chunk
-        :param dimension: optional: if chunk is tuple, if another dim than active should be used
+        :param dimension: optional: if chunk is tuple, and another dimension than the active one should be used
         :param force_generate: if generation should take place also when auto-gen is disabled
         :param immediate: if inner_add_chunk should be called immediate or not [can help in cases where TaskHandler stops
             running tasks when in-generation progress]

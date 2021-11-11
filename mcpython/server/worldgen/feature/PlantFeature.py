@@ -43,4 +43,4 @@ class PlantFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
         instance = cls()
         for key in custom_config:
             instance.add_plant(key, custom_config[key])
-        return instance.as_feature_definition()
+        return instance.as_feature_definition(weight, group)

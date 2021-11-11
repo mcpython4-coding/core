@@ -30,7 +30,7 @@ class DessertWellFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
     ]
     SANDSTONE = "minecraft:sandstone"
     SANDSTONE_SLAB = "minecraft:sandstone_slab"
-    WATER = None
+    WATER = "minecraft:water"
 
     @classmethod
     def place_array(
