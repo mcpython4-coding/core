@@ -15,6 +15,8 @@ import json
 import random
 import sys
 
+import typing
+
 import mcpython.client.gui.InventoryRecipeView
 import mcpython.common.container.crafting.IRecipe
 import mcpython.common.item.ItemManager
@@ -223,6 +225,26 @@ class CraftingManager:
             )
         )
 
+    def show_to_player_from_input(self, input_name: str):
+        recipes = []
+
+        for array in self.crafting_recipes_shapeless.values():
+            for recipe in array:
+                if any(any(x[0] == input_name for x in e) for e in recipe.inputs):
+                    recipes.append(recipe)
+
+        for array1 in self.crafting_recipes_shaped.values():
+            for array2 in array1.values():
+                for recipe in array2:
+                    if any(any(x[0] == input_name for x in e) for e in recipe.inputs.values()):
+                        recipes.append(recipe)
+
+        if not recipes:
+            logger.println(f"[WARN] no recipes found using item {input_name}")
+            return
+
+        self.show_recipe_list(recipes)
+
     def show_to_player_from_output(self, output_name: str):
         recipes = []
 
@@ -241,6 +263,9 @@ class CraftingManager:
             logger.println(f"[WARN] no recipes found outputting {output_name}")
             return
 
+        self.show_recipe_list(recipes)
+
+    def show_recipe_list(self, recipes: typing.List[IRecipe.IRecipe]):
         self.RECIPE_VIEW_INVENTORY = (
             mcpython.client.gui.InventoryRecipeView.InventoryMultiRecipeView()
         )

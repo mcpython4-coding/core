@@ -57,6 +57,7 @@ Backwards incompatible changes:
 
     Commands:
         - added /data view recipe output <item name> command displaying all recipes yielding into the set item
+        - added /data view recipe using <item name> command displaying all recipes using the set item
 
 
 # Changelog of alpha 1.2.0, compared to 21w42a

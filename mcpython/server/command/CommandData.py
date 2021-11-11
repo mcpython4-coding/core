@@ -54,6 +54,18 @@ data = (
                 )
             )
             .than(
+                CommandNode(DefinedString("using"))
+                .of_name("using")
+                .than(
+                    CommandNode(Item())
+                    .of_name("item to use")
+                    .info("displays all recipes using the given item")
+                    .on_execution(
+                        lambda env, d: shared.crafting_handler.show_to_player_from_input(d[4].NAME)
+                    )
+                )
+            )
+            .than(
                 CommandNode(AnyString.INSTANCE)
                 .of_name("recipe name")
                 .info("creates a view for the given recipe")

@@ -21,7 +21,7 @@ from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
 
 
-def transform_to_item_stack(item, file: str) -> list:
+def transform_to_item_stack(item, file: str) -> typing.List[typing.Tuple[str, int]]:
     """
     Transforms an item name from recipe to a valid item list to compare with
     :param item: the item name given
@@ -122,7 +122,7 @@ class GridShaped(AbstractCraftingGridRecipe):
     @classmethod
     def from_data(cls, data: dict, file: str):
         pattern = data["pattern"]
-        table = {}
+        table: typing.Dict[typing.Tuple[int, int], typing.List[typing.Tuple[str, int]]] = {}
         for item in data["key"]:
             item_list = transform_to_item_stack(data["key"][item], file)
             if len(item_list) == 0:
@@ -143,7 +143,7 @@ class GridShaped(AbstractCraftingGridRecipe):
 
     def __init__(
         self,
-        inputs: typing.Dict[typing.Tuple[int, int], typing.Tuple[str, int]],
+        inputs: typing.Dict[typing.Tuple[int, int], typing.List[typing.Tuple[str, int]]],
         output: typing.Tuple[str, int],
     ):
         super().__init__()
