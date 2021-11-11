@@ -65,5 +65,7 @@
       "group": "ores",
       "group_spawn_count": [1, 10]
     }
-  ]
+  ],
+  "grass_color": "#91BD59",
+  "water_color": "#3F76E4"
 }
