@@ -77,7 +77,12 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
             return []
 
         item_name = itemstack.get_item_name()
-        raw = self.localize_builder.format(*item_name.split(":"))
+
+        try:
+            raw = self.localize_builder.format(*item_name.split(":"))
+        except IndexError:
+            raw = item_name
+
         localized_name = mcpython.common.data.Language.get(raw)
         if raw == localized_name:
             localized_name = itemstack.item.NAME

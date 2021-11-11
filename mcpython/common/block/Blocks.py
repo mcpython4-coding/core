@@ -15,6 +15,7 @@ import typing
 
 from mcpython import shared
 from mcpython.common.block.Candle import ICandleCake, ICandleGroup
+from mcpython.common.block.IFoliageColoredBlock import IFoliageColoredBlock
 from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
 from mcpython.common.factory.combined.simple import CombinedFactoryInstance
@@ -106,6 +107,7 @@ def wood(name: str, normal=True):
             .set_all_side_solid(False)
             .set_strength(0.2)
             .set_assigned_tools(ToolType.SHEAR)
+            .add_base_class(IFoliageColoredBlock)
         )
         DEFERRED_PIPE.create_later(
             BlockFactory()
@@ -975,7 +977,7 @@ stone_like(
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gold_ore"))
 stone_like("granite", existing_slab=True, existing_stairs=True, existing_wall=True)
-DEFERRED_PIPE.create_later(plant("grass"))
+DEFERRED_PIPE.create_later(plant("grass").add_base_class(IFoliageColoredBlock))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gravel").set_fall_able())
 colored("gray")
 colored("green")
@@ -1480,7 +1482,7 @@ DEFERRED_PIPE.create_later(large_plant("minecraft:sunflower"))
 DEFERRED_PIPE.create_later(
     plant("minecraft:sweet_berry_bush").set_default_model_state("age=2")
 )
-DEFERRED_PIPE.create_later(large_plant("minecraft:tall_grass"))
+DEFERRED_PIPE.create_later(large_plant("minecraft:tall_grass").add_base_class(IFoliageColoredBlock))
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_seagrass"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:target"))
 stone_like(

@@ -18,10 +18,10 @@ from mcpython import shared
 from mcpython.common.item.AbstractToolItem import AbstractToolItem
 from mcpython.util.enums import ToolType
 
-from . import AbstractBlock
+from . import IFoliageColoredBlock
 
 
-class GrassBlock(AbstractBlock.AbstractBlock):
+class GrassBlock(IFoliageColoredBlock.IFoliageColoredBlock):
     """
     Class for the grass block
     """
@@ -53,25 +53,6 @@ class GrassBlock(AbstractBlock.AbstractBlock):
                 dim.get_chunk_for_position(self.position).add_block(
                     self.position, "minecraft:dirt"
                 )
-
-    def get_tint_for_index(
-        self, index: int
-    ) -> typing.Tuple[float, float, float, float]:
-        x, y, z = self.position
-        biome_map = (
-            shared.world.get_dimension_by_name(self.dimension)
-            .get_chunk_for_position(self.position)
-            .get_map("minecraft:biome_map")
-        )
-        biome_name = biome_map.get_at_xz(x, z)
-
-        if biome_name not in shared.biome_handler.biomes:
-            return 91 / 255, 201 / 255, 59 / 255, 1
-
-        biome = shared.biome_handler.biomes[biome_name]
-
-        # todo: make biome-based
-        return tuple(e / 255 for e in biome.GRASS_COLOR) + (1,)
 
     def on_player_interaction(
         self,
