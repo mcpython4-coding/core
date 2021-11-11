@@ -23,6 +23,10 @@ from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
 
+if shared.IS_CLIENT:
+    from mcpython.client.gui.StoneCutterContainerRenderer import StoneCutterContainerRenderer
+
+
 class StoneCutter(IHorizontalOrientableBlock):
     """
     Class for the stone cutter block
@@ -47,17 +51,10 @@ class StoneCutter(IHorizontalOrientableBlock):
     def __init__(self):
         super().__init__()
 
-        if StoneCutter.INVENTORY is None:
-            from mcpython.client.gui.StoneCutterContainerRenderer import StoneCutterContainerRenderer
+        if StoneCutter.INVENTORY is None and shared.IS_CLIENT:
             self.inventory = StoneCutter.INVENTORY = StoneCutterContainerRenderer()
         else:
             self.inventory = StoneCutter.INVENTORY
-
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
-
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
 
     def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
@@ -77,18 +74,7 @@ class StoneCutter(IHorizontalOrientableBlock):
     def get_inventories(self):
         return [self.inventory]
 
-    def get_provided_slot_lists(self, side):
-        return self.inventory.slots, self.inventory.slots
-
     @classmethod
     def set_block_data(cls, item, block):
         if hasattr(item, "inventory"):
             block.inventory = item.inventory.copy()
-
-    def on_request_item_for_block(self, itemstack):
-        if (
-            shared.window.keys[key.LCTRL]
-            and shared.world.get_active_player().gamemode == 1
-            and shared.window.mouse_pressing[mouse.MIDDLE]
-        ):
-            itemstack.item.inventory = self.inventory.copy()

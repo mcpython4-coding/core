@@ -1920,4 +1920,5 @@ F   [uuk]: added "/data view recipe output <item name>" and "/data view recipe u
 A   [uuk]: added an inventory for displaying multiple recipes at ones
 Af  [uuk]: added IFoliageColoredBlock base class used by leaves & grass now
 F   [uuk]: NBTStructureHelper is now able to place nbt structures in the world, finally!
+F   [uuk]: stone cutter is now a functional block
 

@@ -50,6 +50,7 @@ Backwards incompatible changes:
 
     Blocks:
         - candles and candle cake are now functional
+        - stone cutter can now cut stone
 
     World generation:
         - biome features are generating again
