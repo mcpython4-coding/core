@@ -72,7 +72,7 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
     # todo: move to container
     def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
-        return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
+        return [mcpython.client.gui.Slot.Slot()] + [mcpython.client.gui.Slot.Slot(allow_player_remove=False, allow_player_insert=False, allow_player_add_to_free_place=False, allow_half_getting=False) for _ in range(3*4)] + [mcpython.client.gui.Slot.Slot()]
 
     def draw(self, hovering_slot=None):
         x, y = self.get_position()
