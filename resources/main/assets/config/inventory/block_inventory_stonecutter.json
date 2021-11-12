@@ -17,6 +17,6 @@
     "11": {"position": [168, 194], "allow_player_add_to_free_place": false},
     "12": {"position": [200, 194], "allow_player_add_to_free_place": false},
 
-    "13": {"position": [285, 234], "allow_player_add_to_free_place": false}
+    "13": {"position": [285, 234], "allow_player_add_to_free_place": false, "allow_player_insert": false}
   }
 }
