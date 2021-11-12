@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.container.crafting.GridRecipeInstances
 import mcpython.common.container.crafting.IRecipe
 from mcpython import shared
 

@@ -27,6 +27,8 @@ from mcpython import shared
 import mcpython.engine.ResourceLoader
 from mcpython.client.rendering.ui.Scrollbar import ScrollbarRenderer
 from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRecipe
+from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.engine import logger
 
 
 class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
@@ -67,7 +69,7 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
         self.currently_selected = -1
         self.previous_item = None
         self.possible_outputs = []
-        self.scrollbar = ScrollbarRenderer(self.SCROLLBAR_TEXTURE, (2*119, 2*97), 69-15, 1)
+        self.scrollbar = ScrollbarRenderer(self.SCROLLBAR_TEXTURE, (2*119, 2*97), 69-15, 1, on_progress_change=self.update_selection_slots)
 
     @staticmethod
     def get_config_file() -> str or None:
@@ -110,7 +112,7 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
         )
         shared.inventory_handler.shift_container_handler.container_B = (self.slots[0],) + (self.slots[-1],)
 
-    def update_selection_view(self):
+    def update_selection_view(self, player=None):
         item = self.slots[0].get_itemstack().get_item_name()
 
         if item == self.previous_item: return
@@ -127,12 +129,31 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
             return
 
         self.possible_outputs = [
-            recipe.result for recipe in StoneCuttingRecipe.RECIPES[item]
+            (recipe.result, recipe.count) for recipe in StoneCuttingRecipe.RECIPES[item]
         ]
-        self.scrollbar.steps = math.ceil(len(self.possible_outputs) / 9) - 2
+        self.scrollbar.steps = max(math.ceil(len(self.possible_outputs) / 9) - 2, 1)
         self.scrollbar.current_step = min(self.scrollbar.current_step, self.scrollbar.steps - 1)
 
+        self.update_selection_slots()
+
         # todo: update slots
+
+    def update_selection_slots(self):
+        for slot in self.slots[1:-1]:
+            slot.get_itemstack().clean()
+
+        offset = self.scrollbar.current_step * 4
+        for x in range(4):
+            for y in range(3):
+                i = offset + x + y * 4
+                slot = self.slots[x + y * 4 + 1]
+
+                if i >= len(self.possible_outputs) - 1: return
+
+                try:
+                    slot.set_itemstack(ItemStack(*self.possible_outputs[i]))
+                except IndexError:
+                    logger.print_exception(str((i, len(self.possible_outputs), x, y, slot, offset)))
 
 
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
