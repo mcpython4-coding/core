@@ -105,6 +105,7 @@ class Slot(ISlot):
         allowed_item_tags=None,
         disallowed_item_tags=None,
         allowed_item_test=None,
+        enable_hovering_background=True,
         on_button_press=None,
         capacity=None,
         check_function=None,
@@ -163,9 +164,12 @@ class Slot(ISlot):
         self.amount_label = pyglet.text.Label()
         self.children = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
+
         self.allowed_item_tags = allowed_item_tags
         self.disallowed_item_tags = disallowed_item_tags
         self.allowed_item_func = allowed_item_test
+        self.enable_hovering_background = enable_hovering_background
+
         self.on_button_press = on_button_press
         self.__capacity = capacity
         self.check_function = check_function
@@ -247,7 +251,7 @@ class Slot(ISlot):
         if center_position is None:
             center_position = self.position
 
-        if hovering:
+        if hovering and self.enable_hovering_background:
             PYGLET_IMAGE_HOVERING.position = (
                 center_position[0] + dx,
                 center_position[1] + dy,

@@ -1921,4 +1921,5 @@ A   [uuk]: added an inventory for displaying multiple recipes at ones
 Af  [uuk]: added IFoliageColoredBlock base class used by leaves & grass now
 F   [uuk]: NBTStructureHelper is now able to place nbt structures in the world, finally!
 F   [uuk]: stone cutter is now a functional block
+F   [uuk]: Slots allow now setting that no background gray image should be rendered when the player hovers over the slot
 

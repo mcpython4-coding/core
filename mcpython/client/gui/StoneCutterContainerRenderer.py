@@ -53,6 +53,8 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
         if self.custom_name is None:
             self.custom_name = "Stonecutter"
 
+        self.currently_selected = -1
+
     @staticmethod
     def get_config_file() -> str or None:
         return "assets/config/inventory/block_inventory_stonecutter.json"
@@ -72,7 +74,7 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
     # todo: move to container
     def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
-        return [mcpython.client.gui.Slot.Slot()] + [mcpython.client.gui.Slot.Slot(allow_player_remove=False, allow_player_insert=False, allow_player_add_to_free_place=False, allow_half_getting=False) for _ in range(3*4)] + [mcpython.client.gui.Slot.Slot()]
+        return [mcpython.client.gui.Slot.Slot()] + [mcpython.client.gui.Slot.Slot(allow_player_remove=False, allow_player_insert=False, enable_hovering_background=False, allow_half_getting=False) for _ in range(3*4)] + [mcpython.client.gui.Slot.Slot()]
 
     def draw(self, hovering_slot=None):
         x, y = self.get_position()
@@ -91,7 +93,7 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
         shared.inventory_handler.shift_container_handler.container_A = (
             shared.world.get_active_player().inventory_main.slots[:36]
         )
-        shared.inventory_handler.shift_container_handler.container_B = self.slots
+        shared.inventory_handler.shift_container_handler.container_B = (self.slots[0],) + (self.slots[-1],)
 
 
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
