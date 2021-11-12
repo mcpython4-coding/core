@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import math
+
 import PIL
 
 import mcpython.client.gui.ContainerRenderer
@@ -23,6 +25,8 @@ import mcpython.engine.event.EventHandler
 import pyglet
 from mcpython import shared
 import mcpython.engine.ResourceLoader
+from mcpython.client.rendering.ui.Scrollbar import ScrollbarRenderer
+from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRecipe
 
 
 class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
@@ -34,6 +38,8 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
     TEXTURE = None
     TEXTURE_SIZE = None
 
+    SCROLLBAR_TEXTURE = None
+
     @classmethod
     def update_texture(cls):
         import mcpython.util.texture
@@ -42,11 +48,16 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
             "minecraft:gui/container/stonecutter"
         )
         size = texture.size
-        texture = texture.crop((0, 0, 175 / 255 * size[0], 165 / 255 * size[1]))
-        size = texture.size
-        texture = texture.resize((size[0] * 2, size[1] * 2), PIL.Image.NEAREST)
-        cls.TEXTURE = mcpython.util.texture.to_pyglet_image(texture)
-        cls.TEXTURE_SIZE = texture.size
+        texture_main = texture.crop((0, 0, 175 / 255 * size[0], 165 / 255 * size[1]))
+        size_main = texture_main.size
+        texture_main = texture_main.resize((size_main[0] * 2, size_main[1] * 2), PIL.Image.NEAREST)
+        cls.TEXTURE = mcpython.util.texture.to_pyglet_image(texture_main)
+        cls.TEXTURE_SIZE = texture_main.size
+
+        texture_scrollbar = texture.crop((176, 0, 188 / 255 * size[0], 15 / 255 * size[1]))
+        size_scrollbar = texture_scrollbar.size
+        texture_scrollbar = texture_scrollbar.resize((size_scrollbar[0] * 2, size_scrollbar[1] * 2), PIL.Image.NEAREST)
+        cls.SCROLLBAR_TEXTURE = mcpython.util.texture.to_pyglet_image(texture_scrollbar)
 
     def __init__(self):
         super().__init__()
@@ -54,6 +65,9 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
             self.custom_name = "Stonecutter"
 
         self.currently_selected = -1
+        self.previous_item = None
+        self.possible_outputs = []
+        self.scrollbar = ScrollbarRenderer(self.SCROLLBAR_TEXTURE, (2*119, 2*97), 69-15, 1)
 
     @staticmethod
     def get_config_file() -> str or None:
@@ -74,12 +88,13 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
     # todo: move to container
     def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
-        return [mcpython.client.gui.Slot.Slot()] + [mcpython.client.gui.Slot.Slot(allow_player_remove=False, allow_player_insert=False, enable_hovering_background=False, allow_half_getting=False) for _ in range(3*4)] + [mcpython.client.gui.Slot.Slot()]
+        return [mcpython.client.gui.Slot.Slot(on_update=self.update_selection_view)] + [mcpython.client.gui.Slot.Slot(allow_player_remove=False, allow_player_insert=False, enable_hovering_background=False, allow_half_getting=False) for _ in range(3*4)] + [mcpython.client.gui.Slot.Slot()]
 
     def draw(self, hovering_slot=None):
         x, y = self.get_position()
         self.TEXTURE.blit(x, y)
         self.bg_image_size = self.TEXTURE_SIZE
+        self.scrollbar.draw((x, y))
         super().draw(hovering_slot)
 
     def get_interaction_slots(self):
@@ -94,6 +109,30 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
             shared.world.get_active_player().inventory_main.slots[:36]
         )
         shared.inventory_handler.shift_container_handler.container_B = (self.slots[0],) + (self.slots[-1],)
+
+    def update_selection_view(self):
+        item = self.slots[0].get_itemstack().get_item_name()
+
+        if item == self.previous_item: return
+        self.previous_item = item
+
+        if not item or item not in StoneCuttingRecipe.RECIPES:
+            self.possible_outputs.clear()
+
+            for slot in self.slots[1:]:
+                slot.get_itemstack().clean()
+
+            self.scrollbar.steps = 1
+            self.scrollbar.current_step = 0
+            return
+
+        self.possible_outputs = [
+            recipe.result for recipe in StoneCuttingRecipe.RECIPES[item]
+        ]
+        self.scrollbar.steps = math.ceil(len(self.possible_outputs) / 9) - 2
+        self.scrollbar.current_step = min(self.scrollbar.current_step, self.scrollbar.steps - 1)
+
+        # todo: update slots
 
 
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(

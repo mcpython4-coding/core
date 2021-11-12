@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.container.crafting.GridRecipeInstances
 import mcpython.common.container.crafting.IRecipe
 from mcpython import shared
@@ -21,7 +23,7 @@ class StoneCuttingRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
     # The list of type descriptors to decode
     RECIPE_TYPE_NAMES = ["minecraft:stonecutting"]
 
-    RECIPES = {}
+    RECIPES: typing.Dict[str, typing.List["StoneCuttingRecipe"]] = {}
 
     @classmethod
     def from_data(cls, data: dict, file: str) -> "StoneCuttingRecipe":
