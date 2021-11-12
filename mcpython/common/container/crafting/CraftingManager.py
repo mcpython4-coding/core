@@ -183,6 +183,9 @@ class CraftingManager:
         # all smelting outputs sorted after ingredient
         self.furnace_recipes = {}
 
+        from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRecipe
+        StoneCuttingRecipe.RECIPES.clear()
+
         shared.event_handler.call("crafting_manager:reload:intermediate", self)
 
         for i, modname in enumerate(list(self.loaded_mod_dirs)):
