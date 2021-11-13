@@ -261,6 +261,7 @@ class ISortCodeFormattingPreperation(AbstractProjectPreparation):
                 or "resources" in root
                 or "build" in root
                 or "__pycache__" in root
+                or "venv" in root
             ):
                 continue
 
