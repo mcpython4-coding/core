@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -22,15 +22,17 @@ from pyglet.window import key, mouse
 from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
-
 if shared.IS_CLIENT:
-    from mcpython.client.gui.StoneCutterContainerRenderer import StoneCutterContainerRenderer
+    from mcpython.client.gui.StoneCutterContainerRenderer import (
+        StoneCutterContainerRenderer,
+    )
 
 
 class StoneCutter(IHorizontalOrientableBlock):
     """
     Class for the stone cutter block
     """
+
     NAME = "minecraft:stonecutter"
 
     HARDNESS = BLAST_RESISTANCE = 3.5

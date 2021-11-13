@@ -26,7 +26,9 @@ class StoneCuttingRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
 
     @classmethod
     def from_data(cls, data: dict, file: str) -> "StoneCuttingRecipe":
-        return cls(data["ingredient"]["item"], data["result"], data.setdefault("count", 1))
+        return cls(
+            data["ingredient"]["item"], data["result"], data.setdefault("count", 1)
+        )
 
     def __init__(self, ingredient: str, result: str, count: int = 1):
         super().__init__()

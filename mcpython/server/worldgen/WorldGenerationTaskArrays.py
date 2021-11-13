@@ -310,7 +310,9 @@ class WorldGenerationTaskHandler:
             raise
         except:
             logger.print_exception(
-                "during invoking '{}' with *{} and **{} during world generation".format(*data)
+                "during invoking '{}' with *{} and **{} during world generation".format(
+                    *data
+                )
             )
         return True
 

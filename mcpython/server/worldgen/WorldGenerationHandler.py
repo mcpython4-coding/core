@@ -177,7 +177,9 @@ class WorldGenerationHandler:
                 )
 
             reference.schedule_invoke(
-                self.layers[layer_name].add_generate_functions_to_chunk(config, reference)
+                self.layers[layer_name].add_generate_functions_to_chunk(
+                    config, reference
+                )
             )
 
     def setup_dimension(

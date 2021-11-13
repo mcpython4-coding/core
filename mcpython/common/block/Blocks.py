@@ -1479,7 +1479,9 @@ DEFERRED_PIPE.create_later(large_plant("minecraft:sunflower"))
 DEFERRED_PIPE.create_later(
     plant("minecraft:sweet_berry_bush").set_default_model_state("age=2")
 )
-DEFERRED_PIPE.create_later(large_plant("minecraft:tall_grass").add_base_class(IFoliageColoredBlock))
+DEFERRED_PIPE.create_later(
+    large_plant("minecraft:tall_grass").add_base_class(IFoliageColoredBlock)
+)
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_seagrass"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:target"))
 stone_like(

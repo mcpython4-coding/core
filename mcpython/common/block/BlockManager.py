@@ -86,8 +86,8 @@ def load():
             NetherPortal,
             Rails,
             RedstoneWire,
-            StoneCutter,
             ShulkerBox,
+            StoneCutter,
             Walls,
         )
     except:

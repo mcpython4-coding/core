@@ -12,9 +12,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.engine.ResourceLoader
+import mcpython.server.worldgen.WorldGenerationTaskArrays
 import python_nbt.nbt as nbt
 from mcpython import shared
-import mcpython.server.worldgen.WorldGenerationTaskArrays
 
 
 class StructureNBTHelper:
@@ -35,7 +35,12 @@ class StructureNBTHelper:
         for block_data in data["palette"]["value"][:]:
             if "Properties" in block_data:
                 state = block_data["Properties"]["value"]
-                state = {key: value["value"] if isinstance(value["value"], dict) else value["value"] for key, value in state.items()}
+                state = {
+                    key: value["value"]
+                    if isinstance(value["value"], dict)
+                    else value["value"]
+                    for key, value in state.items()
+                }
                 block_data["Properties"] = state
             else:
                 block_data["Properties"] = {}
@@ -53,7 +58,7 @@ class StructureNBTHelper:
     def place(self, dimension, x: int, y: int, z: int, config):
         for pos, (name, state) in self.blocks.items():
             dx, dy, dz = pos
-            block = dimension.add_block((x+dx, y+dy, z+dz), name)
+            block = dimension.add_block((x + dx, y + dy, z + dz), name)
 
             if block is not None:
                 block.set_model_state(state)
@@ -76,4 +81,6 @@ class StructureNBTHelper:
 
         for pos, (name, state) in self.blocks.items():
             dx, dy, dz = pos
-            array.schedule_block_add((x+dx, y+dy, z+dz), name, on_add=callback(state))
+            array.schedule_block_add(
+                (x + dx, y + dy, z + dz), name, on_add=callback(state)
+            )
