@@ -95,18 +95,23 @@ class Slot(ISlot):
         self,
         itemstack=None,
         position=(0, 0),
+
         allow_player_remove=True,
         allow_player_insert=True,
         allow_player_add_to_free_place=True,
-        on_update=None,
         allow_half_getting=True,
-        on_shift_click=None,
-        empty_image=None,
+
         allowed_item_tags=None,
         disallowed_item_tags=None,
         allowed_item_test=None,
-        enable_hovering_background=True,
+
+        on_update=None,
+        on_shift_click=None,
         on_button_press=None,
+
+        empty_image=None,
+        enable_hovering_background=True,
+
         capacity=None,
         check_function=None,
     ):

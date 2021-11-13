@@ -143,8 +143,9 @@ class StoneCutterContainerRenderer(mcpython.client.gui.ContainerRenderer.Contain
             slot.get_itemstack().clean()
 
         offset = self.scrollbar.current_step * 4
-        for x in range(4):
-            for y in range(3):
+
+        for y in range(3):
+            for x in range(4):
                 i = offset + x + y * 4
                 slot = self.slots[x + y * 4 + 1]
 
