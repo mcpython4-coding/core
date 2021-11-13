@@ -39,6 +39,9 @@ class ISlot(IBufferSerializeAble, ABC):
     def __init__(self):
         self.assigned_inventory = None
 
+    def handle_click(self, button: int, modifiers: int) -> bool:
+        return False
+
     def get_capacity(self) -> int:
         raise NotImplementedError()
 
@@ -98,14 +101,16 @@ class Slot(ISlot):
         allow_player_remove=True,
         allow_player_insert=True,
         allow_player_add_to_free_place=True,
-        on_update=None,
         allow_half_getting=True,
-        on_shift_click=None,
-        empty_image=None,
         allowed_item_tags=None,
         disallowed_item_tags=None,
         allowed_item_test=None,
+        on_update=None,
+        on_shift_click=None,
         on_button_press=None,
+        on_click_on_slot=None,
+        empty_image=None,
+        enable_hovering_background=True,
         capacity=None,
         check_function=None,
     ):
@@ -121,7 +126,8 @@ class Slot(ISlot):
         :param on_shift_click: called when shift-clicked on the block, should return if normal logic should go on or not
         :param on_button_press: called when an button is pressed when hovering above the slot
         :param capacity: the max item count for the slot
-        :param check_function: an function to check if the item is valid, signature: (Slot, ItemStack) -> bool
+        :param check_function: a function to check if the item is valid, signature: (Slot, ItemStack) -> bool
+        :param on_click_on_slot: a function invoked with button & modifiers when the player pressed on the slot
         """
         super().__init__()
 
@@ -156,6 +162,7 @@ class Slot(ISlot):
             allow_player_remove,
             allow_player_insert,
             allow_player_add_to_free_place,
+            allow_half_getting,
         ]
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
@@ -163,12 +170,19 @@ class Slot(ISlot):
         self.amount_label = pyglet.text.Label()
         self.children = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
+        self.on_click_on_slot = on_click_on_slot
+
         self.allowed_item_tags = allowed_item_tags
         self.disallowed_item_tags = disallowed_item_tags
         self.allowed_item_func = allowed_item_test
+        self.enable_hovering_background = enable_hovering_background
+
         self.on_button_press = on_button_press
         self.__capacity = capacity
         self.check_function = check_function
+
+    def handle_click(self, button: int, modifiers: int) -> bool:
+        return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         self.itemstack.read_from_network_buffer(buffer)
@@ -221,7 +235,7 @@ class Slot(ISlot):
 
     def deepCopy(self):
         """
-        This will copy the content of the slot into an Slot-object
+        This will copy the content of the slot into a Slot-object
         """
         return Slot(
             self.itemstack,
@@ -229,14 +243,17 @@ class Slot(ISlot):
             self.interaction_mode[0],
             self.interaction_mode[1],
             self.interaction_mode[2],
-            self.on_update,
-            self.allow_half_getting,
-            self.on_shift_click,
-            self.empty_image,
+            self.interaction_mode[3],
             self.allowed_item_tags,
+            self.disallowed_item_tags,
             self.allowed_item_func,
+            self.on_update,
+            self.on_shift_click,
             self.on_button_press,
-            self.__capacity,
+            self.on_click_on_slot,
+            self.empty_image,
+            self.enable_hovering_background,
+            self.get_capacity(),
             self.check_function,
         )
 
@@ -247,7 +264,7 @@ class Slot(ISlot):
         if center_position is None:
             center_position = self.position
 
-        if hovering:
+        if hovering and self.enable_hovering_background:
             PYGLET_IMAGE_HOVERING.position = (
                 center_position[0] + dx,
                 center_position[1] + dy,
@@ -381,6 +398,7 @@ class SlotCopy(ISlot):
         allow_half_getting=True,
         on_shift_click=None,
         on_button_press=None,
+        on_click_on_slot=None,
     ):
         super().__init__()
         # todo: add empty image
@@ -408,6 +426,7 @@ class SlotCopy(ISlot):
             allow_player_add_to_free_place,
         ]
         self.on_update = [on_update] if on_update else []
+        self.on_click_on_slot = on_click_on_slot
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
         self.amount_label = pyglet.text.Label(
@@ -416,6 +435,9 @@ class SlotCopy(ISlot):
         )
         self.on_button_press = on_button_press
         self.slot_position = 0, 0
+
+    def handle_click(self, button: int, modifiers: int) -> bool:
+        return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
     def get_allowed_item_tags(self):
         return self.master.allowed_item_tags

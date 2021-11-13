@@ -1472,9 +1472,6 @@ stone_like(
     existing_button=True,
     existing_pressure_plate=True,
 )
-DEFERRED_PIPE.create_later(
-    BlockFactory().set_name("minecraft:stonecutter").set_horizontal_orientable()
-)
 stone_like("stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True)
 # todo: structure block, structure void
 DEFERRED_PIPE.create_later(plant("minecraft:sugar_cane"))
@@ -1482,7 +1479,9 @@ DEFERRED_PIPE.create_later(large_plant("minecraft:sunflower"))
 DEFERRED_PIPE.create_later(
     plant("minecraft:sweet_berry_bush").set_default_model_state("age=2")
 )
-DEFERRED_PIPE.create_later(large_plant("minecraft:tall_grass").add_base_class(IFoliageColoredBlock))
+DEFERRED_PIPE.create_later(
+    large_plant("minecraft:tall_grass").add_base_class(IFoliageColoredBlock)
+)
 DEFERRED_PIPE.create_later(large_plant("minecraft:tall_seagrass"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:target"))
 stone_like(

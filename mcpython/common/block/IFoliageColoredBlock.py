@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -41,4 +41,3 @@ class IFoliageColoredBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
         # todo: make biome-based
         return tuple(e / 255 for e in biome.GRASS_COLOR) + (1,)
-

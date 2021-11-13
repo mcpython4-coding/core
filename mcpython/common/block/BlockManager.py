@@ -87,6 +87,7 @@ def load():
             Rails,
             RedstoneWire,
             ShulkerBox,
+            StoneCutter,
             Walls,
         )
     except:
@@ -126,6 +127,7 @@ def load():
     block_registry.register(Rails.PoweredRail)
     block_registry.register(FluidBlock.WaterFluidBlock)
     block_registry.register(FluidBlock.LavaFluidBlock)
+    block_registry.register(StoneCutter.StoneCutter)
 
     Carpet.load()
     CoralBlocks.load()

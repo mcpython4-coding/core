@@ -11,21 +11,30 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.container.crafting.GridRecipeInstances
+import typing
+
 import mcpython.common.container.crafting.IRecipe
 from mcpython import shared
 
 
 @shared.crafting_handler
 class StoneCuttingRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
-    # todo: implement
     # The list of type descriptors to decode
     RECIPE_TYPE_NAMES = ["minecraft:stonecutting"]
 
+    RECIPES: typing.Dict[str, typing.List["StoneCuttingRecipe"]] = {}
+
     @classmethod
     def from_data(cls, data: dict, file: str) -> "StoneCuttingRecipe":
-        pass
-        return cls()
+        return cls(
+            data["ingredient"]["item"], data["result"], data.setdefault("count", 1)
+        )
 
-    def __init__(self):
+    def __init__(self, ingredient: str, result: str, count: int = 1):
         super().__init__()
+        self.ingredient = ingredient
+        self.result = result
+        self.count = count
+
+    def prepare(self):
+        StoneCuttingRecipe.RECIPES.setdefault(self.ingredient, []).append(self)

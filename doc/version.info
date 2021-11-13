@@ -1920,4 +1920,9 @@ F   [uuk]: added "/data view recipe output <item name>" and "/data view recipe u
 A   [uuk]: added an inventory for displaying multiple recipes at ones
 Af  [uuk]: added IFoliageColoredBlock base class used by leaves & grass now
 F   [uuk]: NBTStructureHelper is now able to place nbt structures in the world, finally!
+F   [uuk]: stone cutter is now a functional block
+F   [uuk]: Slots allow now setting that no background gray image should be rendered when the player hovers over the slot
+f   [uuk]: added Scrollbar helper for GUI's
+fA  [uuk]: Slots can now handle a direct click on them
+b   [uuk]: Shift-clicking on a slot was not invoking an update on the target slot
 

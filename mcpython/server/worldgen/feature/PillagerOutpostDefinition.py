@@ -16,7 +16,6 @@ import random
 import mcpython.server.worldgen.feature.IFeature
 from mcpython import shared
 
-
 POSSIBLE_STRUCTURES = [
     "data/minecraft/structures/pillager_outpost/watchtower.nbt",
     "data/minecraft/structures/pillager_outpost/feature_cage1.nbt",
@@ -29,11 +28,7 @@ POSSIBLE_STRUCTURES = [
 
 from .NBTStructureHelper import StructureNBTHelper
 
-
-STRUCTURES = [
-    StructureNBTHelper.from_file(e)
-    for e in POSSIBLE_STRUCTURES
-]
+STRUCTURES = [StructureNBTHelper.from_file(e) for e in POSSIBLE_STRUCTURES]
 
 
 @shared.registry
