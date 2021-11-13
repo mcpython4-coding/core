@@ -503,6 +503,7 @@ class SlotCopyWithDynamicTarget(SlotCopy):
         allow_player_insert=True,
         allow_player_add_to_free_place=True,
         on_update=None,
+        on_click_on_slot=None,
         allow_half_getting=True,
         on_shift_click=None,
         on_button_press=None,
@@ -523,6 +524,7 @@ class SlotCopyWithDynamicTarget(SlotCopy):
             allow_player_add_to_free_place,
         ]
         self.on_update = [on_update] if on_update else []
+        self.on_click_on_slot = on_click_on_slot
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
         self.amount_label = pyglet.text.Label(

@@ -471,7 +471,10 @@ class OpenedInventoryStatePart(
                 if slot.itemstack.is_empty():
                     slot.set_itemstack(self.moving_itemstack.copy())
 
-                slot.itemstack.set_amount(self.original_amount[i] + per_element + x)
+                count = self.original_amount[i] + per_element + x
+                off = max(0, count - slot.get_itemstack().item.STACK_SIZE)
+                slot.itemstack.set_amount(count - off)
+                overhead += off
                 slot.call_update(True)
 
             shared.inventory_handler.moving_slot.itemstack.clean()
@@ -479,7 +482,7 @@ class OpenedInventoryStatePart(
         elif self.mode == 2:
             overhead = self.moving_itemstack.amount
             for i, slot in enumerate(self.slot_list):
-                if overhead > 0:
+                if overhead > 0 and (slot.get_itemstack().is_empty() or slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE):
                     if slot.itemstack.is_empty():
                         slot.set_itemstack(self.moving_itemstack.copy())
                     slot.itemstack.set_amount(self.original_amount[i] + 1)
