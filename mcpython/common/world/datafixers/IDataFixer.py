@@ -85,7 +85,7 @@ class IPartFixer(IDataFixer, ABC):
     @classmethod
     async def apply(cls, save_file, *args, **kwargs):
         """
-        default implementation of the IPartFixer apply() calling apply_part_fixer(cls) on the SERIALIZER specified
+        default implementation of the IPartFixer apply() calling apply_part_fixer_async(cls) on the SERIALIZER specified
         by TARGET_SERIALIZER_NAME
         Mods may want to override this method when doing other special stuff
         """

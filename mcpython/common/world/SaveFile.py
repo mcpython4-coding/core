@@ -194,7 +194,7 @@ class SaveFile:
                 else:
                     fixer = fixers[0]
 
-                self.apply_storage_fixer(fixer.NAME)
+                await self.apply_storage_fixer_async(fixer.NAME)
                 await self.read_async("minecraft:general")
                 self.version = fixer.FIXES_TO
 
@@ -415,7 +415,7 @@ class SaveFile:
         self, modname: str, source_version: tuple, *args, **kwargs
     ):
         """
-        Applies an mod fixer(list) to the system
+        Applies a mod fixer(list) to the system
         :param modname: the mod name
         :param source_version: where to start from
         :param args: args to call with
@@ -454,14 +454,14 @@ class SaveFile:
 
             try:
                 await fixer.apply(self, *args, **kwargs)
-                [
-                    self.apply_group_fixer(name, *args, **kwargs)
+                await asyncio.gather([
+                    self.apply_group_fixer_async(name, *args, **kwargs)
                     for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES
-                ]
-                [
-                    self.apply_part_fixer(name, *args, **kwargs)
+                ])
+                await asyncio.gather([
+                    self.apply_part_fixer_async(name, *args, **kwargs)
                     for (name, args, kwargs) in fixer.PART_FIXER_NAMES
-                ]
+                ])
             except (SystemExit, KeyboardInterrupt, OSError):
                 raise
             except:

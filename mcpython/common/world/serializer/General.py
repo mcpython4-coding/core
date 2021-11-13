@@ -79,7 +79,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 data["mods"][modname]
             ):
                 try:
-                    save_file.apply_mod_fixer(modname, tuple(data["mods"][modname]))
+                    await save_file.apply_mod_fixer_async(modname, tuple(data["mods"][modname]))
                 except mcpython.common.world.SaveFile.DataFixerNotFoundException:
                     if modname != "minecraft":
                         logger.println(
@@ -95,7 +95,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         for modname in shared.mod_loader.mods:
             if modname not in data["mods"]:
                 try:
-                    save_file.apply_mod_fixer(modname, None)
+                    await save_file.apply_mod_fixer_async(modname, None)
                 except mcpython.common.world.SaveFile.DataFixerNotFoundException:
                     pass
 
