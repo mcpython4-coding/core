@@ -24,7 +24,7 @@ Contains only some information, in ordered form, in a better form for the end us
 
 # Changelog of snapshot 21w<46>a
 Planned to be released on 17.11.2021
-targeting 21w42a
+targeting 1.18pre1
 
 Backwards incompatible changes:
 - async system for world saves
