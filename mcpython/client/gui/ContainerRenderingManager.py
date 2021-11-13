@@ -284,6 +284,7 @@ class OpenedInventoryStatePart(
         if (
             moving_itemstack.is_empty()
             and shared.world.get_active_player().gamemode == 1
+            and slot.interaction_mode[0]
         ):
             shared.inventory_handler.moving_slot.set_itemstack(
                 slot.itemstack.copy().set_amount(slot.itemstack.item.STACK_SIZE)
