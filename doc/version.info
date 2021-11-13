@@ -1924,4 +1924,5 @@ F   [uuk]: stone cutter is now a functional block
 F   [uuk]: Slots allow now setting that no background gray image should be rendered when the player hovers over the slot
 f   [uuk]: added Scrollbar helper for GUI's
 fA  [uuk]: Slots can now handle a direct click on them
+b   [uuk]: Shift-clicking on a slot was not invoking an update on the target slot
 

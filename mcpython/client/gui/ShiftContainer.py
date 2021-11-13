@@ -53,6 +53,9 @@ class ShiftContainer:
                 )
                 slot2.itemstack.add_amount(delta)
                 slot.itemstack.add_amount(-delta)
+
+                slot2.call_update(True)
+                slot.call_update(True)
                 if slot.itemstack.is_empty() or count is not None:
                     return True
 
@@ -61,9 +64,11 @@ class ShiftContainer:
                 if count is None:
                     slot2.set_itemstack(slot.itemstack.copy())
                     slot.itemstack.clean()
+                    slot.call_update(True)
                 else:
                     slot2.set_itemstack(slot.itemstack.copy().set_amount(count))
                     slot.itemstack.add_amount(-count)
+                    slot.call_update(True)
                 return True
 
         return False

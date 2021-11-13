@@ -144,15 +144,14 @@ class StoneCutterContainerRenderer(
         shared.inventory_handler.shift_container_handler.container_A = (
             shared.world.get_active_player().inventory_main.slots[:36]
         )
-        shared.inventory_handler.shift_container_handler.container_B = (
-            self.slots[0],
-        ) + (self.slots[-1],)
+        shared.inventory_handler.shift_container_handler.container_B = [self.slots[0], self.slots[-1]]
 
     def update_selection_view(self, player=None):
         item = self.slots[0].get_itemstack().get_item_name()
 
         if item == self.previous_item:
             return
+
         self.previous_item = item
 
         if not item or item not in StoneCuttingRecipe.RECIPES:
@@ -175,8 +174,6 @@ class StoneCutterContainerRenderer(
         )
 
         self.update_selection_slots()
-
-        # todo: update slots
 
     def update_selection_slots(self):
         for slot in self.slots[1:-1]:
@@ -202,6 +199,7 @@ class StoneCutterContainerRenderer(
     def update_output_slot(self, player=None):
         if self.slots[-1].get_itemstack().is_empty() and self.currently_selected != -1:
             self.slots[0].get_itemstack().add_amount(-1)
+            self.update_selection_view()
 
 
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
