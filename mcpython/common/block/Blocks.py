@@ -1496,7 +1496,13 @@ stone_like(
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:tnt"))
 # todo: torch, tripwire, tripwire hook
-stone_like("tuff", existing_slab=False, existing_stairs=False, existing_wall=False)
+stone_like(
+    "tuff",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    consumer=lambda _, factory: factory.set_hardness(1.5, 6),
+)
 # todo: turtle egg, twisted vines, vine, void air
 wood("warped", normal=False)
 DEFERRED_PIPE.create_later(plant("minecraft:warped_fungus"))

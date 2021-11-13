@@ -116,7 +116,11 @@ class StoneCutterContainerRenderer(
                 )
                 for _ in range(3 * 4)
             ]
-            + [mcpython.client.gui.Slot.Slot(on_update=self.update_output_slot, allow_half_getting=False)]
+            + [
+                mcpython.client.gui.Slot.Slot(
+                    on_update=self.update_output_slot, allow_half_getting=False
+                )
+            ]
         )
 
     def handle_slot_click(self, slot, button, modifiers):
@@ -144,7 +148,10 @@ class StoneCutterContainerRenderer(
         shared.inventory_handler.shift_container_handler.container_A = (
             shared.world.get_active_player().inventory_main.slots[:36]
         )
-        shared.inventory_handler.shift_container_handler.container_B = [self.slots[0], self.slots[-1]]
+        shared.inventory_handler.shift_container_handler.container_B = [
+            self.slots[0],
+            self.slots[-1],
+        ]
 
     def update_selection_view(self, player=None):
         item = self.slots[0].get_itemstack().get_item_name()
