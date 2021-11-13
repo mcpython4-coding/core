@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import dis
 import os
 import sys
 import traceback
@@ -43,14 +42,14 @@ class LaunchWrapper:
         if sys.version_info.major < 3 or sys.version_info.minor < 10:
             print(
                 "[VERSION DETECTOR][FATAL] you are using an not supported version of python. "
-                "You need at least python 3.9 in order to run the game!"
+                "You need at least python 3.10 in order to run the game!"
             )
             sys.exit(-1)
 
         if sys.version_info.minor >= 11:
             print(
-                f"[VERSION DETECTOR][WARN] Detected python version 3.{sys.version_info.minor}, "
-                f"which is >= 11, which may not work"
+                f"[VERSION DETECTOR][WARN] Detected python version {sys.version_info.major}.{sys.version_info.minor}, "
+                f"which is > 3.10, the currently recommended version (Issues may arise)"
             )
 
     def set_client(self):
