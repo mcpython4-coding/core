@@ -57,21 +57,3 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     def modify_block_item(cls, factory):
         factory.set_fuel_level(3.35)
 
-
-def create_carpet_block(carpet_color: str):
-    """
-    generator function for carpets. Will create an new class for an carpet
-    :param carpet_color: the color name of the carpet
-    :return: the generated class
-    """
-
-    @shared.registry
-    class Carpet(AbstractCarpet):
-        NAME: str = "{}_carpet".format(carpet_color)  # the name of the block
-
-    return Carpet
-
-
-def load():
-    for color in mcpython.util.enums.COLORS:
-        create_carpet_block("minecraft:" + color)

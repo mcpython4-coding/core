@@ -17,6 +17,7 @@ from abc import ABC
 
 import mcpython.common.event.api
 import mcpython.common.event.Registry
+from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 
 
@@ -52,3 +53,7 @@ class IRecipe(mcpython.common.event.api.IRegistryContent, ABC):
 
     def prepare(self):
         pass
+
+    def prepare_static(self):
+        shared.crafting_handler.add_recipe(self)
+        shared.crafting_handler.static_recipes.append(self)

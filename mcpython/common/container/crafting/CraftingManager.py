@@ -46,6 +46,8 @@ class CraftingManager:
 
         self.loaded_mod_dirs = set()
 
+        self.static_recipes = []
+
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "minecraft:data:shuffle:all", self.shuffle_data
         )
@@ -89,7 +91,9 @@ class CraftingManager:
             logger.print_exception("during preparing recipe " + name)
             return self
 
-        self.recipe_table[name] = recipe
+        if name is not None:
+            self.recipe_table[name] = recipe
+
         return self
 
     def add_recipe_from_data(self, data: dict, name: str, file: str = None):
@@ -200,6 +204,9 @@ class CraftingManager:
             )
             self.load(modname, check_mod_dirs=False, load_direct=True)
         print()
+
+        for recipe in self.static_recipes:
+            self.add_recipe(recipe)
 
         shared.event_handler.call("crafting_manager:reload:end", self)
 

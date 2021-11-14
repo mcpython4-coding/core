@@ -15,7 +15,10 @@ import typing
 
 from mcpython import shared
 from mcpython.common.block.Candle import ICandleCake, ICandleGroup
+from mcpython.common.block.Carpet import AbstractCarpet
 from mcpython.common.block.IFoliageColoredBlock import IFoliageColoredBlock
+from mcpython.common.container.crafting.GridRecipeInstances import GridShaped
+from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRecipe
 from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
 from mcpython.common.factory.combined.simple import CombinedFactoryInstance
@@ -217,6 +220,9 @@ def stone_like(
         instance.create_slab_block(
             f"minecraft:{fname}_slab", block_factory_consumer=consumer
         )
+        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{name}_slab", 2).prepare_static()
+        key = [(f"minecraft:{name}", 1)]
+        GridShaped({(0, 0): key, (1, 0): key, (2, 0): key}, (f"minecraft:{name}_slab", 6)).prepare_static()
 
     if existing_wall:
         obj = BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall()
@@ -224,6 +230,9 @@ def stone_like(
         DEFERRED_PIPE.create_later(obj)
     else:
         instance.create_wall(f"minecraft:{fname}_wall", block_factory_consumer=consumer)
+        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{name}_wall", 6).prepare_static()
+        key = [(f"minecraft:{name}", 1)]
+        GridShaped({(0, 0): key, (1, 0): key, (2, 0): key, (0, 1): key, (1, 1): key, (2, 1): key}, (f"minecraft:{name}_wall", 6)).prepare_static()
 
     if existing_stairs:
         obj = (
@@ -246,6 +255,7 @@ def stone_like(
         instance.create_fence(
             f"minecraft:{fname}_fence", block_factory_consumer=consumer
         )
+        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{name}_fence").prepare_static()
 
     if existing_button:
         DEFERRED_PIPE.create_later(
@@ -290,6 +300,12 @@ def colored(name: str):
         .add_base_class(ICandleCake)
         .set_solid(False)
         .set_all_side_solid(False)
+    )
+
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_carpet")
+        .add_base_class(AbstractCarpet)
     )
 
     stone_like(

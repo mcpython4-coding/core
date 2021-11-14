@@ -129,7 +129,6 @@ def load():
     block_registry.register(FluidBlock.LavaFluidBlock)
     block_registry.register(StoneCutter.StoneCutter)
 
-    Carpet.load()
     CoralBlocks.load()
     ShulkerBox.load()
     Walls.load()
