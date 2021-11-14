@@ -20,11 +20,12 @@ import sys
 import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
-wrapper.apply_mixins()
-wrapper.check_py_version()
 
 
 if __name__ == "__main__":
+    wrapper.apply_mixins()
+    wrapper.check_py_version()
+
     print(
         "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     )

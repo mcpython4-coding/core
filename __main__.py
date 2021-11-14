@@ -18,11 +18,12 @@ import traceback
 import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
-wrapper.apply_mixins()
-wrapper.check_py_version()
 
 
 if __name__ == "__main__":
+    wrapper.apply_mixins()
+    wrapper.check_py_version()
+
     try:
         wrapper.set_client()
         wrapper.full_launch()
