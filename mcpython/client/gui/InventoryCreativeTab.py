@@ -741,4 +741,5 @@ async def init():
     )
 
 
-shared.mod_loader("minecraft", "stage:item_groups:load")(init())
+if not shared.IS_TEST_ENV:
+    shared.mod_loader("minecraft", "stage:item_groups:load")(init())

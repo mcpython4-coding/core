@@ -31,7 +31,7 @@ class FakeInventoryHandler:
 
 class FakeCraftingHandler:
     def __call__(self, *args, **kwargs):
-        pass
+        return args[0]
 
 
 class FakeWorld:
