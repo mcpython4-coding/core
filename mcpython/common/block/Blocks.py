@@ -220,9 +220,9 @@ def stone_like(
         instance.create_slab_block(
             f"minecraft:{fname}_slab", block_factory_consumer=consumer
         )
-        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{name}_slab", 2).prepare_static()
+        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{fname}_slab", 2).prepare_static()
         key = [(f"minecraft:{name}", 1)]
-        GridShaped({(0, 0): key, (1, 0): key, (2, 0): key}, (f"minecraft:{name}_slab", 6)).prepare_static()
+        GridShaped({(0, 0): key, (1, 0): key, (2, 0): key}, (f"minecraft:{fname}_slab", 6)).prepare_static()
 
     if existing_wall:
         obj = BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall()
@@ -230,9 +230,9 @@ def stone_like(
         DEFERRED_PIPE.create_later(obj)
     else:
         instance.create_wall(f"minecraft:{fname}_wall", block_factory_consumer=consumer)
-        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{name}_wall", 6).prepare_static()
+        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{fname}_wall", 6).prepare_static()
         key = [(f"minecraft:{name}", 1)]
-        GridShaped({(0, 0): key, (1, 0): key, (2, 0): key, (0, 1): key, (1, 1): key, (2, 1): key}, (f"minecraft:{name}_wall", 6)).prepare_static()
+        GridShaped({(0, 0): key, (1, 0): key, (2, 0): key, (0, 1): key, (1, 1): key, (2, 1): key}, (f"minecraft:{fname}_wall", 6)).prepare_static()
 
     if existing_stairs:
         obj = (
@@ -255,7 +255,7 @@ def stone_like(
         instance.create_fence(
             f"minecraft:{fname}_fence", block_factory_consumer=consumer
         )
-        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{name}_fence").prepare_static()
+        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{fname}_fence").prepare_static()
 
     if existing_button:
         DEFERRED_PIPE.create_later(
@@ -265,6 +265,7 @@ def stone_like(
             .set_solid(False)
             .set_all_side_solid(False)
         )
+        StoneCuttingRecipe(f"minecraft:{name}", f"minecraft:{fname}_button", 2).prepare_static()
     else:
         # instance.create_button_block(f"minecraft:{fname}_button", block_factory_consumer=consumer)
         # todo: implement
@@ -307,6 +308,7 @@ def colored(name: str):
         .set_name(f"minecraft:{name}_carpet")
         .add_base_class(AbstractCarpet)
     )
+    StoneCuttingRecipe(f"minecraft:{name}_wool", f"minecraft:{name}_carpet", 2).prepare_static()
 
     stone_like(
         f"{name}_concrete",
