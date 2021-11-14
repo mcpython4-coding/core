@@ -59,7 +59,7 @@ def load_data():
         builder = logger.TableBuilder(
             header=[
                 "MCPYTHON REGISTRY CHANGE - Following BlockItemTextures",
-                "are obsolete as this blocks are missing.",
+                "are obsolete as these blocks are missing.",
                 "They are removed from the system",
             ]
         )

@@ -22,12 +22,26 @@ from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRe
 from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
 from mcpython.common.factory.BlockFactory import BlockFactory
 from mcpython.common.factory.combined.simple import CombinedFactoryInstance
+from mcpython.util.enums import ToolType
 
 # Missing:
 # air
 # attached_melon_stem
 # attached_pumpkin_stem
-from mcpython.util.enums import ToolType
+# cave air
+# command block
+# creeper head & wall head
+# dragon head
+# glass pane
+# glow item frame and glow lichen
+# heavy_weighted_pressure_plate
+# iron door
+# iron trapdoor, item frame
+# jigsaw block
+# light_weighted_pressure_plate
+# moving piston, mushroom stem
+# powder_snow
+# piston, piston head, player head, player wall head
 
 DEFERRED_PIPE: DeferredRegistry = shared.registry.get_by_name(
     "minecraft:block"
@@ -368,7 +382,7 @@ DEFERRED_PIPE.create_later(
 wood("acacia")
 
 # Stone based
-stone_like("andesite", strength=(1.5, 6))
+stone_like("andesite", strength=(1.5, 6), tool=ToolType.PICKAXE)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:basalt")
@@ -385,11 +399,10 @@ DEFERRED_PIPE.create_later(
     .set_strength(30, 1200)
 )
 
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:amethyst_block")
-    .set_assigned_tools(ToolType.PICKAXE)
-    .set_strength(1.5)
+stone_like(
+    "amethyst_block",
+    tool=ToolType.PICKAXE,
+    strength=1.5,
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -434,11 +447,11 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_strength(3)
 )
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:bedrock")
-    .set_break_able_flag(False)
-    .set_strength(-1, 3600000)
+stone_like(
+    "bedrock",
+    consumer=lambda _, factory: factory.set_break_able_flag(False),
+    strength=(-1, 3600000),
+    existing_slab=False, existing_stairs=False, existing_wall=False,
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -488,11 +501,10 @@ wood("birch")
 stone_like("blackstone", existing_fence=False, strength=6)
 colored("black")
 colored("blue")
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:blue_ice")
-    .set_strength(2.8)
-    .set_assigned_tools(ToolType.PICKAXE)
+stone_like(
+    "blue_ice",
+    strength=2.8,
+    tool=ToolType.PICKAXE,
 )
 DEFERRED_PIPE.create_later(plant("minecraft:blue_orchid"))
 DEFERRED_PIPE.create_later(
@@ -570,32 +582,32 @@ DEFERRED_PIPE.create_later(
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:candle")
-    .set_default_model_state("candles=2,lit=true")
-    .set_solid(False)
-    .set_all_side_solid(False)
-    .set_strength(0.1)
+    .add_base_class(ICandleGroup)
 )
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:candle_cake")
-    .set_default_model_state("lit=true")
-    .set_solid(False)
-    .set_all_side_solid(False)
-    .set_strength(0.5)
+    .add_base_class(ICandleCake)
 )
 DEFERRED_PIPE.create_later(plant("minecraft:carrots").set_default_model_state("age=3"))
+
+# todo: implement
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:cartography_table")
     .set_strength(2.5)
     .set_assigned_tools(ToolType.AXE)
 )
+
+# todo: emit light
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:carved_pumpkin")
     .set_horizontal_orientable()
     .set_strength(1)
 )
+
+# todo: add functionality
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:cauldron")
@@ -605,7 +617,7 @@ DEFERRED_PIPE.create_later(
     .set_assigned_tools(ToolType.PICKAXE)
     .set_minimum_tool_level(1)
 )
-# todo: cave air
+
 DEFERRED_PIPE.create_later(
     plant("minecraft:cave_vines").set_default_model_state("berries=false")
 )
@@ -668,6 +680,8 @@ stone_like(
     strength=(1.5, 6),
     tool=ToolType.PICKAXE,
 )
+
+# todo: implement
 DEFERRED_PIPE.create_later(
     plant("minecraft:chorus_flower")
     .set_default_model_state("age=3")
@@ -682,6 +696,7 @@ DEFERRED_PIPE.create_later(
     .set_strength(0.4)
     .set_assigned_tools(ToolType.AXE)
 )
+
 stone_like(
     "clay",
     existing_slab=False,
@@ -729,6 +744,8 @@ stone_like(
     strength=(2, 6),
     tool=ToolType.PICKAXE,
 )
+
+# todo: add reduced movement speed
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:cobweb")
@@ -737,6 +754,8 @@ DEFERRED_PIPE.create_later(
     .set_strength(4)
     .set_assigned_tools((ToolType.SHEAR, ToolType.SWORD))
 )
+
+# todo: implement
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:cocoa")
@@ -744,9 +763,8 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
     .set_strength(0.2, 3)
-    .set_assigned_tools((ToolType.AXE))
+    .set_assigned_tools(ToolType.AXE)
 )
-# todo: command block
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:comparator")
@@ -772,6 +790,7 @@ DEFERRED_PIPE.create_later(
     .set_strength(3)
     .set_assigned_tools(ToolType.PICKAXE)
 )
+
 stone_like(
     "copper_block",
     existing_slab=False,
@@ -822,8 +841,9 @@ stone_like(
     existing_wall=False,
     strength=(1.5, 6),
 )
-# todo: creeper head & wall head
 wood("crimson", normal=False)
+
+# todo: add hardness values!
 stone_like(
     "crying_obsidian", existing_slab=False, existing_stairs=False, existing_wall=False
 )
@@ -840,6 +860,8 @@ wood("dark_oak")
 stone_like(
     "dark_prismarine", existing_slab=True, existing_stairs=True, existing_wall=False
 )
+
+# todo: make functional
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:daylight_detector")
@@ -847,6 +869,7 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate").set_log())
 stone_like(
     "deepslate_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
@@ -854,6 +877,8 @@ stone_like(
 stone_like(
     "deepslate_tiles", existing_slab=True, existing_stairs=True, existing_wall=True
 )
+
+# todo: set properties
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_coal_ore"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_copper_ore"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_diamond_ore"))
@@ -862,6 +887,8 @@ DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_gold_ore
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_iron_ore"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_lapis_ore"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_redstone_ore"))
+
+# todo: make functional
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:detector_rail")
@@ -869,6 +896,7 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
 stone_like(
     "diamond_block", existing_slab=False, existing_stairs=False, existing_wall=False
 )
@@ -881,25 +909,33 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
+# todo: make functional
 DEFERRED_PIPE.create_later(
     BlockFactory().set_name("minecraft:dispenser").set_all_direction_orientable()
 )
+
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:dragon_egg")
     .set_solid(False)
     .set_all_side_solid(False)
+    .set_fall_able()
 )
-# todo: dragon head
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:dried_kelp_block"))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:dripstone_block"))
+stone_like("dripstone_block", existing_slab=False, existing_stairs=False, existing_wall=False)
+
+# todo: make functional
 DEFERRED_PIPE.create_later(
     BlockFactory().set_name("minecraft:dropper").set_all_direction_orientable()
 )
+
 stone_like(
     "emerald_block", existing_slab=False, existing_stairs=False, existing_wall=False
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:emerald_ore"))
+
+# todo: implement
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:enchanting_table")
@@ -925,6 +961,8 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
+# todo: emit light
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:end_rod")
@@ -932,6 +970,7 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
 stone_like("end_stone", existing_slab=False, existing_stairs=False, existing_wall=False)
 stone_like(
     "end_stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
@@ -942,6 +981,8 @@ stone_like(
 stone_like(
     "exposed_cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False
 )
+
+# todo: implement crop interaction
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:farmland")
@@ -949,7 +990,10 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
-DEFERRED_PIPE.create_later(plant("minecraft:fern"))
+
+DEFERRED_PIPE.create_later(plant("minecraft:fern").add_base_class(IFoliageColoredBlock))
+
+# todo: set player on fire
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:fire")
@@ -957,6 +1001,7 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:fletching_table"))
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -964,12 +1009,15 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
+# todo: implement interaction
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:flower_pot")
     .set_solid(False)
     .set_all_side_solid(False)
 )
+
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:frosted_ice")
@@ -987,9 +1035,7 @@ stone_like(
     existing_wall=False,
     consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
 )
-# todo: glass pane
 stone_like("glowstone", existing_slab=False, existing_stairs=False, existing_wall=False)
-# todo: glow item frame and glow lichen
 stone_like(
     "gold_block", existing_slab=False, existing_stairs=False, existing_wall=False
 )
@@ -999,6 +1045,8 @@ DEFERRED_PIPE.create_later(plant("grass").add_base_class(IFoliageColoredBlock))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gravel").set_fall_able())
 colored("gray")
 colored("green")
+
+# todo: make functional
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:grindstone")
@@ -1006,26 +1054,32 @@ DEFERRED_PIPE.create_later(
     .set_solid(False)
     .set_default_model_state("face=ceiling,facing=north")
 )
+
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:hanging_roots"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:hay_block").set_log())
-# todo: heavy_weighted_pressure_plate
 stone_like(
     "honeycomb_block", existing_slab=False, existing_stairs=False, existing_wall=False
 )
+
+# todo: add properties
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:honey_block")
     .set_all_side_solid(False)
     .set_solid(False)
 )
+
+# todo: create real block behaviour
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:hopper")
     .set_all_side_solid(False)
     .set_solid(False)
     .set_default_model_state("facing=east")
-)  # todo: create real block behaviour
-stone_like("ice")  # todo: melting
+)
+
+# todo: melting
+stone_like("ice")
 
 # todo: add infection
 stone_like(
@@ -1076,17 +1130,19 @@ stone_like(
 
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:iron_bars").set_fence())
 stone_like("iron_block")
-# todo: iron door
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:iron_ore"))
-# todo: iron trapdoor, item frame
 DEFERRED_PIPE.create_later(
     BlockFactory().set_name("minecraft:jack_o_lantern").set_horizontal_orientable()
 )
-# todo: jigsaw block
+
+# todo: make functional
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:jukebox"))
+
 wood("jungle")
 DEFERRED_PIPE.create_later(plant("minecraft:kelp"))
 DEFERRED_PIPE.create_later(plant("minecraft:kelp_plant"))
+
+# todo: make functional
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:ladder")
@@ -1094,6 +1150,7 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
     .set_solid(False)
 )
+
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:lantern")
@@ -1110,7 +1167,9 @@ DEFERRED_PIPE.create_later(
     .set_name("minecraft:large_amethyst_bud")
     .set_all_direction_orientable()
 )
-DEFERRED_PIPE.create_later(large_plant("minecraft:large_fern"))
+DEFERRED_PIPE.create_later(large_plant("minecraft:large_fern").add_base_class(IFoliageColoredBlock))
+
+# todo: make functional
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:lava_cauldron")
@@ -1131,7 +1190,8 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
     .set_solid(False)
 )
-# todo: light
+
+# todo: lightning rod with lightning
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:lightning_rod")
@@ -1139,18 +1199,23 @@ DEFERRED_PIPE.create_later(
     .set_all_side_solid(False)
     .set_solid(False)
 )
+
 colored("light_blue")
 colored("light_gray")
-# todo: light_weighted_pressure_plate
 DEFERRED_PIPE.create_later(large_plant("minecraft:lilac"))
 DEFERRED_PIPE.create_later(plant("minecraft:lily_of_the_valley"))
 DEFERRED_PIPE.create_later(plant("minecraft:lily_pad"))
 colored("lime")
+
+# todo: implement
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:lodestone"))
 DEFERRED_PIPE.create_later(
     BlockFactory().set_name("minecraft:loom").set_horizontal_orientable()
 )
+
 colored("magenta")
+
+# todo: add damage
 stone_like(
     "magma_block",
     existing_slab=False,
@@ -1158,6 +1223,7 @@ stone_like(
     existing_wall=False,
     texture="minecraft:block/magma",
 )
+
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:medium_amethyst_bud")
@@ -1179,10 +1245,8 @@ stone_like(
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:moss_carpet")
-    .set_all_side_solid(False)
-    .set_solid(False)
+    .add_base_class(AbstractCarpet)
 )
-# todo: moving piston, mushroom stem
 DEFERRED_PIPE.create_later(
     BlockFactory().set_name("minecraft:mycelium").set_default_model_state("snowy=false")
 )
@@ -1204,7 +1268,10 @@ DEFERRED_PIPE.create_later(
 stone_like(
     "nether_wart_block", existing_slab=False, existing_stairs=False, existing_wall=False
 )
+
+# todo: make functional
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:note_block"))
+
 wood("oak")
 DEFERRED_PIPE.create_later(
     BlockFactory()
@@ -1229,7 +1296,6 @@ DEFERRED_PIPE.create_later(
 )
 colored("pink")
 DEFERRED_PIPE.create_later(plant("minecraft:pink_tulip"))
-# todo: piston, piston head, player head, player wall head
 DEFERRED_PIPE.create_later(
     BlockFactory().set_name("minecraft:podzol").set_default_model_state("snowy=false")
 )
@@ -1269,6 +1335,8 @@ stone_like(
 )
 DEFERRED_PIPE.create_later(plant("minecraft:poppy"))
 DEFERRED_PIPE.create_later(plant("minecraft:potatoes").set_default_model_state("age=4"))
+
+# todo: some clever stuff with flower pot
 DEFERRED_PIPE.create_later(plant("minecraft:potted_allium"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_azure_bluet"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_bamboo"))
@@ -1293,7 +1361,7 @@ DEFERRED_PIPE.create_later(plant("minecraft:potted_warped_fungus"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_warped_roots"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_white_tulip"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_wither_rose"))
-# todo: powder_snow
+
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:powder_snow_cauldron")
