@@ -534,6 +534,12 @@ class IDimension(ISupportWorldInterface, ABC):
     def chunk_iterator(self):
         raise NotImplementedError
 
+    def show_chunk(self, chunk: typing.Union[typing.Tuple[int, int], IChunk]):
+        raise NotImplementedError
+
+    def hide_chunk(self, chunk: typing.Union[typing.Tuple[int, int], IChunk]):
+        raise NotImplementedError
+
 
 class IWorld(ABC):
     def get_dimension_names(self) -> typing.Iterable[str]:

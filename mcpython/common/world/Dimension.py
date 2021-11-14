@@ -175,6 +175,44 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
 
         self.height_range = (0, 255)
 
+    def show_chunk(
+        self,
+        chunk: typing.Union[
+            typing.Tuple[int, int], mcpython.engine.world.AbstractInterface.IChunk
+        ],
+    ):
+        """
+        Ensure all blocks in the given chunk that should be shown are
+        drawn to the canvas.
+        :param chunk: the chunk to show
+        """
+        if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
+            chunk = self.get_chunk(*chunk, generate=False)
+
+        if chunk is None:
+            return
+
+        chunk.show()
+
+    def hide_chunk(
+        self,
+        chunk: typing.Union[
+            typing.Tuple[int, int], mcpython.engine.world.AbstractInterface.IChunk
+        ],
+    ):
+        """
+        Ensure all blocks in the given chunk that should be hidden are
+        removed from the canvas.
+        :param chunk: the chunk to hide
+        """
+        if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
+            chunk = self.get_chunk(*chunk, generate=False)
+
+        if chunk is None:
+            return
+
+        chunk.hide()
+
     def update_visible_block(self, position: typing.Tuple[int, int, int]):
         self.get_chunk_for_position(position, generate=False).update_visible_block(
             position

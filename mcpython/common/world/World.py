@@ -422,12 +422,12 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         hide = before_set - after_set
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
-            pyglet.clock.schedule_once(wrap_method(self.hide_chunk, chunk), 0.1)
-            c = shared.world.get_active_dimension().get_chunk(
+            pyglet.clock.schedule_once(wrap_method(dimension.hide_chunk, chunk), 0.1)
+            c = dimension.get_chunk(
                 *chunk, generate=False, create=False
             )
 
-            if c and c.loaded and not shared.IS_NETWORKING:
+            if c and c.is_loaded() and not shared.IS_NETWORKING:
                 shared.tick_handler.schedule_once(
                     shared.world.save_file.dump,
                     None,
@@ -443,7 +443,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                 continue
 
             c = dimension.get_chunk(*chunk, generate=False)
-            pyglet.clock.schedule_once(wrap_method(self.show_chunk, c), 0.1)
+            pyglet.clock.schedule_once(wrap_method(dimension.show_chunk, c), 0.1)
 
             if not shared.IS_NETWORKING:
                 if not load_immediate:
@@ -521,12 +521,12 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         hide = before_set - after_set
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
-            pyglet.clock.schedule_once(wrap_method(self.hide_chunk, chunk), 0.1)
-            c = shared.world.get_active_dimension().get_chunk(
+            pyglet.clock.schedule_once(wrap_method(dimension.hide_chunk, chunk), 0.1)
+            c = dimension.get_chunk(
                 *chunk, generate=False, create=False
             )
 
-            if c and c.loaded and not shared.IS_NETWORKING:
+            if c and c.is_loaded() and not shared.IS_NETWORKING:
                 schedule_task(
                     shared.world.save_file.dump_async(
                         None,
@@ -543,7 +543,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                 continue
 
             c = dimension.get_chunk(*chunk, generate=False)
-            pyglet.clock.schedule_once(wrap_method(self.show_chunk, c), 0.1)
+            pyglet.clock.schedule_once(wrap_method(dimension.show_chunk, c), 0.1)
 
             if not shared.IS_NETWORKING:
                 if not load_immediate:

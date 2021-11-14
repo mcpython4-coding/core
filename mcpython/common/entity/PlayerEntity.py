@@ -493,7 +493,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         sector = mcpython.util.math.position_to_chunk(self.position)
 
         if not internal:
-            shared.world.change_chunks(sector, None)
+            shared.world.change_chunks(sector, None, dimension=self.dimension)
 
         self.reset_moving_slot()
         if (
@@ -532,7 +532,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         if shared.IS_CLIENT and not internal:
             sector = mcpython.util.math.position_to_chunk(self.position)
-            shared.world.change_chunks(None, sector)
+            shared.world.change_chunks(None, sector, dimension=self.dimension)
 
         # todo: recalculate armor level!
 
@@ -546,7 +546,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if not internal:
             shared.event_handler.call("gameplay:player:die", self, damage_source)
 
-        self.send_update_package_when_client()
+        # self.send_update_package_when_client()
+        self.send_update_package_when_server()
 
     def _get_position(self):
         return self.position
