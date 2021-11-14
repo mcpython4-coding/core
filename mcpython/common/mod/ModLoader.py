@@ -32,27 +32,32 @@ from mcpython.common.mod.util import LoadingInterruptException
 from mcpython.engine import logger
 
 
-def cast_dependency(depend: dict):
+def cast_dependency(dependency: dict) -> mcpython.common.mod.Mod.ModDependency:
     """
-    Will cast a dict-structure to the depend
-    :param depend: the depend dict
+    Will cast a dict-structure to the dependency
+    :param dependency: the dependency dict describing the data
     :return: the parsed mod.Mod.ModDependency-object
     """
     config = {}
 
-    if "version" in depend:
-        config["version_min"] = depend["version"]
+    if "version" in dependency:
+        config["version_min"] = dependency["version"]
 
-    if "upper_version" in depend:
-        config["version_max"] = depend["upper_version"]
+    if "upper_version" in dependency:
+        config["version_max"] = dependency["upper_version"]
 
-    if "versions" in depend:
-        config["versions"] = depend["versions"]
+    if "versions" in dependency:
+        config["versions"] = dependency["versions"]
 
-    return mcpython.common.mod.Mod.ModDependency(depend["name"], **config)
+    return mcpython.common.mod.Mod.ModDependency(dependency["name"], **config)
 
 
 def parse_provider_json(container: "ModContainer", data: dict):
+    """
+    Parser for the provider.json information file mods and other containers are
+    allowed to provide in order to do stuff before mod loading
+    """
+
     if "importDirect" in data:
         for module in data["importDirect"]:
             try:
@@ -65,7 +70,10 @@ def parse_provider_json(container: "ModContainer", data: dict):
 
 class ModContainer:
     """
-    Class holding information about a mod file
+    Class holding information about a mod file/directory
+    (Not a single mod, but more a load location)
+
+    Is similar to sys.path-entries, but only for mods
     """
 
     def __init__(self, path: str):
@@ -107,7 +115,7 @@ class ModContainer:
 
     def try_identify_mod_loader(self):
         """
-        Does some clever lookup for identifying the mod loader
+        Does some lookup for identifying the mod loader
         """
         if self.assigned_mod_loader is not None:
             return
@@ -445,7 +453,7 @@ class ModLoader:
         """
         Scanner for mod files, parsing the parsed sys.argv stuff
 
-        Stores the resuolt in the found_mod_files attribute of this
+        Stores the result in the found_mod_files attribute of this
         """
 
         folders = [shared.home + "/mods"]
@@ -488,7 +496,7 @@ class ModLoader:
                 logger.print_exception(container)
                 containers.remove(container)
 
-        for container in containers:
+        for container in containers[:]:
             try:
                 self.current_container = container
                 container.load_meta_files()
@@ -502,10 +510,15 @@ class ModLoader:
             raise RuntimeError()
 
     def load_missing_mods(self):
-        for container in self.mod_containers:
+        for container in self.mod_containers[:]:
             if container.assigned_mod_loader is None:
                 self.current_container = container
                 container.try_identify_mod_loader()
+
+                if container.assigned_mod_loader is not None:
+                    container.load_meta_files()
+                else:
+                    self.mod_containers.remove(container)
 
         logger.println(
             "found mod{}: {}".format(
@@ -518,6 +531,8 @@ class ModLoader:
         Will check for changes between versions between this session and the one before
 
         In case of a change, rebuild mode is entered
+
+        todo: add a way for mods to decide if a rebuild is needed when they are added / removed
         """
 
         for modname in self.previous_mod_list.keys():
@@ -665,15 +680,13 @@ class ModLoader:
         if not mcpython.common.mod.ModLoadingStages.manager.order.is_active():
             return
 
-        start = time.time()
-        astate: mcpython.common.state.ModLoadingProgress.ModLoadingProgress = (
-            shared.state_handler.active_state
-        )
+        astate = shared.state_handler.active_state
         astate.parts[0].progress_max = len(
             mcpython.common.mod.ModLoadingStages.manager.stages
         )
         astate.parts[1].progress_max = len(self.mods)
 
+        start = time.time()
         while time.time() - start < 0.2:
             stage = mcpython.common.mod.ModLoadingStages.manager.get_stage()
             if stage is None:
@@ -682,11 +695,14 @@ class ModLoader:
             try:
                 if stage.call_one(astate):
                     return
+
             except (SystemExit, KeyboardInterrupt):
                 raise
+
             except LoadingInterruptException:
                 print("stopping loading cycle")
                 return
+
             except:
                 logger.print_exception()
                 sys.exit(-1)
@@ -702,12 +718,8 @@ class ModLoader:
         if stage is None:
             return
 
-        astate: mcpython.common.state.ModLoadingProgress.ModLoadingProgress = (
-            shared.state_handler.active_state
-        )
-        instance: mcpython.common.mod.Mod.Mod = self.mods[
-            self.mod_loading_order[stage.active_mod_index]
-        ]
+        astate = shared.state_handler.active_state
+        instance = self.mods[self.mod_loading_order[stage.active_mod_index]]
 
         if (
             stage.active_event in instance.eventbus.event_subscriptions

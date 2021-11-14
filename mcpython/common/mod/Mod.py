@@ -136,8 +136,7 @@ class ModDependency:
 class Mod:
     """
     Class for mods. For creating a new mod, create an instance of this or define an entry in the latest version in your
-    mod.json file.
-    Can be subclassed for custom mod specs
+    mod.json file. Can be subclassed for custom mod specs
     """
 
     def __init__(
@@ -194,7 +193,7 @@ class Mod:
         if add_to_mod_loader:
             shared.mod_loader.add_to_add(self)
 
-    def mod_string(self):
+    def mod_string(self) -> str:
         """
         Will transform the mod into a string for display purposes
         """
@@ -299,7 +298,7 @@ class Mod:
         self.depend_info[6].append(depend)
         return self
 
-    def check_dependencies(self, mod_loader, mod_info):
+    def check_dependencies(self, mod_loader, mod_info) -> bool:
         for depend in self.depend_info[0]:
             if not depend.arrival():
                 if shared.event_handler.call_cancelable(
