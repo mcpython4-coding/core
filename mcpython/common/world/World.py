@@ -423,9 +423,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
             pyglet.clock.schedule_once(wrap_method(dimension.hide_chunk, chunk), 0.1)
-            c = dimension.get_chunk(
-                *chunk, generate=False, create=False
-            )
+            c = dimension.get_chunk(*chunk, generate=False, create=False)
 
             if c and c.is_loaded() and not shared.IS_NETWORKING:
                 shared.tick_handler.schedule_once(
@@ -522,9 +520,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         for chunk in hide:
             # todo: fix this, this was previously hiding chunks randomly....
             pyglet.clock.schedule_once(wrap_method(dimension.hide_chunk, chunk), 0.1)
-            c = dimension.get_chunk(
-                *chunk, generate=False, create=False
-            )
+            c = dimension.get_chunk(*chunk, generate=False, create=False)
 
             if c and c.is_loaded() and not shared.IS_NETWORKING:
                 schedule_task(

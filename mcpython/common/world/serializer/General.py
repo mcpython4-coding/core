@@ -79,7 +79,9 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                 data["mods"][modname]
             ):
                 try:
-                    await save_file.apply_mod_fixer_async(modname, tuple(data["mods"][modname]))
+                    await save_file.apply_mod_fixer_async(
+                        modname, tuple(data["mods"][modname])
+                    )
                 except mcpython.common.world.SaveFile.DataFixerNotFoundException:
                     if modname != "minecraft":
                         logger.println(

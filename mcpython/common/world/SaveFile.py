@@ -454,14 +454,18 @@ class SaveFile:
 
             try:
                 await fixer.apply(self, *args, **kwargs)
-                await asyncio.gather([
-                    self.apply_group_fixer_async(name, *args, **kwargs)
-                    for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES
-                ])
-                await asyncio.gather([
-                    self.apply_part_fixer_async(name, *args, **kwargs)
-                    for (name, args, kwargs) in fixer.PART_FIXER_NAMES
-                ])
+                await asyncio.gather(
+                    [
+                        self.apply_group_fixer_async(name, *args, **kwargs)
+                        for (name, args, kwargs) in fixer.GROUP_FIXER_NAMES
+                    ]
+                )
+                await asyncio.gather(
+                    [
+                        self.apply_part_fixer_async(name, *args, **kwargs)
+                        for (name, args, kwargs) in fixer.PART_FIXER_NAMES
+                    ]
+                )
             except (SystemExit, KeyboardInterrupt, OSError):
                 raise
             except:

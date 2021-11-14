@@ -739,7 +739,7 @@ class ModLoader:
             stage.current_progress,
             len(stage.events),
             stage.name,
-            self.active_loading_stage+1,
+            self.active_loading_stage + 1,
             len(mcpython.common.mod.ModLoadingStages.manager.stages),
         )
 

@@ -16,7 +16,6 @@ import typing
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import pyglet
-
 from mcpython import shared
 from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
 
@@ -49,7 +48,9 @@ class FluidRenderer(
             self.texture_location = "assets/missing_texture.png"
 
             if shared.IS_CLIENT:
-                logger.println(f"[FLUID][WARN] could not look up texture {texture_location}!")
+                logger.println(
+                    f"[FLUID][WARN] could not look up texture {texture_location}!"
+                )
 
         self.texture = self.texture.get_region(
             0, 0, self.texture.width, self.texture.width

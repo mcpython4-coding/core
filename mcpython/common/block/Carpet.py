@@ -56,4 +56,3 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     @classmethod
     def modify_block_item(cls, factory):
         factory.set_fuel_level(3.35)
-
