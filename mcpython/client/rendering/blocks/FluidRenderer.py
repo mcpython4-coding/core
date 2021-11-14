@@ -16,9 +16,13 @@ import typing
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import pyglet
+
+from mcpython import shared
 from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
 
 # Used to prevent z-fighting with neighbor blocks on transparent fluids
+from mcpython.engine import logger
+
 SOME_SMALL_VALUES = 1 / 1000
 
 
@@ -33,9 +37,20 @@ class FluidRenderer(
         super().__init__()
 
         self.texture_location = texture_location
-        self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
-            texture_location
-        )
+
+        try:
+            self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
+                texture_location
+            )
+        except (ValueError, FileNotFoundError):
+            self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
+                "assets/missing_texture.png"
+            )
+            self.texture_location = "assets/missing_texture.png"
+
+            if shared.IS_CLIENT:
+                logger.println(f"[FLUID][WARN] could not look up texture {texture_location}!")
+
         self.texture = self.texture.get_region(
             0, 0, self.texture.width, self.texture.width
         )

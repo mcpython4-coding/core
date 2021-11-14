@@ -27,7 +27,7 @@ class LoadingStageManager:
         self.stages = {}
         self.order: typing.Optional[graphlib.TopologicalSorter] = None
         self.current_stage: typing.Optional[str] = None
-        self.ready: typing.List[str] = []  # todo: can we use queue?
+        self.ready: typing.List[str] = []
 
     def get_new_ready(self):
         self.ready.extend(self.order.get_ready())
