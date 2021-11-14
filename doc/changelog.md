@@ -65,6 +65,11 @@ Backwards incompatible changes:
     Inventories:
         - added a handful of util code
 
+    Bug fixes:
+        - fixed some visual glitches
+        - improved inventory interaction 
+        - fixed some crashes
+
 
 # Changelog of alpha 1.2.0, compared to 21w42a
 Released on 22.10.2021 targeting 1.17

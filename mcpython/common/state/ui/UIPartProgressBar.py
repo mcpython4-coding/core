@@ -74,7 +74,7 @@ class UIPartProgressBar(AbstractUIPart.AbstractUIPart):
             self.progress = self.progress_max
 
         sx = (
-            (sx - 6)
+            (sx - 5)
             * self.progress
             // (self.progress_max if self.progress_max != 0 else 1)
         )
