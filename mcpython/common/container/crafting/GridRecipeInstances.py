@@ -64,6 +64,7 @@ class AbstractCraftingGridRecipe(
     RECIPE_VIEW = (
         mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
     )
+    CRAFTING_SUPPORT = ["minecraft:crafting_table"]
 
     def __init__(self):
         super().__init__()

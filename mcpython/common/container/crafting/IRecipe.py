@@ -35,6 +35,9 @@ class IRecipe(mcpython.common.event.api.IRegistryContent, ABC):
     RECIPE_TYPE_NAMES = []
     RECIPE_VIEW = None
 
+    # item names supporting crafting operations of this recipe
+    CRAFTING_SUPPORT = []
+
     @classmethod
     def from_data(cls, data: dict, file: str):
         raise NotImplementedError()

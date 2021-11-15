@@ -21,6 +21,7 @@ from mcpython import shared
 class StoneCuttingRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
     # The list of type descriptors to decode
     RECIPE_TYPE_NAMES = ["minecraft:stonecutting"]
+    CRAFTING_SUPPORT = ["minecraft:stonecutter"]
 
     RECIPES: typing.Dict[str, typing.List["StoneCuttingRecipe"]] = {}
 

@@ -21,6 +21,7 @@ from pyglet.window import key, mouse
 
 from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
+from mcpython.common.container.crafting.IRecipeUser import IRecipeUser
 
 if shared.IS_CLIENT:
     from mcpython.client.gui.StoneCutterContainerRenderer import (
@@ -28,7 +29,7 @@ if shared.IS_CLIENT:
     )
 
 
-class StoneCutter(IHorizontalOrientableBlock):
+class StoneCutter(IHorizontalOrientableBlock, IRecipeUser):
     """
     Class for the stone cutter block
     """

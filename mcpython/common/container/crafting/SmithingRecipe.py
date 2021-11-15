@@ -21,6 +21,7 @@ class SmithingRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
     # todo: implement
     # The list of type descriptors to decode
     RECIPE_TYPE_NAMES = ["minecraft:smithing"]
+    CRAFTING_SUPPORT = ["minecraft:smithing_table"]
 
     @classmethod
     def from_data(cls, data: dict, file: str) -> "SmithingRecipe":
