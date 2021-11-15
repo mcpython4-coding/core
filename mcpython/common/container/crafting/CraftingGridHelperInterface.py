@@ -19,6 +19,8 @@ import mcpython.common.container.crafting.IRecipe
 import mcpython.common.container.crafting.IRecipeUser
 import mcpython.common.container.ResourceStack
 from mcpython import shared
+from mcpython.client.gui.Slot import ISlot
+from mcpython.common.container.crafting import IRecipe
 from mcpython.engine import logger
 
 
@@ -48,8 +50,8 @@ class CraftingGridHelperInterface(
 
     def __init__(
         self,
-        slot_input_map,
-        slot_output_map,
+        slot_input_map: typing.List[typing.List[ISlot]],
+        slot_output_map: ISlot,
         maxsize=None,
         minsize=None,
         enabled=True,
@@ -69,19 +71,19 @@ class CraftingGridHelperInterface(
         :param enable_shapeless_recipes: if shapeless recipes should be enabled
         """
         self.slot_input_map = slot_input_map
-        self.slot_output_map: mcpython.client.gui.Slot.Slot = slot_output_map
+        self.slot_output_map: mcpython.client.gui.Slot.ISlot = slot_output_map
         self.grid_size = (len(slot_input_map[0]), len(slot_input_map))
         self.maxsize = maxsize if maxsize else self.grid_size
         self.minsize = minsize if minsize else (1, 1)
+
         for y, row in enumerate(slot_input_map):
             for x, slot in enumerate(row):
                 slot.on_update.append(self.on_input_update)
         slot_output_map.on_update.append(self.on_output_update)
         slot_output_map.allow_half_getting = False
         slot_output_map.on_shift_click = self.on_output_shift_click
-        self.active_recipe: typing.Optional[
-            mcpython.common.container.crafting.IRecipe.IRecipe
-        ] = None
+
+        self.active_recipe: typing.Optional[IRecipe] = None
         self.shaped_enabled = enable_shaped_recipes and enabled
         self.shapeless_enabled = enable_shapeless_recipes and enabled
 
@@ -173,22 +175,26 @@ class CraftingGridHelperInterface(
         """
         keys = list(slot_map.keys())
         transform = keys.copy()
+
         # check if everything in the top left corner
         minx = min(keys, key=lambda x: x[0])[0]
         miny = min(keys, key=lambda y: y[1])[1]
         if minx == miny == 0:  # is it in the top left corner?
             return slot_map
+
         if minx > 0:  # move to left if not
             for i, element in enumerate(transform):
                 transform[i] = (element[0] - minx, element[1])
+
         if miny > 0:  # move up if not on top
             for i, element in enumerate(transform):
                 transform[i] = (element[0], element[1] - miny)
+
         new_map = {}
-        for i, key in enumerate(
-            keys
-        ):  # transform the slot positions to the new positions
+        # transform the slot positions to the new positions
+        for i, key in enumerate(keys):
             new_map[transform[i]] = slot_map[key]
+
         return new_map
 
     @classmethod
@@ -298,6 +304,7 @@ class CraftingGridHelperInterface(
         # todo: check by every call if the player can pick up more items of this kind
         if not self.active_recipe:
             return
+
         old_recipe = self.active_recipe
         count = 0
         itemstack = None
@@ -308,12 +315,14 @@ class CraftingGridHelperInterface(
             )
             self.slot_output_map.call_update(player=True)
             count += itemstack.amount
+
         max_size = itemstack.item.STACK_SIZE
         for _ in range(count // max_size):
             shared.world.get_active_player().pick_up_item(
                 itemstack.copy().set_amount(max_size)
             )
             count -= max_size
+
         shared.world.get_active_player().pick_up_item(
             itemstack.copy().set_amount(count)
         )

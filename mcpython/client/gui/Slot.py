@@ -37,6 +37,7 @@ else:
 
 class ISlot(IBufferSerializeAble, ABC):
     def __init__(self):
+        self.on_update = []
         self.assigned_inventory = None
 
     def handle_click(self, button: int, modifiers: int) -> bool:
