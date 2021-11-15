@@ -25,7 +25,7 @@ from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
 )
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 from mcpython.util.annotation import onlyInClient
-from mcpython.util.enums import EnumSide
+from mcpython.util.enums import EnumSide, FACE_ORDER_BY_INDEX
 
 
 @onlyInClient()
@@ -33,19 +33,18 @@ class FaceInfo:
     """
     Class for face state of the block
     """
+    __slots__ = ["block", "faces", "face_data", "custom_renderer", "subscribed_renderer", "bound_rendering_info", "multi_data", "multi_faces"]
 
-    DEFAULT_FACE_STATE = {x.normal_name: False for x in EnumSide.iterate()}
-    DEFAULT_FACE_DATA = {x.normal_name: None for x in EnumSide.iterate()}
+    DEFAULT_FACE_STATE = [False] * 6
+    DEFAULT_FACE_DATA = [None] * 6
 
     def __init__(self, block):
         """
         Block face state, client-sided container holding information for rendering
         """
         self.block = weakref.proxy(block)
-        self.faces: typing.Optional[EnumSide, bool] = self.DEFAULT_FACE_STATE.copy()
-        self.face_data: typing.Optional[
-            EnumSide, list
-        ] = None  # self.DEFAULT_FACE_DATA.copy()
+        self.faces: typing.Optional[typing.List[bool]] = self.DEFAULT_FACE_STATE.copy()
+        self.face_data: typing.Optional[typing.List[typing.Optional[list]]] = None
         self.custom_renderer = None  # holds a custom block renderer
         self.subscribed_renderer: bool = False
         self.bound_rendering_info = None
@@ -54,7 +53,7 @@ class FaceInfo:
         self.multi_faces = set()
 
     def is_shown(self) -> bool:
-        return any(self.faces.values())
+        return any(self.faces)
 
     def show_face(self, face: EnumSide, force=False):
         """
@@ -62,13 +61,13 @@ class FaceInfo:
         :param face: the face of the block
         :param force: force the show, WARNING: internal only
         """
-        if self.faces[face.normal_name] and not force:
+        if self.faces[face.index] and not force:
             return
 
         if self.face_data is None:
             self.face_data = copy.deepcopy(self.DEFAULT_FACE_DATA)
 
-        self.faces[face.normal_name] = True
+        self.faces[face.index] = True
 
         if self.custom_renderer is not None:
             if not self.subscribed_renderer:
@@ -79,7 +78,7 @@ class FaceInfo:
                 self.custom_renderer,
                 ICustomBatchBlockRenderer,
             ):
-                self.face_data[face.normal_name] = self.custom_renderer.add(
+                self.face_data[face.index] = self.custom_renderer.add(
                     self.block.position,
                     self.block,
                     face,
@@ -87,10 +86,10 @@ class FaceInfo:
                 )
 
         else:
-            if self.face_data[face.normal_name] is None:
-                self.face_data[face.normal_name] = []
+            if self.face_data[face.index] is None:
+                self.face_data[face.index] = []
 
-            self.face_data[face.normal_name].extend(
+            self.face_data[face.index].extend(
                 shared.model_handler.add_face_to_batch(
                     self.block,
                     face,
@@ -103,14 +102,13 @@ class FaceInfo:
         Optimised show_face() for more than one face
         Will do only something optimal when more than one face is passed in
         """
+        if not faces: return
+
         for face in faces[:]:
-            if self.faces[face]:
+            if self.faces[EnumSide[face.upper()].index]:
                 faces.remove(face)
             else:
-                self.faces[face] = True
-
-        if not faces:
-            return
+                self.faces[EnumSide[face.upper()].index] = True
 
         if len(faces) == 1:
             # print("short-circuiting show face for face", EnumSide[faces[0].upper()], "@", self.block.position)
@@ -166,16 +164,16 @@ class FaceInfo:
         Will hide an face
         :param face: the face to hide
         """
-        if not self.faces[face.normal_name]:
+        if not self.faces[face.index]:
             return
 
-        self.faces[face.normal_name] = False
+        self.faces[face.index] = False
 
         if self.face_data is None:
             return
 
         if self.custom_renderer is not None:
-            if self.subscribed_renderer and not any(self.faces.values()):
+            if self.subscribed_renderer and not any(self.faces):
                 self.custom_renderer.on_block_fully_hidden(self.block)
                 self.subscribed_renderer = False
 
@@ -196,18 +194,18 @@ class FaceInfo:
                     self.custom_renderer.remove(
                         self.block.position,
                         self.block,
-                        self.face_data[face.normal_name],
+                        self.face_data[face.index],
                         face,
                     )
             else:
-                for x in self.face_data[face.normal_name]:
+                for x in self.face_data[face.index]:
                     try:
                         x.delete()
                     except AssertionError:
                         pass
 
-        self.face_data[face.normal_name] = None
-        if all(value is None or len(value) == 0 for value in self.face_data.values()):
+        self.face_data[face.index] = None
+        if all(value is None or len(value) == 0 for value in self.face_data):
             self.face_data = None
 
     def _draw_custom_render(self):
@@ -229,7 +227,7 @@ class FaceInfo:
 
         dimension = shared.world.get_dimension_by_name(self.block.dimension)
         chunk = dimension.get_chunk_for_position(self.block.position)
-        state = chunk.exposed_faces(self.block.position)
+        state = chunk.exposed_faces_list(self.block.position)
 
         if state == self.faces and not redraw_complete:
             return
@@ -240,8 +238,8 @@ class FaceInfo:
 
         self.show_faces(
             [
-                (key if isinstance(key, str) else key.normal_name)
-                for key, value in state.items()
+                FACE_ORDER_BY_INDEX[i].normal_name
+                for i, value in enumerate(state)
                 if value
             ]
         )
@@ -251,7 +249,7 @@ class FaceInfo:
         Will hide all faces
         """
         if (
-            any(self.faces.values())
+            any(self.faces)
             and self.custom_renderer is not None
             and self.subscribed_renderer
         ):
@@ -260,24 +258,25 @@ class FaceInfo:
 
         if self.multi_data:
             self.hide_multi_data()
-            self.faces.update({key: False for key in self.multi_faces})
+            for key in self.multi_faces:
+                self.faces[EnumSide[key.upper()].index] = False
             self.multi_faces.clear()
 
         if self.custom_renderer:
             [
                 self.hide_face(face)
                 for face in EnumSide.iterate()
-                if self.faces[face.normal_name]
+                if self.faces[face.index]
             ]
 
         # Only when it is shown we need to hide something...
         elif self.face_data:
             for element in itertools.chain.from_iterable(
-                e for e in self.face_data.values() if e is not None
+                e for e in self.face_data if e is not None
             ):
                 element.delete()
 
             for face in EnumSide.iterate():
-                self.faces[face.normal_name] = False
+                self.faces[face.index] = False
 
             self.face_data = None

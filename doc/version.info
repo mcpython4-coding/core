@@ -1926,4 +1926,5 @@ f   [uuk]: added Scrollbar helper for GUI's
 fA  [uuk]: Slots can now handle a direct click on them
 b   [uuk]: Shift-clicking on a slot was not invoking an update on the target slot
 f   [uuk]: made the extra blocks not in vanilla arrival via the stone cutter & some via normal crafting
+O   [uuk]: optimised FaceInfo, again
 

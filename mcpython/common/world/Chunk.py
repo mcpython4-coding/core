@@ -196,6 +196,46 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
+    def exposed_faces_list(
+        self, position: typing.Tuple[int, int, int]
+    ) -> typing.List[bool]:
+        instance = self.get_block(position)
+
+        if instance is None or type(instance) == str:
+            return [True] * 6
+
+        faces = [False] * 6
+
+        for face in mcpython.util.enums.FACE_ORDER:
+            pos = face.relative_offset(position)
+            chunk_position = mcpython.util.math.position_to_chunk(pos)
+
+            if chunk_position != self.position:
+                chunk = self.dimension.get_chunk(chunk_position, generate=False)
+
+                if chunk is None:
+                    continue
+            else:
+                chunk = self
+
+            if (
+                not chunk.is_loaded()
+                and shared.world.hide_faces_to_not_generated_chunks
+            ):
+                faces[face.index] = False
+            else:
+                block = chunk.get_block(pos)
+
+                faces[face.index] = block is None or (
+                    not isinstance(block, str)
+                    and (
+                        not block.face_solid[face.invert().index]
+                        or not instance.face_solid[face.index]
+                    )
+                )
+
+        return faces
+
     def exposed_faces_iterator(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Iterator[mcpython.util.enums.EnumSide]:

@@ -244,7 +244,7 @@ class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             block_data = (
                 block.NAME,
                 buffer.get_data(),
-                any(block.face_info.faces.values())
+                any(block.face_info.faces)
                 if block.face_info is not None
                 else False,
             )

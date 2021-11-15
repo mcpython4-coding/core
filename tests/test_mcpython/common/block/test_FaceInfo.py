@@ -77,6 +77,7 @@ class TestFaceInfo(TestCase):
         self.assertTrue(instance.hit)
         self.assertTrue(info.subscribed_renderer)
         self.assertTrue(info.is_shown())
+        self.assertTrue(info.faces[0])
 
         info.hide_face(EnumSide.UP)
 
