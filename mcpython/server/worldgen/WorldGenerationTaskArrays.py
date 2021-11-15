@@ -334,7 +334,7 @@ class WorldGenerationTaskHandler:
                         data[3](None)
                 else:
                     block = chunk.add_block(position, data[0], **data[2])
-                    if data[3] is not None:
+                    if data[3] is not None and block is not None:
                         data[3](block)
                 return True
 
