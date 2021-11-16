@@ -80,7 +80,7 @@ class StoneCutterContainerRenderer(
         self.scrollbar = ScrollbarRenderer(
             self.SCROLLBAR_TEXTURE,
             (2 * 119, 2 * 97),
-            69 - 15,
+            2 * (69 - 15) - self.SCROLLBAR_TEXTURE.height,
             1,
             on_progress_change=self.update_selection_slots,
         )

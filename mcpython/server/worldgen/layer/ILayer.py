@@ -34,12 +34,11 @@ class LayerConfig:
         ] = None
         self.world_generator_config = None
 
-        if typing.TYPE_CHECKING:
-            self.bedrock_chance = None
-            self.max_height_factor = None
-            self.masses = None
-            self.temperature_max = None
-            self.temperature_min = None
+        self.bedrock_chance = None
+        self.max_height_factor = None
+        self.masses = None
+        self.temperature_max = None
+        self.temperature_min = None
 
     def apply_config(self, attr_config: dict):
         for key in attr_config:
