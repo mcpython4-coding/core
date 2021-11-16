@@ -361,6 +361,10 @@ def load_features():
         PlantFeature,
         SpruceTreeFeature,
         SurfaceLake,
+        JungleTreeFeature,
+        SurfacePlacement,
+        JunglePyramid,
+        Lakes,
     )
     from .feature.village import VillageFeatureDefinition
 

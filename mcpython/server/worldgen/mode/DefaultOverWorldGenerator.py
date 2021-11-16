@@ -38,6 +38,7 @@ class DefaultOverworldGenerator(
                 "minecraft:dessert",
                 "minecraft:dessert_lakes",
             ],
+            0.95: ["minecraft:jungle"],
             0.7: [
                 "minecraft:forest",
                 "minecraft:flower_forest",
