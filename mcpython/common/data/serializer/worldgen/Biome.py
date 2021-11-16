@@ -60,10 +60,10 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
 
         else:
             self.top_extension = tuple(
-                config["blocks"].setdefault("top_extension", (self.default_block, 1))
+                config["blocks"].setdefault("top_extension", (None, 0))
             )
             self.bottom_extension = tuple(
-                config["blocks"].setdefault("bottom_extension", (self.default_block, 1))
+                config["blocks"].setdefault("bottom_extension", (None, 0))
             )
 
         self.height_range = tuple(config.setdefault("height_range", (3, 5)))
@@ -83,10 +83,10 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
     ) -> typing.List[str]:
         data = [self.default_block] * height
         if self.top_extension[0] is not None:
-            data[-self.top_extension[1] :] = self.top_extension
+            data[-self.top_extension[1] :] = [self.top_extension[0]] * self.top_extension[1]
 
         if self.bottom_extension[0] is not None:
-            data[: self.bottom_extension[1]] = self.bottom_extension
+            data[: self.bottom_extension[1]] = [self.bottom_extension[1]] * self.bottom_extension[1]
 
         return data
 

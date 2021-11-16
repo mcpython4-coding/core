@@ -69,6 +69,7 @@ Backwards incompatible changes:
         - fixed some visual glitches
         - improved inventory interaction 
         - fixed some crashes
+        - fixed dessert top layer being one block too low
 
 
 # Changelog of alpha 1.2.0, compared to 21w42a

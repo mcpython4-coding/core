@@ -1929,4 +1929,5 @@ f   [uuk]: made the extra blocks not in vanilla arrival via the stone cutter & s
 O   [uuk]: optimised FaceInfo, again
 b   [uuk]: fixed world generation task array omitting the on_add method when the block is None
 f   [uuk]: changed height map generation from biome-based to global, preparing for 1.18 world generation
+b   [uuk]: fixed desserts generating one block lower than surrounding terrain
 
