@@ -40,6 +40,17 @@ class EQUAL_MERGER(IOctaveMerger):
         return sum(values) / len(values)
 
 
+class WeightedEqualMerger(IOctaveMerger):
+    def __init__(self, weights: typing.List[float, ...]):
+        self.weights = weights
+
+        s = sum(weights)
+        self.normalized_weights = [e / s for e in weights]
+
+    def merge(self, implementation: "INoiseImplementation", values):
+        return sum(map(lambda e: e[0] * e[1], zip(values, self.normalized_weights)))
+
+
 class GEO_EQUAL_MERGER(IOctaveMerger):
     @classmethod
     def merge(cls, implementation: "INoiseImplementation", values):

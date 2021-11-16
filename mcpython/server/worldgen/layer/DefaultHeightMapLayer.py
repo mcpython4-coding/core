@@ -31,7 +31,7 @@ class DefaultHeightMapLayer(ILayer):
         NAME,
         scale=10 ** 2,
         dimensions=2,
-        octaves=5,
+        octaves=3,
         merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
     )
     noise.merger_config = [3, 2, 1]
