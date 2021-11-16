@@ -83,10 +83,14 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
     ) -> typing.List[str]:
         data = [self.default_block] * height
         if self.top_extension[0] is not None:
-            data[-self.top_extension[1] :] = [self.top_extension[0]] * self.top_extension[1]
+            data[-self.top_extension[1] :] = [
+                self.top_extension[0]
+            ] * self.top_extension[1]
 
         if self.bottom_extension[0] is not None:
-            data[: self.bottom_extension[1]] = [self.bottom_extension[1]] * self.bottom_extension[1]
+            data[: self.bottom_extension[1]] = [
+                self.bottom_extension[1]
+            ] * self.bottom_extension[1]
 
         return data
 

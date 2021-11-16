@@ -54,6 +54,7 @@ class ILayer(mcpython.common.event.api.IRegistryContent):
     DEPENDS_ON should be a list of other layer names this layer depends on,
     currently not used, but later for parallel world gen (You see that the generation function itself is async)
     """
+
     TYPE = "minecraft:world_generation_layer"
 
     NAME = "minecraft:unknown_layer"

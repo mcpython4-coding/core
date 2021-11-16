@@ -15,13 +15,13 @@ import random
 
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
+from mcpython.common.container.crafting.IRecipeUser import IRecipeUser
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide, ToolType
 from pyglet.window import key, mouse
 
 from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
-from mcpython.common.container.crafting.IRecipeUser import IRecipeUser
 
 if shared.IS_CLIENT:
     from mcpython.client.gui.StoneCutterContainerRenderer import (

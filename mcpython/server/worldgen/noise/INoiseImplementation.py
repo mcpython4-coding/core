@@ -41,7 +41,7 @@ class EQUAL_MERGER(IOctaveMerger):
 
 
 class WeightedEqualMerger(IOctaveMerger):
-    def __init__(self, weights: typing.List[float, ...]):
+    def __init__(self, weights: typing.Iterable[float]):
         self.weights = weights
 
         s = sum(weights)

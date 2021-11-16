@@ -25,7 +25,7 @@ from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
 )
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 from mcpython.util.annotation import onlyInClient
-from mcpython.util.enums import EnumSide, FACE_ORDER_BY_INDEX
+from mcpython.util.enums import FACE_ORDER_BY_INDEX, EnumSide
 
 
 @onlyInClient()
@@ -33,7 +33,17 @@ class FaceInfo:
     """
     Class for face state of the block
     """
-    __slots__ = ["block", "faces", "face_data", "custom_renderer", "subscribed_renderer", "bound_rendering_info", "multi_data", "multi_faces"]
+
+    __slots__ = [
+        "block",
+        "faces",
+        "face_data",
+        "custom_renderer",
+        "subscribed_renderer",
+        "bound_rendering_info",
+        "multi_data",
+        "multi_faces",
+    ]
 
     DEFAULT_FACE_STATE = [False] * 6
     DEFAULT_FACE_DATA = [None] * 6
@@ -102,7 +112,8 @@ class FaceInfo:
         Optimised show_face() for more than one face
         Will do only something optimal when more than one face is passed in
         """
-        if not faces: return
+        if not faces:
+            return
 
         for face in faces[:]:
             if self.faces[EnumSide[face.upper()].index]:

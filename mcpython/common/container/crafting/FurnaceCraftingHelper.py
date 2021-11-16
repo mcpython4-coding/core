@@ -22,7 +22,12 @@ class FurnaceRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
     Interface for decoding an furnace-like recipe
     """
 
-    CRAFTING_SUPPORT = ["minecraft:furnace", "minecraft:blast_furnace", "minecraft:smoker", "minecraft:campfire"]
+    CRAFTING_SUPPORT = [
+        "minecraft:furnace",
+        "minecraft:blast_furnace",
+        "minecraft:smoker",
+        "minecraft:campfire",
+    ]
 
     # The list of type descriptors to decode
     RECIPE_TYPE_NAMES = [
