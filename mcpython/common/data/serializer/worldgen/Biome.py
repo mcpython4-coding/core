@@ -53,9 +53,11 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
         flag = "blocks" in config
         config.setdefault("blocks", {})
         self.default_block = config["blocks"].setdefault("base", "minecraft:dirt")
+
         if not flag:
             self.top_extension = "minecraft:grass_block", 1
             self.bottom_extension = None, 0
+
         else:
             self.top_extension = tuple(
                 config["blocks"].setdefault("top_extension", (self.default_block, 1))
@@ -63,6 +65,7 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
             self.bottom_extension = tuple(
                 config["blocks"].setdefault("bottom_extension", (self.default_block, 1))
             )
+
         self.height_range = tuple(config.setdefault("height_range", (3, 5)))
 
     def get_top_layer_height_range(
@@ -81,8 +84,10 @@ class DefaultTopLayerConfiguration(ITopLayerConfigurator):
         data = [self.default_block] * height
         if self.top_extension[0] is not None:
             data[-self.top_extension[1] :] = self.top_extension
+
         if self.bottom_extension[0] is not None:
             data[: self.bottom_extension[1]] = self.bottom_extension
+
         return data
 
 

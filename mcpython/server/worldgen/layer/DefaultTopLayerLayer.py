@@ -66,7 +66,7 @@ class DefaultTopLayerLayer(ILayer):
             y = world_height - (height - i - 1)
             block = reference.get_block((x, y, z), chunk)
 
-            if block and (block if type(block) == str else block.NAME) in [
+            if block and (block if not hasattr(block, "NAME") else block.NAME) in [
                 "minecraft:stone"
             ]:
                 try:

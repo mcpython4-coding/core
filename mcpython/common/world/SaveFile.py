@@ -261,9 +261,15 @@ class SaveFile:
             )
 
             for dimension in shared.world.dimensions.values():
+                if not dimension.chunks: continue
+
                 logger.println("saving dimension " + dimension.get_name())
 
-                for chunk in dimension.chunks:
+                count = len(dimension.chunks)
+
+                print(end="")
+                for i, chunk in enumerate(dimension.chunks):
+                    print("\r"+str(round((i + 1) / count * 100))+"% ("+str(i+1)+"/"+str(count)+")", end="")
                     # todo: save all loaded dimension, not only the active one
                     if dimension.get_chunk(*chunk).loaded:
                         await self.dump_async(
@@ -273,6 +279,8 @@ class SaveFile:
                             chunk=chunk,
                             override=override,
                         )
+
+                print()
 
             logger.println("save complete!")
 

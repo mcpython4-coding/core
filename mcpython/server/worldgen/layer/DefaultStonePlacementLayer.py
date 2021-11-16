@@ -43,4 +43,4 @@ class DefaultStonePlacementLayer(ILayer):
     def generate_xz(reference, x, z, config, height):
         for y in range(1, height + 1):
             if not reference.chunk.is_position_blocked((x, y, z)):
-                reference.schedule_block_add((x, y, z), "minecraft:stone")
+                reference.schedule_block_add((x, y, z), "minecraft:stone", immediate=False)

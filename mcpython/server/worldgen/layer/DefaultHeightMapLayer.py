@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-
+import asyncio
 import random
 
 import mcpython.common.world.Chunk
@@ -25,7 +25,7 @@ from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
 @shared.world_generation_handler
 class DefaultHeightMapLayer(ILayer):
     NAME = "minecraft:heightmap_default"
-    DEPENDS_ON = ["minecraft:biome_map_default"]
+    DEPENDS_ON = []
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
         NAME,
@@ -46,21 +46,22 @@ class DefaultHeightMapLayer(ILayer):
         chunk = reference.chunk
         x, z = chunk.position[0] * 16, chunk.position[1] * 16
         height_map = chunk.get_map("minecraft:height_map")
-        biome_map = chunk.get_map("minecraft:biome_map")
 
+        # todo: can we optimize this preparation by sending prepared noise values directly to the async part
         noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
-
-        for (x, z), v in noise_map:
-            height_map.set_at_xz(
-                x, z, cls.get_height_at(config, chunk, x, z, v, biome_map)
+        await asyncio.gather(
+            *(
+                cls.get_height_at(height_map, config, chunk, x, z, v)
+                for (x, z), v in noise_map
             )
+        )
 
     @classmethod
-    def get_height_at(cls, config, chunk, x, z, v, biome_map) -> list:
-        biome = shared.biome_handler.biomes[biome_map.get_at_xz(x, z)]
-        start, end = biome.get_height_range()
+    async def get_height_at(cls, height_map, config, chunk, x, z, v):
+        # todo: make configurable by world generator, decide biome based on height
+        start, end = 20, 40
         end *= config.max_height_factor
         v *= end - start
         v += start
         info = [(1, round(v))]  # todo: do some more special stuff here!
-        return info
+        height_map.set_at_xz(x, z, info)

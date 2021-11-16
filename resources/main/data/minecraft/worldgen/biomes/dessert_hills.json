@@ -57,8 +57,8 @@
       8
     ]
   },
-  "grass_color": "bfb755",
-  "water_color": "32a598",
+  "grass_color": "#bfb755",
+  "water_color": "#32a598",
   "weight": 10,
   "height_range": [
     15,
@@ -68,7 +68,8 @@
     "type": "minecraft:default_top_layer_config",
     "blocks": {
       "base": "minecraft:sand",
-      "bottom_extension": ["minecraft:sandstone", 3]
+      "bottom_extension": ["minecraft:sandstone", 3],
+      "top_extension": ["minecraft:sand", 1]
     },
     "height_range": [5, 9]
   },
