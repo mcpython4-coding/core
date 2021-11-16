@@ -36,12 +36,10 @@ class DefaultOverworldGenerator(
         "land": {
             2.0: [
                 "minecraft:dessert",
-                "minecraft:dessert_hills",
                 "minecraft:dessert_lakes",
             ],
             0.7: [
                 "minecraft:forest",
-                "minecraft:wooded_hills",
                 "minecraft:flower_forest",
             ],
             0.8: ["minecraft:plains", "minecraft:sunflower_plains"],
