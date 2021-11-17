@@ -93,7 +93,7 @@ class FaceInfo:
         else:
             self.multi_data = shared.model_handler.add_faces_to_batch(
                 self.block,
-                [face for face in EnumSide.iterate() if faces & face.bitflag],
+                self.faces,
                 shared.world.get_dimension_by_name(self.block.dimension).batches,
             )
 

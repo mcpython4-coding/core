@@ -17,6 +17,8 @@ import math
 import traceback
 import typing
 
+import deprecation
+
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
@@ -281,49 +283,33 @@ class ModelHandler:
                 "error during loading model '{}' named '{}'".format(location, name)
             )
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self, block: IBlockStateRenderingTarget, face: EnumSide, batches
     ) -> typing.Iterable:
-        """
-        Adds a single face of a block-like thing to a batch
-        :return: a list of vertex lists
-        """
-
         if not shared.IS_CLIENT:
             return tuple()
 
         if block.NAME not in self.blockstates:
-            if not self.hide_blockstate_errors:
-                logger.println(
-                    "[FATAL] block state for block '{}' not found!".format(block.NAME)
-                )
-
-            return self.blockstates["minecraft:missing_texture"].add_face_to_batch(
-                block, batches, face
-            )
+            return tuple()
 
         blockstate = self.blockstates[block.NAME]
 
-        # todo: add custom block renderer check
         if blockstate is None:
-            vertex_list = self.blockstates[
-                "minecraft:missing_texture"
-            ].add_face_to_batch(block, batches, face)
+            return tuple()
 
-        else:
-            vertex_list = blockstate.add_face_to_batch(block, batches, face)
-
-            if issubclass(
-                type(block.face_info.custom_renderer),
-                mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
-            ):
-                block.face_info.custom_renderer.handle(block, vertex_list)
-
-        return vertex_list
+        return blockstate.add_face_to_batch(block, batches, face)
 
     def add_faces_to_batch(
-        self, block, faces: typing.Iterable, batches: typing.List
+        self, block, faces: int, batches: typing.List
     ) -> typing.Iterable:
+        """
+        Adds a collection of faces to a batch
+        :param block: the thing to get rendering information from
+        :param faces: n bitmap describing the faces
+        :param batches: the batches to render into  todo: make single-atlas able
+        :return: a list of vertex lists
+        """
         if not shared.IS_CLIENT:
             return tuple()
 
@@ -337,19 +323,17 @@ class ModelHandler:
 
         blockstate = self.blockstates[block.NAME]
 
-        # todo: add custom block renderer check
         if blockstate is None:
             return tuple()
-        else:
-            vertex_list = list()
-            for face in faces:
-                vertex_list += blockstate.add_face_to_batch(block, batches, face)
-                if issubclass(
-                    type(block.face_info.custom_renderer),
-                    mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBlockVertexManager,
-                ):
-                    block.face_info.custom_renderer.handle(block, vertex_list)
-            return vertex_list
+
+        vertex_list = list()
+
+        for face in EnumSide.iterate():
+            if not face.bitflag & faces: continue
+
+            vertex_list += blockstate.add_face_to_batch(block, batches, face)
+
+        return vertex_list
 
     def add_raw_face_to_batch(
         self,

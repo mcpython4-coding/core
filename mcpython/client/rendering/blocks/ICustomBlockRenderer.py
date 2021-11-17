@@ -69,7 +69,3 @@ class ICustomDrawMethodRenderer(ICustomBlockRenderer, ABC):
     def draw(self, position: typing.Tuple[int, int, int], block):
         pass
 
-
-class ICustomBlockVertexManager(ICustomBlockRenderer):
-    def handle(self, block, vertices, face, blockstate):
-        pass
