@@ -68,29 +68,79 @@ class FunctionPatcher:
         self.free_vars = self.code.co_freevars
         self.cell_vars = self.code.co_cellvars
 
-    def applyPatches(self):
-        """
-        Writes the data this container holds back to the function
-        """
+        if sys.version_info.minor >= 11:
+            self.columntable = self.code.co_columntable
+            self.exceptiontable = self.code.co_exceptiontable
+            self.end_line_table = self.code.co_endlinetable
+            self.qual_name = self.code.co_qualname
 
-        self.target.__code__ = CodeType(
-            self.argument_count,
-            self.positional_only_argument_count,
-            self.keyword_only_argument_count,
-            self.number_of_locals,
-            self.max_stack_size,
-            self.flags,
-            bytes(self.code_string),
-            tuple(self.constants),
-            tuple(self.names),
-            tuple(self.variable_names),
-            self.filename,
-            self.name,
-            self.first_line_number,
-            self.line_number_table,
-            self.free_vars,
-            self.cell_vars,
-        )
+    if sys.version_info.minor == 10:
+
+        def applyPatches(self):
+            """
+            Writes the data this container holds back to the function
+            """
+
+            self.target.__code__ = CodeType(
+                self.argument_count,
+                self.positional_only_argument_count,
+                self.keyword_only_argument_count,
+                self.number_of_locals,
+                self.max_stack_size,
+                self.flags,
+                bytes(self.code_string),
+                tuple(self.constants),
+                tuple(self.names),
+                tuple(self.variable_names),
+                self.filename,
+                self.name,
+                self.first_line_number,
+                self.line_number_table,
+                self.free_vars,
+                self.cell_vars,
+            )
+
+    elif sys.version_info.minor == 11:
+
+        def applyPatches(self):
+            """
+            Writes the data this container holds back to the function
+
+            code_new_impl(PyTypeObject *type, int argcount, int posonlyargcount,
+              int kwonlyargcount, int nlocals, int stacksize, int flags,
+              PyObject *code, PyObject *consts, PyObject *names,
+              PyObject *varnames, PyObject *filename, PyObject *name,
+              PyObject *qualname, int firstlineno, PyObject *linetable,
+              PyObject *endlinetable, PyObject *columntable,
+              PyObject *exceptiontable, PyObject *freevars,
+              PyObject *cellvars);
+            """
+
+            self.target.__code__ = CodeType(
+                self.argument_count,
+                self.positional_only_argument_count,
+                self.keyword_only_argument_count,
+                self.number_of_locals,
+                self.max_stack_size,
+                self.flags,
+                bytes(self.code_string),
+                tuple(self.constants),
+                tuple(self.names),
+                tuple(self.variable_names),
+                self.filename,
+                self.name,
+                self.qual_name,
+                self.first_line_number,
+                self.line_number_table,
+                self.end_line_table,
+                self.columntable,
+                self.exceptiontable,
+                self.free_vars,
+                self.cell_vars,
+            )
+
+    else:
+        raise RuntimeError()
 
     def create_method_from(self):
         return FunctionType(
