@@ -326,14 +326,7 @@ class ModelHandler:
         if blockstate is None:
             return tuple()
 
-        vertex_list = list()
-
-        for face in EnumSide.iterate():
-            if not face.bitflag & faces: continue
-
-            vertex_list += blockstate.add_face_to_batch(block, batches, face)
-
-        return vertex_list
+        return blockstate.add_faces_to_batch(block, batches, faces)
 
     def add_raw_face_to_batch(
         self,

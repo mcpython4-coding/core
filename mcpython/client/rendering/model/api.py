@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
+import deprecation
+
 import mcpython.common.event.api
 import mcpython.util
 import mcpython.util.enums
@@ -93,12 +95,21 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
         """
         return True
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
         batch: pyglet.graphics.Batch,
         face: mcpython.util.enums.EnumSide,
-    ) -> list:
+    ) -> typing.Iterable:
+        return tuple()
+
+    def add_faces_to_batch(
+        self,
+        instance: IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        faces: int,
+    ) -> typing.Iterable:
         raise NotImplementedError()
 
     def add_raw_face_to_batch(

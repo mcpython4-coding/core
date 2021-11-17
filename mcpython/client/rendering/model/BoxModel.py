@@ -269,6 +269,54 @@ class BoxModel(AbstractBoxModel):
 
         return collected_data
 
+    def prepare_rendering_data_multi_face(
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        rotation: typing.Tuple[float, float, float] = (0, 0, 0),
+        faces: int = 0,
+        uv_lock=False,
+        previous: typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float]
+        ] = None,
+    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
+        """
+        Util method for getting the box data for a block (vertices and uv's)
+        :param instance: the instance to get information from to render
+        :param position: the position of the block
+        :param rotation: the rotation
+        :param faces: the faces to get data for, None means all
+        :param uv_lock: ?
+        :param previous: previous data to add the new to, or None to create new
+        """
+        vertex = self.get_vertex_variant(rotation, position)
+        collected_data = ([], [], []) if previous is None else previous
+
+        for face in mcpython.util.enums.EnumSide.iterate():
+            if uv_lock:
+                face = face.rotate(rotation)
+
+            i = UV_ORDER.index(face)
+            i2 = SIDE_ORDER.index(face)
+
+            if face.rotate(rotation).bitflag & faces:
+                if (
+                    not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
+                    and self.inactive[face.rotate(rotation)]
+                ):
+                    continue
+
+                collected_data[0].extend(vertex[i])
+                collected_data[1].extend(self.tex_data[i2])
+                collected_data[2].extend(
+                    (1,) * 16
+                    if self.face_tint_index[face.index] == -1
+                    else instance.get_tint_for_index(self.face_tint_index[face.index])
+                    * 4
+                )
+
+        return collected_data
+
     def get_prepared_box_data_scaled(
         self,
         instance: IBlockStateRenderingTarget,

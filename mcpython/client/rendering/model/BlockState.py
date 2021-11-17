@@ -15,6 +15,8 @@ import copy
 import random
 import typing
 
+import deprecation
+
 import mcpython.client.rendering.model.api
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
@@ -31,6 +33,7 @@ from mcpython.client.rendering.model.api import (
 from mcpython.client.rendering.model.BoxModel import MutableRawBoxModel
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
+from mcpython.util.enums import EnumSide
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",
@@ -146,6 +149,34 @@ class MultiPartDecoder(IBlockStateDecoder):
         box_model = self.prepare_rendering_data(
             box_model,
             face,
+            instance,
+            prepared_texture,
+            prepared_vertex,
+            prepared_tint,
+            state,
+        )
+        return (
+            tuple()
+            if box_model is None
+            else box_model.add_prepared_data_to_batch(
+                (prepared_vertex, prepared_texture, prepared_tint), batch
+            )
+        )
+
+    def add_faces_to_batch(
+        self,
+        instance: IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        faces: int,
+        previous=None,
+    ) -> typing.Iterable:
+        state = instance.get_model_state()
+        prepared_vertex, prepared_texture, prepared_tint, box_model = (
+            ([], [], [], None) if previous is None else (*previous, None)
+        )
+        box_model = self.prepare_rendering_data_multi_face(
+            box_model,
+            faces,
             instance,
             prepared_texture,
             prepared_vertex,
@@ -314,6 +345,47 @@ class MultiPartDecoder(IBlockStateDecoder):
                     )
         return box_model
 
+    def prepare_rendering_data_multi_face(
+        self,
+        box_model,
+        faces: int,
+        instance: IBlockStateRenderingTarget,
+        prepared_texture,
+        prepared_vertex,
+        prepared_tint,
+        state,
+    ):
+        for entry in self.data["multipart"]:
+            if "when" not in entry or self._test_for(state, entry["when"]):
+                data = entry["apply"]
+                if type(data) == dict:
+                    model, config, _ = decode_entry(data)
+                    if model not in shared.model_handler.models:
+                        continue
+
+                    _, box_model = shared.model_handler.models[
+                        model
+                    ].prepare_rendering_data_multi_face(
+                        instance,
+                        instance.position,
+                        config,
+                        faces,
+                        previous=(prepared_vertex, prepared_texture, prepared_tint),
+                    )
+                else:
+                    config, model = get_model_choice(data, instance)
+                    _, box_model = shared.model_handler.models[
+                        model
+                    ].prepare_rendering_data_multi_face(
+                        instance,
+                        instance.position,
+                        config,
+                        faces,
+                        previous=(prepared_vertex, prepared_texture, prepared_tint),
+                    )
+
+        return box_model
+
     def prepare_rendering_data_scaled(
         self,
         box_model,
@@ -441,6 +513,7 @@ class DefaultDecoder(IBlockStateDecoder):
 
         return True
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
@@ -451,6 +524,26 @@ class DefaultDecoder(IBlockStateDecoder):
         for keymap, blockstate in self.states:
             if keymap == data:
                 return blockstate.add_face_to_batch(instance, batch, face)
+
+        if not shared.model_handler.hide_blockstate_errors:
+            logger.println(
+                "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {})".format(
+                    instance, data, [e[0] for e in self.states]
+                )
+            )
+
+        return tuple()
+
+    def add_faces_to_batch(
+        self,
+        instance: IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        faces: int,
+    ) -> typing.Iterable:
+        data = instance.get_model_state()
+        for keymap, blockstate in self.states:
+            if keymap == data:
+                return blockstate.add_faces_to_batch(instance, batch, faces)
 
         if not shared.model_handler.hide_blockstate_errors:
             logger.println(
@@ -693,13 +786,17 @@ class BlockStateContainer:
             logger.print_exception("during baking block state " + self.name)
             self.baked = True
 
-    def add_face_to_batch(
+    @deprecation.deprecated()
+    def add_face_to_batch(self, block, batch, face):
+        return self.loader.add_face_to_batch(block, batch, face)
+
+    def add_faces_to_batch(
         self,
         block: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
         batch: pyglet.graphics.Batch,
-        face: mcpython.util.enums.EnumSide,
+        faces: int
     ):
-        return self.loader.add_face_to_batch(block, batch, face)
+        return self.loader.add_faces_to_batch(block, batch, faces)
 
     def add_raw_face_to_batch(
         self,
@@ -751,11 +848,20 @@ class BlockState:
     def copy(self):
         return BlockState().parse_data(copy.deepcopy(self.data))
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
         batch: pyglet.graphics.Batch,
         face: mcpython.util.enums.EnumSide,
+    ):
+        return self.add_faces_to_batch(instance, batch, face.bitflag)
+
+    def add_faces_to_batch(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        faces: int,
     ):
         if (
             instance.block_state is None
@@ -774,9 +880,11 @@ class BlockState:
                         model, instance.position
                     )
                 )
+
             return tuple()
-        result = shared.model_handler.models[model].add_face_to_batch(
-            instance, instance.position, batch, config, face
+
+        result = shared.model_handler.models[model].add_faces_to_batch(
+            instance, instance.position, batch, config, faces
         )
         return result
 
