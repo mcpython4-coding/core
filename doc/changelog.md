@@ -27,6 +27,9 @@ Contains only some information, in ordered form, in a better form for the end us
 Planned to be released on 01.12.2021
 targeting <1.28pre2>
 
+Backwards-incompatible:
+- mod config system (deprecated and scheduled for removal until next alpha)
+
 
 # Changelog of snapshot 21w46a
 Released on 17.11.2021
