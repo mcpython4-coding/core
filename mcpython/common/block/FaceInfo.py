@@ -37,15 +37,11 @@ class FaceInfo:
     __slots__ = [
         "block",
         "faces",
-        "face_data",
         "custom_renderer",
         "subscribed_renderer",
         "bound_rendering_info",
         "multi_data",
-        "multi_faces",
     ]
-
-    DEFAULT_FACE_DATA = [None] * 6
 
     def __init__(self, block):
         """
@@ -53,58 +49,13 @@ class FaceInfo:
         """
         self.block = weakref.proxy(block)
         self.faces = 0
-        self.face_data: typing.Optional[typing.List[typing.Optional[list]]] = None
         self.custom_renderer = None  # holds a custom block renderer
         self.subscribed_renderer: bool = False
         self.bound_rendering_info = None
-
         self.multi_data = None
-        self.multi_faces = 0
 
     def is_shown(self) -> bool:
         return bool(self.faces)
-
-    def show_face(self, face: EnumSide, force=False):
-        """
-        Shows a face
-        :param face: the face of the block
-        :param force: force the show, WARNING: internal only
-        """
-        if self.faces & face.bitflag and not force:
-            return
-
-        if self.face_data is None:
-            self.face_data = copy.deepcopy(self.DEFAULT_FACE_DATA)
-
-        self.faces |= face.bitflag
-
-        if self.custom_renderer is not None:
-            if not self.subscribed_renderer:
-                self.custom_renderer.on_block_exposed(self.block)
-                self.subscribed_renderer = True
-
-            if isinstance(
-                self.custom_renderer,
-                ICustomBatchBlockRenderer,
-            ):
-                self.face_data[face.index] = self.custom_renderer.add(
-                    self.block.position,
-                    self.block,
-                    face,
-                    shared.world.get_dimension_by_name(self.block.dimension).batches,
-                )
-
-        else:
-            if self.face_data[face.index] is None:
-                self.face_data[face.index] = []
-
-            self.face_data[face.index].extend(
-                shared.model_handler.add_face_to_batch(
-                    self.block,
-                    face,
-                    shared.world.get_dimension_by_name(self.block.dimension).batches,
-                )
-            )
 
     def show_faces(self, faces: int):
         """
@@ -114,19 +65,14 @@ class FaceInfo:
         if not faces:
             return
 
+        if self.faces:
+            self.hide_all()
+
         if not isinstance(faces, int):
             raise ValueError(faces)
 
         # Remove faces in both lists
-        faces ^= faces & self.faces
         self.faces |= faces
-
-        if self.face_data is None:
-            self.face_data = copy.deepcopy(self.DEFAULT_FACE_DATA)
-
-        if self.multi_data:
-            self.hide_multi_data()
-            faces |= self.multi_faces
 
         if self.custom_renderer is not None:
             if not self.subscribed_renderer:
@@ -143,7 +89,6 @@ class FaceInfo:
                     faces,
                     shared.world.get_dimension_by_name(self.block.dimension).batches,
                 )
-                self.multi_faces |= faces
 
         else:
             self.multi_data = shared.model_handler.add_faces_to_batch(
@@ -152,7 +97,7 @@ class FaceInfo:
                 shared.world.get_dimension_by_name(self.block.dimension).batches,
             )
 
-    def hide_multi_data(self):
+    def _hide_data(self):
         if self.custom_renderer is not None and isinstance(
             self.custom_renderer,
             ICustomBatchBlockRenderer,
@@ -160,59 +105,33 @@ class FaceInfo:
             self.custom_renderer.remove_multi(
                 self.block.position, self.block, self.multi_data
             )
-        else:
+        elif self.multi_data:
             [e.delete() for e in self.multi_data]
 
         self.multi_data = None
 
-    def hide_face(self, face: EnumSide):
+    def hide_faces(self, faces: int):
         """
-        Will hide an face
-        :param face: the face to hide
+        Will hide a face
+        :param faces: the faces to hide
         """
-        if not self.faces & face.bitflag:
+        if not self.faces & faces:
             return
 
-        self.faces ^= face.bitflag
-
-        if self.face_data is None:
-            return
+        faces = faces & self.faces
+        self.faces ^= faces
 
         if self.custom_renderer is not None:
             if self.subscribed_renderer and not self.faces:
                 self.custom_renderer.on_block_fully_hidden(self.block)
                 self.subscribed_renderer = False
 
-        if face.bitflag & self.multi_faces:
-            self.hide_multi_data()
+        self._hide_data()
 
-            self.multi_faces ^= face.bitflag
+        self.faces ^= faces & self.faces
 
-            if self.multi_faces:
-                self.show_faces(self.multi_faces)
-
-        else:
-            if self.custom_renderer is not None:
-                if isinstance(
-                    self.custom_renderer,
-                    ICustomBatchBlockRenderer,
-                ):
-                    self.custom_renderer.remove(
-                        self.block.position,
-                        self.block,
-                        self.face_data[face.index],
-                        face,
-                    )
-            else:
-                for x in self.face_data[face.index]:
-                    try:
-                        x.delete()
-                    except AssertionError:
-                        pass
-
-        self.face_data[face.index] = None
-        if all(value is None or len(value) == 0 for value in self.face_data):
-            self.face_data = None
+        if self.faces:
+            self.show_faces(self.faces)
 
     def _draw_custom_render(self):
         """
@@ -239,9 +158,7 @@ class FaceInfo:
             return
 
         chunk.mark_position_dirty(self.block.position)
-
         self.hide_all()
-
         self.show_faces(state)
 
     def hide_all(self):
@@ -256,25 +173,5 @@ class FaceInfo:
             self.custom_renderer.on_block_fully_hidden(self.block)
             self.subscribed_renderer = False
 
-        if self.multi_data:
-            self.hide_multi_data()
-            self.faces ^= self.faces & self.multi_faces
-            self.multi_faces = 0
-
-        if self.custom_renderer:
-            [
-                self.hide_face(face)
-                for face in EnumSide.iterate()
-                if self.faces & face.bitflag
-            ]
-
-        # Only when it is shown we need to hide something...
-        elif self.face_data:
-            for element in itertools.chain.from_iterable(
-                e for e in self.face_data if e is not None
-            ):
-                element.delete()
-
-            self.faces = 0
-
-            self.face_data = None
+        self.hide_faces(self.faces)
+        self.faces = 0

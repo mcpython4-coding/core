@@ -33,12 +33,12 @@ class TestFaceInfo(TestCase):
         block = Weakable()
 
         info = FaceInfo(block)
-        self.assertEqual(info.faces, FaceInfo.DEFAULT_FACE_STATE)
-        self.assertEqual(info.face_data, None)
+        self.assertEqual(info.faces, 0)
+        self.assertEqual(info.multi_data, None)
         self.assertIsNone(info.custom_renderer)
         self.assertFalse(info.subscribed_renderer)
         self.assertIsNone(info.multi_data)
-        self.assertEqual(len(info.multi_faces), 0)
+        self.assertEqual(info.faces, 0)
 
     def test_is_shown(self):
         from mcpython.common.block.FaceInfo import FaceInfo
@@ -72,14 +72,14 @@ class TestFaceInfo(TestCase):
 
         info = FaceInfo(block)
         info.custom_renderer = instance
-        info.show_face(EnumSide.UP)
+        info.show_faces(1)
 
         self.assertTrue(instance.hit)
         self.assertTrue(info.subscribed_renderer)
         self.assertTrue(info.is_shown())
-        self.assertTrue(info.faces[0])
+        self.assertTrue(info.faces & 1)
 
-        info.hide_face(EnumSide.UP)
+        info.hide_faces(1)
 
         self.assertTrue(instance.hit_hide)
         self.assertFalse(info.subscribed_renderer)

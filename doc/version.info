@@ -1935,4 +1935,6 @@ G   [github]: released snapshot 21w46a
 G   [github]: started development cycle for snapshot <21w48a>
     [uuk]: deprecated the mod config system
 IA* [uuk]: FaceInfo will now use two ints to represent the visual state of the block instead of two bool arrays
+A** [uuk]: For optimisation reasons, the show_face() and hide_face() method of FaceInfo are now removed;
+           The only way is to invoke show_faces() and hide_faces() with the bit flag of the face
 

@@ -29,6 +29,13 @@ targeting <1.28pre2>
 
 Backwards-incompatible:
 - mod config system (deprecated and scheduled for removal until next alpha)
+- things touching FaceInfo, beside lookup if the block is shown/hidden, breaking also custom renderers with 
+  an optimised implementation for multi faces, and anything touching the show/hide methods for faces 
+  (excluding the update and hide all methods)
+
+
+    Rendering
+        - optimised block rendering
 
 
 # Changelog of snapshot 21w46a

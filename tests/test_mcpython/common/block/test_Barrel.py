@@ -52,6 +52,10 @@ class FakeWorld:
         return [False] * 6
 
     @classmethod
+    def exposed_faces_flag(cls, block):
+        return 0
+
+    @classmethod
     def mark_position_dirty(cls, position):
         pass
 
