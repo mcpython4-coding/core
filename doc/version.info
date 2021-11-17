@@ -1933,4 +1933,5 @@ b   [uuk]: fixed desserts generating one block lower than surrounding terrain
 G   [github]: released snapshot 21w46a
 
 G   [github]: started development cycle for snapshot <21w48a>
+    [uuk]: deprecated the mod config system
 
