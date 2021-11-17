@@ -125,7 +125,7 @@ chunk = (
             .on_execution(
                 lambda env, data: [
                     c.update_all_rendering()
-                    for c in env.get_dimension().chunk_iterator()
+                    for c in list(env.get_dimension().chunk_iterator())
                 ]
             )
         )

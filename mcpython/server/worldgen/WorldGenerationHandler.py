@@ -356,15 +356,15 @@ def load_features():
         DessertTempleFeature,
         DessertWellFeature,
         FossileFeature,
+        JunglePyramid,
+        JungleTreeFeature,
+        Lakes,
         OakTreeFeature,
         PillagerOutpostDefinition,
         PlantFeature,
         SpruceTreeFeature,
         SurfaceLake,
-        JungleTreeFeature,
         SurfacePlacement,
-        JunglePyramid,
-        Lakes,
     )
     from .feature.village import VillageFeatureDefinition
 

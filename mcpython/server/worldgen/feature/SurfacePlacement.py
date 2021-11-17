@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -42,4 +42,3 @@ class MelonPlacer(IFeature.IFeature):
     @classmethod
     def place_array(cls, array, x: int, y: int, z: int, config):
         pass
-
