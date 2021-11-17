@@ -1934,4 +1934,5 @@ G   [github]: released snapshot 21w46a
 
 G   [github]: started development cycle for snapshot <21w48a>
     [uuk]: deprecated the mod config system
+IA* [uuk]: FaceInfo will now use two ints to represent the visual state of the block instead of two bool arrays
 

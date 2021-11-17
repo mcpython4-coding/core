@@ -19,6 +19,7 @@ import pyglet
 from mcpython import shared
 from mcpython.client.rendering.model.BoxModel import MutableRawBoxModel, RawBoxModel
 from mcpython.client.rendering.model.util import calculate_default_layout_uvs
+from mcpython.util.enums import EnumSide
 
 
 class IChestRendererSupport:
@@ -91,10 +92,10 @@ class ChestRenderer(
         self,
         position: typing.Tuple[int, int, int],
         block: IChestRendererSupport,
-        faces,
+        faces: int,
         batches,
     ):
-        faces = [face.index for face in faces]
+        faces = [face.index for face in EnumSide.iterate() if faces & face.bitflag]
         return (
             self.box_model_top.add_face_to_batch(batches[0], block.position, faces)
             + self.box_model_bottom.add_face_to_batch(batches[0], block.position, faces)
