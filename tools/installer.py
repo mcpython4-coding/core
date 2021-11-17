@@ -48,6 +48,7 @@ subprocess.call(
 )
 
 # THE FOLLOWING LINE IS  O N L Y  PRESENT IN DEV ENVIRONMENT
+"""
 subprocess.call(
     [
         sys.executable,
@@ -55,4 +56,4 @@ subprocess.call(
         "--no-window",
     ],
     stdout=sys.stdout,
-)
+)"""

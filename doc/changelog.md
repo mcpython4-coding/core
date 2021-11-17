@@ -22,12 +22,13 @@ Contains only some information, in ordered form, in a better form for the end us
 
 ----
 
-# Changelog of snapshot 21w<46>a
+# Changelog of snapshot 21w46a
 Planned to be released on 17.11.2021
 targeting 1.18pre1
 
 Backwards incompatible changes:
-- async system for world saves
+- async system for world saves & data fixers
+- async world generation methods
 
 
     Library

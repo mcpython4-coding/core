@@ -542,8 +542,6 @@ class CustomCodePatcher(AbstractBuildStage):
     [
         sys.executable,
         home + "/__main__.py",
-        "--data-gen",
-        "--exit-after-data-gen",
         "--no-window",
     ],
     stdout=sys.stdout,

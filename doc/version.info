@@ -1883,7 +1883,7 @@ f   [uuk]: GrassBlock can now be transformed into grass path
 G   [github]: released snapshot 21w42a
 G   [github]: released alpha 1.2.0
 
-G   [github]: started development cycle for snapshot 21w<46>a
+G   [github]: started development cycle for snapshot 21w46a
 L   [uuk]: upgraded asset source to 21w42a
 OA- [uuk]: improved block model memory usage
 L   [uuk]: removed support for python 3.9
@@ -1930,4 +1930,5 @@ O   [uuk]: optimised FaceInfo, again
 b   [uuk]: fixed world generation task array omitting the on_add method when the block is None
 f   [uuk]: changed height map generation from biome-based to global, preparing for 1.18 world generation
 b   [uuk]: fixed desserts generating one block lower than surrounding terrain
+G   [github]: released snapshot 21w46a
 
