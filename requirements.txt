@@ -6,6 +6,6 @@ clipboard==0.0.4
 toml==0.10.2
 requests==2.26.0
 deprecation==2.1.0
-simplejson==3.17.5
+simplejson==3.17.6
 Python-NBT==1.2.0
 aiofiles==0.7.0
