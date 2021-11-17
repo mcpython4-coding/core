@@ -22,8 +22,14 @@ Contains only some information, in ordered form, in a better form for the end us
 
 ----
 
+
+# Changelog of snapshot <21w48a>
+Planned to be released on 01.12.2021
+targeting <1.28pre2>
+
+
 # Changelog of snapshot 21w46a
-Planned to be released on 17.11.2021
+Released on 17.11.2021
 targeting 1.18pre1
 
 Backwards incompatible changes:
