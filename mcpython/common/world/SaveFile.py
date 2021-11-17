@@ -155,18 +155,10 @@ class SaveFile:
             for region in os.listdir(self.directory + "/dim/" + dim):
                 yield dim, region
 
-    @deprecation.deprecated()
-    def load_world(self):
+    async def load_world_async(self):
         """
         Loads all setup-data into the world
         """
-        task = asyncio.get_event_loop().create_task(self.load_world_async())
-        asyncio.get_event_loop().run_until_complete(task)
-
-        if task.exception():
-            raise task.exception()
-
-    async def load_world_async(self):
         shared.world.cleanup()  # make sure everything is removed before we start
 
         try:
@@ -226,16 +218,6 @@ class SaveFile:
                 "exception during loading world. falling back to start menu..."
             )
             return
-
-    @deprecation.deprecated()
-    def save_world(self, *_, override=False):
-        task = asyncio.get_event_loop().create_task(
-            self.save_world_async(*_, override=override)
-        )
-        asyncio.get_event_loop().run_until_complete(task)
-
-        if task.exception():
-            raise task.exception()
 
     async def save_world_async(self, *_, override=False):
         """
@@ -311,16 +293,6 @@ class SaveFile:
                 shared.NETWORK_MANAGER.disconnect()
                 sys.exit(-1)
 
-    @deprecation.deprecated()
-    def apply_storage_fixer(self, name: str, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(
-            self.apply_storage_fixer_async(name, *args, **kwargs)
-        )
-        asyncio.get_event_loop().run_until_complete(task)
-
-        if task.exception():
-            raise task.exception()
-
     async def apply_storage_fixer_async(self, name: str, *args, **kwargs):
         """
         Will apply a fixer to fix the storage version
@@ -347,16 +319,6 @@ class SaveFile:
                 "during data-fixing storage version '{}'".format(name)
             )
             shared.state_handler.change_state("minecraft:start_menu")
-
-    @deprecation.deprecated()
-    def apply_group_fixer(self, name: str, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(
-            self.apply_group_fixer_async(name, *args, **kwargs)
-        )
-        asyncio.get_event_loop().run_until_complete(task)
-
-        if task.exception():
-            raise task.exception()
 
     async def apply_group_fixer_async(self, name: str, *args, **kwargs):
         """
@@ -387,16 +349,6 @@ class SaveFile:
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")
 
-    @deprecation.deprecated()
-    def apply_part_fixer(self, name: str, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(
-            self.apply_part_fixer_async(name, *args, **kwargs)
-        )
-        asyncio.get_event_loop().run_until_complete(task)
-
-        if task.exception():
-            raise task.exception()
-
     async def apply_part_fixer_async(self, name: str, *args, **kwargs):
         """
         Will apply a part fixer to the system
@@ -418,16 +370,6 @@ class SaveFile:
             logger.print_exception("During data-fixing part '{}' (fatal)".format(name))
             shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")
-
-    @deprecation.deprecated()
-    def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
-        task = asyncio.get_event_loop().create_task(
-            self.apply_mod_fixer_async(modname, source_version, *args, **kwargs)
-        )
-        asyncio.get_event_loop().run_until_complete(task)
-
-        if task.exception():
-            raise task.exception()
 
     async def apply_mod_fixer_async(
         self, modname: str, source_version: tuple, *args, **kwargs
@@ -518,33 +460,6 @@ class SaveFile:
 
         raise ValueError("can't find serializer named '{}'".format(part))
 
-    @deprecation.deprecated()
-    def read(self, part, **kwargs):
-        """
-        Reads a part of the save-file
-        :param part: the part to load
-        :param kwargs: kwargs given to the loader
-        :return: whatever the loader returns
-        todo: use async variant when possible!!!!
-        """
-        try:
-            task = self.get_serializer_for(part).load(self, **kwargs)
-            task = asyncio.get_event_loop().create_task(task)
-            try:
-                asyncio.get_event_loop().run_until_complete(task)
-            except RuntimeError:
-                asyncio.get_running_loop().run_until_complete(task)
-
-            return task.result()
-        except (SystemExit, KeyboardInterrupt, OSError):
-            raise
-        except mcpython.common.world.serializer.IDataSerializer.InvalidSaveException:
-            logger.print_exception(
-                "during reading part '{}' from save files under '{}' with arguments {}".format(
-                    part, self.directory, kwargs
-                )
-            )
-
     async def read_async(self, part, **kwargs):
         """
         Reads a part of the save-file
@@ -563,28 +478,6 @@ class SaveFile:
                 )
             )
 
-    @deprecation.deprecated()
-    def dump(self, data, part, **kwargs):
-        """
-        Similar to read(...), but the other way round.
-        :param data: the data to store, optional, may be None
-        :param part: the part to save
-        :param kwargs: the kwargs to give the saver
-        todo: use async variant when possible!!!!
-        """
-        try:
-            task = self.get_serializer_for(part).save(data, self, **kwargs)
-            task = asyncio.get_event_loop().create_task(task)
-            asyncio.get_event_loop().run_until_complete(task)
-
-            if task.exception():
-                raise task.exception()
-
-        except (SystemExit, KeyboardInterrupt, OSError):
-            raise
-        except:
-            logger.print_exception("during dumping {} to '{}'".format(data, part))
-
     async def dump_async(self, data, part, **kwargs):
         """
         Similar to read(...), but the other way round.
@@ -601,31 +494,6 @@ class SaveFile:
 
     # Helper functions for fixers, loaders and savers
     # todo: add nbt serializer
-
-    @deprecation.deprecated()
-    def access_file_json(self, file: str):
-        """
-        Access a saved json file
-        :param file: the file to load
-        :return: the data of the file or None if an error has occur
-        """
-        file = os.path.join(self.directory, file)
-        if not os.path.isfile(file):
-            return
-
-        try:
-            with open(file) as f:
-                return json.load(f)
-
-        except (SystemExit, KeyboardInterrupt, OSError):
-            raise
-        except json.decoder.JSONDecodeError:
-            logger.print_exception(
-                "File '{}' seems to be corrupted, below the loader exception".format(
-                    file
-                )
-            )
-            return
 
     async def access_file_json_async(self, file: str):
         """
@@ -650,35 +518,6 @@ class SaveFile:
                 )
             )
             return
-
-    @deprecation.deprecated()
-    def access_file_pickle(self, file: str):
-        """
-        Access save a pickle file
-        :param file: the file to load
-        :return: the data of the file or None if an error has occur
-        """
-        file = os.path.join(self.directory, file)
-        if not os.path.isfile(file):
-            return
-        try:
-            with open(file, mode="rb") as f:
-                return mcpython.util.picklemagic.safe_loads(f.read())
-        except (pickle.UnpicklingError, EOFError, ModuleNotFoundError):
-            logger.print_exception(
-                "File '{}' seems to be corrupted. See error message for info, below the loading exception".format(
-                    file
-                )
-            )
-            return
-        except (SystemExit, KeyboardInterrupt, OSError):
-            raise
-        except AttributeError:
-            logger.print_exception(
-                "Module changed in between code systems, leading into corrupted file {}".format(
-                    file
-                )
-            )
 
     async def access_file_pickle_async(self, file: str):
         """
@@ -708,20 +547,6 @@ class SaveFile:
                 )
             )
 
-    @deprecation.deprecated()
-    def access_raw(self, file: str):
-        """
-        Access save a file in binary mode
-        :param file: the file to load
-        :return: the data of the file or None if an error has occur
-        """
-        file = os.path.join(self.directory, file)
-        if not os.path.isfile(file):
-            return
-
-        with open(file, mode="rb") as f:
-            return f.read()
-
     async def access_raw_async(self, file: str):
         """
         Access save a file in binary mode
@@ -737,23 +562,7 @@ class SaveFile:
 
     @deprecation.deprecated()
     def dump_file_json(self, file: str, data):
-        """
-        saves stuff with json into the system
-        :param file: the file to save to
-        :param data: the data to save
-        """
-        file = os.path.join(self.directory, file)
-        d = os.path.dirname(file)
-        if not os.path.isdir(d):
-            os.makedirs(d)
-        try:
-            data = json.dumps(data, indent="  ")
-            with open(file, mode="w") as f:
-                f.write(data)
-        except (SystemExit, KeyboardInterrupt, OSError):
-            raise
-        except:
-            logger.print_exception("during dumping {} to '{}'".format(data, file))
+        asyncio.get_event_loop().run_until_complete(self.dump_file_json_async(file, data))
 
     async def dump_file_json_async(self, file: str, data):
         """
@@ -769,26 +578,6 @@ class SaveFile:
             data = json.dumps(data, indent="  ")
             async with aiofiles.open(file, mode="w") as f:
                 await f.write(data)
-        except (SystemExit, KeyboardInterrupt, OSError):
-            raise
-        except:
-            logger.print_exception("during dumping {} to '{}'".format(data, file))
-
-    @deprecation.deprecated()
-    def dump_file_pickle(self, file: str, data):
-        """
-        saves stuff with pickle into the system
-        :param file: the file to save to
-        :param data: the data to save
-        """
-        file = os.path.join(self.directory, file)
-        d = os.path.dirname(file)
-        if not os.path.isdir(d):
-            os.makedirs(d)
-        try:
-            data = mcpython.util.picklemagic.safe_dumps(data)
-            with open(file, mode="wb") as f:
-                return f.write(data)
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
         except:
@@ -813,20 +602,6 @@ class SaveFile:
         except:
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 
-    @deprecation.deprecated()
-    def dump_raw(self, file: str, data: bytes):
-        """
-        saves bytes into the system
-        :param file: the file to save to
-        :param data: the data to save
-        """
-        file = os.path.join(self.directory, file)
-        d = os.path.dirname(file)
-        if not os.path.isdir(d):
-            os.makedirs(d)
-        with open(file, mode="wb") as f:
-            return f.write(data)
-
     async def dump_raw_async(self, file: str, data: bytes):
         """
         saves bytes into the system
@@ -839,6 +614,59 @@ class SaveFile:
             os.makedirs(d)
         async with aiofiles.open(file, mode="wb") as f:
             await f.write(data)
+
+    @deprecation.deprecated()
+    def load_world(self):
+        asyncio.get_event_loop().run_until_complete(self.load_world_async())
+
+    @deprecation.deprecated()
+    def save_world(self, *_, override=False):
+        asyncio.get_event_loop().run_until_complete(self.save_world_async(*_, override=override))
+
+    @deprecation.deprecated()
+    def apply_storage_fixer(self, name: str, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(self.apply_storage_fixer_async(name, *args, **kwargs))
+
+    @deprecation.deprecated()
+    def apply_group_fixer(self, name: str, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(self.apply_group_fixer_async(name, *args, **kwargs))
+
+    @deprecation.deprecated()
+    def apply_part_fixer(self, name: str, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(self.apply_part_fixer_async(name, *args, **kwargs))
+
+    @deprecation.deprecated()
+    def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(
+            self.apply_mod_fixer_async(modname, source_version, *args, **kwargs))
+
+    @deprecation.deprecated()
+    def read(self, part, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(self.read_async(part, **kwargs))
+
+    @deprecation.deprecated()
+    def dump(self, data, part, **kwargs):
+        asyncio.get_event_loop().run_until_complete(self.dump_async(data, part, **kwargs))
+
+    @deprecation.deprecated()
+    def access_file_json(self, file: str):
+        return asyncio.get_event_loop().run_until_complete(self.access_file_json_async(file))
+
+    @deprecation.deprecated()
+    def access_file_pickle(self, file: str):
+        return asyncio.get_event_loop().run_until_complete(self.access_file_pickle_async(file))
+
+    @deprecation.deprecated()
+    def access_raw(self, file: str):
+        return asyncio.get_event_loop().run_until_complete(self.access_raw_async(file))
+
+    @deprecation.deprecated()
+    def dump_file_pickle(self, file: str, data):
+        asyncio.get_event_loop().run_until_complete(self.dump_file_pickle_async(file, data))
+
+    @deprecation.deprecated()
+    def dump_raw(self, file: str, data: bytes):
+        asyncio.get_event_loop().run_until_complete(self.dump_raw_async(file, data))
 
 
 @shared.mod_loader("minecraft", "stage:datafixer:general")
