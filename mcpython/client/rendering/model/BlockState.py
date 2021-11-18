@@ -135,6 +135,7 @@ class MultiPartDecoder(IBlockStateDecoder):
 
         return True
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
@@ -182,6 +183,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             prepared_vertex,
             prepared_tint,
             state,
+            batch=batch,
         )
         return (
             tuple()
@@ -354,8 +356,11 @@ class MultiPartDecoder(IBlockStateDecoder):
         prepared_vertex,
         prepared_tint,
         state,
+        batch: pyglet.graphics.Batch = None,
     ):
         for entry in self.data["multipart"]:
+            # todo: can we do some more clever lookup here?
+
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
                 if type(data) == dict:
@@ -371,7 +376,9 @@ class MultiPartDecoder(IBlockStateDecoder):
                         config,
                         faces,
                         previous=(prepared_vertex, prepared_texture, prepared_tint),
+                        batch=batch,
                     )
+
                 else:
                     config, model = get_model_choice(data, instance)
                     _, box_model = shared.model_handler.models[
@@ -382,6 +389,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         config,
                         faces,
                         previous=(prepared_vertex, prepared_texture, prepared_tint),
+                        batch=batch,
                     )
 
         return box_model

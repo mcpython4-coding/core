@@ -225,7 +225,7 @@ class BoxModel(AbstractBoxModel):
         :param previous: previous data to add the new to, or None to create new
         """
         vertex = self.get_vertex_variant(rotation, position)
-        collected_data = ([], [], []) if previous is None else previous
+        collected_data = ([], [], [], []) if previous is None else previous
 
         for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:
@@ -279,6 +279,7 @@ class BoxModel(AbstractBoxModel):
         previous: typing.Tuple[
             typing.List[float], typing.List[float], typing.List[float]
         ] = None,
+        batch: pyglet.graphics.Batch = None,
     ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
         """
         Util method for getting the box data for a block (vertices and uv's)
@@ -288,9 +289,10 @@ class BoxModel(AbstractBoxModel):
         :param faces: the faces to get data for, None means all
         :param uv_lock: ?
         :param previous: previous data to add the new to, or None to create new
+        :param batch: the batch to use
         """
         vertex = self.get_vertex_variant(rotation, position)
-        collected_data = ([], [], []) if previous is None else previous
+        collected_data = ([], [], [], []) if previous is None else previous
 
         faces = EnumSide.rotate_bitmap(EnumSide.rotate_bitmap(faces, rotation), (0, -90, 0))
 
@@ -342,7 +344,7 @@ class BoxModel(AbstractBoxModel):
         :param previous: previous data to add the new to, or None to create new
         """
         vertex = self.get_vertex_variant(rotation, position, scale)
-        collected_data = ([], [], []) if previous is None else previous
+        collected_data = ([], [], [], []) if previous is None else previous
 
         for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:

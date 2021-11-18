@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import deprecation
+
 import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.util.enums
@@ -106,7 +108,7 @@ class Model:
         face: mcpython.util.enums.EnumSide,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
     ) -> typing.Tuple[
-        typing.Tuple[typing.List[float], typing.List[float], typing.List[float]],
+        typing.Tuple[typing.List[float], typing.List[float], typing.List[float], typing.List],
         typing.Any,
     ]:
         """
@@ -125,13 +127,13 @@ class Model:
                 f"[BLOCK MODEL][FATAL] can't draw the model '{self.name}' "
                 f"(which has not defined textures) at {position}"
             )
-            return ([], [], []) if previous is None else previous, None
+            return ([], [], [], []) if previous is None else previous, None
 
         rotation = config["rotation"]
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
 
-        collected_data = ([], [], []) if previous is None else previous
+        collected_data = ([], [], [], []) if previous is None else previous
         box_model = None
 
         for box_model in self.box_models:
@@ -154,8 +156,9 @@ class Model:
         config: dict,
         faces: int,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
+        batch: pyglet.graphics.Batch = None,
     ) -> typing.Tuple[
-        typing.Tuple[typing.List[float], typing.List[float], typing.List[float]],
+        typing.Tuple[typing.List[float], typing.List[float], typing.List[float], typing.List],
         typing.Any,
     ]:
         """
@@ -165,6 +168,7 @@ class Model:
         :param config: the configuration
         :param faces: the faces
         :param previous: previous collected data, as a tuple of vertices, texture coords
+        :param batch: the batch to use
         :return: a tuple of vertices and texture coords, and an underlying BoxModel for some identification stuff
         """
 
@@ -174,13 +178,13 @@ class Model:
                 f"[BLOCK MODEL][FATAL] can't draw the model '{self.name}' "
                 f"(which has not defined textures) at {position}"
             )
-            return ([], [], []) if previous is None else previous, None
+            return ([], [], [], []) if previous is None else previous, None
 
         rotation = config["rotation"]
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
 
-        collected_data = ([], [], []) if previous is None else previous
+        collected_data = ([], [], [], []) if previous is None else previous
         box_model = None
 
         for box_model in self.box_models:
@@ -190,6 +194,7 @@ class Model:
                 rotation,
                 faces,
                 previous=collected_data,
+                batch=batch,
             )
 
         return collected_data, box_model
@@ -203,7 +208,7 @@ class Model:
         scale: float,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
     ) -> typing.Tuple[
-        typing.Tuple[typing.List[float], typing.List[float], typing.List[float]],
+        typing.Tuple[typing.List[float], typing.List[float], typing.List[float], typing.List],
         typing.Any,
     ]:
         """
@@ -223,13 +228,13 @@ class Model:
                 f"[BLOCK MODEL][FATAL] can't draw the model '{self.name}' "
                 f"(which has not defined textures) at {position}"
             )
-            return ([], [], []) if previous is None else previous, None
+            return ([], [], [], []) if previous is None else previous, None
 
         rotation = config["rotation"]
         if rotation == (90, 90, 0):
             rotation = (0, 0, 90)
 
-        collected_data = ([], [], []) if previous is None else previous
+        collected_data = ([], [], [], []) if previous is None else previous
         box_model = None
 
         for box_model in self.box_models:
@@ -246,6 +251,7 @@ class Model:
 
         return collected_data, box_model
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
@@ -253,11 +259,7 @@ class Model:
         batch: pyglet.graphics.Batch,
         config: dict,
         face: mcpython.util.enums.EnumSide,
-    ) -> typing.Iterable[VertexList]:
-        """
-        Adds a given face to the batch
-        Simply wraps a get_prepared_data_for call around the box_model.add_prepared_data_to_batch-call
-        """
+    ):
         collected_data, box_model = self.get_prepared_data_for(
             instance, position, config, face
         )
@@ -279,12 +281,12 @@ class Model:
         Simply wraps a get_prepared_data_for call around the box_model.add_prepared_data_to_batch-call
         """
         collected_data, box_model = self.prepare_rendering_data_multi_face(
-            instance, position, config, faces
+            instance, position, config, faces, batch=batch,
         )
         if box_model is None:
             return tuple()
 
-        return box_model.add_prepared_data_to_batch(collected_data, batch)
+        return tuple(collected_data[3]) + tuple(box_model.add_prepared_data_to_batch(collected_data, batch))
 
     def draw_face(
         self,
