@@ -413,6 +413,7 @@ class ModelHandler:
         mcpython.client.rendering.model.BlockState.BlockStateContainer.TO_CREATE.clear()
         mcpython.client.rendering.model.BlockState.BlockStateContainer.NEEDED.clear()
 
+        logger.println("walking across block states...")
         for (
             directory,
             modname,
@@ -423,6 +424,7 @@ class ModelHandler:
                 directory, modname, immediate=True
             )
 
+        logger.println("walking across located block states...")
         for (
             data,
             name,
@@ -435,6 +437,7 @@ class ModelHandler:
         shared.event_handler.call("minecraft:data:blockstates:custom_injection", self)
         shared.event_handler.call("minecraft:data:models:custom_injection", self)
 
+        logger.println("walking across requested models...")
         self.build(immediate=True)
         self.process_models(immediate=True)
         animation_manager.bake()

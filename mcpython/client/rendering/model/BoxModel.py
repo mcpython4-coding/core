@@ -186,11 +186,7 @@ class BoxModel(AbstractBoxModel):
                 coords = animation_manager.get_position_for_texture(self.animated_faces[i])
                 size = animation_manager.get_atlas_size_for_texture(self.animated_faces[i])
                 self.animated_texture_coords[i] = mcpython.util.math.tex_coordinates(*coords, size=size, region=self.texture_region[i], rot=self.texture_region_rotate[i])
-                print(size, mcpython.util.math.tex_coordinates(*coords, size=size, region=self.texture_region[i], rot=self.texture_region_rotate[i]))
                 continue
-
-        if any(self.animated_faces):
-            print(self.model.name, data)
 
         self.tex_data = mcpython.util.math.tex_coordinates_better(
             *data,
@@ -205,8 +201,6 @@ class BoxModel(AbstractBoxModel):
             if data[i] in (None, (0, 0)) and self.animated_texture_coords[i] in (None, (0, 0))
         ])
         self.atlas = atlas
-
-        # print(self.model.name, self.inactive, self.animated_faces, data)
 
         self.enable_alpha = not shared.tag_handler.has_entry_tag(
             self.model.name, "rendering", "#minecraft:alpha"
@@ -299,19 +293,10 @@ class BoxModel(AbstractBoxModel):
                     continue
 
                 if self.animated_faces[i2] is not None:
-                    print(self.model.name, position, self.animated_faces, batch)
-
                     if batch is not None:
                         from mcpython.client.texture.AnimationManager import animation_manager
 
                         group = animation_manager.get_group_for_texture(self.animated_faces[i2])
-
-                        print(group, [
-                            animation_manager.get_position_for_texture(self.animated_faces[i])
-                            if self.animated_faces[i] is not None else None
-                            for i in range(6)
-                        ])
-                        print(self.tex_data[i2])
 
                         if type(batch) == list:
                             batch2 = (
