@@ -23,6 +23,7 @@ wrapper = mcpython.LaunchWrapper.LaunchWrapper()
 
 
 if __name__ == "__main__":
+    wrapper.set_server()
     wrapper.apply_mixins()
     wrapper.check_py_version()
 
@@ -42,7 +43,6 @@ if __name__ == "__main__":
     )
 
     try:
-        wrapper.set_server()
         wrapper.full_launch()
     except (SystemExit, KeyboardInterrupt):
         raise

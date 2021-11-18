@@ -53,10 +53,10 @@ class LaunchWrapper:
             )
 
     def set_client(self):
-        self.is_client = True
+        self.is_client = shared.IS_CLIENT = True
 
     def set_server(self):
-        self.is_client = False
+        self.is_client = shared.IS_CLIENT = False
 
     def apply_mixins(self):
         import mcpython.util.libmodifiers
