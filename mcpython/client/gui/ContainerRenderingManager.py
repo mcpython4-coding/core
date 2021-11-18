@@ -472,7 +472,7 @@ class OpenedInventoryStatePart(
                     slot.set_itemstack(self.moving_itemstack.copy())
 
                 count = self.original_amount[i] + per_element + x
-                off = max(0, count - slot.get_itemstack().item.STACK_SIZE)
+                off = max(0, count - self.moving_itemstack.item.STACK_SIZE)
                 slot.itemstack.set_amount(count - off)
                 overhead += off
                 slot.call_update(True)
