@@ -21,8 +21,10 @@ import mcpython.util.enums
 import pyglet
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
+from mcpython.client.texture.AnimationManager import animation_manager
 from mcpython.engine import logger
 from pyglet.graphics.vertexdomain import VertexList
+import mcpython.engine.ResourceLoader
 
 
 class Model:
@@ -35,6 +37,7 @@ class Model:
         self.modname = modname
         self.parent = None
         self.used_textures = {}
+        self.animated_textures = {}
         self.texture_addresses = {}
         self.texture_names = {}
         self.drawable = True
@@ -67,6 +70,17 @@ class Model:
             for name in data["textures"].keys():
                 texture = data["textures"][name]
                 if not texture.startswith("#"):
+                    if ":" in texture:
+                        texture_f = "assets/{}/textures/{}.png".format(*texture.split(":"))
+                    elif not texture.endswith(".png"):
+                        texture_f = "assets/minecraft/textures/{}.png".format(texture)
+                    else:
+                        texture_f = texture
+
+                    # todo: add a way to disable animated textures
+                    if mcpython.engine.ResourceLoader.exists(texture_f+".mcmeta"):
+                        self.animated_textures[name] = animation_manager.prepare_animated_texture(texture)
+
                     self.used_textures[name] = texture
                 else:
                     self.drawable = False
@@ -76,10 +90,13 @@ class Model:
         to_add = []
         for name in self.used_textures:
             to_add.append((name, self.used_textures[name]))
+
         add = TextureAtlas.handler.add_image_files([x[1] for x in to_add], self.modname)
 
         for i, (name, _) in enumerate(to_add):
-            self.texture_addresses[name] = add[i][0]
+            if name not in self.animated_textures:
+                self.texture_addresses[name] = add[i][0]
+
             self.texture_atlas = add[i][1]
 
         # prepare the box models from parent
@@ -345,6 +362,9 @@ class Model:
         if name in self.texture_addresses:
             return self.texture_addresses[name]
 
+        if name in self.animated_textures:
+            return self.animated_textures[name]
+
         if name in self.texture_names:
             return self.get_texture_position(self.texture_names[name])
 
@@ -352,6 +372,9 @@ class Model:
             n = name[1:]
             if n in self.texture_addresses:
                 return self.texture_addresses[n]
+
+            if n in self.animated_textures:
+                return self.animated_textures[n]
 
             if n in self.texture_names:
                 return self.get_texture_position(self.texture_names[n])

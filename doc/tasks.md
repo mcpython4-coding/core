@@ -77,7 +77,18 @@ UI:
 -> Round button corners & colors
 -> World selection list round white outline 
 
-Test System:
+### Dedicated servers
+- Don't require Pillow and pyglet on dedicated servers
+- Make compatible with python 3.11
+
+### Runtime optimisation
+- Write a mixin using system with helper function "if decide_hard(<string flag>): <do stuff>", which will eval 
+    the expression at each reload and remove the opcodes of that section when the flag is not set
+- Same goes for shared.IS_CLIENT checks, they can be stripped away / removed
+- This can be used in TickHandler for deciding ticks
+- This can be used to configure rendering code
+
+### Test System
 The test system is an external tool developed along the game sitting on top of it. It uses
 a) The python import system, for loading single files and providing dummy files
 b) The custom LaunchWrapper system, for launching the game in-code

@@ -29,6 +29,7 @@ import mcpython.util.math
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
+from mcpython.client.texture.AnimationManager import animation_manager
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 
@@ -436,6 +437,7 @@ class ModelHandler:
 
         self.build(immediate=True)
         self.process_models(immediate=True)
+        animation_manager.bake()
 
         logger.println("finished!")
 

@@ -172,8 +172,8 @@ class MultiPartDecoder(IBlockStateDecoder):
         previous=None,
     ) -> typing.Iterable:
         state = instance.get_model_state()
-        prepared_vertex, prepared_texture, prepared_tint, box_model = (
-            ([], [], [], None) if previous is None else (*previous, None)
+        prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements, box_model = (
+            ([], [], [], [], None) if previous is None else (*previous, None)
         )
         box_model = self.prepare_rendering_data_multi_face(
             box_model,
@@ -182,6 +182,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             prepared_texture,
             prepared_vertex,
             prepared_tint,
+            prepare_vertex_elements,
             state,
             batch=batch,
         )
@@ -355,6 +356,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         prepared_texture,
         prepared_vertex,
         prepared_tint,
+        prepare_vertex_elements,
         state,
         batch: pyglet.graphics.Batch = None,
     ):
@@ -375,7 +377,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         instance.position,
                         config,
                         faces,
-                        previous=(prepared_vertex, prepared_texture, prepared_tint),
+                        previous=(prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements),
                         batch=batch,
                     )
 
@@ -388,7 +390,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         instance.position,
                         config,
                         faces,
-                        previous=(prepared_vertex, prepared_texture, prepared_tint),
+                        previous=(prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements),
                         batch=batch,
                     )
 
