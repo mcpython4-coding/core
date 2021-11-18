@@ -25,7 +25,7 @@ Contains only some information, in ordered form, in a better form for the end us
 
 # Changelog of snapshot <21w48a>
 Planned to be released on 01.12.2021
-targeting <1.28pre2>
+targeting <1.28pre4>
 
 Backwards-incompatible:
 - mod config system (deprecated and scheduled for removal until next alpha)

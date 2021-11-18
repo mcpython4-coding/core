@@ -177,7 +177,9 @@ class MultiPartDecoder(IBlockStateDecoder):
             prepared_tint,
             prepare_vertex_elements,
             box_model,
-        ) = (([], [], [], [], None) if previous is None else (*previous, None))
+        ) = (
+            ([], [], [], [], None) if previous is None else (*previous, None)
+        )
         box_model = self.prepare_rendering_data_multi_face(
             box_model,
             faces,

@@ -1,9 +1,9 @@
 {
   "name": "test build for 21w48a 0",
-  "id": 81,
-  "preview_build_counter": 1,
-  "mc_version": "1.18-pre2",
-  "mc_version_url": "https://launcher.mojang.com/v1/objects/6b88f1734c80775f59416db3599c2a4333558ca4/client.jar",
+  "id": 82,
+  "preview_build_counter": 2,
+  "mc_version": "1.18-pre4",
+  "mc_version_url": "https://launcher.mojang.com/v1/objects/9690cfe8e0d491173c17018f57671bb40745c33b/client.jar",
   "version_type": "snapshot",
   "stable": false
 }
