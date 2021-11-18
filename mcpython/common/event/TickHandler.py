@@ -22,6 +22,9 @@ import pyglet
 from mcpython import shared
 from mcpython.engine import logger
 
+if shared.IS_CLIENT:
+    from mcpython.client.texture.AnimationManager import animation_manager
+
 
 class TickHandler:
     """
@@ -78,6 +81,7 @@ class TickHandler:
         if shared.IS_CLIENT:
             shared.event_handler.call("tickhandler:client")
             shared.NETWORK_MANAGER.fetch_as_client()
+            animation_manager.tick(dt * 20)
         else:
             shared.event_handler.call("tickhandler:server")
             shared.NETWORK_MANAGER.fetch_as_server()

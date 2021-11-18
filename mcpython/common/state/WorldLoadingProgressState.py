@@ -111,7 +111,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         logger.println("[WORLD LOADING][INFO] initializing dimension info")
         shared.dimension_handler.init_dims()
 
-        logger.println("(WORLD LOADING)[INFO] preparing for world loading...")
+        logger.println("[WORLD LOADING][INFO] preparing for world loading...")
         try:
             shared.world.save_file.load_world()
 

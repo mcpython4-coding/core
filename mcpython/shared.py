@@ -36,7 +36,7 @@ build = (
     if "--build-folder" not in sys.argv
     else sys.argv[sys.argv.index("--build-folder") + 1]
 )
-tmp = tempfile.TemporaryDirectory()
+tmp = tempfile.TemporaryDirectory(prefix="mcpython-4")
 
 data_gen = (
     "--data-gen" in sys.argv or "--invalidate-cache" in sys.argv

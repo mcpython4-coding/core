@@ -22,6 +22,7 @@ import pyglet
 from mcpython import shared
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
+import mcpython.util.texture
 
 # We need the missing texture image only on the client, the server will never need this
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
@@ -238,6 +239,9 @@ class TextureAtlas:
         return count <= self.size[0] * self.size[1] - len(self.images) or count <= len(
             self.free_space
         )
+
+    def get_pyglet_texture(self):
+        return mcpython.util.texture.to_pyglet_image(self.texture).get_texture()
 
 
 handler = TextureAtlasGenerator()

@@ -1938,4 +1938,5 @@ IA* [uuk]: FaceInfo will now use two ints to represent the visual state of the b
 A** [uuk]: For optimisation reasons, the show_face() and hide_face() method of FaceInfo are now removed;
            The only way is to invoke show_faces() and hide_faces() with the bit flag of the face
 fA  [uuk]: model system allows now all parties to add directly to the batch
+f   [uuk]: implemented AnimationManager for animated block textures, using above system
 
