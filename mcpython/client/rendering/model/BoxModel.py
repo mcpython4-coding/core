@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import itertools
 import typing
 
+import deprecation
+
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
@@ -204,70 +206,28 @@ class BoxModel(AbstractBoxModel):
         vertices = self.vertex_provider.get_vertex_data(position, rotation, scale=scale)
         return [sum(x, tuple()) for x in vertices]
 
+    @deprecation.deprecated()
     def get_prepared_box_data(
         self,
-        instance: IBlockStateRenderingTarget,
-        position: typing.Tuple[float, float, float],
-        rotation: typing.Tuple[float, float, float] = (0, 0, 0),
+        instance,
+        position,
+        rotation=(0, 0, 0),
         active_faces=None,
         uv_lock=False,
-        previous: typing.Tuple[
-            typing.List[float], typing.List[float], typing.List[float]
-        ] = None,
+        previous=None,
     ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
-        """
-        Util method for getting the box data for a block (vertices and uv's)
-        :param instance: the instance to get information from to render
-        :param position: the position of the block
-        :param rotation: the rotation
-        :param active_faces: the faces to get data for, None means all
-        :param uv_lock: ?
-        :param previous: previous data to add the new to, or None to create new
-        """
-        vertex = self.get_vertex_variant(rotation, position)
-        collected_data = ([], [], [], []) if previous is None else previous
+        if active_faces is None:
+            active_faces = 0b111111
+        elif isinstance(active_faces, EnumSide):
+            active_faces = active_faces.bitflag
+        elif isinstance(active_faces, (list, tuple, set)):
+            active_faces = EnumSide.side_list_to_bit_map(active_faces)
+        elif isinstance(active_faces, dict):
+            active_faces = sum([face.bitflag for face, state in active_faces.items() if state])
+        else:
+            raise ValueError(active_faces)
 
-        for face in mcpython.util.enums.EnumSide.iterate():
-            if uv_lock:
-                face = face.rotate(rotation)
-
-            i = UV_ORDER.index(face)
-            i2 = SIDE_ORDER.index(face)
-
-            if (
-                active_faces is None
-                or (
-                    active_faces == face.rotate(rotation)
-                    if hasattr(face, "rotate")
-                    else False
-                )
-                or (
-                    # todo: this seems wrong
-                    (
-                        active_faces[i]
-                        if type(active_faces) == list
-                        else (i in active_faces and active_faces[i])
-                    )
-                    if type(face) in (list, dict, set, tuple)
-                    else False
-                )
-            ):
-                if (
-                    not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-                    and self.inactive[face.rotate(rotation)]
-                ):
-                    continue
-
-                collected_data[0].extend(vertex[i])
-                collected_data[1].extend(self.tex_data[i2])
-                collected_data[2].extend(
-                    (1,) * 16
-                    if self.face_tint_index[face.index] == -1
-                    else instance.get_tint_for_index(self.face_tint_index[face.index])
-                    * 4
-                )
-
-        return collected_data
+        return self.prepare_rendering_data_multi_face(instance, position, rotation, active_faces, uv_lock=uv_lock, previous=previous)
 
     def prepare_rendering_data_multi_face(
         self,
