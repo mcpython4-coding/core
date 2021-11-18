@@ -292,6 +292,8 @@ class BoxModel(AbstractBoxModel):
         vertex = self.get_vertex_variant(rotation, position)
         collected_data = ([], [], []) if previous is None else previous
 
+        faces = EnumSide.rotate_bitmap(EnumSide.rotate_bitmap(faces, rotation), (0, -90, 0))
+
         for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:
                 face = face.rotate(rotation)
@@ -299,7 +301,7 @@ class BoxModel(AbstractBoxModel):
             i = UV_ORDER.index(face)
             i2 = SIDE_ORDER.index(face)
 
-            if face.rotate(rotation).bitflag & faces:
+            if face.bitflag & faces:
                 if (
                     not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
                     and self.inactive[face.rotate(rotation)]

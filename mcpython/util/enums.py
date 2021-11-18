@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import enum
 import itertools
 import typing
+from functools import reduce
 
 COLORS = [
     "white",
@@ -54,6 +55,19 @@ class EnumSide(enum.Enum):
         Iterator for the faces
         """
         return FACE_ORDER
+
+    @classmethod
+    def side_list_to_bit_map(cls, sides: typing.List["EnumSide"]):
+        return reduce(lambda a, b: a | b, [face.bitflag for face in sides])
+
+    @classmethod
+    def bitmap_to_side_list(cls, bitflag: int):
+        return [face for face in FACE_ORDER if face.bitflag & bitflag]
+
+    @classmethod
+    def rotate_bitmap(cls, bitmap: int, rotation):
+        # todo: is there a better way to to this?
+        return cls.side_list_to_bit_map([face.rotate(rotation) for face in cls.bitmap_to_side_list(bitmap)])
 
     @classmethod
     def by_index(cls, index: int):
