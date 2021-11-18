@@ -751,6 +751,7 @@ class RawBoxModel(AbstractBoxModel):
             ("t2f/static", self.texture_cache),
         )
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         batch: pyglet.graphics.Batch,
@@ -764,6 +765,32 @@ class RawBoxModel(AbstractBoxModel):
         for i in range(6):
             if i in face if isinstance(face, int) else face.index == i:
                 continue
+
+            t = self.texture_cache[i * 8 : i * 8 + 8]
+            v = vertices[i * 12 : i * 12 + 12]
+            result.append(
+                batch.add(
+                    4,
+                    pyglet.gl.GL_QUADS,
+                    self.texture,
+                    ("v3d/static", v),
+                    ("t2f/static", t),
+                )
+            )
+        return result
+
+    def add_faces_to_batch(
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        faces: int,
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        result = []
+        for i, face in enumerate(EnumSide.iterate()):
+            if not face.bitflag & faces: continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
             v = vertices[i * 12 : i * 12 + 12]
@@ -828,6 +855,7 @@ class MutableRawBoxModel(RawBoxModel):
         vertices = self.get_vertices(position, rotation, rotation_center)
         previous.vertices[:] = vertices
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         batch: pyglet.graphics.Batch,
@@ -844,6 +872,33 @@ class MutableRawBoxModel(RawBoxModel):
                 if isinstance(face, int)
                 else (face is not None and face.index == i)
             ):
+                continue
+
+            t = self.texture_cache[i * 8 : i * 8 + 8]
+            v = vertices[i * 12 : i * 12 + 12]
+            result.append(
+                batch.add(
+                    4,
+                    pyglet.gl.GL_QUADS,
+                    self.texture,
+                    ("v3f/dynamic", v),
+                    ("t2f/dynamic", t),
+                )
+            )
+        return result
+
+    def add_faces_to_batch(
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        faces: int,
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        result = []
+        for i, face in enumerate(EnumSide.iterate()):
+            if not face.bitflag & faces:
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
@@ -900,6 +955,7 @@ class ColoredRawBoxModel(RawBoxModel):
             ("c4f", color * 24),
         )
 
+    @deprecation.deprecated()
     def add_face_to_batch(
         self,
         batch: pyglet.graphics.Batch,
@@ -917,6 +973,35 @@ class ColoredRawBoxModel(RawBoxModel):
                 if isinstance(face, int)
                 else (face is not None and face.index == i)
             ):
+                continue
+
+            t = self.texture_cache[i * 8 : i * 8 + 8]
+            v = vertices[i * 12 : i * 12 + 12]
+            result.append(
+                batch.add(
+                    4,
+                    pyglet.gl.GL_QUADS,
+                    self.texture,
+                    ("v3d/static", v),
+                    ("t2f/static", t),
+                    ("c4f", color * 4),
+                )
+            )
+        return result
+
+    def add_faces_to_batch(
+        self,
+        batch: pyglet.graphics.Batch,
+        position: typing.Tuple[float, float, float],
+        faces: int,
+        rotation=(0, 0, 0),
+        rotation_center=(0, 0, 0),
+        color=(1, 1, 1, 1),
+    ):
+        vertices = self.get_vertices(position, rotation, rotation_center)
+        result = []
+        for i, face in enumerate(EnumSide.iterate()):
+            if not face.bitflag & faces:
                 continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
