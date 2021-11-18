@@ -32,10 +32,19 @@ Backwards-incompatible:
 - things touching FaceInfo, beside lookup if the block is shown/hidden, breaking also custom renderers with 
   an optimised implementation for multi faces, and anything touching the show/hide methods for faces 
   (excluding the update and hide all methods)
+- stuff defining invalid animated textures (previously, the errors were ignored)
 
 
     Rendering
         - optimised block rendering
+        - added more possibiliteis for block rendering to do fancy stuff
+        - block models can now be animated by the vanilla way (or by doing some fancy stuff 
+            with the AnimationManager)
+
+    Known issues:
+        - animated blocks behave strangly when other animated blocks are placed/removed/updated
+            (Some strange interaction with other groups, maybe)
+        - somehow, block faces sometimes not get hidden when their corresponding block gets removed
 
 
 # Changelog of snapshot 21w46a
