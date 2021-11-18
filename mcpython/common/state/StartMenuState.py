@@ -31,6 +31,7 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
     def activate(self):
         super().activate()
         shared.world.world_loaded = False
+        shared.ENABLE_ANIMATED_TEXTURES = True
 
     @staticmethod
     def on_new_game_press(x, y):

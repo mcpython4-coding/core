@@ -133,6 +133,8 @@ class AnimationManager:
         return self.texture2controller[texture].atlases[0].size
 
     def tick(self, ticks: float):
+        if not shared.ENABLE_ANIMATED_TEXTURES: return
+
         for controller in self.controllers.values():
             controller.tick(ticks)
 

@@ -50,6 +50,8 @@ IS_CLIENT = True
 IS_NETWORKING = False
 IS_TEST_ENV = False
 
+ENABLE_ANIMATED_TEXTURES = False
+
 # Used by the mod loading system to store the name of the mod doing stuff currently
 # Only updated when currently loading the game
 CURRENT_EVENT_SUB = None
