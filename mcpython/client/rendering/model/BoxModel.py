@@ -58,6 +58,7 @@ class BoxModel(AbstractBoxModel):
 
         self.faces = [None] * 6
         self.animated_faces: typing.List[int | None] = [None] * 6
+        self.animated_texture_coords = [(0, 0)] * 6
         self.face_tint_index = [-1] * 6
 
         self.texture_region: typing.List[typing.Tuple[float, float, float, float]] = [
@@ -182,21 +183,17 @@ class BoxModel(AbstractBoxModel):
                 continue
 
             if self.animated_faces[i] is not None:
-                data[i] = animation_manager.get_position_for_texture(self.animated_faces[i])
+                coords = animation_manager.get_position_for_texture(self.animated_faces[i])
+                size = animation_manager.get_atlas_size_for_texture(self.animated_faces[i])
+                self.animated_texture_coords[i] = mcpython.util.math.tex_coordinates(*coords, size=size, region=self.texture_region[i], rot=self.texture_region_rotate[i])
+                print(size, mcpython.util.math.tex_coordinates(*coords, size=size, region=self.texture_region[i], rot=self.texture_region_rotate[i]))
                 continue
 
         if any(self.animated_faces):
             print(self.model.name, data)
 
-        up, down, north, east, south, west = array = tuple(data)
-
         self.tex_data = mcpython.util.math.tex_coordinates_better(
-            up,
-            down,
-            north,
-            east,
-            south,
-            west,
+            *data,
             tex_region=self.texture_region,
             size=atlas.size,
             rotation=self.texture_region_rotate,
@@ -205,7 +202,7 @@ class BoxModel(AbstractBoxModel):
         self.inactive = reduce(lambda a, b: a | b, [0] + [
             face.bitflag
             for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
-            if array[i] == (0, 0) or array[i] is None
+            if data[i] in (None, (0, 0)) and self.animated_texture_coords[i] in (None, (0, 0))
         ])
         self.atlas = atlas
 
@@ -328,7 +325,7 @@ class BoxModel(AbstractBoxModel):
                             pyglet.gl.GL_QUADS,
                             group,
                             ("v3d/static", vertex[i]),
-                            ("t2f/static", self.tex_data[i2]),
+                            ("t2f/static", self.animated_texture_coords[i2]),
                             ("c4f/static", (1,) * 16
                                 if self.face_tint_index[face.index] == -1
                                 else instance.get_tint_for_index(self.face_tint_index[face.index])

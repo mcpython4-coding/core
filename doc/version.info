@@ -1940,12 +1940,3 @@ A** [uuk]: For optimisation reasons, the show_face() and hide_face() method of F
 fA  [uuk]: model system allows now all parties to add directly to the batch
 f   [uuk]: implemented AnimationManager for animated block textures, using above system
 
-pending:
-- per-animated-texture texture coords calculation as atlas size may vary
--> reduce memory usage
-
-- pyglet does not like what we are doing to animate textures, so can we do something else?
-(currently, I have some hacks locally to make pyglet semi-happy)
-
-- somehow, adding somewhere a new block affects other blocks
-

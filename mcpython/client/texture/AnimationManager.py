@@ -34,7 +34,7 @@ class AnimationController:
 
         self.textures = [None] * frames
         self.atlases = [
-            TextureAtlas(size=(32, 32))  # size=(4, 4))  # todo: enable and fix this somehow in BoxModel breaking down
+            TextureAtlas(size=(4, 4))
             for _ in range(frames)
         ]
 
@@ -119,6 +119,9 @@ class AnimationManager:
 
     def get_position_for_texture(self, texture: int):
         return self.positions[texture] if texture != -1 else (0, 0)
+
+    def get_atlas_size_for_texture(self, texture: int):
+        return self.texture2controller[texture].atlases[0].size
 
     def tick(self, ticks: float):
         for controller in self.controllers.values():
