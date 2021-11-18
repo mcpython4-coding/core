@@ -16,7 +16,6 @@ import random
 import typing
 
 import deprecation
-
 import mcpython.client.rendering.model.api
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
@@ -172,9 +171,13 @@ class MultiPartDecoder(IBlockStateDecoder):
         previous=None,
     ) -> typing.Iterable:
         state = instance.get_model_state()
-        prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements, box_model = (
-            ([], [], [], [], None) if previous is None else (*previous, None)
-        )
+        (
+            prepared_vertex,
+            prepared_texture,
+            prepared_tint,
+            prepare_vertex_elements,
+            box_model,
+        ) = (([], [], [], [], None) if previous is None else (*previous, None))
         box_model = self.prepare_rendering_data_multi_face(
             box_model,
             faces,
@@ -377,7 +380,12 @@ class MultiPartDecoder(IBlockStateDecoder):
                         instance.position,
                         config,
                         faces,
-                        previous=(prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements),
+                        previous=(
+                            prepared_vertex,
+                            prepared_texture,
+                            prepared_tint,
+                            prepare_vertex_elements,
+                        ),
                         batch=batch,
                     )
 
@@ -390,7 +398,12 @@ class MultiPartDecoder(IBlockStateDecoder):
                         instance.position,
                         config,
                         faces,
-                        previous=(prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements),
+                        previous=(
+                            prepared_vertex,
+                            prepared_texture,
+                            prepared_tint,
+                            prepare_vertex_elements,
+                        ),
                         batch=batch,
                     )
 
@@ -804,7 +817,7 @@ class BlockStateContainer:
         self,
         block: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
         batch: pyglet.graphics.Batch,
-        faces: int
+        faces: int,
     ):
         return self.loader.add_faces_to_batch(block, batch, faces)
 

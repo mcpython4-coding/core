@@ -18,7 +18,6 @@ import traceback
 import typing
 
 import deprecation
-
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState

@@ -236,9 +236,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
-    def exposed_faces_flag(
-        self, block
-    ) -> int:
+    def exposed_faces_flag(self, block) -> int:
 
         if block is None or type(block) == str:
             return 0b111111

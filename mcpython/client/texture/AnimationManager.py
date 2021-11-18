@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -13,14 +13,13 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import mcpython.engine.ResourceLoader
 import PIL.Image
 import pyglet
-from pyglet.graphics import TextureGroup
-
-import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.engine import logger
 from mcpython.util.texture import to_pyglet_image
+from pyglet.graphics import TextureGroup
 
 
 class AnimationController:
@@ -28,30 +27,33 @@ class AnimationController:
         self.frames = frames
         self.timing = timing
         from .TextureAtlas import MISSING_TEXTURE, TextureAtlas
-        self.group: typing.Optional[pyglet.graphics.TextureGroup] = pyglet.graphics.TextureGroup(to_pyglet_image(MISSING_TEXTURE).get_texture())
+
+        self.group: typing.Optional[
+            pyglet.graphics.TextureGroup
+        ] = pyglet.graphics.TextureGroup(to_pyglet_image(MISSING_TEXTURE).get_texture())
         self.ticks_since_change = 0
         self.atlas_index = 0
 
         self.textures = [None] * frames
-        self.atlases = [
-            TextureAtlas(size=(4, 4))
-            for _ in range(frames)
-        ]
+        self.atlases = [TextureAtlas(size=(4, 4)) for _ in range(frames)]
 
         self.remaining_ticks = 0
 
     def add_texture(self, image: PIL.Image, lookup: typing.List[int]):
-        if len(lookup) != self.frames: raise ValueError(lookup, len(lookup), self.frames)
+        if len(lookup) != self.frames:
+            raise ValueError(lookup, len(lookup), self.frames)
 
         atlas = self.atlases[0]
         width = image.width
 
         # todo: split textures beforehand!
 
-        pos = atlas.add_image(image.crop((0, lookup[0]*width, width, (lookup[0]+1)*width)))
+        pos = atlas.add_image(
+            image.crop((0, lookup[0] * width, width, (lookup[0] + 1) * width))
+        )
 
         for atlas, index in zip(self.atlases[1:], lookup[1:]):
-            atlas.add_image(image.crop((0, index*width, width, (index+1)*width)))
+            atlas.add_image(image.crop((0, index * width, width, (index + 1) * width)))
 
         return pos
 
@@ -78,7 +80,8 @@ class AnimationManager:
         self.texture_lookup: typing.Dict[str, int] = {}
 
     def prepare_animated_texture(self, location: str) -> int:
-        if location in self.texture_lookup: return self.texture_lookup[location]
+        if location in self.texture_lookup:
+            return self.texture_lookup[location]
 
         texture = mcpython.engine.ResourceLoader.read_image(location)
 
@@ -90,15 +93,21 @@ class AnimationManager:
             t_location = location
 
         if not mcpython.engine.ResourceLoader.exists(t_location + ".mcmeta"):
-            logger.println("skipping animated texture @"+location+" / "+t_location)
+            logger.println(
+                "skipping animated texture @" + location + " / " + t_location
+            )
             return -1
 
-        meta: dict = mcpython.engine.ResourceLoader.read_json(t_location+".mcmeta")["animation"]
+        meta: dict = mcpython.engine.ResourceLoader.read_json(t_location + ".mcmeta")[
+            "animation"
+        ]
 
         if "frames" not in meta:
             meta["frames"] = list(range(texture.height // texture.width))
 
-        atlas = self.get_atlas_for_spec(len(meta["frames"]), meta.setdefault("frametime", 1))
+        atlas = self.get_atlas_for_spec(
+            len(meta["frames"]), meta.setdefault("frametime", 1)
+        )
         self.positions.append(atlas.add_texture(texture, meta["frames"]))
         self.texture2controller.append(atlas)
 
@@ -133,4 +142,3 @@ class AnimationManager:
 
 
 animation_manager = AnimationManager()
-

@@ -17,12 +17,12 @@ import typing
 
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
+import mcpython.util.texture
 import PIL.Image
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
-import mcpython.util.texture
 
 # We need the missing texture image only on the client, the server will never need this
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:

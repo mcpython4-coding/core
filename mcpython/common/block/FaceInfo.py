@@ -165,11 +165,7 @@ class FaceInfo:
         """
         Will hide all faces
         """
-        if (
-            self.faces
-            and self.custom_renderer is not None
-            and self.subscribed_renderer
-        ):
+        if self.faces and self.custom_renderer is not None and self.subscribed_renderer:
             self.custom_renderer.on_block_fully_hidden(self.block)
             self.subscribed_renderer = False
 

@@ -16,7 +16,6 @@ import typing
 from functools import reduce
 
 import deprecation
-
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
@@ -130,7 +129,9 @@ class BoxModel(AbstractBoxModel):
             if name in data["faces"]:
                 f = data["faces"][name]
                 var = f["texture"]
-                position = model.get_texture_position(var) if model is not None else None
+                position = (
+                    model.get_texture_position(var) if model is not None else None
+                )
 
                 if isinstance(position, int):
                     self.animated_faces[face.index] = position
@@ -183,9 +184,18 @@ class BoxModel(AbstractBoxModel):
                 continue
 
             if self.animated_faces[i] is not None:
-                coords = animation_manager.get_position_for_texture(self.animated_faces[i])
-                size = animation_manager.get_atlas_size_for_texture(self.animated_faces[i])
-                self.animated_texture_coords[i] = mcpython.util.math.tex_coordinates(*coords, size=size, region=self.texture_region[i], rot=self.texture_region_rotate[i])
+                coords = animation_manager.get_position_for_texture(
+                    self.animated_faces[i]
+                )
+                size = animation_manager.get_atlas_size_for_texture(
+                    self.animated_faces[i]
+                )
+                self.animated_texture_coords[i] = mcpython.util.math.tex_coordinates(
+                    *coords,
+                    size=size,
+                    region=self.texture_region[i],
+                    rot=self.texture_region_rotate[i],
+                )
                 continue
 
         self.tex_data = mcpython.util.math.tex_coordinates_better(
@@ -195,11 +205,16 @@ class BoxModel(AbstractBoxModel):
             rotation=self.texture_region_rotate,
         )
 
-        self.inactive = reduce(lambda a, b: a | b, [0] + [
-            face.bitflag
-            for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
-            if data[i] in (None, (0, 0)) and self.animated_texture_coords[i] in (None, (0, 0))
-        ])
+        self.inactive = reduce(
+            lambda a, b: a | b,
+            [0]
+            + [
+                face.bitflag
+                for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
+                if data[i] in (None, (0, 0))
+                and self.animated_texture_coords[i] in (None, (0, 0))
+            ],
+        )
         self.atlas = atlas
 
         self.enable_alpha = not shared.tag_handler.has_entry_tag(
@@ -238,11 +253,20 @@ class BoxModel(AbstractBoxModel):
         elif isinstance(active_faces, (list, tuple, set)):
             active_faces = EnumSide.side_list_to_bit_map(active_faces)
         elif isinstance(active_faces, dict):
-            active_faces = sum([face.bitflag for face, state in active_faces.items() if state])
+            active_faces = sum(
+                [face.bitflag for face, state in active_faces.items() if state]
+            )
         else:
             raise ValueError(active_faces)
 
-        return self.prepare_rendering_data_multi_face(instance, position, rotation, active_faces, uv_lock=uv_lock, previous=previous)
+        return self.prepare_rendering_data_multi_face(
+            instance,
+            position,
+            rotation,
+            active_faces,
+            uv_lock=uv_lock,
+            previous=previous,
+        )
 
     def prepare_rendering_data_multi_face(
         self,
@@ -272,7 +296,9 @@ class BoxModel(AbstractBoxModel):
         if previous and len(previous) != 4:
             raise RuntimeError
 
-        faces = EnumSide.rotate_bitmap(EnumSide.rotate_bitmap(faces, rotation), (0, -90, 0))
+        faces = EnumSide.rotate_bitmap(
+            EnumSide.rotate_bitmap(faces, rotation), (0, -90, 0)
+        )
 
         for face in mcpython.util.enums.EnumSide.iterate():
             if uv_lock:
@@ -289,35 +315,57 @@ class BoxModel(AbstractBoxModel):
                     continue
 
                 if vertex is None or self.tex_data is None:
-                    logger.println("something is wrong @"+str(position), vertex, self.tex_data, bin(self.inactive))
+                    logger.println(
+                        "something is wrong @" + str(position),
+                        vertex,
+                        self.tex_data,
+                        bin(self.inactive),
+                    )
                     continue
 
                 if self.animated_faces[i2] is not None:
                     if batch is not None:
-                        from mcpython.client.texture.AnimationManager import animation_manager
+                        from mcpython.client.texture.AnimationManager import (
+                            animation_manager,
+                        )
 
-                        group = animation_manager.get_group_for_texture(self.animated_faces[i2])
+                        group = animation_manager.get_group_for_texture(
+                            self.animated_faces[i2]
+                        )
 
                         if type(batch) == list:
                             batch2 = (
-                                batch[0] if self.model is not None and self.enable_alpha else batch[1]
+                                batch[0]
+                                if self.model is not None and self.enable_alpha
+                                else batch[1]
                             )
                         else:
                             batch2 = batch
 
-                        collected_data[3].append(batch2.add(
-                            4,
-                            pyglet.gl.GL_QUADS,
-                            group,
-                            ("v3d/static", vertex[i]),
-                            ("t2f/static", self.animated_texture_coords[i2]),
-                            ("c4f/static", (1,) * 16
-                                if self.face_tint_index[face.index] == -1
-                                else instance.get_tint_for_index(self.face_tint_index[face.index])
-                                * 4),
-                        ))
+                        collected_data[3].append(
+                            batch2.add(
+                                4,
+                                pyglet.gl.GL_QUADS,
+                                group,
+                                ("v3d/static", vertex[i]),
+                                ("t2f/static", self.animated_texture_coords[i2]),
+                                (
+                                    "c4f/static",
+                                    (1,) * 16
+                                    if self.face_tint_index[face.index] == -1
+                                    else instance.get_tint_for_index(
+                                        self.face_tint_index[face.index]
+                                    )
+                                    * 4,
+                                ),
+                            )
+                        )
                     else:
-                        logger.println("skipping animated texture @"+str(position)+"; batch not present")
+                        logger.println(
+                            "skipping animated texture @"
+                            + str(position)
+                            + "; batch not present"
+                        )
 
                     continue
 
@@ -790,7 +838,8 @@ class RawBoxModel(AbstractBoxModel):
         vertices = self.get_vertices(position, rotation, rotation_center)
         result = []
         for i, face in enumerate(EnumSide.iterate()):
-            if not face.bitflag & faces: continue
+            if not face.bitflag & faces:
+                continue
 
             t = self.texture_cache[i * 8 : i * 8 + 8]
             v = vertices[i * 12 : i * 12 + 12]

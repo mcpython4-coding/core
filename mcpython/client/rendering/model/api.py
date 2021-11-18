@@ -15,7 +15,6 @@ import typing
 from abc import ABC
 
 import deprecation
-
 import mcpython.common.event.api
 import mcpython.util
 import mcpython.util.enums

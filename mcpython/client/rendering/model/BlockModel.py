@@ -14,9 +14,9 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import deprecation
-
 import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
+import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
 from mcpython import shared
@@ -24,7 +24,6 @@ from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.client.texture.AnimationManager import animation_manager
 from mcpython.engine import logger
 from pyglet.graphics.vertexdomain import VertexList
-import mcpython.engine.ResourceLoader
 
 
 class Model:
@@ -71,15 +70,19 @@ class Model:
                 texture = data["textures"][name]
                 if not texture.startswith("#"):
                     if ":" in texture:
-                        texture_f = "assets/{}/textures/{}.png".format(*texture.split(":"))
+                        texture_f = "assets/{}/textures/{}.png".format(
+                            *texture.split(":")
+                        )
                     elif not texture.endswith(".png"):
                         texture_f = "assets/minecraft/textures/{}.png".format(texture)
                     else:
                         texture_f = texture
 
                     # todo: add a way to disable animated textures
-                    if mcpython.engine.ResourceLoader.exists(texture_f+".mcmeta"):
-                        self.animated_textures[name] = animation_manager.prepare_animated_texture(texture)
+                    if mcpython.engine.ResourceLoader.exists(texture_f + ".mcmeta"):
+                        self.animated_textures[
+                            name
+                        ] = animation_manager.prepare_animated_texture(texture)
 
                     self.used_textures[name] = texture
                 else:
@@ -125,7 +128,9 @@ class Model:
         face: mcpython.util.enums.EnumSide,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
     ) -> typing.Tuple[
-        typing.Tuple[typing.List[float], typing.List[float], typing.List[float], typing.List],
+        typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float], typing.List
+        ],
         typing.Any,
     ]:
         """
@@ -175,7 +180,9 @@ class Model:
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
         batch: pyglet.graphics.Batch = None,
     ) -> typing.Tuple[
-        typing.Tuple[typing.List[float], typing.List[float], typing.List[float], typing.List],
+        typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float], typing.List
+        ],
         typing.Any,
     ]:
         """
@@ -225,7 +232,9 @@ class Model:
         scale: float,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
     ) -> typing.Tuple[
-        typing.Tuple[typing.List[float], typing.List[float], typing.List[float], typing.List],
+        typing.Tuple[
+            typing.List[float], typing.List[float], typing.List[float], typing.List
+        ],
         typing.Any,
     ]:
         """
@@ -298,12 +307,18 @@ class Model:
         Simply wraps a get_prepared_data_for call around the box_model.add_prepared_data_to_batch-call
         """
         collected_data, box_model = self.prepare_rendering_data_multi_face(
-            instance, position, config, faces, batch=batch,
+            instance,
+            position,
+            config,
+            faces,
+            batch=batch,
         )
         if box_model is None:
             return tuple()
 
-        return tuple(collected_data[3]) + tuple(box_model.add_prepared_data_to_batch(collected_data, batch))
+        return tuple(collected_data[3]) + tuple(
+            box_model.add_prepared_data_to_batch(collected_data, batch)
+        )
 
     def draw_face(
         self,

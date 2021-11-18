@@ -279,10 +279,7 @@ class SaveFile:
                 print()
 
             await asyncio.gather(
-                *(
-                    save_dimension(d)
-                    for d in shared.world.dimensions.values()
-                )
+                *(save_dimension(d) for d in shared.world.dimensions.values())
             )
 
             logger.println("save complete!")
@@ -324,10 +321,12 @@ class SaveFile:
 
         try:
             await fixer.apply(self, *args, **kwargs)
-            await asyncio.gather(*(
-                self.apply_group_fixer_async(*args, **kwargs)
-                for name, args, kwargs in fixer.GROUP_FIXER_NAMES
-            ))
+            await asyncio.gather(
+                *(
+                    self.apply_group_fixer_async(*args, **kwargs)
+                    for name, args, kwargs in fixer.GROUP_FIXER_NAMES
+                )
+            )
 
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
@@ -355,10 +354,12 @@ class SaveFile:
 
         try:
             await fixer.apply(self, *args, **kwargs)
-            await asyncio.gather(*(
-                self.apply_group_fixer_async(*args, **kwargs)
-                for name, args, kwargs in fixer.GROUP_FIXER_NAMES
-            ))
+            await asyncio.gather(
+                *(
+                    self.apply_group_fixer_async(*args, **kwargs)
+                    for name, args, kwargs in fixer.GROUP_FIXER_NAMES
+                )
+            )
 
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
@@ -644,40 +645,57 @@ class SaveFile:
 
     @deprecation.deprecated()
     def save_world(self, *_, override=False):
-        asyncio.get_event_loop().run_until_complete(self.save_world_async(*_, override=override))
+        asyncio.get_event_loop().run_until_complete(
+            self.save_world_async(*_, override=override)
+        )
 
     @deprecation.deprecated()
     def apply_storage_fixer(self, name: str, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(self.apply_storage_fixer_async(name, *args, **kwargs))
+        return asyncio.get_event_loop().run_until_complete(
+            self.apply_storage_fixer_async(name, *args, **kwargs)
+        )
 
     @deprecation.deprecated()
     def apply_group_fixer(self, name: str, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(self.apply_group_fixer_async(name, *args, **kwargs))
+        return asyncio.get_event_loop().run_until_complete(
+            self.apply_group_fixer_async(name, *args, **kwargs)
+        )
 
     @deprecation.deprecated()
     def apply_part_fixer(self, name: str, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(self.apply_part_fixer_async(name, *args, **kwargs))
+        return asyncio.get_event_loop().run_until_complete(
+            self.apply_part_fixer_async(name, *args, **kwargs)
+        )
 
     @deprecation.deprecated()
     def apply_mod_fixer(self, modname: str, source_version: tuple, *args, **kwargs):
         return asyncio.get_event_loop().run_until_complete(
-            self.apply_mod_fixer_async(modname, source_version, *args, **kwargs))
+            self.apply_mod_fixer_async(modname, source_version, *args, **kwargs)
+        )
 
     @deprecation.deprecated()
     def read(self, part, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(self.read_async(part, **kwargs))
+        return asyncio.get_event_loop().run_until_complete(
+            self.read_async(part, **kwargs)
+        )
 
     @deprecation.deprecated()
     def dump(self, data, part, **kwargs):
-        asyncio.get_event_loop().run_until_complete(self.dump_async(data, part, **kwargs))
+        asyncio.get_event_loop().run_until_complete(
+            self.dump_async(data, part, **kwargs)
+        )
 
     @deprecation.deprecated()
     def access_file_json(self, file: str):
-        return asyncio.get_event_loop().run_until_complete(self.access_file_json_async(file))
+        return asyncio.get_event_loop().run_until_complete(
+            self.access_file_json_async(file)
+        )
 
     @deprecation.deprecated()
     def access_file_pickle(self, file: str):
-        return asyncio.get_event_loop().run_until_complete(self.access_file_pickle_async(file))
+        return asyncio.get_event_loop().run_until_complete(
+            self.access_file_pickle_async(file)
+        )
 
     @deprecation.deprecated()
     def access_raw(self, file: str):
@@ -685,11 +703,15 @@ class SaveFile:
 
     @deprecation.deprecated()
     def dump_file_json(self, file: str, data):
-        asyncio.get_event_loop().run_until_complete(self.dump_file_json_async(file, data))
+        asyncio.get_event_loop().run_until_complete(
+            self.dump_file_json_async(file, data)
+        )
 
     @deprecation.deprecated()
     def dump_file_pickle(self, file: str, data):
-        asyncio.get_event_loop().run_until_complete(self.dump_file_pickle_async(file, data))
+        asyncio.get_event_loop().run_until_complete(
+            self.dump_file_pickle_async(file, data)
+        )
 
     @deprecation.deprecated()
     def dump_raw(self, file: str, data: bytes):

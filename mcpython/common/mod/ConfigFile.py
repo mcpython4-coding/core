@@ -11,11 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import deprecation
 import os
 import sys
 from abc import ABC
 
+import deprecation
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -314,7 +314,6 @@ class ListDataMapper(IDataMapper):
 
 
 class IntDataMapper(IDataMapper):
-
     @deprecation.deprecated()
     def __init__(self, value=0):
         super().__init__(value)

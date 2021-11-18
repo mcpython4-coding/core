@@ -67,6 +67,7 @@ patchAsyncSystem()
 
 
 if shared.IS_CLIENT:
+
     def replacement_update_draw_list(self):
         import pyglet
 
@@ -83,8 +84,7 @@ if shared.IS_CLIENT:
                 if domain._is_empty():
                     del domain_map[(formats, mode, indexed)]
                     continue
-                draw_list.append(
-                    (lambda d, m: lambda: d.draw(m))(domain, mode))
+                draw_list.append((lambda d, m: lambda: d.draw(m))(domain, mode))
 
             # Sort and visit child groups of this group
             children = self.group_children.get(group)
@@ -124,7 +124,6 @@ if shared.IS_CLIENT:
 
         if pyglet.graphics._debug_graphics_batch:
             self._dump_draw_list()
-
 
     def patchPygletRendering():
         logger.println("[MIXIN][PYGLET] applying pyglet mixins")

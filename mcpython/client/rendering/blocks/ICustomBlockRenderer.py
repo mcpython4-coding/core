@@ -34,7 +34,9 @@ class ICustomBatchBlockRenderer(ICustomBlockRenderer, ABC):
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
         raise NotImplementedError()
 
-    def add_multi(self, position: typing.Tuple[int, int, int], block, faces: int, batches):
+    def add_multi(
+        self, position: typing.Tuple[int, int, int], block, faces: int, batches
+    ):
         d = []
         for face in EnumSide.iterate():
             if faces & face.bitflag:
@@ -68,4 +70,3 @@ class ICustomDrawMethodRenderer(ICustomBlockRenderer, ABC):
 
     def draw(self, position: typing.Tuple[int, int, int], block):
         pass
-

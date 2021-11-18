@@ -15,13 +15,13 @@ import typing
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
+import mcpython.util.enums
 import pyglet
 from mcpython import shared
 from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
 
 # Used to prevent z-fighting with neighbor blocks on transparent fluids
 from mcpython.engine import logger
-import mcpython.util.enums
 
 SOME_SMALL_VALUES = 1 / 1000
 
@@ -83,7 +83,9 @@ class FluidRenderer(
             batches[1], block.position, face, color=self.color(block, face)
         )
 
-    def add_multi(self, position: typing.Tuple[int, int, int], block, faces: int, batches):
+    def add_multi(
+        self, position: typing.Tuple[int, int, int], block, faces: int, batches
+    ):
         return self.layered_models[block.height - 1].add_faces_to_batch(
             batches[1],
             block.position,
