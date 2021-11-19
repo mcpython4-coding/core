@@ -54,6 +54,8 @@
     "minecraft:cauldron",
     "minecraft:cornflower",
     "minecraft:water",
-    "minecraft:stonecutter"
+    "minecraft:stonecutter",
+    "minecraft:fire",
+    "minecraft:soul_campfire"
   ]
 }

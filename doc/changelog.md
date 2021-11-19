@@ -42,9 +42,7 @@ Backwards-incompatible:
             with the AnimationManager)
 
     Known issues:
-        - animated blocks behave strangly when other animated blocks are placed/removed/updated
-            (Some strange interaction with other groups, maybe)
-        - somehow, block faces sometimes not get hidden when their corresponding block gets removed
+        - somehow, block faces sometimes not get hidden when their corresponding block gets removed [curently, only fire is affected]
 
 
 # Changelog of snapshot 21w46a

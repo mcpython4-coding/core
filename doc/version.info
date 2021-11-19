@@ -1939,4 +1939,5 @@ A** [uuk]: For optimisation reasons, the show_face() and hide_face() method of F
            The only way is to invoke show_faces() and hide_faces() with the bit flag of the face
 fA  [uuk]: model system allows now all parties to add directly to the batch
 f   [uuk]: implemented AnimationManager for animated block textures, using above system
+b   [uuk]: Ok, __hash__ for the group the animation system uses is now stable, maybe this is liked by pyglet?
 

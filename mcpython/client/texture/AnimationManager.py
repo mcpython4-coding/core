@@ -22,6 +22,21 @@ from mcpython.util.texture import to_pyglet_image
 from pyglet.graphics import TextureGroup
 
 
+class AnimatedTexture(TextureGroup):
+    def __init__(self, hash_texture, texture, parent=None):
+        super().__init__(texture, parent)
+        self.hash_texture = hash_texture
+
+    def __hash__(self):
+        return hash((self.hash_texture.target, self.hash_texture.id, self.parent))
+
+    def __eq__(self, other):
+        return (self.__class__ is other.__class__ and
+                self.hash_texture.target == other.hash_texture.target and
+                self.hash_texture.id == other.hash_texture.id and
+                self.parent == other.parent)
+
+
 class AnimationController:
     def __init__(self, frames: int, timing: int):
         self.frames = frames
@@ -61,7 +76,7 @@ class AnimationController:
         for i, atlas in enumerate(self.atlases):
             self.textures[i] = atlas.get_pyglet_texture()
             # atlas.texture.save(shared.build+f"/atlas_{self.frames}_{self.timing}_{i}.png")
-        self.group = TextureGroup(self.textures[0])
+        self.group = AnimatedTexture(self.textures[0], self.textures[0])
 
     def tick(self, ticks: float):
         self.ticks_since_change += ticks
