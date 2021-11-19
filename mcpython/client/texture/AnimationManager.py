@@ -18,10 +18,12 @@ import PIL.Image
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.util.annotation import onlyInClient
 from mcpython.util.texture import to_pyglet_image
 from pyglet.graphics import TextureGroup
 
 
+@onlyInClient()
 class AnimatedTexture(TextureGroup):
     def __init__(self, hash_texture, texture, parent=None):
         super().__init__(texture, parent)
@@ -37,7 +39,15 @@ class AnimatedTexture(TextureGroup):
                 self.parent == other.parent)
 
 
+@onlyInClient()
 class AnimationController:
+    """
+    Manager class for the animation group, identified by frame count and ticks needed for one frame.
+    Animation controllers are shared by AnimationManager when possible.
+
+    WARNING: This system is highly unstable currently, and may never be fully stable
+    """
+
     def __init__(self, frames: int, timing: int):
         self.frames = frames
         self.timing = timing
@@ -50,7 +60,7 @@ class AnimationController:
         self.atlas_index = 0
 
         self.textures = [None] * frames
-        self.atlases = [TextureAtlas(size=(4, 4)) for _ in range(frames)]
+        self.atlases = [TextureAtlas(size=(2, 2)) for _ in range(frames)]
 
         self.remaining_ticks = 0
 
@@ -76,6 +86,7 @@ class AnimationController:
         for i, atlas in enumerate(self.atlases):
             self.textures[i] = atlas.get_pyglet_texture()
             # atlas.texture.save(shared.build+f"/atlas_{self.frames}_{self.timing}_{i}.png")
+
         self.group = AnimatedTexture(self.textures[0], self.textures[0])
 
     def tick(self, ticks: float):
@@ -87,7 +98,16 @@ class AnimationController:
         self.group.texture = self.textures[self.atlas_index]
 
 
+@onlyInClient()
 class AnimationManager:
+    """
+    Manager for any block animations
+
+    Handles all AnimationController's, use get_atlas_for_spec() when needing your own one.
+    Use prepare_animated_texture() when wanting stuff from a texture on resources.
+    Use the get_...() methods to get the needed data for animations
+    """
+
     def __init__(self):
         self.controllers: typing.Dict[typing.Tuple[int, int], AnimationController] = {}
         self.positions: typing.List[typing.Tuple[int, int]] = []
@@ -158,4 +178,5 @@ class AnimationManager:
             controller.bake()
 
 
-animation_manager = AnimationManager()
+if shared.IS_CLIENT or typing.TYPE_CHECKING:
+    animation_manager = AnimationManager()
