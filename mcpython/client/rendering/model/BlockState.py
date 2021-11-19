@@ -197,7 +197,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             else box_model.add_prepared_data_to_batch(
                 (prepared_vertex, prepared_texture, prepared_tint), batch
             )
-        )
+        ) + tuple(prepare_vertex_elements)
 
     @classmethod
     def _test_for(cls, state, part, use_or=False):
