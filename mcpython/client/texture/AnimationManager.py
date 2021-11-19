@@ -33,10 +33,12 @@ class AnimatedTexture(TextureGroup):
         return hash((self.hash_texture.target, self.hash_texture.id, self.parent))
 
     def __eq__(self, other):
-        return (self.__class__ is other.__class__ and
-                self.hash_texture.target == other.hash_texture.target and
-                self.hash_texture.id == other.hash_texture.id and
-                self.parent == other.parent)
+        return (
+            self.__class__ is other.__class__
+            and self.hash_texture.target == other.hash_texture.target
+            and self.hash_texture.id == other.hash_texture.id
+            and self.parent == other.parent
+        )
 
 
 @onlyInClient()
@@ -168,7 +170,8 @@ class AnimationManager:
         return self.texture2controller[texture].atlases[0].size
 
     def tick(self, ticks: float):
-        if not shared.ENABLE_ANIMATED_TEXTURES: return
+        if not shared.ENABLE_ANIMATED_TEXTURES:
+            return
 
         for controller in self.controllers.values():
             controller.tick(ticks)

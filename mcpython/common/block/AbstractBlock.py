@@ -206,7 +206,14 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         buffer.write_int(len(state))
         for key, value in state.items():
             if not isinstance(value, str):
-                logger.println("Skipping serialization of block "+self.NAME+" as key "+key+" has the invalid value "+str(value))
+                logger.println(
+                    "Skipping serialization of block "
+                    + self.NAME
+                    + " as key "
+                    + key
+                    + " has the invalid value "
+                    + str(value)
+                )
                 continue
 
             buffer.write_string(key).write_string(value)
