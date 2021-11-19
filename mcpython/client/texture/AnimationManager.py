@@ -84,6 +84,18 @@ class AnimationController:
 
         return pos
 
+    def add_textures(self, textures: typing.List[PIL.Image.Image]):
+        if len(textures) != self.frames:
+            raise ValueError(textures, len(textures), self.frames)
+
+        atlas = self.atlases[0]
+        pos = atlas.add_image(textures[0])
+
+        for atlas, image in zip(self.atlases[1:], textures):
+            atlas.add_image(image, pos)
+
+        return pos
+
     def bake(self):
         for i, atlas in enumerate(self.atlases):
             self.textures[i] = atlas.get_pyglet_texture()
@@ -117,6 +129,13 @@ class AnimationManager:
         self.texture_lookup: typing.Dict[str, int] = {}
 
     def prepare_animated_texture(self, location: str) -> int:
+        """
+        Prepares a texture for later animation; Internally loads the .mcmeta file for the image,
+        and does some parsing for knowing how the animation should play
+        :param location: a location to look at
+        :return: the texture id, for later lookup operations
+        """
+
         if location in self.texture_lookup:
             return self.texture_lookup[location]
 
@@ -152,7 +171,24 @@ class AnimationManager:
 
         return len(self.positions) - 1
 
+    def prepare_texture_series_as_animation(self, textures: typing.List[PIL.Image.Image], timing_per_frame: int = 1) -> int:
+        """
+        Prepares a set of textures with some ticks in between for rendering as an animation
+        :param textures: the textures to use
+        :param timing_per_frame: how many ticks per frame to use
+        :return: the animation id
+        """
+        controller = self.get_atlas_for_spec(len(textures), timing_per_frame)
+        self.positions.append(controller.add_textures(textures))
+        self.texture2controller.append(controller)
+        return len(self.positions) - 1
+
     def get_atlas_for_spec(self, frames: int, timing: int) -> AnimationController:
+        """
+        Returns or creates the AnimationController for the given configuration
+        Use prepare_texture_series_as_animation for fully registering it into the system
+        """
+
         if (frames, timing) in self.controllers:
             return self.controllers[(frames, timing)]
 
