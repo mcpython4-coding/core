@@ -26,6 +26,7 @@ import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
+from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.util.enums import BlockRotationType, EnumSide
 
@@ -204,6 +205,10 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
         buffer.write_int(len(state))
         for key, value in state.items():
+            if not isinstance(value, str):
+                logger.println("Skipping serialization of block "+self.NAME+" as key "+key+" has the invalid value "+str(value))
+                continue
+
             buffer.write_string(key).write_string(value)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):

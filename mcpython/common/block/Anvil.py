@@ -90,7 +90,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
 
         # self.inventory.write_to_network_buffer(buffer)
         buffer.write_int(self.broken_count)
-        buffer.write_int(EnumSide[self.facing].index)
+        buffer.write_int(EnumSide[self.facing.upper()].index)
 
     def read_from_network_buffer(self, buffer: ReadBuffer):
         super().read_from_network_buffer(buffer)
