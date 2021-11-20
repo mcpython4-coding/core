@@ -1940,4 +1940,5 @@ A** [uuk]: For optimisation reasons, the show_face() and hide_face() method of F
 fA  [uuk]: model system allows now all parties to add directly to the batch
 f   [uuk]: implemented AnimationManager for animated block textures, using above system
 b   [uuk]: Ok, __hash__ for the group the animation system uses is now stable, maybe this is liked by pyglet?
+A-  [uuk]: removed iterables.py with its Stream class, as this was only a test, and never ment to face to the developer
 
