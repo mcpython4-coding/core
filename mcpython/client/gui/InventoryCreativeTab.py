@@ -243,9 +243,6 @@ class CreativeItemTab(ICreativeView):
             (position[0] + 176 * 2, position[1] + 8 * 2), self.get_view_size()[1] - 50
         )
 
-    def draw(self, hovering_slot=None):
-        super().draw(hovering_slot)
-
     def clear(self):
         pass
 
@@ -283,6 +280,10 @@ class CreativeItemTab(ICreativeView):
 
     def __repr__(self):
         return f"CreateItemTab({self.name}, entry_count={len(self.group.entries)})"
+
+    def update_shift_container(self):
+        shared.inventory_handler.shift_container_handler.container_A = self.slots[:9]
+        shared.inventory_handler.shift_container_handler.container_B = self.slots[9:]
 
 
 if not shared.IS_TEST_ENV:

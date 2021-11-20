@@ -201,6 +201,9 @@ class Slot(ISlot):
     def get_itemstack(self) -> mcpython.common.container.ResourceStack.ItemStack:
         return self.__itemstack
 
+    def get_linked_itemstack_for_sift_clicking(self):
+        return self.itemstack
+
     def set_itemstack(
         self,
         stack: mcpython.common.container.ResourceStack.ItemStack,
@@ -437,6 +440,9 @@ class SlotCopy(ISlot):
         self.on_button_press = on_button_press
         self.slot_position = 0, 0
 
+    def get_linked_itemstack_for_sift_clicking(self):
+        return self.get_itemstack()
+
     def handle_click(self, button: int, modifiers: int) -> bool:
         return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
@@ -586,10 +592,14 @@ class SlotInfiniteStack(Slot):
 
     def call_update(self, player=False):
         [f(player=player) for f in self.on_update]
-        if self.itemstack.get_item_name() != self.reference_stack.get_item_name():
+        self.itemstack.add_amount(0)
+        if self.itemstack.get_item_name() != self.reference_stack.get_item_name() or self.itemstack.amount == 0:
             self.itemstack = self.reference_stack.copy()
         self.itemstack.set_amount(1)
         self.reference_stack.set_amount(1)
+
+    def get_linked_itemstack_for_sift_clicking(self):
+        return self.itemstack.copy().set_amount(self.itemstack.item.STACK_SIZE) if not self.get_itemstack().is_empty() else None
 
     itemstack = property(Slot.get_itemstack, set_itemstack)
 

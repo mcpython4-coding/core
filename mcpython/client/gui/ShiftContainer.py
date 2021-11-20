@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython.common.container.ResourceStack import ItemStack
 
 
 class ShiftContainer:
@@ -41,33 +42,35 @@ class ShiftContainer:
             count = slot.itemstack.amount
 
         opposite = self.get_opposite_item_list_for(slot)
+        itemstack_to_move = slot.get_linked_itemstack_for_sift_clicking()
 
         if len(opposite) == 0:
             return False
 
         for slot2 in opposite:
-            if slot2.itemstack.item == slot.itemstack.item and slot.interaction_mode[1]:
+            if slot2.itemstack.item == itemstack_to_move.item and slot.interaction_mode[1]:
                 delta = min(
-                    slot.itemstack.amount if count is None else count,
+                    itemstack_to_move.amount if count is None else count,
                     slot2.itemstack.item.STACK_SIZE - slot2.itemstack.amount,
                 )
-                slot2.itemstack.add_amount(delta)
-                slot.itemstack.add_amount(-delta)
+                slot2.get_itemstack().add_amount(delta)
+                itemstack_to_move.add_amount(-delta)
 
                 slot2.call_update(True)
                 slot.call_update(True)
-                if slot.itemstack.is_empty() or count is not None:
+
+                if itemstack_to_move.is_empty() or count is not None:
                     return True
 
         for slot2 in opposite:
-            if slot2.itemstack.is_empty() and slot.interaction_mode[1]:
+            if slot2.get_itemstack().is_empty() and slot.interaction_mode[1]:
                 if count is None:
-                    slot2.set_itemstack(slot.itemstack.copy())
-                    slot.itemstack.clean()
+                    slot2.set_itemstack(itemstack_to_move.copy())
+                    slot.set_itemstack(ItemStack.create_empty())
                     slot.call_update(True)
                 else:
-                    slot2.set_itemstack(slot.itemstack.copy().set_amount(count))
-                    slot.itemstack.add_amount(-count)
+                    slot2.set_itemstack(itemstack_to_move.copy().set_amount(count))
+                    itemstack_to_move.add_amount(-count)
                     slot.call_update(True)
                 return True
 
