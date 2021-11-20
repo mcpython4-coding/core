@@ -37,7 +37,12 @@ def onlyInClient() -> typing.Callable:
             else:
 
                 class Replacement:
-                    pass
+                    def __getattr__(self, item):
+                        raise AttributeError(f"Cannot access static attribute {item}; Class is only present on client!")
+
+                    @classmethod
+                    def __class_getitem__(cls, item):
+                        raise AttributeError(f"Cannot access attribute {item}; Class is only present on client!")
 
                 return Replacement
 

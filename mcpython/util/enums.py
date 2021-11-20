@@ -128,7 +128,7 @@ class EnumSide(enum.Enum):
         return face
 
     def as_bit(self) -> int:
-        return 2 ** FACE_ORDER.index(self)
+        return self.bitflag
 
 
 FACE_ORDER: typing.List[EnumSide] = [
