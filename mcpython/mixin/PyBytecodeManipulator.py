@@ -34,6 +34,8 @@ class FunctionPatcher:
 
     See https://docs.python.org/3.10/library/inspect.html
 
+    and http://unpyc.sourceforge.net/Opcodes.html
+
     todo: add different wrapper types for different versions
     """
 
@@ -65,8 +67,10 @@ class FunctionPatcher:
         self.name = self.code.co_name
         self.first_line_number = self.code.co_firstlineno
         self.line_number_table = self.code.co_lnotab
-        self.free_vars = self.code.co_freevars
-        self.cell_vars = self.code.co_cellvars
+        self.free_vars = list(self.code.co_freevars)
+        self.cell_vars = list(self.code.co_cellvars)
+
+        self.can_be_reattached = True
 
         if sys.version_info.minor >= 11:
             self.columntable = self.code.co_columntable
@@ -80,6 +84,9 @@ class FunctionPatcher:
             """
             Writes the data this container holds back to the function
             """
+
+            if not self.can_be_reattached:
+                raise RuntimeError("Cannot reattach code object; Number of cell / free vars changed!")
 
             self.target.__code__ = CodeType(
                 self.argument_count,
@@ -96,8 +103,8 @@ class FunctionPatcher:
                 self.name,
                 self.first_line_number,
                 self.line_number_table,
-                self.free_vars,
-                self.cell_vars,
+                tuple(self.free_vars),
+                tuple(self.cell_vars),
             )
 
     elif sys.version_info.minor == 11:
@@ -105,16 +112,10 @@ class FunctionPatcher:
         def applyPatches(self):
             """
             Writes the data this container holds back to the function
-
-            code_new_impl(PyTypeObject *type, int argcount, int posonlyargcount,
-              int kwonlyargcount, int nlocals, int stacksize, int flags,
-              PyObject *code, PyObject *consts, PyObject *names,
-              PyObject *varnames, PyObject *filename, PyObject *name,
-              PyObject *qualname, int firstlineno, PyObject *linetable,
-              PyObject *endlinetable, PyObject *columntable,
-              PyObject *exceptiontable, PyObject *freevars,
-              PyObject *cellvars);
             """
+
+            if not self.can_be_reattached:
+                raise RuntimeError("Cannot reattach code object; Number of cell / free vars changed!")
 
             self.target.__code__ = CodeType(
                 self.argument_count,
@@ -135,8 +136,8 @@ class FunctionPatcher:
                 self.end_line_table,
                 self.columntable,
                 self.exceptiontable,
-                self.free_vars,
-                self.cell_vars,
+                tuple(self.free_vars),
+                tuple(self.cell_vars),
             )
 
     else:
@@ -159,8 +160,8 @@ class FunctionPatcher:
                 self.name,
                 self.first_line_number,
                 self.line_number_table,
-                self.free_vars,
-                self.cell_vars,
+                tuple(self.free_vars),
+                tuple(self.cell_vars),
             ),
             globals(),
         )
@@ -229,9 +230,23 @@ class FunctionPatcher:
                 print(instr)
                 raise
 
-    def ensure_name(self, name: str) -> int:
+    def ensureName(self, name: str) -> int:
         if name in self.names:
             return self.names.index(name)
 
         self.names.append(name)
         return len(self.names) - 1
+
+    def ensureFreeVar(self, name: str):
+        if name in self.free_vars:
+            return self.free_vars.index(name)
+        self.free_vars.append(name)
+        self.can_be_reattached = False
+        return len(self.free_vars) - 1
+
+    def ensureCellVar(self, name: str):
+        if name in self.cell_vars:
+            return self.cell_vars.index(name)
+        self.cell_vars.append(name)
+        self.can_be_reattached = False
+        return len(self.cell_vars) - 1

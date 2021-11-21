@@ -93,7 +93,7 @@ class MixinPatchHelper:
             nonlocal i
 
             if start <= i + o < end and safety:
-                raise RuntimeError("instruction to jump to is getting deleted")
+                raise RuntimeError("Instruction to jump to is getting deleted")
 
             # If we jump OVER the region
             if i + o >= end and i < start:
@@ -106,7 +106,7 @@ class MixinPatchHelper:
 
         def rebind_real(o: int) -> int:
             if start <= o < end and safety:
-                raise RuntimeError("instruction to jump to is getting deleted")
+                raise RuntimeError("Instruction to jump to is getting deleted")
 
             if o >= end:
                 return o - size
@@ -137,6 +137,7 @@ class MixinPatchHelper:
 
         WARNING: the user is required to make sure that stack & variable constraints still hold
         """
+        start -= 1
         size = len(instructions)
 
         def rebind_offset(o: int) -> int:
@@ -248,7 +249,7 @@ class MixinPatchHelper:
             dis.Instruction(
                 "IMPORT_NAME",
                 108,
-                self.patcher.ensure_name(real_module),
+                self.patcher.ensureName(real_module),
                 None,
                 None,
                 False,
@@ -258,7 +259,7 @@ class MixinPatchHelper:
             dis.Instruction(
                 "IMPORT_FROM",
                 109,
-                self.patcher.ensure_name(real_name),
+                self.patcher.ensureName(real_name),
                 None,
                 None,
                 False,
@@ -268,7 +269,7 @@ class MixinPatchHelper:
             dis.Instruction(
                 "STORE_FAST",
                 125,
-                self.patcher.ensure_name(real_module),
+                self.patcher.ensureName(real_module),
                 None,
                 None,
                 False,
@@ -288,7 +289,7 @@ class MixinPatchHelper:
             dis.Instruction(
                 "LOAD_FAST",
                 124,
-                self.patcher.ensure_name(real_module),
+                self.patcher.ensureName(real_module),
                 None,
                 None,
                 False,
@@ -360,3 +361,16 @@ class MixinPatchHelper:
             instr = helper.instruction_listing[i]
 
         return method
+
+    def print_stats(self):
+        self.store()
+        print(f"MixinMethodWrapper stats around {self.patcher.target}")
+
+        for i, instr in enumerate(self.instruction_listing):
+            print(i*2, instr)
+
+        print("Raw code:", self.patcher.code_string)
+        print("Names:", self.patcher.names)
+        print("Constants:", self.patcher.constants)
+        print("Free vars:", self.patcher.free_vars)
+        print("Cell vars:", self.patcher.cell_vars)
