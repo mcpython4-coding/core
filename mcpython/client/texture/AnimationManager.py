@@ -171,7 +171,9 @@ class AnimationManager:
 
         return len(self.positions) - 1
 
-    def prepare_texture_series_as_animation(self, textures: typing.List[PIL.Image.Image], timing_per_frame: int = 1) -> int:
+    def prepare_texture_series_as_animation(
+        self, textures: typing.List[PIL.Image.Image], timing_per_frame: int = 1
+    ) -> int:
         """
         Prepares a set of textures with some ticks in between for rendering as an animation
         :param textures: the textures to use

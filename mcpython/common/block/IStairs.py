@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -14,11 +14,11 @@ This project is not official by mojang and does not relate to it.
 import enum
 
 import mcpython.common.block.AbstractBlock
+import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.engine.physics.BoundingBox
 import mcpython.util.enums
 from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from mcpython.util.enums import EnumSide
-import mcpython.common.block.PossibleBlockStateBuilder
 
 
 class StairShape(enum.Enum):
@@ -46,7 +46,14 @@ class IStairs(mcpython.common.block.AbstractBlock.AbstractBlock):
         .combinations()
         .add_comby_side_horizontal("facing")
         .add_comby("half", "top", "bottom")
-        .add_comby("shape", "straight", "inner_left", "inner_right", "outer_left", "outer_right")
+        .add_comby(
+            "shape",
+            "straight",
+            "inner_left",
+            "inner_right",
+            "outer_left",
+            "outer_right",
+        )
         .build()
     )
 
@@ -67,7 +74,11 @@ class IStairs(mcpython.common.block.AbstractBlock.AbstractBlock):
         pass  # todo: calculate shape!
 
     def get_model_state(self):
-        return {"facing": self.face.normal_name, "half": "top" if self.is_top else "bottom", "shape": self.shape.name.lower()}
+        return {
+            "facing": self.face.normal_name,
+            "half": "top" if self.is_top else "bottom",
+            "shape": self.shape.name.lower(),
+        }
 
     def set_model_state(self, state: dict):
         if "facing" in state:

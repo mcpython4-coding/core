@@ -593,13 +593,20 @@ class SlotInfiniteStack(Slot):
     def call_update(self, player=False):
         [f(player=player) for f in self.on_update]
         self.itemstack.add_amount(0)
-        if self.itemstack.get_item_name() != self.reference_stack.get_item_name() or self.itemstack.amount == 0:
+        if (
+            self.itemstack.get_item_name() != self.reference_stack.get_item_name()
+            or self.itemstack.amount == 0
+        ):
             self.itemstack = self.reference_stack.copy()
         self.itemstack.set_amount(1)
         self.reference_stack.set_amount(1)
 
     def get_linked_itemstack_for_sift_clicking(self):
-        return self.itemstack.copy().set_amount(self.itemstack.item.STACK_SIZE) if not self.get_itemstack().is_empty() else None
+        return (
+            self.itemstack.copy().set_amount(self.itemstack.item.STACK_SIZE)
+            if not self.get_itemstack().is_empty()
+            else None
+        )
 
     itemstack = property(Slot.get_itemstack, set_itemstack)
 
