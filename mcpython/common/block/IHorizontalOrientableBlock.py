@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.util.enums
+from mcpython.util.enums import EnumSide
 
 
 class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
@@ -20,29 +21,41 @@ class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlo
 
     def __init__(self):
         super().__init__()
-        self.face = mcpython.util.enums.EnumSide.NORTH
-        if self.set_to:
-            sx, sy, sz = self.set_to
+        self.face = EnumSide.NORTH
+
+    def on_block_added(self):
+        if self.real_hit:
+            sx, sy, sz = self.real_hit
             px, py, pz = self.position
             dx, dy, dz = sx - px, sy - py, sz - pz
-            if dy == 0:
-                if dx > 0:
-                    self.face = mcpython.util.enums.EnumSide.EAST
-                elif dx < 0:
-                    self.face = mcpython.util.enums.EnumSide.WEST
-                elif dz > 0:
-                    self.face = mcpython.util.enums.EnumSide.SOUTH
-                elif dz < 0:
-                    self.face = mcpython.util.enums.EnumSide.NORTH
 
-                self.schedule_network_update()
+            if dx >= 0.5:
+                self.face = EnumSide.EAST
+            elif dx <= -0.5:
+                self.face = EnumSide.WEST
+            elif dz >= 0.5:
+                self.face = EnumSide.SOUTH
+            elif dz <= -0.5:
+                self.face = EnumSide.NORTH
+
+            elif abs(dy) > 0.5:
+                if dx > 0 and abs(dx) > abs(dz):
+                    self.face = EnumSide.EAST
+                elif dx < 0 and abs(dx) > abs(dz):
+                    self.face = EnumSide.WEST
+                elif dz < 0 and abs(dx) < abs(dz):
+                    self.face = EnumSide.NORTH
+                elif dz > 0 and abs(dx) < abs(dz):
+                    self.face = EnumSide.SOUTH
+
+            self.schedule_network_update()
 
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}
 
     def set_model_state(self, state: dict):
         if self.MODEL_FACE_NAME in state:
-            self.face = mcpython.util.enums.EnumSide[
+            self.face = EnumSide[
                 state[self.MODEL_FACE_NAME].upper()
             ]
 
@@ -51,5 +64,5 @@ class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlo
     def __init_subclass__(cls, **kwargs):
         cls.DEBUG_WORLD_BLOCK_STATES = [
             {cls.MODEL_FACE_NAME: face.name}
-            for face in mcpython.util.enums.EnumSide.iterate()[2:]
+            for face in EnumSide.iterate()[2:]
         ]

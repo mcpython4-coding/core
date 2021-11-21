@@ -27,9 +27,10 @@ BBOX_DICT = {
 
 class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
-    base class for slabs
+    Base class for slabs
     """
 
+    IS_SOLID = False
     DEFAULT_FACE_SOLID = (
         mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
     )
