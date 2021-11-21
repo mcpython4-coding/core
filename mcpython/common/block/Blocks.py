@@ -17,6 +17,7 @@ from mcpython import shared
 from mcpython.common.block.Candle import ICandleCake, ICandleGroup
 from mcpython.common.block.Carpet import AbstractCarpet
 from mcpython.common.block.IFoliageColoredBlock import IFoliageColoredBlock
+from mcpython.common.block.IStairs import IStairs
 from mcpython.common.container.crafting.GridRecipeInstances import GridShaped
 from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRecipe
 from mcpython.common.event.DeferredRegistryHelper import DeferredRegistry
@@ -268,7 +269,7 @@ def stone_like(
         obj = (
             BlockFactory()
             .set_name(f"minecraft:{fname}_stairs")
-            .set_default_model_state("facing=east,half=bottom,shape=inner_left")
+            .add_base_class(IStairs)
             .set_solid(False)
             .set_all_side_solid(False)
         )

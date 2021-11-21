@@ -33,6 +33,7 @@ Backwards-incompatible:
   an optimised implementation for multi faces, and anything touching the show/hide methods for faces 
   (excluding the update and hide all methods)
 - stuff defining invalid animated textures (previously, the errors were ignored)
+- stuff using the Stream class from util/iterables.py (removed)
 
 
     Rendering
@@ -41,8 +42,8 @@ Backwards-incompatible:
         - block models can now be animated by the vanilla way (or by doing some fancy stuff 
             with the AnimationManager)
 
-    Known issues:
-        - somehow, block faces sometimes not get hidden when their corresponding block gets removed [curently, only fire is affected]
+    Blocks:
+        - implemented real stair behaviour
 
 
 # Changelog of snapshot 21w46a
