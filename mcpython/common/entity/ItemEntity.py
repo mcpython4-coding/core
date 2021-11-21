@@ -53,6 +53,7 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             or not self.item_stack.item.HAS_BLOCK
             else self.item_stack.get_item_name()
         ]()
+        self.test_block.dimension = self.dimension.get_name()
 
     def draw(self):
         self.test_block.position = self.position
