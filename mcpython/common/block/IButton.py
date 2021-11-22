@@ -45,12 +45,14 @@ class IButton(IAllDirectionOrientableBlock):
             .build()
         )
     )
+    IS_SOLID = False
 
     def __init__(self):
         super().__init__()
         self.powered = False
 
     def check_block_behind(self):
+        return
         x, y, z = self.position
         dx, dy, dz = self.face.dx, self.face.dy, self.face.dz
 
@@ -62,7 +64,7 @@ class IButton(IAllDirectionOrientableBlock):
             dimension.remove_block(self.position, block_update_self=False)
 
             # todo: drop item into world
-            if shared.IS_CLIENT:
+            if shared.IS_CLIENT and shared.world.get_active_player().gamemode in (0, 2):
                 shared.world.get_active_player().pick_up_item(ItemStack(self.NAME))
 
     def on_block_update(self):

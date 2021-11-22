@@ -34,17 +34,17 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
             px, py, pz = self.position
             dx, dy, dz = sx - px, sy - py, sz - pz
 
-            if dx > 0:
+            if dx > 0.5:
                 self.face = mcpython.util.enums.EnumSide.EAST
-            elif dx < 0:
+            elif dx < -0.5:
                 self.face = mcpython.util.enums.EnumSide.WEST
-            elif dz > 0:
+            elif dz > 0.5:
                 self.face = mcpython.util.enums.EnumSide.SOUTH
-            elif dz < 0:
+            elif dz < -0.5:
                 self.face = mcpython.util.enums.EnumSide.NORTH
-            elif dy > 0:
+            elif dy > 0.5:
                 self.face = mcpython.util.enums.EnumSide.UP
-            elif dy < 0:
+            elif dy < -0.5:
                 self.face = mcpython.util.enums.EnumSide.DOWN
 
             if shared.IS_CLIENT:
