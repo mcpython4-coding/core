@@ -41,7 +41,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
     )
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = 0
     NO_ENTITY_COLLISION = True
 
     def __init__(self):
@@ -67,7 +67,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
         block = dimension.get_block((x, y - 1, z), none_if_str=True)
-        if block is None or not block.face_solid[EnumSide.UP.index]:
+        if block is None or not block.face_solid & 1:
             dimension.remove_block(self.position)
             return
 
@@ -90,7 +90,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
         block = dimension.get_block((x, y + 1, z), none_if_str=True)
-        non_solid_above = block is None or not block.face_solid[EnumSide.DOWN.index]
+        non_solid_above = block is None or not block.face_solid & 2
 
         for face in EnumSide.iterate()[2:]:
             block = dimension.get_block((x + face.dx, y, z + face.dz), none_if_str=True)
@@ -99,7 +99,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
                 if block.is_connecting_to_redstone(face.invert()):
                     self.state[face] = "side"
 
-                elif not block.face_solid[EnumSide.DOWN.index]:
+                elif not block.face_solid & 2:
                     block2 = dimension.get_block(
                         (x + face.dx, y - 1, z + face.dz), none_if_str=True
                     )

@@ -130,14 +130,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     # todo: add a manager for it like mc
     DEBUG_WORLD_BLOCK_STATES: typing.List[dict] = [{}]
 
-    # internal helper properties; DO NOT CHANGE ON BASE CLASS!
-    DEFAULT_FACE_SOLID = tuple([True] * 6)
-    UNSOLID_FACE_SOLID = tuple([False] * 6)
-
-    @classmethod
-    def __init_subclass__(cls, **kwargs):
-        cls.DEFAULT_FACE_SOLID = cls.DEFAULT_FACE_SOLID
-        cls.UNSOLID_FACE_SOLID = cls.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = 0
 
     @classmethod
     def modify_block_item(cls, instance):
@@ -175,13 +168,13 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         self.block_state: typing.Optional[int] = None
 
         # Which faces are solid
-        self.face_solid: typing.Tuple[bool] = self.DEFAULT_FACE_SOLID
+        self.face_solid: int = self.DEFAULT_FACE_SOLID
 
         # The redstone power values
         self.injected_redstone_power = [0, 0, 0, 0, 0, 0]
 
     def is_face_solid(self, face: EnumSide):
-        return self.face_solid[face.index]
+        return self.face_solid & face.bitflag
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.NETWORK_BUFFER_SERIALIZER_VERSION)

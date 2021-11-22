@@ -49,9 +49,7 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     BLAST_RESISTANCE = 3
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    DEFAULT_FACE_SOLID = 0
 
     def __init__(self):
         super().__init__()
@@ -116,7 +114,7 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         if instance is None or type(instance) == str:
             return False
 
-        return instance.face_solid[face.invert().index] or (
+        return instance.face_solid & face.invert().bitflag or (
             issubclass(type(instance), AbstractFence)
             and len(self.FENCE_TYPE_NAME.intersection(instance.FENCE_TYPE_NAME)) > 0
         )

@@ -51,9 +51,7 @@ class Chest(
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    DEFAULT_FACE_SOLID = 0
 
     if shared.IS_CLIENT:
         CHEST_BLOCK_RENDERER = (
@@ -117,7 +115,7 @@ class Chest(
         instance = shared.world.get_dimension_by_name(self.dimension).get_block(
             (x, y + 1, z)
         )
-        return instance is None or not instance.face_solid[1]
+        return instance is None or not instance.face_solid & 2
 
     def on_player_interaction(
         self,

@@ -60,7 +60,7 @@ class IButton(IAllDirectionOrientableBlock):
 
         block = dimension.get_block((x + dx, y + dy, z + dz), none_if_str=True)
 
-        if block is None or not block.face_solid[self.face.invert().index]:
+        if block is None or not block.face_solid & self.face.invert().bitflag:
             dimension.remove_block(self.position, block_update_self=False)
 
             # todo: drop item into world

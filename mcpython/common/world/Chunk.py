@@ -189,8 +189,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                 faces[face.normal_name] = block is None or (
                     not isinstance(block, str)
                     and (
-                        not block.face_solid[face.invert().index]
-                        or not instance.face_solid[face.index]
+                        not block.face_solid & face.invert().bitflag
+                        or not instance.face_solid & face.bitflag
                     )
                 )
 
@@ -229,8 +229,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                 faces[face.index] = block is None or (
                     not isinstance(block, str)
                     and (
-                        not block.face_solid[face.invert().index]
-                        or not instance.face_solid[face.index]
+                        not block.face_solid & face.invert().bitflag
+                        or not instance.face_solid & face.bitflag
                     )
                 )
 
@@ -264,8 +264,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                 if new_block is None or (
                     not isinstance(new_block, str)
                     and (
-                        not new_block.face_solid[face.invert().index]
-                        or not new_block.face_solid[face.index]
+                        not new_block.face_solid & face.invert().bitflag
+                        or not new_block.face_solid & face.bitflag
                     )
                 ):
                     faces ^= face.bitflag
@@ -303,8 +303,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                     or (
                         not isinstance(block, str)
                         and (
-                            not block.face_solid[face.invert().index]
-                            or not instance.face_solid[face.index]
+                            not block.face_solid & face.invert().bitflag
+                            or not instance.face_solid & face.bitflag
                         )
                     )
                 ):

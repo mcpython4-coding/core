@@ -41,9 +41,7 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     FLUID_RENDERER = None
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    DEFAULT_FACE_SOLID = 0
     NO_ENTITY_COLLISION = True
     CUSTOM_WALING_SPEED_MULTIPLIER = 0.3
 

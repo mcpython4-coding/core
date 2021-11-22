@@ -37,6 +37,11 @@ def register_block(registry, cls):
                     f"Block {cls.NAME} ({cls}) has invalid ASSIGNED_TOOLS data: {cls.ASSIGNED_TOOLS}"
                 )
 
+        if not isinstance(cls.DEFAULT_FACE_SOLID, int):
+            raise ValueError(
+                f"Block {cls.NAME} ({cls}) has invalid DEFAULT_FACE_SOLID data: {cls.DEFAULT_FACE_SOLID}; expected int"
+            )
+
         tag_holder.register_class(cls)
 
         cls.on_register(block_registry)  # call event function

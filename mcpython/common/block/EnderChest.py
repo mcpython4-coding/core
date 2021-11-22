@@ -32,9 +32,7 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     DEFAULT_DISPLAY_NAME = "Ender Chest"
     MODEL_FACE_NAME = "side"
 
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    DEFAULT_FACE_SOLID = 0
     HARDNESS = 22.5
     BLAST_RESISTANCE = 600
     MINIMUM_TOOL_LEVEL = 1

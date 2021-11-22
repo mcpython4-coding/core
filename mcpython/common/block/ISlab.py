@@ -31,9 +31,7 @@ class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    DEFAULT_FACE_SOLID = 0
 
     def __init__(self):
         super().__init__()

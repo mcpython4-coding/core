@@ -24,7 +24,7 @@ class ICandleGroup(AbstractBlock.AbstractBlock):
     """
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = 0
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()
@@ -82,7 +82,7 @@ class ICandleCake(FlowerLikeBlock):
     SUPPORT_BLOCK_TAG = None
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = 0
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()

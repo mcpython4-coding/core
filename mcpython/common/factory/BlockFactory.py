@@ -182,11 +182,7 @@ def set_assigned_tools(instance: FactoryBuilder.IFactory, *tools, tool_level=Non
     FactoryBuilder.AnnotationFactoryConfigurator("set_all_side_solid")
 )
 def set_all_side_solid(instance: FactoryBuilder.IFactory, solid: bool):
-    instance.config_table["solid_face_table"] = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.DEFAULT_FACE_SOLID
-        if solid
-        else mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    instance.config_table["solid_face_table"] = 0b111111 if solid else 0
     return instance
 
 
@@ -194,7 +190,8 @@ def set_all_side_solid(instance: FactoryBuilder.IFactory, solid: bool):
     FactoryBuilder.AnnotationFactoryConfigurator("set_side_solid")
 )
 def set_side_solid(instance: FactoryBuilder.IFactory, side: EnumSide, solid: bool):
-    instance.config_table["solid_face_table"][side.index] = solid
+    c = instance.config_table["solid_face_table"] & side.bitflag
+    instance.config_table["solid_face_table"] ^= int(bool(c) != solid) * side.bitflag
     return instance
 
 
@@ -240,9 +237,9 @@ def build_class(
         if not isinstance(IS_BREAKABLE, bool):
             IS_BREAKABLE = True
 
-        DEFAULT_FACE_SOLID = tuple(
-            configs.setdefault("solid_face_table", cls.DEFAULT_FACE_SOLID)
-        )
+        DEFAULT_FACE_SOLID = configs.setdefault("solid_face_table", cls.DEFAULT_FACE_SOLID)
+
+        assert isinstance(DEFAULT_FACE_SOLID, int), "face solid must be int"
 
         CUSTOM_WALING_SPEED_MULTIPLIER = configs.setdefault(
             "speed_multiplier", cls.CUSTOM_WALING_SPEED_MULTIPLIER
@@ -555,11 +552,9 @@ block_factory_builder.register_direct_copy_attributes(
     "enable_random_ticks",
     "no_entity_collision",
     "entity_fall_multiplier",
+    "solid_face_table",
 )
 
-block_factory_builder.register_direct_copy_attributes(
-    "solid_face_table", operation=lambda x: x.copy()
-)
 block_factory_builder.register_direct_copy_attributes(
     "debug_world_states",
     "on_instance_creation",

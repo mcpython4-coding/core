@@ -37,9 +37,7 @@ class IStairs(mcpython.common.block.AbstractBlock.AbstractBlock):
     """
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    DEFAULT_FACE_SOLID = 0
 
     DEBUG_WORLD_BLOCK_STATES = (
         mcpython.common.block.PossibleBlockStateBuilder.PossibleBlockStateBuilder()

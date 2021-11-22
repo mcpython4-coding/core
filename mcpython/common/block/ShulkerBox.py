@@ -26,9 +26,7 @@ def create_shulker_box(name):
     class ShulkerBox(AbstractBlock.AbstractBlock):
         NAME = "minecraft:{}".format(name)
 
-        DEFAULT_FACE_SOLID = (
-            mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-        )
+        DEFAULT_FACE_SOLID = 0
 
         HARDNESS = BLAST_RESISTANCE = 2.5
         ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}

@@ -47,7 +47,7 @@ class StoneCutter(IHorizontalOrientableBlock, IRecipeUser):
     )
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = 0
 
     INVENTORY = None
 

@@ -36,7 +36,7 @@ class IRail(AbstractBlock, ABC):
     BLAST_RESISTANCE = 0.5
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = 0
     NO_ENTITY_COLLISION = True
 
     def is_currently_orientated_for_side(self, side: EnumSide) -> bool:

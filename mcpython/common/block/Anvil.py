@@ -47,7 +47,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
     BROKEN_BLOCK = None
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
+    DEFAULT_FACE_SOLID = 0
 
     def __init__(self):
         super().__init__()

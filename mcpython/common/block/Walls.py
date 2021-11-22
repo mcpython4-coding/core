@@ -35,9 +35,7 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
     )
 
     IS_SOLID = False
-    DEFAULT_FACE_SOLID = (
-        mcpython.common.block.AbstractBlock.AbstractBlock.UNSOLID_FACE_SOLID
-    )
+    DEFAULT_FACE_SOLID = 0
 
     def __init__(self):
         super().__init__()
@@ -71,19 +69,19 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         block_west = dim.get_block((x, y, z - 1), none_if_str=True)
 
         self.connections["east"] = block_north is not None and (
-            block_north.face_solid[mcpython.util.enums.EnumSide.SOUTH.index]
+            block_north.face_solid & mcpython.util.enums.EnumSide.SOUTH.bitflag
             or issubclass(type(block_north), AbstractWall)
         )
         self.connections["south"] = block_east is not None and (
-            block_east.face_solid[mcpython.util.enums.EnumSide.WEST.index]
+            block_east.face_solid & mcpython.util.enums.EnumSide.WEST.bitflag
             or issubclass(type(block_east), AbstractWall)
         )
         self.connections["west"] = block_south is not None and (
-            block_south.face_solid[mcpython.util.enums.EnumSide.NORTH.index]
+            block_south.face_solid & mcpython.util.enums.EnumSide.NORTH.bitflag
             or issubclass(type(block_south), AbstractWall)
         )
         self.connections["north"] = block_west is not None and (
-            block_west.face_solid[mcpython.util.enums.EnumSide.EAST.index]
+            block_west.face_solid & mcpython.util.enums.EnumSide.EAST.bitflag
             or issubclass(type(block_west), AbstractWall)
         )
         self.connections["up"] = False  # for next calculation, this must be False
@@ -95,7 +93,7 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         if (
             not self.connections["up"]
             and upper_block is not None
-            and upper_block.face_solid[1]
+            and upper_block.face_solid & 2
             and not issubclass(type(upper_block), AbstractWall)
         ):
             self.connections["up"] = True
