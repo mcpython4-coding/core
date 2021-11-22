@@ -45,6 +45,12 @@ Backwards-incompatible:
     Blocks:
         - implemented real stair behaviour
 
+    Mixins:
+        - improved some stuff
+
+    Fixed issues:
+        - fixed rendering of block top for non cubic blocks
+
 
 # Changelog of snapshot 21w46a
 Released on 17.11.2021

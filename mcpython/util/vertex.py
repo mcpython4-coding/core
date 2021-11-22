@@ -20,12 +20,12 @@ from mcpython.util.math import rotate_point
 # This defines how cubes look; do not change!
 CORNER_SIGNS = tuple(itertools.product((-1, 1), repeat=3))
 CUBE_MAP = (
-    (2, 3, 7, 6),
-    (0, 4, 5, 1),
-    (0, 1, 3, 2),
-    (5, 4, 6, 7),
-    (1, 5, 7, 3),
-    (4, 0, 2, 6),
+    (6, 2, 3, 7),  # UP
+    (0, 4, 5, 1),  # DOWN
+    (0, 1, 3, 2),  # LEFT
+    (5, 4, 6, 7),  # RIGHT
+    (1, 5, 7, 3),  # FRONT
+    (4, 0, 2, 6),  # BACK
 )
 
 

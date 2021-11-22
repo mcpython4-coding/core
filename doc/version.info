@@ -1943,4 +1943,5 @@ b   [uuk]: Ok, __hash__ for the group the animation system uses is now stable, m
 A-  [uuk]: removed iterables.py with its Stream class, as this was only a test, and never meant to face to the developer
 fb  [uuk]: IHorizontalOrientableBlock handles now a lot of stuff better
 F   [uuk]: implemented real stair behaviour
+b   [uuk]: fixed uv order on top of blocks
 
