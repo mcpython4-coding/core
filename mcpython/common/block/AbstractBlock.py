@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import enum
-import pickle
 import typing
 from abc import ABC
 
@@ -28,21 +27,8 @@ from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
+from mcpython.util.enums import BlockRemovalReason
 from mcpython.util.enums import BlockRotationType, EnumSide
-
-
-class BlockRemovalReason(enum.Enum):
-    """
-    Helper enum storing reasons for an block removed from world
-    """
-
-    UNKNOWN = 0  # default
-    PLAYER_REMOVAL = 1  # the player removed it
-    PISTON_MOTION = 2  # caused by an piston (move or destroy)
-    EXPLOSION = 3  # destroyed during an explosion
-    ENTITY_PICKUP = 4  # An entity was removing it
-    COMMANDS = 5  # command based
-
 
 if shared.IS_CLIENT:
     import mcpython.client.rendering.model.api
@@ -167,7 +153,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
         For modders:
             - setup attributes here
-            - fill them with data in on_block_added
+            - fill them with data in on_block_added, then player provided data is added
         """
         super(parent, self).__init__()
         self.prepare_capability_container()

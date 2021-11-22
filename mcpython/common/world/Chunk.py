@@ -454,7 +454,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         block_update: bool = True,
         block_update_self: bool = True,
         network_sync=True,
-        reason=Block.BlockRemovalReason.UNKNOWN,
+        reason=mcpython.util.enums.BlockRemovalReason.UNKNOWN,
     ):
         """
         Remove the block at the given position. When no block is there, nothing happens

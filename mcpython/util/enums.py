@@ -273,3 +273,16 @@ class BlockRotationType(enum.Enum):
     ROTATE_Z_180 = 9
     ROTATE_Z_270 = 10
     FLIP_Z = 11
+
+
+class BlockRemovalReason(enum.Enum):
+    """
+    Helper enum storing reasons for a block removed from world
+    """
+
+    UNKNOWN = 0  # default
+    PLAYER_REMOVAL = 1  # the player removed it
+    PISTON_MOTION = 2  # caused by an piston (move or destroy)
+    EXPLOSION = 3  # destroyed during an explosion
+    ENTITY_PICKUP = 4  # An entity was removing it
+    COMMANDS = 5  # command based

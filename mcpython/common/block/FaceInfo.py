@@ -11,9 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import copy
-import itertools
-import typing
 import weakref
 
 import mcpython.engine.event.EventHandler
@@ -25,7 +22,6 @@ from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
 )
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 from mcpython.util.annotation import onlyInClient
-from mcpython.util.enums import FACE_ORDER_BY_INDEX, EnumSide
 
 
 @onlyInClient()
@@ -47,11 +43,20 @@ class FaceInfo:
         """
         Block face state, client-sided container holding information for rendering
         """
+        # A reference to the super block
         self.block = weakref.proxy(block)
+
+        # Holds which faces are visible
         self.faces = 0
-        self.custom_renderer = None  # holds a custom block renderer
+
+        # holds a custom block renderer
+        self.custom_renderer: ICustomBlockRenderer | None = None
+
+        # If the custom_renderer was bound to a rendering event or not
         self.subscribed_renderer: bool = False
         self.bound_rendering_info = None
+
+        # The data from the normal add_to_batch() calls, should be a list of VertexList's
         self.multi_data = None
 
     def is_shown(self) -> bool:
@@ -59,8 +64,7 @@ class FaceInfo:
 
     def show_faces(self, faces: int):
         """
-        Optimised show_face() for more than one face
-        Will do only something optimal when more than one face is passed in
+        Shows the faces indicating by the bit flag (See EnumSide.bitflag)
         """
         if not faces:
             return
@@ -112,8 +116,10 @@ class FaceInfo:
 
     def hide_faces(self, faces: int):
         """
-        Will hide a face
+        Will hide the faces indicated by the face
         :param faces: the faces to hide
+
+        Will hide all faces and re-render the still visible ones
         """
         if not self.faces & faces:
             return
@@ -142,6 +148,7 @@ class FaceInfo:
                 NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
             )
             return
+
         self.custom_renderer.draw(self.block.position, self.block)
 
     def update(self, redraw_complete=True):
