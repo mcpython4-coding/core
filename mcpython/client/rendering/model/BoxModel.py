@@ -125,46 +125,47 @@ class BoxModel(AbstractBoxModel):
 
         for face in mcpython.util.enums.EnumSide.iterate():
             name: str = face.normal_name
-
             if name in data["faces"]:
-                f = data["faces"][name]
-                var = f["texture"]
-                position = (
-                    model.get_texture_position(var) if model is not None else None
-                )
-
-                if isinstance(position, int):
-                    self.animated_faces[face.index] = position
-                else:
-                    self.faces[face.index] = position
-
-                index = SIDE_ORDER.index(face)
-
-                if "uv" in f:
-                    uvs = tuple(f["uv"])
-                    uvs = (uvs[0], uvs[3], uvs[2], uvs[1])
-                    if self.flip_y:
-                        self.texture_region[index] = tuple(
-                            [
-                                (uvs[i] / 16) if i % 2 == 0 else (1 - uvs[i] / 16)
-                                for i in UV_INDICES[index]
-                            ]
-                        )
-                    else:
-                        self.texture_region[index] = tuple(
-                            [uvs[i] / 16 for i in UV_INDICES[index]]
-                        )
-
-                if "rotation" in f:
-                    self.texture_region_rotate[index] = f["rotation"]
-
-                if "tintindex" in f:
-                    self.face_tint_index[index] = f["tintindex"]
+                self._parse_face(data["faces"][name], face)
 
         if model is not None and model.drawable and self.model.texture_atlas:
             self.build()
 
         return self
+
+    def _parse_face(self, f: dict, face: EnumSide):
+        var = f["texture"]
+        position = (
+            self.model.get_texture_position(var) if self.model is not None else None
+        )
+
+        if isinstance(position, int):
+            self.animated_faces[face.index] = position
+        else:
+            self.faces[face.index] = position
+
+        index = SIDE_ORDER.index(face)
+
+        if "uv" in f:
+            uvs = tuple(f["uv"])
+            uvs = (uvs[0], uvs[3], uvs[2], uvs[1])
+            if self.flip_y:
+                self.texture_region[index] = tuple(
+                    [
+                        (uvs[i] / 16) if i % 2 == 0 else (1 - uvs[i] / 16)
+                        for i in UV_INDICES[index]
+                    ]
+                )
+            else:
+                self.texture_region[index] = tuple(
+                    [uvs[i] / 16 for i in UV_INDICES[index]]
+                )
+
+        if "rotation" in f:
+            self.texture_region_rotate[index] = f["rotation"]
+
+        if "tintindex" in f:
+            self.face_tint_index[index] = f["tintindex"]
 
     def build(self, atlas=None):
         """
@@ -245,7 +246,7 @@ class BoxModel(AbstractBoxModel):
         active_faces=None,
         uv_lock=False,
         previous=None,
-    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
+    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float], list]:
         if active_faces is None:
             active_faces = 0b111111
         elif isinstance(active_faces, EnumSide):
@@ -279,7 +280,8 @@ class BoxModel(AbstractBoxModel):
             typing.List[float], typing.List[float], typing.List[float]
         ] = None,
         batch: pyglet.graphics.Batch | typing.List[pyglet.graphics.Batch] = None,
-    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
+        scale: float = 1,
+    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float], list]:
         """
         Util method for getting the box data for a block (vertices and uv's)
         :param instance: the instance to get information from to render
@@ -289,12 +291,21 @@ class BoxModel(AbstractBoxModel):
         :param uv_lock: ?
         :param previous: previous data to add the new to, or None to create new
         :param batch: the batch to use
+        :param scale: a scale to use, passed to VertexProvider
         """
-        vertex = self.get_vertex_variant(rotation, position)
+        vertex = self.get_vertex_variant(rotation, position, scale=scale)
         collected_data = ([], [], [], []) if previous is None else previous
 
-        if previous and len(previous) != 4:
-            raise RuntimeError
+        if type(batch) == list:
+            batch = (
+                batch[0]
+                if self.model is not None and self.enable_alpha
+                else batch[1]
+            )
+        else:
+            batch = batch
+
+        enable_animated = previous and len(previous) == 4
 
         faces = EnumSide.rotate_bitmap(
             EnumSide.rotate_bitmap(faces, rotation), (0, -90, 0)
@@ -315,16 +326,13 @@ class BoxModel(AbstractBoxModel):
                     continue
 
                 if vertex is None or self.tex_data is None:
-                    logger.println(
-                        "something is wrong @" + str(position),
-                        vertex,
-                        self.tex_data,
-                        bin(self.inactive),
-                    )
-                    continue
+                    raise RuntimeError
 
                 if self.animated_faces[i2] is not None:
                     if batch is not None:
+                        if not enable_animated:
+                            continue
+
                         from mcpython.client.texture.AnimationManager import (
                             animation_manager,
                         )
@@ -333,17 +341,8 @@ class BoxModel(AbstractBoxModel):
                             self.animated_faces[i2]
                         )
 
-                        if type(batch) == list:
-                            batch2 = (
-                                batch[0]
-                                if self.model is not None and self.enable_alpha
-                                else batch[1]
-                            )
-                        else:
-                            batch2 = batch
-
                         collected_data[3].append(
-                            batch2.add(
+                            batch.add(
                                 4,
                                 pyglet.gl.GL_QUADS,
                                 group,
@@ -360,14 +359,9 @@ class BoxModel(AbstractBoxModel):
                                 ),
                             )
                         )
-                    else:
-                        logger.println(
-                            "skipping animated texture @"
-                            + str(position)
-                            + "; batch not present"
-                        )
+                        continue
 
-                    continue
+                    raise RuntimeError
 
                 collected_data[0].extend(vertex[i])
                 collected_data[1].extend(self.tex_data[i2])
@@ -380,6 +374,7 @@ class BoxModel(AbstractBoxModel):
 
         return collected_data
 
+    @deprecation.deprecated()
     def get_prepared_box_data_scaled(
         self,
         instance: IBlockStateRenderingTarget,
@@ -391,66 +386,18 @@ class BoxModel(AbstractBoxModel):
         previous: typing.Tuple[
             typing.List[float], typing.List[float], typing.List[float]
         ] = None,
-    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float]]:
-        """
-        Util method for getting the box data for a block (vertices and uv's)
-        :param instance: the instance to get information from to render
-        :param position: the position of the block
-        :param rotation: the rotation
-        :param scale: the scale to draw with
-        :param active_faces: the faces to get data for, None means all
-        :param uv_lock: ?
-        :param previous: previous data to add the new to, or None to create new
-        """
-        vertex = self.get_vertex_variant(rotation, position, scale)
-        collected_data = ([], [], [], []) if previous is None else previous
-
-        for face in mcpython.util.enums.EnumSide.iterate():
-            if uv_lock:
-                face = face.rotate(rotation)
-
-            i = UV_ORDER.index(face)
-            i2 = SIDE_ORDER.index(face)
-
-            if (
-                active_faces is None
-                or (
-                    active_faces == face.rotate(rotation)
-                    if hasattr(face, "rotate")
-                    else False
-                )
-                or (
-                    # todo: this seems wrong
-                    (
-                        active_faces[i]
-                        if type(active_faces) == list
-                        else (i in active_faces and active_faces[i])
-                    )
-                    if type(face) in (list, dict, set, tuple)
-                    else False
-                )
-            ):
-                if (
-                    not mcpython.common.config.USE_MISSING_TEXTURES_ON_MISS_TEXTURE
-                    and self.inactive & face.rotate(rotation).bitflag
-                ):
-                    continue
-
-                collected_data[0].extend(vertex[i])
-                collected_data[1].extend(self.tex_data[i2])
-                collected_data[2].extend(
-                    (1,) * 16
-                    if self.face_tint_index[face.index] == -1
-                    else instance.get_tint_for_index(self.face_tint_index[face.index])
-                    * 4
-                )
-
-        return collected_data
+        batch=None,
+    ) -> typing.Tuple[typing.List[float], typing.List[float], typing.List[float], list]:
+        if isinstance(active_faces, EnumSide):
+            active_faces = active_faces.bitflag
+        elif isinstance(active_faces, list):
+            active_faces = sum([face.bitflag for face in active_faces])
+        return self.prepare_rendering_data_multi_face(instance, position, rotation, active_faces, uv_lock, previous, batch, scale)
 
     def add_prepared_data_to_batch(
         self,
         collected_data: typing.Tuple[
-            typing.List[float], typing.List[float], typing.List[float]
+            typing.List[float], typing.List[float], typing.List[float], list
         ],
         batch: typing.Union[pyglet.graphics.Batch, typing.List[pyglet.graphics.Batch]],
     ) -> typing.Iterable[VertexList]:
@@ -481,7 +428,7 @@ class BoxModel(AbstractBoxModel):
                 ("t2f/static", collected_data[1]),
                 ("c4f/static", collected_data[2]),
             ),
-        )
+        ) + tuple(collected_data[3])
 
     def add_to_batch(
         self,
@@ -515,7 +462,7 @@ class BoxModel(AbstractBoxModel):
     def draw_prepared_data(
         self,
         collected_data: typing.Tuple[
-            typing.List[float], typing.List[float], typing.List[float]
+            typing.List[float], typing.List[float], typing.List[float], list
         ],
     ):
         """
@@ -535,6 +482,10 @@ class BoxModel(AbstractBoxModel):
                 ("c4f/static", collected_data[2]),
             )
             self.model.texture_atlas.group.unset_state()
+
+        if len(collected_data) > 3:
+            for element in collected_data[3]:
+                element.draw(pyglet.gl.GL_QUADS)
 
     def draw(
         self,
@@ -577,11 +528,11 @@ class BoxModel(AbstractBoxModel):
         :param uv_lock: if the uv's should be locked in place or not
         :param active_faces: which faces to draw
         """
-        collected_data = self.get_prepared_box_data_scaled(
+        collected_data = self.get_prepared_box_data(
             instance,
             position,
             rotation,
-            scale,
+            scale=scale,
             active_faces=active_faces,
             uv_lock=uv_lock,
         )

@@ -16,6 +16,7 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.math import vector_distance, vector_negate, vector_offset
 
@@ -57,7 +58,11 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def draw(self):
         self.test_block.position = self.position
-        shared.model_handler.draw_block_scaled(self.test_block, 0.2)
+        try:
+            shared.model_handler.draw_block_scaled(self.test_block, 0.2)
+        except:
+            logger.print_exception(f"During render block-item {self.test_block} as {self}")
+            self.kill()
 
     def tick(self, dt):
         super().tick(dt)

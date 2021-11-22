@@ -23,6 +23,8 @@ Issues:
 - shift-clicking and shift-moving over slots does not move the items to "the other" area of the inventory
 - tools are consumed when right-clicking on a block
 - you can fall through blocks when digging down
+- rendering a block item of a block with a custom block renderer, and a non-empty model state, prints errors out
+  (-> chest)
 
 
 Toolchain:
