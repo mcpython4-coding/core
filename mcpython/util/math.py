@@ -12,13 +12,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import functools
-import itertools
 import math
 import typing
-from functools import reduce
+import graphlib
 
 import deprecation
-from mcpython import shared
 from mcpython.engine import logger
 
 
@@ -33,17 +31,6 @@ def cube_vertices_better(
     nz: float,
     faces=(True, True, True, True, True, True),
 ) -> typing.Iterable[typing.List[float]]:
-    """
-    Similar to cube_vertices, but will return it per-face instead of an whole array of data
-    :param x: the x position
-    :param y: the y position
-    :param z: the z position
-    :param nx: the size in x direction
-    :param ny: the size in y direction
-    :param nz: the size in z direction
-    :param faces: which faces to generate
-    :return: a tuple of length 6 representing each face
-    """
     top = (
         [
             x - nx,
@@ -254,6 +241,7 @@ def position_to_chunk(
 
 
 # code from https://stackoverflow.com/questions/11557241/python-sorting-a-dependency-list
+@deprecation.deprecated()
 def topological_sort(items):
     """
     'items' is an iterable of (item, dependencies) pairs, where 'dependencies'
@@ -268,27 +256,10 @@ def topological_sort(items):
 
     todo: replace with native sorting system
     """
-    provided = set()
-    items = list(items)
-    missing = []
-    previous_missing = 0
-    result = []
-    while len(items) > 0 or len(missing) > 0:
-        if len(items) == 0:
-            if len(missing) == previous_missing:
-                logger.println(provided)
-                logger.println(missing)
-                raise ValueError("error during sorting dependency graph")
-            previous_missing = len(missing)
-            items += missing
-            missing.clear()
-        key, depend = items.pop(0)
-        if all([e in provided for e in depend]):
-            provided.add(key)
-            result.append(key)
-        else:
-            missing.append((key, depend))
-    return result
+    generator = graphlib.TopologicalSorter()
+    for key, dep in items:
+        generator.add(key, *dep)
+    return list(generator.static_order())
 
 
 def rotate_point(point, origin, rotation):
