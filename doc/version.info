@@ -1944,4 +1944,5 @@ A-  [uuk]: removed iterables.py with its Stream class, as this was only a test, 
 fb  [uuk]: IHorizontalOrientableBlock handles now a lot of stuff better
 F   [uuk]: implemented real stair behaviour
 b   [uuk]: fixed uv order on top of blocks
+O   [uuk]: another round of optimisations to block rendering
 

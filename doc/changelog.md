@@ -37,13 +37,14 @@ Backwards-incompatible:
 
 
     Rendering
-        - optimised block rendering
+        - optimised block rendering (again)
         - added more possibiliteis for block rendering to do fancy stuff
         - block models can now be animated by the vanilla way (or by doing some fancy stuff 
             with the AnimationManager)
 
     Blocks:
         - implemented real stair behaviour
+        - block solid flag is now also only a bit flag
 
     Mixins:
         - improved some stuff

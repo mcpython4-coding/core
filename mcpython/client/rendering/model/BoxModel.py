@@ -350,13 +350,16 @@ class BoxModel(AbstractBoxModel):
                                 ("t2f/static", self.animated_texture_coords[i2]),
                                 (
                                     "c4f/static",
-                                    (1,) * 16
-                                    if self.face_tint_index[face.index] == -1
-                                    else instance.get_tint_for_index(
-                                        self.face_tint_index[face.index]
-                                    )
-                                    * 4,
+                                    instance.get_tint_for_index(self.face_tint_index[face.index]) * 4,
                                 ),
+                            )
+                            if self.face_tint_index[face.index] != -1 else
+                            batch.add(
+                                4,
+                                pyglet.gl.GL_QUADS,
+                                group,
+                                ("v3d/static", vertex[i]),
+                                ("t2f/static", self.animated_texture_coords[i2]),
                             )
                         )
                         continue

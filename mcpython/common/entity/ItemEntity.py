@@ -46,7 +46,7 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.item_stack = representing_item_stack
         self.pickup_delay = pickup_delay
 
-        # only for test reasons here
+        # todo: fetch real item model here
         self.test_block = shared.registry.get_by_name("minecraft:block")[
             "minecraft:oak_fence"
             if self.item_stack is None
@@ -54,9 +54,11 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             or not self.item_stack.item.HAS_BLOCK
             else self.item_stack.get_item_name()
         ]()
+        # Set the block dimension so the block can do cool stuff with rendering if it wants to
         self.test_block.dimension = self.dimension.get_name()
 
     def draw(self):
+        # Set the block position so it knows where it is
         self.test_block.position = self.position
         try:
             shared.model_handler.draw_block_scaled(self.test_block, 0.2)
