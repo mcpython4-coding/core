@@ -909,15 +909,6 @@ DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_iron_ore
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_lapis_ore"))
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_redstone_ore"))
 
-# todo: make functional
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:detector_rail")
-    .set_default_model_state("powered=false,shape=ascending_south")
-    .set_solid(False)
-    .set_all_side_solid(False)
-)
-
 stone_like(
     "diamond_block", existing_slab=False, existing_stairs=False, existing_wall=False
 )

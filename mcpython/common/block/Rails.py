@@ -39,7 +39,7 @@ class IRail(AbstractBlock, ABC):
     DEFAULT_FACE_SOLID = 0
     NO_ENTITY_COLLISION = True
 
-    def is_currently_orientated_for_side(self, side: EnumSide) -> bool:
+    def is_currently_orientated_for_side(self, side: EnumSide, up: bool) -> bool:
         return False
 
 
@@ -64,7 +64,7 @@ class IStraightRail(IRail, ABC):
         for face in EnumSide.iterate()[2:]:
             block = dimension.get_block((x + face.dx, y, z + face.dz))
             if isinstance(block, IRail) and block.is_currently_orientated_for_side(
-                face.invert()
+                face.invert(), False
             ):
                 connecting_faces.add(face)
 
@@ -82,6 +82,15 @@ class IStraightRail(IRail, ABC):
 
         self.face_info.update(True)
         self.schedule_network_update()
+
+    def is_currently_orientated_for_side(self, side: EnumSide, up: bool) -> bool:
+        if "ascending" in self.shape:
+            if self.shape == "ascending_"+side.normal_name and up:
+                return True
+            elif self.shape == "ascending_"+side.invert().normal_name and not up:
+                return True
+            return False
+        return side.normal_name in self.shape
 
 
 class ActivatorRail(IStraightRail):
@@ -118,6 +127,13 @@ class ActivatorRail(IStraightRail):
 
 class PoweredRail(ActivatorRail):
     NAME = "minecraft:powered_rail"
+
+    BLAST_RESISTANCE = HARDNESS = 0.7
+    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
+
+
+class DetectorRail(ActivatorRail):
+    NAME = "minecraft:detector_rail"
 
     BLAST_RESISTANCE = HARDNESS = 0.7
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
