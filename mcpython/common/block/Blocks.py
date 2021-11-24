@@ -102,6 +102,13 @@ def wood(name: str, normal=True):
     )
     DEFERRED_PIPE.create_later(
         BlockFactory()
+        .set_name(f"minecraft:{name}_stairs")
+        .set_strength(2)
+        .set_assigned_tools(ToolType.AXE)
+        .add_base_class(IStairs)
+    )
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
         .set_name(f"minecraft:{name}_pressure_plate")
         .set_default_model_state("powered=false")
         .set_solid(False)
@@ -206,6 +213,7 @@ def stone_like(
     consumer=lambda _, __: None,
     strength: typing.Union[float, typing.Tuple[float, float]] = 2,
     tool=ToolType.PICKAXE,
+    fname=None,
 ):
     consumer = (
         lambda _, inst: tool
@@ -213,46 +221,53 @@ def stone_like(
         == consumer(_, inst)
     )
 
-    fname = name.removesuffix("s")
+    if ":" in name:
+        modname, name = name.split(":")
+    else:
+        modname = "minecraft"
+
+    if fname is None:
+        fname = name.removesuffix("s")
+
     instance = CombinedFactoryInstance(
-        f"minecraft:{name}",
-        f"minecraft:block/{name}" if texture is None else texture,
+        f"{modname}:{name}",
+        f"{modname}:block/{name}" if texture is None else texture,
         block_phase="stage:block:load_late",
     )
 
     if existing_full:
-        obj = BlockFactory().set_name(f"minecraft:{name}")
+        obj = BlockFactory().set_name(f"{modname}:{name}")
         consumer(None, obj)
         DEFERRED_PIPE.create_later(obj)
     else:
         instance.create_full_block(block_factory_consumer=consumer)
 
     if existing_slab:
-        obj = BlockFactory().set_name(f"minecraft:{fname}_slab").set_slab()
+        obj = BlockFactory().set_name(f"{modname}:{fname}_slab").set_slab()
         consumer(None, obj)
         DEFERRED_PIPE.create_later(obj)
     else:
         instance.create_slab_block(
-            f"minecraft:{fname}_slab", block_factory_consumer=consumer
+            f"{modname}:{fname}_slab", block_factory_consumer=consumer
         )
         StoneCuttingRecipe(
-            f"minecraft:{name}", f"minecraft:{fname}_slab", 2
+            f"{modname}:{name}", f"{modname}:{fname}_slab", 2
         ).prepare_static()
-        key = [(f"minecraft:{name}", 1)]
+        key = [(f"{modname}:{name}", 1)]
         GridShaped(
-            {(0, 0): key, (1, 0): key, (2, 0): key}, (f"minecraft:{fname}_slab", 6)
+            {(0, 0): key, (1, 0): key, (2, 0): key}, (f"{modname}:{fname}_slab", 6)
         ).prepare_static()
 
     if existing_wall:
-        obj = BlockFactory().set_name(f"minecraft:{fname}_wall").set_wall()
+        obj = BlockFactory().set_name(f"{modname}:{fname}_wall").set_wall()
         consumer(None, obj)
         DEFERRED_PIPE.create_later(obj)
     else:
-        instance.create_wall(f"minecraft:{fname}_wall", block_factory_consumer=consumer)
+        instance.create_wall(f"{modname}:{fname}_wall", block_factory_consumer=consumer)
         StoneCuttingRecipe(
-            f"minecraft:{name}", f"minecraft:{fname}_wall", 6
+            f"{modname}:{name}", f"{modname}:{fname}_wall", 6
         ).prepare_static()
-        key = [(f"minecraft:{name}", 1)]
+        key = [(f"{modname}:{name}", 1)]
         GridShaped(
             {
                 (0, 0): key,
@@ -262,13 +277,13 @@ def stone_like(
                 (1, 1): key,
                 (2, 1): key,
             },
-            (f"minecraft:{fname}_wall", 6),
+            (f"{modname}:{fname}_wall", 6),
         ).prepare_static()
 
     if existing_stairs:
         obj = (
             BlockFactory()
-            .set_name(f"minecraft:{fname}_stairs")
+            .set_name(f"{modname}:{fname}_stairs")
             .add_base_class(IStairs)
             .set_solid(False)
             .set_all_side_solid(False)
@@ -279,30 +294,30 @@ def stone_like(
         pass  # todo: implement
 
     if existing_fence:
-        obj = BlockFactory().set_name(f"minecraft:{fname}_fence").set_fence()
+        obj = BlockFactory().set_name(f"{modname}:{fname}_fence").set_fence()
         consumer(None, obj)
         DEFERRED_PIPE.create_later(obj)
     else:
         instance.create_fence(
-            f"minecraft:{fname}_fence", block_factory_consumer=consumer
+            f"{modname}:{fname}_fence", block_factory_consumer=consumer
         )
         StoneCuttingRecipe(
-            f"minecraft:{name}", f"minecraft:{fname}_fence"
+            f"{modname}:{name}", f"{modname}:{fname}_fence"
         ).prepare_static()
 
     if existing_button:
         DEFERRED_PIPE.create_later(
             BlockFactory()
-            .set_name(f"minecraft:{fname}_button")
+            .set_name(f"{modname}:{fname}_button")
             .set_button()
             .set_solid(False)
             .set_all_side_solid(False)
         )
         StoneCuttingRecipe(
-            f"minecraft:{name}", f"minecraft:{fname}_button", 2
+            f"{modname}:{name}", f"{modname}:{fname}_button", 2
         ).prepare_static()
     else:
-        # instance.create_button_block(f"minecraft:{fname}_button", block_factory_consumer=consumer)
+        # instance.create_button_block(f"{modname}:{fname}_button", block_factory_consumer=consumer)
         # todo: implement
         pass
 
@@ -372,7 +387,11 @@ def colored(name: str):
         consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
     )
 
-    # todo: glass pane
+    DEFERRED_PIPE.create_later(
+        BlockFactory()
+        .set_name(f"minecraft:{name}_stained_glass_pane")
+        .set_fence()
+    )
 
     DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_terracotta"))
 
@@ -412,6 +431,14 @@ DEFERRED_PIPE.create_later(
     .set_log()
     .set_strength(1.25, 4.2)
     .set_assigned_tools(ToolType.PICKAXE)
+)
+stone_like(
+    "bedrock",
+    consumer=lambda _, factory: factory.set_break_able_flag(False),
+    strength=(-1, 3600000),
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
 )
 
 # Value blocks
@@ -456,54 +483,7 @@ DEFERRED_PIPE.create_later(
     .set_assigned_tools(ToolType.SHEAR)
     .set_strength(0.2)
 )
-DEFERRED_PIPE.create_later(
-    plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small")
-)
-DEFERRED_PIPE.create_later(plant("minecraft:bamboo_sapling"))
 
-# Unsorted
-
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:beacon")
-    .set_all_side_solid(False)
-    .set_solid(False)
-    .set_strength(3)
-)
-stone_like(
-    "bedrock",
-    consumer=lambda _, factory: factory.set_break_able_flag(False),
-    strength=(-1, 3600000),
-    existing_slab=False,
-    existing_stairs=False,
-    existing_wall=False,
-)
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:beehive")
-    .set_default_model_state("facing=east,honey_level=3")
-    .set_strength(0.6)
-    .set_assigned_tools(ToolType.AXE)
-)
-DEFERRED_PIPE.create_later(
-    plant("minecraft:beetroots").set_default_model_state("age=2")
-)
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:bee_nest")
-    .set_default_model_state("facing=east,honey_level=2")
-    .set_strength(0.3)
-    .set_assigned_tools(ToolType.AXE)
-)
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name("minecraft:bell")
-    .set_default_model_state("attachment=ceiling,facing=north")
-    .set_all_side_solid(False)
-    .set_solid(False)
-    .set_strength(5)
-    .set_assigned_tools(ToolType.PICKAXE)
-)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:big_dripleaf")
@@ -522,6 +502,52 @@ DEFERRED_PIPE.create_later(
     .set_strength(0.1)
     .set_assigned_tools(ToolType.AXE)
 )
+
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:beehive")
+    .set_default_model_state("facing=east,honey_level=3")
+    .set_strength(0.6)
+    .set_assigned_tools(ToolType.AXE)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:bee_nest")
+    .set_default_model_state("facing=east,honey_level=2")
+    .set_strength(0.3)
+    .set_assigned_tools(ToolType.AXE)
+)
+
+# todo: implement growth
+DEFERRED_PIPE.create_later(
+    plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small")
+)
+DEFERRED_PIPE.create_later(plant("minecraft:bamboo_sapling"))
+DEFERRED_PIPE.create_later(
+    plant("minecraft:beetroots").set_default_model_state("age=2")
+)
+
+# Unsorted
+
+# todo: implement UI
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:beacon")
+    .set_all_side_solid(False)
+    .set_solid(False)
+    .set_strength(3)
+)
+
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:bell")
+    .set_default_model_state("attachment=ceiling,facing=north")
+    .set_all_side_solid(False)
+    .set_solid(False)
+    .set_strength(5)
+    .set_assigned_tools(ToolType.PICKAXE)
+)
+
 wood("birch")
 stone_like("blackstone", existing_fence=False, strength=6)
 colored("black")
@@ -1063,6 +1089,11 @@ stone_like(
     existing_wall=False,
     consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
 )
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name(f"minecraft:glass_pane")
+    .set_fence()
+)
 stone_like("glowstone", existing_slab=False, existing_stairs=False, existing_wall=False)
 stone_like(
     "gold_block", existing_slab=False, existing_stairs=False, existing_wall=False
@@ -1366,6 +1397,7 @@ DEFERRED_PIPE.create_later(plant("minecraft:potatoes").set_default_model_state("
 
 # todo: some clever stuff with flower pot
 DEFERRED_PIPE.create_later(plant("minecraft:potted_allium"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_azalea_bush"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_azure_bluet"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_bamboo"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_blue_orchid"))
@@ -1377,6 +1409,7 @@ DEFERRED_PIPE.create_later(plant("minecraft:potted_crimson_roots"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_dandelion"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_dead_bush"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_fern"))
+DEFERRED_PIPE.create_later(plant("minecraft:potted_flowering_azalea_bush"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_lily_of_the_valley"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_orange_tulip"))
 DEFERRED_PIPE.create_later(plant("minecraft:potted_pink_tulip"))
@@ -1407,7 +1440,7 @@ DEFERRED_PIPE.create_later(
 )
 colored("purple")
 stone_like(
-    "purpur_block", existing_slab=True, existing_stairs=True, existing_wall=False
+    "purpur_block", existing_slab=True, existing_stairs=True, existing_wall=False, fname="purpur"
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:purpur_pillar").set_log())
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:quartz_block"))

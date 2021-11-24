@@ -1945,4 +1945,7 @@ fb  [uuk]: IHorizontalOrientableBlock handles now a lot of stuff better
 F   [uuk]: implemented real stair behaviour
 b   [uuk]: fixed uv order on top of blocks
 O   [uuk]: another round of optimisations to block rendering
+f   [uuk]: added wood stairs & colored stained glass pane
+f   [uuk]: block stone creation API allows now for custom mod names, so mods may use that util function
+           (you need to set the DEFERRED_PIPE property for it to work, but still...)
 

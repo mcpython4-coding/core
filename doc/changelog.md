@@ -45,12 +45,16 @@ Backwards-incompatible:
     Blocks:
         - implemented real stair behaviour
         - block solid flag is now also only a bit flag
+        - added some left over blocks
 
     Mixins:
         - improved some stuff
 
     Fixed issues:
         - fixed rendering of block top for non cubic blocks
+
+    Commands:
+        - added /data missing blocks to print a list of all blocks for which a BlockState exists, but no Block definition is found
 
 
 # Changelog of snapshot 21w46a

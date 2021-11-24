@@ -431,7 +431,7 @@ class BoxModel(AbstractBoxModel):
                 ("t2f/static", collected_data[1]),
                 ("c4f/static", collected_data[2]),
             ),
-        ) + tuple(collected_data[3])
+        ) + (tuple(collected_data[3]) if len(collected_data) > 3 else tuple())
 
     def add_to_batch(
         self,

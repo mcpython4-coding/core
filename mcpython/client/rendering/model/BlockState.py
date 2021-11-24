@@ -159,7 +159,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             tuple()
             if box_model is None
             else box_model.add_prepared_data_to_batch(
-                (prepared_vertex, prepared_texture, prepared_tint), batch
+                (prepared_vertex, prepared_texture, prepared_tint, []), batch
             )
         )
 
@@ -287,7 +287,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         )
         if box_model is not None:
             box_model.draw_prepared_data(
-                (prepared_vertex, prepared_texture, prepared_tint)
+                (prepared_vertex, prepared_texture, prepared_tint, [])
             )
 
     def draw_face_scaled(
@@ -311,7 +311,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         )
         if box_model is not None:
             box_model.draw_prepared_data(
-                (prepared_vertex, prepared_texture, prepared_tint)
+                (prepared_vertex, prepared_texture, prepared_tint, [])
             )
 
     def prepare_rendering_data(

@@ -20,6 +20,7 @@ from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
     ICustomBatchBlockRenderer,
     ICustomBlockRenderer,
 )
+from mcpython.engine import logger
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 from mcpython.util.annotation import onlyInClient
 
@@ -109,8 +110,13 @@ class FaceInfo:
             self.custom_renderer.remove_multi(
                 self.block.position, self.block, self.multi_data
             )
+
         elif self.multi_data:
-            [e.delete() for e in self.multi_data]
+            try:
+                for e in self.multi_data:
+                    e.delete()
+            except AssertionError:
+                logger.println(f"De-allocation error @{self.block}")
 
         self.multi_data = None
 

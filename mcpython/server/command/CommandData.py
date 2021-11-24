@@ -22,6 +22,7 @@ from mcpython.server.command.Builder import (
     DefinedString,
     Item,
 )
+from . import impl
 
 data = (
     # todo
@@ -124,6 +125,18 @@ data = (
                 lambda env, d: importlib.import_module(
                     "mcpython.client.gui.InventoryCreativeTab"
                 ).CT_MANAGER.print_missing()
+            )
+        )
+    )
+    .than(
+        CommandNode(DefinedString("missing"))
+        .of_name("missing")
+        .than(
+            CommandNode(DefinedString("blocks"))
+            .of_name("blocks")
+            .info("Displays a list of all blocks found block state files for, but no block instance")
+            .on_execution(
+                lambda env, d: impl.print_block_missing()
             )
         )
     )
