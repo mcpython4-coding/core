@@ -116,7 +116,9 @@ class FaceInfo:
                 for e in self.multi_data:
                     e.delete()
             except AssertionError:
-                logger.println(f"De-allocation error @{self.block}")
+                # todo: what is the cause of this exception?
+                # logger.println(f"De-allocation error @{self.block}")
+                pass
 
         self.multi_data = None
 
@@ -149,6 +151,7 @@ class FaceInfo:
         """
         Will inherit the custom renderer
         """
+        # todo: remove this for performance reasons
         if not self.subscribed_renderer:
             mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                 NORMAL_WORLD.getRenderingEvent(), self._draw_custom_render
