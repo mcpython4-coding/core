@@ -58,13 +58,16 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.test_block.dimension = self.dimension.get_name()
 
     def draw(self):
+        if not self.test_block: return
+
         # Set the block position so it knows where it is
         self.test_block.position = self.position
         try:
             shared.model_handler.draw_block_scaled(self.test_block, 0.2)
         except:
             logger.print_exception(f"During render block-item {self.test_block} as {self}")
-            self.kill()
+            shared.tick_handler.schedule_once(self.kill)
+            self.test_block = None
 
     def tick(self, dt):
         super().tick(dt)
