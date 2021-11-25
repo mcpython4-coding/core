@@ -12,16 +12,16 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
-import mcpython.engine.physics.BoundingBox
+import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
 from mcpython.util.enums import SlabModes
 
 BBOX_DICT = {
-    SlabModes.TOP: mcpython.engine.physics.BoundingBox.BoundingBox(
+    SlabModes.TOP: mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
         (1, 0.5, 1), (0, 0.5, 0)
     ),
-    SlabModes.BOTTOM: mcpython.engine.physics.BoundingBox.BoundingBox((1, 0.5, 1)),
-    SlabModes.DOUBLE: mcpython.engine.physics.BoundingBox.FULL_BLOCK_BOUNDING_BOX,
+    SlabModes.BOTTOM: mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox((1, 0.5, 1)),
+    SlabModes.DOUBLE: mcpython.engine.physics.AxisAlignedBoundingBox.FULL_BLOCK_BOUNDING_BOX,
 }
 
 

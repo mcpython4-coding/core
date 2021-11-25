@@ -23,7 +23,7 @@ import mcpython.common.block.Walls as BlockWall
 import mcpython.common.container.ResourceStack
 import mcpython.common.factory.FactoryBuilder
 import mcpython.common.factory.IFactoryModifier
-import mcpython.engine.physics.BoundingBox
+import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
 from mcpython.common.block.FlowerLikeBlock import FlowerLikeBlock
 from mcpython.common.block.FluidBlock import IFluidBlock

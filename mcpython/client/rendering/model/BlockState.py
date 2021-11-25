@@ -19,7 +19,7 @@ import deprecation
 import mcpython.client.rendering.model.api
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
-import mcpython.engine.physics.BoundingBox
+import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
@@ -249,7 +249,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model = shared.model_handler.models[model]
                     for box_model in model.box_models:
                         bbox.bounding_boxes.append(
-                            mcpython.engine.physics.BoundingBox.BoundingBox(
+                            mcpython.engine.physics.BoundingBox.AxisAlignedBoundingBox(
                                 box_model.box_size,
                                 box_model.box_position,
                                 rotation=config["rotation"],
@@ -260,7 +260,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model = shared.model_handler.models[model]
                     for box_model in model.box_models:
                         bbox.bounding_boxes.append(
-                            mcpython.engine.physics.BoundingBox.BoundingBox(
+                            mcpython.engine.physics.BoundingBox.AxisAlignedBoundingBox(
                                 box_model.box_size,
                                 box_model.box_position,
                                 rotation=config["rotation"],
@@ -613,7 +613,7 @@ class DefaultDecoder(IBlockStateDecoder):
                 for box_model in model.box_models:
                     rotation = config["rotation"]
                     bbox.bounding_boxes.append(
-                        mcpython.engine.physics.BoundingBox.BoundingBox(
+                        mcpython.engine.physics.BoundingBox.AxisAlignedBoundingBox(
                             box_model.box_size,
                             box_model.box_position,
                             rotation=rotation,

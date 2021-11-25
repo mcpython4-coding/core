@@ -27,7 +27,7 @@ from mcpython.common.config import JUMP_SPEED
 from mcpython.common.network.packages.PlayerInfoPackages import PlayerUpdatePackage
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-from mcpython.engine.physics.BoundingBox import BoundingBox
+from mcpython.engine.physics.AxisAlignedBoundingBox import AxisAlignedBoundingBox
 
 
 @shared.registry
@@ -54,7 +54,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         "3": 3,
     }
 
-    BOUNDING_BOX = BoundingBox((0.4, 0.9, 0.4), (0.2, 0.45, 0.2))
+    BOUNDING_BOX = AxisAlignedBoundingBox((0.4, 0.9, 0.4), (0.2, 0.45, 0.2))
 
     def __init__(self, name="unknown", dimension=None):
         self.is_in_init = True

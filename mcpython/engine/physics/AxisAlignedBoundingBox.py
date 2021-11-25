@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import itertools
 import typing
 from abc import ABC
+from functools import reduce
 
 import mcpython.engine.rendering.util
 import mcpython.util.math
@@ -59,7 +60,7 @@ class AbstractBoundingBox(ABC):
         raise RuntimeError
 
 
-class BoundingBox(AbstractBoundingBox):
+class AxisAlignedBoundingBox(AbstractBoundingBox):
     """
     The basic bounding box - an axis aligned cube
     """
@@ -123,7 +124,7 @@ class BoundingBox(AbstractBoundingBox):
         collision_with: "AbstractBoundingBox",
         that_position: typing.Tuple[float, float, float],
     ):
-        if isinstance(collision_with, BoundingBox):
+        if isinstance(collision_with, AxisAlignedBoundingBox):
             return tuple(
                 self.get_collision_vector_component(
                     this_position[i] + self.relative_position[i],
@@ -151,6 +152,36 @@ class BoundingBox(AbstractBoundingBox):
         # No collision
         return 0
 
+    def test_collision_with(self, this_position, that_position, box: "AxisAlignedBoundingBox") -> int:
+        v = reduce(
+            lambda a, b: a * b,
+            [
+                self.collides_in_dimension(a, b, i, box) for a, b, i in zip(this_position, that_position, range(3))
+            ]
+        )
+        return v
+
+    def collides_in_dimension(self, this_position: int, that_position: int, dim: int, box: "AxisAlignedBoundingBox") -> int:
+        mx = this_position
+        mx += self.relative_position[dim]
+        msx = self.size[dim]
+
+        tx = that_position
+        tx += box.relative_position[dim]
+        mtx = box.size[dim]
+
+        ax, bx = mx - msx / 2, mx + msx / 2
+        cx, dx = tx - mtx / 2, tx + mtx / 2
+
+        if ax > dx or bx < cx: return 0
+        if ax <= cx and dx <= bx: return mtx
+        if ax >= cx and dx >= bx: return msx
+
+        if ax <= cx <= bx: return bx - cx
+        if ax >= cx >= bx: return ax - cx
+
+        raise RuntimeError()
+
 
 class BoundingArea(AbstractBoundingBox):
     """
@@ -166,7 +197,7 @@ class BoundingArea(AbstractBoundingBox):
         relative_position=(0, 0, 0),
     ):
         self.bounding_boxes.append(
-            BoundingBox(size, relative_position=relative_position)
+            AxisAlignedBoundingBox(size, relative_position=relative_position)
         )
         return self
 
@@ -184,5 +215,5 @@ class BoundingArea(AbstractBoundingBox):
         [bbox.draw_outline(position) for bbox in self.bounding_boxes]
 
 
-FULL_BLOCK_BOUNDING_BOX = BoundingBox((1, 1, 1))
+FULL_BLOCK_BOUNDING_BOX = AxisAlignedBoundingBox((1, 1, 1))
 EMPTY_BOUNDING_BOX = BoundingArea()

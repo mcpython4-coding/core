@@ -15,12 +15,12 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.container.ResourceStack
-import mcpython.engine.physics.BoundingBox
+import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 
-carpet_bbox = mcpython.engine.physics.BoundingBox.BoundingBox((1, 1 / 16, 1))
+carpet_bbox = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox((1, 1 / 16, 1))
 
 
 class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):

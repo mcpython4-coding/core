@@ -217,7 +217,6 @@ class Model:
             scale=scale,
         )
         if box_model is None:
-            logger.println(f"[MODEL][ERROR] tried to show faces {faces} at {position} with {instance}, but box model is not found")
             return tuple()
 
         return tuple(collected_data[3]) + tuple(

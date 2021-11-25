@@ -26,7 +26,7 @@ from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
-from mcpython.engine.physics.BoundingBox import EMPTY_BOUNDING_BOX
+from mcpython.engine.physics.AxisAlignedBoundingBox import EMPTY_BOUNDING_BOX
 
 
 class AbstractEntity(

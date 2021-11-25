@@ -14,19 +14,16 @@ This project is not official by mojang and does not relate to it.
 from datetime import datetime
 
 import mcpython.client.rendering.blocks.ChestRenderer
-import mcpython.common.block.PossibleBlockStateBuilder
-import mcpython.common.item.AbstractToolItem
-import mcpython.engine.physics.BoundingBox
+import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
 import pyglet
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from pyglet.window import key, mouse
 
-from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
-BBOX = mcpython.engine.physics.BoundingBox.BoundingBox(
+BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
 )  # the bounding box of the chest
 

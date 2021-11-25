@@ -15,7 +15,7 @@ from abc import ABC
 
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.PossibleBlockStateBuilder
-import mcpython.engine.physics.BoundingBox
+import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
 from mcpython import shared
 
