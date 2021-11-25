@@ -28,12 +28,12 @@ class AbstractBoundingBox(ABC):
     def test_point_hit(
         self,
         point: typing.Tuple[float, float, float],
-        boxposition: typing.Tuple[float, float, float],
+        box_position: typing.Tuple[float, float, float],
     ):
         """
         Tests for a collision with a single point
         :param point: the point
-        :param boxposition: the offset of the box
+        :param box_position: the offset of the box
         """
         raise NotImplementedError()
 
@@ -68,11 +68,9 @@ class BoundingBox(AbstractBoundingBox):
         self,
         size: typing.Tuple[float, float, float],
         relative_position: typing.Tuple[float, float, float] = (0, 0, 0),
-        rotation: typing.Tuple[float, float, float] = (0, 0, 0),
     ):
         self.size = size
         self.relative_position = relative_position
-        self.rotation = rotation
 
         self.vertex_provider = VertexProvider.create(
             typing.cast(
@@ -83,12 +81,12 @@ class BoundingBox(AbstractBoundingBox):
             ),
             size,
             (0, 0, 0),
-            rotation,
+            (0, 0, 0)
         )
 
     def recalculate_vertices(self):
         self.vertex_provider = VertexProvider.create(
-            self.relative_position, self.size, (0, 0, 0), self.rotation
+            self.relative_position, self.size, (0, 0, 0), (0, 0, 0)
         )
 
     def test_point_hit(
@@ -96,11 +94,6 @@ class BoundingBox(AbstractBoundingBox):
         point: typing.Tuple[float, float, float],
         box_position: typing.Tuple[float, float, float],
     ):
-        point = mcpython.util.math.rotate_point(
-            point,
-            tuple([box_position[i] + self.relative_position[i] for i in range(3)]),
-            rotation=self.rotation,
-        )
         x, y, z = point
         sx, sy, sz = tuple(
             [box_position[i] - 0.5 + self.relative_position[i] for i in range(3)]
@@ -171,20 +164,19 @@ class BoundingArea(AbstractBoundingBox):
         self,
         size: typing.Tuple[float, float, float],
         relative_position=(0, 0, 0),
-        rotation=(0, 0, 0),
     ):
         self.bounding_boxes.append(
-            BoundingBox(size, relative_position=relative_position, rotation=rotation)
+            BoundingBox(size, relative_position=relative_position)
         )
         return self
 
     def test_point_hit(
         self,
         point: typing.Tuple[float, float, float],
-        boxposition: typing.Tuple[float, float, float],
+        box_position: typing.Tuple[float, float, float],
     ):
         for bbox in self.bounding_boxes:
-            if bbox.test_point_hit(point, boxposition):
+            if bbox.test_point_hit(point, box_position):
                 return True
         return False
 
