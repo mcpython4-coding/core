@@ -8,4 +8,4 @@ requests==2.26.0
 deprecation==2.1.0
 simplejson==3.17.6
 Python-NBT==1.2.0
-aiofiles==0.7.0
+aiofiles==0.8.0
