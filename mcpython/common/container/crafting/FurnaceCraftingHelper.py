@@ -53,7 +53,7 @@ class FurnaceRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
         ]
         result = data["result"]
         return cls(
-            data["type"], inputs, result, data["experience"], data["cookingtime"] / 20
+            data["type"], inputs, result, data.setdefault("experience", 0), data["cookingtime"] / 20
         )
 
     def __init__(self, t, i, o, xp, time):

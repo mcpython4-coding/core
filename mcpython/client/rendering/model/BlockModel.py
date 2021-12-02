@@ -18,12 +18,12 @@ import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
-from mcpython.util.enums import EnumSide
 import pyglet
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.client.texture.AnimationManager import animation_manager
 from mcpython.engine import logger
+from mcpython.util.enums import EnumSide
 from pyglet.graphics.vertexdomain import VertexList
 
 
@@ -108,15 +108,20 @@ class Model:
             shared.model_handler.load_model(self.parent)
 
         self.parent = shared.model_handler.models[self.parent]
-        self.used_textures = self.parent.used_textures.copy()
-        self.texture_names = self.parent.texture_names.copy()
+
+        if self.parent is not None:
+            self.used_textures = self.parent.used_textures.copy()
+            self.texture_names = self.parent.texture_names.copy()
 
     def parse_texture(self, texture: str, name: str):
+        if not isinstance(texture, str):
+            logger.println("invalid texture", texture, name, self.name)
+            self.texture_names[name] = "assets/missing_texture.png"
+            return
+
         if not texture.startswith("#"):
             if ":" in texture:
-                texture_f = "assets/{}/textures/{}.png".format(
-                    *texture.split(":")
-                )
+                texture_f = "assets/{}/textures/{}.png".format(*texture.split(":"))
             elif not texture.endswith(".png"):
                 texture_f = "assets/minecraft/textures/{}.png".format(texture)
             else:
@@ -238,7 +243,11 @@ class Model:
         if isinstance(face, EnumSide):
             face = face.bitflag
         collected_data, box_model = self.prepare_rendering_data_multi_face(
-            instance, position, config, face, scale=scale,
+            instance,
+            position,
+            config,
+            face,
+            scale=scale,
         )
         if box_model is None:
             return
@@ -280,31 +289,38 @@ class Model:
 
     @deprecation.deprecated()
     def get_prepared_data_for_scaled(
-            self,
-            instance: IBlockStateRenderingTarget,
-            position: typing.Tuple[float, float, float],
-            config: dict,
-            face: mcpython.util.enums.EnumSide,
-            scale: float,
-            previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
-            batch=None,
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        config: dict,
+        face: mcpython.util.enums.EnumSide,
+        scale: float,
+        previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
+        batch=None,
     ) -> typing.Tuple[
         typing.Tuple[
             typing.List[float], typing.List[float], typing.List[float], typing.List
         ],
         typing.Any,
     ]:
-        return self.prepare_rendering_data_multi_face(instance, position, config, face.bitflag, scale=scale,
-                                                      previous=previous, batch=batch)
+        return self.prepare_rendering_data_multi_face(
+            instance,
+            position,
+            config,
+            face.bitflag,
+            scale=scale,
+            previous=previous,
+            batch=batch,
+        )
 
     @deprecation.deprecated()
     def add_face_to_batch(
-            self,
-            instance: IBlockStateRenderingTarget,
-            position: typing.Tuple[float, float, float],
-            batch: pyglet.graphics.Batch,
-            config: dict,
-            face: mcpython.util.enums.EnumSide,
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        batch: pyglet.graphics.Batch,
+        config: dict,
+        face: mcpython.util.enums.EnumSide,
     ):
         collected_data, box_model = self.get_prepared_data_for(
             instance, position, config, face
@@ -316,21 +332,22 @@ class Model:
 
     @deprecation.deprecated()
     def get_prepared_data_for(
-            self,
-            instance: IBlockStateRenderingTarget,
-            position: typing.Tuple[float, float, float],
-            config: dict,
-            face: mcpython.util.enums.EnumSide,
-            previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
-            batch=None,
+        self,
+        instance: IBlockStateRenderingTarget,
+        position: typing.Tuple[float, float, float],
+        config: dict,
+        face: mcpython.util.enums.EnumSide,
+        previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
+        batch=None,
     ) -> typing.Tuple[
         typing.Tuple[
             typing.List[float], typing.List[float], typing.List[float], typing.List
         ],
         typing.Any,
     ]:
-        return self.prepare_rendering_data_multi_face(instance, position, config, face.bitflag, previous=previous,
-                                                      batch=batch)
+        return self.prepare_rendering_data_multi_face(
+            instance, position, config, face.bitflag, previous=previous, batch=batch
+        )
 
     @deprecation.deprecated()
     def draw_face_scaled(

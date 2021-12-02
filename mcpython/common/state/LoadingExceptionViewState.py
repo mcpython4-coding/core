@@ -16,9 +16,8 @@ import sys
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.util.annotation import onlyInClient
+from mcpython.engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 
-from ...engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 from . import AbstractState
 from .ui import UIPartButton
 from .util import update_memory_usage_bar
@@ -120,5 +119,9 @@ def error_occur(text: str):
         print(text)
         sys.exit(-1)
 
-    loading_exception.set_text(text)
-    shared.state_handler.change_state(loading_exception.NAME)
+    if shared.launch_wrapper.launch_config["skip-loading-errors"]:
+        print("INTERNAL ERROR OCCURRED - SCHEDULED FOR DISPLAY TO USER")
+        print(text)
+    else:
+        loading_exception.set_text(text)
+        shared.state_handler.change_state(loading_exception.NAME)

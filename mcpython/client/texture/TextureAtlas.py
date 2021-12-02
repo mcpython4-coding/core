@@ -110,8 +110,15 @@ class TextureAtlasGenerator:
     def add_image_files(
         self, files: list, identifier: typing.Hashable = None, single_atlas=True
     ) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
+        images = []
+        for file in files:
+            try:
+                images.append(mcpython.engine.ResourceLoader.read_image(file))
+            except ValueError:
+                logger.println("[WARN] could not find texture "+file)
+                images.append(mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png"))
         return self.add_images(
-            [mcpython.engine.ResourceLoader.read_image(x) for x in files],
+            images,
             identifier,
             single_atlas=single_atlas,
         )

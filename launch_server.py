@@ -17,6 +17,8 @@ This project is not official by mojang and does not relate to it.
 import sys
 
 # the LaunchWrapper which launches all stuff
+import traceback
+
 import mcpython.LaunchWrapper
 
 wrapper = mcpython.LaunchWrapper.LaunchWrapper()
@@ -48,6 +50,7 @@ if __name__ == "__main__":
         raise
     except:
         wrapper.error_clean()
+        traceback.print_exc()
         print("closing")
         sys.exit(-1)
 

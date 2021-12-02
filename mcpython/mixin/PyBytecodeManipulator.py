@@ -86,7 +86,9 @@ class FunctionPatcher:
             """
 
             if not self.can_be_reattached:
-                raise RuntimeError("Cannot reattach code object; Number of cell / free vars changed!")
+                raise RuntimeError(
+                    "Cannot reattach code object; Number of cell / free vars changed!"
+                )
 
             self.target.__code__ = CodeType(
                 self.argument_count,
@@ -115,7 +117,9 @@ class FunctionPatcher:
             """
 
             if not self.can_be_reattached:
-                raise RuntimeError("Cannot reattach code object; Number of cell / free vars changed!")
+                raise RuntimeError(
+                    "Cannot reattach code object; Number of cell / free vars changed!"
+                )
 
             self.target.__code__ = CodeType(
                 self.argument_count,

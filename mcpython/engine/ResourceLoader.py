@@ -566,7 +566,11 @@ def read_image(file: str):
         raise RuntimeError("can't find resource named {}".format(resource))
 
     if not exists(file, transform=False):
-        file = transform_name(file)
+        try:
+            file = transform_name(file)
+        except FileNotFoundError:
+            logger.println("[WARN] could not find texture", file)
+            file = "assets/missing_texture.png"
 
     loc = RESOURCE_LOCATIONS[:]
     for x in loc:
@@ -589,9 +593,17 @@ def read_json(file: str):
     Reads a .json file from the system
     """
     try:
-        return json.loads(read_raw(file).decode("utf-8"))
+        data = read_raw(file).decode("utf-8")
     except:
-        print(file)
+        print("during accessing", file)
+        raise
+
+    if not data: raise ValueError
+
+    try:
+        return json.loads(data)
+    except:
+        print("during decoding", file)
         raise
 
 

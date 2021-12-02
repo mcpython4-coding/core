@@ -334,7 +334,9 @@ manager.add_stage(
     LoadingStage(
         "minecraft:fluids", "loading fluid definitions", "minecraft:deferred_registries"
     )
-    .add_event_stage("stage:fluids:register")
+    .add_event_stage("stage:fluids:prepare")
+    .add_event_stage("stage:fluids:register", "stage:fluids:prepare")
+    .add_event_stage("stage:fluids:override", "stage:fluids:register")
     .update_order()
 )
 manager.add_stage(
@@ -349,8 +351,12 @@ manager.add_stage(
     .add_event_stage("stage:block:factory:finish", "stage:block:factory_usage")
     .add_event_stage("stage:block:load", "stage:block:factory:finish")
     .add_event_stage("stage:block:load_late", "stage:block:load")
+    .add_event_stage("stage:block:bind_special", "stage:block:load_late")
     .add_event_stage(
-        "stage:block:overwrite", "stage:block:load_late", "stage:block:factory:finish"
+        "stage:block:overwrite",
+        "stage:block:load_late",
+        "stage:block:factory:finish",
+        "stage:block:bind_special",
     )
     .update_order()
 )
@@ -370,14 +376,28 @@ manager.add_stage(
     )
     .update_order()
 )
-# todo: split container & rendering part
+
+# todo: use rendering stages for creating the needed rendering systems
 manager.add_stage(
     LoadingStage("minecraft:inventories", "loading inventories", "minecraft:items")
     .add_event_stage("stage:inventories:pre")
     .add_event_stage("stage:inventories", "stage:inventories:pre")
-    .add_event_stage("stage:inventories:post", "stage:inventories")
-    .update_order()
 )
+if shared.IS_CLIENT:
+    manager.stages["minecraft:inventories"].add_event_stage(
+        "stage:inventories:create_renderers"
+    ).add_event_stage(
+        "stage:inventories:bind_renderers",
+        "stage:inventories:create_renderers",
+        "stage:inventories",
+    ).add_event_stage(
+        "stage:inventories:post",
+        "stage:inventories:bind_renderers",
+    )
+else:
+    manager.stages["minecraft:inventories"].add_event_stage("stage:inventories:post", "stage:inventories")
+
+manager.stages["minecraft:inventories"].update_order()
 manager.add_stage(
     LoadingStage("minecraft:commands", "loading commands", "minecraft:configs")
     .add_event_stage("stage:command:entries")
@@ -435,7 +455,8 @@ manager.add_stage(
         "loading recipes",
         "minecraft:tags",
     )
-    .add_event_stage("stage:recipes")
+    .add_event_stage("stage:recipes:serializers")
+    .add_event_stage("stage:recipes", "stage:recipes:serializers")
     .add_event_stage("stage:recipe:groups", "stage:recipes")
     .add_event_stage("stage:recipe:on_bake", "stage:recipe:groups")
     .update_order()

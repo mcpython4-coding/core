@@ -56,10 +56,13 @@ class TestMixinAlignment(TestCase):
         a()
         self.assertFalse(test)
 
-        helper.insertRegion(0, [
-            create_instruction("LOAD_CONST", arg_pt=patcher.ensureConstant(True)),
-            create_instruction("RETURN_VALUE"),
-        ])
+        helper.insertRegion(
+            0,
+            [
+                create_instruction("LOAD_CONST", arg_pt=patcher.ensureConstant(True)),
+                create_instruction("RETURN_VALUE"),
+            ],
+        )
         helper.store()
         patcher.applyPatches()
         # helper.print_stats()
@@ -126,6 +129,3 @@ class TestMixinAlignment(TestCase):
     #
     #     outer = 0
     #     a()
-
-
-

@@ -20,7 +20,9 @@ BBOX_DICT = {
     SlabModes.TOP: mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
         (1, 0.5, 1), (0, 0.5, 0)
     ),
-    SlabModes.BOTTOM: mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox((1, 0.5, 1)),
+    SlabModes.BOTTOM: mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
+        (1, 0.5, 1)
+    ),
     SlabModes.DOUBLE: mcpython.engine.physics.AxisAlignedBoundingBox.FULL_BLOCK_BOUNDING_BOX,
 }
 

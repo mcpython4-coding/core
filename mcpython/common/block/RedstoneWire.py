@@ -23,7 +23,11 @@ from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 states = "none", "up", "side"
 
 
-redstone_wire_bbox = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox((1, 1 / 16, 1))
+redstone_wire_bbox = (
+    mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
+        (1, 1 / 16, 1)
+    )
+)
 
 
 class RedstoneWire(AbstractBlock.AbstractBlock):

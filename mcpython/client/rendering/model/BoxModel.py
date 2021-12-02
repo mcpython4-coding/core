@@ -298,9 +298,7 @@ class BoxModel(AbstractBoxModel):
 
         if type(batch) == list:
             batch = (
-                batch[0]
-                if self.model is not None and self.enable_alpha
-                else batch[1]
+                batch[0] if self.model is not None and self.enable_alpha else batch[1]
             )
         else:
             batch = batch
@@ -350,11 +348,14 @@ class BoxModel(AbstractBoxModel):
                                 ("t2f/static", self.animated_texture_coords[i2]),
                                 (
                                     "c4f/static",
-                                    instance.get_tint_for_index(self.face_tint_index[face.index]) * 4,
+                                    instance.get_tint_for_index(
+                                        self.face_tint_index[face.index]
+                                    )
+                                    * 4,
                                 ),
                             )
-                            if self.face_tint_index[face.index] != -1 else
-                            batch.add(
+                            if self.face_tint_index[face.index] != -1
+                            else batch.add(
                                 4,
                                 pyglet.gl.GL_QUADS,
                                 group,
@@ -395,7 +396,9 @@ class BoxModel(AbstractBoxModel):
             active_faces = active_faces.bitflag
         elif isinstance(active_faces, list):
             active_faces = sum([face.bitflag for face in active_faces])
-        return self.prepare_rendering_data_multi_face(instance, position, rotation, active_faces, uv_lock, previous, batch, scale)
+        return self.prepare_rendering_data_multi_face(
+            instance, position, rotation, active_faces, uv_lock, previous, batch, scale
+        )
 
     def add_prepared_data_to_batch(
         self,

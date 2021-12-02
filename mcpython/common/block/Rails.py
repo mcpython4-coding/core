@@ -85,9 +85,9 @@ class IStraightRail(IRail, ABC):
 
     def is_currently_orientated_for_side(self, side: EnumSide, up: bool) -> bool:
         if "ascending" in self.shape:
-            if self.shape == "ascending_"+side.normal_name and up:
+            if self.shape == "ascending_" + side.normal_name and up:
                 return True
-            elif self.shape == "ascending_"+side.invert().normal_name and not up:
+            elif self.shape == "ascending_" + side.invert().normal_name and not up:
                 return True
             return False
         return side.normal_name in self.shape

@@ -27,8 +27,7 @@ from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
-from mcpython.util.enums import BlockRemovalReason
-from mcpython.util.enums import BlockRotationType, EnumSide
+from mcpython.util.enums import BlockRemovalReason, BlockRotationType, EnumSide
 
 if shared.IS_CLIENT:
     import mcpython.client.rendering.model.api
@@ -133,7 +132,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     DEFAULT_FACE_SOLID = 0
 
     # per default, every block is full
-    BOUNDING_BOX = mcpython.engine.physics.AxisAlignedBoundingBox.FULL_BLOCK_BOUNDING_BOX
+    BOUNDING_BOX = (
+        mcpython.engine.physics.AxisAlignedBoundingBox.FULL_BLOCK_BOUNDING_BOX
+    )
 
     @classmethod
     def modify_block_item(cls, instance):
@@ -144,7 +145,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     @classmethod
     def __init_subclass__(cls, **kwargs):
         if cls.NO_ENTITY_COLLISION:
-            cls.BOUNDING_BOX = mcpython.engine.physics.AxisAlignedBoundingBox.EMPTY_BOUNDING_BOX
+            cls.BOUNDING_BOX = (
+                mcpython.engine.physics.AxisAlignedBoundingBox.EMPTY_BOUNDING_BOX
+            )
 
     def __init__(self):
         """

@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import enum
+import json.decoder
 import random
 import typing
 
@@ -123,8 +124,9 @@ class LootTableHandler:
         for path in mcpython.engine.ResourceLoader.get_all_entries(
             "data/{}/loot_tables".format(path_name)
         ):
-            if path.endswith("/"):
+            if not path.endswith(".json"):
                 continue
+
             self._add_load(mod, path, immediate=immediate)
         self.mod_names_to_load.add(modname)
 
@@ -358,7 +360,16 @@ class LootTable:
                 s[s.index("data") + 3],
                 "/".join(s[s.index("data") + 4 :]).split(".")[0],
             )
-        return cls.from_data(mcpython.engine.ResourceLoader.read_json(file), name)
+        try:
+            data = mcpython.engine.ResourceLoader.read_json(file)
+        except json.decoder.JSONDecodeError:
+            logger.println("[WARN][CORRUPTION] invalid or corrupted .json file: "+file)
+            return
+        except:
+            logger.print_exception("during decoding loot table @"+file)
+            return
+
+        return cls.from_data(data, name)
 
     @classmethod
     def from_data(cls, data: dict, name: str):

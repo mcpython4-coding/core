@@ -22,6 +22,7 @@ from mcpython.server.command.Builder import (
     DefinedString,
     Item,
 )
+
 from . import impl
 
 data = (
@@ -134,10 +135,10 @@ data = (
         .than(
             CommandNode(DefinedString("blocks"))
             .of_name("blocks")
-            .info("Displays a list of all blocks found block state files for, but no block instance")
-            .on_execution(
-                lambda env, d: impl.print_block_missing()
+            .info(
+                "Displays a list of all blocks found block state files for, but no block instance"
             )
+            .on_execution(lambda env, d: impl.print_block_missing())
         )
     )
 )

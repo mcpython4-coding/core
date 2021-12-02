@@ -64,9 +64,14 @@ class Language:
         :param name: the name of the language to use or None for generation from file name
         """
         try:
+            try:
+                data = mcpython.engine.ResourceLoader.read_json(file)
+            except ValueError:
+                return
+
             Language.from_data(
                 file.split("/")[-1].split(".")[0] if name is None else name,
-                mcpython.engine.ResourceLoader.read_json(file).copy(),
+                data,
             )
         except:
             logger.print_exception(

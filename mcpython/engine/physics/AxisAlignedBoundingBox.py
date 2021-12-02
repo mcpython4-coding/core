@@ -82,7 +82,7 @@ class AxisAlignedBoundingBox(AbstractBoundingBox):
             ),
             size,
             (0, 0, 0),
-            (0, 0, 0)
+            (0, 0, 0),
         )
 
     def recalculate_vertices(self):
@@ -152,16 +152,25 @@ class AxisAlignedBoundingBox(AbstractBoundingBox):
         # No collision
         return 0
 
-    def test_collision_with(self, this_position, that_position, box: "AxisAlignedBoundingBox") -> int:
+    def test_collision_with(
+        self, this_position, that_position, box: "AxisAlignedBoundingBox"
+    ) -> int:
         v = reduce(
             lambda a, b: a * b,
             [
-                self.collides_in_dimension(a, b, i, box) for a, b, i in zip(this_position, that_position, range(3))
-            ]
+                self.collides_in_dimension(a, b, i, box)
+                for a, b, i in zip(this_position, that_position, range(3))
+            ],
         )
         return v
 
-    def collides_in_dimension(self, this_position: int, that_position: int, dim: int, box: "AxisAlignedBoundingBox") -> int:
+    def collides_in_dimension(
+        self,
+        this_position: int,
+        that_position: int,
+        dim: int,
+        box: "AxisAlignedBoundingBox",
+    ) -> int:
         mx = this_position
         mx += self.relative_position[dim]
         msx = self.size[dim]
@@ -173,12 +182,17 @@ class AxisAlignedBoundingBox(AbstractBoundingBox):
         ax, bx = mx - msx / 2, mx + msx / 2
         cx, dx = tx - mtx / 2, tx + mtx / 2
 
-        if ax > dx or bx < cx: return 0
-        if ax <= cx and dx <= bx: return mtx
-        if ax >= cx and dx >= bx: return msx
+        if ax > dx or bx < cx:
+            return 0
+        if ax <= cx and dx <= bx:
+            return mtx
+        if ax >= cx and dx >= bx:
+            return msx
 
-        if ax <= cx <= bx: return bx - cx
-        if ax >= cx >= bx: return ax - cx
+        if ax <= cx <= bx:
+            return bx - cx
+        if ax >= cx >= bx:
+            return ax - cx
 
         raise RuntimeError()
 

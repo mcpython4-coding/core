@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -15,7 +15,14 @@ import dis
 import typing
 
 
-def create_instruction(opname_or_code: str | int, arg_pt: int = 0, arg_val: typing.Any = None, offset=-1, start_line=None, is_jump_target=False):
+def create_instruction(
+    opname_or_code: str | int,
+    arg_pt: int = 0,
+    arg_val: typing.Any = None,
+    offset=-1,
+    start_line=None,
+    is_jump_target=False,
+):
     if isinstance(opname_or_code, str):
         opname = opname_or_code
         opcode = dis.opmap[opname]
@@ -23,5 +30,6 @@ def create_instruction(opname_or_code: str | int, arg_pt: int = 0, arg_val: typi
         opcode = opname_or_code
         opname = dis.opname[opcode]
 
-    return dis.Instruction(opname, opcode, arg_pt, arg_val, arg_val, offset, start_line, is_jump_target)
-
+    return dis.Instruction(
+        opname, opcode, arg_pt, arg_val, arg_val, offset, start_line, is_jump_target
+    )

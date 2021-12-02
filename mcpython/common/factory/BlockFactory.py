@@ -237,7 +237,9 @@ def build_class(
         if not isinstance(IS_BREAKABLE, bool):
             IS_BREAKABLE = True
 
-        DEFAULT_FACE_SOLID = configs.setdefault("solid_face_table", cls.DEFAULT_FACE_SOLID)
+        DEFAULT_FACE_SOLID = configs.setdefault(
+            "solid_face_table", cls.DEFAULT_FACE_SOLID
+        )
 
         assert isinstance(DEFAULT_FACE_SOLID, int), "face solid must be int"
 

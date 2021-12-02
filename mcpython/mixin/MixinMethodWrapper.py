@@ -367,7 +367,7 @@ class MixinPatchHelper:
         print(f"MixinMethodWrapper stats around {self.patcher.target}")
 
         for i, instr in enumerate(self.instruction_listing):
-            print(i*2, instr)
+            print(i * 2, instr)
 
         print("Raw code:", self.patcher.code_string)
         print("Names:", self.patcher.names)

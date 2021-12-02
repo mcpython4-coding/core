@@ -791,7 +791,7 @@ class BlockStateContainer:
                 self.loader.parse_data(data)
                 break
         else:
-            raise ValueError(
+            logger.println(
                 "can't find matching loader for model {}".format(self.name)
             )
 

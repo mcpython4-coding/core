@@ -167,7 +167,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
             instance.face_info.update(redraw_complete=True)
-        except ValueError:  # if the block is not working, use the next
+        except:  # if the block is not working, use the next
             self.block_index = 0
             logger.print_exception(
                 f"during adding first block to BlockItemGenerator (being {self.tasks[0]})"
@@ -285,17 +285,11 @@ class BlockItemGenerator(AbstractState.AbstractState):
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
             instance.face_info.update(redraw_complete=True)
-        except ValueError:
+        except:
             logger.print_exception(
                 "[BLOCK ITEM GENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                 "following exception".format(self.tasks[self.block_index])
             )
-            self.block_index += 1
-            pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
-            return
-        except:
-            logger.println(self.tasks[self.block_index])
-            raise
 
         self.status_bar.progress = self.block_index + 1
         self.status_bar.text = "{}/{}: {}".format(

@@ -12,9 +12,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import functools
+import graphlib
 import math
 import typing
-import graphlib
 
 import deprecation
 from mcpython.engine import logger

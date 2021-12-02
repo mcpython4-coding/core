@@ -73,10 +73,14 @@ class TagHandler:
             for x in self.tag_locations
         ]:
             for address in row:
-                if address.endswith("/"):
+                if not address.endswith(".json"):
                     continue
 
-                data = mcpython.engine.ResourceLoader.read_json(address)
+                try:
+                    data = mcpython.engine.ResourceLoader.read_json(address)
+                except ValueError:
+                    continue
+
                 s = address.split("/")
                 modname = s[s.index("data") + 1]
                 name = "#{}:{}".format(

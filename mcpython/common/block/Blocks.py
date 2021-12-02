@@ -388,9 +388,7 @@ def colored(name: str):
     )
 
     DEFERRED_PIPE.create_later(
-        BlockFactory()
-        .set_name(f"minecraft:{name}_stained_glass_pane")
-        .set_fence()
+        BlockFactory().set_name(f"minecraft:{name}_stained_glass_pane").set_fence()
     )
 
     DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_terracotta"))
@@ -892,20 +890,42 @@ wood("crimson", normal=False)
 
 # todo: add hardness values!
 stone_like(
-    "crying_obsidian", existing_slab=False, existing_stairs=False, existing_wall=False, strength=(50, 1200)
+    "crying_obsidian",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=(50, 1200),
 )
-stone_like("cut_copper", existing_slab=True, existing_stairs=True, existing_wall=False, strength=(3, 6))
 stone_like(
-    "cut_red_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False, strength=.8
+    "cut_copper",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    strength=(3, 6),
 )
 stone_like(
-    "cut_sandstone", existing_slab=True, existing_stairs=False, existing_wall=False, strength=.8
+    "cut_red_sandstone",
+    existing_slab=True,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=0.8,
+)
+stone_like(
+    "cut_sandstone",
+    existing_slab=True,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=0.8,
 )
 colored("cyan")
 DEFERRED_PIPE.create_later(plant("dandelion"))
 wood("dark_oak")
 stone_like(
-    "dark_prismarine", existing_slab=True, existing_stairs=True, existing_wall=False, strength=(1.5, 6)
+    "dark_prismarine",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    strength=(1.5, 6),
 )
 
 # todo: make functional
@@ -915,40 +935,83 @@ DEFERRED_PIPE.create_later(
     .set_default_model_state("inverted=false")
     .set_solid(False)
     .set_all_side_solid(False)
-    .set_strength(.2)
+    .set_strength(0.2)
     .set_assigned_tools(ToolType.AXE)
 )
 
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate").set_log())
 stone_like(
-    "deepslate_bricks", existing_slab=True, existing_stairs=True, existing_wall=True, strength=(3, 6)
+    "deepslate_bricks",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=True,
+    strength=(3, 6),
 )
 stone_like(
-    "deepslate_tiles", existing_slab=True, existing_stairs=True, existing_wall=True, strength=(3, 6)
+    "deepslate_tiles",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=True,
+    strength=(3, 6),
 )
 
 # todo: set tool properties
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_coal_ore").set_strength(4.5, 3))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_copper_ore").set_strength(4.5, 3))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_diamond_ore").set_strength(4.5, 3))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_emerald_ore").set_strength(4.5, 3))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_gold_ore").set_strength(4.5, 3))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_iron_ore").set_strength(4.5, 3))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_lapis_ore").set_strength(4.5, 3))
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate_redstone_ore").set_strength(4.5, 3))
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_coal_ore").set_strength(4.5, 3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_copper_ore").set_strength(4.5, 3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_diamond_ore").set_strength(4.5, 3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_emerald_ore").set_strength(4.5, 3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_gold_ore").set_strength(4.5, 3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_iron_ore").set_strength(4.5, 3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_lapis_ore").set_strength(4.5, 3)
+)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:deepslate_redstone_ore").set_strength(4.5, 3)
+)
 
 stone_like(
-    "diamond_block", existing_slab=False, existing_stairs=False, existing_wall=False, strength=(5, 6)
+    "diamond_block",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=(5, 6),
 )
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:diamond_ore").set_strength(3, 3))
-stone_like("diorite", existing_slab=True, existing_stairs=True, existing_wall=True, strength=(1.5, 6))
-stone_like("dirt", existing_slab=False, existing_stairs=False, existing_wall=False, strength=(.5, .5), tool=ToolType.SHOVEL)
+DEFERRED_PIPE.create_later(
+    BlockFactory().set_name("minecraft:diamond_ore").set_strength(3, 3)
+)
+stone_like(
+    "diorite",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=True,
+    strength=(1.5, 6),
+)
+stone_like(
+    "dirt",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=(0.5, 0.5),
+    tool=ToolType.SHOVEL,
+)
 DEFERRED_PIPE.create_later(
     BlockFactory()
     .set_name("minecraft:dirt_path")
     .set_solid(False)
     .set_all_side_solid(False)
-    .set_strength(.5)
+    .set_strength(0.5)
     .set_assigned_tools(ToolType.SHOVEL)
 )
 
@@ -965,9 +1028,18 @@ DEFERRED_PIPE.create_later(
     .set_fall_able()
     .set_strength(3, 9)
 )
-DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:dried_kelp_block").set_strength(.5, 2.5).set_assigned_tools(ToolType.HOE))
+DEFERRED_PIPE.create_later(
+    BlockFactory()
+    .set_name("minecraft:dried_kelp_block")
+    .set_strength(0.5, 2.5)
+    .set_assigned_tools(ToolType.HOE)
+)
 stone_like(
-    "dripstone_block", existing_slab=False, existing_stairs=False, existing_wall=False, strength=(1, 1.5)
+    "dripstone_block",
+    existing_slab=False,
+    existing_stairs=False,
+    existing_wall=False,
+    strength=(1, 1.5),
 )
 
 # todo: make functional
@@ -1089,11 +1161,7 @@ stone_like(
     existing_wall=False,
     consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
 )
-DEFERRED_PIPE.create_later(
-    BlockFactory()
-    .set_name(f"minecraft:glass_pane")
-    .set_fence()
-)
+DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:glass_pane").set_fence())
 stone_like("glowstone", existing_slab=False, existing_stairs=False, existing_wall=False)
 stone_like(
     "gold_block", existing_slab=False, existing_stairs=False, existing_wall=False
@@ -1440,7 +1508,11 @@ DEFERRED_PIPE.create_later(
 )
 colored("purple")
 stone_like(
-    "purpur_block", existing_slab=True, existing_stairs=True, existing_wall=False, fname="purpur"
+    "purpur_block",
+    existing_slab=True,
+    existing_stairs=True,
+    existing_wall=False,
+    fname="purpur",
 )
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:purpur_pillar").set_log())
 DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:quartz_block"))

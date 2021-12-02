@@ -127,6 +127,8 @@ class CraftingManager:
 
         try:
             data = json.loads(data)
+        except json.decoder.JSONDecodeError:
+            logger.println("[WARN] invalid or corrupted JSON file: "+str(file))
         except:
             logger.print_exception(
                 "during json-decoding recipe from file '{}'".format(file),
@@ -161,7 +163,7 @@ class CraftingManager:
         for file in mcpython.engine.ResourceLoader.get_all_entries(
             "data/{}/recipes".format(modname)
         ):
-            if file.endswith("/"):
+            if not file.endswith(".json"):
                 continue
 
             if not load_direct:
