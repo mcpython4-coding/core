@@ -119,7 +119,7 @@ def error_occur(text: str):
         print(text)
         sys.exit(-1)
 
-    if shared.launch_wrapper.launch_config["skip-loading-errors"]:
+    if shared.launch_wrapper.launch_config.setdefault("skip-loading-errors", False):
         print("INTERNAL ERROR OCCURRED - SCHEDULED FOR DISPLAY TO USER")
         print(text)
     else:

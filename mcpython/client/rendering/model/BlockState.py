@@ -908,7 +908,12 @@ class BlockState:
 
             return tuple()
 
-        result = shared.model_handler.models[model].add_faces_to_batch(
+        m = shared.model_handler.models[model]
+
+        if m is None:
+            return tuple()
+
+        result = m.add_faces_to_batch(
             instance, instance.position, batch, config, faces
         )
         return result

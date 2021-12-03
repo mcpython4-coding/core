@@ -174,6 +174,7 @@ class ModelHandler:
             return
 
         file = self.found_models[used]
+
         if type(file) == str:
             try:
                 data = mcpython.engine.ResourceLoader.read_json(file)
@@ -182,13 +183,15 @@ class ModelHandler:
                     "parent": "minecraft:block/cube_all",
                     "textures": {"all": "assets/missing_texture.png"},
                 }
-                logger.print_exception(
-                    "during loading model from file {}, now replaced by missing texture".format(
-                        file
-                    )
+                logger.println(
+                    f"[WARN] json error during loading model from file {file}, now replaced by a missing texture block"
                 )
-        else:
+
+        elif isinstance(file, dict):
             data = file
+
+        else:
+            raise ValueError(file)
 
         if "parent" in data:
             self.special_build(data["parent"])
@@ -239,25 +242,34 @@ class ModelHandler:
         if name in self.models:
             return
 
+        if name not in self.found_models:
+            logger.println(f"[FATAL] model {name} was requested to be loaded, but never was required to be loaded")
+            return
+
         location = self.found_models[name]
         try:
             if type(location) == str:
-                model_data = mcpython.engine.ResourceLoader.read_json(location)
                 try:
-                    self.models[
-                        name
-                    ] = mcpython.client.rendering.model.BlockModel.Model(
-                        "block/" + location.split("/")[-1].split(".")[0],
-                        name.split(":")[0] if name.count(":") == 1 else "minecraft",
-                    ).parse_from_data(
-                        model_data.copy()
-                    )
-
-                except (SystemExit, KeyboardInterrupt):
-                    raise
-                except:
-                    logger.print_exception(f"during decoding model {location}")
+                    model_data = mcpython.engine.ResourceLoader.read_json(location)
+                except json.decoder.JSONDecodeError:
+                    logger.println("[WARN] invalid or corrupted .json file: "+location)
                     self.models[name] = None
+                else:
+                    try:
+                        self.models[
+                            name
+                        ] = mcpython.client.rendering.model.BlockModel.Model(
+                            "block/" + location.split("/")[-1].split(".")[0],
+                            name.split(":")[0] if name.count(":") == 1 else "minecraft",
+                        ).parse_from_data(
+                            model_data.copy()
+                        )
+
+                    except (SystemExit, KeyboardInterrupt):
+                        raise
+                    except:
+                        logger.print_exception(f"during decoding model {location}")
+                        self.models[name] = None
 
             else:
                 try:

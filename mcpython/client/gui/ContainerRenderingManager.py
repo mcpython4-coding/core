@@ -502,7 +502,7 @@ class OpenedInventoryStatePart(
                 slot.call_update(True)
 
     def on_mouse_scroll(self, x: int, y: int, dx: int, dy: int):
-        if shared.window.exclusive or self.mode != 0:
+        if shared.window.exclusive or self.mode != 0 or not shared.window.keys[key.LSHIFT]:
             return  # when no mouse interaction is active, do nothing
 
         slot = self._get_slot_for(x, y)

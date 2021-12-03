@@ -107,6 +107,11 @@ class Model:
         if self.parent not in shared.model_handler.models:
             shared.model_handler.load_model(self.parent)
 
+        if self.parent not in shared.model_handler.models:
+            self.parent = None
+            logger.println(f"[FATAL] causing model {self.name} to not bake its parent references")
+            return
+
         self.parent = shared.model_handler.models[self.parent]
 
         if self.parent is not None:

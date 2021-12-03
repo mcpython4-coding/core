@@ -1949,4 +1949,5 @@ f   [uuk]: added wood stairs & colored stained glass pane
 f   [uuk]: block stone creation API allows now for custom mod names, so mods may use that util function
            (you need to set the DEFERRED_PIPE property for it to work, but still...)
 b   [uuk]: fixed a lot small issues; improved error handling all over the place
+b   [uuk]: fixed scrolling is creative tab over slots leading to moving that item into your inventory
 

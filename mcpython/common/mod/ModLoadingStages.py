@@ -368,8 +368,10 @@ manager.add_stage(
         "minecraft:fluids",
     )
     .add_event_stage("stage:item:factory:prepare")
-    .add_event_stage("stage:item:factory_usage", "stage:item:factory:prepare")
-    .add_event_stage("stage:item:factory:finish", "stage:item:factory_usage")
+    .add_event_stage("stage:item:enchantments")
+    .add_event_stage("stage:item:factory_usage", "stage:item:factory:prepare", "stage:item:enchantments")
+    .add_event_stage("stage:item:potions", "stage:item:factory_usage")
+    .add_event_stage("stage:item:factory:finish", "stage:item:factory_usage", "stage:item:potions")
     .add_event_stage("stage:item:load", "stage:item:factory:finish")
     .add_event_stage(
         "stage:item:overwrite", "stage:item:load", "stage:item:factory:finish"
@@ -474,6 +476,7 @@ manager.add_stage(
         "stage:loottables:functions",
         "stage:loottables:conditions",
     )
+    .add_event_stage("stage:loottables:modify", "stage:loottables:load")
     .update_order()
 )
 if shared.IS_CLIENT:

@@ -70,6 +70,9 @@ class AnimationController:
         if len(lookup) != self.frames:
             raise ValueError(lookup, len(lookup), self.frames)
 
+        if not all(isinstance(e, int) for e in lookup):
+            raise ValueError(lookup, len(lookup))
+
         atlas = self.atlases[0]
         width = image.width
 

@@ -89,4 +89,4 @@ class IStairs(mcpython.common.block.AbstractBlock.AbstractBlock):
             self.shape = StairShape[state["shape"].upper()]
 
     def get_view_bbox(self):
-        return mcpython.engine.physics.BoundingBox.FULL_BLOCK_BOUNDING_BOX
+        return mcpython.engine.physics.AxisAlignedBoundingBox.FULL_BLOCK_BOUNDING_BOX
