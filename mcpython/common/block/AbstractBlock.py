@@ -56,6 +56,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     todo: add custom properties to set_creation_properties() -> injected by add_block() call
     todo: cache somehow the block state for rendering here (-> also custom relinking)
     todo: optimise block state lookup by using a array internally & using integers for references
+    todo: add a util method to get the loots of the block
     """
 
     @classmethod
@@ -129,7 +130,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     # todo: add a manager for it like mc
     DEBUG_WORLD_BLOCK_STATES: typing.List[dict] = [{}]
 
-    DEFAULT_FACE_SOLID = 0
+    DEFAULT_FACE_SOLID = 255
 
     # per default, every block is full
     BOUNDING_BOX = (
@@ -184,8 +185,8 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         # The redstone power values
         self.injected_redstone_power = [0, 0, 0, 0, 0, 0]
 
-    def is_face_solid(self, face: EnumSide):
-        return self.face_solid & face.bitflag
+    def is_face_solid(self, face: EnumSide) -> bool:
+        return bool(self.face_solid & face.bitflag)
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.NETWORK_BUFFER_SERIALIZER_VERSION)
@@ -252,12 +253,19 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         self.set_to = set_to
         self.real_hit = real_hit
         self.set_by = player
+
         if state is not None:
             self.set_model_state(state)
+
         return self
 
     def get_rotated_variant(self, rotation_type: BlockRotationType) -> "AbstractBlock":
-        return self.__class__()
+        """
+        Returns a variant of the given block rotated by the given rotation
+        """
+        block = self.__class__()
+        block.set_model_state(self.get_model_state())
+        return block
 
     # block events
 
@@ -307,11 +315,11 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     ):
         """
         Called when the player pressed on mouse button on the block.
-        :param player: the entity instance that interacts. WARNING: may not be an player instance
-        :param button: the button pressed
-        :param modifiers: the modifiers hold during press
-        :param hit_position: where the block was hit at
-        :param itemstack: the itemstack hit with
+        :param player: nullable, the entity instance that interacts. WARNING: may not be a player instance
+        :param button: the button pressed, always != 0
+        :param modifiers: the modifiers hold during press, 0 when no are pressed
+        :param hit_position: where the block was hit at, nullable
+        :param itemstack: the itemstack hit with, nullable
         :return: if default logic should be interrupted or not
         """
         return False
@@ -346,7 +354,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         """
         return []
 
-    def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide):
+    def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide) -> typing.Tuple[typing.Iterable, typing.Iterable]:
         """
         Similar to get_inventories, but specifies only slots & the side on which the interaction can happen.
         Useful for e.g. furnaces which can get fuel from the side, but from top the item to smelt.

@@ -106,7 +106,7 @@ class FactoryBuilder:
                 (value,) = args
             assert isinstance(
                 value, self.assert_type
-            ), "type must be valid ({}, exptected {})".format(
+            ), "type must be valid ({}, expected {})".format(
                 type(value), self.assert_type
             )
             instance.config_table[self.attr_name] = value

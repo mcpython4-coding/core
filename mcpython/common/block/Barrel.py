@@ -25,6 +25,7 @@ from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
 class Barrel(IAllDirectionOrientableBlock):
     """
     Class for the Barrel-Block
+    Barrels are container blocks, with one front face
     """
 
     NAME = "minecraft:barrel"
@@ -40,12 +41,12 @@ class Barrel(IAllDirectionOrientableBlock):
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
     def __init__(self):
-        """
-        Creates a new BlockBarrel-class
-        """
         super().__init__()
 
-        self.opened: bool = False  # if the barrel is open
+        # if the barrel is open
+        self.opened: bool = False
+
+        # the inventory instance
         self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
