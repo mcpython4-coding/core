@@ -13,6 +13,11 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import TestCase
 
+from pyglet.window import mouse
+
+from mcpython.util.enums import BlockRotationType
+from mcpython.util.enums import EnumSide
+
 
 class TestAbstractBlock(TestCase):
     def test_module_import(self):
@@ -47,3 +52,37 @@ class TestAbstractBlock(TestCase):
         block.read_from_network_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertTrue(TestBlock.model_state_set)
+
+    def test_is_solid_method(self):
+        import mcpython.common.block.AbstractBlock
+
+        block = mcpython.common.block.AbstractBlock.AbstractBlock()
+        for face in EnumSide.iterate():
+            self.assertTrue(block.is_face_solid(face), face)
+
+    def test_get_rotated_variant(self):
+        import mcpython.common.block.AbstractBlock
+
+        class Block(mcpython.common.block.AbstractBlock.AbstractBlock):
+            def __init__(self):
+                super().__init__()
+                self.invoked = False
+
+            def get_model_state(self):
+                return {"a": "b", "c": "d"}
+
+            def set_model_state(self_, state: dict):
+                self.assertEqual(state, self_.get_model_state())
+                self_.invoked = True
+
+        b = Block()
+        b2 = b.get_rotated_variant(BlockRotationType.ROTATE_X_90)
+        self.assertIsInstance(b2, Block)
+        self.assertTrue(b2.invoked)
+
+    def test_on_player_interaction_default_result(self):
+        import mcpython.common.block.AbstractBlock
+
+        block = mcpython.common.block.AbstractBlock.AbstractBlock()
+        self.assertFalse(block.on_player_interaction(None, mouse.LEFT, 0, (0, 0, 0), None))
+

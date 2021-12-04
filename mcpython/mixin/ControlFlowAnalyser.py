@@ -139,6 +139,8 @@ class ControlFlowAnalyser:
 
                 op += 2
 
+        self.entry_branch = self.offset2branch[0]
+
     # todo: add a way to reassemble the branches to a single method
 
 
