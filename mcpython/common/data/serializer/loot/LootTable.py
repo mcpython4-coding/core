@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import enum
 import json.decoder
 import random
@@ -62,10 +63,11 @@ class LootTableHandler:
 
         self.mod_names_to_load = set()
 
-    def reload(self):
+    async def reload(self):
         self.loot_tables.clear()
-        for modname in self.mod_names_to_load:
-            self.for_mod_name(modname, immediate=True)
+
+        await asyncio.gather(*(self.for_mod_name(name, immediate=True) for name in self.mod_names_to_load))
+
         shared.event_handler.call("data:loot_tables:custom_inject", self)
 
     def shuffle_data(self):
@@ -113,7 +115,7 @@ class LootTableHandler:
         # todo: add option to print an warning here
         return [mcpython.common.container.ResourceStack.ItemStack(block.NAME)]
 
-    def for_mod_name(self, modname: str, path_name: str = None, immediate=False):
+    async def for_mod_name(self, modname: str, path_name: str = None, immediate=False):
         if path_name is None:
             path_name = modname
         mod = (
@@ -127,20 +129,21 @@ class LootTableHandler:
             if not path.endswith(".json"):
                 continue
 
-            self._add_load(mod, path, immediate=immediate)
+            await self._add_load(mod, path, immediate=immediate)
+
         self.mod_names_to_load.add(modname)
 
-    def _add_load(self, mod, path: str, immediate=False):
+    async def _add_load(self, mod, path: str, immediate=False):
         if not immediate:
             mod.eventbus.subscribe(
                 "stage:loottables:load",
-                lambda: self.from_file(path),
+                self.from_file(path),
                 info="loading loot table '{}'".format(path),
             )
         else:
-            self.from_file(path)
+            await self.from_file(path)
 
-    def from_file(self, file: str):
+    async def from_file(self, file: str):
         return LootTable.from_file(file)
 
     @classmethod

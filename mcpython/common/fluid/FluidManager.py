@@ -21,7 +21,7 @@ fluid_manager = mcpython.common.event.Registry.Registry(
 
 
 @shared.mod_loader("minecraft", "stage:fluids:register")
-def register_fluids():
+async def register_fluids():
     from . import LavaFluid, WaterFluid
 
     fluid_manager.register(LavaFluid.LavaFluid)

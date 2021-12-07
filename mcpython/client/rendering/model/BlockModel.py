@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import typing
 
 import deprecation
@@ -45,12 +46,12 @@ class Model:
         self.texture_atlas = None
         self.box_models = []
 
-    def parse_from_data(self, data: dict):
+    async def parse_from_data(self, data: dict):
         self.parent = data["parent"] if "parent" in data else None
 
         # do some parent copying stuff
         if self.parent is not None:
-            self.parse_parent_data()
+            await self.parse_parent_data()
 
         # check out assigned textures
         if "textures" in data:
@@ -93,7 +94,7 @@ class Model:
 
             self.texture_atlas = add[i][1]
 
-    def parse_parent_data(self):
+    async def parse_parent_data(self):
         if ":" not in self.parent:
             self.parent = "minecraft:" + self.parent
 
@@ -105,7 +106,7 @@ class Model:
                 )
 
         if self.parent not in shared.model_handler.models:
-            shared.model_handler.load_model(self.parent)
+            await shared.model_handler.load_model(self.parent)
 
         if self.parent not in shared.model_handler.models:
             self.parent = None

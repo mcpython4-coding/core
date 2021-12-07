@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import importlib
 import os
 import sys
@@ -228,7 +229,7 @@ def intercept_loading(handler):
         }
     )
 
-    shared.state_handler.change_state("minecraft:world_generation")
+    asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_generation"))
 
     from mcpython.engine.event.EventHandler import PUBLIC_EVENT_BUS
 
@@ -242,7 +243,7 @@ def intercept_loading(handler):
 
 
 @shared.mod_loader("structure_test_system", "stage:mod:init")
-def init():
+async def init():
     from mcpython.engine.event.EventHandler import PUBLIC_EVENT_BUS
 
     PUBLIC_EVENT_BUS.subscribe("stage_handler:loading2main_menu", intercept_loading)

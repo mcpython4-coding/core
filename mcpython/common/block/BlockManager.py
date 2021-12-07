@@ -68,7 +68,7 @@ block_registry = mcpython.common.event.Registry.Registry(
 block_registry.full_table = {}  # an table of localized & un-localized block names
 
 
-def load():
+async def load():
     """
     Loads all blocks that should be loaded into the game
     Most registration should happen here so mods cannot load stuff too early into registries
@@ -144,7 +144,7 @@ if not shared.IS_TEST_ENV:
     import mcpython.common.mod.ModMcpython
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-        "stage:block:factory:prepare", load, info="loading special blocks"
+        "stage:block:factory:prepare", load(), info="loading special blocks"
     )
 
     from . import IFallingBlock, ILog

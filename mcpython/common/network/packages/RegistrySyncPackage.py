@@ -46,7 +46,7 @@ class RegistrySyncInitPackage(AbstractPackage):
     def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_list(self.registries, lambda e: buffer.write_string(e))
 
-    def handle_inner(self):
+    async def handle_inner(self):
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"] = {
             e: -1 for e in self.registries
         }
@@ -105,7 +105,7 @@ class RegistrySyncPackage(AbstractPackage):
             self.content, lambda e: buffer.write_string(e[0]).write_string(e[1])
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         entries_there = set(self.content)
         entries_here = set(
             (entry.NAME, entry.INFO if entry.INFO is not None else "")
@@ -169,7 +169,7 @@ class RegistrySyncResultPackage(AbstractPackage):
         self.name = buffer.read_string()
         self.status = buffer.read_bool()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         from .DisconnectionPackage import DisconnectionInitPackage
 
         if shared.IS_CLIENT:

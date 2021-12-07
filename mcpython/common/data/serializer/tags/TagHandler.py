@@ -33,7 +33,7 @@ class TagHandler:
         self.tag_groups = {}  # name -> tag group
         self.tag_locations = []
         shared.mod_loader("minecraft", "stage:tag:load", info="loading tag-groups")(
-            self.load_tags
+            self.load_tags()
         )
 
     def from_data(self, tag_group: str, tag_name: str, data: dict, replace=True):
@@ -56,14 +56,14 @@ class TagHandler:
         """
         self.tag_locations += locations
 
-    def reload(self):
+    async def reload(self):
         """
         Will reload all tag-related data
         """
         self.tag_groups.clear()
-        self.load_tags(direct_call=True)
+        await self.load_tags(direct_call=True)
 
-    def load_tags(self, direct_call=False):
+    async def load_tags(self, direct_call=False):
         """
         Will load the tags
         :param direct_call: if build now or in the loading stage for it
@@ -96,11 +96,11 @@ class TagHandler:
 
         for tag_group in shared.tag_handler.tag_groups.values():
             if direct_call:
-                tag_group.build()
+                await tag_group.build()
             else:
                 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                     "stage:tag:load",
-                    tag_group.build,
+                    tag_group.build(),
                     info="loading tag-group '{}'".format(tag_group.name),
                 )
 
@@ -165,7 +165,7 @@ class TagHandler:
 shared.tag_handler = TagHandler()
 
 
-def add_from_location(loc: str):
+async def add_from_location(loc: str):
     """
     Adds tags from an given scope for an given namespace where loc is the name of the namespace
     :param loc: the namespace
@@ -184,6 +184,6 @@ def add_from_location(loc: str):
 
 
 @shared.mod_loader("minecraft", "stage:tag:group", info="adding tag group locations")
-def load_default_tags():
-    add_from_location("minecraft")
-    add_from_location("forge")
+async def load_default_tags():
+    await add_from_location("minecraft")
+    await add_from_location("forge")

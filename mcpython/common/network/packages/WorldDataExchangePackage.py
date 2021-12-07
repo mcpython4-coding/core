@@ -71,7 +71,7 @@ class DataRequestPackage(AbstractPackage):
             lambda: (buffer.read_string(), buffer.read_int(), buffer.read_int())
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         if self.request_world_info_state:
             self.answer(WorldInfoPackage().setup())
 
@@ -132,7 +132,7 @@ class WorldInfoPackage(AbstractPackage):
             )
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         shared.world.spawn_point = self.spawn_point
 
         for name, dim_id, height_range in self.dimensions:
@@ -259,7 +259,7 @@ class ChunkDataPackage(AbstractPackage):
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
 
-    def handle_inner(self):
+    async def handle_inner(self):
         start = time.time()
         logger.println(
             f"adding chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world"
@@ -374,7 +374,7 @@ class ChunkBlockChangePackage(AbstractPackage):
 
         buffer.read_list(read)
 
-    def handle_inner(self):
+    async def handle_inner(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
         for position, block, update_only in self.data:

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import graphlib
 import typing
 
@@ -152,7 +153,7 @@ class LoadingStage:
             shared.event_handler.call("mod_loader:load_finished")
 
             if shared.IS_CLIENT:
-                shared.state_handler.change_state("minecraft:block_item_generator")
+                asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:block_item_generator"))
             else:
                 shared.state_handler.states["minecraft:world_loading"].load_or_generate(
                     "server_world"
@@ -217,7 +218,7 @@ class LoadingStage:
         mod_instance = shared.mod_loader.mods[modname]
 
         try:
-            mod_instance.eventbus.call_as_stack(self.active_event, store_stuff=False)
+            asyncio.get_event_loop().run_until_complete(mod_instance.eventbus.call_as_stack(self.active_event)) #, amount=4))
 
         except RuntimeError:  # when we are empty
             self.active_mod_index += 1

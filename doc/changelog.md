@@ -23,9 +23,9 @@ Contains only some information, in ordered form, in a better form for the end us
 ----
 
 
-# Changelog of snapshot <21w48a>
-Planned to be released on 01.12.2021
-targeting <1.28pre4>
+# Changelog of snapshot <21w50a>
+Planned to be released on 15.12.2021
+targeting <1.18.1>
 
 Backwards-incompatible:
 - mod config system (deprecated and scheduled for removal until next alpha)
@@ -34,6 +34,8 @@ Backwards-incompatible:
   (excluding the update and hide all methods)
 - stuff defining invalid animated textures (previously, the errors were ignored)
 - stuff using the Stream class from util/iterables.py (removed)
+- anything event related, a lot of stuff is now async, and invoking methods is also broken, as a lot of them 
+  are now async
 
 
     Rendering

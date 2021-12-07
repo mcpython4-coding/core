@@ -28,8 +28,7 @@ def recipe_mapper(modname, pathname):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:recipes",
-        shared.crafting_handler.load,
-        pathname,
+        shared.crafting_handler.load(pathname),
         info="loading crafting recipes for mod {}".format(modname),
     )
 
@@ -39,16 +38,13 @@ def model_mapper(modname, pathname):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:model_search",
-        shared.model_handler.add_from_mod,
-        pathname,
+        shared.model_handler.add_from_mod(pathname),
         info="searching for block models for mod {}".format(modname),
     )
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:blockstate_search",
-        BlockStateContainer.from_directory,
-        "assets/{}/blockstates".format(pathname),
-        modname,
+        BlockStateContainer.from_directory("assets/{}/blockstates".format(pathname), modname),
         info="searching for block states for mod {}".format(modname),
     )
 
@@ -62,7 +58,7 @@ def tag_mapper(modname, pathname):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:tag:group",
-        lambda: mcpython.common.data.serializer.tags.TagHandler.add_from_location(
+        mcpython.common.data.serializer.tags.TagHandler.add_from_location(
             pathname
         ),
         info="adding tag groups for mod {}".format(modname),
@@ -84,7 +80,7 @@ def loot_table_mapper(modname, pathname):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
-        lambda: LootTable.handler.for_mod_name(modname, pathname),
+        LootTable.handler.for_mod_name(modname, pathname),
         info="adding loot tables for mod {}".format(modname),
     )
 
@@ -99,25 +95,27 @@ class ResourcePipeHandler:
 
         self.listeners: typing.List[typing.Type[AbstractReloadListener]] = []
 
-        shared.mod_loader("minecraft", "stage:post")(self.reload_content)
+        shared.mod_loader("minecraft", "stage:post")(self.reload_content())
 
     def register_listener(self, listener: typing.Type[AbstractReloadListener]):
         self.listeners.append(listener)
 
-        def l():
+        async def l():
             listener.on_reload(True)
 
-        shared.mod_loader("minecraft", "stage:post")(l)
+        shared.mod_loader("minecraft", "stage:post")(l())
 
         return self
 
-    def register_for_mod(self, providing_mod: str, namespace: str = None):
+    async def register_for_mod(self, providing_mod: str, namespace: str = None):
         """
         Used internally to add new namespaces to the loading system
         """
         if namespace is None:
             namespace = providing_mod
+
         self.namespaces.append((providing_mod, namespace))
+
         for mapper in self.mappers:
             mapper(providing_mod, namespace)
 
@@ -149,17 +147,17 @@ class ResourcePipeHandler:
         self.data_processors.append(listener)
         return self
 
-    def reload_content(self):
+    async def reload_content(self):
         if not shared.event_handler.call_cancelable("data:reload:cancel"):
             return
 
         mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
-        shared.tag_handler.reload()  # reloads all tags
-        shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
+        await shared.tag_handler.reload()  # reloads all tags
+        await shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
 
         import mcpython.common.data.serializer.loot.LootTable as LootTable
 
-        LootTable.handler.reload()
+        await LootTable.handler.reload()
 
         # as we are reloading, this may get mixed up...
         shared.crafting_handler.recipe_relink_table.clear()

@@ -163,7 +163,7 @@ class CommandParser:
 shared.command_parser = CommandParser()
 
 
-def load_commands():
+async def load_commands():
     # This is the deal, we import & register here, so others can safely import our classes without worrying about
     # flooding the registry in the wrong moment
     # And it also resolves errors during dynamic reload / cross process loading
@@ -222,5 +222,5 @@ if not shared.IS_TEST_ENV:
     import mcpython.common.mod.ModMcpython
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-        "stage:commands", load_commands
+        "stage:commands", load_commands()
     )

@@ -16,7 +16,7 @@ import uuid
 
 import mcpython.common.world.Chunk
 import mcpython.common.world.datafixers.IDataFixer
-import mcpython.common.world.serializer.IDataSerializer
+import mcpython.common.world.serializer.IDataSerializer as IDataSerializer
 import mcpython.engine.world.AbstractInterface
 import mcpython.util.enums
 from mcpython import shared
@@ -30,7 +30,7 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 @shared.registry
-class Chunk(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
+class Chunk(IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
 
     @classmethod

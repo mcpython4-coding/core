@@ -40,7 +40,7 @@ class PlayerInfoPackage(AbstractPackage):
             lambda: PlayerEntity().read_from_network_buffer(buffer)
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         for player in self.players:
             shared.entity_manager.spawn_entity(player, player.position)
             shared.world.players[player.name] = player
@@ -86,7 +86,7 @@ class PlayerUpdatePackage(AbstractPackage):
         self.gamemode = buffer.read_int()
         self.update_flags = buffer.read_int()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         player = shared.world.get_player_by_name(self.name)
 
         # Stuff the client is NOT allowed to change on its own

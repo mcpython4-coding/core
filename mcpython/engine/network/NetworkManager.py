@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import gzip
 import io
 import typing
@@ -150,7 +151,7 @@ class NetworkManager:
 
         if shared.IS_CLIENT:
             shared.CLIENT_NETWORK_HANDLER.disconnect()
-            shared.state_handler.change_state("minecraft:start_menu")
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
         else:
             if target == -1:
                 shared.SERVER_NETWORK_HANDLER.disconnect_all()
@@ -292,7 +293,7 @@ class NetworkManager:
         self.valid_package_ids.clear()
         self.custom_package_handlers.clear()
 
-    def fetch_as_client(self):
+    async def fetch_as_client(self):
         if not shared.CLIENT_NETWORK_HANDLER.connected:
             return
 
@@ -315,7 +316,7 @@ class NetworkManager:
             package.sender_id = 0
 
             try:
-                package.handle_inner()
+                await package.handle_inner()
             except (SystemExit, KeyboardInterrupt):
                 raise
             except:
@@ -332,7 +333,7 @@ class NetworkManager:
 
                 self.custom_package_handlers[package.package_id].clear()
 
-    def fetch_as_server(self):
+    async def fetch_as_server(self):
         for client_id, buffer in shared.SERVER_NETWORK_HANDLER.get_package_streams():
             while buffer:
                 try:
@@ -352,7 +353,7 @@ class NetworkManager:
                 package.sender_id = client_id
 
                 try:
-                    package.handle_inner()
+                    await package.handle_inner()
                 except (SystemExit, KeyboardInterrupt):
                     raise
                 except:
@@ -441,7 +442,7 @@ class NetworkManager:
 shared.NETWORK_MANAGER = NetworkManager()
 
 
-def load_packages():
+async def load_packages():
     from mcpython.common.network.packages import (
         ClientStateChangePackage,
         DisconnectionPackage,

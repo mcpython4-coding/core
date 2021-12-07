@@ -118,7 +118,7 @@ class TestPlayerEntity(TestCase):
         self.assertEqual(instance.xp_level, 0)
 
     # Test for issue 1000
-    def test_pickup_item(self):
+    async def test_pickup_item(self):
         import mcpython.common.container.crafting.CraftingManager
         import mcpython.common.entity.PlayerEntity
         from mcpython.client.gui.Slot import SlotCopy
@@ -129,6 +129,7 @@ class TestPlayerEntity(TestCase):
         shared.mod_loader = FakeModloader()
 
         instance = mcpython.common.entity.PlayerEntity.PlayerEntity(name="test_player")
+        await instance.create_inventories()
         instance.pick_up_item(ItemStack("fake:item", 32))
 
         count = 0

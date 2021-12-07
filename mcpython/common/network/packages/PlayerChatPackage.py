@@ -35,7 +35,7 @@ class PlayerChatInputPackage(AbstractPackage):
     def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         if self.text.startswith("/"):
             player = shared.world.get_player_by_name(
                 shared.NETWORK_MANAGER.client_profiles[self.sender_id]["player_name"]
@@ -72,7 +72,7 @@ class PlayerMessageShowPackage(AbstractPackage):
     def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         logger.println(self.text)
 
 
@@ -93,6 +93,6 @@ class PlayerClientCommandExecution(AbstractPackage):
     def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         env = CommandExecutionEnvironment(this=shared.world.get_active_player())
         shared.command_parser.run(self.text, env)

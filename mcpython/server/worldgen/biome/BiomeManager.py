@@ -150,10 +150,10 @@ class BiomeHandler:
 shared.biome_handler = BiomeHandler()
 
 
-def load():
+async def load():
     from . import BiomeMountains, BiomeVoid
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:biomes", load, info="loading biomes"
+    "stage:worldgen:biomes", load(), info="loading biomes"
 )

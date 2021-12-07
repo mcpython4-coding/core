@@ -324,7 +324,7 @@ class WorldGenerationHandler:
 shared.world_generation_handler = WorldGenerationHandler()
 
 
-def load_layers():
+async def load_layers():
     from .layer import (
         DefaultBedrockLayer,
         DefaultBiomeLayer,
@@ -337,7 +337,7 @@ def load_layers():
     )
 
 
-def load_modes():
+async def load_modes():
     from .mode import (
         AmplifiedWorldGenerator,
         BiomeGenDebugGenerator,
@@ -349,7 +349,7 @@ def load_modes():
     )
 
 
-def load_features():
+async def load_features():
     from .feature import (
         BirchTreeFeature,
         CactusFeature,
@@ -369,19 +369,19 @@ def load_features():
     from .feature.village import VillageFeatureDefinition
 
 
-def load_maps():
+async def load_maps():
     from .map import BiomeMap, FeatureMap, HeightMap, LandMassMap, TemperatureMap
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:layer", load_layers, info="loading generation layers"
+    "stage:worldgen:layer", load_layers(), info="loading generation layers"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:mode", load_modes, info="loading generation modes"
+    "stage:worldgen:mode", load_modes(), info="loading generation modes"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:feature", load_features, info="loading world gen features"
+    "stage:worldgen:feature", load_features(), info="loading world gen features"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:maps", load_maps, info="loading chunk maps"
+    "stage:worldgen:maps", load_maps(), info="loading chunk maps"
 )

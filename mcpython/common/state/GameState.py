@@ -40,8 +40,8 @@ class Game(AbstractState.AbstractState):
             mcpython.client.gui.ContainerRenderingManager.inventory_part,
         ]
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
         if shared.IS_CLIENT:
             shared.window.mouse_pressing = {
@@ -54,8 +54,8 @@ class Game(AbstractState.AbstractState):
             time.sleep(0.2)
         shared.world_generation_handler.enable_auto_gen = True
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
         shared.world_generation_handler.enable_auto_gen = False
 
         if shared.IS_CLIENT:
@@ -73,7 +73,7 @@ class Game(AbstractState.AbstractState):
             return
 
         if symbol == key.ESCAPE and shared.window.exclusive:
-            shared.state_handler.change_state("minecraft:escape_menu")
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:escape_menu"))
 
         elif symbol == key.R:
             shared.inventory_handler.reload_config()
@@ -113,9 +113,9 @@ class Game(AbstractState.AbstractState):
 game = None
 
 
-def create():
+async def create():
     global game
     game = Game()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

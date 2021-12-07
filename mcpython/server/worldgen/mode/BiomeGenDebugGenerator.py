@@ -44,7 +44,7 @@ class DebugBiomeWorldGenerator(
     BIOME_TO_BLOCK = {}
 
     @classmethod
-    def generate_table(cls):
+    async def generate_table(cls):
         blocks = list(shared.registry.get_by_name("minecraft:block").entries.keys())
         blocks.sort()
         i = 0
@@ -83,6 +83,6 @@ shared.world_generation_handler.register_world_gen_config(DebugBiomeWorldGenerat
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:post",
-    DebugBiomeWorldGenerator.generate_table,
+    DebugBiomeWorldGenerator.generate_table(),
     info="constructing debug world info",
 )

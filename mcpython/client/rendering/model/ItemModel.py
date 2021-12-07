@@ -194,11 +194,11 @@ class ItemModelHandler:
         self.atlas = mcpython.common.item.ItemTextureAtlas.ItemAtlasHandler(
             folder=shared.build + "/tmp_items"
         )
-        shared.mod_loader("minecraft", "stage:model:item:on_bake")(self.bake)
+        shared.mod_loader("minecraft", "stage:model:item:on_bake")(self.bake())
 
     @staticmethod
     @shared.mod_loader("minecraft", "stage:model:item:search")
-    def load():
+    async def load():
         handler.from_folder("assets/minecraft/models/item", "minecraft")
 
     def from_data(self, data: dict, name: str):
@@ -211,7 +211,7 @@ class ItemModelHandler:
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])
             self.models[item] = ItemModel.from_file(file, item)
 
-    def bake(self):
+    async def bake(self):
         self.atlas.load()
         for model in self.models.values():
             try:

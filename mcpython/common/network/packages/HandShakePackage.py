@@ -48,7 +48,7 @@ class Client2ServerHandshake(AbstractPackage):
     def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.game_version).write_string(self.player_name)
 
-    def handle_inner(self):
+    async def handle_inner(self):
         logger.println(
             f"client named '{self.player_name}' (game version: {self.game_version}) is connecting to this server"
         )
@@ -146,7 +146,7 @@ class Server2ClientHandshake(AbstractPackage):
             self.mod_list, lambda e: buffer.write_string(e[0]).write_string(e[1])
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         if not self.accept_connection:
             logger.println(
                 f"[SERVER-MSG][ERROR] connection closed by server; reason: {self.deny_reason}"

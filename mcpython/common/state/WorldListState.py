@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import datetime
 import json
 import os
@@ -199,8 +200,8 @@ class WorldList(AbstractState.AbstractState):
             self.selected_world += 1
             self.parts[-1].move(-60)
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
         self.reload_world_icons()
         self.parts[-1].set_status(1)
@@ -254,10 +255,10 @@ class WorldList(AbstractState.AbstractState):
         self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
 
     def on_back_press(self, *_):
-        shared.state_handler.change_state("minecraft:start_menu")
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
 
     def on_new_world_press(self, *_):
-        shared.state_handler.change_state("minecraft:world_generation_config")
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_generation_config"))
 
     def on_delete_press(self, *_):
         if self.selected_world is None:
@@ -281,9 +282,9 @@ class WorldList(AbstractState.AbstractState):
 world_selection = None
 
 
-def create():
+async def create():
     global world_selection
     world_selection = WorldList()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

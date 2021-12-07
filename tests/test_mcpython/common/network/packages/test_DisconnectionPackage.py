@@ -38,7 +38,7 @@ class TestDisconnectionInitPackage(TestCase):
         self.assertEqual(package.reason, "test reason!")
         self.assertEqual(package.reason, package2.reason)
 
-    def test_handle_inner(self):
+    async def test_handle_inner(self):
         from mcpython import shared
         from mcpython.common.network.packages.DisconnectionPackage import (
             DisconnectionConfirmPackage,
@@ -56,9 +56,9 @@ class TestDisconnectionInitPackage(TestCase):
         package = DisconnectionInitPackage().set_reason("test reason!")
         package.answer = a
 
-        package.handle_inner()
+        await package.handle_inner()
 
         self.assertTrue(status_a)
 
 
-# the confirm package does not need a unit test here, as the underlying systems are hard to test
+# the confirmation package does not need a unit test here, as the underlying systems are hard to test

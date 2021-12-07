@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import sys
 import typing
 
@@ -40,7 +41,7 @@ class StateHandler:
         self.states: typing.Dict[str, AbstractState] = {}
         self.global_key_bind_toggle = False
 
-    def change_state(self, state_name: str, immediate=True):
+    async def change_state(self, state_name: str, immediate=True):
         """
         Will change the current state of the "machine"
         :param state_name: the name to switch to
@@ -54,13 +55,13 @@ class StateHandler:
             logger.println(f"[STATE] {state_name}")
 
         if immediate:
-            self.inner_change_state(state_name)
+            await self.inner_change_state(state_name)
         else:
             mcpython.common.event.TickHandler.handler.schedule_once(
-                self.inner_change_state, state_name
+                self.inner_change_state(state_name)
             )
 
-    def inner_change_state(self, state_name: str):
+    async def inner_change_state(self, state_name: str):
         """
         Internal change_state
 
@@ -69,20 +70,20 @@ class StateHandler:
 
         previous = self.active_state.NAME if self.active_state is not None else None
 
-        shared.event_handler.call("state:switch:pre", state_name)
+        await shared.event_handler.call_async("state:switch:pre", state_name)
 
         if self.active_state:
-            self.active_state.deactivate()
+            await self.active_state.deactivate()
 
         self.active_state: AbstractState.AbstractState = self.states[state_name]
-        self.active_state.activate()
+        await self.active_state.activate()
 
         if shared.IS_CLIENT:
-            self.active_state.eventbus.call(
+            await self.active_state.eventbus.call_async(
                 "user:window:resize", *shared.window.get_size()
             )
 
-        shared.event_handler.call("state:switch:post", state_name)
+        await shared.event_handler.call_async("state:switch:post", state_name)
         logger.println(
             f"[STATE HANDLER][STATE CHANGE] state changed to '{state_name}' (from {repr(previous)})'",
             console=False,
@@ -119,4 +120,4 @@ def load_states():
     )
 
     # this is the first state, so initial init for it
-    handler.change_state("minecraft:mod_loading")
+    asyncio.get_event_loop().run_until_complete(handler.change_state("minecraft:mod_loading"))

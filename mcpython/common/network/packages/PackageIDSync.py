@@ -40,5 +40,5 @@ class PackageIDSync(AbstractPackage):
     def read_from_buffer(self, buffer: ReadBuffer):
         self.data = buffer.read_list(lambda: (buffer.read_string(), buffer.read_int()))
 
-    def handle_inner(self):
+    async def handle_inner(self):
         shared.NETWORK_MANAGER.set_dynamic_id_info(self.data)

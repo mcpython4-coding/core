@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import cProfile
 import os
 import random
@@ -61,7 +62,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             config = DEFAULT_GENERATION_CONFIG
             config["seed"] = random.randint(-1000000, 10000000)
         self.world_gen_config.update(config)
-        shared.state_handler.change_state(self.NAME)
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state(self.NAME))
 
     def generate_from_user_input(self, state=None):
         if state is None:
@@ -113,14 +114,14 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
 
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
-            shared.state_handler.change_state("minecraft:game")
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:game"))
             import mcpython.common.data.ResourcePipe
 
-            mcpython.common.data.ResourcePipe.handler.reload_content()
+            asyncio.get_event_loop().run_until_complete(mcpython.common.data.ResourcePipe.handler.reload_content())
             self.finish()
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
         self.status_table.clear()
 
         if os.path.exists(shared.world.save_file.directory):
@@ -183,7 +184,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             player_name = "unknown"
 
         if player_name not in shared.world.players:
-            shared.world.add_player(player_name, dimension=0)
+            asyncio.get_event_loop().run_until_complete(shared.world.add_player(player_name, dimension=0))
 
         # setup skin
         try:
@@ -258,7 +259,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 dimension=shared.world.get_dimension(0)
             ),
         )
-        shared.state_handler.change_state("minecraft:game", immediate=False)
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:game", immediate=False))
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
@@ -267,7 +268,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.change_state("minecraft:start_menu")
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
             shared.tick_handler.schedule_once(shared.world.cleanup)
             logger.println("interrupted world generation by user")
 
@@ -286,9 +287,9 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 world_generation = None
 
 
-def create():
+async def create():
     global world_generation
     world_generation = WorldGenerationProgress()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

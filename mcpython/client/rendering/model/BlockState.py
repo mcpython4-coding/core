@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import copy
 import random
 import typing
@@ -672,28 +673,28 @@ class BlockStateContainer:
     NEEDED = set()  # for parent <-> child connection
 
     @classmethod
-    def from_directory(cls, directory: str, modname: str, immediate=False):
+    async def from_directory(cls, directory: str, modname: str, immediate=False):
         for file in mcpython.engine.ResourceLoader.get_all_entries(directory):
             if not file.endswith("/"):
-                cls.from_file(file, modname, immediate=immediate)
+                await cls.from_file(file, modname, immediate=immediate)
+
         cls.LOOKUP_DIRECTORIES.add((directory, modname))
 
     @classmethod
-    def from_file(cls, file: str, modname: str, immediate=False):
+    async def from_file(cls, file: str, modname: str, immediate=False):
         # todo: check for correct process
         if immediate:
-            cls.unsafe_from_file(file)
+            await cls.unsafe_from_file(file)
         else:
             shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:blockstate_create",
-                cls.unsafe_from_file,
-                file,
+                cls.unsafe_from_file(file),
                 info="loading block state file '{}'".format(file),
             )
         cls.TO_CREATE.add(file)
 
     @classmethod
-    def unsafe_from_file(cls, file: str):
+    async def unsafe_from_file(cls, file: str):
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
@@ -778,11 +779,11 @@ class BlockStateContainer:
         if not immediate:
             shared.mod_loader.mods[name.split(":")[0]].eventbus.subscribe(
                 "stage:model:blockstate_bake",
-                self.bake,
+                self.bake(),
                 info="baking block state {}".format(name),
             )
         else:
-            self.bake()
+            asyncio.get_event_loop().run_until_complete(self.bake())
 
     def parse_data(self, data: dict):
         for loader in blockstate_decoder_registry.entries.values():
@@ -797,7 +798,7 @@ class BlockStateContainer:
 
         return self
 
-    def bake(self):
+    async def bake(self):
         try:
             if self.loader and not self.loader.bake():
                 shared.mod_loader.mods[self.name.split(":")[0]].eventbus.subscribe(
@@ -988,8 +989,6 @@ class BlockState:
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:blockstate_search",
-    BlockStateContainer.from_directory,
-    "assets/minecraft/blockstates",
-    "minecraft",
+    BlockStateContainer.from_directory("assets/minecraft/blockstates", "minecraft"),
     info="searching for block states",
 )

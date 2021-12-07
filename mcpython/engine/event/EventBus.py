@@ -119,6 +119,70 @@ class EventBus:
         if not any_found:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
+    async def call_async(self, event_name: str, *args, **kwargs):
+        from mcpython.common.mod.util import LoadingInterruptException
+
+        if event_name not in self.event_subscriptions:
+            return
+
+        # todo: run all async stuff parallel
+
+        exception_occ = False
+        for function, extra_args, extra_kwargs, info in self.event_subscriptions[
+            event_name
+        ]:
+            try:
+                if asyncio.iscoroutine(function):
+                    await function
+                else:
+                    function(
+                        *list(args) + list(extra_args),
+                        **{**kwargs, **extra_kwargs},
+                    )
+
+            except (SystemExit, KeyboardInterrupt):
+                raise
+
+            except LoadingInterruptException:
+                raise
+
+            except MemoryError:  # Memory error is something fatal
+                shared.window.close()
+                pyglet.app.exit()
+                print("closing due to missing memory")
+                sys.exit(-1)
+
+            except:
+                exception_occ = True
+                logger.print_exception(
+                    "during calling function: {} with arguments: {}, {}".format(
+                        function,
+                        list(args) + list(extra_args),
+                        {**kwargs, **extra_kwargs},
+                        sep="\n",
+                    ),
+                    "function info: '{}'".format(info) if info is not None else "",
+                    "during event:",
+                    event_name,
+                )
+
+        if exception_occ and self.crash_on_error:
+            logger.println("\nout of the above reasons, the game is being closed")
+
+            if self.close_on_error:
+                shared.window.close()
+                pyglet.app.exit()
+                import mcpython.common.state.LoadingExceptionViewState
+                from mcpython.common.mod.util import LoadingInterruptException
+
+                mcpython.common.state.LoadingExceptionViewState.error_occur(
+                    traceback.format_exc()
+                )
+                return
+
+            else:
+                raise RuntimeError
+
     def call(self, event_name: str, *args, **kwargs):
         """
         Call an event on this event bus. Also works when deactivated

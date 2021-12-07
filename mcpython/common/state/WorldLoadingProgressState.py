@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import os
 
 import mcpython.common.config
@@ -39,18 +40,18 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         self.finished_chunks = 0
 
     def load_or_generate(self, name: str):
-        shared.world.cleanup()
+        asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
         shared.world.setup_by_filename(name)
         save_file = shared.world.save_file
         if not os.path.exists(save_file.directory):
             shared.state_handler.states["minecraft:world_generation"].generate_world()
         else:
-            shared.state_handler.change_state("minecraft:world_loading")
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_loading"))
 
     def load_world_from(self, name: str):
         logger.println(f"[WORLD LOADING][INFO] starting loading world '{name}'")
         shared.world.setup_by_filename(name)
-        shared.state_handler.change_state("minecraft:world_loading")
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_loading"))
 
     def create_state_parts(self) -> list:
         return [
@@ -82,7 +83,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
                 self.status_table[chunk] = 1 / c if c > 0 else -1
 
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
-            shared.state_handler.change_state("minecraft:game")
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:game"))
             shared.world.world_loaded = True
             if (
                 mcpython.common.config.SHUFFLE_DATA
@@ -94,8 +95,8 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10
         )
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
         # todo: add a check if we need this
         # logger.println("[WORLD LOADING][INFO] reloading assets...")
@@ -119,8 +120,8 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             logger.println(
                 "Failed to load world. data-fixer Failed with NoDataFixerFoundException"
             )
-            shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:start_menu")
+            asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
             return
 
         except (SystemExit, KeyboardInterrupt, OSError):
@@ -128,8 +129,8 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
         except:
             logger.print_exception("Failed to load world; Failed in inital loading")
-            shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:start_menu")
+            asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
             return
 
         for cx in range(-3, 4):
@@ -140,11 +141,11 @@ class WorldLoadingProgress(AbstractState.AbstractState):
                 #                       immediate=False)
         shared.world_generation_handler.enable_generation = True
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
 
         if shared.IS_CLIENT:
-            player = shared.world.get_active_player()
+            player = shared.world.get_active_player_async()
             player.teleport(player.position, force_chunk_save_update=True)
 
     def bind_to_eventbus(self):
@@ -155,8 +156,8 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.change_state("minecraft:start_menu")
-            shared.world.cleanup()
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+            asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
             logger.println("interrupted world loading by user")
 
     def calculate_percentage_of_progress(self):
@@ -194,9 +195,9 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 world_loading = None
 
 
-def create():
+async def create():
     global world_loading
     world_loading = WorldLoadingProgress()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

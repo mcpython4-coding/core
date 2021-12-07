@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import math
 import typing
 
@@ -108,12 +109,12 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if not shared.mod_loader.finished and not shared.IS_TEST_ENV:
             shared.mod_loader["minecraft"].eventbus.subscribe(
                 "stage:inventories",
-                self.create_inventories,
+                self.create_inventories(),
                 info="setting up player inventory",
             )
 
         else:
-            self.create_inventories()
+            shared.tick_handler.schedule_once(self.create_inventories())
 
         # todo: move to somewhere else! (Each player creation does a new one!)
         # todo: client-only
@@ -276,7 +277,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         elif self.gamemode == 3:
             self.set_gamemode(1)
 
-    def create_inventories(self):
+    async def create_inventories(self):
         """
         Helper method for setting up the player inventory
         todo: can we re-use inventories from previous players?
@@ -541,7 +542,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             and not internal
         ):
             # todo: add special state [see above]
-            shared.state_handler.change_state("minecraft:escape_menu")
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:escape_menu"))
 
         if not internal:
             shared.event_handler.call("gameplay:player:die", self, damage_source)

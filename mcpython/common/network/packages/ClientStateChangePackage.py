@@ -40,7 +40,7 @@ class ClientStateChangePackage(AbstractPackage):
     def read_from_buffer(self, buffer: ReadBuffer):
         self.new_state = buffer.read_string()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         if self.new_state in self.DISALLOWED_STATES:
             logger.println(
                 f"[NETWORK][FATAL] Server requested state change to state {self.new_state}, which is not allowed!"
@@ -50,4 +50,4 @@ class ClientStateChangePackage(AbstractPackage):
             )
             shared.NETWORK_MANAGER.disconnect(self.sender_id)
         else:
-            shared.state_handler.change_state(self.new_state)
+            await shared.state_handler.change_state(self.new_state)

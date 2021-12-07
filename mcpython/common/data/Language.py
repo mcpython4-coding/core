@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import typing
 
 import mcpython.engine.ResourceLoader
@@ -57,9 +58,9 @@ class Language:
     """
 
     @classmethod
-    def from_file(cls, file: str, name=None):
+    async def from_file(cls, file: str, name=None):
         """
-        will load an file into the system
+        will load a file into the system
         :param file: the file to load, as ResourceLocate-able
         :param name: the name of the language to use or None for generation from file name
         """
@@ -69,7 +70,7 @@ class Language:
             except ValueError:
                 return
 
-            Language.from_data(
+            await Language.from_data(
                 file.split("/")[-1].split(".")[0] if name is None else name,
                 data,
             )
@@ -79,7 +80,7 @@ class Language:
             )
 
     @classmethod
-    def from_old_data(cls, file: str, name=None):
+    async def from_old_data(cls, file: str, name=None):
         """
         will load an file from the old format into the system
         :param file: the file to load
@@ -113,7 +114,7 @@ class Language:
             language.table[pre] = "=".join(post)
 
     @classmethod
-    def from_data(cls, name: str, data: dict):
+    async def from_data(cls, name: str, data: dict):
         """
         will load data into the system
         :param name: the name to load under
@@ -152,15 +153,13 @@ def from_directory(directory: str, modname: str):
         if f.endswith(".json"):  # new language format
             shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:language",
-                Language.from_file,
-                f[:],
+                Language.from_file(f[:]),
                 info="loading language file {} ({}/{})".format(f, i + 1, m),
             )
         elif f.endswith(".lang"):  # old language format
             shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:language",
-                Language.from_old_data,
-                f[:],
+                Language.from_old_data(f[:]),
                 info="loading language file {} ({}/{})".format(f, i + 1, m),
             )
 

@@ -28,14 +28,14 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
         shared.world.world_loaded = False
         shared.ENABLE_ANIMATED_TEXTURES = True
 
     @staticmethod
     def on_new_game_press(x, y):
-        shared.state_handler.change_state("minecraft:world_selection", immediate=False)
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_selection", immediate=False))
 
     @staticmethod
     def on_quit_game_press(x, y):
@@ -44,21 +44,21 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
     @staticmethod
     def on_key_press(key, modifier):
         if key == pyglet.window.key.ENTER:
-            shared.state_handler.change_state(
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state(
                 "minecraft:world_selection", immediate=False
-            )
+            ))
 
     @staticmethod
     def on_multiplayer_press(x, y):
-        shared.state_handler.change_state("minecraft:server_selection")
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:server_selection"))
 
 
 start_menu = None
 
 
-def create():
+async def create():
     global start_menu
     start_menu = StartMenu()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

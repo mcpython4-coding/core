@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import functools
 import time
 
@@ -55,9 +56,9 @@ class EscapeMenu(AbstractState.AbstractState):
                 (0, 150),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=lambda *_: shared.state_handler.change_state(
+                on_press=lambda *_: asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state(
                     "minecraft:game", immediate=False
-                ),
+                )),
             ),
             UIPartButton.UIPartButton(
                 (250, 25),
@@ -94,9 +95,9 @@ class EscapeMenu(AbstractState.AbstractState):
             shared.world.save_file.save_world(override=True)
 
         shared.world.setup_by_filename("tmp")
-        shared.world.cleanup()
+        asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
         shared.event_handler.call("on_game_leave")
-        shared.state_handler.change_state("minecraft:start_menu", immediate=False)
+        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu", immediate=False))
 
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
@@ -104,10 +105,10 @@ class EscapeMenu(AbstractState.AbstractState):
     @staticmethod
     def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.change_state("minecraft:game", immediate=False)
+            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:game", immediate=False))
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
         if not shared.IS_NETWORKING:
             pyglet.clock.schedule_once(shared.world.save_file.save_world, 0.1)
@@ -116,9 +117,9 @@ class EscapeMenu(AbstractState.AbstractState):
 escape = None
 
 
-def create():
+async def create():
     global escape
     escape = EscapeMenu()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

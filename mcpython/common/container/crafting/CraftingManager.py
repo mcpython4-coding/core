@@ -115,7 +115,7 @@ class CraftingManager:
             )
             return None
 
-    def add_recipe_from_file(self, file: str):
+    async def add_recipe_from_file(self, file: str):
         try:
             data = mcpython.engine.ResourceLoader.read_raw(file).decode("utf-8")
         except:
@@ -150,7 +150,7 @@ class CraftingManager:
                 )
             )
 
-    def load(self, modname: str, check_mod_dirs=True, load_direct=False):
+    async def load(self, modname: str, check_mod_dirs=True, load_direct=False):
         if modname in self.loaded_mod_dirs and check_mod_dirs:
             logger.println(
                 "ERROR: mod '{}' has tried to load crafting recipes twice or more".format(
@@ -169,14 +169,13 @@ class CraftingManager:
             if not load_direct:
                 shared.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:recipe:on_bake",
-                    self.add_recipe_from_file,
-                    file,
+                    self.add_recipe_from_file(file),
                     info="loading crafting recipe from {}".format(file),
                 )
             else:
-                self.add_recipe_from_file(file)
+                await self.add_recipe_from_file(file)
 
-    def reload_crafting_recipes(self):
+    async def reload_crafting_recipes(self):
         if not shared.event_handler.call_cancelable(
             "crafting_manager:reload:pre", self
         ):
@@ -204,7 +203,7 @@ class CraftingManager:
                 ),
                 end="",
             )
-            self.load(modname, check_mod_dirs=False, load_direct=True)
+            await self.load(modname, check_mod_dirs=False, load_direct=True)
         print()
 
         for recipe in self.static_recipes:
@@ -310,7 +309,7 @@ class CraftingManager:
 shared.crafting_handler = CraftingManager()
 
 
-def load_recipe_providers():
+async def load_recipe_providers():
     from . import (
         FurnaceCraftingHelper,
         GridRecipeInstances,
@@ -324,6 +323,6 @@ if not shared.IS_TEST_ENV:
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
         "stage:recipe:groups",
-        load_recipe_providers,
+        load_recipe_providers(),
         info="loading crafting recipe groups",
     )

@@ -20,7 +20,7 @@ from mcpython import shared
 from mcpython.util.enums import ToolType
 
 
-def load_item():
+async def load_item():
     template = (
         mcpython.common.factory.ItemFactory.ItemFactory()
         .set_global_mod_name("minecraft")
@@ -278,5 +278,5 @@ def load_item():
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:item:factory_usage", load_item, info="generating items"
+    "stage:item:factory_usage", load_item(), info="generating items"
 )

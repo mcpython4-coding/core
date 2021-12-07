@@ -73,7 +73,7 @@ class TestClient2ServerHandshake(TestCase):
         self.assertEqual(package2.player_name, "test:player")
         self.assertEqual(package2.game_version, 123235)
 
-    def test_handle_inner_compatible(self):
+    async def test_handle_inner_compatible(self):
         from mcpython import shared
         from mcpython.common.network.packages.HandShakePackage import (
             Client2ServerHandshake,
@@ -94,13 +94,13 @@ class TestClient2ServerHandshake(TestCase):
         package.setup("test:player")
         package.answer = answer
 
-        package.handle_inner()
+        await package.handle_inner()
 
         self.assertIsNotNone(handshake_back)
         self.assertTrue(handshake_back.accept_connection)
         # todo: can we check more?
 
-    def test_handle_inner_incompatible(self):
+    async def test_handle_inner_incompatible(self):
         import mcpython.common.config
         from mcpython import shared
         from mcpython.common.network.packages.HandShakePackage import (
@@ -124,7 +124,7 @@ class TestClient2ServerHandshake(TestCase):
 
         mcpython.common.config.VERSION_ID += 3
 
-        package.handle_inner()
+        await package.handle_inner()
 
         self.assertIsNotNone(handshake_back)
         self.assertFalse(handshake_back.accept_connection)

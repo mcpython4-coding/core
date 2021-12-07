@@ -68,5 +68,5 @@ class AbstractPackage:
 
         shared.NETWORK_MANAGER.send_package(package, self.sender_id)
 
-    def handle_inner(self):
+    async def handle_inner(self):
         pass

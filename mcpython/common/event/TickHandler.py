@@ -11,8 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import random
 import sys
+import typing
 
 import mcpython.common.config
 import mcpython.common.data.DataPacks
@@ -80,11 +82,11 @@ class TickHandler:
 
         if shared.IS_CLIENT:
             shared.event_handler.call("tickhandler:client")
-            shared.NETWORK_MANAGER.fetch_as_client()
+            asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.fetch_as_client())
             animation_manager.tick(dt * 20)
         else:
             shared.event_handler.call("tickhandler:server")
-            shared.NETWORK_MANAGER.fetch_as_server()
+            asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.fetch_as_server())
 
         # todo: include command info here!
         mcpython.common.data.DataPacks.datapack_handler.try_call_function(
@@ -96,7 +98,11 @@ class TickHandler:
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
             try:
-                func(*args, **kwargs)
+
+                if not isinstance(func, typing.Awaitable):
+                    func(*args, **kwargs)
+                else:
+                    asyncio.get_event_loop().run_until_complete(func)
 
             except (SystemExit, KeyboardInterrupt, OSError) as e:
                 print(e)

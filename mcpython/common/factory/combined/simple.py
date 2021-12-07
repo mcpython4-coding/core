@@ -400,7 +400,7 @@ class CombinedFactoryInstance:
         model_name = "{}:block/{}".format(*name.split(":"))
 
         @shared.mod_loader(mod_name, self.block_phase)
-        def block_instance():
+        async def block_instance():
             import mcpython.common.factory.BlockFactory
 
             instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name(
@@ -417,12 +417,12 @@ class CombinedFactoryInstance:
         if shared.IS_CLIENT:
 
             @shared.mod_loader(mod_name, "stage:model:model_search")
-            def block_model():
+            async def block_model():
                 for variant in states:
                     self.inner_generate_model(variant, model_name)
 
             @shared.mod_loader(mod_name, "stage:model:blockstate_search")
-            def block_state():
+            async def block_state():
                 data = {
                     "variants": {
                         variant["state"]: {
@@ -639,7 +639,7 @@ class CombinedFactoryInstance:
         model_name = "{}:block/{}".format(*name.split(":"))
 
         @shared.mod_loader(mod_name, self.block_phase)
-        def block_instance():
+        async def block_instance():
             import mcpython.common.factory.BlockFactory
 
             instance = mcpython.common.factory.BlockFactory.BlockFactory().set_name(
@@ -649,19 +649,19 @@ class CombinedFactoryInstance:
                 block_factory_consumer(self, instance)
 
             if self.deferred_registry is None:
-                instance.finish()
+                await instance.finish_async()
             else:
                 self.deferred_registry.create_later(instance)
 
         if shared.IS_CLIENT:
 
             @shared.mod_loader(mod_name, "stage:model:model_search")
-            def block_model():
+            async def block_model():
                 for part in parts:
                     self.inner_generate_model(part, model_name)
 
             @shared.mod_loader(mod_name, "stage:model:blockstate_search")
-            def block_state():
+            async def block_state():
                 data = {
                     "multipart": [
                         {

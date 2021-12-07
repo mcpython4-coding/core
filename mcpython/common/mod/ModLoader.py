@@ -434,7 +434,7 @@ class ModLoader:
             print("Hello world!")
         """
         return lambda function: self.mods[modname].eventbus.subscribe(
-            event_name, function, *args, **kwargs
+            event_name, function() if callable(function) else function, *args, **kwargs
         )
 
     def __getitem__(self, item: str):
@@ -725,7 +725,7 @@ class ModLoader:
             stage.active_event in instance.eventbus.event_subscriptions
             and len(instance.eventbus.event_subscriptions[stage.active_event]) > 0
         ):
-            f, _, _, text = instance.eventbus.event_subscriptions[stage.active_event][0]
+            f, text = instance.eventbus.event_subscriptions[stage.active_event][0]
         else:
             f, text = None, ""
 

@@ -123,7 +123,7 @@ class TextureAtlasGenerator:
             single_atlas=single_atlas,
         )
 
-    def output(self):
+    async def output(self):
         # todo: add per-mod, at end of every processing of models
 
         shared.event_handler.call("minecraft:textures:atlas:build", self)
@@ -254,4 +254,4 @@ class TextureAtlas:
 handler = TextureAtlasGenerator()
 
 if shared.IS_CLIENT:
-    shared.mod_loader("minecraft", "stage:textureatlas:on_bake")(handler.output)
+    shared.mod_loader("minecraft", "stage:textureatlas:on_bake")(handler.output())

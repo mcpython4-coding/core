@@ -57,7 +57,7 @@ data_serializer_registry = mcpython.common.event.Registry.Registry(
 
 
 @shared.mod_loader("minecraft", "stage:serializer:parts")
-def load():
+async def load():
     from mcpython.common.world.serializer import (
         Chunk,
         GameRule,

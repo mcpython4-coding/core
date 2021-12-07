@@ -43,6 +43,6 @@ class PackageReroute(AbstractPackage):
             shared.NETWORK_MANAGER.encode_package(self.inner_package), size_size=4
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         # todo: can we prevent the encoding / decoding bit (we are routing, encoding should be equal)
         shared.NETWORK_MANAGER.send_package(self.inner_package, self.route_target)

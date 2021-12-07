@@ -318,6 +318,9 @@ class FactoryBuilder:
 
             return BuildTarget
 
+        async def finish_async(self):
+            return self.finish()
+
         def __repr__(self):
             return f"FactoryInstance(of={self.master.name},name={self.config_table['name']})"
 

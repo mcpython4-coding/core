@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import random
 import typing
 
@@ -103,7 +104,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
         self.world_generation_process.run_tasks()
 
-    def add_player(
+    async def add_player(
         self,
         name: str,
         add_inventories: bool = True,
@@ -130,7 +131,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             dimension=dimension,
         )
         if add_inventories:
-            self.players[name].create_inventories()
+            await self.players[name].create_inventories()
         return self.players[name]
 
     @onlyInClient()
@@ -142,18 +143,36 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         :param create: if the player should be created or not (by calling add_player())
         :return: the player instance or None if no player with the name is arrival
         """
-        if not create and self.local_player is None:
+        if not create and (self.local_player is None or self.local_player not in self.players):
             return
 
         return (
             self.players[self.local_player]
             if self.local_player in self.players
-            else self.add_player(self.local_player)
+            else asyncio.get_event_loop().run_until_complete(self.add_player(self.local_player))
+        )
+
+    @onlyInClient()
+    async def get_active_player_async(
+        self, create: bool = True
+    ) -> typing.Union[mcpython.common.entity.PlayerEntity.PlayerEntity, None]:
+        """
+        Returns the player instance for this client
+        :param create: if the player should be created or not (by calling add_player())
+        :return: the player instance or None if no player with the name is arrival
+        """
+        if not create and (self.local_player is None or self.local_player not in self.players):
+            return
+
+        return (
+            self.players[self.local_player]
+            if self.local_player in self.players
+            else await self.add_player(self.local_player)
         )
 
     def get_player_by_name(self, name: str):
         if name not in self.players:
-            self.add_player(name)
+            asyncio.get_event_loop().run_until_complete(self.add_player(name))
 
         return self.players[name]
 
@@ -576,7 +595,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                             chunk
                         )
 
-    def cleanup(self, remove_dims=False, filename=None):
+    async def cleanup(self, remove_dims=False, filename=None):
         """
         Will clean up the world
         :param remove_dims: if dimensions should be cleared
@@ -603,9 +622,12 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         self.reset_config()
 
         if shared.IS_CLIENT:
-            shared.world.get_active_player().flying = False
-            for inv in shared.world.get_active_player().get_inventories():
-                inv.clear()
+            player = shared.world.get_active_player(create=False)
+
+            if player is not None:
+                player.flying = False
+                for inv in shared.world.get_active_player().get_inventories():
+                    inv.clear()
 
         self.spawn_point = (random.randint(0, 15), random.randint(0, 15))
         shared.world_generation_handler.task_handler.clear()

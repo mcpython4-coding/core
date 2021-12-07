@@ -79,8 +79,8 @@ class ModLoadingProgress(AbstractState.AbstractState):
     def on_update(self, dt):
         shared.mod_loader.process()
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
 
         if shared.IS_CLIENT:
             shared.world.get_active_player().init_creative_tabs()

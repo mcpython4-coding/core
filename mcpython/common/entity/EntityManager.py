@@ -131,7 +131,7 @@ class EntityManager:
         self.entity_map.clear()
 
 
-def load():
+async def load():
     from mcpython.common.entity import AbstractEntity, FallingBlockEntity, ItemEntity
 
     shared.registry(FallingBlockEntity.FallingBlockEntity)
@@ -144,4 +144,4 @@ if not shared.IS_TEST_ENV:
 
     import mcpython.common.mod.ModMcpython
 
-    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load)
+    mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:entities", load())
