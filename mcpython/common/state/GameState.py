@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import time
 
 import mcpython.client.gui.ContainerRenderingManager
@@ -76,7 +77,7 @@ class Game(AbstractState.AbstractState):
             asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:escape_menu"))
 
         elif symbol == key.R:
-            shared.inventory_handler.reload_config()
+            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.reload_config())
 
         elif symbol == key.E:
             if (
@@ -85,16 +86,16 @@ class Game(AbstractState.AbstractState):
             ):
                 if shared.window.exclusive:
                     shared.event_handler.call("on_player_inventory_open")
-                    shared.inventory_handler.show(
+                    asyncio.get_event_loop().run_until_complete(shared.inventory_handler.show(
                         shared.world.get_active_player().inventory_main
-                    )
+                    ))
                     self.parts[0].activate_mouse = False
 
             else:
                 shared.event_handler.call("on_player_inventory_close")
-                shared.inventory_handler.hide(
+                asyncio.get_event_loop().run_until_complete(shared.inventory_handler.hide(
                     shared.world.get_active_player().inventory_main
-                )
+                ))
 
         elif symbol == key.T and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(self.open_chat, 2)

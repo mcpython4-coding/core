@@ -141,11 +141,11 @@ class ModelHandler:
 
     async def build(self, immediate=False):
         [
-            self.let_subscribe_to_build(model, immediate=immediate)
+            await self.let_subscribe_to_build(model, immediate=immediate)
             for model in self.used_models
         ]
 
-    def let_subscribe_to_build(self, model, immediate=False):
+    async def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
 
         if modname == "alias":
@@ -158,7 +158,7 @@ class ModelHandler:
             modname = "minecraft"
 
         if immediate:
-            asyncio.get_event_loop().run_until_complete(self.special_build(model))
+            await self.special_build(model)
         else:
             shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:model_bake_prepare",
@@ -224,15 +224,8 @@ class ModelHandler:
         self.dependence_list.clear()  # decrease memory usage
 
         for x in list(set(sorted_models)):
-            modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
-            if immediate:
-                asyncio.get_event_loop().run_until_complete(self.load_model(x))
-            else:
-                shared.mod_loader.mods[modname].eventbus.subscribe(
-                    "stage:model:model_bake",
-                    self.load_model(x),
-                    info="baking model '{}'".format(x),
-                )
+            # modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
+            await self.load_model(x)
 
     async def load_model(self, name: str):
         if ":" not in name:
@@ -406,7 +399,7 @@ class ModelHandler:
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)
 
-    def reload_models(self):
+    async def reload_models(self):
         logger.println("deleting content of models...")
 
         # clear the structures holding the data...
@@ -419,7 +412,7 @@ class ModelHandler:
 
         logger.println("loading models...")
         # and now start reloading models...
-        asyncio.get_event_loop().run_until_complete(self.search())
+        await self.search()
         mcpython.client.rendering.model.BlockState.BlockStateContainer.TO_CREATE.clear()
         mcpython.client.rendering.model.BlockState.BlockStateContainer.NEEDED.clear()
 
@@ -430,7 +423,7 @@ class ModelHandler:
         ) in (
             mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
         ):
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
+            await mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
                 directory, modname, immediate=True
             )
 
@@ -440,16 +433,15 @@ class ModelHandler:
             name,
             force,
         ) in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA:
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
+            await mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
                 name, data, immediate=True, force=force
             )
 
-        shared.event_handler.call("minecraft:data:blockstates:custom_injection", self)
-        shared.event_handler.call("minecraft:data:models:custom_injection", self)
+        await shared.event_handler.call_async("minecraft:data:blockstates:custom_injection", self)
 
         logger.println("walking across requested models...")
-        asyncio.get_event_loop().run_until_complete(self.build(immediate=True))
-        asyncio.get_event_loop().run_until_complete(self.process_models(immediate=True))
+        await self.build(immediate=True)
+        await self.process_models(immediate=True)
         animation_manager.bake()
 
         logger.println("finished!")

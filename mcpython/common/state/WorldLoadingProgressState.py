@@ -114,14 +114,14 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
         logger.println("[WORLD LOADING][INFO] preparing for world loading...")
         try:
-            shared.world.save_file.load_world()
+            await shared.world.save_file.load_world_async()
 
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
             logger.println(
                 "Failed to load world. data-fixer Failed with NoDataFixerFoundException"
             )
-            asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+            await shared.world.cleanup()
+            await shared.state_handler.change_state("minecraft:start_menu")
             return
 
         except (SystemExit, KeyboardInterrupt, OSError):
@@ -129,8 +129,8 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
         except:
             logger.print_exception("Failed to load world; Failed in inital loading")
-            asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+            await shared.world.cleanup()
+            await shared.state_handler.change_state("minecraft:start_menu")
             return
 
         for cx in range(-3, 4):
@@ -145,7 +145,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         await super().deactivate()
 
         if shared.IS_CLIENT:
-            player = shared.world.get_active_player_async()
+            player = await shared.world.get_active_player_async()
             player.teleport(player.position, force_chunk_save_update=True)
 
     def bind_to_eventbus(self):

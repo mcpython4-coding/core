@@ -128,12 +128,12 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
 
         self.slots[-2].get_itemstack().clean()
 
-    def on_activate(self):
+    async def on_activate(self):
         if shared.world.get_active_player().gamemode == 1:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
             mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
 
-    def on_deactivate(self):
+    async def on_deactivate(self):
         self.remove_items_from_crafting()
         shared.state_handler.active_state.parts[0].activate_mouse = True
 

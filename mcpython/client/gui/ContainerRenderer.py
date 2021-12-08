@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import random
 import typing
 import uuid
@@ -115,7 +116,6 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
         self.uuid = uuid.uuid4()
-        shared.inventory_handler.add(self)
         self.slots: typing.List[ISlot] = self.create_slot_renderers()
 
         for slot in self.slots:
@@ -124,10 +124,12 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         # todo: add special class holding this information with serializer for it
         self.config = {}
 
-        self.reload_config()
+        # asyncio.get_event_loop().run_until_complete(self.reload_config())
         self.custom_name = None  # the custom name; If set, rendered in the inventory
         self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
         self.custom_name_label.anchor_y = "top"
+
+        shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
 
     def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.active)
@@ -163,7 +165,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
     ) -> bool:
         return False
 
-    def reload_config(self):
+    async def reload_config(self):
         """
         Reload the config file
         """
@@ -321,12 +323,12 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
         return 0 <= x - px <= sx and 0 <= y - py <= sy
 
-    def on_activate(self):
+    async def on_activate(self):
         """
         Called when the inventory is shown
         """
 
-    def on_deactivate(self):
+    async def on_deactivate(self):
         """
         Called when the inventory is hidden
         """
@@ -374,10 +376,10 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
             self.custom_name_label.draw()
 
     # todo: remove
-    def on_world_cleared(self):
+    async def on_world_cleared(self):
         [slot.get_itemstack().clean() for slot in self.slots]
         if self in shared.inventory_handler.open_containers:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def get_interaction_slots(self):
         return self.slots

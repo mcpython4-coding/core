@@ -233,8 +233,8 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def on_output_update(self, player=False):
         self.update_status()
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         try:
             mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
                 "user:keyboard:press", self.on_key_press
@@ -252,8 +252,8 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             "tickhandler:general", self.on_tick
         )
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         shared.world.get_active_player().reset_moving_slot()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press

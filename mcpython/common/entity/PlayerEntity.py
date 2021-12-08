@@ -293,6 +293,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         import mcpython.client.gui.MainPlayerInventory as Main
 
         self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar.create(self)
+        await self.inventory_hotbar.reload_config()
         self.inventory_main = Main.MainPlayerInventory.create(self.inventory_hotbar)
         self.inventory_chat = Chat.ChatInventory()
         self.inventory_enderchest = Chest.InventoryChest()

@@ -63,14 +63,14 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
         # base_slots = shared.world.get_active_player().inventory_main.slots[:36]
         return [mcpython.client.gui.Slot.Slot() for _ in range(10)]
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         for slot in self.slots[:-1]:
             shared.world.get_active_player().pick_up_item(slot.get_itemstack().copy())
             slot.get_itemstack().clean()

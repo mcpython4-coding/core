@@ -74,11 +74,11 @@ class ImageOverlayButtonRenderer:
             and 0 <= y - self.position[1] <= self.size[1]
         )
 
-    def activate(self):
+    async def activate(self):
         self.hovering = self.over_button(*shared.window.mouse_position)
         self.underlying_event_bus.activate()
 
-    def deactivate(self):
+    async def deactivate(self):
         self.underlying_event_bus.deactivate()
 
     def draw(self):

@@ -196,10 +196,10 @@ class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRende
     def create_slot_renderers(self) -> list:
         return [mcpython.client.gui.Slot.Slot() for _ in range(9)]
 
-    def on_activate(self):
+    async def on_activate(self):
         pass
 
-    def on_deactivate(self):
+    async def on_deactivate(self):
         pass
 
     def draw(self, hovering_slot=None):

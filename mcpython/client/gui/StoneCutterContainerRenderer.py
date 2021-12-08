@@ -89,14 +89,14 @@ class StoneCutterContainerRenderer(
     def get_config_file() -> str or None:
         return "assets/config/inventory/block_inventory_stonecutter.json"
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )

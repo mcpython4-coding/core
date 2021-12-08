@@ -51,7 +51,7 @@ class ContainerInteraction(TestCase):
     def tearDown(self) -> None:
         shared.window = None
 
-    def test_key_forward(self):
+    async def test_key_forward(self):
         inventory = Inventory()
 
         invoked = False
@@ -70,15 +70,15 @@ class ContainerInteraction(TestCase):
         inventory.add_slot(s)
         s.on_button_press = test
 
-        shared.inventory_handler.add(inventory)
-        shared.inventory_handler.show(inventory)
+        await shared.inventory_handler.add(inventory)
+        await shared.inventory_handler.show(inventory)
 
         shared.window.mouse_position = 52, 56
 
         self.interaction_manager.on_key_press(10, 20)
         self.assertTrue(invoked)
 
-    def test_key_forward_not_hit(self):
+    async def test_key_forward_not_hit(self):
         inventory = Inventory()
 
         invoked = False
@@ -92,8 +92,8 @@ class ContainerInteraction(TestCase):
         inventory.add_slot(s)
         s.on_button_press = test
 
-        shared.inventory_handler.add(inventory)
-        shared.inventory_handler.show(inventory)
+        await shared.inventory_handler.add(inventory)
+        await shared.inventory_handler.show(inventory)
 
         shared.window.mouse_position = 20, 20
 

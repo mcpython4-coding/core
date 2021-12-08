@@ -69,13 +69,13 @@ class ChatInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 "<font color='white'>" + text + "<span>&#95;</span></font>"
             )
 
-    def on_activate(self):
+    async def on_activate(self):
         shared.chat.text = ""
         shared.chat.active_index = 0
         shared.chat.has_entered_t = False
         self.eventbus.activate()
 
-    def on_deactivate(self):
+    async def on_deactivate(self):
         self.eventbus.deactivate()
 
     def draw(self, hovering_slot=None):
@@ -215,7 +215,7 @@ class Chat:
         """
         closes the chat
         """
-        shared.inventory_handler.hide(shared.world.get_active_player().inventory_chat)
+        shared.tick_handler.schedule_once(shared.inventory_handler.hide(shared.world.get_active_player().inventory_chat))
         self.active_index = 0
 
     def clear(self):

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import itertools
 import math
 import typing
@@ -85,14 +86,14 @@ class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC
             self.custom_name_label.y = y + self.bg_image_size[1] - 10
             self.custom_name_label.draw()
 
-    def on_activate(self):
-        super().on_activate()
-        CT_MANAGER.activate()
+    async def on_activate(self):
+        await super().on_activate()
+        await CT_MANAGER.activate()
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         shared.state_handler.active_state.parts[0].activate_mouse = True
-        CT_MANAGER.deactivate()
+        await CT_MANAGER.deactivate()
 
 
 class CreativeItemTab(ICreativeView):
@@ -246,12 +247,12 @@ class CreativeItemTab(ICreativeView):
     def clear(self):
         pass
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         self.scroll_bar.deactivate()
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         self.scroll_bar.activate()
         self.update_rendering(True)
 
@@ -324,12 +325,12 @@ class CreativeTabSearchBar(CreativeItemTab):
 
         ResourcePipe.handler.register_data_processor(setNeedReload)
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         self.search_bar.disable()
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         self.group.apply_raw_filter("(.*)")
 
         if self.need_reload:
@@ -495,7 +496,7 @@ class CreativeTabManager:
                 "Search", ItemStack("minecraft:paper")
             )
 
-    def activate(self):
+    async def activate(self):
         mcpython.common.event.TickHandler.handler.bind(
             self.underlying_event_bus.activate, 1
         )
@@ -504,7 +505,7 @@ class CreativeTabManager:
             self.page_left.activate()
             self.page_right.activate()
 
-    def deactivate(self):
+    async def deactivate(self):
         self.underlying_event_bus.deactivate()
         self.page_left.deactivate()
         self.page_right.deactivate()
@@ -515,7 +516,7 @@ class CreativeTabManager:
 
         tab = self.get_tab_at(mx, my)
         if tab is not None:
-            self.switch_to_tab(tab)
+            asyncio.get_event_loop().run_until_complete(self.switch_to_tab(tab))
 
     def get_tab_at(self, mx, my) -> typing.Optional[ICreativeView]:
         tx, ty = self.TAB_SIZE
@@ -635,7 +636,7 @@ class CreativeTabManager:
         if self.current_tab is None:
             self.init_tabs_if_needed()
 
-            self.switch_to_tab(self.inventory_instance)
+            asyncio.get_event_loop().run_until_complete(self.switch_to_tab(self.inventory_instance))
         else:
             shared.inventory_handler.show(self.current_tab)
 
@@ -643,9 +644,9 @@ class CreativeTabManager:
         previous = self.current_page
         self.current_page = max(0, min(self.current_page + count, len(self.pages) - 1))
         if previous != self.current_page:
-            self.switch_to_tab(self.pages[self.current_page][0])
+            asyncio.get_event_loop().run_until_complete(self.switch_to_tab(self.pages[self.current_page][0]))
 
-    def switch_to_tab(self, tab: ICreativeView):
+    async def switch_to_tab(self, tab: ICreativeView):
         if self.current_tab is not None:
             shared.inventory_handler.hide(self.current_tab)
             self.current_tab.is_selected = False
@@ -653,7 +654,7 @@ class CreativeTabManager:
         self.current_tab = tab
 
         tab.is_selected = True
-        shared.inventory_handler.show(tab)
+        await shared.inventory_handler.show(tab)
 
     def print_missing(self):
         for page in self.pages:

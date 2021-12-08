@@ -137,7 +137,7 @@ class Chest(
                 )
                 self.loot_table_link = None
 
-            shared.inventory_handler.show(self.inventory)
+            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.show(self.inventory))
             return True
         else:
             return False

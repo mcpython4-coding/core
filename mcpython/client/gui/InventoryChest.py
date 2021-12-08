@@ -55,8 +55,8 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         if self.custom_name is None and block is not None:
             self.custom_name = block.DEFAULT_DISPLAY_NAME
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -67,8 +67,8 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
             self.block.face_info.custom_renderer.play_open_animation(self.block)
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )

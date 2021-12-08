@@ -140,7 +140,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         # Have we nothing to do -> We can stop here
         if len(self.tasks) == 0:
-            self.close()
+            await self.close()
             return
 
         # We want to hide this error messages
@@ -257,22 +257,22 @@ class BlockItemGenerator(AbstractState.AbstractState):
         ItemManager.ITEM_ATLAS.load()
         await ItemModel.handler.bake()
 
-    def close(self):
-        player = shared.world.get_active_player(create=False)
+    async def close(self):
+        player = await shared.world.get_active_player_async(create=False)
 
         if player is not None:
             player.position = (0, 10, 0)
             player.rotation = (0, 0, 0)
             player.dimension.remove_block((0, 0, 0))
 
-            if shared.event_handler.call_cancelable("stage_handler:loading2main_menu"):
-                asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+        if shared.event_handler.call_cancelable("stage_handler:loading2main_menu"):
+            await shared.state_handler.change_state("minecraft:start_menu")
 
     def add_new_screen(self, *args):
         self.block_index += 1
 
         if self.block_index >= len(self.tasks):
-            self.close()
+            asyncio.get_event_loop().run_until_complete(self.close())
             return
 
         dimension = shared.world.get_active_dimension()

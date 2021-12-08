@@ -38,8 +38,8 @@ class InventorySingleRecipeView(
         self.renderer = renderer
         return self
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         assert self.renderer is not None
 
     def draw(self, hovering_slot=None):
@@ -78,8 +78,8 @@ class InventoryMultiRecipeView(mcpython.client.gui.ContainerRenderer.ContainerRe
         self.renderers.append(renderer)
         return self
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         assert self.renderers
         self.bg_anchor = "MM"
         self.window_anchor = "MM"

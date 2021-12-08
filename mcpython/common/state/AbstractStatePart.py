@@ -61,14 +61,14 @@ class AbstractStatePart(ABC):
 
     async def activate(self):
         for part in self.parts:
-            part.activate()
+            await part.activate()
 
         if self.state_renderer is not None:
             self.state_renderer.on_activate()
 
     async def deactivate(self):
         for part in self.parts:
-            part.deactivate()
+            await part.deactivate()
 
         if self.state_renderer is not None:
             self.state_renderer.on_deactivate()

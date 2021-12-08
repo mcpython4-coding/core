@@ -88,10 +88,10 @@ class MultiPartDecoder(IBlockStateDecoder):
         if "alias" in data:
             self.model_alias = data["alias"]
 
-    def bake(self):
+    async def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
             try:
-                parent: BlockStateContainer = BlockStateContainer.get_or_load(
+                parent: BlockStateContainer = await BlockStateContainer.get_or_load(
                     self.parent
                 )
             except FileNotFoundError:
@@ -504,9 +504,9 @@ class DefaultDecoder(IBlockStateDecoder):
         if "alias" in data:
             self.model_alias = data["alias"]
 
-    def bake(self):
+    async def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
-            parent: BlockStateContainer = BlockStateContainer.get_or_load(self.parent)
+            parent: BlockStateContainer = await BlockStateContainer.get_or_load(self.parent)
             if not parent.baked:
                 return False
 
@@ -698,7 +698,7 @@ class BlockStateContainer:
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
-            return cls("{}:{}".format(modname, s[-1].split(".")[0])).parse_data(
+            return await cls("{}:{}".format(modname, s[-1].split(".")[0])).parse_data(
                 mcpython.engine.ResourceLoader.read_json(file)
             )
         except BlockStateNotNeeded:
@@ -709,7 +709,7 @@ class BlockStateContainer:
             )
 
     @classmethod
-    def from_data(
+    async def from_data(
         cls,
         name: str,
         data: typing.Dict[str, typing.Any],
@@ -722,23 +722,22 @@ class BlockStateContainer:
             cls.RAW_DATA.append((data, name, force))
 
         if immediate:
-            cls.unsafe_from_data(name, data, force=force)
+            await cls.unsafe_from_data(name, data, force=force)
         else:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:model:blockstate_create",
-                cls.unsafe_from_data,
-                name,
-                data,
+                cls.unsafe_from_data(name, data),
                 info="loading block state '{}' from raw data".format(name),
                 force=force,
             )
 
     @classmethod
-    def unsafe_from_data(
+    async def unsafe_from_data(
         cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, force=False
     ):
         try:
-            instance = cls(name, immediate=immediate, force=force).parse_data(data)
+            instance = await cls(name, immediate=immediate, force=force).parse_data(data)
+            await instance.bake()
             return instance
         except BlockStateNotNeeded:
             pass  # do we need this model?
@@ -748,7 +747,7 @@ class BlockStateContainer:
             )
 
     @classmethod
-    def get_or_load(cls, name: str) -> "BlockStateContainer":
+    async def get_or_load(cls, name: str) -> "BlockStateContainer":
         if name in shared.model_handler.blockstates:
             return shared.model_handler.blockstates[name]
 
@@ -757,7 +756,7 @@ class BlockStateContainer:
             raise FileNotFoundError("for blockstate '{}'".format(name))
 
         data = mcpython.engine.ResourceLoader.read_json(file)
-        return cls.unsafe_from_data(name, data, immediate=True, force=True)
+        return await cls.unsafe_from_data(name, data, immediate=True, force=True)
 
     def __init__(self, name: str, immediate=False, force=False):
         self.name = name
@@ -782,10 +781,10 @@ class BlockStateContainer:
                 self.bake(),
                 info="baking block state {}".format(name),
             )
-        else:
-            asyncio.get_event_loop().run_until_complete(self.bake())
+        # else:
+            # asyncio.get_event_loop().run_until_complete(self.bake())
 
-    def parse_data(self, data: dict):
+    async def parse_data(self, data: dict):
         for loader in blockstate_decoder_registry.entries.values():
             if loader.is_valid(data):
                 self.loader: IBlockStateDecoder = loader(self)
@@ -800,7 +799,7 @@ class BlockStateContainer:
 
     async def bake(self):
         try:
-            if self.loader and not self.loader.bake():
+            if self.loader and not await self.loader.bake():
                 shared.mod_loader.mods[self.name.split(":")[0]].eventbus.subscribe(
                     "stage:model:blockstate_bake",
                     self.bake,

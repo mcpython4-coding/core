@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import itertools
 import typing
 
@@ -402,8 +403,8 @@ class OpenedInventoryStatePart(
             self.mode = 0
             shared.inventory_handler.moving_slot.itemstack.clean()
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
 
         if shared.IS_CLIENT:
             self.on_mouse_release(0, 0, 0, 0)
@@ -554,7 +555,7 @@ class InventoryHandler:
         for inventory in self.open_containers:
             inventory.update_shift_container()
 
-    def add(self, inventory):
+    async def add(self, inventory):
         """
         Adds a new inventory to the internal handling system
         :param inventory: the inventory to add
@@ -566,12 +567,12 @@ class InventoryHandler:
 
         if inventory.is_always_open():
             self.always_open_containers.append(inventory)
-            self.show(inventory)
+            await self.show(inventory)
 
-    def reload_config(self):
-        [inventory.reload_config() for inventory in self.containers]
+    async def reload_config(self):
+        await asyncio.gather(*[inventory.reload_config() for inventory in self.containers])
 
-    def show(self, inventory):
+    async def show(self, inventory):
         """
         Shows a inventory by adding it to the corresponding structure
         :param inventory: the inventory to show
@@ -580,12 +581,12 @@ class InventoryHandler:
             return
 
         self.open_containers.append(inventory)
-        inventory.on_activate()
+        await inventory.on_activate()
         self.update_shift_container()
 
         shared.event_handler.call("minecraft:inventory:show", inventory)
 
-    def hide(self, inventory, force=False):
+    async def hide(self, inventory, force=False):
         """
         Hides an inventory
         :param inventory: the inventory to hide
@@ -597,7 +598,7 @@ class InventoryHandler:
         if inventory in self.always_open_containers and not force:
             return
 
-        inventory.on_deactivate()
+        await inventory.on_deactivate()
         self.open_containers.remove(inventory)
         self.update_shift_container()
 

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import gc
 import typing
 
@@ -50,7 +51,7 @@ def model_mapper(modname, pathname):
 
 
 def model_bake():
-    shared.model_handler.build(immediate=True)
+    asyncio.get_event_loop().run_until_complete(shared.model_handler.build(immediate=True))
 
 
 def tag_mapper(modname, pathname):
@@ -151,6 +152,8 @@ class ResourcePipeHandler:
         if not shared.event_handler.call_cancelable("data:reload:cancel"):
             return
 
+        print("starting reload cycle...")
+
         mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
         await shared.tag_handler.reload()  # reloads all tags
         await shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
@@ -162,14 +165,14 @@ class ResourcePipeHandler:
         # as we are reloading, this may get mixed up...
         shared.crafting_handler.recipe_relink_table.clear()
         shared.loot_table_handler.relink_table.clear()
-        shared.event_handler.call("data:shuffle:clear")
+        await shared.event_handler.call_async("data:shuffle:clear")
 
         if mcpython.common.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
-            shared.event_handler.call("minecraft:data:shuffle:all")
+            await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
         if shared.IS_CLIENT:
-            shared.inventory_handler.reload_config()  # reloads inventory configuration
-            shared.model_handler.reload_models()
+            await shared.inventory_handler.reload_config()  # reloads inventory configuration
+            await shared.model_handler.reload_models()
             mcpython.engine.rendering.util.setup()
 
             # todo: regenerate block item images, regenerate item atlases
@@ -181,24 +184,37 @@ class ResourcePipeHandler:
         ]
 
         for function in self.reload_handlers:
-            function()
+            result = function()
+            if isinstance(result, typing.Awaitable):
+                await result
 
         for listener in self.listeners:
-            listener.on_unload()
-            listener.on_reload()
+            result = listener.on_unload()
+            if isinstance(result, typing.Awaitable):
+                await result
+
+            result = listener.on_reload()
+            if isinstance(result, typing.Awaitable):
+                await result
 
         for function in self.bake_handlers:
-            function()
+            result = function()
+            if isinstance(result, typing.Awaitable):
+                await result
 
         for listener in self.listeners:
-            listener.on_bake()
+            result = listener.on_bake()
+            if isinstance(result, typing.Awaitable):
+                await result
 
-        shared.event_handler.call("data:reload:work")
+        await shared.event_handler.call_async("data:reload:work")
 
         gc.collect()  # make sure that memory was cleaned up
 
         for function in self.data_processors:
-            function()
+            result = function()
+            if isinstance(result, typing.Awaitable):
+                await result
 
 
 handler = ResourcePipeHandler()

@@ -90,10 +90,10 @@ class AbstractContainer(IBufferSerializeAble, ABC):
     def is_blocking_interactions(self) -> bool:
         return True
 
-    def on_world_cleared(self):
+    async def on_world_cleared(self):
         [slot.get_itemstack().clean() for slot in self.slots]
         if self in shared.inventory_handler.open_containers:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def get_interaction_slots(self):
         return self.slots

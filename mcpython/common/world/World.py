@@ -176,6 +176,12 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
         return self.players[name]
 
+    async def get_player_by_name_async(self, name: str):
+        if name not in self.players:
+            await self.add_player(name)
+
+        return self.players[name]
+
     def player_iterator(self) -> typing.Iterable:
         return list(self.players.values())
 
@@ -271,10 +277,10 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         """
         logger.println("changing dimension to '{}'...".format(dim_id))
 
-        shared.event_handler.call("dimension:change:pre", self.active_dimension, dim_id)
+        await shared.event_handler.call_async("dimension:change:pre", self.active_dimension, dim_id)
 
         sector = mcpython.util.math.position_to_chunk(
-            shared.world.get_active_player().position
+            (await shared.world.get_active_player_async()).position
         )
         logger.println("unloading chunks...")
         await self.change_chunks_async(sector, None)
@@ -282,7 +288,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         self.active_dimension = dim_id
         logger.println("loading new chunks...")
         await self.change_chunks_async(None, sector)
-        shared.event_handler.call("dimension:change:post", old, dim_id)
+        await shared.event_handler.call_async("dimension:change:post", old, dim_id)
         logger.println("finished!")
 
     def get_dimension(
@@ -615,7 +621,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             shared.dimension_handler.init_dims()
 
         [
-            inventory.on_world_cleared()
+            await inventory.on_world_cleared()
             for inventory in shared.inventory_handler.containers
         ]
 
