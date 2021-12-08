@@ -33,7 +33,7 @@ data = (
         .of_name("shuffle")
         .info("shuffles the internal data links for fun; only for fun")
         .on_execution(
-            lambda env, d: shared.event_handler.call("minecraft:data:shuffle:all")
+            lambda env, d: shared.event_handler.call_async("minecraft:data:shuffle:all")
         )
     )
     .than(

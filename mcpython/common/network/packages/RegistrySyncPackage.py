@@ -51,7 +51,7 @@ class RegistrySyncInitPackage(AbstractPackage):
             e: -1 for e in self.registries
         }
 
-        shared.event_handler.call("minecraft:network:registry_sync:init", self)
+        await shared.event_handler.call_async("minecraft:network:registry_sync:init", self)
 
         for name in self.registries:
             registry = shared.registry.get_by_name(name)
@@ -112,7 +112,7 @@ class RegistrySyncPackage(AbstractPackage):
             for entry in shared.registry.get_by_name(self.name).entries.values()
         )
 
-        shared.event_handler.call(
+        await shared.event_handler.call_async(
             "minecraft:network:registry_sync:data_recv",
             self,
             entries_here,
@@ -203,7 +203,7 @@ class RegistrySyncResultPackage(AbstractPackage):
 
             else:
                 logger.println("[NETWORK][WARN] registry sync FAILED on server side")
-                shared.event_handler.call("minecraft:network:registry_sync:fail", self)
+                await shared.event_handler.call_async("minecraft:network:registry_sync:fail", self)
 
             self.answer(DisconnectionInitPackage().set_reason("registry sync fatal"))
             return

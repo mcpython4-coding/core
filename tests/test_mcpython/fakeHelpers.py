@@ -16,6 +16,8 @@ class FakeCraftingHandler:
 
 
 class FakeWorld:
+    entities = set()
+
     @classmethod
     def get_dimension_by_name(cls, name: str):
         return cls

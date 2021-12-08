@@ -16,6 +16,7 @@ from unittest import TestCase
 
 class FakeWorldAccess:
     def __init__(self):
+        self.entities = set()
         self.world = {}
 
     def add_block(self, position, block):

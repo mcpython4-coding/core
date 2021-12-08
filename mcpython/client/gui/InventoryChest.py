@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
@@ -93,7 +95,7 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventory_handler.hide(self)
+            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.hide(self))
 
     def update_shift_container(self):
         shared.inventory_handler.shift_container_handler.container_A = (

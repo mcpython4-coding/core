@@ -15,6 +15,7 @@ from unittest import TestCase
 
 
 class FakeWorld:
+    entities = set()
     @classmethod
     def add_player(cls, *_, **__):
         pass

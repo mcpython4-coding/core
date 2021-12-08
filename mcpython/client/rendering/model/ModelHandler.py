@@ -126,7 +126,7 @@ class ModelHandler:
             if name not in self.models:
                 self.found_models[name] = data
 
-        shared.event_handler.call("minecraft:model_handler:searched")
+        await shared.event_handler.call_async("minecraft:model_handler:searched")
 
     def add_from_data(self, name: str, data: dict, store=True):
         """

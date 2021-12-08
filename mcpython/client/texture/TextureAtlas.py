@@ -126,7 +126,7 @@ class TextureAtlasGenerator:
     async def output(self):
         # todo: add per-mod, at end of every processing of models
 
-        shared.event_handler.call("minecraft:textures:atlas:build", self)
+        await shared.event_handler.call_async("minecraft:textures:atlas:build", self)
         os.makedirs(shared.tmp.name + "/texture_atlases", exist_ok=True)
 
         for identifier in self.atlases:

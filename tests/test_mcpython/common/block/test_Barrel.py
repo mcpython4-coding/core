@@ -28,30 +28,6 @@ class TestBarrel(TestCase):
 
         self.assertEqual(mcpython.common.block.Barrel.Barrel.NAME, "minecraft:barrel")
 
-    async def test_on_block_added(self):
-        shared.crafting_handler = FakeCraftingHandler()
-        shared.world = FakeWorld
-
-        import mcpython.common.block.Barrel
-
-        shared.inventory_handler = FakeInventoryHandler
-
-        instance = mcpython.common.block.Barrel.Barrel()
-        instance.position = 0, 0, 0
-        instance.set_to = 0, -1, 0
-
-        await instance.on_block_added()
-
-        self.assertEqual(instance.face.normal_name, "down")
-
-        instance.set_to = 0, 0, 1
-
-        await instance.on_block_added()
-
-        self.assertEqual(instance.face.normal_name, "south")
-
-        shared.world = None
-
     async def test_on_player_interaction(self):
         shared.crafting_handler = FakeCraftingHandler()
 

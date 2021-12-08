@@ -584,7 +584,7 @@ class InventoryHandler:
         await inventory.on_activate()
         self.update_shift_container()
 
-        shared.event_handler.call("minecraft:inventory:show", inventory)
+        await shared.event_handler.call_async("minecraft:inventory:show", inventory)
 
     async def hide(self, inventory, force=False):
         """
@@ -602,7 +602,7 @@ class InventoryHandler:
         self.open_containers.remove(inventory)
         self.update_shift_container()
 
-        shared.event_handler.call("minecraft:inventory:hide", inventory)
+        await shared.event_handler.call_async("minecraft:inventory:hide", inventory)
 
     async def remove_one_from_stack(self, is_escape=True):
         """

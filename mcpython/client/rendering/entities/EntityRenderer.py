@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 import mcpython.client.rendering.model.BoxModel
 import mcpython.engine.ResourceLoader
 import pyglet
@@ -29,10 +31,10 @@ class EntityRenderer:
         self.box_models = {}
         self.states = {}
         self.texture_size = None
-        self.reload()
+        asyncio.get_event_loop().run_until_complete(self.reload())
         RENDERERS.append(self)
 
-    def reload(self):
+    async def reload(self):
         """
         reloads from file
         concept: every entity has an state which can be rendered (similar to blockstates). Every state contains multiple

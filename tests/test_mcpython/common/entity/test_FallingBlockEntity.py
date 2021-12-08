@@ -42,6 +42,7 @@ class TestFallingBlockEntity(TestCase):
         import mcpython.common.entity.FallingBlockEntity
 
         instance = mcpython.common.entity.FallingBlockEntity.FallingBlockEntity()
+        instance.chunk = FakeChunk
 
         self.assertFalse(instance.dead)
 

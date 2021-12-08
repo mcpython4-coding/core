@@ -244,7 +244,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         # todo: Global variable, so user can toggle in-game
         window.set_fullscreen("--fullscreen" in sys.argv)
 
-        shared.event_handler.call("stage:blockitemfactory:finish")
+        await shared.event_handler.call_async("stage:blockitemfactory:finish")
 
         TickHandler.handler.enable_tick_skipping = True
         shared.world.hide_faces_to_not_generated_chunks = True

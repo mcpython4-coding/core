@@ -69,12 +69,14 @@ class Chest(
             async def on_block_added(self):
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
                 self.face_info.update(True)
+                await self.inventory.reload_config()
 
         else:
 
             async def on_block_added(self):
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
                 self.face_info.update(True)
+                await self.inventory.reload_config()
 
     def __init__(self):
         """

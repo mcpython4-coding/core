@@ -149,13 +149,13 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         ffx = sx - fx
         ffy = sy - fy
 
-        shared.event_handler.call("on_world_generation_prepared")
+        await shared.event_handler.call_async("on_world_generation_prepared")
 
         seed = self.world_gen_config["seed"]
         shared.world.config["seed"] = seed
-        shared.event_handler.call("seed:set")
+        await shared.event_handler.call_async("seed:set")
 
-        shared.event_handler.call("on_world_generation_started")
+        await shared.event_handler.call_async("on_world_generation_started")
 
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
@@ -176,7 +176,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             chunk.is_ready = True
             chunk.visible = True
 
-        shared.event_handler.call("on_game_generation_finished")
+        await shared.event_handler.call_async("on_game_generation_finished")
         logger.println("[WORLD GENERATION] finished world generation")
 
         player_name = self.world_gen_config["player_name"]
@@ -227,7 +227,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             block_chest = overworld.add_block((x, height + 1, z), "minecraft:chest")
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
 
-        shared.event_handler.call("on_game_enter")
+        await shared.event_handler.call_async("on_game_enter")
 
         # add surrounding chunks to load list
         shared.world.change_chunks(
@@ -249,7 +249,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             mcpython.common.config.SHUFFLE_DATA
             and mcpython.common.config.SHUFFLE_INTERVAL > 0
         ):
-            shared.event_handler.call("minecraft:data:shuffle:all")
+            await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
         # reload all the data-packs
         mcpython.common.data.DataPacks.datapack_handler.reload()

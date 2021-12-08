@@ -24,7 +24,7 @@ from mcpython import shared
 from .abstract import AbstractReloadListener
 
 
-def recipe_mapper(modname, pathname):
+async def recipe_mapper(modname: str, pathname: str):
     import mcpython.common.container.crafting.CraftingManager
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
@@ -34,7 +34,7 @@ def recipe_mapper(modname, pathname):
     )
 
 
-def model_mapper(modname, pathname):
+async def model_mapper(modname: str, pathname: str):
     from mcpython.client.rendering.model.BlockState import BlockStateContainer
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
@@ -54,7 +54,7 @@ async def model_bake():
     await shared.model_handler.build(immediate=True)
 
 
-def tag_mapper(modname, pathname):
+async def tag_mapper(modname: str, pathname: str):
     import mcpython.common.data.serializer.tags.TagHandler
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
@@ -66,13 +66,13 @@ def tag_mapper(modname, pathname):
     )
 
 
-def language_mapper(modname, pathname):
+async def language_mapper(modname: str, pathname: str):
     import mcpython.common.data.Language
 
     mcpython.common.data.Language.from_mod_name(modname)
 
 
-def loot_table_mapper(modname, pathname):
+async def loot_table_mapper(modname: str, pathname: str):
     from mcpython.common.data.serializer.loot import (
         LootTable,
         LootTableCondition,
@@ -117,11 +117,10 @@ class ResourcePipeHandler:
 
         self.namespaces.append((providing_mod, namespace))
 
-        for mapper in self.mappers:
-            mapper(providing_mod, namespace)
+        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(providing_mod, namespace), self.mappers)))
 
     def register_mapper(
-        self, mapper: typing.Callable[[str, str], None], on_dedicated_server=True
+        self, mapper: typing.Callable[[str, str], None | typing.Awaitable], on_dedicated_server=True
     ):
         """
         To use in "stage:resources:pipe:add_mapper"
@@ -131,8 +130,10 @@ class ResourcePipeHandler:
 
         self.mappers.append(mapper)
 
-        for name, pathname in self.namespaces:
-            mapper(name, pathname)
+        asyncio.get_event_loop().run_until_complete(
+            asyncio.gather(
+                *filter(lambda e: e is not None, map(lambda e: mapper(*e), self.namespaces)))
+        )
 
         return self
 
@@ -175,43 +176,24 @@ class ResourcePipeHandler:
             # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
-        [
+        await asyncio.gather(*[
             e.reload()
             for e in mcpython.client.rendering.entities.EntityRenderer.RENDERERS
-        ]
+        ])
 
-        for function in self.reload_handlers:
-            result = function()
-            if isinstance(result, typing.Awaitable):
-                await result
+        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(), self.reload_handlers)))
+        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e.on_unload(), self.listeners)))
+        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e.on_reload(), self.listeners)))
+        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(), self.bake_handlers)))
+        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e.on_bake(), self.listeners)))
 
-        for listener in self.listeners:
-            result = listener.on_unload()
-            if isinstance(result, typing.Awaitable):
-                await result
-
-            result = listener.on_reload()
-            if isinstance(result, typing.Awaitable):
-                await result
-
-        for function in self.bake_handlers:
-            result = function()
-            if isinstance(result, typing.Awaitable):
-                await result
-
-        for listener in self.listeners:
-            result = listener.on_bake()
-            if isinstance(result, typing.Awaitable):
-                await result
+        await shared.inventory_handler.reload_config()
 
         await shared.event_handler.call_async("data:reload:work")
 
         gc.collect()  # make sure that memory was cleaned up
 
-        for function in self.data_processors:
-            result = function()
-            if isinstance(result, typing.Awaitable):
-                await result
+        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(), self.data_processors)))
 
 
 handler = ResourcePipeHandler()

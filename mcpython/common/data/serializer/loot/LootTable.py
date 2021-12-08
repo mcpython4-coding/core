@@ -68,7 +68,7 @@ class LootTableHandler:
 
         await asyncio.gather(*(self.for_mod_name(name, immediate=True) for name in self.mod_names_to_load))
 
-        shared.event_handler.call("data:loot_tables:custom_inject", self)
+        await shared.event_handler.call_async("data:loot_tables:custom_inject", self)
 
     def shuffle_data(self):
         ccopy = list(self.loot_tables.keys())

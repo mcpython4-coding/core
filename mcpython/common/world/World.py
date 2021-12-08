@@ -644,7 +644,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             self.setup_by_filename(filename)
 
         mcpython.common.data.DataPacks.datapack_handler.cleanup()
-        shared.event_handler.call("world:clean")
+        await shared.event_handler.call_async("world:clean")
 
     def setup_by_filename(self, filename: str):
         """

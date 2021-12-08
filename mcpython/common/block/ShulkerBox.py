@@ -36,6 +36,11 @@ def create_shulker_box(name):
 
             async def on_block_added(self):
                 self.face_info.custom_renderer = self.RENDERER
+                await self.inventory.reload_config()
+
+        else:
+            async def on_block_added(self):
+                await self.inventory.reload_config()
 
         def __init__(self):
             super().__init__()
@@ -88,9 +93,6 @@ def create_shulker_box(name):
 
         def on_request_item_for_block(self, itemstack):
             itemstack.item.inventory = self.inventory.copy()
-
-        async def on_block_remove(self, reason):
-            shared.inventory_handler.hide(self.inventory)
 
 
 def load():

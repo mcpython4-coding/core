@@ -56,12 +56,12 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             ).save(shared.build + "/skin.png")
 
         try:
-            mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
+            await mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
         except AttributeError:
             pass
 
         shared.world.config = data["config"]
-        shared.event_handler.call("seed:set")
+        await shared.event_handler.call_async("seed:set")
 
         if type(data["game version"]) != int:
             logger.println("Old version name format found!")

@@ -86,6 +86,9 @@ class Game(AbstractState.AbstractState):
             ):
                 if shared.window.exclusive:
                     shared.event_handler.call("on_player_inventory_open")
+                    asyncio.get_event_loop().run_until_complete(
+                        shared.world.get_active_player().inventory_main.reload_config()
+                    )
                     asyncio.get_event_loop().run_until_complete(shared.inventory_handler.show(
                         shared.world.get_active_player().inventory_main
                     ))

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import json
 import random
 import sys
@@ -194,22 +195,19 @@ class CraftingManager:
 
         StoneCuttingRecipe.RECIPES.clear()
 
-        shared.event_handler.call("crafting_manager:reload:intermediate", self)
+        await shared.event_handler.call_async("crafting_manager:reload:intermediate", self)
 
-        for i, modname in enumerate(list(self.loaded_mod_dirs)):
-            print(
-                "\r[MOD LOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
-                    modname, i + 1, len(self.loaded_mod_dirs)
-                ),
-                end="",
+        await asyncio.gather(
+            *(
+                self.load(modname, check_mod_dirs=False, load_direct=True)
+                for modname in list(self.loaded_mod_dirs)
             )
-            await self.load(modname, check_mod_dirs=False, load_direct=True)
-        print()
+        )
 
         for recipe in self.static_recipes:
             self.add_recipe(recipe)
 
-        shared.event_handler.call("crafting_manager:reload:end", self)
+        await shared.event_handler.call_async("crafting_manager:reload:end", self)
 
     def show_to_player(self, recipe_name: str | IRecipe.IRecipe):
         # todo: show error messages in chat
