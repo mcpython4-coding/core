@@ -48,7 +48,7 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
         def on_block_added(self):
             self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,
@@ -59,7 +59,7 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             player.inventory_enderchest.block = self
             if shared.IS_CLIENT:
-                shared.inventory_handler.show(player.inventory_enderchest)
+                await shared.inventory_handler.show(player.inventory_enderchest)
             return True
         else:
             return False
@@ -79,8 +79,8 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     def get_view_bbox(self):
         return BBOX
 
-    def on_block_remove(self, reason):
+    async def on_block_remove(self, reason):
         if shared.IS_CLIENT:
-            shared.inventory_handler.hide(
+            await shared.inventory_handler.hide(
                 shared.world.get_active_player().inventory_enderchest
             )

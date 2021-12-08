@@ -99,7 +99,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         self.broken_count = buffer.read_int()
         self.facing = EnumSide.by_index(buffer.read_int()).normal_name
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         return False
@@ -108,7 +108,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         if button == mouse.RIGHT and not modifiers & (
             key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
         ):
-            shared.inventory_handler.show(self.inventory)
+            await shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False"""
@@ -148,7 +148,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         ):
             itemstack.item.inventory = self.inventory.copy()
 
-    def on_block_remove(self, reason):
+    async def on_block_remove(self, reason):
         return
 
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
@@ -156,7 +156,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
                 shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
                 slot.itemstack.clean()
 
-        shared.inventory_handler.hide(self.inventory)
+        await shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
 

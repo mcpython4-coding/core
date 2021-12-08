@@ -59,19 +59,19 @@ class StoneCutter(IHorizontalOrientableBlock, IRecipeUser):
         else:
             self.inventory = StoneCutter.INVENTORY
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         if button == mouse.RIGHT and not modifiers & (
             key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
         ):
-            shared.inventory_handler.show(self.inventory)
+            await shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
 
-    def on_block_remove(self, reason):
-        shared.inventory_handler.hide(self.inventory)
+    async def on_block_remove(self, reason):
+        await shared.inventory_handler.hide(self.inventory)
         self.inventory = None
 
     def get_inventories(self):

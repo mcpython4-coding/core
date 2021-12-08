@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import math
 import time
 import typing
@@ -538,13 +539,13 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 cancel = True
 
         if block:
-            if not cancel and block.on_player_interaction(
+            if not cancel and asyncio.get_event_loop().run_until_complete(block.on_player_interaction(
                 player,
                 button,
                 modifiers,
                 hit_position,
                 player.get_active_inventory_slot().get_itemstack(),
-            ):
+            )):
                 cancel = True
 
         if cancel:

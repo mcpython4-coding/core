@@ -52,7 +52,7 @@ class GrassBlock(IFoliageColoredBlock.IFoliageColoredBlock):
                     self.position, "minecraft:dirt"
                 )
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,

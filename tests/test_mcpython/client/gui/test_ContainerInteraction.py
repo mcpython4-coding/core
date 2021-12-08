@@ -100,14 +100,14 @@ class ContainerInteraction(TestCase):
         self.interaction_manager.on_key_press(10, 20)
         self.assertFalse(invoked)
 
-    def test_left_pickup(self):
+    async def test_left_pickup(self):
         inventory = Inventory()
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 8))
         inventory.add_slot(s)
 
-        shared.inventory_handler.add(inventory)
-        shared.inventory_handler.show(inventory)
+        await shared.inventory_handler.add(inventory)
+        await shared.inventory_handler.show(inventory)
 
         shared.window.mouse_position = 50, 50
 
@@ -125,14 +125,14 @@ class ContainerInteraction(TestCase):
         self.assertEqual(s.get_itemstack().get_item_name(), None)
         shared.inventory_handler.moving_slot.itemstack.clean()
 
-    def test_left_exchange(self):
+    async def test_left_exchange(self):
         inventory = Inventory()
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 8))
         inventory.add_slot(s)
 
-        shared.inventory_handler.add(inventory)
-        shared.inventory_handler.show(inventory)
+        await shared.inventory_handler.add(inventory)
+        await shared.inventory_handler.show(inventory)
 
         shared.window.mouse_position = 50, 50
 
@@ -153,14 +153,14 @@ class ContainerInteraction(TestCase):
         self.assertEqual(s.get_itemstack().amount, 5)
         shared.inventory_handler.moving_slot.itemstack.clean()
 
-    def test_right_pickup_half(self):
+    async def test_right_pickup_half(self):
         inventory = Inventory()
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 4))
         inventory.add_slot(s)
 
-        shared.inventory_handler.add(inventory)
-        shared.inventory_handler.show(inventory)
+        await shared.inventory_handler.add(inventory)
+        await shared.inventory_handler.show(inventory)
 
         shared.window.mouse_position = 50, 50
 

@@ -80,9 +80,9 @@ class TestAbstractBlock(TestCase):
         self.assertIsInstance(b2, Block)
         self.assertTrue(b2.invoked)
 
-    def test_on_player_interaction_default_result(self):
+    async def test_on_player_interaction_default_result(self):
         import mcpython.common.block.AbstractBlock
 
         block = mcpython.common.block.AbstractBlock.AbstractBlock()
-        self.assertFalse(block.on_player_interaction(None, mouse.LEFT, 0, (0, 0, 0), None))
+        self.assertFalse(await block.on_player_interaction(None, mouse.LEFT, 0, (0, 0, 0), None))
 

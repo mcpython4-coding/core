@@ -331,15 +331,15 @@ def build_class_default_state(
             for function in configs["on_block_added"]:
                 function(self)
 
-        def on_block_remove(self, *args, **kwargs):
+        async def on_block_remove(self, *args, **kwargs):
             if not is_super_base:
-                super().on_block_remove(*args, **kwargs)
+                await super().on_block_remove(*args, **kwargs)
 
             for base in bases:
-                base.on_block_remove(self, *args, **kwargs)
+                await base.on_block_remove(self, *args, **kwargs)
 
             for function in configs["on_block_remove"]:
-                function(self, *args, **kwargs)
+                await function(self, *args, **kwargs)
 
         def on_random_update(self, *args, **kwargs):
             if not is_super_base:
@@ -373,17 +373,17 @@ def build_class_default_state(
             for function in configs["on_redstone_update"]:
                 function(self)
 
-        def on_player_interaction(self, *args, **kwargs):
+        async def on_player_interaction(self, *args, **kwargs):
             for function in configs["on_player_interaction"]:
                 if not function(self, *args, **kwargs):
                     return True
 
             if not is_super_base:
-                if super().on_player_interaction(*args, **kwargs):
+                if await super().on_player_interaction(*args, **kwargs):
                     return True
 
             for base in bases:
-                if base.on_player_interaction(self, *args, **kwargs):
+                if await base.on_player_interaction(self, *args, **kwargs):
                     return True
 
             return False

@@ -89,9 +89,9 @@ class TickHandler:
             asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.fetch_as_server())
 
         # todo: include command info here!
-        mcpython.common.data.DataPacks.datapack_handler.try_call_function(
+        asyncio.get_event_loop().run_until_complete(mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:tick", None
-        )
+        ))
         if self.enable_random_ticks:
             pyglet.clock.schedule_once(self.send_random_ticks, 0)
 

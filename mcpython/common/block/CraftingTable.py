@@ -28,11 +28,11 @@ class CraftingTable(AbstractBlock.AbstractBlock):
     HARDNESS = BLAST_RESISTANCE = 2.5
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-            shared.inventory_handler.show(
+            await shared.inventory_handler.show(
                 shared.world.get_active_player().inventory_crafting_table
             )
             return True
@@ -43,8 +43,8 @@ class CraftingTable(AbstractBlock.AbstractBlock):
         # todo: this seems not good..., maybe return None, and add a option for a internal inventory?
         return [shared.world.get_active_player().inventory_crafting_table]
 
-    def on_block_remove(self, reason):
-        shared.inventory_handler.hide(
+    async def on_block_remove(self, reason):
+        await shared.inventory_handler.hide(
             shared.world.get_active_player().inventory_crafting_table
         )
 

@@ -118,7 +118,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             import mcpython.common.data.ResourcePipe
 
             asyncio.get_event_loop().run_until_complete(mcpython.common.data.ResourcePipe.handler.reload_content())
-            self.finish()
+            asyncio.get_event_loop().run_until_complete(self.finish())
 
     async def activate(self):
         await super().activate()
@@ -166,7 +166,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 )
                 self.status_table[(cx, cz)] = 0
 
-    def finish(self):
+    async def finish(self):
         # read in the config
 
         overworld = shared.world.get_dimension(0)
@@ -253,13 +253,13 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 
         # reload all the data-packs
         mcpython.common.data.DataPacks.datapack_handler.reload()
-        mcpython.common.data.DataPacks.datapack_handler.try_call_function(
+        await mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:load",
             mcpython.server.command.CommandParser.CommandExecutionEnvironment(
                 dimension=shared.world.get_dimension(0)
             ),
         )
-        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:game", immediate=False))
+        await shared.state_handler.change_state("minecraft:game", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()

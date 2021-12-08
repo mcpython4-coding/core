@@ -115,7 +115,7 @@ class Chest(
         )
         return instance is None or not instance.face_solid & 2
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,
@@ -138,7 +138,7 @@ class Chest(
                 )
                 self.loot_table_link = None
 
-            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.show(self.inventory))
+            await shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -165,7 +165,7 @@ class Chest(
         ):
             itemstack.item.inventory = self.inventory.copy()
 
-    def on_block_remove(self, reason):
+    async def on_block_remove(self, reason):
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             dimension = shared.world.get_dimension_by_name(self.dimension)
 
@@ -178,7 +178,7 @@ class Chest(
                 )
                 slot.get_itemstack().clean()
 
-        shared.inventory_handler.hide(self.inventory)
+        await shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
     @classmethod

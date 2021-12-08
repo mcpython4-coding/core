@@ -65,12 +65,12 @@ class Furnace(IHorizontalOrientableBlock):
         if "lit" in state:
             self.active = state["lit"] == "true"
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self, player, button, modifiers, exact_hit, itemstack
     ) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             if shared.IS_CLIENT:
-                shared.inventory_handler.show(self.inventory)
+                await shared.inventory_handler.show(self.inventory)
 
             return True
 
@@ -88,7 +88,7 @@ class Furnace(IHorizontalOrientableBlock):
         else:
             return [self.inventory.slots[37]], []
 
-    def on_block_remove(self, reason):
+    async def on_block_remove(self, reason):
         # todo: add special flag for not dropping
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             dimension = shared.world.get_dimension_by_name(self.dimension)
@@ -103,7 +103,7 @@ class Furnace(IHorizontalOrientableBlock):
                 slot.get_itemstack().clean()
 
         if shared.IS_CLIENT:
-            shared.inventory_handler.hide(self.inventory)
+            await shared.inventory_handler.hide(self.inventory)
             del self.inventory
 
 

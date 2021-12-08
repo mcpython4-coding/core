@@ -274,7 +274,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         Called when the block is added to the world
         """
 
-    def on_block_remove(self, reason: BlockRemovalReason):
+    async def on_block_remove(self, reason: BlockRemovalReason):
         """
         Called when the block is removed
         Not cancelable. Block show data is removed, but the "current" state of the block is still stored.
@@ -305,7 +305,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         Is also invoked o "normal" block update
         """
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,

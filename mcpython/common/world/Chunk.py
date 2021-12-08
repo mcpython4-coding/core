@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import datetime
 import typing
 import weakref
@@ -472,7 +473,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         if position not in self._world:
             return
 
-        self._world[position].on_block_remove(reason)
+        asyncio.get_event_loop().run_until_complete(self._world[position].on_block_remove(reason))
 
         if shared.IS_CLIENT:
             self._world[position].face_info.hide_all()

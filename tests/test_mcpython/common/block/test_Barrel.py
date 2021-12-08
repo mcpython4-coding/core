@@ -52,7 +52,7 @@ class TestBarrel(TestCase):
 
         shared.world = None
 
-    def test_on_player_interaction(self):
+    async def test_on_player_interaction(self):
         shared.crafting_handler = FakeCraftingHandler()
 
         import mcpython.common.block.Barrel
@@ -62,13 +62,13 @@ class TestBarrel(TestCase):
 
         instance = mcpython.common.block.Barrel.Barrel()
 
-        instance.on_player_interaction(None, mouse.RIGHT, 0, None, None)
+        await instance.on_player_interaction(None, mouse.RIGHT, 0, None, None)
 
         self.assertTrue(FakeInventoryHandler.SHOWN)
 
         FakeInventoryHandler.SHOWN = False
 
-        instance.on_player_interaction(None, mouse.RIGHT, key.MOD_SHIFT, None, None)
+        await instance.on_player_interaction(None, mouse.RIGHT, key.MOD_SHIFT, None, None)
 
         self.assertFalse(FakeInventoryHandler.SHOWN)
 

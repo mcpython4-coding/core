@@ -2,11 +2,11 @@ class FakeInventoryHandler:
     SHOWN = False
 
     @classmethod
-    def add(cls, inventory):
+    async def add(cls, inventory):
         return
 
     @classmethod
-    def show(cls, inventory):
+    async def show(cls, inventory):
         cls.SHOWN = True
 
 

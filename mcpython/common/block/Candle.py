@@ -48,7 +48,7 @@ class ICandleGroup(AbstractBlock.AbstractBlock):
         if "lit" in state:
             self.lit = state["lit"] == "true"
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,
@@ -101,7 +101,7 @@ class ICandleCake(FlowerLikeBlock):
         if "lit" in state:
             self.lit = state["lit"] == "true"
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,

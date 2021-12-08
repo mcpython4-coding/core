@@ -51,7 +51,7 @@ def create_shulker_box(name):
             super().read_from_network_buffer(buffer)
             self.inventory.read_from_network_buffer(buffer)
 
-        def on_player_interaction(
+        async def on_player_interaction(
             self,
             player,
             button: int,
@@ -60,10 +60,13 @@ def create_shulker_box(name):
             itemstack,
         ):
             if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
-                shared.inventory_handler.show(self.inventory)
+                await shared.inventory_handler.show(self.inventory)
                 return True
             else:
                 return False
+
+        async def on_block_remove(self, reason):
+            await shared.inventory_handler.hide(self.inventory)
 
         def get_inventories(self):
             return (self.inventory,)
@@ -86,7 +89,7 @@ def create_shulker_box(name):
         def on_request_item_for_block(self, itemstack):
             itemstack.item.inventory = self.inventory.copy()
 
-        def on_block_remove(self, reason):
+        async def on_block_remove(self, reason):
             shared.inventory_handler.hide(self.inventory)
 
 
