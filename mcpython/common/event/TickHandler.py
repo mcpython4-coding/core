@@ -175,6 +175,7 @@ class TickHandler:
         cx, cz = mcpython.util.math.position_to_chunk(
             shared.world.get_active_player().position
         )
+        blocks = []
         for dx in range(-r, r + 1):
             for dz in range(-r, r + 1):
                 if dx ** 2 + dz ** 2 <= r ** 2:
@@ -194,7 +195,11 @@ class TickHandler:
                                 and type(instance) != str
                                 and instance.ENABLE_RANDOM_TICKS
                             ):
-                                instance.on_random_update()
+                                blocks.append(instance.on_random_update())
+
+        asyncio.get_event_loop().run_until_complete(
+            asyncio.gather(*(func for func in blocks if func))
+        )
 
 
 handler = shared.tick_handler = TickHandler()

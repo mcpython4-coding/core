@@ -66,13 +66,13 @@ class Chest(
         # As this can be statically decided, we use this trick for some performance gain
         if is_christmas:
 
-            def on_block_added(self):
+            async def on_block_added(self):
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
                 self.face_info.update(True)
 
         else:
 
-            def on_block_added(self):
+            async def on_block_added(self):
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
                 self.face_info.update(True)
 

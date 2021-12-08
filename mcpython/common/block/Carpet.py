@@ -34,7 +34,7 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
     HARDNESS = BLAST_RESISTANCE = 0.1
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
         dim = shared.world.get_dimension_by_name(self.dimension)
         instance: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(

@@ -45,7 +45,7 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
             )
         )
 
-        def on_block_added(self):
+        async def on_block_added(self):
             self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
 
     async def on_player_interaction(

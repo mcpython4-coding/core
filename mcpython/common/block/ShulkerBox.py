@@ -34,7 +34,7 @@ def create_shulker_box(name):
         if shared.IS_CLIENT:
             RENDERER = ShulkerBoxRenderer("minecraft:block/" + name)
 
-            def on_block_added(self):
+            async def on_block_added(self):
                 self.face_info.custom_renderer = self.RENDERER
 
         def __init__(self):

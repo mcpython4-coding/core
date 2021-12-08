@@ -402,7 +402,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         # store the block instance in the local world
         self._world[position] = block
 
-        block.on_block_added()
+        asyncio.get_event_loop().run_until_complete(block.on_block_added())
 
         if block_state is not None:
             block.set_model_state(block_state)
@@ -428,6 +428,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         :param position: the position in the center
         :param include_itself: if the block itself should be updated
         """
+        to_invoke = []
         x, y, z = position
         for dx in range(-1, 2):
             for dy in range(-1, 2):
@@ -439,14 +440,11 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                             (x + dx, y + dy, z + dz)
                         )
                         if b and type(b) != str:
-                            try:
-                                b.on_block_update()
-                            except:
-                                logger.print_exception(
-                                    "during block-updating block {} caused by block at {}".format(
-                                        b, position
-                                    )
-                                )
+                            to_invoke.append(b.on_block_update())
+
+        asyncio.get_event_loop().run_until_complete(
+            asyncio.gather(*to_invoke)
+        )
 
     def remove_block(
         self,

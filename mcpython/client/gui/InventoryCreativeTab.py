@@ -477,7 +477,7 @@ class CreativeTabManager:
             return
 
         if button == key.E:
-            shared.inventory_handler.hide(self.current_tab)
+            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.hide(self.current_tab))
         elif button == key.N and self.is_multi_page():
             self.current_page = max(self.current_page - 1, 0)
         elif button == key.M and self.is_multi_page():

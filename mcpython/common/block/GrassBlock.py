@@ -36,7 +36,7 @@ class GrassBlock(IFoliageColoredBlock.IFoliageColoredBlock):
     def get_model_state(self) -> dict:
         return {"snowy": "false"}
 
-    def on_random_update(self):
+    async def on_random_update(self):
         x, y, z = self.position
         dim = shared.world.get_dimension_by_name(self.dimension)
 

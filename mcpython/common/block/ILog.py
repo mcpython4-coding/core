@@ -26,7 +26,7 @@ class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
         super().__init__()
         self.axis = LogAxis.Y
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if self.set_to:
             dx, dy, dz = (
                 abs(self.set_to[0] - self.position[0]),

@@ -46,8 +46,8 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     DEBUG_WORLD_BLOCK_STATES = [{"axis": "x"}, {"axis": "z"}]
 
-    def on_block_update(self):
-        self.on_redstone_update()
+    async def on_block_update(self):
+        await self.on_redstone_update()
         self.check_valid_surrounding()
 
     def check_valid_surrounding(self):

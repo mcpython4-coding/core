@@ -56,7 +56,7 @@ class IStraightRail(IRail, ABC):
         if "shape" in state:
             self.shape = state["shape"]
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
 

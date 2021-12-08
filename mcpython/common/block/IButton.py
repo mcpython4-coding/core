@@ -67,7 +67,7 @@ class IButton(IAllDirectionOrientableBlock):
             if shared.IS_CLIENT and shared.world.get_active_player().gamemode in (0, 2):
                 shared.world.get_active_player().pick_up_item(ItemStack(self.NAME))
 
-    def on_block_update(self):
+    async def on_block_update(self):
         self.check_block_behind()
 
     def get_model_state(self) -> dict:

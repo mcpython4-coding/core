@@ -23,7 +23,7 @@ class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlo
         super().__init__()
         self.face = EnumSide.NORTH
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if self.real_hit:
             sx, sy, sz = self.real_hit
             px, py, pz = self.position

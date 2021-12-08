@@ -66,7 +66,7 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
         self.height = 7
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if shared.IS_CLIENT:
             self.face_info.custom_renderer = self.FLUID_RENDERER
 

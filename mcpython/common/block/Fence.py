@@ -60,15 +60,15 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
             "west": False,
         }
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if self.NAME in shared.model_handler.blockstates:
-            self.on_block_update()
+            await self.on_block_update()
 
     def get_model_state(self) -> dict:
         state = {key: str(self.connections[key]).lower() for key in self.connections}
         return state
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
 
         block_north: mcpython.common.block.AbstractBlock.AbstractBlock = (

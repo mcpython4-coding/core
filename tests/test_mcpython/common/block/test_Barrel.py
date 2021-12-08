@@ -28,7 +28,7 @@ class TestBarrel(TestCase):
 
         self.assertEqual(mcpython.common.block.Barrel.Barrel.NAME, "minecraft:barrel")
 
-    def test_on_block_added(self):
+    async def test_on_block_added(self):
         shared.crafting_handler = FakeCraftingHandler()
         shared.world = FakeWorld
 
@@ -40,13 +40,13 @@ class TestBarrel(TestCase):
         instance.position = 0, 0, 0
         instance.set_to = 0, -1, 0
 
-        instance.on_block_added()
+        await instance.on_block_added()
 
         self.assertEqual(instance.face.normal_name, "down")
 
         instance.set_to = 0, 0, 1
 
-        instance.on_block_added()
+        await instance.on_block_added()
 
         self.assertEqual(instance.face.normal_name, "south")
 

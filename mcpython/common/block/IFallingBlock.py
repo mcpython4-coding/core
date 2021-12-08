@@ -25,7 +25,7 @@ class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
         super().__init__()
         self.fall_cooldown = mcpython.common.event.TickHandler.handler.active_tick - 10
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
         dim = shared.world.get_dimension_by_name(self.dimension)
         instance = dim.get_block((x, y - 1, z))
@@ -35,16 +35,3 @@ class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             )
             dim.remove_block(self.position, block_update_self=False)
 
-    def fall(self, check=True):
-        x, y, z = self.position
-        dim = shared.world.get_dimension_by_name(self.dimension)
-        if not check or not dim.get_block((x, y - 1, z)):
-            dim.remove_block(self.position)
-            dim.check_neighbors(self.position)
-            chunk = dim.get_chunk_for_position(self.position)
-            chunk.on_block_updated(self.position)
-            if y == 0:
-                return
-            chunk.add_block((x, y - 1, z), self)
-            self.on_block_update()
-            chunk.check_neighbors(self.position)

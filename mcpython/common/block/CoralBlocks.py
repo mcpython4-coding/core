@@ -27,7 +27,7 @@ class ICoralBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     BLAST_RESISTANCE = 6
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
 
-    def on_random_update(self):
+    async def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
         shared.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
             self.position

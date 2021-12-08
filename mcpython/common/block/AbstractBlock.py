@@ -269,7 +269,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     # block events
 
-    def on_block_added(self):
+    async def on_block_added(self):
         """
         Called when the block is added to the world
         """
@@ -284,22 +284,22 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         todo: add cancel-able variant
         """
 
-    def on_random_update(self):
+    async def on_random_update(self):
         """
         Called on random update
         Needs ENABLE_RANDOM_TICKS to be set to True for being invoked
         """
 
-    def on_block_update(self):
+    async def on_block_update(self):
         """
         Called when an near-by block-position is updated by setting/removing an block
         Invokes a redstone update by default. Call if needed.
         todo: add optional source of update
         todo: add at source a method to cancel update calling
         """
-        self.on_redstone_update()
+        await self.on_redstone_update()
 
-    def on_redstone_update(self):
+    async def on_redstone_update(self):
         """
         Special event called in order to update redstone state. Not used by vanilla at the moment
         Is also invoked o "normal" block update

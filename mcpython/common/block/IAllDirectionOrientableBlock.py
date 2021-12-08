@@ -28,7 +28,7 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
         super().__init__()
         self.face = mcpython.util.enums.EnumSide.NORTH
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if self.set_to:
             sx, sy, sz = self.set_to
             px, py, pz = self.position

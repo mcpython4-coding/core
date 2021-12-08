@@ -58,7 +58,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
 
         self.broken_count = 0
 
-    def on_block_added(self):
+    async def on_block_added(self):
         # only if this is set, decode it
         if self.set_to is not None:
             dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
