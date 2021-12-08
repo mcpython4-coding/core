@@ -223,9 +223,7 @@ class ModelHandler:
 
         self.dependence_list.clear()  # decrease memory usage
 
-        for x in list(set(sorted_models)):
-            # modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
-            await self.load_model(x)
+        await asyncio.gather(*(self.load_model(x) for x in sorted_models))
 
     async def load_model(self, name: str):
         if ":" not in name:
@@ -417,25 +415,25 @@ class ModelHandler:
         mcpython.client.rendering.model.BlockState.BlockStateContainer.NEEDED.clear()
 
         logger.println("walking across block states...")
-        for (
-            directory,
-            modname,
-        ) in (
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
-        ):
-            await mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
+        await asyncio.gather(*(
+            mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
                 directory, modname, immediate=True
             )
+            for (
+                directory,
+                modname,
+            ) in (
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
+            )
+        ))
 
         logger.println("walking across located block states...")
-        for (
-            data,
-            name,
-            force,
-        ) in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA:
-            await mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
+        await asyncio.gather(*(
+            mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
                 name, data, immediate=True, force=force
             )
+            for name, data, force in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA
+        ))
 
         await shared.event_handler.call_async("minecraft:data:blockstates:custom_injection", self)
 

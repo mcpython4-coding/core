@@ -82,7 +82,7 @@ class CommandParser:
     def __init__(self):
         self.commands: typing.Dict[str, mcpython.server.command.Builder.Command] = {}
 
-    def run(self, string: str, env: CommandExecutionEnvironment) -> bool:
+    async def run(self, string: str, env: CommandExecutionEnvironment) -> bool:
         parsed = self.parse(string)
 
         if parsed is None:
@@ -94,7 +94,7 @@ class CommandParser:
             return False
 
         try:
-            node.run(env, data)
+            await node.run(env, data)
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
@@ -104,9 +104,9 @@ class CommandParser:
 
         return True
 
-    def run_function(self, name: str, info=None):
+    async def run_function(self, name: str, info=None):
         # todo: move here
-        mcpython.common.data.DataPacks.datapack_handler.try_call_function(name, info)
+        await mcpython.common.data.DataPacks.datapack_handler.try_call_function(name, info)
 
     def parse(self, string: str):
         tracker = mcpython.server.command.Builder.CommandExecutionTracker.from_string(

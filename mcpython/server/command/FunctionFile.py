@@ -38,6 +38,6 @@ class FunctionFile:
     def __init__(self):
         self.command_nodes = []
 
-    def execute(self, info):
+    async def execute(self, info):
         for node, data in self.command_nodes:
-            node.run(info, data)
+            await node.run(info, data)

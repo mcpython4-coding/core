@@ -59,7 +59,7 @@ class TestCommandNode(TestCase):
     def test_get_executing_node(self):
         pass  # todo: implement
 
-    def test_run(self):
+    async def test_run(self):
         from mcpython.server.command.Builder import CommandNode, DefinedString
 
         ran = False
@@ -71,6 +71,6 @@ class TestCommandNode(TestCase):
         node = CommandNode(DefinedString())
         node.on_execution(run)
 
-        node.run(None, [None])
+        await node.run(None, [None])
 
         self.assertTrue(ran)

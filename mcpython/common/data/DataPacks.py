@@ -136,7 +136,7 @@ class DataPackHandler:
         self.loaded_data_packs.clear()
         shared.event_handler.call("datapack:unload:post")
 
-    def try_call_function(
+    async def try_call_function(
         self,
         name: str,
         info,
@@ -153,13 +153,13 @@ class DataPackHandler:
             except ValueError:
                 return
             for name in tag.entries:
-                self.try_call_function(name, info.copy())
+                await self.try_call_function(name, info.copy())
             return
 
         for datapack in self.loaded_data_packs:
             if datapack.status == DataPackStatus.ACTIVATED:
                 if name in datapack.function_table:
-                    return datapack.function_table[name].execute(info)
+                    return await datapack.function_table[name].execute(info)
 
         logger.println("can't find function '{}'".format(name))
 

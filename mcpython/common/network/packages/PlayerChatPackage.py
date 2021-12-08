@@ -41,7 +41,7 @@ class PlayerChatInputPackage(AbstractPackage):
                 shared.NETWORK_MANAGER.client_profiles[self.sender_id]["player_name"]
             )
             env = CommandExecutionEnvironment(this=player)
-            if not shared.command_parser.run(self.text, env):
+            if not await shared.command_parser.run(self.text, env):
                 self.answer(PlayerClientCommandExecution().setup(self.text))
 
         else:
@@ -95,4 +95,4 @@ class PlayerClientCommandExecution(AbstractPackage):
 
     async def handle_inner(self):
         env = CommandExecutionEnvironment(this=shared.world.get_active_player())
-        shared.command_parser.run(self.text, env)
+        await shared.command_parser.run(self.text, env)

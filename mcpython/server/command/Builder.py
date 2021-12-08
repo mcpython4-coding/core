@@ -544,10 +544,12 @@ class CommandNode:
             if track is not None:
                 return track
 
-    def run(self, env, data):
+    async def run(self, env, data):
         try:
             for func in self.on_execution_callbacks:
-                func(env, data)
+                result = func(env, data)
+                if isinstance(result, typing.Awaitable):
+                    await result
 
         except Exception as e:
             for compare, handle in self.exception_handlers:

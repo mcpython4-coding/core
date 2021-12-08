@@ -502,13 +502,13 @@ class CreativeTabManager:
         )
 
         if self.is_multi_page():
-            self.page_left.activate()
-            self.page_right.activate()
+            await self.page_left.activate()
+            await self.page_right.activate()
 
     async def deactivate(self):
         self.underlying_event_bus.deactivate()
-        self.page_left.deactivate()
-        self.page_right.deactivate()
+        await self.page_left.deactivate()
+        await self.page_right.deactivate()
 
     def on_mouse_press(self, mx, my, button, modifiers):
         if not button & mouse.LEFT:
@@ -632,13 +632,13 @@ class CreativeTabManager:
             )
             self.page_label.draw()
 
-    def open(self):
+    async def open(self):
         if self.current_tab is None:
             self.init_tabs_if_needed()
 
-            asyncio.get_event_loop().run_until_complete(self.switch_to_tab(self.inventory_instance))
+            await self.switch_to_tab(self.inventory_instance)
         else:
-            shared.inventory_handler.show(self.current_tab)
+            await shared.inventory_handler.show(self.current_tab)
 
     def increase_page(self, count: int):
         previous = self.current_page
@@ -648,7 +648,7 @@ class CreativeTabManager:
 
     async def switch_to_tab(self, tab: ICreativeView):
         if self.current_tab is not None:
-            shared.inventory_handler.hide(self.current_tab)
+            await shared.inventory_handler.hide(self.current_tab)
             self.current_tab.is_selected = False
 
         self.current_tab = tab

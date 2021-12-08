@@ -158,7 +158,7 @@ class WorldGenerationConfig(AbstractState.AbstractState):
         filename = self.parts[11].entered_text
         if filename == "":
             filename = "New World"
-        shared.world.cleanup(remove_dims=True, filename=filename)
+        asyncio.get_event_loop().run_until_complete(shared.world.cleanup(remove_dims=True, filename=filename))
         self.generate()
 
     def generate(self):

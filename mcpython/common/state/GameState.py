@@ -107,7 +107,7 @@ class Game(AbstractState.AbstractState):
 
     @staticmethod
     def open_chat(enter=""):
-        shared.inventory_handler.show(shared.world.get_active_player().inventory_chat)
+        asyncio.get_event_loop().run_until_complete(shared.inventory_handler.show(shared.world.get_active_player().inventory_chat))
         shared.chat.text = enter
 
 

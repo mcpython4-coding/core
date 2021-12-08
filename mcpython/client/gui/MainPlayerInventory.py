@@ -131,7 +131,7 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
     async def on_activate(self):
         if shared.world.get_active_player().gamemode == 1:
             await shared.inventory_handler.hide(self)
-            mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
+            await mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
 
     async def on_deactivate(self):
         self.remove_items_from_crafting()

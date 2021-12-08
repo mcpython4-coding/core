@@ -58,7 +58,7 @@ class OpenedInventoryStatePart(
 
     def on_key_press(self, symbol: int, modifiers: int):
         if symbol == key.ESCAPE:
-            shared.inventory_handler.remove_one_from_stack()
+            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.remove_one_from_stack())
 
         x, y = shared.window.mouse_position
         slot, inventory = self._get_slot_inventory_for(x, y)
@@ -604,7 +604,7 @@ class InventoryHandler:
 
         shared.event_handler.call("minecraft:inventory:hide", inventory)
 
-    def remove_one_from_stack(self, is_escape=True):
+    async def remove_one_from_stack(self, is_escape=True):
         """
         Removes one inventory from stack which can be removed
         :param is_escape: if to handle like it is an escape press, so we skip containers not wanting to be closed that
@@ -615,7 +615,7 @@ class InventoryHandler:
         stack.reverse()
         for inventory in stack:
             if inventory.is_closable_by_escape() or not is_escape:
-                self.hide(inventory)
+                await self.hide(inventory)
                 return inventory
 
     def close_all_inventories(self):

@@ -52,11 +52,14 @@ Backwards-incompatible:
     Mixins:
         - improved some stuff
 
-    Fixed issues:
-        - fixed rendering of block top for non cubic blocks
+    Async framework:
+        - moved a lot of stuff to async system, so we are future proof with threading
 
     Commands:
         - added /data missing blocks to print a list of all blocks for which a BlockState exists, but no Block definition is found
+
+    Fixed issues:
+        - fixed rendering of block top for non cubic blocks
 
 
 # Changelog of snapshot 21w46a

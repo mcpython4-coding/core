@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import html
 import time
 
@@ -163,7 +164,7 @@ class Chat:
                     self.executing_command_info.position = player.get_position()
                     self.executing_command_info.dimension = player.get_dimension()
 
-                shared.command_parser.run(self.text, self.executing_command_info)
+                asyncio.get_event_loop().run_until_complete(shared.command_parser.run(self.text, self.executing_command_info))
 
             else:
                 self.print_ln(self.text)

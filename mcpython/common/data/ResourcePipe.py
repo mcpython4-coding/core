@@ -50,8 +50,8 @@ def model_mapper(modname, pathname):
     )
 
 
-def model_bake():
-    asyncio.get_event_loop().run_until_complete(shared.model_handler.build(immediate=True))
+async def model_bake():
+    await shared.model_handler.build(immediate=True)
 
 
 def tag_mapper(modname, pathname):
@@ -149,9 +149,6 @@ class ResourcePipeHandler:
         return self
 
     async def reload_content(self):
-        if not shared.event_handler.call_cancelable("data:reload:cancel"):
-            return
-
         print("starting reload cycle...")
 
         mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs

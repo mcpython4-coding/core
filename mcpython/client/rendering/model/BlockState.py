@@ -717,9 +717,11 @@ class BlockStateContainer:
         store=True,
         force=False,
     ):
+        assert isinstance(name, str), "name must be str"
+
         # todo: check for correct process
         if store:
-            cls.RAW_DATA.append((data, name, force))
+            cls.RAW_DATA.append((name, data, force))
 
         if immediate:
             await cls.unsafe_from_data(name, data, force=force)
@@ -735,6 +737,7 @@ class BlockStateContainer:
     async def unsafe_from_data(
         cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, force=False
     ):
+        assert isinstance(name, str), "name must be str"
         try:
             instance = await cls(name, immediate=immediate, force=force).parse_data(data)
             await instance.bake()
@@ -759,6 +762,8 @@ class BlockStateContainer:
         return await cls.unsafe_from_data(name, data, immediate=True, force=True)
 
     def __init__(self, name: str, immediate=False, force=False):
+        assert isinstance(name, str), "name must be str"
+
         self.name = name
         if (
             (

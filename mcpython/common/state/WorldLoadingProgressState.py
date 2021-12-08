@@ -99,12 +99,12 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         await super().activate()
 
         # todo: add a check if we need this
-        # logger.println("[WORLD LOADING][INFO] reloading assets...")
-        #
-        # shared.event_handler.call("data:reload:work")
-        # import mcpython.common.data.ResourcePipe
+        logger.println("[WORLD LOADING][INFO] reloading assets...")
 
-        # mcpython.common.data.ResourcePipe.handler.reload_content()
+        await shared.event_handler.call_async("data:reload:work")
+        import mcpython.common.data.ResourcePipe
+
+        await mcpython.common.data.ResourcePipe.handler.reload_content()
 
         shared.world_generation_handler.enable_generation = False
         self.status_table.clear()
