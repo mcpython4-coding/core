@@ -41,11 +41,11 @@ class Client2ServerHandshake(AbstractPackage):
         self.player_name = player_name
         return self
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.game_version = buffer.read_int()
         self.player_name = buffer.read_string()
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.game_version).write_string(self.player_name)
 
     async def handle_inner(self):
@@ -58,7 +58,7 @@ class Client2ServerHandshake(AbstractPackage):
             logger.println(
                 f"[HANDSHAKE] denied connection to {self.player_name} due to incompatible versions"
             )
-            self.answer(
+            await self.answer(
                 Server2ClientHandshake().setup_deny(
                     f"Incompatible game version: {self.game_version}; expected: {mcpython.common.config.VERSION_ID}"
                 )
@@ -69,7 +69,7 @@ class Client2ServerHandshake(AbstractPackage):
             logger.println(
                 f"[HANDSHAKE] denied connection due to duplicate player name {self.player_name}"
             )
-            self.answer(
+            await self.answer(
                 Server2ClientHandshake().setup_deny(
                     f"Invalid player name: Player with same name already connected to this server"
                 )
@@ -86,10 +86,10 @@ class Client2ServerHandshake(AbstractPackage):
         shared.world.add_player(self.player_name)
 
         logger.println(f"[HANDSHAKE] sending mod list to {self.player_name}")
-        self.answer(Server2ClientHandshake().setup_accept())
+        await self.answer(await Server2ClientHandshake().setup_accept())
 
         logger.println(f"[HANDSHAKE] syncing up package id lists to {self.player_name}")
-        self.answer(PackageIDSync().setup())
+        await self.answer(PackageIDSync().setup())
 
 
 class Server2ClientHandshake(AbstractPackage):
@@ -113,36 +113,36 @@ class Server2ClientHandshake(AbstractPackage):
         self.deny_reason = reason
         return self
 
-    def setup_accept(self):
+    async def setup_accept(self):
         mod_info = []
         for mod in shared.mod_loader.mods.values():
 
             if not mod.server_only:
                 mod_info.append((mod.name, str(mod.version)))
 
-        shared.event_handler.call("minecraft:modlist:sync:setup", self, mod_info)
+        await shared.event_handler.call_async("minecraft:modlist:sync:setup", self, mod_info)
         self.mod_list = mod_info
         return self
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.accept_connection = buffer.read_bool()
 
         if not self.accept_connection:
             self.deny_reason = buffer.read_string()
             return
 
-        self.mod_list = buffer.read_list(
+        self.mod_list = [e async for e in buffer.read_list(
             lambda: (buffer.read_string(), buffer.read_string())
-        )
+        )]
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.accept_connection)
 
         if not self.accept_connection:
             buffer.write_string(self.deny_reason)
             return
 
-        buffer.write_list(
+        await buffer.write_list(
             self.mod_list, lambda e: buffer.write_string(e[0]).write_string(e[1])
         )
 
@@ -170,7 +170,7 @@ class Server2ClientHandshake(AbstractPackage):
 
             from .DisconnectionPackage import DisconnectionInitPackage
 
-            shared.NETWORK_MANAGER.send_package(
+            await shared.NETWORK_MANAGER.send_package(
                 DisconnectionInitPackage().set_reason("mod mismatch")
             )
             return
@@ -183,4 +183,4 @@ class Server2ClientHandshake(AbstractPackage):
         logger.println("[CLIENT][INFO] starting registry compare...")
         from .RegistrySyncPackage import RegistrySyncInitPackage
 
-        self.answer(RegistrySyncInitPackage().setup())
+        await self.answer(RegistrySyncInitPackage().setup())

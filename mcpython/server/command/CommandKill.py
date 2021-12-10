@@ -14,14 +14,24 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 from mcpython.server.command.Builder import Command, CommandNode, Selector
 
+
+async def kill_entities(env, data):
+    for entity in data[1](env):
+        await entity.kill()
+
+
+async def kill_entity(env, data):
+    await env.get_this().kill()
+
+
 kill = (
     Command("kill")
     .than(
         CommandNode(Selector(max_entities=1))
         .of_name("who")
-        .on_execution(lambda env, data: [entity.kill() for entity in data[1](env)])
+        .on_execution(kill_entities)
         .info("kills all selected entities")
     )
-    .on_execution(lambda env, data: env.get_this().kill())
+    .on_execution(kill_entity)
     .info("kills the executing entity")
 )

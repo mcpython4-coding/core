@@ -66,7 +66,7 @@ class IStairs(mcpython.common.block.AbstractBlock.AbstractBlock):
 
         if self.real_hit and self.real_hit[1] > self.position[1]:
             self.is_top = True
-            self.schedule_network_update()
+            await self.schedule_network_update()
 
     async def on_block_update(self):
         pass  # todo: calculate shape!

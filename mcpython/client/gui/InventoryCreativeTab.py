@@ -472,12 +472,12 @@ class CreativeTabManager:
     def is_multi_page(self):
         return len(self.pages) > 1
 
-    def on_key_press(self, button, mod):
+    async def on_key_press(self, button, mod):
         if shared.state_handler.global_key_bind_toggle:
             return
 
         if button == key.E:
-            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.hide(self.current_tab))
+            await shared.inventory_handler.hide(self.current_tab)
         elif button == key.N and self.is_multi_page():
             self.current_page = max(self.current_page - 1, 0)
         elif button == key.M and self.is_multi_page():
@@ -510,13 +510,13 @@ class CreativeTabManager:
         await self.page_left.deactivate()
         await self.page_right.deactivate()
 
-    def on_mouse_press(self, mx, my, button, modifiers):
+    async def on_mouse_press(self, mx, my, button, modifiers):
         if not button & mouse.LEFT:
             return
 
         tab = self.get_tab_at(mx, my)
         if tab is not None:
-            asyncio.get_event_loop().run_until_complete(self.switch_to_tab(tab))
+            await self.switch_to_tab(tab)
 
     def get_tab_at(self, mx, my) -> typing.Optional[ICreativeView]:
         tx, ty = self.TAB_SIZE

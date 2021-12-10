@@ -22,11 +22,11 @@ class CactusFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
     NAME = "minecraft:cactus_feature"
 
     @classmethod
-    def place(cls, dimension, x: int, y: int, z: int, config):
+    async def place(cls, dimension, x: int, y: int, z: int, config):
         for dy in range(0, random.randint(1, 3)):
-            dimension.add_block((x, y + dy, z), "minecraft:cactus")
+            await dimension.add_block((x, y + dy, z), "minecraft:cactus")
 
     @classmethod
-    def place_array(cls, array, x: int, y: int, z: int, config):
+    async def place_array(cls, array, x: int, y: int, z: int, config):
         for dy in range(0, random.randint(1, 3)):
-            array.schedule_block_add((x, y + dy, z), "minecraft:cactus")
+            await array.schedule_block_add((x, y + dy, z), "minecraft:cactus")

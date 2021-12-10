@@ -38,7 +38,7 @@ class TestFallingBlockEntity(TestCase):
     def test_module_import(self):
         import mcpython.common.entity.FallingBlockEntity
 
-    def test_tick_despawn(self):
+    async def test_tick_despawn(self):
         import mcpython.common.entity.FallingBlockEntity
 
         instance = mcpython.common.entity.FallingBlockEntity.FallingBlockEntity()
@@ -46,11 +46,11 @@ class TestFallingBlockEntity(TestCase):
 
         self.assertFalse(instance.dead)
 
-        instance.tick(0.02)
+        await instance.tick(0.02)
 
         self.assertTrue(instance.dead)
 
-    def test_tick_fall(self):
+    async def test_tick_fall(self):
         import mcpython.common.entity.FallingBlockEntity
 
         instance = mcpython.common.entity.FallingBlockEntity.FallingBlockEntity(
@@ -60,7 +60,7 @@ class TestFallingBlockEntity(TestCase):
 
         self.assertFalse(instance.dead)
 
-        instance.tick(0.02)
+        await instance.tick(0.02)
 
         self.assertFalse(instance.dead)
         # They have fallen a bit...

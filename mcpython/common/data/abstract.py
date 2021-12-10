@@ -23,7 +23,7 @@ class AbstractReloadListener(ABC):
     DEPENDS_ON = set()
 
     @classmethod
-    def on_reload(cls, is_first_load=False):
+    async def on_reload(cls, is_first_load=False):
         """
         Invoked when it is time to load resources
         :param is_first_load: indicates if this is the first resource load or not
@@ -49,7 +49,7 @@ class AbstractFileWalkingReloadListener(AbstractReloadListener, ABC):
     DIRECTORY = ""
 
     @classmethod
-    def on_reload(cls, is_first_load=False):
+    async def on_reload(cls, is_first_load=False):
         if not cls.SPECIAL_WALK:
             entries = ResourceLoader.get_all_entries(cls.DIRECTORY)
         else:
@@ -77,7 +77,7 @@ class AbstractFileWalkingReloadListenerInstanceBased(AbstractReloadListener, ABC
         self.SPECIAL_WALK = False
         self.DIRECTORY = ""
 
-    def on_reload(self, is_first_load=False):
+    async def on_reload(self, is_first_load=False):
         if not self.SPECIAL_WALK:
             entries = ResourceLoader.get_all_entries(self.DIRECTORY)
         else:
@@ -88,9 +88,9 @@ class AbstractFileWalkingReloadListenerInstanceBased(AbstractReloadListener, ABC
                 continue
 
             if self.PATTERN is None or self.PATTERN.match(entry):
-                self.load_file(entry, is_first_load=is_first_load)
+                await self.load_file(entry, is_first_load=is_first_load)
 
-    def load_file(self, file: str, is_first_load=False):
+    async def load_file(self, file: str, is_first_load=False):
         """
         Similar to on_reload, but it invoked for each matching file
         :param file: the file to load

@@ -22,6 +22,8 @@ class TestNetworkManager(TestCase):
         from mcpython import shared
         from mcpython.engine.network.NetworkManager import load_packages
 
+        shared.NETWORK_MANAGER.reset_package_registry()
+
         self.assertEqual(len(shared.NETWORK_MANAGER.package_types), 0)
 
         await load_packages()
@@ -40,7 +42,7 @@ class TestNetworkManager(TestCase):
 
         data = shared.NETWORK_MANAGER.get_dynamic_id_info()
 
-        shared.NETWORK_MANAGER.set_dynamic_id_info(data)
+        await shared.NETWORK_MANAGER.set_dynamic_id_info(data)
 
         self.assertNotEqual(len(shared.NETWORK_MANAGER.package_types), 0)
 
@@ -58,9 +60,9 @@ class TestNetworkManager(TestCase):
         await load_packages()
 
         package = DisconnectionConfirmPackage()
-        data = shared.NETWORK_MANAGER.encode_package(0, package)
+        data = await shared.NETWORK_MANAGER.encode_package(0, package)
 
-        package2 = shared.NETWORK_MANAGER.fetch_package_from_buffer(bytearray(data))
+        package2 = await shared.NETWORK_MANAGER.fetch_package_from_buffer(bytearray(data))
 
         self.assertIsInstance(package2, DisconnectionConfirmPackage)
         # todo: test more attributes

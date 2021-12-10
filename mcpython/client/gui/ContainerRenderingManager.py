@@ -56,9 +56,9 @@ class OpenedInventoryStatePart(
         self.eventbus.subscribe("user:mouse:drag", self.on_mouse_drag)
         self.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    async def on_key_press(self, symbol: int, modifiers: int):
         if symbol == key.ESCAPE:
-            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.remove_one_from_stack())
+            await shared.inventory_handler.remove_one_from_stack()
 
         x, y = shared.window.mouse_position
         slot, inventory = self._get_slot_inventory_for(x, y)

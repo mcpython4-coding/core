@@ -25,7 +25,7 @@ class ICapabilityContainer(IBufferSerializeAble):
     def __init__(self):
         self.capability_data: typing.Optional[typing.Dict[str, typing.Any]] = None
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         flag = self.capability_data is None
         buffer.write_bool(flag)
         if flag:
@@ -36,7 +36,7 @@ class ICapabilityContainer(IBufferSerializeAble):
             lambda e: buffer.write_string(e[0]).write_bytes(pickle.dumps(e[1])),
         )
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         flag = buffer.read_bool()
         if flag:
             self.capability_data = None
@@ -44,7 +44,7 @@ class ICapabilityContainer(IBufferSerializeAble):
 
         self.capability_data = {
             e[0]: e[1]
-            for e in buffer.read_list(
+            for e in await buffer.read_list(
                 lambda: (
                     buffer.read_string(),
                     mcpython.util.picklemagic.safe_loads(buffer.read_bytes()),

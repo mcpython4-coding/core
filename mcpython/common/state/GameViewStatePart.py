@@ -122,7 +122,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 for x in shared.window.mouse_pressing.keys()
             ]
         else:
-            shared.world.get_active_player().reset_moving_slot()
+            shared.tick_handler.schedule_once(shared.world.get_active_player().reset_moving_slot())
 
     def get_mouse_active(self):
         return self.__activate_mouse
@@ -184,7 +184,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 if not self.break_time:
                     self.calculate_new_break_time()
 
-    def on_physics_update(self, dt: float):
+    async def on_physics_update(self, dt: float):
         if not self.activate_physics:
             return
 
@@ -195,16 +195,16 @@ class GameView(AbstractStatePart.AbstractStatePart):
             player = shared.world.get_active_player()
 
             for _ in range(m):
-                self.physics_update_internal(dt / m, player)
+                await self.physics_update_internal(dt / m, player)
 
-            player.send_update_package_when_client()
+            await player.send_update_package_when_client()
         else:
             pass
             # for player in shared.world.players.values():
             #     for _ in range(m):
             #         self.physics_update_internal(dt / m, player)
 
-    def on_left_click_interaction_update(self, dt: float):
+    async def on_left_click_interaction_update(self, dt: float):
         if shared.window.exclusive and shared.window.mouse_pressing[mouse.LEFT]:
 
             player = shared.world.get_active_player()
@@ -225,7 +225,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 if player.gamemode == 1:
                     if self.mouse_press_time >= 0.10:
                         # todo: check for special break behaviour (chests, etc.)
-                        chunk.remove_block(block_position)
+                        await chunk.remove_block(block_position)
 
                 elif player.gamemode in (0, 2):
                     selected_itemstack: mcpython.common.container.ResourceStack.ItemStack = (
@@ -267,14 +267,14 @@ class GameView(AbstractStatePart.AbstractStatePart):
                                     stack.copy(), block.position, pickup_delay=0
                                 )
 
-                        chunk.remove_block(block_position)
+                        await chunk.remove_block(block_position)
 
                         if not selected_itemstack.is_empty():
                             selected_itemstack.item.on_block_broken_with(
                                 selected_itemstack, player, block
                             )
 
-    def on_right_click_interaction_update(self, dt: float):
+    async def on_right_click_interaction_update(self, dt: float):
         if not shared.window.mouse_pressing[mouse.RIGHT]:
             return
 
@@ -325,7 +325,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                             self.mouse_press_time = 0
                             return
 
-                        instance = chunk.add_block(
+                        instance = await chunk.add_block(
                             previous,
                             slot.get_itemstack().item.get_block(),
                             lazy_setup=lambda block: block.set_creation_properties(
@@ -342,7 +342,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
                         self.mouse_press_time = 0
 
-    def on_middle_click_interaction_update(self, dt: float):
+    async def on_middle_click_interaction_update(self, dt: float):
         player = shared.world.get_active_player()
         if (
             shared.window.exclusive
@@ -384,17 +384,17 @@ class GameView(AbstractStatePart.AbstractStatePart):
                                 selected_slot.set_itemstack(slot.get_itemstack())
                                 slot.set_itemstack(ref_itemstack)
                             else:
-                                player.set_active_inventory_slot(slots.index(slot))
+                                await player.set_active_inventory_slot(slots.index(slot))
                             return
 
                 if player.gamemode == 1:
                     old_itemstack = selected_slot.get_itemstack()
                     selected_slot.set_itemstack(itemstack)
-                    player.pick_up_item(old_itemstack)
+                    await player.pick_up_item(old_itemstack)
                     if shared.window.mouse_pressing[mouse.LEFT]:
                         self.calculate_new_break_time()
 
-    def physics_update_internal(self, dt: float, player):
+    async def physics_update_internal(self, dt: float, player):
         """
         Internal implementation of the `update()` method. This is where most
         of the motion logic lives, along with gravity and collision detection.
@@ -415,7 +415,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         # collisions & position update
         x, y, z = player.position
-        before = mcpython.util.math.position_to_chunk(player.position)
+        # before = mcpython.util.math.position_to_chunk(player.position)
         if player.gamemode != 3:
             x, y, z = collide((x + dx, y + dy, z + dz), 2, player.position)
         else:
@@ -508,7 +508,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
             )
         return dx, dy, dz
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+    async def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         player = shared.world.get_active_player()
         if not self.activate_mouse:
             return
@@ -539,13 +539,13 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 cancel = True
 
         if block:
-            if not cancel and asyncio.get_event_loop().run_until_complete(block.on_player_interaction(
+            if not cancel and await block.on_player_interaction(
                 player,
                 button,
                 modifiers,
                 hit_position,
                 player.get_active_inventory_slot().get_itemstack(),
-            )):
+            ):
                 cancel = True
 
         if cancel:
@@ -577,7 +577,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
             if previous_block and new_block != previous_block:
                 self.mouse_press_time = 0
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    async def on_key_press(self, symbol: int, modifiers: int):
         player = shared.world.get_active_player()
 
         if not self.activate_keyboard:
@@ -617,7 +617,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
 
         elif symbol in shared.window.num_keys and not modifiers & key.MOD_SHIFT:
             index = symbol - shared.window.num_keys[0]
-            player.set_active_inventory_slot(index)
+            await player.set_active_inventory_slot(index)
             if shared.window.mouse_pressing[mouse.LEFT]:
                 self.calculate_new_break_time()
 

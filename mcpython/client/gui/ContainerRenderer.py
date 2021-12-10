@@ -131,13 +131,13 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
         shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.active)
         buffer.write_string(self.custom_name if self.custom_name is not None else "")
 
-        buffer.write_list(self.slots, lambda slot: slot.write_to_network_buffer(buffer))
+        await buffer.write_list(self.slots, lambda slot: slot.write_to_network_buffer(buffer))
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         self.active = buffer.read_bool()
 
         self.custom_name = buffer.read_string()
@@ -152,7 +152,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
             raise RuntimeError("invalid slot count received!")
 
         for slot in self.slots:
-            slot.read_from_network_buffer(buffer)
+            await slot.read_from_network_buffer(buffer)
 
     def on_mouse_button_press(
         self,

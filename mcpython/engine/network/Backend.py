@@ -34,7 +34,7 @@ class ClientBackend:
 
         self.connected = False
 
-    def send_package(self, data: bytes):
+    async def send_package(self, data: bytes):
         self.scheduled_packages.append(data)
 
     def connect(self) -> bool:
@@ -161,7 +161,7 @@ class ServerBackend:
         yield from list(self.data_by_client.items())
         self.handle_lock.release()
 
-    def send_package(self, data: bytes, client: int):
+    async def send_package(self, data: bytes, client: int):
         self.client_locks[client].acquire()
         self.scheduled_packages_by_client.setdefault(client, []).append(data)
         self.client_locks[client].release()
@@ -230,7 +230,7 @@ class ServerBackend:
                     client_id, []
                 ):
                     try:
-                        conn.send(package)
+                        asyncio.get_event_loop().run_until_complete(conn.send(package))
                     except ConnectionResetError:
                         logger.println(f"forced-disconnected client @{client_id}")
                         self.disconnect_client(client_id)

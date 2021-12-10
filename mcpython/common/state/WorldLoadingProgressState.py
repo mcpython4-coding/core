@@ -48,10 +48,10 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         else:
             asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_loading"))
 
-    def load_world_from(self, name: str):
+    async def load_world_from(self, name: str):
         logger.println(f"[WORLD LOADING][INFO] starting loading world '{name}'")
         shared.world.setup_by_filename(name)
-        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_loading"))
+        await shared.state_handler.change_state("minecraft:world_loading")
 
     def create_state_parts(self) -> list:
         return [
@@ -72,8 +72,8 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             ),
         ]
 
-    def on_update(self, dt):
-        shared.world_generation_handler.task_handler.process_tasks(timer=0.8)
+    async def on_update(self, dt):
+        await shared.world_generation_handler.task_handler.process_tasks(timer=0.8)
 
         if shared.IS_CLIENT:
             for chunk in self.status_table:
@@ -83,13 +83,14 @@ class WorldLoadingProgress(AbstractState.AbstractState):
                 self.status_table[chunk] = 1 / c if c > 0 else -1
 
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:game"))
+            await shared.state_handler.change_state("minecraft:game")
             shared.world.world_loaded = True
+
             if (
                 mcpython.common.config.SHUFFLE_DATA
                 and mcpython.common.config.SHUFFLE_INTERVAL > 0
             ):
-                shared.event_handler.call("minecraft:data:shuffle:all")
+                await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
         self.parts[1].text = "{}%".format(
             round(sum(self.status_table.values()) / len(self.status_table) * 1000) / 10

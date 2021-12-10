@@ -19,6 +19,28 @@ from mcpython.server.command.Builder import (
     Selector,
 )
 
+
+async def add_xp_to_all(env, data):
+    for player in data[2](env):
+        await player.add_xp(data[3])
+
+
+async def add_xp_level_to_all(env, data):
+    for player in data[2](env):
+        await player.add_xp_level(data[3])
+
+
+async def set_xp_to(env, data):
+    for player in data[2](env):
+        await player.clear_xp()
+        await player.add_xp(data[3])
+
+
+async def set_xp_level_to(env, data):
+    for player in data[2](env):
+        await player.clear_xp()
+        await player.add_xp_level(data[3])
+
 xp = (
     Command("xp")
     .alias("experience")
@@ -38,9 +60,7 @@ xp = (
                     .of_name("points")
                     .info("adds <amount> experience points to the selected players")
                     .on_execution(
-                        lambda env, data: [
-                            player.add_xp(data[3]) for player in data[2](env)
-                        ]
+                        add_xp_to_all
                     )
                 )
                 .than(
@@ -48,9 +68,7 @@ xp = (
                     .of_name("levels")
                     .info("adds <amount> experience levels to the selected players")
                     .on_execution(
-                        lambda env, data: [
-                            player.add_xp_level(data[3]) for player in data[2](env)
-                        ]
+                        add_xp_level_to_all
                     )
                 )
             )
@@ -70,9 +88,7 @@ xp = (
                     .of_name("points")
                     .info("sets the experience of the selected players to <amount>")
                     .on_execution(
-                        lambda env, data: [
-                            player.clear_xp().add_xp(data[3]) for player in data[2](env)
-                        ]
+                        set_xp_to
                     )
                 )
                 .than(
@@ -82,10 +98,7 @@ xp = (
                         "sets the experience level of the selected players to <amount>"
                     )
                     .on_execution(
-                        lambda env, data: [
-                            player.clear_xp().add_xp_level(data[3])
-                            for player in data[2](env)
-                        ]
+                        set_xp_level_to
                     )
                 )
             )

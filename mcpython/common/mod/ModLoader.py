@@ -671,7 +671,7 @@ class ModLoader:
             ]
         )
 
-    def process(self):
+    async def process(self):
         """
         Will process some loading tasks scheduled
         Used internally during mod loading state
@@ -693,7 +693,7 @@ class ModLoader:
                 break
 
             try:
-                if stage.call_one(astate):
+                if await stage.call_one(astate):
                     return
 
             except (SystemExit, KeyboardInterrupt):

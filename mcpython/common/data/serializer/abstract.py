@@ -21,22 +21,22 @@ class ISerializeAble(IBufferSerializeAble, ABC):
     SERIALIZER: typing.Optional[typing.Type["ISerializer"]] = None
 
     @classmethod
-    def deserialize(cls, data: bytes) -> "ISerializeAble":
-        return cls.SERIALIZER.deserialize(data)
+    async def deserialize(cls, data: bytes) -> "ISerializeAble":
+        return await cls.SERIALIZER.deserialize(data)
 
-    def serialize(self) -> bytes:
-        return self.SERIALIZER.serialize(self)
+    async def serialize(self) -> bytes:
+        return await self.SERIALIZER.serialize(self)
 
 
 class ISerializer:
     @classmethod
-    def check(cls, data: bytes) -> bool:
+    async def check(cls, data: bytes) -> bool:
         return True
 
     @classmethod
-    def deserialize(cls, data: bytes) -> ISerializeAble:
+    async def deserialize(cls, data: bytes) -> ISerializeAble:
         raise NotImplementedError()
 
     @classmethod
-    def serialize(cls, obj: ISerializeAble) -> bytes:
+    async def serialize(cls, obj: ISerializeAble) -> bytes:
         raise NotImplementedError()

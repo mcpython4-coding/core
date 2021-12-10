@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import typing
 from abc import ABC
 
@@ -57,7 +58,7 @@ class BucketItem(AbstractFluidContainer):
         fluidstack.amount -= 1000
         return True
 
-    def on_player_interact(
+    async def on_player_interact(
         self, player, block, button: int, modifiers: int, itemstack, previous
     ) -> bool:
         if button != mouse.RIGHT:
@@ -66,13 +67,13 @@ class BucketItem(AbstractFluidContainer):
         from mcpython.common.block.FluidBlock import IFluidBlock
 
         if isinstance(block, IFluidBlock):
-            shared.world.get_active_dimension().remove_block(block)
+            await shared.world.get_active_dimension().remove_block(block)
 
             bucket = ItemStack(block.NAME + "_bucket")
 
             if itemstack.amount > 1:
                 itemstack.add_amount(-1)
-                player.pick_up_item(bucket)
+                asyncio.get_event_loop().run_until_complete(player.pick_up_item(bucket))
             else:
                 itemstack.copy_from(bucket)
 
@@ -116,14 +117,14 @@ class FilledBucketItem(AbstractFluidContainer, ABC):
         fluidstack.amount -= 1000
         return True
 
-    def on_player_interact(
+    async def on_player_interact(
         self, player, block, button: int, modifiers: int, itemstack, previous
     ) -> bool:
         if button != mouse.RIGHT:
             return False
 
         if previous is not None:
-            player.dimension.add_block(previous, self.ASSIGNED_FLUID.NAME)
+            await player.dimension.add_block(previous, self.ASSIGNED_FLUID.NAME)
             itemstack.copy_from(ItemStack("minecraft:bucket"))
             return True
 

@@ -31,14 +31,14 @@ class DisconnectionInitPackage(AbstractPackage):
         self.reason = reason
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.reason)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.reason = buffer.read_string()
 
     async def handle_inner(self):
-        self.answer(DisconnectionConfirmPackage())
+        await self.answer(DisconnectionConfirmPackage())
 
         mcpython.common.event.TickHandler.handler.bind(self.disconnect, 5)
 

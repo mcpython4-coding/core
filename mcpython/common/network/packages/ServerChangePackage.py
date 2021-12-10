@@ -35,11 +35,11 @@ class ServerChangePackage(AbstractPackage):
         self.new_server_port = port
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.new_server_ip)
         buffer.write_int(self.new_server_port)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.new_server_ip = buffer.read_string()
         self.new_server_port = buffer.read_int()
 
@@ -65,7 +65,7 @@ class ServerChangePackage(AbstractPackage):
             Client2ServerHandshake,
         )
 
-        shared.NETWORK_MANAGER.send_package(
+        await shared.NETWORK_MANAGER.send_package(
             Client2ServerHandshake().setup("test:player")
         )
 

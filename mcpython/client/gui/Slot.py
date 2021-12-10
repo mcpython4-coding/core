@@ -185,11 +185,11 @@ class Slot(ISlot):
     def handle_click(self, button: int, modifiers: int) -> bool:
         return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        self.itemstack.read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await self.itemstack.read_from_network_buffer(buffer)
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        self.itemstack.write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await self.itemstack.write_to_network_buffer(buffer)
 
     def get_capacity(self) -> int:
         return (

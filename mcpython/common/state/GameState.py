@@ -69,15 +69,15 @@ class Game(AbstractState.AbstractState):
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if shared.state_handler.global_key_bind_toggle:
             return
 
         if symbol == key.ESCAPE and shared.window.exclusive:
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:escape_menu"))
+            await shared.state_handler.change_state("minecraft:escape_menu")
 
         elif symbol == key.R:
-            asyncio.get_event_loop().run_until_complete(shared.inventory_handler.reload_config())
+            await shared.inventory_handler.reload_config()
 
         elif symbol == key.E:
             if (
@@ -85,23 +85,21 @@ class Game(AbstractState.AbstractState):
                 in shared.inventory_handler.open_containers
             ):
                 if shared.window.exclusive:
-                    shared.event_handler.call("on_player_inventory_open")
-                    asyncio.get_event_loop().run_until_complete(
-                        shared.world.get_active_player().inventory_main.reload_config()
-                    )
-                    asyncio.get_event_loop().run_until_complete(shared.inventory_handler.show(
+                    await shared.event_handler.call_async("on_player_inventory_open")
+                    await shared.world.get_active_player().inventory_main.reload_config()
+                    await shared.inventory_handler.show(
                         shared.world.get_active_player().inventory_main
-                    ))
+                    )
                     self.parts[0].activate_mouse = False
 
             else:
-                shared.event_handler.call("on_player_inventory_close")
-                asyncio.get_event_loop().run_until_complete(shared.inventory_handler.hide(
+                await shared.event_handler.call_async("on_player_inventory_close")
+                await shared.inventory_handler.hide(
                     shared.world.get_active_player().inventory_main
-                ))
+                )
 
         elif symbol == key.T and shared.window.exclusive:
-            mcpython.common.event.TickHandler.handler.bind(self.open_chat, 2)
+            mcpython.common.event.TickHandler.handler.schedule_once(self.open_chat())
 
         elif symbol == key._7 and modifiers & key.MOD_SHIFT and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(
@@ -109,8 +107,8 @@ class Game(AbstractState.AbstractState):
             )
 
     @staticmethod
-    def open_chat(enter=""):
-        asyncio.get_event_loop().run_until_complete(shared.inventory_handler.show(shared.world.get_active_player().inventory_chat))
+    async def open_chat(enter=""):
+        await shared.inventory_handler.show(shared.world.get_active_player().inventory_chat)
         shared.chat.text = enter
 
 

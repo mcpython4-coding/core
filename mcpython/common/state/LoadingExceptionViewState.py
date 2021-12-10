@@ -125,4 +125,4 @@ def error_occur(text: str):
         print(text)
     else:
         loading_exception.set_text(text)
-        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state(loading_exception.NAME))
+        shared.tick_handler.schedule_once(shared.state_handler.change_state(loading_exception.NAME))

@@ -50,28 +50,28 @@ class NetworkSyncedDimension(Dimension):
                 DataRequestPackage,
             )
 
-            shared.NETWORK_MANAGER.send_package(
+            shared.tick_handler.schedule_once(shared.NETWORK_MANAGER.send_package(
                 DataRequestPackage().request_chunk(self.name, cx, cz)
-            )
+            ))
 
         return self.chunks[(cx, cz)]
 
 
 class NetworkSyncedChunk(Chunk):
-    def add_block(
+    async def add_block(
         self,
         *args,
         network_sync=True,
         **kwargs,
     ):
-        b = super().add_block(*args, **kwargs, network_sync=False)
+        b = await super().add_block(*args, **kwargs, network_sync=False)
 
         if network_sync:
             from mcpython.common.network.packages.WorldDataExchangePackage import (
                 ChunkBlockChangePackage,
             )
 
-            shared.NETWORK_MANAGER.send_package_to_all(
+            await shared.NETWORK_MANAGER.send_package_to_all(
                 ChunkBlockChangePackage()
                 .set_dimension(self.dimension.get_name())
                 .change_position(b.position, b),
@@ -80,15 +80,15 @@ class NetworkSyncedChunk(Chunk):
 
         return b
 
-    def remove_block(self, *args, network_sync=True, **kwargs):
-        super().remove_block(*args, network_sync=False, **kwargs)
+    async def remove_block(self, *args, network_sync=True, **kwargs):
+        await super().remove_block(*args, network_sync=False, **kwargs)
 
         if network_sync:
             from mcpython.common.network.packages.WorldDataExchangePackage import (
                 ChunkBlockChangePackage,
             )
 
-            shared.NETWORK_MANAGER.send_package_to_all(
+            await shared.NETWORK_MANAGER.send_package_to_all(
                 ChunkBlockChangePackage()
                 .set_dimension(self.dimension.get_name())
                 .change_position(args[0], None),

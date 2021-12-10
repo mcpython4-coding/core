@@ -23,11 +23,11 @@ class ItemGroup(IBufferSerializeAble):
         self.entries: typing.List[ItemStack] = []
         self.has_lazy = False
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        buffer.write_list(self.entries, lambda e: e.write_to_network_buffer(buffer))
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await buffer.write_list(self.entries, lambda e: e.write_to_network_buffer(buffer))
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        self.entries = buffer.read_list(
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        self.entries = await buffer.read_list(
             lambda: ItemStack().read_from_network_buffer(buffer)
         )
 
@@ -86,12 +86,12 @@ class FilteredItemGroup(ItemGroup):
         self.raw_filter: str = None
         self.filter: re.Pattern = None
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
         buffer.write_string(self.raw_filter)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
         self.apply_filter(buffer.read_string())
 
     def view(self) -> typing.Iterator[ItemStack]:

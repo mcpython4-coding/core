@@ -1952,4 +1952,5 @@ b   [uuk]: fixed a lot small issues; improved error handling all over the place
 b   [uuk]: fixed scrolling is creative tab over slots leading to moving that item into your inventory
 FA* [uuk]: async mod loading is here
 FA* [uuk]: async event handling, block events and general events
+IA* [uuk]: event handler will crash now when invoked from an async context
 

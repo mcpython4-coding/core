@@ -54,36 +54,36 @@ class DataRequestPackage(AbstractPackage):
         self.request_player_info_state = True
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.request_world_info_state)
         buffer.write_bool(self.request_player_info_state)
-        buffer.write_list(self.requested_dimensions, lambda e: buffer.write_string(e))
-        buffer.write_list(
+        await buffer.write_list(self.requested_dimensions, lambda e: buffer.write_string(e))
+        await buffer.write_list(
             self.requested_chunks,
             lambda e: buffer.write_string(e[0]).write_int(e[1]).write_int(e[1]),
         )
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.request_world_info_state = buffer.read_bool()
         self.request_player_info_state = buffer.read_bool()
-        self.requested_dimensions = buffer.read_list(lambda: buffer.read_string())
-        self.requested_chunks = buffer.read_list(
+        self.requested_dimensions = await buffer.read_list(lambda: buffer.read_string())
+        self.requested_chunks = await buffer.read_list(
             lambda: (buffer.read_string(), buffer.read_int(), buffer.read_int())
         )
 
     async def handle_inner(self):
         if self.request_world_info_state:
-            self.answer(WorldInfoPackage().setup())
+            await self.answer(WorldInfoPackage().setup())
 
         if self.request_player_info_state:
-            self.answer(PlayerInfoPackage().setup())
+            await self.answer(PlayerInfoPackage().setup())
 
         for dimension in self.requested_dimensions:
-            self.answer(DimensionInfoPackage().setup(dimension))
+            await self.answer(DimensionInfoPackage().setup(dimension))
 
         for dim, cx, cz in self.requested_chunks:
             logger.println(f"collecting chunk information for chunk @{cx}:{cz}@{dim}")
-            self.answer(ChunkDataPackage().setup(dim, (cx, cz)))
+            await self.answer(ChunkDataPackage().setup(dim, (cx, cz)))
 
 
 class WorldInfoPackage(AbstractPackage):
@@ -110,10 +110,10 @@ class WorldInfoPackage(AbstractPackage):
 
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.spawn_point[0]).write_int(self.spawn_point[1])
 
-        buffer.write_list(
+        await buffer.write_list(
             self.dimensions,
             lambda e: buffer.write_string(e[0])
             .write_int(e[1])
@@ -121,10 +121,10 @@ class WorldInfoPackage(AbstractPackage):
             .write_int(e[2][1]),
         )
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.spawn_point = buffer.read_int(), buffer.read_int()
 
-        self.dimensions = buffer.read_list(
+        self.dimensions = await buffer.read_list(
             lambda: (
                 buffer.read_string(),
                 buffer.read_int(),
@@ -164,12 +164,12 @@ class WorldInfoPackage(AbstractPackage):
                     entity.dimension = new_dim
 
             if dim.get_dimension_id() != dim_id:
-                self.answer(
+                await self.answer(
                     DisconnectionInitPackage().set_reason("world dim id miss-match")
                 )
 
             if dim.get_world_height_range() != height_range:
-                self.answer(
+                await self.answer(
                     DisconnectionInitPackage().set_reason("world height miss-match")
                 )
 
@@ -213,7 +213,7 @@ class ChunkDataPackage(AbstractPackage):
 
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         start = time.time()
         logger.println(
             f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} for networking"
@@ -232,11 +232,11 @@ class ChunkDataPackage(AbstractPackage):
             else:
                 buffer.write_bool_group([True, chunk.exposed(b.position)])
                 buffer.write_string(b.NAME)
-                b.write_to_network_buffer(buffer)
+                await b.write_to_network_buffer(buffer)
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         start = time.time()
         logger.println(
             f"preparing chunk data for chunk @{self.position[0]}:{self.position[1]}@{self.dimension} to world"
@@ -254,7 +254,7 @@ class ChunkDataPackage(AbstractPackage):
             else:
                 name = buffer.read_string()
                 instance = shared.registry.get_by_name("minecraft:block").get(name)()
-                instance.read_from_network_buffer(buffer)
+                await instance.read_from_network_buffer(buffer)
                 self.blocks.append((instance, visible))
 
         logger.println(f"-> chunk data ready (took {time.time() - start}s)")
@@ -281,7 +281,7 @@ class ChunkDataPackage(AbstractPackage):
             block = self.blocks[i]
 
             if block is not None:
-                chunk.add_block(
+                await chunk.add_block(
                     (x, y, z),
                     block[0],
                     immediate=False,
@@ -321,10 +321,10 @@ class ChunkBlockChangePackage(AbstractPackage):
         self.data.append((position, block, update_only))
         return self
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.dimension)
 
-        def write(e):
+        async def write(e):
             position, block, update_only = e
             buffer.write_long(position[0])
             buffer.write_long(position[1])
@@ -335,16 +335,16 @@ class ChunkBlockChangePackage(AbstractPackage):
             else:
                 buffer.write_bool_group([True, update_only])
                 buffer.write_string(block.NAME)
-                block.write_to_network_buffer(buffer)
+                await block.write_to_network_buffer(buffer)
 
-        buffer.write_list(self.data, write)
+        await buffer.write_list(self.data, write)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         self.dimension = buffer.read_string()
 
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
-        def read():
+        async def read():
             position = tuple((buffer.read_long() for _ in range(3)))
 
             is_block, update_only = buffer.read_bool_group(2)
@@ -363,19 +363,19 @@ class ChunkBlockChangePackage(AbstractPackage):
                         )
                         return
 
-                    b.read_from_network_buffer(buffer)
+                    await b.read_from_network_buffer(buffer)
 
                 else:
                     instance = shared.registry.get_by_name("minecraft:block").get(
                         name
                     )()
-                    instance.read_from_network_buffer(buffer)
+                    await instance.read_from_network_buffer(buffer)
                     self.data.append((position, instance, update_only))
 
-        buffer.read_list(read)
+        await buffer.read_list(read)
 
     async def handle_inner(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
         for position, block, update_only in self.data:
-            dimension.add_block(position, block, network_sync=False, block_update=False)
+            await dimension.add_block(position, block, network_sync=False, block_update=False)

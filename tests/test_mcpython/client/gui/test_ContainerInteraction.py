@@ -75,7 +75,7 @@ class ContainerInteraction(TestCase):
 
         shared.window.mouse_position = 52, 56
 
-        self.interaction_manager.on_key_press(10, 20)
+        await self.interaction_manager.on_key_press(10, 20)
         self.assertTrue(invoked)
 
     async def test_key_forward_not_hit(self):
@@ -97,7 +97,7 @@ class ContainerInteraction(TestCase):
 
         shared.window.mouse_position = 20, 20
 
-        self.interaction_manager.on_key_press(10, 20)
+        await self.interaction_manager.on_key_press(10, 20)
         self.assertFalse(invoked)
 
     async def test_left_pickup(self):

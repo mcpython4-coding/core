@@ -62,7 +62,7 @@ class TestBarrel(TestCase):
         instance.set_model_state(state)
         self.assertEqual(state, instance.get_model_state())
 
-    def test_serializer(self):
+    async def test_serializer(self):
         from mcpython import shared
         from mcpython.common.container.ResourceStack import ItemStack
         from mcpython.common.item.AbstractItem import AbstractItem
@@ -85,10 +85,10 @@ class TestBarrel(TestCase):
         instance.inventory.slots[0].set_itemstack(ItemStack(TestItem()))
 
         buffer = WriteBuffer()
-        instance.write_to_network_buffer(buffer)
+        await instance.write_to_network_buffer(buffer)
 
         instance2 = mcpython.common.block.Barrel.Barrel()
-        instance2.read_from_network_buffer(ReadBuffer(buffer.get_data()))
+        await instance2.read_from_network_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertEqual(
             instance2.inventory.slots[0].get_itemstack().get_item_name(),

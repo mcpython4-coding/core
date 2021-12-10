@@ -49,7 +49,7 @@ class Dirt(AbstractBlock.AbstractBlock):
                                 type(instance) != str
                                 and instance.NAME == "minecraft:grass_block"
                             ):
-                                dim.get_chunk_for_position(self.position).add_block(
+                                await dim.get_chunk_for_position(self.position).add_block(
                                     self.position, "minecraft:grass_block"
                                 )
                                 return

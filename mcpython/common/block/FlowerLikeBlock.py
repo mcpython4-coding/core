@@ -36,4 +36,4 @@ class FlowerLikeBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             self.SUPPORT_BLOCK_TAG not in block_under.TAGS
             and self.SUPPORT_BLOCK_TAG is not None
         ):
-            dimension.remove_block(self, block_update_self=False)
+            await dimension.remove_block(self, block_update_self=False)

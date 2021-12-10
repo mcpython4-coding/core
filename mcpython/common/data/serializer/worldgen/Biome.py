@@ -107,7 +107,7 @@ class BiomeSerializer(
             cls.TOP_LAYER_CONFIGURATORS[obj.NAME] = obj
 
     @classmethod
-    def deserialize(cls, data: dict) -> typing.Type[ISerializeAble]:
+    async def deserialize(cls, data: dict) -> typing.Type[ISerializeAble]:
         import mcpython.server.worldgen.biome.Biome
 
         data.setdefault("top_layer", {"type": "minecraft:default_top_layer_config"})
@@ -115,7 +115,7 @@ class BiomeSerializer(
             data["top_layer"]["type"]
         ](data["top_layer"])
 
-        class Biome(mcpython.server.worldgen.biome.Biome.Biome):
+        class Biome(mcpython.server.worldgen.biome.Biome .Biome):
             NAME = data["name"]
 
             # name -> weight, group size
@@ -193,11 +193,11 @@ class BiomeSerializer(
         )
 
     @classmethod
-    def serialize(cls, obj: typing.Type[ISerializeAble]) -> dict:
+    async def serialize(cls, obj: typing.Type[ISerializeAble]) -> dict:
         raise NotImplementedError()
 
     @classmethod
-    def register(cls, obj):
+    async def register(cls, obj):
         cls.COLLECTED.append(obj)
         shared.biome_handler.register(obj)
 
@@ -214,8 +214,8 @@ instance = (
     mcpython.common.data.serializer.DataSerializationManager.DataSerializationService(
         "minecraft:biomes",
         re.compile("data/[A-Za-z0-9-_]+/worldgen/biomes/[A-Za-z0-9-_/]+.json"),
-        data_deserializer=mcpython.util.data.bytes_to_json,
-        data_serializer=mcpython.util.data.json_to_bytes,
+        data_deserializer=mcpython.util.data.bytes_to_json_async,
+        data_serializer=mcpython.util.data.json_to_bytes_async,
         re_run_on_reload=True,
     ).register_serializer(BiomeSerializer)
 )

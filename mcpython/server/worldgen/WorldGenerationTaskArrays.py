@@ -229,7 +229,7 @@ class WorldGenerationTaskHandler:
 
         return 3
 
-    def process_tasks(self, chunks=None, timer=None):
+    async def process_tasks(self, chunks=None, timer=None):
         """
         Process tasks in chunks [default to all scheduled chunks] until more time than timer is left behind
             [Defaults to no limit]
@@ -246,49 +246,49 @@ class WorldGenerationTaskHandler:
 
         if timer is not None:
             for chunk in chunks:
-                self.process_chunk(chunk, timer=timer)
+                await self.process_chunk(chunk, timer=timer)
                 timer -= time.time() - start
                 if timer < 0:
                     return
                 start = time.time()
         else:
             for chunk in chunks:
-                self.process_chunk(chunk)
+                await self.process_chunk(chunk)
 
-    def process_chunk(
+    async def process_chunk(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk, timer=None
     ):
         start = time.time()
         flag = True
         while flag:
             flag = (
-                self._process_0_array(chunk)
-                or self._process_1_array(chunk)
-                or self._process_2_array(chunk)
+                await self._process_0_array(chunk)
+                or await self._process_1_array(chunk)
+                or await self._process_2_array(chunk)
             )
             if timer is not None and time.time() - start >= timer:
                 return
 
         if chunk in self.chunks:
             if not chunk.generated:
-                shared.world_generation_handler.mark_finished(chunk)
+                await shared.world_generation_handler.mark_finished(chunk)
 
             self.chunks.remove(chunk)
             chunk.generated = True
             chunk.finished = True
             chunk.loaded = True
 
-    def _process_0_array(
+    async def _process_0_array(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> bool:
         dimension = chunk.get_dimension().get_dimension_id()
         if dimension in self.data_maps[0]:
             dim_map = self.data_maps[0][dimension]
             if chunk.get_position() in dim_map:
-                return self.unsafe_process_0_array(chunk, dim_map=dim_map)
+                return await self.unsafe_process_0_array(chunk, dim_map=dim_map)
         return False
 
-    def unsafe_process_0_array(self, chunk, dim_map: dict = None) -> bool:
+    async def unsafe_process_0_array(self, chunk, dim_map: dict = None) -> bool:
         if dim_map is None:
             dim_map = self.data_maps[0][chunk.get_dimension().get_dimension_id()]
 
@@ -299,11 +299,7 @@ class WorldGenerationTaskHandler:
         data = m.pop(0)
         try:
             if asyncio.iscoroutine(data[0]):
-                task = asyncio.get_event_loop().create_task(data[0])
-                asyncio.get_event_loop().run_until_complete(task)
-
-                if task.exception():
-                    raise task.exception()
+                await data[0]
             else:
                 data[0](*data[1], **data[2])
         except (SystemExit, KeyboardInterrupt, OSError):
@@ -316,7 +312,7 @@ class WorldGenerationTaskHandler:
             )
         return True
 
-    def _process_1_array(
+    async def _process_1_array(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?
@@ -329,18 +325,20 @@ class WorldGenerationTaskHandler:
 
                 position, data = m.popitem()
                 if data[0] is None:
-                    chunk.remove_block(position, **data[2])
+                    await chunk.remove_block(position, **data[2])
                     if data[3] is not None:
                         data[3](None)
                 else:
-                    block = chunk.add_block(position, data[0], **data[2])
+                    block = await chunk.add_block(position, data[0], **data[2])
                     if data[3] is not None and block is not None:
-                        data[3](block)
+                        result = data[3](block)
+                        if isinstance(result, typing.Awaitable):
+                            await result
                 return True
 
         return False
 
-    def _process_2_array(
+    async def _process_2_array(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk
     ) -> bool:
         # todo: can we optimize this?

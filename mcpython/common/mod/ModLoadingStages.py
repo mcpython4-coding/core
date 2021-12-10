@@ -135,7 +135,7 @@ class LoadingStage:
         return self
 
     @classmethod
-    def finish(cls, astate):
+    async def finish(cls, astate):
         """
         Will finish up the system
         :param astate: the state to use
@@ -150,10 +150,10 @@ class LoadingStage:
             logger.println(
                 "[INFO] locking registries..."
             )  # ... and do similar stuff :-)
-            shared.event_handler.call("mod_loader:load_finished")
+            await shared.event_handler.call_async("mod_loader:load_finished")
 
             if shared.IS_CLIENT:
-                asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:block_item_generator"))
+                await shared.state_handler.change_state("minecraft:block_item_generator")
             else:
                 shared.state_handler.states["minecraft:world_loading"].load_or_generate(
                     "server_world"
@@ -194,7 +194,7 @@ class LoadingStage:
         astate.parts[2].progress_max = self.max_progress
         astate.parts[2].progress = 0
 
-    def call_one(self, astate):
+    async def call_one(self, astate):
         """
         Will call one event from the stack
         :param astate: the state to use
@@ -202,7 +202,7 @@ class LoadingStage:
         todo: split into smaller parts!
         """
         if self.active_event is None:
-            self.finish(astate)
+            await self.finish(astate)
             return
 
         # todo: modloader needs a constant for the count of loaded mods
@@ -218,7 +218,7 @@ class LoadingStage:
         mod_instance = shared.mod_loader.mods[modname]
 
         try:
-            asyncio.get_event_loop().run_until_complete(mod_instance.eventbus.call_as_stack(self.active_event)) #, amount=4))
+            await mod_instance.eventbus.call_as_stack(self.active_event)  #, amount=4))
 
         except RuntimeError:  # when we are empty
             self.active_mod_index += 1

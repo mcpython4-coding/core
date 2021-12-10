@@ -162,7 +162,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         self.block_index = -1
 
         try:
-            instance = world.get_active_dimension().add_block(
+            instance = await world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[0], block_update=False
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
@@ -263,9 +263,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
         if player is not None:
             player.position = (0, 10, 0)
             player.rotation = (0, 0, 0)
-            player.dimension.remove_block((0, 0, 0))
+            await player.dimension.remove_block((0, 0, 0))
 
-        if shared.event_handler.call_cancelable("stage_handler:loading2main_menu"):
+        if await shared.event_handler.call_cancelable_async("stage_handler:loading2main_menu"):
             await shared.state_handler.change_state("minecraft:start_menu")
 
     def add_new_screen(self, *args):
@@ -282,9 +282,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
             block.face_info.hide_all()
 
         try:
-            instance = dimension.add_block(
+            instance = asyncio.get_event_loop().run_until_complete(dimension.add_block(
                 (0, 0, 0), self.tasks[self.block_index], block_update=False
-            )
+            ))
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
             instance.face_info.update(redraw_complete=True)

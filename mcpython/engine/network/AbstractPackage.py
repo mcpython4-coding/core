@@ -47,17 +47,17 @@ class AbstractPackage:
         self.target_id = -1
         self.previous_packages = []  # set only during receiving or calling answer()
 
-    def send(self, destination=0):
-        shared.NETWORK_MANAGER.send_package(self, destination)
+    async def send(self, destination=0):
+        await shared.NETWORK_MANAGER.send_package(self, destination)
         return self
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         pass
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         pass
 
-    def answer(self, package: "AbstractPackage"):
+    async def answer(self, package: "AbstractPackage"):
         if self.CAN_GET_ANSWER:
             if self.package_id == -1:
                 raise RuntimeError(
@@ -66,7 +66,7 @@ class AbstractPackage:
 
             package.previous_packages = self.previous_packages + [self.package_id]
 
-        shared.NETWORK_MANAGER.send_package(package, self.sender_id)
+        await shared.NETWORK_MANAGER.send_package(package, self.sender_id)
 
     async def handle_inner(self):
         pass

@@ -29,10 +29,10 @@ class PlayerChatInputPackage(AbstractPackage):
         self.text = text
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.text)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
     async def handle_inner(self):
@@ -42,14 +42,14 @@ class PlayerChatInputPackage(AbstractPackage):
             )
             env = CommandExecutionEnvironment(this=player)
             if not await shared.command_parser.run(self.text, env):
-                self.answer(PlayerClientCommandExecution().setup(self.text))
+                await self.answer(PlayerClientCommandExecution().setup(self.text))
 
         else:
             text = (
                 f"[{shared.NETWORK_MANAGER.client_profiles[self.sender_id]['player_name']}] "
                 + self.text
             )
-            shared.NETWORK_MANAGER.send_package_to_all(
+            await shared.NETWORK_MANAGER.send_package_to_all(
                 PlayerMessageShowPackage().setup(text)
             )
             logger.println(text)
@@ -66,10 +66,10 @@ class PlayerMessageShowPackage(AbstractPackage):
         self.text = text
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.text)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
     async def handle_inner(self):
@@ -87,10 +87,10 @@ class PlayerClientCommandExecution(AbstractPackage):
         self.text = text
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.text)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
     async def handle_inner(self):

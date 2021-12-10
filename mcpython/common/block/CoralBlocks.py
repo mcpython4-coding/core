@@ -29,7 +29,7 @@ class ICoralBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     async def on_random_update(self):
         # todo: add water check; not arrival as it is not implemented
-        shared.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
+        await shared.world.get_dimension_by_name(self.dimension).get_chunk_for_position(
             self.position
         ).add_block(self.position, "{}:dead_{}".format(*self.NAME.split(":")))
 

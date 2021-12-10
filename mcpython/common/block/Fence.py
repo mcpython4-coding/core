@@ -100,7 +100,7 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         if shared.IS_CLIENT:
             self.face_info.update(redraw_complete=True)
 
-        self.schedule_network_update()
+        await self.schedule_network_update()
 
     def set_model_state(self, state: dict):
         for key in state:

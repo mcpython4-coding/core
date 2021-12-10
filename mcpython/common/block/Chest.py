@@ -89,17 +89,17 @@ class Chest(
         self.inventory = InventoryChest.InventoryChest(self)
         self.loot_table_link = None
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
-        self.inventory.write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+        await self.inventory.write_to_network_buffer(buffer)
 
         buffer.write_string(
             self.loot_table_link if self.loot_table_link is not None else ""
         )
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
-        self.inventory.read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
+        await self.inventory.read_from_network_buffer(buffer)
 
         self.loot_table_link = buffer.read_string()
         if self.loot_table_link == "":

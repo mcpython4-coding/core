@@ -151,18 +151,18 @@ class WorldGenerationConfig(AbstractState.AbstractState):
     def get_seed_source(self):
         return self.parts[5].text
 
-    def on_back_press(self, x, y):
-        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+    async def on_back_press(self, x, y):
+        await shared.state_handler.change_state("minecraft:start_menu")
 
-    def on_generate_press(self, x, y):
+    async def on_generate_press(self, x, y):
         filename = self.parts[11].entered_text
         if filename == "":
             filename = "New World"
-        asyncio.get_event_loop().run_until_complete(shared.world.cleanup(remove_dims=True, filename=filename))
-        self.generate()
+        await shared.world.cleanup(remove_dims=True, filename=filename)
+        await self.generate()
 
-    def generate(self):
-        shared.state_handler.states[
+    async def generate(self):
+        await shared.state_handler.states[
             "minecraft:world_generation"
         ].generate_from_user_input(self)
 
@@ -170,11 +170,11 @@ class WorldGenerationConfig(AbstractState.AbstractState):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             self.on_back_press(0, 0)
         elif symbol == key.ENTER:
-            self.on_generate_press(0, 0)
+            await self.on_generate_press(0, 0)
 
     async def activate(self):
         await super().activate()

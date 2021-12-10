@@ -42,7 +42,7 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         )
 
         if instance is None or (type(instance) != str and not instance.face_solid & 1):
-            dim.get_chunk_for_position((x, y, z)).remove_block(
+            await dim.get_chunk_for_position((x, y, z)).remove_block(
                 (x, y, z), block_update=False
             )
 

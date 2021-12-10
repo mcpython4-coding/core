@@ -83,12 +83,12 @@ class EntityManager:
 
         return entity
 
-    def tick(self, dt: float):
+    async def tick(self, dt: float):
         # todo: move to dimensions
         # todo: move most of this here to entity
 
         for entity in list(self.entity_map.values()):
-            entity.tick(dt)
+            await entity.tick(dt)
 
             # update the positions of the children
             if entity.parent is None and entity.child is not None:
@@ -107,15 +107,15 @@ class EntityManager:
                 if entity.dimension is not None
                 else 0
             ):
-                entity.kill()
+                await entity.kill()
 
             # todo: add collision & falling system
             # todo: add max entities standing in one space handler
 
-    def clear(self):
+    async def clear(self):
         for entity in list(self.entity_map.values()):
             try:
-                entity.kill(internal=True, force=True)
+                await entity.kill(internal=True, force=True)
             except (SystemExit, KeyboardInterrupt):
                 raise
             except:

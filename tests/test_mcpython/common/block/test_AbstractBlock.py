@@ -28,7 +28,7 @@ class TestAbstractBlock(TestCase):
             "minecraft:block_registry",
         )
 
-    def test_network_serializer(self):
+    async def test_network_serializer(self):
         import mcpython.common.block.AbstractBlock
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
@@ -46,10 +46,10 @@ class TestAbstractBlock(TestCase):
 
         buffer = WriteBuffer()
         block = TestBlock()
-        block.write_to_network_buffer(buffer)
+        await block.write_to_network_buffer(buffer)
 
         block = TestBlock()
-        block.read_from_network_buffer(ReadBuffer(buffer.get_data()))
+        await block.read_from_network_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertTrue(TestBlock.model_state_set)
 

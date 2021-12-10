@@ -34,10 +34,10 @@ class ClientStateChangePackage(AbstractPackage):
         self.new_state = new_state
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.new_state)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.new_state = buffer.read_string()
 
     async def handle_inner(self):

@@ -70,7 +70,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             mcpython.common.world.GameRule.GameRuleHandler, None
         ] = None
 
-        self.reset_config()  # will reset the config
+        asyncio.get_event_loop().run_until_complete(self.reset_config())  # will reset the config
 
         # todo: move to configs / game rules
         self.hide_faces_to_not_generated_chunks: bool = True
@@ -189,7 +189,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         for dimension in self.dimensions.values():
             yield from dimension.entity_iterator()
 
-    def reset_config(self):
+    async def reset_config(self):
         """
         Will reset the internal config of the system.
         todo: change game rule handler reset to an non-new-instance
@@ -197,7 +197,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         calls event world:reset_config in the process
         """
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
-        shared.event_handler.call("world:reset_config")
+        await shared.event_handler.call_async("world:reset_config")
         self.gamerule_handler = mcpython.common.world.GameRule.GameRuleHandler(self)
 
     @onlyInClient()
@@ -625,7 +625,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             for inventory in shared.inventory_handler.containers
         ]
 
-        self.reset_config()
+        await self.reset_config()
 
         if shared.IS_CLIENT:
             player = shared.world.get_active_player(create=False)
@@ -637,13 +637,13 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
         self.spawn_point = (random.randint(0, 15), random.randint(0, 15))
         shared.world_generation_handler.task_handler.clear()
-        shared.entity_manager.clear()
+        await shared.entity_manager.clear()
         self.players.clear()
 
         if filename is not None:
             self.setup_by_filename(filename)
 
-        mcpython.common.data.DataPacks.datapack_handler.cleanup()
+        await mcpython.common.data.DataPacks.datapack_handler.cleanup()
         await shared.event_handler.call_async("world:clean")
 
     def setup_by_filename(self, filename: str):

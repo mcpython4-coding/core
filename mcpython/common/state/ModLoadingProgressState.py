@@ -76,14 +76,14 @@ class ModLoadingProgress(AbstractState.AbstractState):
 
         update_memory_usage_bar(self.memory_bar)
 
-    def on_update(self, dt):
-        shared.mod_loader.process()
+    async def on_update(self, dt):
+        await shared.mod_loader.process()
 
     async def deactivate(self):
         await super().deactivate()
 
         if shared.IS_CLIENT:
-            shared.world.get_active_player().init_creative_tabs()
+            (await shared.world.get_active_player_async()).init_creative_tabs()
 
 
 mod_loading = ModLoadingProgress()

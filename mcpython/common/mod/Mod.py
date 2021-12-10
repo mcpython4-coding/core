@@ -187,7 +187,7 @@ class Mod:
 
         self.server_only = False
 
-        if add_to_mod_loader:
+        if add_to_mod_loader and shared.mod_loader:
             shared.mod_loader.add_to_add(self)
 
     def mod_string(self) -> str:

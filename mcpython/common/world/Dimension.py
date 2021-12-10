@@ -337,7 +337,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
             network_sync=network_sync,
         )
 
-    def remove_block(
+    async def remove_block(
         self,
         position: tuple,
         immediate=True,
@@ -346,7 +346,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
         network_sync=True,
     ):
         chunk = self.get_chunk_for_position(position)
-        chunk.remove_block(
+        await chunk.remove_block(
             position,
             immediate=immediate,
             block_update=block_update,

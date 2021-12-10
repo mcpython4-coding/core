@@ -102,7 +102,7 @@ class ResourcePipeHandler:
         self.listeners.append(listener)
 
         async def l():
-            listener.on_reload(True)
+            await listener.on_reload(True)
 
         shared.mod_loader("minecraft", "stage:post")(l())
 
@@ -152,7 +152,7 @@ class ResourcePipeHandler:
     async def reload_content(self):
         print("starting reload cycle...")
 
-        mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
+        await mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
         await shared.tag_handler.reload()  # reloads all tags
         await shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
 

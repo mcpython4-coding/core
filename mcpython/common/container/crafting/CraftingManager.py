@@ -177,7 +177,7 @@ class CraftingManager:
                 await self.add_recipe_from_file(file)
 
     async def reload_crafting_recipes(self):
-        if not shared.event_handler.call_cancelable(
+        if not await shared.event_handler.call_cancelable_async(
             "crafting_manager:reload:pre", self
         ):
             return

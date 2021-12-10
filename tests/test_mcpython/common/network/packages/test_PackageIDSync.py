@@ -38,8 +38,10 @@ class TestPackageIDSync(TestCase):
         shared.NETWORK_MANAGER.reset_package_registry()
 
     async def test_serialize(self):
-        import mcpython.engine.network.NetworkManager
         from mcpython import shared
+        shared.IS_TEST_ENV = True
+
+        import mcpython.engine.network.NetworkManager
         from mcpython.common.network.packages.PackageIDSync import PackageIDSync
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
@@ -49,20 +51,22 @@ class TestPackageIDSync(TestCase):
         package.setup()
 
         buffer = WriteBuffer()
-        package.write_to_buffer(buffer)
+        await package.write_to_buffer(buffer)
 
         shared.NETWORK_MANAGER.reset_package_registry()
 
         package2 = PackageIDSync()
-        package2.read_from_buffer(ReadBuffer(buffer.get_data()))
+        await package2.read_from_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertEqual(package.data, package2.data)
 
         shared.NETWORK_MANAGER.reset_package_registry()
 
     async def test_handle_inner(self):
-        import mcpython.engine.network.NetworkManager
         from mcpython import shared
+        shared.IS_TEST_ENV = True
+
+        import mcpython.engine.network.NetworkManager
         from mcpython.common.network.packages.PackageIDSync import PackageIDSync
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
@@ -72,7 +76,7 @@ class TestPackageIDSync(TestCase):
         package.setup()
 
         buffer = WriteBuffer()
-        package.write_to_buffer(buffer)
+        await package.write_to_buffer(buffer)
 
         previous_data = shared.NETWORK_MANAGER.get_dynamic_id_info()
 

@@ -11,17 +11,19 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 from mcpython import shared
 from mcpython.server.command.Builder import Command, CommandNode, Int, Item, Selector
 
 
-def give_helper(entities, item, count):
+async def give_helper(entities, item, count):
     if len(entities) > 0:
         import mcpython.common.container.ResourceStack
 
         stack = mcpython.common.container.ResourceStack.ItemStack(item, count)
 
-        entities[0].pick_up_item(stack)
+        await entities[0].pick_up_item(stack)
 
 
 give = Command("give").than(

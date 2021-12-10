@@ -44,7 +44,7 @@ class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
             self.type = SlabModes.TOP
         else:
             self.type = SlabModes.BOTTOM
-        self.schedule_network_update()
+        await self.schedule_network_update()
 
     def get_model_state(self):
         return {"type": self.type.name.lower()}

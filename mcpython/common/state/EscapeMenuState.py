@@ -83,7 +83,7 @@ class EscapeMenu(AbstractState.AbstractState):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
     @staticmethod
-    def start_menu_press(x, y):
+    async def start_menu_press(*_):
         shared.world.world_loaded = False
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
@@ -92,20 +92,21 @@ class EscapeMenu(AbstractState.AbstractState):
             shared.NETWORK_MANAGER.disconnect()
         else:
             # make sure that file size is as small as possible
-            shared.world.save_file.save_world(override=True)
+            await shared.world.save_file.save_world_async(override=True)
 
         shared.world.setup_by_filename("tmp")
-        asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
-        shared.event_handler.call("on_game_leave")
-        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu", immediate=False))
+        await shared.world.cleanup()
+        await shared.event_handler.call_async("on_game_leave")
+        await shared.state_handler.change_state("minecraft:start_menu", immediate=False)
 
+        # todo: can we use an asyncio event here?
         while shared.world.save_file.save_in_progress:
-            time.sleep(0.2)
+            await asyncio.sleep(.2)
 
     @staticmethod
-    def on_key_press(symbol, modifiers):
+    async def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:game", immediate=False))
+            await shared.state_handler.change_state("minecraft:game", immediate=False)
 
     async def activate(self):
         await super().activate()

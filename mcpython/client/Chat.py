@@ -122,7 +122,7 @@ class Chat:
         )
         self.active_index += len(text)
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    async def on_key_press(self, symbol: int, modifiers: int):
         """
         called when an key is pressed
         :param symbol: the symbol that is pressed
@@ -148,7 +148,7 @@ class Chat:
 
         elif symbol == key.ENTER:  # execute command
             if shared.IS_CLIENT and shared.IS_NETWORKING:
-                shared.NETWORK_MANAGER.send_package(
+                await shared.NETWORK_MANAGER.send_package(
                     PlayerChatInputPackage().setup(self.text)
                 )
 
@@ -164,7 +164,7 @@ class Chat:
                     self.executing_command_info.position = player.get_position()
                     self.executing_command_info.dimension = player.get_dimension()
 
-                asyncio.get_event_loop().run_until_complete(shared.command_parser.run(self.text, self.executing_command_info))
+                await shared.command_parser.run(self.text, self.executing_command_info)
 
             else:
                 self.print_ln(self.text)

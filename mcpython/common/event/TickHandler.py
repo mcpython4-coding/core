@@ -47,9 +47,12 @@ class TickHandler:
         # an array of (function, args, kwargs) for functions which should be executed in near future
         self.execute_array = []
 
-        pyglet.clock.schedule_interval(self.tick, 1 / 20)
+        pyglet.clock.schedule_interval(self.schedule_tick, 1 / 20)
 
-    def tick(self, dt):
+    def schedule_tick(self, dt: float):
+        asyncio.get_event_loop().run_until_complete(self.tick(dt))
+
+    async def tick(self, dt):
         """
         Execute ticks
         :param dt: the time that came after the last event
@@ -72,37 +75,39 @@ class TickHandler:
                     self.lost_time = 0
                     return
 
-        shared.entity_manager.tick(dt)
+        await shared.entity_manager.tick(dt)
 
         if shared.IS_CLIENT:
             shared.inventory_handler.tick(dt)
 
         shared.world.tick()
-        shared.event_handler.call("tickhandler:general", dt)
+        await shared.event_handler.call_async("tickhandler:general", dt)
 
         if shared.IS_CLIENT:
-            shared.event_handler.call("tickhandler:client")
-            asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.fetch_as_client())
+            await shared.event_handler.call_async("tickhandler:client")
+            await shared.NETWORK_MANAGER.fetch_as_client()
             animation_manager.tick(dt * 20)
         else:
-            shared.event_handler.call("tickhandler:server")
-            asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.fetch_as_server())
+            await shared.event_handler.call_async("tickhandler:server")
+            await shared.NETWORK_MANAGER.fetch_as_server()
 
         # todo: include command info here!
-        asyncio.get_event_loop().run_until_complete(mcpython.common.data.DataPacks.datapack_handler.try_call_function(
+        await mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:tick", None
-        ))
+        )
         if self.enable_random_ticks:
-            pyglet.clock.schedule_once(self.send_random_ticks, 0)
+            await self.send_random_ticks(0)
 
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
             try:
 
                 if not isinstance(func, typing.Awaitable):
-                    func(*args, **kwargs)
+                    result = func(*args, **kwargs)
+                    if isinstance(result, typing.Awaitable):
+                        await result
                 else:
-                    asyncio.get_event_loop().run_until_complete(func)
+                    await func
 
             except (SystemExit, KeyboardInterrupt, OSError) as e:
                 print(e)
@@ -157,7 +162,7 @@ class TickHandler:
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)
 
-    def send_random_ticks(self, *args, **kwargs):
+    async def send_random_ticks(self, *args, **kwargs):
         # todo: when networking, only on server & walk over all players!
         if not shared.IS_CLIENT:
             return
@@ -171,35 +176,32 @@ class TickHandler:
         ].status.status
         r = mcpython.common.config.RANDOM_TICK_RANGE
 
-        # todo: make iterate over all players
-        cx, cz = mcpython.util.math.position_to_chunk(
-            shared.world.get_active_player().position
-        )
         blocks = []
-        for dx in range(-r, r + 1):
-            for dz in range(-r, r + 1):
-                if dx ** 2 + dz ** 2 <= r ** 2:
-                    x = cx + dx
-                    z = cz + dz
-                    for dy in range(16):
-                        for _ in range(random_tick_speed):
-                            ddx, ddy, ddz = (
-                                random.randint(0, 15),
-                                random.randint(0, 15),
-                                random.randint(0, 15),
-                            )
-                            position = (x + ddx, dy * 16 + ddy, z + ddz)
-                            instance = dimension.get_block(position)
-                            if (
-                                instance is not None
-                                and type(instance) != str
-                                and instance.ENABLE_RANDOM_TICKS
-                            ):
-                                blocks.append(instance.on_random_update())
 
-        asyncio.get_event_loop().run_until_complete(
-            asyncio.gather(*(func for func in blocks if func))
-        )
+        for player in shared.world.players.values():
+            cx, cz = mcpython.util.math.position_to_chunk(player.position)
+            for dx in range(-r, r + 1):
+                for dz in range(-r, r + 1):
+                    if dx ** 2 + dz ** 2 <= r ** 2:
+                        x = cx + dx
+                        z = cz + dz
+                        for dy in range(16):
+                            for _ in range(random_tick_speed):
+                                ddx, ddy, ddz = (
+                                    random.randint(0, 15),
+                                    random.randint(0, 15),
+                                    random.randint(0, 15),
+                                )
+                                position = (x + ddx, dy * 16 + ddy, z + ddz)
+                                instance = dimension.get_block(position)
+                                if (
+                                    instance is not None
+                                    and type(instance) != str
+                                    and instance.ENABLE_RANDOM_TICKS
+                                ):
+                                    blocks.append(instance.on_random_update())
+
+        await asyncio.gather(*(func for func in blocks if func))
 
 
 handler = shared.tick_handler = TickHandler()

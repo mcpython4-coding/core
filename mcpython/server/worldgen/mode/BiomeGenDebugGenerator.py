@@ -55,7 +55,7 @@ class DebugBiomeWorldGenerator(
                     i += 1
 
     @classmethod
-    def on_chunk_generation_finished(
+    async def on_chunk_generation_finished(
         cls,
         chunk,
     ):
@@ -68,7 +68,7 @@ class DebugBiomeWorldGenerator(
                 x, z = cx * 16 + dx, cz * 16 + dz
                 biome = biome_map.get_at_xz(x, z)
                 block = cls.BIOME_TO_BLOCK[biome]
-                chunk.add_block(
+                await chunk.add_block(
                     (x, 0, z), block, block_update=False, block_update_self=False
                 )
 

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import enum
 import json
 import os
@@ -69,7 +70,7 @@ class DataPackHandler:
             f"[DATA PACK HANDLER][WARN] told to disable datapack '{pack}', but it was not found!"
         )
 
-    def schedule_datapack_load(self):
+    async def schedule_datapack_load(self):
         """
         Will load all data packs in the default locations and call an event for
         subsequent systems to register them (datapack:search)
@@ -81,7 +82,7 @@ class DataPackHandler:
         for path in os.listdir(shared.home + "/datapacks"):
             self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
 
-        shared.event_handler.call("datapack:search")
+        await shared.event_handler.call_async("datapack:search")
 
     def load_datapack_from_directory(
         self, directory: str, raise_on_error=False
@@ -104,7 +105,7 @@ class DataPackHandler:
             if raise_on_error:
                 raise DatapackLoadException(directory)
 
-    def reload(self):
+    async def reload(self):
         """
         Reloads all loaded data packs
         todo: look out for new ones at special locations
@@ -112,9 +113,9 @@ class DataPackHandler:
         old_status_table = {
             datapack.name: datapack.status for datapack in self.loaded_data_packs
         }
-        self.cleanup()
-        self.schedule_datapack_load()
-        shared.event_handler.call("datapack:reload")
+        await self.cleanup()
+        await self.schedule_datapack_load()
+        await shared.event_handler.call_async("datapack:reload")
 
         # restore old state
         for datapack in self.loaded_data_packs:
@@ -125,16 +126,16 @@ class DataPackHandler:
                 ):
                     datapack.status = old_status_table[datapack.name]
 
-    def cleanup(self):
+    async def cleanup(self):
         """
         Removes all data packs from the system
         Used during reload for cleaning the list of datapacks
         """
-        shared.event_handler.call("datapack:unload:pre")
+        await shared.event_handler.call_async("datapack:unload:pre")
         for datapack in self.loaded_data_packs:
             datapack.unload()
         self.loaded_data_packs.clear()
-        shared.event_handler.call("datapack:unload:post")
+        await shared.event_handler.call_async("datapack:unload:post")
 
     async def try_call_function(
         self,

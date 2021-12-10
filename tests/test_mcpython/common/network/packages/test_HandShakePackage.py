@@ -53,7 +53,10 @@ class TestClient2ServerHandshake(TestCase):
         self.assertEqual(package.game_version, 123234)
         self.assertEqual(package.player_name, "test:player")
 
-    def test_serialize(self):
+    async def test_serialize(self):
+        from mcpython import shared
+        shared.IS_TEST_ENV = True
+
         import mcpython.common.config
         from mcpython.common.network.packages.HandShakePackage import (
             Client2ServerHandshake,
@@ -66,16 +69,19 @@ class TestClient2ServerHandshake(TestCase):
         package.setup("test:player")
 
         buffer = WriteBuffer()
-        package.write_to_buffer(buffer)
+        await package.write_to_buffer(buffer)
 
         package2 = Client2ServerHandshake()
-        package2.read_from_buffer(ReadBuffer(buffer.get_data()))
+        await package2.read_from_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertEqual(package2.player_name, "test:player")
         self.assertEqual(package2.game_version, 123235)
 
     async def test_handle_inner_compatible(self):
         from mcpython import shared
+
+        shared.IS_TEST_ENV = True
+
         from mcpython.common.network.packages.HandShakePackage import (
             Client2ServerHandshake,
             Server2ClientHandshake,
@@ -83,7 +89,7 @@ class TestClient2ServerHandshake(TestCase):
 
         handshake_back = None
 
-        def answer(p):
+        async def answer(p):
             if isinstance(p, Server2ClientHandshake):
                 nonlocal handshake_back
                 handshake_back = p
@@ -104,6 +110,9 @@ class TestClient2ServerHandshake(TestCase):
     async def test_handle_inner_incompatible(self):
         import mcpython.common.config
         from mcpython import shared
+
+        shared.IS_TEST_ENV = True
+
         from mcpython.common.network.packages.HandShakePackage import (
             Client2ServerHandshake,
             Server2ClientHandshake,
@@ -111,7 +120,7 @@ class TestClient2ServerHandshake(TestCase):
 
         handshake_back = None
 
-        def answer(p):
+        async def answer(p):
             if isinstance(p, Server2ClientHandshake):
                 nonlocal handshake_back
                 handshake_back = p
@@ -148,7 +157,7 @@ class TestServer2ClientHandshake(TestCase):
         self.assertEqual(package.mod_list, [])
         FakeModLoader.mods.clear()
 
-    def test_setup_accept(self):
+    async def test_setup_accept(self):
         from mcpython import shared
         from mcpython.common.network.packages.HandShakePackage import (
             Server2ClientHandshake,
@@ -157,7 +166,7 @@ class TestServer2ClientHandshake(TestCase):
         shared.mod_loader = FakeModLoader
         FakeModLoader.mods = {"minecraft": FakeMod}
 
-        package = Server2ClientHandshake().setup_accept()
+        package = await Server2ClientHandshake().setup_accept()
 
         self.assertTrue(package.accept_connection)
         self.assertEqual(package.deny_reason, "")
@@ -165,7 +174,7 @@ class TestServer2ClientHandshake(TestCase):
 
         FakeModLoader.mods.clear()
 
-    def test_serialize_deny(self):
+    async def test_serialize_deny(self):
         from mcpython import shared
         from mcpython.common.network.packages.HandShakePackage import (
             Server2ClientHandshake,
@@ -178,17 +187,21 @@ class TestServer2ClientHandshake(TestCase):
         package = Server2ClientHandshake().setup_deny("test:reason")
 
         buffer = WriteBuffer()
-        package.write_to_buffer(buffer)
+        await package.write_to_buffer(buffer)
         package = Server2ClientHandshake()
-        package.read_from_buffer(ReadBuffer(buffer.get_data()))
+        await package.read_from_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertFalse(package.accept_connection)
         self.assertEqual(package.deny_reason, "test:reason")
         self.assertEqual(package.mod_list, [])
         FakeModLoader.mods.clear()
 
-    def test_serialize_accept(self):
+    async def test_serialize_accept(self):
         from mcpython import shared
+        import mcpython.engine.event.EventHandler
+
+        shared.IS_TEST_ENV = True
+
         from mcpython.common.network.packages.HandShakePackage import (
             Server2ClientHandshake,
         )
@@ -197,12 +210,12 @@ class TestServer2ClientHandshake(TestCase):
         shared.mod_loader = FakeModLoader
         FakeModLoader.mods = {"minecraft": FakeMod}
 
-        package = Server2ClientHandshake().setup_accept()
+        package = await Server2ClientHandshake().setup_accept()
 
         buffer = WriteBuffer()
-        package.write_to_buffer(buffer)
+        await package.write_to_buffer(buffer)
         package = Server2ClientHandshake()
-        package.read_from_buffer(ReadBuffer(buffer.get_data()))
+        await package.read_from_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertTrue(package.accept_connection)
         self.assertEqual(package.deny_reason, "")

@@ -63,9 +63,15 @@ class ReadBuffer:
         size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
         return self.stream.read(size).decode(encoding)
 
-    def read_list(self, handling: typing.Callable[[], typing.Any]):
+    async def read_list(self, handling: typing.Callable[[], typing.Any]):
         size = self.read_int()
-        return [handling() for _ in range(size)]
+
+        for _ in range(size):
+            result = handling()
+            if isinstance(result, typing.Awaitable):
+                yield await result
+            else:
+                yield result
 
     def read_bytes(self, size_size=2):
         size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
@@ -128,12 +134,14 @@ class WriteBuffer:
         self.data.append(data)
         return self
 
-    def write_list(
+    async def write_list(
         self, data: typing.List, handling: typing.Callable[[typing.Any], typing.Any]
     ):
         self.write_int(len(data))
         for e in data:
-            handling(e)
+            result = handling(e)
+            if isinstance(result, typing.Awaitable):
+                await result
         return self
 
     def write_bytes(self, data: bytes, size_size=2):
@@ -151,8 +159,8 @@ class WriteBuffer:
 
 
 class IBufferSerializeAble(ABC):
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         pass
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         pass

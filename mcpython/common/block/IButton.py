@@ -51,7 +51,7 @@ class IButton(IAllDirectionOrientableBlock):
         super().__init__()
         self.powered = False
 
-    def check_block_behind(self):
+    async def check_block_behind(self):
         return
         x, y, z = self.position
         dx, dy, dz = self.face.dx, self.face.dy, self.face.dz
@@ -61,14 +61,14 @@ class IButton(IAllDirectionOrientableBlock):
         block = dimension.get_block((x + dx, y + dy, z + dz), none_if_str=True)
 
         if block is None or not block.face_solid & self.face.invert().bitflag:
-            dimension.remove_block(self.position, block_update_self=False)
+            await dimension.remove_block(self.position, block_update_self=False)
 
             # todo: drop item into world
             if shared.IS_CLIENT and shared.world.get_active_player().gamemode in (0, 2):
-                shared.world.get_active_player().pick_up_item(ItemStack(self.NAME))
+                await shared.world.get_active_player().pick_up_item(ItemStack(self.NAME))
 
     async def on_block_update(self):
-        self.check_block_behind()
+        await self.check_block_behind()
 
     def get_model_state(self) -> dict:
         # todo: for floor / ceiling, use real calculations

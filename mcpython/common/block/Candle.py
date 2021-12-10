@@ -122,11 +122,11 @@ class ICandleCake(FlowerLikeBlock):
 
         elif player.hunger < 20 and player.gamemode == 0:
             player.hunger = min(player.hunger + 4)
-            self.consum_bite()
+            await self.consum_bite()
             return
 
-    def consume_bite(self):
+    async def consume_bite(self):
         # todo: consume bite on target
-        shared.world.get_dimension_by_name(self.dimension).add_block(
+        await shared.world.get_dimension_by_name(self.dimension).add_block(
             self.position, "minecraft:cake"
         )  # .consume_bite()

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import typing
 
 import mcpython.client.gui.ContainerRenderer
@@ -114,14 +115,14 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
         self.TEXTURE.blit(x, y)
         super().draw(hovering_slot)
 
-    def remove_items_from_crafting(self):
+    async def remove_items_from_crafting(self):
         for slot in self.slots[40:-2]:
             slot: mcpython.client.gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(
                 mcpython.common.container.ResourceStack.ItemStack.create_empty()
             )
-            if not shared.world.get_active_player().pick_up_item(itemstack):
+            if not await shared.world.get_active_player().pick_up_item(itemstack):
                 shared.world.get_active_dimension().spawn_itemstack_in_world(
                     itemstack, self.position
                 )
@@ -134,7 +135,7 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
             await mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
 
     async def on_deactivate(self):
-        self.remove_items_from_crafting()
+        await self.remove_items_from_crafting()
         shared.state_handler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):

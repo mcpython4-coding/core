@@ -32,7 +32,7 @@ class AbstractContainer(IBufferSerializeAble, ABC):
         self.custom_name = ""
         self.uuid = uuid.uuid4()
 
-        shared.inventory_handler.add(self)
+        shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
 
         self.create_slots()
         for slot in self.slots:
@@ -49,16 +49,16 @@ class AbstractContainer(IBufferSerializeAble, ABC):
         Invoked during construction of the object; should fill the slots array with slot instances
         """
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.custom_name)
         buffer.write_uuid(self.uuid)
 
         buffer.write_int(len(self.slots))
 
         for slot in self.slots:
-            slot.write_to_network_buffer(buffer)
+            await slot.write_to_network_buffer(buffer)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         self.custom_name = buffer.read_string()
         self.uuid = buffer.read_uuid()
 
@@ -69,7 +69,7 @@ class AbstractContainer(IBufferSerializeAble, ABC):
             return
 
         for slot in self.slots:
-            slot.read_from_network_buffer(buffer)
+            await slot.read_from_network_buffer(buffer)
 
     def create_renderer(self) -> typing.Any:
         """

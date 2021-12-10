@@ -50,7 +50,7 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
             if shared.IS_CLIENT:
                 self.face_info.update(True)
 
-            self.schedule_network_update()
+            await self.schedule_network_update()
 
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}

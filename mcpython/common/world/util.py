@@ -136,7 +136,7 @@ def area_iterator(start: typing.Tuple[int, int, int], end: typing.Tuple[int, int
     return itertools.product(*map(lambda e: range(e[0], e[1] + 1), zip(start, end)))
 
 
-def fill_area(
+async def fill_area(
     access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
@@ -145,10 +145,10 @@ def fill_area(
     block = BlockSource.from_any(block)
 
     for p in area_iterator(start, end):
-        access.add_block(p, block.get())
+        await access.add_block(p, block.get())
 
 
-def fill_area_replacing(
+async def fill_area_replacing(
     access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
@@ -162,7 +162,7 @@ def fill_area_replacing(
         previous = access.get_block(p)
 
         if replacing.contains(previous):
-            access.add_block(p, block.get())
+            await access.add_block(p, block.get())
 
 
 def get_content(
@@ -195,7 +195,7 @@ def get_content_list(
         yield b
 
 
-def paste_content(
+async def paste_content(
     access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     data: typing.Dict[typing.Tuple[int, int, int], typing.Any],
@@ -216,10 +216,10 @@ def paste_content(
         p2 = mcpython.util.math.vector_offset(p, start)
         if not replaces.contains(access.get_block(p2)):
             continue
-        access.add_block(p2, block)
+        await access.add_block(p2, block)
 
 
-def paste_content_list(
+async def paste_content_list(
     access: mcpython.engine.world.AbstractInterface.ISupportWorldInterface,
     start: typing.Tuple[int, int, int],
     end: typing.Tuple[int, int, int],
@@ -240,7 +240,7 @@ def paste_content_list(
         p2 = mcpython.util.math.vector_offset(p, start)
         if not replaces.contains(access.get_block(p2)):
             continue
-        access.add_block(p2, block)
+        await access.add_block(p2, block)
 
 
 def clone(

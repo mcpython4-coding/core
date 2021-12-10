@@ -23,13 +23,13 @@ class BirchTreeNormalFeature(IFeature.IFeature):
     NAME = "minecraft:birch_tree_feature"
 
     @classmethod
-    def place(cls, dimension, x, y, z, config):
+    async def place(cls, dimension, x, y, z, config):
         height_range = config.setdefault("height_range", (4, 8))
         height = random.randint(*height_range)
 
         # place the logs
         for dy in range(height):
-            dimension.get_chunk_for_position((x, y, z)).add_block(
+            await dimension.get_chunk_for_position((x, y, z)).add_block(
                 (x, y + dy, z), "minecraft:birch_log"
             )
 
@@ -41,7 +41,7 @@ class BirchTreeNormalFeature(IFeature.IFeature):
                     if (dx ** 2 + dz ** 2 + dy ** 2 / 4) ** (
                         1 / 2.25
                     ) < 3.5 and not chunk.is_position_blocked((x + dx, y + dy, z + dz)):
-                        chunk.add_block(
+                        await chunk.add_block(
                             (x + dx, y + dy, z + dz), "minecraft:birch_leaves"
                         )
 

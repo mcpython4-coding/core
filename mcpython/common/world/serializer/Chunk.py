@@ -87,7 +87,7 @@ class Chunk(IDataSerializer.IDataSerializer):
             )
             d = data["block_palette"][data["blocks"][rel_position]]
 
-            cls.add_block_to_world(
+            await cls.add_block_to_world(
                 chunk_instance, d, immediate, position, save_file, inv_file
             )
 
@@ -135,17 +135,17 @@ class Chunk(IDataSerializer.IDataSerializer):
         chunk_instance.show()
 
     @classmethod
-    def add_block_to_world(
+    async def add_block_to_world(
         cls, chunk_instance, d, immediate, position, save_file, inv_file
     ):
         # helper for setting up the block
-        def add(instance):
+        async def add(instance):
             if instance is None:
                 return
 
             if isinstance(d[1], bytes):
                 buffer = ReadBuffer(d[1])
-                instance.read_from_network_buffer(buffer)
+                await instance.read_from_network_buffer(buffer)
             else:
                 logger.println(
                     "[WARN][DISCARD] discarding block data for block", instance
@@ -154,7 +154,7 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         flag = d[2]
         if immediate:
-            add(chunk_instance.add_block(position, d[0], immediate=flag))
+            await add(chunk_instance.add_block(position, d[0], immediate=flag))
         else:
             shared.world_generation_handler.task_handler.schedule_block_add(
                 chunk_instance, position, d[0], on_add=add, immediate=flag
@@ -239,7 +239,7 @@ class Chunk(IDataSerializer.IDataSerializer):
                 continue
 
             buffer = WriteBuffer()
-            block.write_to_network_buffer(buffer)
+            await block.write_to_network_buffer(buffer)
 
             block_data = (
                 block.NAME,

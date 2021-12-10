@@ -71,23 +71,23 @@ class ServerSelectionState(AbstractState):
             self.server_ip_input,
         ]
 
-    def open_server_connection(self, *_):
+    async def open_server_connection(self, *_):
         pair = self.server_ip_input.entered_text.split(":")
         if not connectClient2Server(pair[0], int(pair[1])):
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+            await shared.state_handler.change_state("minecraft:start_menu")
             return
 
         from mcpython.common.network.packages.HandShakePackage import (
             Client2ServerHandshake,
         )
 
-        shared.NETWORK_MANAGER.send_package(
+        await shared.NETWORK_MANAGER.send_package(
             Client2ServerHandshake().setup(
                 "test:player" + str(random.randint(10, 1000))
             )
         )
 
-        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:server_connecting"))
+        await shared.state_handler.change_state("minecraft:server_connecting")
 
 
 server_selection = ServerSelectionState()

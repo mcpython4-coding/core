@@ -323,7 +323,10 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             is not None
         )
 
-    def add_block(
+    def add_block_unsafe(self, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(self.add_block(*args, **kwargs))
+
+    async def add_block(
         self,
         position: tuple,
         block_name: typing.Union[str, Block.AbstractBlock],
@@ -341,9 +344,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         :param position: the position to add
         :param block_name: the name of the block or an instance of it
         :param immediate: if the block should be shown if needed
-        :param block_update: if an block-update should be send to neighbors blocks
+        :param block_update: if an block-update should be sent to neighbor blocks
         :param block_update_self: if the block should get an block-update
-        :param lazy_setup: an callable for setting up the block instance
+        :param lazy_setup: a callable for setting up the block instance
         :param check_build_range: if the build limits should be checked
         :param block_state: the block state to create in, or None if not set
         :param replace_existing: if existing blocks should be replaced
@@ -364,7 +367,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             if not replace_existing:
                 return
 
-            self.remove_block(
+            await self.remove_block(
                 position,
                 immediate=immediate,
                 block_update=block_update,
@@ -402,7 +405,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         # store the block instance in the local world
         self._world[position] = block
 
-        asyncio.get_event_loop().run_until_complete(block.on_block_added())
+        await block.on_block_added()
 
         if block_state is not None:
             block.set_model_state(block_state)
@@ -414,13 +417,13 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             block.face_info.update()
 
             if block_update:
-                self.on_block_updated(position, include_itself=block_update_self)
+                await self.on_block_updated(position, include_itself=block_update_self)
 
             self.check_neighbors(position)
 
         return block
 
-    def on_block_updated(
+    async def on_block_updated(
         self, position: typing.Tuple[int, int, int], include_itself=True
     ):
         """
@@ -442,11 +445,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                         if b and type(b) != str:
                             to_invoke.append(b.on_block_update())
 
-        asyncio.get_event_loop().run_until_complete(
-            asyncio.gather(*to_invoke)
-        )
+        await asyncio.gather(*to_invoke)
 
-    def remove_block(
+    async def remove_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
         immediate: bool = True,
@@ -471,7 +472,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         if position not in self._world:
             return
 
-        asyncio.get_event_loop().run_until_complete(self._world[position].on_block_remove(reason))
+        await self._world[position].on_block_remove(reason)
 
         if shared.IS_CLIENT:
             self._world[position].face_info.hide_all()
@@ -480,7 +481,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         if block_update:
             try:
-                self.on_block_updated(position, include_itself=block_update_self)
+                await self.on_block_updated(position, include_itself=block_update_self)
             except (KeyboardInterrupt, SystemExit):
                 raise
             except:

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import typing
 
 import mcpython.client.gui.Slot
@@ -318,14 +319,14 @@ class CraftingGridHelperInterface(
 
         max_size = itemstack.item.STACK_SIZE
         for _ in range(count // max_size):
-            shared.world.get_active_player().pick_up_item(
+            asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().pick_up_item(
                 itemstack.copy().set_amount(max_size)
-            )
+            ))
             count -= max_size
 
-        shared.world.get_active_player().pick_up_item(
+        asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().pick_up_item(
             itemstack.copy().set_amount(count)
-        )
+        ))
         shared.event_handler.call(
             "gui:crafting:grid:output:remove",
             self,

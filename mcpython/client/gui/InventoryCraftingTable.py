@@ -72,11 +72,11 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
     async def on_deactivate(self):
         await super().on_deactivate()
         for slot in self.slots[:-1]:
-            shared.world.get_active_player().pick_up_item(slot.get_itemstack().copy())
+            await shared.world.get_active_player().pick_up_item(slot.get_itemstack().copy())
             slot.get_itemstack().clean()
 
         self.slots[-1].get_itemstack().clean()
-        shared.world.get_active_player().reset_moving_slot()
+        await shared.world.get_active_player().reset_moving_slot()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -93,9 +93,9 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
         shared.inventory_handler.shift_container_handler.container_A = (

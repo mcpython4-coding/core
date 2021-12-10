@@ -188,10 +188,10 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     def is_face_solid(self, face: EnumSide) -> bool:
         return bool(self.face_solid & face.bitflag)
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.NETWORK_BUFFER_SERIALIZER_VERSION)
 
-        super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
 
         buffer.write_int(len(state))
@@ -209,9 +209,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
             buffer.write_string(key).write_string(value)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         version = buffer.read_int()
-        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
 
         # Apply these fixers locally
         if version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
@@ -230,13 +230,13 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         }
         self.set_model_state(state)
 
-    def schedule_network_update(self):
+    async def schedule_network_update(self):
         if shared.IS_NETWORKING:
             from mcpython.common.network.packages.WorldDataExchangePackage import (
                 ChunkBlockChangePackage,
             )
 
-            shared.NETWORK_MANAGER.send_package_to_all(
+            await shared.NETWORK_MANAGER.send_package_to_all(
                 ChunkBlockChangePackage()
                 .set_dimension(self.dimension)
                 .change_position(self.position, self, update_only=True),

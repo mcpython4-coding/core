@@ -54,6 +54,12 @@ class EventHandler:
                 return False
         return True
 
+    async def call_cancelable_async(self, event_name, *args, **kwargs):
+        for bus in self.active_buses:
+            if (await bus.call_cancelable_async(event_name, *args, **kwargs)).canceled:
+                return False
+        return True
+
     def __call__(self, *args, **kwargs):
         self.call(*args, **kwargs)
 

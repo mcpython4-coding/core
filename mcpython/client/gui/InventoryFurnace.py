@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import time
 import typing
 
@@ -95,8 +96,8 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         if self.custom_name is None:
             self.custom_name = "Furnace"
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
         buffer.write_int(self.fuel_left)
         buffer.write_int(self.fuel_max)
         buffer.write_int(self.xp_stored)
@@ -104,16 +105,16 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             time.time() - self.smelt_start if self.smelt_start else time.time()
         )
         buffer.write_int(self.progress)
-        buffer.write_list(self.types, lambda e: buffer.write_string(e))
+        await buffer.write_list(self.types, lambda e: buffer.write_string(e))
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
         self.fuel_left = buffer.read_int()
         self.fuel_max = buffer.read_int()
         self.xp_stored = buffer.read_int()
         self.smelt_start = buffer.read_float() + time.time()
         self.progress = buffer.read_int()
-        self.types = buffer.read_list(lambda: buffer.read_string())
+        self.types = await buffer.read_list(lambda: buffer.read_string())
 
     @staticmethod
     def get_config_file() -> str or None:
@@ -216,7 +217,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def on_shift(slot, x, y, button, mod, player):
         slot_copy = slot.itemstack.copy()
 
-        if shared.world.get_active_player().pick_up_item(slot_copy):
+        if asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().pick_up_item(slot_copy)):
             slot.itemstack.clean()  # if we successfully added the itemstack, we have to clear it
         else:
             slot.itemstack.set_amount(slot_copy.itemstack.amount)
@@ -254,7 +255,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
     async def on_deactivate(self):
         await super().on_deactivate()
-        shared.world.get_active_player().reset_moving_slot()
+        await shared.world.get_active_player().reset_moving_slot()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -299,9 +300,9 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def on_tick(self, dt):
         if self.fuel_left > 0:
@@ -336,7 +337,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
         self.slots[0].get_itemstack().add_amount(-1)
         try:
-            shared.world.get_active_player().add_xp(self.recipe.xp)
+            asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().add_xp(self.recipe.xp))
         except AttributeError:
             pass
         self.smelt_start = time.time()
