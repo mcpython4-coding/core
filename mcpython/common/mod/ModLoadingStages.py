@@ -153,7 +153,9 @@ class LoadingStage:
             await shared.event_handler.call_async("mod_loader:load_finished")
 
             if shared.IS_CLIENT:
-                await shared.state_handler.change_state("minecraft:block_item_generator")
+                await shared.state_handler.change_state(
+                    "minecraft:block_item_generator"
+                )
             else:
                 shared.state_handler.states["minecraft:world_loading"].load_or_generate(
                     "server_world"
@@ -218,7 +220,7 @@ class LoadingStage:
         mod_instance = shared.mod_loader.mods[modname]
 
         try:
-            await mod_instance.eventbus.call_as_stack(self.active_event)  #, amount=4))
+            await mod_instance.eventbus.call_as_stack(self.active_event)  # , amount=4))
 
         except RuntimeError:  # when we are empty
             self.active_mod_index += 1
@@ -370,9 +372,15 @@ manager.add_stage(
     )
     .add_event_stage("stage:item:factory:prepare")
     .add_event_stage("stage:item:enchantments")
-    .add_event_stage("stage:item:factory_usage", "stage:item:factory:prepare", "stage:item:enchantments")
+    .add_event_stage(
+        "stage:item:factory_usage",
+        "stage:item:factory:prepare",
+        "stage:item:enchantments",
+    )
     .add_event_stage("stage:item:potions", "stage:item:factory_usage")
-    .add_event_stage("stage:item:factory:finish", "stage:item:factory_usage", "stage:item:potions")
+    .add_event_stage(
+        "stage:item:factory:finish", "stage:item:factory_usage", "stage:item:potions"
+    )
     .add_event_stage("stage:item:load", "stage:item:factory:finish")
     .add_event_stage(
         "stage:item:overwrite", "stage:item:load", "stage:item:factory:finish"
@@ -398,7 +406,9 @@ if shared.IS_CLIENT:
         "stage:inventories:bind_renderers",
     )
 else:
-    manager.stages["minecraft:inventories"].add_event_stage("stage:inventories:post", "stage:inventories")
+    manager.stages["minecraft:inventories"].add_event_stage(
+        "stage:inventories:post", "stage:inventories"
+    )
 
 manager.stages["minecraft:inventories"].update_order()
 manager.add_stage(

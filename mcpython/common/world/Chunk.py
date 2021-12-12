@@ -324,7 +324,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         )
 
     def add_block_unsafe(self, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(self.add_block(*args, **kwargs))
+        return asyncio.get_event_loop().run_until_complete(
+            self.add_block(*args, **kwargs)
+        )
 
     async def add_block(
         self,

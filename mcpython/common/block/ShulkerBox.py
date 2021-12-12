@@ -39,6 +39,7 @@ def create_shulker_box(name):
                 await self.inventory.reload_config()
 
         else:
+
             async def on_block_added(self):
                 await self.inventory.reload_config()
 

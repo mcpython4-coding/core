@@ -34,4 +34,3 @@ class IFallingBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
                 "minecraft:falling_block", self.position, representing_block=self
             )
             await dim.remove_block(self.position, block_update_self=False)
-

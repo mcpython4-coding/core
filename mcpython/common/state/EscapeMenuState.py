@@ -56,9 +56,9 @@ class EscapeMenu(AbstractState.AbstractState):
                 (0, 150),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=lambda *_: asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state(
-                    "minecraft:game", immediate=False
-                )),
+                on_press=lambda *_: asyncio.get_event_loop().run_until_complete(
+                    shared.state_handler.change_state("minecraft:game", immediate=False)
+                ),
             ),
             UIPartButton.UIPartButton(
                 (250, 25),
@@ -101,7 +101,7 @@ class EscapeMenu(AbstractState.AbstractState):
 
         # todo: can we use an asyncio event here?
         while shared.world.save_file.save_in_progress:
-            await asyncio.sleep(.2)
+            await asyncio.sleep(0.2)
 
     @staticmethod
     async def on_key_press(symbol, modifiers):

@@ -239,9 +239,11 @@ class OffProcessWorld(mcpython.engine.world.AbstractInterface.IWorld):
     ):
         # todo: await remote entity instance
         self.helper.run_on_main(
-            lambda context: asyncio.get_event_loop().run_until_complete(context.get_world().add_player(
-                name, add_inventories=add_inventories, override=override
-            ))
+            lambda context: asyncio.get_event_loop().run_until_complete(
+                context.get_world().add_player(
+                    name, add_inventories=add_inventories, override=override
+                )
+            )
         )
 
     async def get_active_player(self, create: bool = True) -> typing.Optional:

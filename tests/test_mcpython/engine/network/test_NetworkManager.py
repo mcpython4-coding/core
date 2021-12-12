@@ -62,7 +62,9 @@ class TestNetworkManager(TestCase):
         package = DisconnectionConfirmPackage()
         data = await shared.NETWORK_MANAGER.encode_package(0, package)
 
-        package2 = await shared.NETWORK_MANAGER.fetch_package_from_buffer(bytearray(data))
+        package2 = await shared.NETWORK_MANAGER.fetch_package_from_buffer(
+            bytearray(data)
+        )
 
         self.assertIsInstance(package2, DisconnectionConfirmPackage)
         # todo: test more attributes

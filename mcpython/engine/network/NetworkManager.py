@@ -151,7 +151,9 @@ class NetworkManager:
 
         if shared.IS_CLIENT:
             shared.CLIENT_NETWORK_HANDLER.disconnect()
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+            asyncio.get_event_loop().run_until_complete(
+                shared.state_handler.change_state("minecraft:start_menu")
+            )
         else:
             if target == -1:
                 shared.SERVER_NETWORK_HANDLER.disconnect_all()
@@ -159,10 +161,13 @@ class NetworkManager:
                 shared.SERVER_NETWORK_HANDLER.disconnect_client(target)
 
     async def send_package_to_all(self, package, not_including=-1):
-        # todo: prepare parallel
-        for client_id in self.valid_client_ids:
-            if client_id != not_including:
-                await self.send_package(package, client_id)
+        await asyncio.gather(
+            *(
+                self.send_package(package, client_id)
+                for client_id in self.valid_client_ids
+                if client_id != not_including
+            )
+        )
 
     async def send_package(
         self,
@@ -180,7 +185,9 @@ class NetworkManager:
                 )
 
                 # todo: do not encode package above there!
-                await self.send_package(PackageReroute().set_package(destination, package), 0)
+                await self.send_package(
+                    PackageReroute().set_package(destination, package), 0
+                )
 
         else:
             if destination == 0:

@@ -45,7 +45,9 @@ async def model_mapper(modname: str, pathname: str):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:blockstate_search",
-        BlockStateContainer.from_directory("assets/{}/blockstates".format(pathname), modname),
+        BlockStateContainer.from_directory(
+            "assets/{}/blockstates".format(pathname), modname
+        ),
         info="searching for block states for mod {}".format(modname),
     )
 
@@ -59,9 +61,7 @@ async def tag_mapper(modname: str, pathname: str):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:tag:group",
-        mcpython.common.data.serializer.tags.TagHandler.add_from_location(
-            pathname
-        ),
+        mcpython.common.data.serializer.tags.TagHandler.add_from_location(pathname),
         info="adding tag groups for mod {}".format(modname),
     )
 
@@ -117,10 +117,17 @@ class ResourcePipeHandler:
 
         self.namespaces.append((providing_mod, namespace))
 
-        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(providing_mod, namespace), self.mappers)))
+        await asyncio.gather(
+            *filter(
+                lambda e: e is not None,
+                map(lambda e: e(providing_mod, namespace), self.mappers),
+            )
+        )
 
     def register_mapper(
-        self, mapper: typing.Callable[[str, str], None | typing.Awaitable], on_dedicated_server=True
+        self,
+        mapper: typing.Callable[[str, str], None | typing.Awaitable],
+        on_dedicated_server=True,
     ):
         """
         To use in "stage:resources:pipe:add_mapper"
@@ -132,7 +139,10 @@ class ResourcePipeHandler:
 
         asyncio.get_event_loop().run_until_complete(
             asyncio.gather(
-                *filter(lambda e: e is not None, map(lambda e: mapper(*e), self.namespaces)))
+                *filter(
+                    lambda e: e is not None, map(lambda e: mapper(*e), self.namespaces)
+                )
+            )
         )
 
         return self
@@ -176,16 +186,32 @@ class ResourcePipeHandler:
             # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
-        await asyncio.gather(*[
-            e.reload()
-            for e in mcpython.client.rendering.entities.EntityRenderer.RENDERERS
-        ])
+        await asyncio.gather(
+            *[
+                e.reload()
+                for e in mcpython.client.rendering.entities.EntityRenderer.RENDERERS
+            ]
+        )
 
-        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(), self.reload_handlers)))
-        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e.on_unload(), self.listeners)))
-        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e.on_reload(), self.listeners)))
-        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(), self.bake_handlers)))
-        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e.on_bake(), self.listeners)))
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e(), self.reload_handlers))
+        )
+        await asyncio.gather(
+            *filter(
+                lambda e: e is not None, map(lambda e: e.on_unload(), self.listeners)
+            )
+        )
+        await asyncio.gather(
+            *filter(
+                lambda e: e is not None, map(lambda e: e.on_reload(), self.listeners)
+            )
+        )
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e(), self.bake_handlers))
+        )
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e.on_bake(), self.listeners))
+        )
 
         await shared.inventory_handler.reload_config()
 
@@ -193,7 +219,9 @@ class ResourcePipeHandler:
 
         gc.collect()  # make sure that memory was cleaned up
 
-        await asyncio.gather(*filter(lambda e: e is not None, map(lambda e: e(), self.data_processors)))
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e(), self.data_processors))
+        )
 
 
 handler = ResourcePipeHandler()

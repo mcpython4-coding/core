@@ -70,7 +70,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             mcpython.common.world.GameRule.GameRuleHandler, None
         ] = None
 
-        asyncio.get_event_loop().run_until_complete(self.reset_config())  # will reset the config
+        asyncio.get_event_loop().run_until_complete(
+            self.reset_config()
+        )  # will reset the config
 
         # todo: move to configs / game rules
         self.hide_faces_to_not_generated_chunks: bool = True
@@ -143,13 +145,17 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         :param create: if the player should be created or not (by calling add_player())
         :return: the player instance or None if no player with the name is arrival
         """
-        if not create and (self.local_player is None or self.local_player not in self.players):
+        if not create and (
+            self.local_player is None or self.local_player not in self.players
+        ):
             return
 
         return (
             self.players[self.local_player]
             if self.local_player in self.players
-            else asyncio.get_event_loop().run_until_complete(self.add_player(self.local_player))
+            else asyncio.get_event_loop().run_until_complete(
+                self.add_player(self.local_player)
+            )
         )
 
     @onlyInClient()
@@ -161,7 +167,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         :param create: if the player should be created or not (by calling add_player())
         :return: the player instance or None if no player with the name is arrival
         """
-        if not create and (self.local_player is None or self.local_player not in self.players):
+        if not create and (
+            self.local_player is None or self.local_player not in self.players
+        ):
             return
 
         return (
@@ -277,7 +285,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         """
         logger.println("changing dimension to '{}'...".format(dim_id))
 
-        await shared.event_handler.call_async("dimension:change:pre", self.active_dimension, dim_id)
+        await shared.event_handler.call_async(
+            "dimension:change:pre", self.active_dimension, dim_id
+        )
 
         sector = mcpython.util.math.position_to_chunk(
             (await shared.world.get_active_player_async()).position

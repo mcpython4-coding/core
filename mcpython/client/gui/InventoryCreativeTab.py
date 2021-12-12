@@ -644,7 +644,9 @@ class CreativeTabManager:
         previous = self.current_page
         self.current_page = max(0, min(self.current_page + count, len(self.pages) - 1))
         if previous != self.current_page:
-            asyncio.get_event_loop().run_until_complete(self.switch_to_tab(self.pages[self.current_page][0]))
+            asyncio.get_event_loop().run_until_complete(
+                self.switch_to_tab(self.pages[self.current_page][0])
+            )
 
     async def switch_to_tab(self, tab: ICreativeView):
         if self.current_tab is not None:

@@ -39,6 +39,7 @@ class TestPackageIDSync(TestCase):
 
     async def test_serialize(self):
         from mcpython import shared
+
         shared.IS_TEST_ENV = True
 
         import mcpython.engine.network.NetworkManager
@@ -64,6 +65,7 @@ class TestPackageIDSync(TestCase):
 
     async def test_handle_inner(self):
         from mcpython import shared
+
         shared.IS_TEST_ENV = True
 
         import mcpython.engine.network.NetworkManager

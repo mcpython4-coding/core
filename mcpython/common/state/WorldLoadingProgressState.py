@@ -46,7 +46,9 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         if not os.path.exists(save_file.directory):
             shared.state_handler.states["minecraft:world_generation"].generate_world()
         else:
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_loading"))
+            asyncio.get_event_loop().run_until_complete(
+                shared.state_handler.change_state("minecraft:world_loading")
+            )
 
     async def load_world_from(self, name: str):
         logger.println(f"[WORLD LOADING][INFO] starting loading world '{name}'")
@@ -157,7 +159,9 @@ class WorldLoadingProgress(AbstractState.AbstractState):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:start_menu"))
+            asyncio.get_event_loop().run_until_complete(
+                shared.state_handler.change_state("minecraft:start_menu")
+            )
             asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
             logger.println("interrupted world loading by user")
 

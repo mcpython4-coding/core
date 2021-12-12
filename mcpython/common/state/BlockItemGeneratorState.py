@@ -265,7 +265,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
             player.rotation = (0, 0, 0)
             await player.dimension.remove_block((0, 0, 0))
 
-        if await shared.event_handler.call_cancelable_async("stage_handler:loading2main_menu"):
+        if await shared.event_handler.call_cancelable_async(
+            "stage_handler:loading2main_menu"
+        ):
             await shared.state_handler.change_state("minecraft:start_menu")
 
     def add_new_screen(self, *args):
@@ -282,9 +284,11 @@ class BlockItemGenerator(AbstractState.AbstractState):
             block.face_info.hide_all()
 
         try:
-            instance = asyncio.get_event_loop().run_until_complete(dimension.add_block(
-                (0, 0, 0), self.tasks[self.block_index], block_update=False
-            ))
+            instance = asyncio.get_event_loop().run_until_complete(
+                dimension.add_block(
+                    (0, 0, 0), self.tasks[self.block_index], block_update=False
+                )
+            )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
             instance.face_info.update(redraw_complete=True)

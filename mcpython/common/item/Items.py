@@ -69,7 +69,9 @@ async def load_item():
     template.set_name("ender_eye").set_max_stack_size(16).finish()
 
     def lambda_add_random_xp(instance, itemstack):
-        asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().add_xp(random.randint(3, 11)))
+        asyncio.get_event_loop().run_until_complete(
+            shared.world.get_active_player().add_xp(random.randint(3, 11))
+        )
         itemstack.add_amount(-1)
         return True
 

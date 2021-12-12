@@ -105,7 +105,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             time.time() - self.smelt_start if self.smelt_start else time.time()
         )
         buffer.write_int(self.progress)
-        await buffer.write_list(self.types, lambda e: buffer.write_string(e))
+        await buffer.write_list(self.types, buffer.write_string)
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
@@ -114,7 +114,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         self.xp_stored = buffer.read_int()
         self.smelt_start = buffer.read_float() + time.time()
         self.progress = buffer.read_int()
-        self.types = await buffer.read_list(lambda: buffer.read_string())
+        self.types = await buffer.read_list(buffer.read_string)
 
     @staticmethod
     def get_config_file() -> str or None:
@@ -217,7 +217,9 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def on_shift(slot, x, y, button, mod, player):
         slot_copy = slot.itemstack.copy()
 
-        if asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().pick_up_item(slot_copy)):
+        if asyncio.get_event_loop().run_until_complete(
+            shared.world.get_active_player().pick_up_item(slot_copy)
+        ):
             slot.itemstack.clean()  # if we successfully added the itemstack, we have to clear it
         else:
             slot.itemstack.set_amount(slot_copy.itemstack.amount)
@@ -337,7 +339,9 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
         self.slots[0].get_itemstack().add_amount(-1)
         try:
-            asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().add_xp(self.recipe.xp))
+            asyncio.get_event_loop().run_until_complete(
+                shared.world.get_active_player().add_xp(self.recipe.xp)
+            )
         except AttributeError:
             pass
         self.smelt_start = time.time()

@@ -224,7 +224,9 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             chunk = overworld.get_chunk((0, 0))
             x, z = random.randint(0, 15), random.randint(0, 15)
             height = chunk.get_maximum_y_coordinate_from_generation(x, z)
-            block_chest = await overworld.add_block((x, height + 1, z), "minecraft:chest")
+            block_chest = await overworld.add_block(
+                (x, height + 1, z), "minecraft:chest"
+            )
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
 
         await shared.event_handler.call_async("on_game_enter")
@@ -270,7 +272,9 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         if symbol == key.ESCAPE:
             await shared.state_handler.change_state("minecraft:start_menu")
             await shared.world.cleanup()
-            logger.println("Interrupted world generation by user; going back to start menu")
+            logger.println(
+                "Interrupted world generation by user; going back to start menu"
+            )
 
     def calculate_percentage_of_progress(self):
         k = list(self.status_table.values())

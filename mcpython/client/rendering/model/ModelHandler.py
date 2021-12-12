@@ -233,7 +233,9 @@ class ModelHandler:
             return
 
         if name not in self.found_models:
-            logger.println(f"[FATAL] model {name} was requested to be loaded, but never was required to be loaded")
+            logger.println(
+                f"[FATAL] model {name} was requested to be loaded, but never was required to be loaded"
+            )
             return
 
         location = self.found_models[name]
@@ -242,7 +244,9 @@ class ModelHandler:
                 try:
                     model_data = mcpython.engine.ResourceLoader.read_json(location)
                 except json.decoder.JSONDecodeError:
-                    logger.println("[WARN] invalid or corrupted .json file: "+location)
+                    logger.println(
+                        "[WARN] invalid or corrupted .json file: " + location
+                    )
                     self.models[name] = None
                 else:
                     try:
@@ -415,27 +419,30 @@ class ModelHandler:
         mcpython.client.rendering.model.BlockState.BlockStateContainer.NEEDED.clear()
 
         logger.println("walking across block states...")
-        await asyncio.gather(*(
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
-                directory, modname, immediate=True
+        await asyncio.gather(
+            *(
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
+                    directory, modname, immediate=True
+                )
+                for (directory, modname,) in (
+                    mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
+                )
             )
-            for (
-                directory,
-                modname,
-            ) in (
-                mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
-            )
-        ))
+        )
 
         logger.println("walking across located block states...")
-        await asyncio.gather(*(
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
-                name, data, immediate=True, force=force
+        await asyncio.gather(
+            *(
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
+                    name, data, immediate=True, force=force
+                )
+                for name, data, force in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA
             )
-            for name, data, force in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA
-        ))
+        )
 
-        await shared.event_handler.call_async("minecraft:data:blockstates:custom_injection", self)
+        await shared.event_handler.call_async(
+            "minecraft:data:blockstates:custom_injection", self
+        )
 
         logger.println("walking across requested models...")
         await self.build(immediate=True)
@@ -464,7 +471,9 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     info="searching for block models for minecraft",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_create", shared.model_handler.search(), info="loading found models"
+    "stage:model:model_create",
+    shared.model_handler.search(),
+    info="loading found models",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_bake_prepare",

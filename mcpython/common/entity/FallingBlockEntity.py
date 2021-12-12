@@ -15,6 +15,7 @@ import mcpython.common.entity.AbstractEntity
 import mcpython.util.math
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.util.enums import EnumSide
 
 
 class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
@@ -48,8 +49,10 @@ class FallingBlockEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         block = self.chunk.get_block((x, y - 1, z))
 
         if (self.position[1] - y <= 0.1) and not (block is None or type(block) == str):
-            if not block.IS_SOLID:
-                await self.kill()  # todo: drop item in world
+            if not block.is_face_solid(EnumSide.UP.bitflag):
+                self.dimension.spawn_itemstack_in_world(
+                    self.block.NAME, self.position, pickup_delay=0
+                )
             else:
                 await self.chunk.add_block((x, y, z), self.block)
                 await self.kill()

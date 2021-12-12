@@ -38,7 +38,9 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
 
     @staticmethod
     async def on_new_game_press(x, y):
-        await shared.state_handler.change_state("minecraft:world_selection", immediate=False)
+        await shared.state_handler.change_state(
+            "minecraft:world_selection", immediate=False
+        )
 
     @staticmethod
     def on_quit_game_press(x, y):

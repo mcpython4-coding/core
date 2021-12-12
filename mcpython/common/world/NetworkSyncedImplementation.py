@@ -50,9 +50,11 @@ class NetworkSyncedDimension(Dimension):
                 DataRequestPackage,
             )
 
-            shared.tick_handler.schedule_once(shared.NETWORK_MANAGER.send_package(
-                DataRequestPackage().request_chunk(self.name, cx, cz)
-            ))
+            shared.tick_handler.schedule_once(
+                shared.NETWORK_MANAGER.send_package(
+                    DataRequestPackage().request_chunk(self.name, cx, cz)
+                )
+            )
 
         return self.chunks[(cx, cz)]
 

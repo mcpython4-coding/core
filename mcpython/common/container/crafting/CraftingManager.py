@@ -129,7 +129,7 @@ class CraftingManager:
         try:
             data = json.loads(data)
         except json.decoder.JSONDecodeError:
-            logger.println("[WARN] invalid or corrupted JSON file: "+str(file))
+            logger.println("[WARN] invalid or corrupted JSON file: " + str(file))
         except:
             logger.print_exception(
                 "during json-decoding recipe from file '{}'".format(file),
@@ -195,7 +195,9 @@ class CraftingManager:
 
         StoneCuttingRecipe.RECIPES.clear()
 
-        await shared.event_handler.call_async("crafting_manager:reload:intermediate", self)
+        await shared.event_handler.call_async(
+            "crafting_manager:reload:intermediate", self
+        )
 
         await asyncio.gather(
             *(

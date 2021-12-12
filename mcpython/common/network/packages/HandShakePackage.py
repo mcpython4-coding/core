@@ -120,7 +120,9 @@ class Server2ClientHandshake(AbstractPackage):
             if not mod.server_only:
                 mod_info.append((mod.name, str(mod.version)))
 
-        await shared.event_handler.call_async("minecraft:modlist:sync:setup", self, mod_info)
+        await shared.event_handler.call_async(
+            "minecraft:modlist:sync:setup", self, mod_info
+        )
         self.mod_list = mod_info
         return self
 
@@ -131,9 +133,12 @@ class Server2ClientHandshake(AbstractPackage):
             self.deny_reason = buffer.read_string()
             return
 
-        self.mod_list = [e async for e in buffer.read_list(
-            lambda: (buffer.read_string(), buffer.read_string())
-        )]
+        self.mod_list = [
+            e
+            async for e in buffer.read_list(
+                lambda: (buffer.read_string(), buffer.read_string())
+            )
+        ]
 
     async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.accept_connection)

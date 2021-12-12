@@ -41,17 +41,19 @@ class RegistrySyncInitPackage(AbstractPackage):
         return self
 
     async def read_from_buffer(self, buffer: ReadBuffer):
-        self.registries = await buffer.read_list(lambda: buffer.read_string())
+        self.registries = await buffer.read_list(buffer.read_string)
 
     async def write_to_buffer(self, buffer: WriteBuffer):
-        await buffer.write_list(self.registries, lambda e: buffer.write_string(e))
+        await buffer.write_list(self.registries, buffer.write_string)
 
     async def handle_inner(self):
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"] = {
             e: -1 for e in self.registries
         }
 
-        await shared.event_handler.call_async("minecraft:network:registry_sync:init", self)
+        await shared.event_handler.call_async(
+            "minecraft:network:registry_sync:init", self
+        )
 
         for name in self.registries:
             registry = shared.registry.get_by_name(name)
@@ -203,9 +205,13 @@ class RegistrySyncResultPackage(AbstractPackage):
 
             else:
                 logger.println("[NETWORK][WARN] registry sync FAILED on server side")
-                await shared.event_handler.call_async("minecraft:network:registry_sync:fail", self)
+                await shared.event_handler.call_async(
+                    "minecraft:network:registry_sync:fail", self
+                )
 
-            await self.answer(DisconnectionInitPackage().set_reason("registry sync fatal"))
+            await self.answer(
+                DisconnectionInitPackage().set_reason("registry sync fatal")
+            )
             return
 
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"][

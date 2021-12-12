@@ -13,8 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.engine.event.EventBus
 import mcpython.engine.event.AsyncEventBus
+import mcpython.engine.event.EventBus
 import mcpython.engine.event.EventHandler
 from mcpython import shared
 
@@ -173,7 +173,9 @@ class Mod:
         self.name = name
 
         # The mod event bus
-        self.eventbus: mcpython.engine.event.AsyncEventBus.AsyncEventBus = mcpython.engine.event.AsyncEventBus.AsyncEventBus()
+        self.eventbus: mcpython.engine.event.AsyncEventBus.AsyncEventBus = (
+            mcpython.engine.event.AsyncEventBus.AsyncEventBus()
+        )
 
         # need, possible, not possible, before, after, only with, only without
         self.depend_info = [[] for _ in range(7)]

@@ -62,10 +62,10 @@ class AbstractItem(
         can_be_set_on_flag = buffer.read_bool()
 
         if can_destroy_flag:
-            self.can_destroy = await buffer.read_list(lambda: buffer.read_string())
+            self.can_destroy = await buffer.read_list(buffer.read_string)
 
         if can_be_set_on_flag:
-            self.can_be_set_on = await buffer.read_list(lambda: buffer.read_string())
+            self.can_be_set_on = await buffer.read_list(buffer.read_string)
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
@@ -79,7 +79,9 @@ class AbstractItem(
             await buffer.write_list(self.can_destroy, lambda e: buffer.write_string(e))
 
         if can_be_set_on_flag:
-            await buffer.write_list(self.can_be_set_on, lambda e: buffer.write_string(e))
+            await buffer.write_list(
+                self.can_be_set_on, lambda e: buffer.write_string(e)
+            )
 
     def check_can_be_set_on(self, block, player):
         return player.gamemode != 2 or (

@@ -264,7 +264,9 @@ class WorldGenerationHandler:
         """
         dimension.set_world_generation_config_entry("configname", config)
 
-    async def mark_finished(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
+    async def mark_finished(
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
+    ):
         """
         Internal helper for marking a chunk as finished. Will call the needed events.
         :param chunk: the chunk instance

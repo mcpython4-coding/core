@@ -66,7 +66,12 @@ class LootTableHandler:
     async def reload(self):
         self.loot_tables.clear()
 
-        await asyncio.gather(*(self.for_mod_name(name, immediate=True) for name in self.mod_names_to_load))
+        await asyncio.gather(
+            *(
+                self.for_mod_name(name, immediate=True)
+                for name in self.mod_names_to_load
+            )
+        )
 
         await shared.event_handler.call_async("data:loot_tables:custom_inject", self)
 
@@ -366,10 +371,12 @@ class LootTable:
         try:
             data = mcpython.engine.ResourceLoader.read_json(file)
         except json.decoder.JSONDecodeError:
-            logger.println("[WARN][CORRUPTION] invalid or corrupted .json file: "+file)
+            logger.println(
+                "[WARN][CORRUPTION] invalid or corrupted .json file: " + file
+            )
             return
         except:
-            logger.print_exception("during decoding loot table @"+file)
+            logger.print_exception("during decoding loot table @" + file)
             return
 
         return cls.from_data(data, name)

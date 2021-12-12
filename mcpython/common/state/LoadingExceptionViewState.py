@@ -76,7 +76,9 @@ class LoadingExceptionView(AbstractState.AbstractState):
             "[MOD LOADER][EXCEPTION MANAGER][WARN] The game might be in an invalid state, errors down the road may be caused by above!"
         )
 
-        asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:mod_loading"))
+        asyncio.get_event_loop().run_until_complete(
+            shared.state_handler.change_state("minecraft:mod_loading")
+        )
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
@@ -125,4 +127,6 @@ def error_occur(text: str):
         print(text)
     else:
         loading_exception.set_text(text)
-        shared.tick_handler.schedule_once(shared.state_handler.change_state(loading_exception.NAME))
+        shared.tick_handler.schedule_once(
+            shared.state_handler.change_state(loading_exception.NAME)
+        )

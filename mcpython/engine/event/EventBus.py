@@ -186,7 +186,9 @@ class EventBus:
                 raise RuntimeError
 
     def call(self, event_name: str, *args, **kwargs):
-        asyncio.get_event_loop().run_until_complete(self.call_async(event_name, *args, **kwargs))
+        asyncio.get_event_loop().run_until_complete(
+            self.call_async(event_name, *args, **kwargs)
+        )
 
     async def call_cancelable_async(self, event_name: str, *args, **kwargs):
         handler = CancelAbleEvent()
@@ -196,7 +198,9 @@ class EventBus:
         return handler
 
     def call_cancelable(self, event_name: str, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(self.call_cancelable_async(event_name, *args, **kwargs))
+        return asyncio.get_event_loop().run_until_complete(
+            self.call_cancelable_async(event_name, *args, **kwargs)
+        )
 
     async def call_until_async(
         self,
@@ -257,7 +261,9 @@ class EventBus:
         *args,
         **kwargs,
     ):
-        return asyncio.get_event_loop().run_until_complete(self.call_until_async(event_name, check_function, *args, **kwargs))
+        return asyncio.get_event_loop().run_until_complete(
+            self.call_until_async(event_name, check_function, *args, **kwargs)
+        )
 
     def activate(self):
         shared.event_handler.activate_bus(self)

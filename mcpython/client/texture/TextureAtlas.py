@@ -115,8 +115,12 @@ class TextureAtlasGenerator:
             try:
                 images.append(mcpython.engine.ResourceLoader.read_image(file))
             except ValueError:
-                logger.println("[WARN] could not find texture "+file)
-                images.append(mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png"))
+                logger.println("[WARN] could not find texture " + file)
+                images.append(
+                    mcpython.engine.ResourceLoader.read_image(
+                        "assets/missing_texture.png"
+                    )
+                )
         return self.add_images(
             images,
             identifier,

@@ -138,6 +138,7 @@ class IChunk(ISupportWorldInterface, ABC):
             # We should not remove players...
             if not isinstance(entity, mcpython.common.entity.PlayerEntity.PlayerEntity):
                 from mcpython import shared
+
                 shared.tick_handler.schedule_once(entity.kill(force=True))
 
     def get_map(self, name: str):

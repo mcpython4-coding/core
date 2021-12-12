@@ -13,10 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import TestCase
 
+from mcpython.util.enums import BlockRotationType, EnumSide
 from pyglet.window import mouse
-
-from mcpython.util.enums import BlockRotationType
-from mcpython.util.enums import EnumSide
 
 
 class TestAbstractBlock(TestCase):
@@ -84,5 +82,6 @@ class TestAbstractBlock(TestCase):
         import mcpython.common.block.AbstractBlock
 
         block = mcpython.common.block.AbstractBlock.AbstractBlock()
-        self.assertFalse(await block.on_player_interaction(None, mouse.LEFT, 0, (0, 0, 0), None))
-
+        self.assertFalse(
+            await block.on_player_interaction(None, mouse.LEFT, 0, (0, 0, 0), None)
+        )

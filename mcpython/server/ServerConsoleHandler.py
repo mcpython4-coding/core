@@ -26,7 +26,9 @@ class ServerConsoleHandler:
         while self.running:
             command = input(">>> ")
             if command.startswith("/"):
-                asyncio.get_event_loop().run_until_complete(shared.command_parser.run(command))
+                asyncio.get_event_loop().run_until_complete(
+                    shared.command_parser.run(command)
+                )
             else:
                 shared.chat.print_ln("<SERVER>", command)
 

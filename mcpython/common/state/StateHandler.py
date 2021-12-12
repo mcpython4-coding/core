@@ -120,4 +120,6 @@ def load_states():
     )
 
     # this is the first state, so initial init for it
-    asyncio.get_event_loop().run_until_complete(handler.change_state("minecraft:mod_loading"))
+    asyncio.get_event_loop().run_until_complete(
+        handler.change_state("minecraft:mod_loading")
+    )

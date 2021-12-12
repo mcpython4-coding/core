@@ -319,14 +319,18 @@ class CraftingGridHelperInterface(
 
         max_size = itemstack.item.STACK_SIZE
         for _ in range(count // max_size):
-            asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().pick_up_item(
-                itemstack.copy().set_amount(max_size)
-            ))
+            asyncio.get_event_loop().run_until_complete(
+                shared.world.get_active_player().pick_up_item(
+                    itemstack.copy().set_amount(max_size)
+                )
+            )
             count -= max_size
 
-        asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().pick_up_item(
-            itemstack.copy().set_amount(count)
-        ))
+        asyncio.get_event_loop().run_until_complete(
+            shared.world.get_active_player().pick_up_item(
+                itemstack.copy().set_amount(count)
+            )
+        )
         shared.event_handler.call(
             "gui:crafting:grid:output:remove",
             self,

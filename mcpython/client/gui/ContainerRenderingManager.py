@@ -503,7 +503,11 @@ class OpenedInventoryStatePart(
                 slot.call_update(True)
 
     def on_mouse_scroll(self, x: int, y: int, dx: int, dy: int):
-        if shared.window.exclusive or self.mode != 0 or not shared.window.keys[key.LSHIFT]:
+        if (
+            shared.window.exclusive
+            or self.mode != 0
+            or not shared.window.keys[key.LSHIFT]
+        ):
             return  # when no mouse interaction is active, do nothing
 
         slot = self._get_slot_for(x, y)
@@ -570,7 +574,9 @@ class InventoryHandler:
             await self.show(inventory)
 
     async def reload_config(self):
-        await asyncio.gather(*[inventory.reload_config() for inventory in self.containers])
+        await asyncio.gather(
+            *[inventory.reload_config() for inventory in self.containers]
+        )
 
     async def show(self, inventory):
         """

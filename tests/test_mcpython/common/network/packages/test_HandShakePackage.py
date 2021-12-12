@@ -16,6 +16,7 @@ from unittest import TestCase
 
 class FakeWorld:
     entities = set()
+
     @classmethod
     def add_player(cls, *_, **__):
         pass
@@ -55,6 +56,7 @@ class TestClient2ServerHandshake(TestCase):
 
     async def test_serialize(self):
         from mcpython import shared
+
         shared.IS_TEST_ENV = True
 
         import mcpython.common.config
@@ -197,8 +199,8 @@ class TestServer2ClientHandshake(TestCase):
         FakeModLoader.mods.clear()
 
     async def test_serialize_accept(self):
-        from mcpython import shared
         import mcpython.engine.event.EventHandler
+        from mcpython import shared
 
         shared.IS_TEST_ENV = True
 

@@ -32,14 +32,14 @@ class DataSerializationService(
     """
 
     def __init__(
-            self,
-            name: str,
-            path_group: typing.Union[str, re.Pattern],
-            data_deserializer=None,
-            data_serializer=None,
-            re_run_on_reload=False,
-            on_bake=None,
-            on_dedicated_server=True,
+        self,
+        name: str,
+        path_group: typing.Union[str, re.Pattern],
+        data_deserializer=None,
+        data_serializer=None,
+        re_run_on_reload=False,
+        on_bake=None,
+        on_dedicated_server=True,
     ):
         """
         Constructor of the Service

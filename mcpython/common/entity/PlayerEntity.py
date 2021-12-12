@@ -341,7 +341,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             logger.println("[ERROR] invalid gamemode:", gamemode)
 
         if not shared.IS_TEST_ENV:
-            shared.tick_handler.schedule_once(self.send_update_package_when_server(update_flags=32))
+            shared.tick_handler.schedule_once(
+                self.send_update_package_when_server(update_flags=32)
+            )
 
     def get_needed_xp_for_next_level(self) -> int:
         """
@@ -555,7 +557,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             await shared.state_handler.change_state("minecraft:escape_menu")
 
         if not internal:
-            await shared.event_handler.call_async("gameplay:player:die", self, damage_source)
+            await shared.event_handler.call_async(
+                "gameplay:player:die", self, damage_source
+            )
 
         # self.send_update_package_when_client()
         await self.send_update_package_when_server()
@@ -570,19 +574,16 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         """
         Damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
         """
-        hearts *= (
-            1
-            - min(
-                [
-                    20,
-                    max(
-                        [
-                            self.armor_level / 5,
-                            self.armor_level - hearts / (2 + self.armor_toughness / 4),
-                        ]
-                    ),
-                ]
-            )
+        hearts *= 1 - min(
+            [
+                20,
+                max(
+                    [
+                        self.armor_level / 5,
+                        self.armor_level - hearts / (2 + self.armor_toughness / 4),
+                    ]
+                ),
+            ]
         )
         if self.gamemode in [0, 2] or not check_gamemode:
             self.hearts -= hearts
@@ -618,13 +619,17 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def tell(self, msg: str):
         if not shared.IS_CLIENT:
-            asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg))
+            asyncio.get_event_loop().run_until_complete(
+                shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
+            )
             return
 
         if self == shared.world.get_active_player():
             shared.chat.print_ln(msg)
         else:
-            asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg))
+            asyncio.get_event_loop().run_until_complete(
+                shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
+            )
 
     def draw(self, position=None, rotation=None, full=None):
         old_position = self.position

@@ -106,7 +106,9 @@ class CommandParser:
 
     async def run_function(self, name: str, info=None):
         # todo: move here
-        await mcpython.common.data.DataPacks.datapack_handler.try_call_function(name, info)
+        await mcpython.common.data.DataPacks.datapack_handler.try_call_function(
+            name, info
+        )
 
     def parse(self, string: str):
         tracker = mcpython.server.command.Builder.CommandExecutionTracker.from_string(

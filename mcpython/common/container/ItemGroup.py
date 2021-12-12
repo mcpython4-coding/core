@@ -24,7 +24,9 @@ class ItemGroup(IBufferSerializeAble):
         self.has_lazy = False
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
-        await buffer.write_list(self.entries, lambda e: e.write_to_network_buffer(buffer))
+        await buffer.write_list(
+            self.entries, lambda e: e.write_to_network_buffer(buffer)
+        )
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         self.entries = await buffer.read_list(

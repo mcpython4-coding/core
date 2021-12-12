@@ -216,7 +216,11 @@ class Chat:
         """
         closes the chat
         """
-        shared.tick_handler.schedule_once(shared.inventory_handler.hide(shared.world.get_active_player().inventory_chat))
+        shared.tick_handler.schedule_once(
+            shared.inventory_handler.hide(
+                shared.world.get_active_player().inventory_chat
+            )
+        )
         self.active_index = 0
 
     def clear(self):

@@ -65,7 +65,9 @@ class IButton(IAllDirectionOrientableBlock):
 
             # todo: drop item into world
             if shared.IS_CLIENT and shared.world.get_active_player().gamemode in (0, 2):
-                await shared.world.get_active_player().pick_up_item(ItemStack(self.NAME))
+                await shared.world.get_active_player().pick_up_item(
+                    ItemStack(self.NAME)
+                )
 
     async def on_block_update(self):
         await self.check_block_behind()

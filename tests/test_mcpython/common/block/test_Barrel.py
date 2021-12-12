@@ -15,9 +15,11 @@ from unittest import TestCase
 
 from mcpython import shared
 from pyglet.window import key, mouse
-from test_mcpython.fakeHelpers import FakeCraftingHandler
-from test_mcpython.fakeHelpers import FakeInventoryHandler
-from test_mcpython.fakeHelpers import FakeWorld
+from test_mcpython.fakeHelpers import (
+    FakeCraftingHandler,
+    FakeInventoryHandler,
+    FakeWorld,
+)
 
 
 class TestBarrel(TestCase):
@@ -44,7 +46,9 @@ class TestBarrel(TestCase):
 
         FakeInventoryHandler.SHOWN = False
 
-        await instance.on_player_interaction(None, mouse.RIGHT, key.MOD_SHIFT, None, None)
+        await instance.on_player_interaction(
+            None, mouse.RIGHT, key.MOD_SHIFT, None, None
+        )
 
         self.assertFalse(FakeInventoryHandler.SHOWN)
 

@@ -354,7 +354,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         """
         return []
 
-    def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide) -> typing.Tuple[typing.Iterable, typing.Iterable]:
+    def get_provided_slot_lists(
+        self, side: mcpython.util.enums.EnumSide
+    ) -> typing.Tuple[typing.Iterable, typing.Iterable]:
         """
         Similar to get_inventories, but specifies only slots & the side on which the interaction can happen.
         Useful for e.g. furnaces which can get fuel from the side, but from top the item to smelt.

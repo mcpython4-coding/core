@@ -72,7 +72,9 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
     async def on_deactivate(self):
         await super().on_deactivate()
         for slot in self.slots[:-1]:
-            await shared.world.get_active_player().pick_up_item(slot.get_itemstack().copy())
+            await shared.world.get_active_player().pick_up_item(
+                slot.get_itemstack().copy()
+            )
             slot.get_itemstack().clean()
 
         self.slots[-1].get_itemstack().clean()

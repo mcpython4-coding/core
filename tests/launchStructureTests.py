@@ -229,7 +229,9 @@ def intercept_loading(handler):
         }
     )
 
-    asyncio.get_event_loop().run_until_complete(shared.state_handler.change_state("minecraft:world_generation"))
+    asyncio.get_event_loop().run_until_complete(
+        shared.state_handler.change_state("minecraft:world_generation")
+    )
 
     from mcpython.engine.event.EventHandler import PUBLIC_EVENT_BUS
 

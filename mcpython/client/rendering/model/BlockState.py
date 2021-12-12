@@ -506,7 +506,9 @@ class DefaultDecoder(IBlockStateDecoder):
 
     async def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
-            parent: BlockStateContainer = await BlockStateContainer.get_or_load(self.parent)
+            parent: BlockStateContainer = await BlockStateContainer.get_or_load(
+                self.parent
+            )
             if not parent.baked:
                 return False
 
@@ -739,7 +741,9 @@ class BlockStateContainer:
     ):
         assert isinstance(name, str), "name must be str"
         try:
-            instance = await cls(name, immediate=immediate, force=force).parse_data(data)
+            instance = await cls(name, immediate=immediate, force=force).parse_data(
+                data
+            )
             await instance.bake()
             return instance
         except BlockStateNotNeeded:
@@ -787,7 +791,7 @@ class BlockStateContainer:
                 info="baking block state {}".format(name),
             )
         # else:
-            # asyncio.get_event_loop().run_until_complete(self.bake())
+        # asyncio.get_event_loop().run_until_complete(self.bake())
 
     async def parse_data(self, data: dict):
         for loader in blockstate_decoder_registry.entries.values():
@@ -796,9 +800,7 @@ class BlockStateContainer:
                 self.loader.parse_data(data)
                 break
         else:
-            logger.println(
-                "can't find matching loader for model {}".format(self.name)
-            )
+            logger.println("can't find matching loader for model {}".format(self.name))
 
         return self
 
@@ -918,9 +920,7 @@ class BlockState:
         if m is None:
             return tuple()
 
-        result = m.add_faces_to_batch(
-            instance, instance.position, batch, config, faces
-        )
+        result = m.add_faces_to_batch(instance, instance.position, batch, config, faces)
         return result
 
     def add_raw_face_to_batch(

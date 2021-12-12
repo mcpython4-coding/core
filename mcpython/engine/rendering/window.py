@@ -251,7 +251,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             type(x) == mcpython.common.state.GameViewStatePart.GameView
             for x in shared.state_handler.active_state.parts
         ):
-            asyncio.get_event_loop().run_until_complete(shared.world_generation_handler.task_handler.process_tasks(timer=0.02))
+            asyncio.get_event_loop().run_until_complete(
+                shared.world_generation_handler.task_handler.process_tasks(timer=0.02)
+            )
 
         shared.event_handler.call("tickhandler:general", dt)
 
@@ -524,7 +526,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         if shared.world.world_loaded:
             # have we a world which should be saved?
-            asyncio.get_event_loop().run_until_complete(shared.world.get_active_player().inventory_main.remove_items_from_crafting())
+            asyncio.get_event_loop().run_until_complete(
+                shared.world.get_active_player().inventory_main.remove_items_from_crafting()
+            )
 
             if shared.IS_NETWORKING:
                 shared.NETWORK_MANAGER.disconnect()

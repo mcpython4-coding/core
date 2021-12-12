@@ -115,7 +115,7 @@ class BiomeSerializer(
             data["top_layer"]["type"]
         ](data["top_layer"])
 
-        class Biome(mcpython.server.worldgen.biome.Biome .Biome):
+        class Biome(mcpython.server.worldgen.biome.Biome.Biome):
             NAME = data["name"]
 
             # name -> weight, group size

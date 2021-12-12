@@ -122,7 +122,9 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 for x in shared.window.mouse_pressing.keys()
             ]
         else:
-            shared.tick_handler.schedule_once(shared.world.get_active_player().reset_moving_slot())
+            shared.tick_handler.schedule_once(
+                shared.world.get_active_player().reset_moving_slot()
+            )
 
     def get_mouse_active(self):
         return self.__activate_mouse
@@ -384,7 +386,9 @@ class GameView(AbstractStatePart.AbstractStatePart):
                                 selected_slot.set_itemstack(slot.get_itemstack())
                                 slot.set_itemstack(ref_itemstack)
                             else:
-                                await player.set_active_inventory_slot(slots.index(slot))
+                                await player.set_active_inventory_slot(
+                                    slots.index(slot)
+                                )
                             return
 
                 if player.gamemode == 1:

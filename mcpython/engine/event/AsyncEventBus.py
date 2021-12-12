@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import asyncio
 import sys
+import threading
 import traceback
 import typing
 
@@ -20,9 +21,6 @@ import deprecation
 import pyglet.app
 from mcpython import shared
 from mcpython.engine import logger
-
-import threading
-
 from mcpython.engine.event.EventBus import CancelAbleEvent
 
 
@@ -72,14 +70,10 @@ class AsyncEventBus:
 
         assert isinstance(function, typing.Awaitable)
 
-        self.event_subscriptions.setdefault(event_name, []).append(
-            (function, info)
-        )
+        self.event_subscriptions.setdefault(event_name, []).append((function, info))
 
     @deprecation.deprecated()
-    def unsubscribe(
-        self, event_name: str, function: typing.Awaitable
-    ):
+    def unsubscribe(self, event_name: str, function: typing.Awaitable):
         """
         Remove a function from the event bus from a given event
         :param event_name: the event name the function was registered to
@@ -138,8 +132,7 @@ class AsyncEventBus:
                 )
                 return
 
-            else:
-                raise RuntimeError
+            raise RuntimeError
 
     async def call_cancelable(self, event_name: str):
         """
@@ -149,9 +142,7 @@ class AsyncEventBus:
         :return: if it was canceled or not
         """
         handler = CancelAbleEvent()
-        await self.call_until(
-            event_name, lambda _: handler.canceled
-        )
+        await self.call_until(event_name, lambda _: handler.canceled)
         return handler
 
     async def call_until(
@@ -168,11 +159,7 @@ class AsyncEventBus:
         if event_name not in self.event_subscriptions:
             return
 
-        # todo: run all async stuff parallel
-
-        for function, info in self.event_subscriptions[
-            event_name
-        ]:
+        for function, info in self.event_subscriptions[event_name]:
             try:
                 result = await function
 
@@ -221,9 +208,7 @@ class AsyncEventBus:
         self.sub_buses.append(bus)
         return bus
 
-    async def call_as_stack(
-        self, event_name: str, amount=1
-    ):
+    async def call_as_stack(self, event_name: str, amount=1):
         result = []
         if event_name not in self.event_subscriptions:
             raise RuntimeError(
@@ -238,7 +223,9 @@ class AsyncEventBus:
             )
 
         try:
-            await asyncio.gather(*(e[0] for e in self.event_subscriptions[event_name][:amount]))
+            await asyncio.gather(
+                *(e[0] for e in self.event_subscriptions[event_name][:amount])
+            )
         except TypeError:
             print(self.event_subscriptions[event_name][:amount])
             raise
@@ -254,7 +241,9 @@ class AsyncEventBus:
             )
             return
         finally:
-            self.popped_event_subscriptions.setdefault(event_name, []).extend(self.event_subscriptions[event_name][:amount])
+            self.popped_event_subscriptions.setdefault(event_name, []).extend(
+                self.event_subscriptions[event_name][:amount]
+            )
             del self.event_subscriptions[event_name][:amount]
 
         return result

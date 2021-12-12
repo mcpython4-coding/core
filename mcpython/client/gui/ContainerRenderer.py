@@ -135,7 +135,9 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         buffer.write_bool(self.active)
         buffer.write_string(self.custom_name if self.custom_name is not None else "")
 
-        await buffer.write_list(self.slots, lambda slot: slot.write_to_network_buffer(buffer))
+        await buffer.write_list(
+            self.slots, lambda slot: slot.write_to_network_buffer(buffer)
+        )
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         self.active = buffer.read_bool()
