@@ -83,13 +83,13 @@ class Client2ServerHandshake(AbstractPackage):
             self.player_name
         ] = self.sender_id
 
-        shared.world.add_player(self.player_name)
-
-        logger.println(f"[HANDSHAKE] sending mod list to {self.player_name}")
-        await self.answer(await Server2ClientHandshake().setup_accept())
+        await shared.world.add_player(self.player_name)
 
         logger.println(f"[HANDSHAKE] syncing up package id lists to {self.player_name}")
         await self.answer(PackageIDSync().setup())
+
+        logger.println(f"[HANDSHAKE] sending mod list to {self.player_name}")
+        await self.answer(await Server2ClientHandshake().setup_accept())
 
 
 class Server2ClientHandshake(AbstractPackage):
@@ -158,6 +158,9 @@ class Server2ClientHandshake(AbstractPackage):
             )
             return
 
+        logger.println("[SERVER-MSG][INFO] received connection success package")
+        logger.println("[NETWORKING] comparing mod lists...")
+
         miss_matches = []
 
         for modname, version in self.mod_list:
@@ -171,6 +174,7 @@ class Server2ClientHandshake(AbstractPackage):
                 )
 
         if miss_matches:
+            logger.println("[NETWORKING][FATAL] due to the following miss-matches, the connection failed:")
             logger.write_into_container(miss_matches)
 
             from .DisconnectionPackage import DisconnectionInitPackage
@@ -178,6 +182,8 @@ class Server2ClientHandshake(AbstractPackage):
             await shared.NETWORK_MANAGER.send_package(
                 DisconnectionInitPackage().set_reason("mod mismatch")
             )
+            await shared.state_handler.change_state("minecraft:start_menu")
+            await shared.world.cleanup()
             return
 
         logger.println(
@@ -188,4 +194,4 @@ class Server2ClientHandshake(AbstractPackage):
         logger.println("[CLIENT][INFO] starting registry compare...")
         from .RegistrySyncPackage import RegistrySyncInitPackage
 
-        await self.answer(RegistrySyncInitPackage().setup())
+        await self.answer(await RegistrySyncInitPackage().setup())

@@ -18,7 +18,7 @@ class FakeWorld:
     entities = set()
 
     @classmethod
-    def add_player(cls, *_, **__):
+    async def add_player(cls, *_, **__):
         pass
 
 

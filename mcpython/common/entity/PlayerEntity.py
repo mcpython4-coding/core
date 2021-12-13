@@ -217,7 +217,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         return package
 
-    def write_update_package(self, package: PlayerUpdatePackage):
+    async def write_update_package(self, package: PlayerUpdatePackage):
         if package.update_flags == -1:
             self.position, self.rotation, self.nbt_data["motion"] = (
                 package.position,
@@ -238,7 +238,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             if flag & 8:
                 self.dimension = shared.world.get_dimension_by_name(package.dimension)
             if flag & 16:
-                self.active_inventory_slot = package.selected_slot
+                await self.set_active_inventory_slot(package.selected_slot)
             if flag & 32:
                 self.set_gamemode(package.gamemode)
 

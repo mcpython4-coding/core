@@ -144,16 +144,14 @@ class NetworkManager:
 
         logger.println("[NETWORK][SYNC] package ID sync was successful!")
 
-    def disconnect(self, target=-1):
+    async def disconnect(self, target=-1):
         logger.println(
             f"disconnecting connection to {target if target != -1 else ('all' if not shared.IS_CLIENT else 'server')}"
         )
 
         if shared.IS_CLIENT:
             shared.CLIENT_NETWORK_HANDLER.disconnect()
-            asyncio.get_event_loop().run_until_complete(
-                shared.state_handler.change_state("minecraft:start_menu")
-            )
+            await shared.state_handler.change_state("minecraft:start_menu")
         else:
             if target == -1:
                 shared.SERVER_NETWORK_HANDLER.disconnect_all()
@@ -315,7 +313,7 @@ class NetworkManager:
                 raise
             except:
                 logger.print_exception("during fetching package data @client")
-                self.disconnect()
+                await self.disconnect()
                 return
 
             if package is None:
@@ -333,11 +331,15 @@ class NetworkManager:
 
             if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                 for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
-                    func(package, self.client_id)
+                    result = func(package, self.client_id)
+                    if isinstance(result, typing.Awaitable):
+                        await result
 
             if package.package_id in self.custom_package_handlers:
                 for func in self.custom_package_handlers[package.package_id]:
-                    func(package, self.client_id)
+                    result = func(package, self.client_id)
+                    if isinstance(result, typing.Awaitable):
+                        await result
 
                 self.custom_package_handlers[package.package_id].clear()
 
@@ -352,7 +354,7 @@ class NetworkManager:
                     logger.print_exception(
                         f"during fetching data @server from @{client_id}"
                     )
-                    self.disconnect(client_id)
+                    await self.disconnect(client_id)
                     break
 
                 if package is None:
@@ -372,11 +374,15 @@ class NetworkManager:
 
                 if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                     for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
-                        func(package, 0)
+                        result = func(package, 0)
+                        if isinstance(result, typing.Awaitable):
+                            await result
 
                 if package.package_id in self.custom_package_handlers:
                     for func in self.custom_package_handlers[package.package_id]:
-                        func(package, 0)
+                        result = func(package, 0)
+                        if isinstance(result, typing.Awaitable):
+                            await result
                     self.custom_package_handlers[package.package_id].clear()
 
     async def fetch_package_from_buffer(self, buffer):

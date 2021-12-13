@@ -36,9 +36,9 @@ class PlayerInfoPackage(AbstractPackage):
     async def read_from_buffer(self, buffer: ReadBuffer):
         from mcpython.common.entity.PlayerEntity import PlayerEntity
 
-        self.players = await buffer.read_list(
+        self.players = [e async for e in buffer.read_list(
             lambda: PlayerEntity().read_from_network_buffer(buffer)
-        )
+        )]
 
     async def handle_inner(self):
         for player in self.players:
@@ -87,13 +87,13 @@ class PlayerUpdatePackage(AbstractPackage):
         self.update_flags = buffer.read_int()
 
     async def handle_inner(self):
-        player = shared.world.get_player_by_name(self.name)
+        player = await shared.world.get_player_by_name_async(self.name)
 
         # Stuff the client is NOT allowed to change on its own
         if not shared.IS_CLIENT:
             self.gamemode = player.gamemode
 
-        player.write_update_package(self)
+        await player.write_update_package(self)
 
         if not shared.IS_CLIENT:
             await shared.NETWORK_MANAGER.send_package_to_all(

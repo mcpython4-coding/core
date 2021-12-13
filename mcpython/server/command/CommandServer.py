@@ -29,6 +29,6 @@ server = (
         CommandNode(DefinedString("save"))
         .of_name("save")
         .info("saves the current world")
-        .on_execution(lambda env, data: shared.world.save_file.save_world())
+        .on_execution(lambda env, data: shared.world.save_file.save_world_async())
     )
 )

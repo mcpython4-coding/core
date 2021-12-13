@@ -39,16 +39,14 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         self.world_size = ((0, 0), (0, 0, 0, 0), 0)
         self.finished_chunks = 0
 
-    def load_or_generate(self, name: str):
-        asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
+    async def load_or_generate(self, name: str):
+        await shared.world.cleanup()
         shared.world.setup_by_filename(name)
         save_file = shared.world.save_file
         if not os.path.exists(save_file.directory):
             shared.state_handler.states["minecraft:world_generation"].generate_world()
         else:
-            asyncio.get_event_loop().run_until_complete(
-                shared.state_handler.change_state("minecraft:world_loading")
-            )
+            await shared.state_handler.change_state("minecraft:world_loading")
 
     async def load_world_from(self, name: str):
         logger.println(f"[WORLD LOADING][INFO] starting loading world '{name}'")

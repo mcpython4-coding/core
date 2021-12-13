@@ -48,7 +48,7 @@ class ServerChangePackage(AbstractPackage):
             "[NETWORK][INFO] Preparing for server change, please stand by for new connection..."
         )
         shared.tick_handler.schedule_once(self.reconnect)
-        shared.NETWORK_MANAGER.disconnect()
+        await shared.NETWORK_MANAGER.disconnect()
 
     async def reconnect(self):
         pair = self.new_server_ip, self.new_server_port

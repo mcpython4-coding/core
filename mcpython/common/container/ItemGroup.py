@@ -29,9 +29,9 @@ class ItemGroup(IBufferSerializeAble):
         )
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
-        self.entries = await buffer.read_list(
+        self.entries = [e async for e in buffer.read_list(
             lambda: ItemStack().read_from_network_buffer(buffer)
-        )
+        )]
 
     def add(self, entry: typing.Union[ItemStack, str]):
         if isinstance(entry, str):

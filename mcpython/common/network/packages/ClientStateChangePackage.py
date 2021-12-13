@@ -48,6 +48,6 @@ class ClientStateChangePackage(AbstractPackage):
             logger.println(
                 "[NETWORK][FATAL] this results in an unplanned disconnection..."
             )
-            shared.NETWORK_MANAGER.disconnect(self.sender_id)
+            await shared.NETWORK_MANAGER.disconnect(self.sender_id)
         else:
             await shared.state_handler.change_state(self.new_state)

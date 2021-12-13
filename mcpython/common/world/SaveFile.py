@@ -301,7 +301,7 @@ class SaveFile:
 
             else:
                 logger.print_exception("Exception during saving world")
-                shared.NETWORK_MANAGER.disconnect()
+                await shared.NETWORK_MANAGER.disconnect()
                 sys.exit(-1)
 
     async def apply_storage_fixer_async(self, name: str, *args, **kwargs):

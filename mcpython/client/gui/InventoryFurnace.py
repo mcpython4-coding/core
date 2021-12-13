@@ -114,7 +114,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         self.xp_stored = buffer.read_int()
         self.smelt_start = buffer.read_float() + time.time()
         self.progress = buffer.read_int()
-        self.types = await buffer.read_list(buffer.read_string)
+        self.types = [e async for e in buffer.read_list(buffer.read_string)]
 
     @staticmethod
     def get_config_file() -> str or None:

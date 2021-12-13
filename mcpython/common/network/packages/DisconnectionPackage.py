@@ -48,8 +48,8 @@ class DisconnectionInitPackage(AbstractPackage):
             )
             logger.println(self.reason)
 
-    def disconnect(self):
-        shared.NETWORK_MANAGER.disconnect(self.sender_id)
+    async def disconnect(self):
+        await shared.NETWORK_MANAGER.disconnect(self.sender_id)
 
 
 class DisconnectionConfirmPackage(AbstractPackage):
@@ -57,7 +57,7 @@ class DisconnectionConfirmPackage(AbstractPackage):
     PACKAGE_NAME = "minecraft:disconnection_confirm"
 
     async def handle_inner(self):
-        shared.NETWORK_MANAGER.disconnect(self.target_id)
+        await shared.NETWORK_MANAGER.disconnect(self.target_id)
 
         if shared.IS_CLIENT:
             await shared.world.cleanup()

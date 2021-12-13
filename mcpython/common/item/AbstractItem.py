@@ -62,10 +62,10 @@ class AbstractItem(
         can_be_set_on_flag = buffer.read_bool()
 
         if can_destroy_flag:
-            self.can_destroy = await buffer.read_list(buffer.read_string)
+            self.can_destroy = [e async for e in buffer.read_list(buffer.read_string)]
 
         if can_be_set_on_flag:
-            self.can_be_set_on = await buffer.read_list(buffer.read_string)
+            self.can_be_set_on = [e async for e in buffer.read_list(buffer.read_string)]
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)

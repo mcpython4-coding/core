@@ -222,7 +222,7 @@ class WorldGenerationHandler:
             dimension.set_world_generation_config_for_layer(layer_name, layer_config)
             layer_config.layer = layer
 
-    def generate_chunk(
+    async def generate_chunk(
         self,
         chunk: typing.Union[mcpython.engine.world.AbstractInterface.IChunk, tuple],
         dimension: typing.Union[
@@ -241,7 +241,7 @@ class WorldGenerationHandler:
             chunk = dimension.get_chunk(chunk, generate=False)
 
         self.add_chunk_to_generation_list(chunk, dimension)
-        self.task_handler.process_chunk(chunk)
+        await self.task_handler.process_chunk(chunk)
 
     def get_current_config(
         self, dimension: mcpython.engine.world.AbstractInterface.IDimension

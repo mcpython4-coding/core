@@ -31,17 +31,17 @@ class RegistrySyncInitPackage(AbstractPackage):
         super().__init__()
         self.registries = []
 
-    def setup(self):
+    async def setup(self):
         for registry_name, instance in shared.registry.registries.items():
             if instance.sync_via_network:
                 self.registries.append(registry_name)
 
-        shared.event_handler.call("minecraft:network:registry_sync:setup", self)
+        await shared.event_handler.call_async("minecraft:network:registry_sync:setup", self)
 
         return self
 
     async def read_from_buffer(self, buffer: ReadBuffer):
-        self.registries = await buffer.read_list(buffer.read_string)
+        self.registries = [e async for e in buffer.read_list(buffer.read_string)]
 
     async def write_to_buffer(self, buffer: WriteBuffer):
         await buffer.write_list(self.registries, buffer.write_string)
@@ -64,7 +64,7 @@ class RegistrySyncInitPackage(AbstractPackage):
                 )
                 continue
 
-            package = (
+            package = await (
                 registry.registry_sync_package_class or RegistrySyncPackage
             )().setup(name)
             await self.answer(package)
@@ -83,7 +83,7 @@ class RegistrySyncPackage(AbstractPackage):
         self.content = []
         self.name = None
 
-    def setup(self, name: str):
+    async def setup(self, name: str):
         self.name = name
 
         for entry in shared.registry.get_by_name(name).entries.values():
@@ -91,15 +91,15 @@ class RegistrySyncPackage(AbstractPackage):
                 (entry.NAME, entry.INFO if entry.INFO is not None else "")
             )
 
-        shared.event_handler.call("minecraft:network:registry_sync:setup", self)
+        await shared.event_handler.call_async("minecraft:network:registry_sync:setup", self)
 
         return self
 
     async def read_from_buffer(self, buffer: ReadBuffer):
         self.name = buffer.read_string()
-        self.content = await buffer.read_list(
+        self.content = [e async for e in buffer.read_list(
             lambda: (buffer.read_string(), buffer.read_string())
-        )
+        )]
 
     async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.name)
@@ -179,17 +179,17 @@ class RegistrySyncResultPackage(AbstractPackage):
                 logger.println(
                     "[NETWORK][INFO] registry compare results are back from server, everything fine"
                 )
-                if shared.event_handler.call_cancelable(
+                if await shared.event_handler.call_cancelable_async(
                     "minecraft:network:registry_sync:success", self
                 ):
                     logger.println("[NETWORK][INFO] requesting world now...")
                     from .WorldDataExchangePackage import DataRequestPackage
 
-                    def handle(*_):
+                    async def handle(*_):
                         logger.println(
                             "[NETWORK][WORLD] world data received successful, handing over to user..."
                         )
-                        shared.state_handler.change_state("minecraft:game")
+                        await shared.state_handler.change_state("minecraft:game")
                         shared.world.get_active_player().teleport((0, 100, 0))
                         shared.world.get_active_dimension().get_chunk(
                             0, 0

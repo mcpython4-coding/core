@@ -234,7 +234,7 @@ class ServerBackend:
                     client_id, []
                 ):
                     try:
-                        asyncio.get_event_loop().run_until_complete(conn.send(package))
+                        conn.send(package)
                     except ConnectionResetError:
                         logger.println(f"forced-disconnected client @{client_id}")
                         self.disconnect_client(client_id)
