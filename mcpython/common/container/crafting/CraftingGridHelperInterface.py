@@ -277,13 +277,13 @@ class CraftingGridHelperInterface(
         self.check_recipe_state()
         self.update_output()
 
-    def on_output_update(self, player=False):
+    async def on_output_update(self, player=False):
         if not self.active_recipe:
             return
         if (
             self.slot_output_map.get_itemstack().is_empty() and player
         ):  # have we removed items and where they removed by the player?
-            shared.event_handler.call(
+            await shared.event_handler.call_async(
                 "gui:crafting:grid:output:remove",
                 self,
                 self.slot_output_map,
