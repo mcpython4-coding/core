@@ -40,7 +40,7 @@ class ISlot(IBufferSerializeAble, ABC):
         self.on_update = []
         self.assigned_inventory = None
 
-    def handle_shift_click(self, x: int, y: int, button: int, modifiers: int, player):
+    async def handle_shift_click(self, x: int, y: int, button: int, modifiers: int, player):
         pass
 
     def handle_click(self, button: int, modifiers: int) -> bool:
@@ -62,6 +62,9 @@ class ISlot(IBufferSerializeAble, ABC):
 
     def call_update(self, player=False):
         pass
+
+    async def call_update_async(self, player=False):
+        return self.call_update(player=player)
 
     def copy(self, position=(0, 0)):
         raise NotImplementedError()
@@ -235,6 +238,17 @@ class Slot(ISlot):
                 result = f(player=player)
                 if isinstance(result, typing.Awaitable):
                     shared.tick_handler.schedule_once(result)
+            except:
+                logger.print_exception(
+                    "during invoking {} for slot-update of {}".format(f, self)
+                )
+
+    async def call_update_async(self, player=False):
+        for f in self.on_update:
+            try:
+                result = f(player=player)
+                if isinstance(result, typing.Awaitable):
+                    await result
             except:
                 logger.print_exception(
                     "during invoking {} for slot-update of {}".format(f, self)
@@ -475,6 +489,9 @@ class SlotCopy(ISlot):
 
     def call_update(self, player=False):
         self.master.call_update(player=player)
+
+    async def call_update_async(self, player=False):
+        return await self.master.call_update_async(player=player)
 
     itemstack = property(get_itemstack, set_itemstack)
 

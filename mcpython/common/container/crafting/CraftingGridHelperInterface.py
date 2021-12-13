@@ -301,7 +301,7 @@ class CraftingGridHelperInterface(
                 self.active_recipe = None
             self.update_output()
 
-    def on_output_shift_click(self, slot, x, y, button, modifiers, player):
+    async def on_output_shift_click(self, slot, x, y, button, modifiers, player):
         # todo: check by every call if the player can pick up more items of this kind
         if not self.active_recipe:
             return
@@ -314,24 +314,20 @@ class CraftingGridHelperInterface(
             self.slot_output_map.set_itemstack(
                 mcpython.common.container.ResourceStack.ItemStack.create_empty()
             )
-            self.slot_output_map.call_update(player=True)
+            await self.slot_output_map.call_update_async(player=True)
             count += itemstack.amount
 
         max_size = itemstack.item.STACK_SIZE
         for _ in range(count // max_size):
-            asyncio.get_event_loop().run_until_complete(
-                shared.world.get_active_player().pick_up_item(
-                    itemstack.copy().set_amount(max_size)
-                )
+            await shared.world.get_active_player().pick_up_item(
+                itemstack.copy().set_amount(max_size)
             )
             count -= max_size
 
-        asyncio.get_event_loop().run_until_complete(
-            shared.world.get_active_player().pick_up_item(
-                itemstack.copy().set_amount(count)
-            )
+        await shared.world.get_active_player().pick_up_item(
+            itemstack.copy().set_amount(count)
         )
-        shared.event_handler.call(
+        await shared.event_handler.call_async(
             "gui:crafting:grid:output:remove",
             self,
             self.slot_output_map,
