@@ -214,12 +214,10 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         return not itemstack.is_empty() and hasattr(itemstack.item, "FUEL")
 
     @staticmethod
-    def on_shift(slot, x, y, button, mod, player):
+    async def on_shift(slot, x, y, button, mod, player):
         slot_copy = slot.itemstack.copy()
 
-        if asyncio.get_event_loop().run_until_complete(
-            shared.world.get_active_player().pick_up_item(slot_copy)
-        ):
+        if await shared.world.get_active_player().pick_up_item(slot_copy):
             slot.itemstack.clean()  # if we successfully added the itemstack, we have to clear it
         else:
             slot.itemstack.set_amount(slot_copy.itemstack.amount)

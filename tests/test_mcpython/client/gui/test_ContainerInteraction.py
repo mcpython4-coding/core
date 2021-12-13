@@ -114,7 +114,7 @@ class ContainerInteraction(TestCase):
         self.interaction_manager.moving_itemstack = (
             shared.inventory_handler.moving_slot.itemstack.copy()
         )
-        self.interaction_manager.handle_left_click(
+        await self.interaction_manager.handle_left_click(
             mouse.LEFT, 0, shared.inventory_handler.moving_slot.itemstack, s, 50, 50
         )
         self.assertEqual(shared.inventory_handler.moving_slot.itemstack.amount, 8)
@@ -141,7 +141,7 @@ class ContainerInteraction(TestCase):
         self.interaction_manager.moving_itemstack = (
             shared.inventory_handler.moving_slot.itemstack.copy()
         )
-        self.interaction_manager.handle_left_click(
+        await self.interaction_manager.handle_left_click(
             mouse.LEFT, 0, shared.inventory_handler.moving_slot.itemstack, s, 50, 50
         )
         self.assertEqual(shared.inventory_handler.moving_slot.itemstack.amount, 8)
@@ -167,7 +167,7 @@ class ContainerInteraction(TestCase):
         self.interaction_manager.moving_itemstack = (
             shared.inventory_handler.moving_slot.itemstack.copy()
         )
-        self.interaction_manager.handle_right_click(
+        await self.interaction_manager.handle_right_click(
             mouse.RIGHT, 0, shared.inventory_handler.moving_slot.itemstack, s, 50, 50
         )
         self.assertEqual(

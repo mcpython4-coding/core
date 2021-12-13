@@ -180,7 +180,7 @@ class OpenedInventoryStatePart(
                     return slot, inventory
         return None, None
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+    async def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         # when no mouse interaction is active, do nothing
         if shared.window.exclusive:
             return
@@ -229,28 +229,28 @@ class OpenedInventoryStatePart(
             return
 
         if modifiers & key.MOD_SHIFT:
-            if self.handle_shift_click(button, modifiers, slot, x, y):
+            if await self.handle_shift_click(button, modifiers, slot, x, y):
                 return
 
         if button == mouse.LEFT:
-            if self.handle_left_click(button, modifiers, moving_itemstack, slot, x, y):
+            if await self.handle_left_click(button, modifiers, moving_itemstack, slot, x, y):
                 return
 
         elif button == mouse.RIGHT:
-            if self.handle_right_click(button, modifiers, moving_itemstack, slot, x, y):
+            if await self.handle_right_click(button, modifiers, moving_itemstack, slot, x, y):
                 return
 
         elif button == mouse.MIDDLE:
-            if self.handle_middle_click(
+            if await self.handle_middle_click(
                 button, modifiers, moving_itemstack, slot, x, y
             ):
                 return
 
-    def handle_shift_click(self, button: int, modifiers: int, slot, x: int, y: int):
+    async def handle_shift_click(self, button: int, modifiers: int, slot, x: int, y: int):
         if slot.on_shift_click:
             try:
-                flag = slot.on_shift_click(
-                    slot, x, y, button, modifiers, shared.world.get_active_player()
+                flag = await slot.handle_shift_click(
+                    x, y, button, modifiers, shared.world.get_active_player()
                 )
 
                 # no default logic should go on
@@ -273,7 +273,7 @@ class OpenedInventoryStatePart(
 
         return False
 
-    def handle_middle_click(
+    async def handle_middle_click(
         self,
         button: int,
         modifiers: int,
@@ -294,14 +294,14 @@ class OpenedInventoryStatePart(
             moving_itemstack
         ):
             self.mode = 3
-            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            await self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
         else:
             return False
 
         return True
 
-    def handle_right_click(
+    async def handle_right_click(
         self,
         button: int,
         modifiers: int,
@@ -326,14 +326,14 @@ class OpenedInventoryStatePart(
             or slot.itemstack.contains_same_resource(moving_itemstack)
         ):
             self.mode = 2
-            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            await self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
         else:
             return False
 
         return True
 
-    def handle_left_click(
+    async def handle_left_click(
         self,
         button: int,
         modifiers: int,
@@ -356,7 +356,7 @@ class OpenedInventoryStatePart(
             or slot.itemstack.contains_same_resource(moving_itemstack)
         ):
             self.mode = 1
-            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            await self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
         elif slot.interaction_mode[1]:
             stack_a = slot.get_itemstack().copy()
@@ -368,7 +368,7 @@ class OpenedInventoryStatePart(
 
         return True
 
-    def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
+    async def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
         if (
             shared.window.exclusive
         ):  # when no mouse interaction is active, do nothing beside clearing the status
@@ -407,9 +407,9 @@ class OpenedInventoryStatePart(
         await super().deactivate()
 
         if shared.IS_CLIENT:
-            self.on_mouse_release(0, 0, 0, 0)
+            await self.on_mouse_release(0, 0, 0, 0)
 
-    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
+    async def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
         if shared.window.exclusive:
             return  # when no mouse interaction is active, do nothing
 
@@ -502,7 +502,7 @@ class OpenedInventoryStatePart(
                 slot.itemstack.set_amount(slot.itemstack.item.STACK_SIZE)
                 slot.call_update(True)
 
-    def on_mouse_scroll(self, x: int, y: int, dx: int, dy: int):
+    async def on_mouse_scroll(self, x: int, y: int, dx: int, dy: int):
         if (
             shared.window.exclusive
             or self.mode != 0
