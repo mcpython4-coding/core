@@ -36,7 +36,9 @@ class RegistrySyncInitPackage(AbstractPackage):
             if instance.sync_via_network:
                 self.registries.append(registry_name)
 
-        await shared.event_handler.call_async("minecraft:network:registry_sync:setup", self)
+        await shared.event_handler.call_async(
+            "minecraft:network:registry_sync:setup", self
+        )
 
         return self
 
@@ -91,15 +93,20 @@ class RegistrySyncPackage(AbstractPackage):
                 (entry.NAME, entry.INFO if entry.INFO is not None else "")
             )
 
-        await shared.event_handler.call_async("minecraft:network:registry_sync:setup", self)
+        await shared.event_handler.call_async(
+            "minecraft:network:registry_sync:setup", self
+        )
 
         return self
 
     async def read_from_buffer(self, buffer: ReadBuffer):
         self.name = buffer.read_string()
-        self.content = [e async for e in buffer.read_list(
-            lambda: (buffer.read_string(), buffer.read_string())
-        )]
+        self.content = [
+            e
+            async for e in buffer.read_list(
+                lambda: (buffer.read_string(), buffer.read_string())
+            )
+        ]
 
     async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.name)

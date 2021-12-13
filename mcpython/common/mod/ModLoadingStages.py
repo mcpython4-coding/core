@@ -157,9 +157,9 @@ class LoadingStage:
                     "minecraft:block_item_generator"
                 )
             else:
-                await shared.state_handler.states["minecraft:world_loading"].load_or_generate(
-                    "server_world"
-                )
+                await shared.state_handler.states[
+                    "minecraft:world_loading"
+                ].load_or_generate("server_world")
 
             shared.mod_loader.finished = True
             return True

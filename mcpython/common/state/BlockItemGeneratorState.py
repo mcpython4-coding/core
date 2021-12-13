@@ -154,7 +154,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         self.prepare_window()
 
         # Setup the player view, todo: make configurable by block model / state
-        player = world.get_active_player()
+        player = await world.get_active_player_async()
         player.position = (1.5, 2, 1.5)
         player.rotation = (-45, -45, 0)
 
@@ -194,8 +194,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
         if os.path.exists(shared.build + "/item_block_factory.json"):
             with open(shared.build + "/item_block_factory.json", mode="r") as f:
                 self.table = json.load(f)
-        else:  # make sure it is was reset
+        else:  # make sure it is reset
             self.table.clear()
+
         items = shared.registry.get_by_name("minecraft:item").entries
         for task in self.tasks[:]:
             if task in items:

@@ -174,7 +174,9 @@ class Server2ClientHandshake(AbstractPackage):
                 )
 
         if miss_matches:
-            logger.println("[NETWORKING][FATAL] due to the following miss-matches, the connection failed:")
+            logger.println(
+                "[NETWORKING][FATAL] due to the following miss-matches, the connection failed:"
+            )
             logger.write_into_container(miss_matches)
 
             from .DisconnectionPackage import DisconnectionInitPackage

@@ -21,8 +21,9 @@ from mcpython.server.command.Builder import Command, CommandNode, DefinedString,
 
 
 async def generate_area(env, data):
-    for x, z in itertools.product(range(data[3], data[5] + 1),
-            range(data[4], data[6] + 1)):
+    for x, z in itertools.product(
+        range(data[3], data[5] + 1), range(data[4], data[6] + 1)
+    ):
         logger.println(f"generating chunk {x} {z}")
         await shared.world_generation_handler.generate_chunk(
             env.get_dimension().get_chunk(x, z)
@@ -72,9 +73,7 @@ chunk = (
                             CommandNode(Int())
                             .of_name("end Z")
                             .info("generates the given area")
-                            .on_execution(
-                                generate_area
-                            )
+                            .on_execution(generate_area)
                         )
                     )
                 )

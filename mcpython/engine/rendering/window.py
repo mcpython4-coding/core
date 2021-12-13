@@ -531,7 +531,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             )
 
             if shared.IS_NETWORKING:
-                asyncio.get_event_loop().run_until_complete(shared.NETWORK_MANAGER.disconnect())
+                asyncio.get_event_loop().run_until_complete(
+                    shared.NETWORK_MANAGER.disconnect()
+                )
             else:
                 # make sure that file size is as small as possible
                 shared.world.save_file.save_world(override=True)

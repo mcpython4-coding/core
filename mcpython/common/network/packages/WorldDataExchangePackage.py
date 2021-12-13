@@ -66,10 +66,15 @@ class DataRequestPackage(AbstractPackage):
     async def read_from_buffer(self, buffer: ReadBuffer):
         self.request_world_info_state = buffer.read_bool()
         self.request_player_info_state = buffer.read_bool()
-        self.requested_dimensions = [e async for e in buffer.read_list(buffer.read_string)]
-        self.requested_chunks = [e async for e in buffer.read_list(
-            lambda: (buffer.read_string(), buffer.read_int(), buffer.read_int())
-        )]
+        self.requested_dimensions = [
+            e async for e in buffer.read_list(buffer.read_string)
+        ]
+        self.requested_chunks = [
+            e
+            async for e in buffer.read_list(
+                lambda: (buffer.read_string(), buffer.read_int(), buffer.read_int())
+            )
+        ]
 
     async def handle_inner(self):
         if self.request_world_info_state:
@@ -124,13 +129,16 @@ class WorldInfoPackage(AbstractPackage):
     async def read_from_buffer(self, buffer: ReadBuffer):
         self.spawn_point = buffer.read_int(), buffer.read_int()
 
-        self.dimensions = [e async for e in buffer.read_list(
-            lambda: (
-                buffer.read_string(),
-                buffer.read_int(),
-                (buffer.read_int(), buffer.read_int()),
+        self.dimensions = [
+            e
+            async for e in buffer.read_list(
+                lambda: (
+                    buffer.read_string(),
+                    buffer.read_int(),
+                    (buffer.read_int(), buffer.read_int()),
+                )
             )
-        )]
+        ]
 
     async def handle_inner(self):
         shared.world.spawn_point = self.spawn_point
