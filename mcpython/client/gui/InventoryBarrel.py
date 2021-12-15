@@ -56,7 +56,7 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             self.block.face_info.update(True)
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
 

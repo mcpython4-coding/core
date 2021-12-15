@@ -58,7 +58,7 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
             self.custom_name = "Crafting Table"
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 36 slots of main, 9 crafting grid, 1 crafting output
         # base_slots = shared.world.get_active_player().inventory_main.slots[:36]
         return [mcpython.client.gui.Slot.Slot() for _ in range(10)]

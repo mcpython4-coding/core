@@ -191,7 +191,7 @@ class CreativeItemTab(ICreativeView):
         for slot in self.slots[:9]:
             slot.invalidate()
 
-    def create_slot_renderers(self):
+    async def create_slot_renderers(self):
         """
         Creates the slots
         """
@@ -376,7 +376,7 @@ class CreativePlayerInventory(ICreativeView):
     def draw_at(self, position: typing.Tuple[int, int], hovering_slot=None):
         self.TEXTURE.blit(*position)
 
-    def create_slot_renderers(self):
+    async def create_slot_renderers(self):
         """
         Creates the slots
         """

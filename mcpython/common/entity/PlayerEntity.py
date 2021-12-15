@@ -292,14 +292,19 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         import mcpython.client.gui.MainPlayerInventory as Main
 
         self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar.create(self)
+        await self.inventory_hotbar.init()
 
         self.inventory_main = Main.MainPlayerInventory.create(self.inventory_hotbar)
+        await self.inventory_main.init()
 
         self.inventory_chat = Chat.ChatInventory()
+        await self.inventory_chat.init()
 
         self.inventory_enderchest = Chest.InventoryChest()
+        await self.inventory_enderchest.init()
 
         self.inventory_crafting_table = InvCrafting.InventoryCraftingTable()
+        await self.inventory_crafting_table.init()
 
         if shared.IS_CLIENT:
             await self.inventory_hotbar.reload_config()

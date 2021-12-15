@@ -66,17 +66,14 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
     def __init__(self, hotbar):
         self.hotbar = hotbar
         super().__init__()
-        inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
-            inputs, self.slots[44]
-        )
+        self.recipe_interface = None
         if self.custom_name is None:
             self.custom_name = "Inventory"
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
-        return (
+        slots = (
             [self.hotbar.slots[i].copy() for i in range(9)]
             + [mcpython.client.gui.Slot.Slot() for _ in range(27)]
             + [
@@ -91,6 +88,13 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
             ]
             + [mcpython.client.gui.Slot.Slot()]
         )
+
+        inputs = [slots[40:42], slots[42:44]]
+        self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
+            inputs, self.slots[44]
+        )
+
+        return slots
 
     # todo: move to container
     def armor_update(self, player=None):

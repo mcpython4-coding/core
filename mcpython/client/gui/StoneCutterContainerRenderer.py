@@ -102,7 +102,7 @@ class StoneCutterContainerRenderer(
         )
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
         return (
             [mcpython.client.gui.Slot.Slot(on_update=self.update_selection_view)]

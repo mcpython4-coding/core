@@ -192,7 +192,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         else:
             self.reset()
 
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 36 slots of main, 1 input, 1 fuel and 1 output
         slots = [
             mcpython.client.gui.Slot.Slot(

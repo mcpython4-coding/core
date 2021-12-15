@@ -116,7 +116,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
         self.uuid = uuid.uuid4()
-        self.slots: typing.List[ISlot] = self.create_slot_renderers()
+        self.slots: typing.List[ISlot] = []
 
         for slot in self.slots:
             slot.assigned_inventory = self
@@ -130,6 +130,14 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.custom_name_label.anchor_y = "top"
 
         shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
+
+        shared.tick_handler.schedule_once(self.init())
+        self.created_slots = False
+
+    async def init(self):
+        if self.created_slots: return
+        self.created_slots = True
+        self.slots = await self.create_slot_renderers()
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.active)
@@ -283,7 +291,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
     def tick(self, dt: float):
         pass
 
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         """
         Creates the slots
         :return: the slots the inventory uses
