@@ -200,8 +200,7 @@ class OpenedInventoryStatePart(
                 return
 
         if slot is None:
-
-            player = shared.world.get_active_player()
+            player = await shared.world.get_active_player_async()
             dimension = player.dimension
 
             if (
@@ -378,8 +377,8 @@ class OpenedInventoryStatePart(
             return
 
         await self.reorder_slot_list_stacks()
-        player = shared.world.get_active_player()
-        dimension = shared.world.get_active_dimension()
+        player = await shared.world.get_active_player_async()
+        dimension = player.dimension
 
         if self.mode == 1:
             if len(self.slot_list) == 0:

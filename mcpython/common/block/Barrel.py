@@ -50,6 +50,7 @@ class Barrel(IAllDirectionOrientableBlock):
         self.inventory = mcpython.client.gui.InventoryBarrel.InventoryBarrel(self)
 
     async def on_block_added(self):
+        await self.inventory.init()
         await self.inventory.reload_config()
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):

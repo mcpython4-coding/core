@@ -15,6 +15,8 @@ import asyncio
 import math
 import typing
 
+import deprecation
+
 import mcpython.client.gui.Slot
 import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.common.container.ResourceStack
@@ -297,8 +299,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.inventory_main = Main.MainPlayerInventory.create(self.inventory_hotbar)
         await self.inventory_main.init()
 
-        self.inventory_chat = Chat.ChatInventory()
-        await self.inventory_chat.init()
+        if shared.IS_CLIENT:
+            self.inventory_chat = Chat.ChatInventory()
+            await self.inventory_chat.init()
 
         self.inventory_enderchest = Chest.InventoryChest()
         await self.inventory_enderchest.init()
@@ -461,12 +464,22 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         await self.send_update_package_when_client()
         return self
 
+    @deprecation.deprecated()
     def get_active_inventory_slot(self):
         """
         Gets the slot of the selected slot
         """
         if self.inventory_hotbar is None:
-            self.create_inventories()
+            asyncio.get_event_loop().run_until_complete(self.create_inventories())
+
+        return self.inventory_hotbar.slots[self.active_inventory_slot]
+
+    async def get_active_inventory_slot_async(self):
+        """
+        Gets the slot of the selected slot
+        """
+        if self.inventory_hotbar is None:
+            await self.create_inventories()
 
         return self.inventory_hotbar.slots[self.active_inventory_slot]
 
@@ -484,7 +497,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             # todo: add list to player of possible slots with possibility of being callable
             # todo: add tag for this functionality
             a = (
-                self.get_active_inventory_slot().get_itemstack().get_item_name()
+                (await self.get_active_inventory_slot_async()).get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
             )
             b = (

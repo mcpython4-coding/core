@@ -36,11 +36,13 @@ def create_shulker_box(name):
 
             async def on_block_added(self):
                 self.face_info.custom_renderer = self.RENDERER
+                await self.inventory.init()
                 await self.inventory.reload_config()
 
         else:
 
             async def on_block_added(self):
+                await self.inventory.init()
                 await self.inventory.reload_config()
 
         def __init__(self):

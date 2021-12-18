@@ -370,10 +370,12 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         # todo: move to RenderingHelper
         if shared.world.get_active_player() is None:
             return
+
         if shared.rendering_helper.default_3d_stack is None:
             shared.rendering_helper.default_3d_stack = (
                 shared.rendering_helper.get_dynamic_3d_matrix_stack()
             )
+
         shared.rendering_helper.default_3d_stack.apply()
         pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 

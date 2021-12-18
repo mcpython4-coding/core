@@ -211,7 +211,7 @@ class CraftingManager:
 
         await shared.event_handler.call_async("crafting_manager:reload:end", self)
 
-    def show_to_player(self, recipe_name: str | IRecipe.IRecipe):
+    async def show_to_player(self, recipe_name: str | IRecipe.IRecipe):
         # todo: show error messages in chat
 
         if isinstance(recipe_name, str):
@@ -235,13 +235,13 @@ class CraftingManager:
                 mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
             )
 
-        shared.inventory_handler.show(
+        await shared.inventory_handler.show(
             self.RECIPE_VIEW_INVENTORY.set_renderer(
                 recipe.RECIPE_VIEW.prepare_for_recipe(recipe)
             )
         )
 
-    def show_to_player_from_input(self, input_name: str):
+    async def show_to_player_from_input(self, input_name: str):
         recipes = []
 
         for array in self.crafting_recipes_shapeless.values():
@@ -262,9 +262,9 @@ class CraftingManager:
             logger.println(f"[WARN] no recipes found using item {input_name}")
             return
 
-        self.show_recipe_list(recipes)
+        await self.show_recipe_list(recipes)
 
-    def show_to_player_from_output(self, output_name: str):
+    async def show_to_player_from_output(self, output_name: str):
         recipes = []
 
         for array in self.crafting_recipes_shapeless.values():
@@ -282,9 +282,9 @@ class CraftingManager:
             logger.println(f"[WARN] no recipes found outputting {output_name}")
             return
 
-        self.show_recipe_list(recipes)
+        await self.show_recipe_list(recipes)
 
-    def show_recipe_list(self, recipes: typing.List[IRecipe.IRecipe]):
+    async def show_recipe_list(self, recipes: typing.List[IRecipe.IRecipe]):
         self.RECIPE_VIEW_INVENTORY = (
             mcpython.client.gui.InventoryRecipeView.InventoryMultiRecipeView()
         )
@@ -303,7 +303,7 @@ class CraftingManager:
                 self.RECIPE_VIEW_INVENTORY = None
                 return
 
-        shared.inventory_handler.show(self.RECIPE_VIEW_INVENTORY)
+        await shared.inventory_handler.show(self.RECIPE_VIEW_INVENTORY)
 
 
 shared.crafting_handler = CraftingManager()

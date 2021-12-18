@@ -136,6 +136,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
     async def init(self):
         if self.created_slots: return
+
         self.created_slots = True
         self.slots = await self.create_slot_renderers()
 
@@ -159,7 +160,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         size = buffer.read_int()
 
         if size != len(self.slots):
-            raise RuntimeError("invalid slot count received!")
+            raise RuntimeError(f"invalid slot count received for container {self}!")
 
         for slot in self.slots:
             await slot.read_from_network_buffer(buffer)

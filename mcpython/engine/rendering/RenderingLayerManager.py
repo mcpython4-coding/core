@@ -78,7 +78,7 @@ class RenderingLayer:
     def setupEnv(self):
         if self.rendering_mode == "2d":
             shared.window.set_2d()
-        elif self.rendering_mode == "3d" and shared.world.local_player != "unknown":
+        elif self.rendering_mode == "3d":
             shared.window.set_3d()
         else:
             glLoadIdentity()

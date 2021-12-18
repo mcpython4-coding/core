@@ -60,6 +60,9 @@ class ISlot(IBufferSerializeAble, ABC):
     ):
         raise NotImplementedError()
 
+    def set_itemstack_force(self, *args, **kwargs):
+        self.set_itemstack(*args, **kwargs)
+
     def call_update(self, player=False):
         pass
 
@@ -94,6 +97,9 @@ class ISlot(IBufferSerializeAble, ABC):
 
     def clean_itemstack(self):
         self.get_itemstack().clean()
+
+    def invalidate(self):
+        pass
 
 
 class Slot(ISlot):

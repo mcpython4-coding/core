@@ -367,6 +367,10 @@ class CreativePlayerInventory(ICreativeView):
         self.tab_icon = CreativeTabManager.LOWER_TAB
         self.tab_icon_selected = CreativeTabManager.LOWER_TAB_SELECTED
 
+    async def on_activate(self):
+        await super().on_activate()
+        shared.tick_handler.schedule_once(self.reload_config())
+
     def get_icon_stack(self) -> ItemStack:
         return self.stack
 

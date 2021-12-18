@@ -18,6 +18,7 @@ import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.InventoryCreativeTab
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
+from mcpython.common.container.crafting.CraftingGridHelperInterface import CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractArmorItem
@@ -90,9 +91,8 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
         )
 
         inputs = [slots[40:42], slots[42:44]]
-        self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
-            inputs, self.slots[44]
-        )
+        output = slots[44]
+        self.recipe_interface = CraftingGridHelperInterface(inputs, output)
 
         return slots
 
@@ -137,6 +137,8 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
         if shared.world.get_active_player().gamemode == 1:
             await shared.inventory_handler.hide(self)
             await mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
+        else:
+            shared.tick_handler.schedule_once(self.reload_config())
 
     async def on_deactivate(self):
         await self.remove_items_from_crafting()

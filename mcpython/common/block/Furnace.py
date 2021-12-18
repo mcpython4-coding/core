@@ -51,6 +51,7 @@ class Furnace(IHorizontalOrientableBlock):
 
     async def on_block_added(self):
         await super().on_block_added()
+        await self.inventory.init()
         await self.inventory.reload_config()
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):

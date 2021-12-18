@@ -207,6 +207,7 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 on_update=self.on_output_update, on_shift_click=self.on_shift
             ),
         ]
+
         return slots
 
     @classmethod

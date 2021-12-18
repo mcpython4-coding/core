@@ -72,6 +72,7 @@ class StoneCutter(IHorizontalOrientableBlock, IRecipeUser):
 
     async def on_block_added(self):
         await super().on_block_added()
+        await self.inventory.init()
         await self.inventory.reload_config()
 
     async def on_block_remove(self, reason):

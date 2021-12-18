@@ -50,10 +50,7 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        inputs = [self.slots[:3], self.slots[3:6], self.slots[6:9]]
-        self.recipeinterface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
-            inputs, self.slots[9]
-        )
+        self.recipe_interface = None
         if self.custom_name is None:
             self.custom_name = "Crafting Table"
 
@@ -61,7 +58,14 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
     async def create_slot_renderers(self) -> list:
         # 36 slots of main, 9 crafting grid, 1 crafting output
         # base_slots = shared.world.get_active_player().inventory_main.slots[:36]
-        return [mcpython.client.gui.Slot.Slot() for _ in range(10)]
+        slots = [mcpython.client.gui.Slot.Slot() for _ in range(10)]
+
+        inputs = [slots[:3], slots[3:6], slots[6:9]]
+        self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
+            inputs, slots[9]
+        )
+
+        return slots
 
     async def on_activate(self):
         await super().on_activate()

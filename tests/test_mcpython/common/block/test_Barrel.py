@@ -86,12 +86,14 @@ class TestBarrel(TestCase):
         FakeInventoryHandler.SHOWN = False
 
         instance = mcpython.common.block.Barrel.Barrel()
+        await instance.inventory.init()
         instance.inventory.slots[0].set_itemstack(ItemStack(TestItem()))
 
         buffer = WriteBuffer()
         await instance.write_to_network_buffer(buffer)
 
         instance2 = mcpython.common.block.Barrel.Barrel()
+        await instance2.inventory.init()
         await instance2.read_from_network_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertEqual(
