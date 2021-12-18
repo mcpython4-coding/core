@@ -100,15 +100,15 @@ class ItemStack(AbstractResourceStack):
 
         self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.is_empty())
 
         if not self.is_empty():
             buffer.write_int(self.amount)
             buffer.write_string(self.item.NAME)
-            self.item.write_to_network_buffer(buffer)
+            await self.item.write_to_network_buffer(buffer)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         if buffer.read_bool():
             self.clean()
         else:
@@ -117,7 +117,7 @@ class ItemStack(AbstractResourceStack):
             self.item = shared.registry.get_by_name("minecraft:item").full_entries[
                 item_name
             ]()
-            self.item.read_from_network_buffer(buffer)
+            await self.item.read_from_network_buffer(buffer)
         return self
 
     def copy(self) -> "ItemStack":
@@ -260,14 +260,14 @@ class FluidStack(AbstractResourceStack):
         self.amount = amount
         return self
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.is_empty())
 
         if not self.is_empty():
             buffer.write_float(self.amount)
             buffer.write_string(self.fluid)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         if not buffer.read_bool():
             self.clean()
         else:

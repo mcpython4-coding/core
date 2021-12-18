@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import cProfile
 import os
 import random
@@ -56,17 +57,17 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         self.profiler = cProfile.Profile()
         self.world_gen_config = {}
 
-    def generate_world(self, config=None):
+    async def generate_world(self, config=None):
         if config is None:
             config = DEFAULT_GENERATION_CONFIG
             config["seed"] = random.randint(-1000000, 10000000)
         self.world_gen_config.update(config)
-        shared.state_handler.change_state(self.NAME)
+        await shared.state_handler.change_state(self.NAME)
 
-    def generate_from_user_input(self, state=None):
+    async def generate_from_user_input(self, state=None):
         if state is None:
             state = shared.state_handler.states["minecraft:world_generation_config"]
-        self.generate_world(
+        await self.generate_world(
             {
                 "world_config_name": state.get_world_config_name(),
                 "world_size": state.get_world_size(),
@@ -97,8 +98,8 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             ),
         ]
 
-    def on_update(self, dt):
-        shared.world_generation_handler.task_handler.process_tasks(timer=0.4)
+    async def on_update(self, dt):
+        await shared.world_generation_handler.task_handler.process_tasks(timer=0.4)
 
         overworld = shared.world.get_dimension(0)
 
@@ -113,14 +114,14 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 self.status_table[chunk] = 1 / (count if count > 0 else 1)
 
         if len(shared.world_generation_handler.task_handler.chunks) == 0:
-            shared.state_handler.change_state("minecraft:game")
+            await shared.state_handler.change_state("minecraft:game")
             import mcpython.common.data.ResourcePipe
 
-            mcpython.common.data.ResourcePipe.handler.reload_content()
-            self.finish()
+            await mcpython.common.data.ResourcePipe.handler.reload_content()
+            await self.finish()
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
         self.status_table.clear()
 
         if os.path.exists(shared.world.save_file.directory):
@@ -148,13 +149,13 @@ class WorldGenerationProgress(AbstractState.AbstractState):
         ffx = sx - fx
         ffy = sy - fy
 
-        shared.event_handler.call("on_world_generation_prepared")
+        await shared.event_handler.call_async("on_world_generation_prepared")
 
         seed = self.world_gen_config["seed"]
         shared.world.config["seed"] = seed
-        shared.event_handler.call("seed:set")
+        await shared.event_handler.call_async("seed:set")
 
-        shared.event_handler.call("on_world_generation_started")
+        await shared.event_handler.call_async("on_world_generation_started")
 
         for cx in range(-fx, ffx):
             for cz in range(-fy, ffy):
@@ -165,7 +166,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 )
                 self.status_table[(cx, cz)] = 0
 
-    def finish(self):
+    async def finish(self):
         # read in the config
 
         overworld = shared.world.get_dimension(0)
@@ -175,7 +176,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             chunk.is_ready = True
             chunk.visible = True
 
-        shared.event_handler.call("on_game_generation_finished")
+        await shared.event_handler.call_async("on_game_generation_finished")
         logger.println("[WORLD GENERATION] finished world generation")
 
         player_name = self.world_gen_config["player_name"]
@@ -183,7 +184,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             player_name = "unknown"
 
         if player_name not in shared.world.players:
-            shared.world.add_player(player_name, dimension=0)
+            await shared.world.add_player(player_name, dimension=0)
 
         # setup skin
         try:
@@ -205,7 +206,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 sys.exit(-1)
 
         if shared.IS_CLIENT:
-            mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
+            await mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
 
         # todo: this is also only client code
         shared.world.local_player = player_name
@@ -223,20 +224,22 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             chunk = overworld.get_chunk((0, 0))
             x, z = random.randint(0, 15), random.randint(0, 15)
             height = chunk.get_maximum_y_coordinate_from_generation(x, z)
-            block_chest = overworld.add_block((x, height + 1, z), "minecraft:chest")
+            block_chest = await overworld.add_block(
+                (x, height + 1, z), "minecraft:chest"
+            )
             block_chest.loot_table_link = "minecraft:chests/spawn_bonus_chest"
 
-        shared.event_handler.call("on_game_enter")
+        await shared.event_handler.call_async("on_game_enter")
 
         # add surrounding chunks to load list
-        shared.world.change_chunks(
+        await shared.world.change_chunks_async(
             None,
             mcpython.util.math.position_to_chunk(
                 shared.world.get_player_by_name(player_name).position
             ),
             dimension=shared.world.get_dimension(0),
         )
-        shared.world.save_file.save_world()
+        await shared.world.save_file.save_world_async()
 
         # set player position
         player = shared.world.get_player_by_name(player_name)
@@ -248,28 +251,30 @@ class WorldGenerationProgress(AbstractState.AbstractState):
             mcpython.common.config.SHUFFLE_DATA
             and mcpython.common.config.SHUFFLE_INTERVAL > 0
         ):
-            shared.event_handler.call("minecraft:data:shuffle:all")
+            await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
         # reload all the data-packs
-        mcpython.common.data.DataPacks.datapack_handler.reload()
-        mcpython.common.data.DataPacks.datapack_handler.try_call_function(
+        await mcpython.common.data.DataPacks.datapack_handler.reload()
+        await mcpython.common.data.DataPacks.datapack_handler.try_call_function(
             "#minecraft:load",
             mcpython.server.command.CommandParser.CommandExecutionEnvironment(
                 dimension=shared.world.get_dimension(0)
             ),
         )
-        shared.state_handler.change_state("minecraft:game", immediate=False)
+        await shared.state_handler.change_state("minecraft:game", immediate=False)
 
     def bind_to_eventbus(self):
         super().bind_to_eventbus()
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
         self.eventbus.subscribe("tickhandler:general", self.on_update)
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.change_state("minecraft:start_menu")
-            shared.tick_handler.schedule_once(shared.world.cleanup)
-            logger.println("interrupted world generation by user")
+            await shared.state_handler.change_state("minecraft:start_menu")
+            await shared.world.cleanup()
+            logger.println(
+                "Interrupted world generation by user; going back to start menu"
+            )
 
     def calculate_percentage_of_progress(self):
         k = list(self.status_table.values())
@@ -286,9 +291,9 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 world_generation = None
 
 
-def create():
+async def create():
     global world_generation
     world_generation = WorldGenerationProgress()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

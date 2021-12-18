@@ -481,7 +481,7 @@ class ConfigFile:
         return item in self.main_tag
 
     @deprecation.deprecated()
-    def build(self):
+    async def build(self):
         if os.path.exists(self.file) and "--delete-configs" not in sys.argv:
             old_buffer = self.main_tag
             try:
@@ -527,7 +527,7 @@ class ConfigFile:
 
 @shared.mod_loader("minecraft", "stage:mod:config:define")
 @deprecation.deprecated()
-def load():
+async def load():
     import mcpython.common.config
 
     mcpython.common.config.load()

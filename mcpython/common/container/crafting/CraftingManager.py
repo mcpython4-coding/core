@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import json
 import random
 import sys
@@ -115,7 +116,7 @@ class CraftingManager:
             )
             return None
 
-    def add_recipe_from_file(self, file: str):
+    async def add_recipe_from_file(self, file: str):
         try:
             data = mcpython.engine.ResourceLoader.read_raw(file).decode("utf-8")
         except:
@@ -128,7 +129,7 @@ class CraftingManager:
         try:
             data = json.loads(data)
         except json.decoder.JSONDecodeError:
-            logger.println("[WARN] invalid or corrupted JSON file: "+str(file))
+            logger.println("[WARN] invalid or corrupted JSON file: " + str(file))
         except:
             logger.print_exception(
                 "during json-decoding recipe from file '{}'".format(file),
@@ -150,7 +151,7 @@ class CraftingManager:
                 )
             )
 
-    def load(self, modname: str, check_mod_dirs=True, load_direct=False):
+    async def load(self, modname: str, check_mod_dirs=True, load_direct=False):
         if modname in self.loaded_mod_dirs and check_mod_dirs:
             logger.println(
                 "ERROR: mod '{}' has tried to load crafting recipes twice or more".format(
@@ -169,15 +170,14 @@ class CraftingManager:
             if not load_direct:
                 shared.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:recipe:on_bake",
-                    self.add_recipe_from_file,
-                    file,
+                    self.add_recipe_from_file(file),
                     info="loading crafting recipe from {}".format(file),
                 )
             else:
-                self.add_recipe_from_file(file)
+                await self.add_recipe_from_file(file)
 
-    def reload_crafting_recipes(self):
-        if not shared.event_handler.call_cancelable(
+    async def reload_crafting_recipes(self):
+        if not await shared.event_handler.call_cancelable_async(
             "crafting_manager:reload:pre", self
         ):
             return
@@ -195,24 +195,23 @@ class CraftingManager:
 
         StoneCuttingRecipe.RECIPES.clear()
 
-        shared.event_handler.call("crafting_manager:reload:intermediate", self)
+        await shared.event_handler.call_async(
+            "crafting_manager:reload:intermediate", self
+        )
 
-        for i, modname in enumerate(list(self.loaded_mod_dirs)):
-            print(
-                "\r[MOD LOADER][INFO] reloading mod recipes for mod {} ({}/{})".format(
-                    modname, i + 1, len(self.loaded_mod_dirs)
-                ),
-                end="",
+        await asyncio.gather(
+            *(
+                self.load(modname, check_mod_dirs=False, load_direct=True)
+                for modname in list(self.loaded_mod_dirs)
             )
-            self.load(modname, check_mod_dirs=False, load_direct=True)
-        print()
+        )
 
         for recipe in self.static_recipes:
             self.add_recipe(recipe)
 
-        shared.event_handler.call("crafting_manager:reload:end", self)
+        await shared.event_handler.call_async("crafting_manager:reload:end", self)
 
-    def show_to_player(self, recipe_name: str | IRecipe.IRecipe):
+    async def show_to_player(self, recipe_name: str | IRecipe.IRecipe):
         # todo: show error messages in chat
 
         if isinstance(recipe_name, str):
@@ -236,13 +235,13 @@ class CraftingManager:
                 mcpython.client.gui.InventoryRecipeView.InventorySingleRecipeView()
             )
 
-        shared.inventory_handler.show(
+        await shared.inventory_handler.show(
             self.RECIPE_VIEW_INVENTORY.set_renderer(
                 recipe.RECIPE_VIEW.prepare_for_recipe(recipe)
             )
         )
 
-    def show_to_player_from_input(self, input_name: str):
+    async def show_to_player_from_input(self, input_name: str):
         recipes = []
 
         for array in self.crafting_recipes_shapeless.values():
@@ -263,9 +262,9 @@ class CraftingManager:
             logger.println(f"[WARN] no recipes found using item {input_name}")
             return
 
-        self.show_recipe_list(recipes)
+        await self.show_recipe_list(recipes)
 
-    def show_to_player_from_output(self, output_name: str):
+    async def show_to_player_from_output(self, output_name: str):
         recipes = []
 
         for array in self.crafting_recipes_shapeless.values():
@@ -283,9 +282,9 @@ class CraftingManager:
             logger.println(f"[WARN] no recipes found outputting {output_name}")
             return
 
-        self.show_recipe_list(recipes)
+        await self.show_recipe_list(recipes)
 
-    def show_recipe_list(self, recipes: typing.List[IRecipe.IRecipe]):
+    async def show_recipe_list(self, recipes: typing.List[IRecipe.IRecipe]):
         self.RECIPE_VIEW_INVENTORY = (
             mcpython.client.gui.InventoryRecipeView.InventoryMultiRecipeView()
         )
@@ -304,13 +303,13 @@ class CraftingManager:
                 self.RECIPE_VIEW_INVENTORY = None
                 return
 
-        shared.inventory_handler.show(self.RECIPE_VIEW_INVENTORY)
+        await shared.inventory_handler.show(self.RECIPE_VIEW_INVENTORY)
 
 
 shared.crafting_handler = CraftingManager()
 
 
-def load_recipe_providers():
+async def load_recipe_providers():
     from . import (
         FurnaceCraftingHelper,
         GridRecipeInstances,
@@ -324,6 +323,6 @@ if not shared.IS_TEST_ENV:
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
         "stage:recipe:groups",
-        load_recipe_providers,
+        load_recipe_providers(),
         info="loading crafting recipe groups",
     )

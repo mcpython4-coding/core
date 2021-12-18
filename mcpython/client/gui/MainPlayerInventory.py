@@ -11,12 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import typing
 
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.InventoryCreativeTab
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
+from mcpython.common.container.crafting.CraftingGridHelperInterface import CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractArmorItem
@@ -65,17 +67,14 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
     def __init__(self, hotbar):
         self.hotbar = hotbar
         super().__init__()
-        inputs = [self.slots[40:42], self.slots[42:44]]
-        self.recipe_interface = mcpython.common.container.crafting.CraftingGridHelperInterface.CraftingGridHelperInterface(
-            inputs, self.slots[44]
-        )
+        self.recipe_interface = None
         if self.custom_name is None:
             self.custom_name = "Inventory"
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 9x hotbar, 27x main, 4x armor, 5x crafting, 1x offhand
-        return (
+        slots = (
             [self.hotbar.slots[i].copy() for i in range(9)]
             + [mcpython.client.gui.Slot.Slot() for _ in range(27)]
             + [
@@ -90,6 +89,12 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
             ]
             + [mcpython.client.gui.Slot.Slot()]
         )
+
+        inputs = [slots[40:42], slots[42:44]]
+        output = slots[44]
+        self.recipe_interface = CraftingGridHelperInterface(inputs, output)
+
+        return slots
 
     # todo: move to container
     def armor_update(self, player=None):
@@ -114,27 +119,29 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
         self.TEXTURE.blit(x, y)
         super().draw(hovering_slot)
 
-    def remove_items_from_crafting(self):
+    async def remove_items_from_crafting(self):
         for slot in self.slots[40:-2]:
             slot: mcpython.client.gui.Slot.Slot
             itemstack = slot.get_itemstack()
             slot.set_itemstack(
                 mcpython.common.container.ResourceStack.ItemStack.create_empty()
             )
-            if not shared.world.get_active_player().pick_up_item(itemstack):
+            if not await shared.world.get_active_player().pick_up_item(itemstack):
                 shared.world.get_active_dimension().spawn_itemstack_in_world(
                     itemstack, self.position
                 )
 
         self.slots[-2].get_itemstack().clean()
 
-    def on_activate(self):
+    async def on_activate(self):
         if shared.world.get_active_player().gamemode == 1:
-            shared.inventory_handler.hide(self)
-            mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
+            await shared.inventory_handler.hide(self)
+            await mcpython.client.gui.InventoryCreativeTab.CT_MANAGER.open()
+        else:
+            shared.tick_handler.schedule_once(self.reload_config())
 
-    def on_deactivate(self):
-        self.remove_items_from_crafting()
+    async def on_deactivate(self):
+        await self.remove_items_from_crafting()
         shared.state_handler.active_state.parts[0].activate_mouse = True
 
     def update_shift_container(self):

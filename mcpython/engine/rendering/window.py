@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-
+import asyncio
 import cProfile
 import time
 
@@ -251,7 +251,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
             type(x) == mcpython.common.state.GameViewStatePart.GameView
             for x in shared.state_handler.active_state.parts
         ):
-            shared.world_generation_handler.task_handler.process_tasks(timer=0.02)
+            asyncio.get_event_loop().run_until_complete(
+                shared.world_generation_handler.task_handler.process_tasks(timer=0.02)
+            )
 
         shared.event_handler.call("tickhandler:general", dt)
 
@@ -368,10 +370,12 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         # todo: move to RenderingHelper
         if shared.world.get_active_player() is None:
             return
+
         if shared.rendering_helper.default_3d_stack is None:
             shared.rendering_helper.default_3d_stack = (
                 shared.rendering_helper.get_dynamic_3d_matrix_stack()
             )
+
         shared.rendering_helper.default_3d_stack.apply()
         pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
@@ -524,10 +528,14 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         if shared.world.world_loaded:
             # have we a world which should be saved?
-            shared.world.get_active_player().inventory_main.remove_items_from_crafting()
+            asyncio.get_event_loop().run_until_complete(
+                shared.world.get_active_player().inventory_main.remove_items_from_crafting()
+            )
 
             if shared.IS_NETWORKING:
-                shared.NETWORK_MANAGER.disconnect()
+                asyncio.get_event_loop().run_until_complete(
+                    shared.NETWORK_MANAGER.disconnect()
+                )
             else:
                 # make sure that file size is as small as possible
                 shared.world.save_file.save_world(override=True)

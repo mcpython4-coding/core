@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import functools
 import time
 
@@ -55,8 +56,8 @@ class EscapeMenu(AbstractState.AbstractState):
                 (0, 150),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=lambda *_: shared.state_handler.change_state(
-                    "minecraft:game", immediate=False
+                on_press=lambda *_: asyncio.get_event_loop().run_until_complete(
+                    shared.state_handler.change_state("minecraft:game", immediate=False)
                 ),
             ),
             UIPartButton.UIPartButton(
@@ -82,32 +83,33 @@ class EscapeMenu(AbstractState.AbstractState):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
     @staticmethod
-    def start_menu_press(x, y):
+    async def start_menu_press(*_):
         shared.world.world_loaded = False
         while shared.world.save_file.save_in_progress:
             time.sleep(0.2)
 
         if shared.IS_NETWORKING:
-            shared.NETWORK_MANAGER.disconnect()
+            await shared.NETWORK_MANAGER.disconnect()
         else:
             # make sure that file size is as small as possible
-            shared.world.save_file.save_world(override=True)
+            await shared.world.save_file.save_world_async(override=True)
 
         shared.world.setup_by_filename("tmp")
-        shared.world.cleanup()
-        shared.event_handler.call("on_game_leave")
-        shared.state_handler.change_state("minecraft:start_menu", immediate=False)
+        await shared.world.cleanup()
+        await shared.event_handler.call_async("on_game_leave")
+        await shared.state_handler.change_state("minecraft:start_menu", immediate=False)
 
+        # todo: can we use an asyncio event here?
         while shared.world.save_file.save_in_progress:
-            time.sleep(0.2)
+            await asyncio.sleep(0.2)
 
     @staticmethod
-    def on_key_press(symbol, modifiers):
+    async def on_key_press(symbol, modifiers):
         if symbol == key.ESCAPE:
-            shared.state_handler.change_state("minecraft:game", immediate=False)
+            await shared.state_handler.change_state("minecraft:game", immediate=False)
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
         if not shared.IS_NETWORKING:
             pyglet.clock.schedule_once(shared.world.save_file.save_world, 0.1)
@@ -116,9 +118,9 @@ class EscapeMenu(AbstractState.AbstractState):
 escape = None
 
 
-def create():
+async def create():
     global escape
     escape = EscapeMenu()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

@@ -55,10 +55,10 @@ class StructureNBTHelper:
 
             self.blocks[pos] = name, state
 
-    def place(self, dimension, x: int, y: int, z: int, config):
+    async def place(self, dimension, x: int, y: int, z: int, config):
         for pos, (name, state) in self.blocks.items():
             dx, dy, dz = pos
-            block = dimension.add_block((x + dx, y + dy, z + dz), name)
+            block = await dimension.add_block((x + dx, y + dy, z + dz), name)
 
             if block is not None:
                 block.set_model_state(state)

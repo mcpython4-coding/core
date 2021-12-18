@@ -26,7 +26,7 @@ class BlockInfo:
     TABLE = {}  # {chunk: tuple<x, z> -> {position<x,z> -> blockname}}
 
     @classmethod
-    def construct(cls):
+    async def construct(cls):
         BLOCKS: mcpython.common.event.Registry.Registry = shared.registry.get_by_name(
             "minecraft:block"
         )
@@ -94,5 +94,5 @@ class DebugWorldGenerator(
 shared.world_generation_handler.register_world_gen_config(DebugWorldGenerator)
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:post", BlockInfo.construct, info="constructing debug world info"
+    "stage:post", BlockInfo.construct(), info="constructing debug world info"
 )

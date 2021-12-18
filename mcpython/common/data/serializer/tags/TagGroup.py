@@ -54,7 +54,7 @@ class TagGroup:
                 name, mcpython.common.data.serializer.tags.Tag.Tag(self, name, [])
             ).entries.extend(data["values"])
 
-    def build(self):
+    async def build(self):
         """
         Will "build" the tag group
         """
@@ -63,8 +63,10 @@ class TagGroup:
         for tag in self.tags.values():
             depend_list.append((tag.name, tag.get_dependencies()))
         sort = mcpython.util.math.topological_sort(depend_list)
+
         for tagname in sort:
             self.tags[tagname].build()
+
         self.cache.clear()
         if self.name in TagGroup.TAG_HOLDERS:
             for holder in TagGroup.TAG_HOLDERS[self.name]:

@@ -40,6 +40,9 @@ class ISlot(IBufferSerializeAble, ABC):
         self.on_update = []
         self.assigned_inventory = None
 
+    async def handle_shift_click(self, x: int, y: int, button: int, modifiers: int, player):
+        pass
+
     def handle_click(self, button: int, modifiers: int) -> bool:
         return False
 
@@ -57,8 +60,14 @@ class ISlot(IBufferSerializeAble, ABC):
     ):
         raise NotImplementedError()
 
+    def set_itemstack_force(self, *args, **kwargs):
+        self.set_itemstack(*args, **kwargs)
+
     def call_update(self, player=False):
         pass
+
+    async def call_update_async(self, player=False):
+        return self.call_update(player=player)
 
     def copy(self, position=(0, 0)):
         raise NotImplementedError()
@@ -88,6 +97,9 @@ class ISlot(IBufferSerializeAble, ABC):
 
     def clean_itemstack(self):
         self.get_itemstack().clean()
+
+    def invalidate(self):
+        pass
 
 
 class Slot(ISlot):
@@ -185,11 +197,19 @@ class Slot(ISlot):
     def handle_click(self, button: int, modifiers: int) -> bool:
         return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        self.itemstack.read_from_network_buffer(buffer)
+    async def handle_shift_click(self, x: int, y: int, button: int, modifiers: int, player) -> bool:
+        if self.on_shift_click:
+            result = self.on_shift_click(self, x, y, button, modifiers, player)
+            if isinstance(result, typing.Awaitable):
+                return await result
+            return result
+        return True
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        self.itemstack.write_to_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await self.itemstack.read_from_network_buffer(buffer)
+
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await self.itemstack.write_to_network_buffer(buffer)
 
     def get_capacity(self) -> int:
         return (
@@ -221,7 +241,20 @@ class Slot(ISlot):
     def call_update(self, player=False):
         for f in self.on_update:
             try:
-                f(player=player)
+                result = f(player=player)
+                if isinstance(result, typing.Awaitable):
+                    shared.tick_handler.schedule_once(result)
+            except:
+                logger.print_exception(
+                    "during invoking {} for slot-update of {}".format(f, self)
+                )
+
+    async def call_update_async(self, player=False):
+        for f in self.on_update:
+            try:
+                result = f(player=player)
+                if isinstance(result, typing.Awaitable):
+                    await result
             except:
                 logger.print_exception(
                     "during invoking {} for slot-update of {}".format(f, self)
@@ -462,6 +495,9 @@ class SlotCopy(ISlot):
 
     def call_update(self, player=False):
         self.master.call_update(player=player)
+
+    async def call_update_async(self, player=False):
+        return await self.master.call_update_async(player=player)
 
     itemstack = property(get_itemstack, set_itemstack)
 

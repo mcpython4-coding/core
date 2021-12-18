@@ -31,14 +31,14 @@ class DisconnectionInitPackage(AbstractPackage):
         self.reason = reason
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.reason)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.reason = buffer.read_string()
 
-    def handle_inner(self):
-        self.answer(DisconnectionConfirmPackage())
+    async def handle_inner(self):
+        await self.answer(DisconnectionConfirmPackage())
 
         mcpython.common.event.TickHandler.handler.bind(self.disconnect, 5)
 
@@ -48,17 +48,17 @@ class DisconnectionInitPackage(AbstractPackage):
             )
             logger.println(self.reason)
 
-    def disconnect(self):
-        shared.NETWORK_MANAGER.disconnect(self.sender_id)
+    async def disconnect(self):
+        await shared.NETWORK_MANAGER.disconnect(self.sender_id)
 
 
 class DisconnectionConfirmPackage(AbstractPackage):
     PACKAGE_TYPE_ID = 4
     PACKAGE_NAME = "minecraft:disconnection_confirm"
 
-    def handle_inner(self):
-        shared.NETWORK_MANAGER.disconnect(self.target_id)
+    async def handle_inner(self):
+        await shared.NETWORK_MANAGER.disconnect(self.target_id)
 
         if shared.IS_CLIENT:
-            shared.world.cleanup()
+            await shared.world.cleanup()
             shared.state_handler.change_state("minecraft:start_menu")

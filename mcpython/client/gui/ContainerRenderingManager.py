@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import itertools
 import typing
 
@@ -55,9 +56,9 @@ class OpenedInventoryStatePart(
         self.eventbus.subscribe("user:mouse:drag", self.on_mouse_drag)
         self.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    async def on_key_press(self, symbol: int, modifiers: int):
         if symbol == key.ESCAPE:
-            shared.inventory_handler.remove_one_from_stack()
+            await shared.inventory_handler.remove_one_from_stack()
 
         x, y = shared.window.mouse_position
         slot, inventory = self._get_slot_inventory_for(x, y)
@@ -179,7 +180,7 @@ class OpenedInventoryStatePart(
                     return slot, inventory
         return None, None
 
-    def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
+    async def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         # when no mouse interaction is active, do nothing
         if shared.window.exclusive:
             return
@@ -189,7 +190,7 @@ class OpenedInventoryStatePart(
 
         slot: mcpython.client.gui.Slot.Slot = self._get_slot_for(x, y)
 
-        # Check all open inventories for a handle
+        # Check all open inventories for a handle for that click
         for inventory in shared.inventory_handler.open_containers:
             ix, iy = inventory.get_position()
 
@@ -199,8 +200,7 @@ class OpenedInventoryStatePart(
                 return
 
         if slot is None:
-
-            player = shared.world.get_active_player()
+            player = await shared.world.get_active_player_async()
             dimension = player.dimension
 
             if (
@@ -228,28 +228,28 @@ class OpenedInventoryStatePart(
             return
 
         if modifiers & key.MOD_SHIFT:
-            if self.handle_shift_click(button, modifiers, slot, x, y):
+            if await self.handle_shift_click(button, modifiers, slot, x, y):
                 return
 
         if button == mouse.LEFT:
-            if self.handle_left_click(button, modifiers, moving_itemstack, slot, x, y):
+            if await self.handle_left_click(button, modifiers, moving_itemstack, slot, x, y):
                 return
 
         elif button == mouse.RIGHT:
-            if self.handle_right_click(button, modifiers, moving_itemstack, slot, x, y):
+            if await self.handle_right_click(button, modifiers, moving_itemstack, slot, x, y):
                 return
 
         elif button == mouse.MIDDLE:
-            if self.handle_middle_click(
+            if await self.handle_middle_click(
                 button, modifiers, moving_itemstack, slot, x, y
             ):
                 return
 
-    def handle_shift_click(self, button: int, modifiers: int, slot, x: int, y: int):
+    async def handle_shift_click(self, button: int, modifiers: int, slot, x: int, y: int):
         if slot.on_shift_click:
             try:
-                flag = slot.on_shift_click(
-                    slot, x, y, button, modifiers, shared.world.get_active_player()
+                flag = await slot.handle_shift_click(
+                    x, y, button, modifiers, shared.world.get_active_player()
                 )
 
                 # no default logic should go on
@@ -272,7 +272,7 @@ class OpenedInventoryStatePart(
 
         return False
 
-    def handle_middle_click(
+    async def handle_middle_click(
         self,
         button: int,
         modifiers: int,
@@ -293,14 +293,14 @@ class OpenedInventoryStatePart(
             moving_itemstack
         ):
             self.mode = 3
-            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            await self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
         else:
             return False
 
         return True
 
-    def handle_right_click(
+    async def handle_right_click(
         self,
         button: int,
         modifiers: int,
@@ -318,21 +318,21 @@ class OpenedInventoryStatePart(
                 slot.itemstack.copy().set_amount(amount - amount // 2)
             )
             slot.itemstack.set_amount(amount // 2)
-            slot.call_update(True)
+            await slot.call_update_async(True)
 
         elif slot.is_item_allowed(moving_itemstack) and (
             slot.itemstack.is_empty()
             or slot.itemstack.contains_same_resource(moving_itemstack)
         ):
             self.mode = 2
-            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            await self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
         else:
             return False
 
         return True
 
-    def handle_left_click(
+    async def handle_left_click(
         self,
         button: int,
         modifiers: int,
@@ -348,16 +348,16 @@ class OpenedInventoryStatePart(
 
             shared.inventory_handler.moving_slot.set_itemstack(slot.itemstack.copy())
             slot.clean_itemstack()
-            slot.call_update(True)
+            await slot.call_update_async(True)
 
         elif slot.is_item_allowed(moving_itemstack) and (
             slot.itemstack.is_empty()
             or slot.itemstack.contains_same_resource(moving_itemstack)
         ):
             self.mode = 1
-            self.on_mouse_drag(x, y, 0, 0, button, modifiers)
+            await self.on_mouse_drag(x, y, 0, 0, button, modifiers)
 
-        elif slot.interaction_mode[1]:
+        elif slot.interaction_mode[1] and slot.is_item_allowed(moving_itemstack):
             stack_a = slot.get_itemstack().copy()
             slot.set_itemstack(moving_itemstack)
             shared.inventory_handler.moving_slot.set_itemstack(stack_a)
@@ -367,21 +367,25 @@ class OpenedInventoryStatePart(
 
         return True
 
-    def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
-        if (
-            shared.window.exclusive
-        ):  # when no mouse interaction is active, do nothing beside clearing the status
+    async def on_mouse_release(self, x: int, y: int, button: int, modifiers: int):
+        # when no mouse interaction is active, do nothing beside clearing the status
+        if shared.window.exclusive:
             self.slot_list.clear()
             self.original_amount.clear()
             self.moving_itemstack = None
             self.mode = 0
             return
 
-        self.reorder_slot_list_stacks()
+        await self.reorder_slot_list_stacks()
+        player = await shared.world.get_active_player_async()
+        dimension = player.dimension
 
         if self.mode == 1:
             if len(self.slot_list) == 0:
-                pass  # todo: drop item [see entity update]
+                dimension.spawn_itemstack_in_world(
+                    self.moving_itemstack.copy(), player.position, pickup_delay=10
+                )
+
             self.slot_list.clear()
             self.original_amount.clear()
             self.moving_itemstack = None
@@ -389,7 +393,10 @@ class OpenedInventoryStatePart(
 
         elif self.mode == 2:
             if len(self.slot_list) == 0:
-                pass  # todo: drop item [see entity update]
+                dimension.spawn_itemstack_in_world(
+                    self.moving_itemstack.copy(), player.position, pickup_delay=10
+                )
+
             self.slot_list.clear()
             self.original_amount.clear()
             self.moving_itemstack = None
@@ -402,13 +409,13 @@ class OpenedInventoryStatePart(
             self.mode = 0
             shared.inventory_handler.moving_slot.itemstack.clean()
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
 
         if shared.IS_CLIENT:
-            self.on_mouse_release(0, 0, 0, 0)
+            await self.on_mouse_release(0, 0, 0, 0)
 
-    def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
+    async def on_mouse_drag(self, x, y, dx, dy, button, modifiers):
         if shared.window.exclusive:
             return  # when no mouse interaction is active, do nothing
 
@@ -430,23 +437,25 @@ class OpenedInventoryStatePart(
                 self.slot_list.append(slot)
                 self.original_amount.append(slot.itemstack.amount)
 
-            self.reorder_slot_list_stacks()
+            await self.reorder_slot_list_stacks()
 
         elif modifiers & key.MOD_SHIFT:
             slot = self._get_slot_for(x, y)
-            if slot.on_shift_click:
-                try:
-                    flag = slot.on_shift_click(
-                        slot, x, y, button, modifiers, shared.world.get_active_player()
+            try:
+                flag = await slot.handle_shift_click(
+                    x, y, button, modifiers, await shared.world.get_active_player_async()
+                )
+                # no default logic should go on
+                if flag is not True:
+                    return
+
+            except:
+                logger.print_exception(
+                    "during shift-clicking {}, the function {} crashed".format(
+                        slot, slot.on_shift_click
                     )
-                    if flag is not True:
-                        return  # no default logic should go on
-                except:
-                    logger.print_exception(
-                        "during shift-clicking {}, the function {} crashed".format(
-                            slot, slot.on_shift_click
-                        )
-                    )
+                )
+
             if (
                 shared.inventory_handler.shift_container_handler is not None
                 and shared.inventory_handler.shift_container_handler.move_to_opposite(
@@ -455,7 +464,7 @@ class OpenedInventoryStatePart(
             ):
                 return
 
-    def reorder_slot_list_stacks(self):
+    async def reorder_slot_list_stacks(self):
         if len(self.slot_list) == 0:
             return
 
@@ -469,13 +478,16 @@ class OpenedInventoryStatePart(
                     overhead -= 1
 
                 if slot.itemstack.is_empty():
+                    if not slot.is_item_allowed(self.moving_itemstack):
+                        continue
+
                     slot.set_itemstack(self.moving_itemstack.copy())
 
                 count = self.original_amount[i] + per_element + x
                 off = max(0, count - self.moving_itemstack.item.STACK_SIZE)
                 slot.itemstack.set_amount(count - off)
                 overhead += off
-                slot.call_update(True)
+                await slot.call_update_async(True)
 
             shared.inventory_handler.moving_slot.itemstack.clean()
 
@@ -488,21 +500,33 @@ class OpenedInventoryStatePart(
                     < slot.get_itemstack().item.STACK_SIZE
                 ):
                     if slot.itemstack.is_empty():
+                        if not slot.is_item_allowed(self.moving_itemstack):
+                            continue
                         slot.set_itemstack(self.moving_itemstack.copy())
+
                     slot.itemstack.set_amount(self.original_amount[i] + 1)
                     overhead -= 1
-                    slot.call_update(True)
+                    await slot.call_update_async(True)
+
             shared.inventory_handler.moving_slot.itemstack.set_amount(overhead)
 
         elif self.mode == 3:
             for i, slot in enumerate(self.slot_list):
                 if slot.itemstack.item != self.moving_itemstack.item:
-                    slot.set_itemstack(self.moving_itemstack.copy())
-                slot.itemstack.set_amount(slot.itemstack.item.STACK_SIZE)
-                slot.call_update(True)
+                    if not slot.is_item_allowed(self.moving_itemstack):
+                        continue
 
-    def on_mouse_scroll(self, x: int, y: int, dx: int, dy: int):
-        if shared.window.exclusive or self.mode != 0 or not shared.window.keys[key.LSHIFT]:
+                    slot.set_itemstack(self.moving_itemstack.copy())
+
+                slot.itemstack.set_amount(slot.itemstack.item.STACK_SIZE)
+                await slot.call_update_async(True)
+
+    async def on_mouse_scroll(self, x: int, y: int, dx: int, dy: int):
+        if (
+            shared.window.exclusive
+            or self.mode != 0
+            or not shared.window.keys[key.LSHIFT]
+        ):
             return  # when no mouse interaction is active, do nothing
 
         slot = self._get_slot_for(x, y)
@@ -554,7 +578,7 @@ class InventoryHandler:
         for inventory in self.open_containers:
             inventory.update_shift_container()
 
-    def add(self, inventory):
+    async def add(self, inventory):
         """
         Adds a new inventory to the internal handling system
         :param inventory: the inventory to add
@@ -566,12 +590,14 @@ class InventoryHandler:
 
         if inventory.is_always_open():
             self.always_open_containers.append(inventory)
-            self.show(inventory)
+            await self.show(inventory)
 
-    def reload_config(self):
-        [inventory.reload_config() for inventory in self.containers]
+    async def reload_config(self):
+        await asyncio.gather(
+            *[inventory.reload_config() for inventory in self.containers]
+        )
 
-    def show(self, inventory):
+    async def show(self, inventory):
         """
         Shows a inventory by adding it to the corresponding structure
         :param inventory: the inventory to show
@@ -580,12 +606,12 @@ class InventoryHandler:
             return
 
         self.open_containers.append(inventory)
-        inventory.on_activate()
+        await inventory.on_activate()
         self.update_shift_container()
 
-        shared.event_handler.call("minecraft:inventory:show", inventory)
+        await shared.event_handler.call_async("minecraft:inventory:show", inventory)
 
-    def hide(self, inventory, force=False):
+    async def hide(self, inventory, force=False):
         """
         Hides an inventory
         :param inventory: the inventory to hide
@@ -597,13 +623,13 @@ class InventoryHandler:
         if inventory in self.always_open_containers and not force:
             return
 
-        inventory.on_deactivate()
+        await inventory.on_deactivate()
         self.open_containers.remove(inventory)
         self.update_shift_container()
 
-        shared.event_handler.call("minecraft:inventory:hide", inventory)
+        await shared.event_handler.call_async("minecraft:inventory:hide", inventory)
 
-    def remove_one_from_stack(self, is_escape=True):
+    async def remove_one_from_stack(self, is_escape=True):
         """
         Removes one inventory from stack which can be removed
         :param is_escape: if to handle like it is an escape press, so we skip containers not wanting to be closed that
@@ -614,7 +640,7 @@ class InventoryHandler:
         stack.reverse()
         for inventory in stack:
             if inventory.is_closable_by_escape() or not is_escape:
-                self.hide(inventory)
+                await self.hide(inventory)
                 return inventory
 
     def close_all_inventories(self):

@@ -27,6 +27,14 @@ def json_to_bytes(data: dict) -> bytes:
     return simplejson.dumps(data, indent="  ").encode("utf-8")
 
 
+async def bytes_to_json_async(data: bytes):
+    return simplejson.loads(data.decode("utf-8"))
+
+
+async def json_to_bytes_async(data: dict) -> bytes:
+    return simplejson.dumps(data, indent="  ").encode("utf-8")
+
+
 def lists_to_tuples(data, levels=-1):
     if levels == 0:
         return data

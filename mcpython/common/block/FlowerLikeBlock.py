@@ -27,7 +27,7 @@ class FlowerLikeBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     IS_SOLID = False
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
         block_under = dimension.get_block((x, y - 1, z), none_if_str=True)
@@ -36,4 +36,4 @@ class FlowerLikeBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             self.SUPPORT_BLOCK_TAG not in block_under.TAGS
             and self.SUPPORT_BLOCK_TAG is not None
         ):
-            dimension.remove_block(self, block_update_self=False)
+            await dimension.remove_block(self, block_update_self=False)

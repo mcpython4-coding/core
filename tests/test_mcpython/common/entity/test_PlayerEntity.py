@@ -81,7 +81,7 @@ class TestPlayerEntity(TestCase):
 
         self.assertEqual(instance.gamemode, 0)
 
-    def test_set_active_inventory_slot(self):
+    async def test_set_active_inventory_slot(self):
         import mcpython.common.container.crafting.CraftingManager
         import mcpython.common.entity.PlayerEntity
 
@@ -91,13 +91,13 @@ class TestPlayerEntity(TestCase):
 
         instance = mcpython.common.entity.PlayerEntity.PlayerEntity(name="test_player")
 
-        instance.set_active_inventory_slot(3)
+        await instance.set_active_inventory_slot(3)
         self.assertEqual(instance.active_inventory_slot, 3)
 
-        instance.set_active_inventory_slot(-1)
+        await instance.set_active_inventory_slot(-1)
         self.assertEqual(instance.active_inventory_slot, 0)
 
-        instance.set_active_inventory_slot(100)
+        await instance.set_active_inventory_slot(100)
         self.assertEqual(instance.active_inventory_slot, 8)
 
     def test_on_inventory_cleared(self):
@@ -118,7 +118,7 @@ class TestPlayerEntity(TestCase):
         self.assertEqual(instance.xp_level, 0)
 
     # Test for issue 1000
-    def test_pickup_item(self):
+    async def test_pickup_item(self):
         import mcpython.common.container.crafting.CraftingManager
         import mcpython.common.entity.PlayerEntity
         from mcpython.client.gui.Slot import SlotCopy
@@ -129,7 +129,8 @@ class TestPlayerEntity(TestCase):
         shared.mod_loader = FakeModloader()
 
         instance = mcpython.common.entity.PlayerEntity.PlayerEntity(name="test_player")
-        instance.pick_up_item(ItemStack("fake:item", 32))
+        await instance.create_inventories()
+        await instance.pick_up_item(ItemStack("fake:item", 32))
 
         count = 0
 

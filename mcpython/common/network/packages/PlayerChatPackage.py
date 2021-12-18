@@ -29,27 +29,27 @@ class PlayerChatInputPackage(AbstractPackage):
         self.text = text
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.text)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         if self.text.startswith("/"):
             player = shared.world.get_player_by_name(
                 shared.NETWORK_MANAGER.client_profiles[self.sender_id]["player_name"]
             )
             env = CommandExecutionEnvironment(this=player)
-            if not shared.command_parser.run(self.text, env):
-                self.answer(PlayerClientCommandExecution().setup(self.text))
+            if not await shared.command_parser.run(self.text, env):
+                await self.answer(PlayerClientCommandExecution().setup(self.text))
 
         else:
             text = (
                 f"[{shared.NETWORK_MANAGER.client_profiles[self.sender_id]['player_name']}] "
                 + self.text
             )
-            shared.NETWORK_MANAGER.send_package_to_all(
+            await shared.NETWORK_MANAGER.send_package_to_all(
                 PlayerMessageShowPackage().setup(text)
             )
             logger.println(text)
@@ -66,13 +66,13 @@ class PlayerMessageShowPackage(AbstractPackage):
         self.text = text
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.text)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         logger.println(self.text)
 
 
@@ -87,12 +87,12 @@ class PlayerClientCommandExecution(AbstractPackage):
         self.text = text
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.text)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.text = buffer.read_string()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         env = CommandExecutionEnvironment(this=shared.world.get_active_player())
-        shared.command_parser.run(self.text, env)
+        await shared.command_parser.run(self.text, env)

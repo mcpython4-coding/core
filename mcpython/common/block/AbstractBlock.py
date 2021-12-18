@@ -188,10 +188,10 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     def is_face_solid(self, face: EnumSide) -> bool:
         return bool(self.face_solid & face.bitflag)
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.NETWORK_BUFFER_SERIALIZER_VERSION)
 
-        super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
 
         buffer.write_int(len(state))
@@ -209,9 +209,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
             buffer.write_string(key).write_string(value)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         version = buffer.read_int()
-        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
 
         # Apply these fixers locally
         if version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
@@ -230,13 +230,13 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         }
         self.set_model_state(state)
 
-    def schedule_network_update(self):
+    async def schedule_network_update(self):
         if shared.IS_NETWORKING:
             from mcpython.common.network.packages.WorldDataExchangePackage import (
                 ChunkBlockChangePackage,
             )
 
-            shared.NETWORK_MANAGER.send_package_to_all(
+            await shared.NETWORK_MANAGER.send_package_to_all(
                 ChunkBlockChangePackage()
                 .set_dimension(self.dimension)
                 .change_position(self.position, self, update_only=True),
@@ -269,12 +269,12 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     # block events
 
-    def on_block_added(self):
+    async def on_block_added(self):
         """
         Called when the block is added to the world
         """
 
-    def on_block_remove(self, reason: BlockRemovalReason):
+    async def on_block_remove(self, reason: BlockRemovalReason):
         """
         Called when the block is removed
         Not cancelable. Block show data is removed, but the "current" state of the block is still stored.
@@ -284,28 +284,28 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         todo: add cancel-able variant
         """
 
-    def on_random_update(self):
+    async def on_random_update(self):
         """
         Called on random update
         Needs ENABLE_RANDOM_TICKS to be set to True for being invoked
         """
 
-    def on_block_update(self):
+    async def on_block_update(self):
         """
         Called when an near-by block-position is updated by setting/removing an block
         Invokes a redstone update by default. Call if needed.
         todo: add optional source of update
         todo: add at source a method to cancel update calling
         """
-        self.on_redstone_update()
+        await self.on_redstone_update()
 
-    def on_redstone_update(self):
+    async def on_redstone_update(self):
         """
         Special event called in order to update redstone state. Not used by vanilla at the moment
         Is also invoked o "normal" block update
         """
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,
@@ -354,7 +354,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         """
         return []
 
-    def get_provided_slot_lists(self, side: mcpython.util.enums.EnumSide) -> typing.Tuple[typing.Iterable, typing.Iterable]:
+    def get_provided_slot_lists(
+        self, side: mcpython.util.enums.EnumSide
+    ) -> typing.Tuple[typing.Iterable, typing.Iterable]:
         """
         Similar to get_inventories, but specifies only slots & the side on which the interaction can happen.
         Useful for e.g. furnaces which can get fuel from the side, but from top the item to smelt.

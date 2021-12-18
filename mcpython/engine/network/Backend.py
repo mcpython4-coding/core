@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import socket
 import threading
 import typing
@@ -33,7 +34,7 @@ class ClientBackend:
 
         self.connected = False
 
-    def send_package(self, data: bytes):
+    async def send_package(self, data: bytes):
         self.scheduled_packages.append(data)
 
     def connect(self) -> bool:
@@ -73,7 +74,9 @@ class ClientBackend:
                     "force-disconnecting from server, sever seems to have closed without noticing us"
                 )
                 self.disconnect()
-                shared.state_handler.change_state("minecraft:start_menu")
+                asyncio.get_event_loop().run_until_complete(
+                    shared.state_handler.change_state("minecraft:start_menu")
+                )
                 return
 
         self.scheduled_packages.clear()
@@ -92,7 +95,9 @@ class ClientBackend:
                     "force-disconnecting from server, sever seems to have closed without noticing us"
                 )
                 self.disconnect()
-                shared.state_handler.change_state("minecraft:start_menu")
+                asyncio.get_event_loop().run_until_complete(
+                    shared.state_handler.change_state("minecraft:start_menu")
+                )
                 return
 
             self.data_stream += d
@@ -160,7 +165,7 @@ class ServerBackend:
         yield from list(self.data_by_client.items())
         self.handle_lock.release()
 
-    def send_package(self, data: bytes, client: int):
+    async def send_package(self, data: bytes, client: int):
         self.client_locks[client].acquire()
         self.scheduled_packages_by_client.setdefault(client, []).append(data)
         self.client_locks[client].release()

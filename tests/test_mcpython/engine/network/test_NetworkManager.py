@@ -18,13 +18,15 @@ class TestNetworkManager(TestCase):
     def test_module_import(self):
         import mcpython.engine.network.NetworkManager
 
-    def test_reset_package_registry(self):
+    async def test_reset_package_registry(self):
         from mcpython import shared
         from mcpython.engine.network.NetworkManager import load_packages
 
+        shared.NETWORK_MANAGER.reset_package_registry()
+
         self.assertEqual(len(shared.NETWORK_MANAGER.package_types), 0)
 
-        load_packages()
+        await load_packages()
 
         self.assertNotEqual(len(shared.NETWORK_MANAGER.package_types), 0)
 
@@ -32,15 +34,15 @@ class TestNetworkManager(TestCase):
 
         self.assertEqual(len(shared.NETWORK_MANAGER.package_types), 0)
 
-    def test_dynamic_id_info(self):
+    async def test_dynamic_id_info(self):
         from mcpython import shared
         from mcpython.engine.network.NetworkManager import load_packages
 
-        load_packages()
+        await load_packages()
 
         data = shared.NETWORK_MANAGER.get_dynamic_id_info()
 
-        shared.NETWORK_MANAGER.set_dynamic_id_info(data)
+        await shared.NETWORK_MANAGER.set_dynamic_id_info(data)
 
         self.assertNotEqual(len(shared.NETWORK_MANAGER.package_types), 0)
 
@@ -48,19 +50,21 @@ class TestNetworkManager(TestCase):
 
         shared.NETWORK_MANAGER.reset_package_registry()
 
-    def test_serialize_package(self):
+    async def test_serialize_package(self):
         from mcpython import shared
         from mcpython.common.network.packages.DisconnectionPackage import (
             DisconnectionConfirmPackage,
         )
         from mcpython.engine.network.NetworkManager import load_packages
 
-        load_packages()
+        await load_packages()
 
         package = DisconnectionConfirmPackage()
-        data = shared.NETWORK_MANAGER.encode_package(0, package)
+        data = await shared.NETWORK_MANAGER.encode_package(0, package)
 
-        package2 = shared.NETWORK_MANAGER.fetch_package_from_buffer(bytearray(data))
+        package2 = await shared.NETWORK_MANAGER.fetch_package_from_buffer(
+            bytearray(data)
+        )
 
         self.assertIsInstance(package2, DisconnectionConfirmPackage)
         # todo: test more attributes

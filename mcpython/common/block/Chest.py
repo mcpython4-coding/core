@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 from datetime import datetime
 
 import mcpython.client.rendering.blocks.ChestRenderer
@@ -65,15 +66,19 @@ class Chest(
         # As this can be statically decided, we use this trick for some performance gain
         if is_christmas:
 
-            def on_block_added(self):
+            async def on_block_added(self):
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
                 self.face_info.update(True)
+                await self.inventory.init()
+                await self.inventory.reload_config()
 
         else:
 
-            def on_block_added(self):
+            async def on_block_added(self):
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
                 self.face_info.update(True)
+                await self.inventory.init()
+                await self.inventory.reload_config()
 
     def __init__(self):
         """
@@ -86,17 +91,17 @@ class Chest(
         self.inventory = InventoryChest.InventoryChest(self)
         self.loot_table_link = None
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
-        self.inventory.write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+        await self.inventory.write_to_network_buffer(buffer)
 
         buffer.write_string(
             self.loot_table_link if self.loot_table_link is not None else ""
         )
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
-        self.inventory.read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
+        await self.inventory.read_from_network_buffer(buffer)
 
         self.loot_table_link = buffer.read_string()
         if self.loot_table_link == "":
@@ -114,7 +119,7 @@ class Chest(
         )
         return instance is None or not instance.face_solid & 2
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,
@@ -137,7 +142,7 @@ class Chest(
                 )
                 self.loot_table_link = None
 
-            shared.inventory_handler.show(self.inventory)
+            await shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False
@@ -164,7 +169,7 @@ class Chest(
         ):
             itemstack.item.inventory = self.inventory.copy()
 
-    def on_block_remove(self, reason):
+    async def on_block_remove(self, reason):
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             dimension = shared.world.get_dimension_by_name(self.dimension)
 
@@ -177,7 +182,7 @@ class Chest(
                 )
                 slot.get_itemstack().clean()
 
-        shared.inventory_handler.hide(self.inventory)
+        await shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
     @classmethod

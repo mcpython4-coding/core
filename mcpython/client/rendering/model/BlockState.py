@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import copy
 import random
 import typing
@@ -87,10 +88,10 @@ class MultiPartDecoder(IBlockStateDecoder):
         if "alias" in data:
             self.model_alias = data["alias"]
 
-    def bake(self):
+    async def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
             try:
-                parent: BlockStateContainer = BlockStateContainer.get_or_load(
+                parent: BlockStateContainer = await BlockStateContainer.get_or_load(
                     self.parent
                 )
             except FileNotFoundError:
@@ -503,9 +504,11 @@ class DefaultDecoder(IBlockStateDecoder):
         if "alias" in data:
             self.model_alias = data["alias"]
 
-    def bake(self):
+    async def bake(self):
         if self.parent is not None and isinstance(self.parent, str):
-            parent: BlockStateContainer = BlockStateContainer.get_or_load(self.parent)
+            parent: BlockStateContainer = await BlockStateContainer.get_or_load(
+                self.parent
+            )
             if not parent.baked:
                 return False
 
@@ -672,32 +675,32 @@ class BlockStateContainer:
     NEEDED = set()  # for parent <-> child connection
 
     @classmethod
-    def from_directory(cls, directory: str, modname: str, immediate=False):
+    async def from_directory(cls, directory: str, modname: str, immediate=False):
         for file in mcpython.engine.ResourceLoader.get_all_entries(directory):
             if not file.endswith("/"):
-                cls.from_file(file, modname, immediate=immediate)
+                await cls.from_file(file, modname, immediate=immediate)
+
         cls.LOOKUP_DIRECTORIES.add((directory, modname))
 
     @classmethod
-    def from_file(cls, file: str, modname: str, immediate=False):
+    async def from_file(cls, file: str, modname: str, immediate=False):
         # todo: check for correct process
         if immediate:
-            cls.unsafe_from_file(file)
+            await cls.unsafe_from_file(file)
         else:
             shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:blockstate_create",
-                cls.unsafe_from_file,
-                file,
+                cls.unsafe_from_file(file),
                 info="loading block state file '{}'".format(file),
             )
         cls.TO_CREATE.add(file)
 
     @classmethod
-    def unsafe_from_file(cls, file: str):
+    async def unsafe_from_file(cls, file: str):
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
-            return cls("{}:{}".format(modname, s[-1].split(".")[0])).parse_data(
+            return await cls("{}:{}".format(modname, s[-1].split(".")[0])).parse_data(
                 mcpython.engine.ResourceLoader.read_json(file)
             )
         except BlockStateNotNeeded:
@@ -708,7 +711,7 @@ class BlockStateContainer:
             )
 
     @classmethod
-    def from_data(
+    async def from_data(
         cls,
         name: str,
         data: typing.Dict[str, typing.Any],
@@ -716,28 +719,32 @@ class BlockStateContainer:
         store=True,
         force=False,
     ):
+        assert isinstance(name, str), "name must be str"
+
         # todo: check for correct process
         if store:
-            cls.RAW_DATA.append((data, name, force))
+            cls.RAW_DATA.append((name, data, force))
 
         if immediate:
-            cls.unsafe_from_data(name, data, force=force)
+            await cls.unsafe_from_data(name, data, force=force)
         else:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:model:blockstate_create",
-                cls.unsafe_from_data,
-                name,
-                data,
+                cls.unsafe_from_data(name, data),
                 info="loading block state '{}' from raw data".format(name),
                 force=force,
             )
 
     @classmethod
-    def unsafe_from_data(
+    async def unsafe_from_data(
         cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, force=False
     ):
+        assert isinstance(name, str), "name must be str"
         try:
-            instance = cls(name, immediate=immediate, force=force).parse_data(data)
+            instance = await cls(name, immediate=immediate, force=force).parse_data(
+                data
+            )
+            await instance.bake()
             return instance
         except BlockStateNotNeeded:
             pass  # do we need this model?
@@ -747,7 +754,7 @@ class BlockStateContainer:
             )
 
     @classmethod
-    def get_or_load(cls, name: str) -> "BlockStateContainer":
+    async def get_or_load(cls, name: str) -> "BlockStateContainer":
         if name in shared.model_handler.blockstates:
             return shared.model_handler.blockstates[name]
 
@@ -756,9 +763,11 @@ class BlockStateContainer:
             raise FileNotFoundError("for blockstate '{}'".format(name))
 
         data = mcpython.engine.ResourceLoader.read_json(file)
-        return cls.unsafe_from_data(name, data, immediate=True, force=True)
+        return await cls.unsafe_from_data(name, data, immediate=True, force=True)
 
     def __init__(self, name: str, immediate=False, force=False):
+        assert isinstance(name, str), "name must be str"
+
         self.name = name
         if (
             (
@@ -778,28 +787,26 @@ class BlockStateContainer:
         if not immediate:
             shared.mod_loader.mods[name.split(":")[0]].eventbus.subscribe(
                 "stage:model:blockstate_bake",
-                self.bake,
+                self.bake(),
                 info="baking block state {}".format(name),
             )
-        else:
-            self.bake()
+        # else:
+        # asyncio.get_event_loop().run_until_complete(self.bake())
 
-    def parse_data(self, data: dict):
+    async def parse_data(self, data: dict):
         for loader in blockstate_decoder_registry.entries.values():
             if loader.is_valid(data):
                 self.loader: IBlockStateDecoder = loader(self)
                 self.loader.parse_data(data)
                 break
         else:
-            logger.println(
-                "can't find matching loader for model {}".format(self.name)
-            )
+            logger.println("can't find matching loader for model {}".format(self.name))
 
         return self
 
-    def bake(self):
+    async def bake(self):
         try:
-            if self.loader and not self.loader.bake():
+            if self.loader and not await self.loader.bake():
                 shared.mod_loader.mods[self.name.split(":")[0]].eventbus.subscribe(
                     "stage:model:blockstate_bake",
                     self.bake,
@@ -913,9 +920,7 @@ class BlockState:
         if m is None:
             return tuple()
 
-        result = m.add_faces_to_batch(
-            instance, instance.position, batch, config, faces
-        )
+        result = m.add_faces_to_batch(instance, instance.position, batch, config, faces)
         return result
 
     def add_raw_face_to_batch(
@@ -988,8 +993,6 @@ class BlockState:
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:blockstate_search",
-    BlockStateContainer.from_directory,
-    "assets/minecraft/blockstates",
-    "minecraft",
+    BlockStateContainer.from_directory("assets/minecraft/blockstates", "minecraft"),
     info="searching for block states",
 )

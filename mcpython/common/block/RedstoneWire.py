@@ -64,27 +64,27 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
     def set_model_state(self, state: dict):
         self.state.update({EnumSide[e.upper()]: v for e, v in state.items()})
 
-    def on_block_update(self):
+    async def on_block_update(self):
         self.update_visual()
-        self.send_level_update()
+        await self.send_level_update()
 
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
         block = dimension.get_block((x, y - 1, z), none_if_str=True)
         if block is None or not block.face_solid & 1:
-            dimension.remove_block(self.position)
+            await dimension.remove_block(self.position)
             return
 
         elif block.IS_SOLID:
             block.inject_redstone_power(EnumSide.UP, self.level)
 
-        self.schedule_network_update()
+        await self.schedule_network_update()
 
-    def send_level_update(self):
+    async def send_level_update(self):
         level = max(self.injected_redstone_power)
         if level != self.level:
             self.level = level
-            shared.world.get_dimension_by_name(self.dimension).on_block_updated(
+            await shared.world.get_dimension_by_name(self.dimension).on_block_updated(
                 self.position, include_itself=False
             )
 

@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import mcpython.engine.event.AsyncEventBus
 import mcpython.engine.event.EventBus
 import mcpython.engine.event.EventHandler
 from mcpython import shared
@@ -172,10 +173,8 @@ class Mod:
         self.name = name
 
         # The mod event bus
-        self.eventbus: mcpython.engine.event.EventBus.EventBus = (
-            mcpython.engine.event.EventHandler.LOADING_EVENT_BUS.create_sub_bus(
-                crash_on_error=True
-            )
+        self.eventbus: mcpython.engine.event.AsyncEventBus.AsyncEventBus = (
+            mcpython.engine.event.AsyncEventBus.AsyncEventBus()
         )
 
         # need, possible, not possible, before, after, only with, only without
@@ -190,7 +189,7 @@ class Mod:
 
         self.server_only = False
 
-        if add_to_mod_loader:
+        if add_to_mod_loader and shared.mod_loader:
             shared.mod_loader.add_to_add(self)
 
     def mod_string(self) -> str:
@@ -216,7 +215,7 @@ class Mod:
 
         self.eventbus.subscribe(
             "stage:mod:init",
-            lambda: mcpython.common.data.ResourcePipe.handler.register_for_mod(
+            mcpython.common.data.ResourcePipe.handler.register_for_mod(
                 self.name, path_name
             ),
             info="adding resource load subscriptions",

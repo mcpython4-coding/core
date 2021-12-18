@@ -44,7 +44,7 @@ class DebugBiomeWorldGenerator(
     BIOME_TO_BLOCK = {}
 
     @classmethod
-    def generate_table(cls):
+    async def generate_table(cls):
         blocks = list(shared.registry.get_by_name("minecraft:block").entries.keys())
         blocks.sort()
         i = 0
@@ -55,7 +55,7 @@ class DebugBiomeWorldGenerator(
                     i += 1
 
     @classmethod
-    def on_chunk_generation_finished(
+    async def on_chunk_generation_finished(
         cls,
         chunk,
     ):
@@ -68,7 +68,7 @@ class DebugBiomeWorldGenerator(
                 x, z = cx * 16 + dx, cz * 16 + dz
                 biome = biome_map.get_at_xz(x, z)
                 block = cls.BIOME_TO_BLOCK[biome]
-                chunk.add_block(
+                await chunk.add_block(
                     (x, 0, z), block, block_update=False, block_update_self=False
                 )
 
@@ -83,6 +83,6 @@ shared.world_generation_handler.register_world_gen_config(DebugBiomeWorldGenerat
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:post",
-    DebugBiomeWorldGenerator.generate_table,
+    DebugBiomeWorldGenerator.generate_table(),
     info="constructing debug world info",
 )

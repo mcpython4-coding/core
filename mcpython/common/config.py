@@ -256,12 +256,12 @@ for stone in ["andesite", "granite", "diorite"]:
 
 
 def load():
-    import mcpython.common.mod.ConfigFile
+    import mcpython.common.mod.ConfigFile as ConfigFile
     from mcpython import shared
 
-    config = mcpython.common.mod.ConfigFile.ConfigFile("main", "minecraft")
+    config = ConfigFile.ConfigFile("main", "minecraft")
     speeds = (
-        mcpython.common.mod.ConfigFile.DictDataMapper()
+        ConfigFile.DictDataMapper()
         .add_entry("walking", 5)
         .add_entry("sprinting", 8)
         .add_entry("flying", 15)
@@ -270,31 +270,31 @@ def load():
         .add_entry("gamemode_3_sprinting", 25)
     )
     physics = (
-        mcpython.common.mod.ConfigFile.DictDataMapper()
+        ConfigFile.DictDataMapper()
         .add_entry("gravity", 20)
         .add_entry("terminal_velocity", 50)
     )
     timing = (
-        mcpython.common.mod.ConfigFile.DictDataMapper()
+        ConfigFile.DictDataMapper()
         .add_entry("random_tick_range", 2)
         .add_entry("cpu_usage_refresh_time", 0.8)
     )
     rendering = (
-        mcpython.common.mod.ConfigFile.DictDataMapper()
+        ConfigFile.DictDataMapper()
         .add_entry("use_missing_texture_on_missing_faces", False)
         .add_entry("fog_distance", 60)
         .add_entry("chunk_generation_range", 1)
         .add_entry("write_not_formatted_exceptions", False)
     )
     profiler = (
-        mcpython.common.mod.ConfigFile.DictDataMapper()
+        ConfigFile.DictDataMapper()
         .add_entry("enable", False)
         .add_entry("total_draw", True)
         .add_entry("total_tick", False)
         .add_entry("generation", False)
     )
     misc = (
-        mcpython.common.mod.ConfigFile.DictDataMapper()
+        ConfigFile.DictDataMapper()
         .add_entry("enable_mixing_data", False)
         .add_entry("auto_shuffle_interval", -1)
     )
@@ -305,20 +305,20 @@ def load():
         "misc", misc
     )
 
-    biomeconfig = mcpython.common.mod.ConfigFile.ConfigFile("biomes", "minecraft")
+    biomeconfig = ConfigFile.ConfigFile("biomes", "minecraft")
     biomeconfig.add_entry(
         "minecraft:plains",
-        mcpython.common.mod.ConfigFile.ListDataMapper().append(10).append(30),
+        ConfigFile.ListDataMapper().append(10).append(30),
     )
 
-    block_config = mcpython.common.mod.ConfigFile.ConfigFile("blocks", "minecraft")
+    block_config = ConfigFile.ConfigFile("blocks", "minecraft")
     [
-        block_config.add_entry(key, mcpython.common.mod.ConfigFile.BooleanDataMapper())
+        block_config.add_entry(key, ConfigFile.BooleanDataMapper())
         for key in ENABLED_EXTRA_BLOCKS
     ]
 
     @shared.mod_loader("minecraft", "stage:mod:config:work")
-    def load_data():
+    async def load_data():
         SPEED_DICT[0] = [speeds["walking"].read(), speeds["sprinting"].read(), 0, 0]
         SPEED_DICT[1] = [
             speeds["walking"].read(),

@@ -32,13 +32,18 @@ class PackageIDSync(AbstractPackage):
         self.data = shared.NETWORK_MANAGER.get_dynamic_id_info()
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
-        buffer.write_list(
+    async def write_to_buffer(self, buffer: WriteBuffer):
+        await buffer.write_list(
             self.data, lambda e: buffer.write_string(e[0]).write_int(e[1])
         )
 
-    def read_from_buffer(self, buffer: ReadBuffer):
-        self.data = buffer.read_list(lambda: (buffer.read_string(), buffer.read_int()))
+    async def read_from_buffer(self, buffer: ReadBuffer):
+        self.data = [
+            e
+            async for e in buffer.read_list(
+                lambda: (buffer.read_string(), buffer.read_int())
+            )
+        ]
 
-    def handle_inner(self):
-        shared.NETWORK_MANAGER.set_dynamic_id_info(self.data)
+    async def handle_inner(self):
+        await shared.NETWORK_MANAGER.set_dynamic_id_info(self.data)

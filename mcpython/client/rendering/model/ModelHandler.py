@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import gc
 import json
 import math
@@ -100,14 +101,14 @@ class ModelHandler:
             ),
         ]
 
-    def add_from_mod(self, modname: str):
+    async def add_from_mod(self, modname: str):
         """
         Will add locations for a given mod name
         :param modname: the mod to use
         """
         self.lookup_locations.add("assets/{}/models/block".format(modname))
 
-    def search(self):
+    async def search(self):
         """
         Will search all locations for new stuff
         todo: add datapack locations
@@ -125,7 +126,7 @@ class ModelHandler:
             if name not in self.models:
                 self.found_models[name] = data
 
-        shared.event_handler.call("minecraft:model_handler:searched")
+        await shared.event_handler.call_async("minecraft:model_handler:searched")
 
     def add_from_data(self, name: str, data: dict, store=True):
         """
@@ -138,13 +139,13 @@ class ModelHandler:
         if store:
             self.raw_models.append((data, name))
 
-    def build(self, immediate=False):
+    async def build(self, immediate=False):
         [
-            self.let_subscribe_to_build(model, immediate=immediate)
+            await self.let_subscribe_to_build(model, immediate=immediate)
             for model in self.used_models
         ]
 
-    def let_subscribe_to_build(self, model, immediate=False):
+    async def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
 
         if modname == "alias":
@@ -157,16 +158,15 @@ class ModelHandler:
             modname = "minecraft"
 
         if immediate:
-            self.special_build(model)
+            await self.special_build(model)
         else:
             shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:model_bake_prepare",
-                self.special_build,
-                model,
+                self.special_build(model),
                 info="filtering model '{}'".format(model),
             )
 
-    def special_build(self, used: str):
+    async def special_build(self, used: str):
         if used.count(":") == 0:
             used = "minecraft:" + used
 
@@ -194,7 +194,7 @@ class ModelHandler:
             raise ValueError(file)
 
         if "parent" in data:
-            self.special_build(data["parent"])
+            await self.special_build(data["parent"])
             depend = [data["parent"]]
         else:
             depend = []
@@ -203,7 +203,7 @@ class ModelHandler:
             (used, [e if ":" in e else "minecraft:" + e for e in depend])
         )
 
-    def process_models(self, immediate=False):
+    async def process_models(self, immediate=False):
         try:
             sorted_models = mcpython.util.math.topological_sort(self.dependence_list)
             if "minecraft:block/block" in sorted_models:
@@ -223,19 +223,9 @@ class ModelHandler:
 
         self.dependence_list.clear()  # decrease memory usage
 
-        for x in list(set(sorted_models)):
-            modname = x.split(":")[0] if x.count(":") == 1 else "minecraft"
-            if immediate:
-                self.load_model(x)
-            else:
-                shared.mod_loader.mods[modname].eventbus.subscribe(
-                    "stage:model:model_bake",
-                    self.load_model,
-                    x,
-                    info="baking model '{}'".format(x),
-                )
+        await asyncio.gather(*(self.load_model(x) for x in sorted_models))
 
-    def load_model(self, name: str):
+    async def load_model(self, name: str):
         if ":" not in name:
             name = "minecraft:" + name
 
@@ -243,7 +233,9 @@ class ModelHandler:
             return
 
         if name not in self.found_models:
-            logger.println(f"[FATAL] model {name} was requested to be loaded, but never was required to be loaded")
+            logger.println(
+                f"[FATAL] model {name} was requested to be loaded, but never was required to be loaded"
+            )
             return
 
         location = self.found_models[name]
@@ -252,13 +244,15 @@ class ModelHandler:
                 try:
                     model_data = mcpython.engine.ResourceLoader.read_json(location)
                 except json.decoder.JSONDecodeError:
-                    logger.println("[WARN] invalid or corrupted .json file: "+location)
+                    logger.println(
+                        "[WARN] invalid or corrupted .json file: " + location
+                    )
                     self.models[name] = None
                 else:
                     try:
                         self.models[
                             name
-                        ] = mcpython.client.rendering.model.BlockModel.Model(
+                        ] = await mcpython.client.rendering.model.BlockModel.Model(
                             "block/" + location.split("/")[-1].split(".")[0],
                             name.split(":")[0] if name.count(":") == 1 else "minecraft",
                         ).parse_from_data(
@@ -275,7 +269,7 @@ class ModelHandler:
                 try:
                     self.models[
                         name
-                    ] = mcpython.client.rendering.model.BlockModel.Model(
+                    ] = await mcpython.client.rendering.model.BlockModel.Model(
                         name,
                         name.split(":")[0] if name.count(":") == 1 else "minecraft",
                     ).parse_from_data(
@@ -407,7 +401,7 @@ class ModelHandler:
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)
 
-    def reload_models(self):
+    async def reload_models(self):
         logger.println("deleting content of models...")
 
         # clear the structures holding the data...
@@ -420,37 +414,39 @@ class ModelHandler:
 
         logger.println("loading models...")
         # and now start reloading models...
-        self.search()
+        await self.search()
         mcpython.client.rendering.model.BlockState.BlockStateContainer.TO_CREATE.clear()
         mcpython.client.rendering.model.BlockState.BlockStateContainer.NEEDED.clear()
 
         logger.println("walking across block states...")
-        for (
-            directory,
-            modname,
-        ) in (
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
-        ):
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
-                directory, modname, immediate=True
+        await asyncio.gather(
+            *(
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
+                    directory, modname, immediate=True
+                )
+                for (directory, modname,) in (
+                    mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
+                )
             )
+        )
 
         logger.println("walking across located block states...")
-        for (
-            data,
-            name,
-            force,
-        ) in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA:
-            mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
-                name, data, immediate=True, force=force
+        await asyncio.gather(
+            *(
+                mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
+                    name, data, immediate=True, force=force
+                )
+                for name, data, force in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA
             )
+        )
 
-        shared.event_handler.call("minecraft:data:blockstates:custom_injection", self)
-        shared.event_handler.call("minecraft:data:models:custom_injection", self)
+        await shared.event_handler.call_async(
+            "minecraft:data:blockstates:custom_injection", self
+        )
 
         logger.println("walking across requested models...")
-        self.build(immediate=True)
-        self.process_models(immediate=True)
+        await self.build(immediate=True)
+        await self.process_models(immediate=True)
         animation_manager.bake()
 
         logger.println("finished!")
@@ -471,20 +467,21 @@ shared.model_handler = ModelHandler()
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_search",
-    shared.model_handler.add_from_mod,
-    "minecraft",
+    shared.model_handler.add_from_mod("minecraft"),
     info="searching for block models for minecraft",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_create", shared.model_handler.search, info="loading found models"
+    "stage:model:model_create",
+    shared.model_handler.search(),
+    info="loading found models",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_bake_prepare",
-    shared.model_handler.build,
+    shared.model_handler.build(),
     info="filtering models",
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     "stage:model:model_bake:prepare",
-    shared.model_handler.process_models,
+    shared.model_handler.process_models(),
     info="preparing model data",
 )

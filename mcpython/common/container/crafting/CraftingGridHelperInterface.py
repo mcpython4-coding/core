@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import typing
 
 import mcpython.client.gui.Slot
@@ -276,13 +277,13 @@ class CraftingGridHelperInterface(
         self.check_recipe_state()
         self.update_output()
 
-    def on_output_update(self, player=False):
+    async def on_output_update(self, player=False):
         if not self.active_recipe:
             return
         if (
             self.slot_output_map.get_itemstack().is_empty() and player
         ):  # have we removed items and where they removed by the player?
-            shared.event_handler.call(
+            await shared.event_handler.call_async(
                 "gui:crafting:grid:output:remove",
                 self,
                 self.slot_output_map,
@@ -300,7 +301,7 @@ class CraftingGridHelperInterface(
                 self.active_recipe = None
             self.update_output()
 
-    def on_output_shift_click(self, slot, x, y, button, modifiers, player):
+    async def on_output_shift_click(self, slot, x, y, button, modifiers, player):
         # todo: check by every call if the player can pick up more items of this kind
         if not self.active_recipe:
             return
@@ -313,20 +314,20 @@ class CraftingGridHelperInterface(
             self.slot_output_map.set_itemstack(
                 mcpython.common.container.ResourceStack.ItemStack.create_empty()
             )
-            self.slot_output_map.call_update(player=True)
+            await self.slot_output_map.call_update_async(player=True)
             count += itemstack.amount
 
         max_size = itemstack.item.STACK_SIZE
         for _ in range(count // max_size):
-            shared.world.get_active_player().pick_up_item(
+            await shared.world.get_active_player().pick_up_item(
                 itemstack.copy().set_amount(max_size)
             )
             count -= max_size
 
-        shared.world.get_active_player().pick_up_item(
+        await shared.world.get_active_player().pick_up_item(
             itemstack.copy().set_amount(count)
         )
-        shared.event_handler.call(
+        await shared.event_handler.call_async(
             "gui:crafting:grid:output:remove",
             self,
             self.slot_output_map,

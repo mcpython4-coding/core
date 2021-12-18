@@ -89,20 +89,20 @@ class StoneCutterContainerRenderer(
     def get_config_file() -> str or None:
         return "assets/config/inventory/block_inventory_stonecutter.json"
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
         return (
             [mcpython.client.gui.Slot.Slot(on_update=self.update_selection_view)]
@@ -140,9 +140,9 @@ class StoneCutterContainerRenderer(
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
         shared.inventory_handler.shift_container_handler.container_A = (

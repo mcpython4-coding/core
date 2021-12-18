@@ -23,12 +23,12 @@ class AbstractDamageBarItem(mcpython.common.item.AbstractItem.AbstractItem, ABC)
         super().__init__()
         self.unbreakable = False
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
         buffer.write_bool(self.unbreakable)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
         self.unbreakable = buffer.read_bool()
 
     def get_damage_info(

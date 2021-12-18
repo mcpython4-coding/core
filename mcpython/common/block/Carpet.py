@@ -34,7 +34,7 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
     HARDNESS = BLAST_RESISTANCE = 0.1
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
         dim = shared.world.get_dimension_by_name(self.dimension)
         instance: mcpython.common.block.AbstractBlock.AbstractBlock = dim.get_block(
@@ -42,7 +42,7 @@ class AbstractCarpet(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         )
 
         if instance is None or (type(instance) != str and not instance.face_solid & 1):
-            dim.get_chunk_for_position((x, y, z)).remove_block(
+            await dim.get_chunk_for_position((x, y, z)).remove_block(
                 (x, y, z), block_update=False
             )
 

@@ -39,7 +39,7 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
 
         else:
             for name in data.keys():
-                player = shared.world.get_player_by_name(name)
+                player = await shared.world.get_player_by_name_async(name)
                 await cls.load_player_data(data, player, save_file)
 
     @classmethod

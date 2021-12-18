@@ -49,13 +49,18 @@ class Furnace(IHorizontalOrientableBlock):
 
         self.inventory = InventoryFurnace(self, self.FURNACE_RECIPES)
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
-        self.inventory.write_to_network_buffer(buffer)
+    async def on_block_added(self):
+        await super().on_block_added()
+        await self.inventory.init()
+        await self.inventory.reload_config()
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
-        self.inventory.read_from_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+        await self.inventory.write_to_network_buffer(buffer)
+
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
+        await self.inventory.read_from_network_buffer(buffer)
 
     def get_model_state(self) -> dict:
         return {"facing": self.face.normal_name, "lit": str(self.active).lower()}
@@ -65,12 +70,12 @@ class Furnace(IHorizontalOrientableBlock):
         if "lit" in state:
             self.active = state["lit"] == "true"
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self, player, button, modifiers, exact_hit, itemstack
     ) -> bool:
         if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
             if shared.IS_CLIENT:
-                shared.inventory_handler.show(self.inventory)
+                await shared.inventory_handler.show(self.inventory)
 
             return True
 
@@ -88,7 +93,7 @@ class Furnace(IHorizontalOrientableBlock):
         else:
             return [self.inventory.slots[37]], []
 
-    def on_block_remove(self, reason):
+    async def on_block_remove(self, reason):
         # todo: add special flag for not dropping
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             dimension = shared.world.get_dimension_by_name(self.dimension)
@@ -103,7 +108,7 @@ class Furnace(IHorizontalOrientableBlock):
                 slot.get_itemstack().clean()
 
         if shared.IS_CLIENT:
-            shared.inventory_handler.hide(self.inventory)
+            await shared.inventory_handler.hide(self.inventory)
             del self.inventory
 
 

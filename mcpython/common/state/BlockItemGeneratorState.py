@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 __all__ = ["BlockItemGenerator", "block_item_generator"]
 
+import asyncio
 import json
 import os
 import sys
@@ -114,8 +115,8 @@ class BlockItemGenerator(AbstractState.AbstractState):
     def tick(self, _):
         pass
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
         pyglet.clock.schedule_interval(self.tick, 1 / 400)
 
@@ -126,7 +127,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         item_registry.unlock()
 
         # The world should be clean before we start work
-        self.clean_world(world)
+        await self.clean_world(world)
 
         # Fetch the list of all blocks
         self.tasks = list(shared.registry.get_by_name("minecraft:block").entries.keys())
@@ -139,7 +140,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         # Have we nothing to do -> We can stop here
         if len(self.tasks) == 0:
-            self.close()
+            await self.close()
             return
 
         # We want to hide this error messages
@@ -153,7 +154,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         self.prepare_window()
 
         # Setup the player view, todo: make configurable by block model / state
-        player = world.get_active_player()
+        player = await world.get_active_player_async()
         player.position = (1.5, 2, 1.5)
         player.rotation = (-45, -45, 0)
 
@@ -161,7 +162,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         self.block_index = -1
 
         try:
-            instance = world.get_active_dimension().add_block(
+            instance = await world.get_active_dimension().add_block(
                 (0, 0, 0), self.tasks[0], block_update=False
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
@@ -193,16 +194,17 @@ class BlockItemGenerator(AbstractState.AbstractState):
         if os.path.exists(shared.build + "/item_block_factory.json"):
             with open(shared.build + "/item_block_factory.json", mode="r") as f:
                 self.table = json.load(f)
-        else:  # make sure it is was reset
+        else:  # make sure it is reset
             self.table.clear()
+
         items = shared.registry.get_by_name("minecraft:item").entries
         for task in self.tasks[:]:
             if task in items:
                 self.tasks.remove(task)
 
-    def clean_world(self, world):
+    async def clean_world(self, world):
         try:
-            world.cleanup()
+            await world.cleanup()
             shared.dimension_handler.init_dims()
             world.hide_faces_to_not_generated_chunks = False
             shared.tick_handler.enable_random_ticks = False
@@ -213,8 +215,8 @@ class BlockItemGenerator(AbstractState.AbstractState):
             shared.window.close()
             sys.exit(-1)
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
 
         pyglet.clock.unschedule(self.tick)
 
@@ -222,13 +224,13 @@ class BlockItemGenerator(AbstractState.AbstractState):
         shared.model_handler.hide_blockstate_errors = False
 
         # Clean up the world
-        shared.world.cleanup()
+        await shared.world.cleanup()
 
         # dump our created data
         with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(self.table, f)
 
-        self.bake_items()
+        await self.bake_items()
 
         logger.println("[BLOCK ITEM GENERATOR] finished!")
 
@@ -243,7 +245,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         # todo: Global variable, so user can toggle in-game
         window.set_fullscreen("--fullscreen" in sys.argv)
 
-        shared.event_handler.call("stage:blockitemfactory:finish")
+        await shared.event_handler.call_async("stage:blockitemfactory:finish")
 
         TickHandler.handler.enable_tick_skipping = True
         shared.world.hide_faces_to_not_generated_chunks = True
@@ -251,25 +253,29 @@ class BlockItemGenerator(AbstractState.AbstractState):
         item_registry = shared.registry.get_by_name("minecraft:item")
         item_registry.lock()
 
-    def bake_items(self):
+    async def bake_items(self):
         ItemManager.build()
         ItemManager.ITEM_ATLAS.load()
-        ItemModel.handler.bake()
+        await ItemModel.handler.bake()
 
-    def close(self):
-        player = shared.world.get_active_player()
-        player.position = (0, 10, 0)
-        player.rotation = (0, 0, 0)
-        player.dimension.remove_block((0, 0, 0))
+    async def close(self):
+        player = await shared.world.get_active_player_async(create=False)
 
-        if shared.event_handler.call_cancelable("stage_handler:loading2main_menu"):
-            shared.state_handler.change_state("minecraft:start_menu")
+        if player is not None:
+            player.position = (0, 10, 0)
+            player.rotation = (0, 0, 0)
+            await player.dimension.remove_block((0, 0, 0))
+
+        if await shared.event_handler.call_cancelable_async(
+            "stage_handler:loading2main_menu"
+        ):
+            await shared.state_handler.change_state("minecraft:start_menu")
 
     def add_new_screen(self, *args):
         self.block_index += 1
 
         if self.block_index >= len(self.tasks):
-            self.close()
+            asyncio.get_event_loop().run_until_complete(self.close())
             return
 
         dimension = shared.world.get_active_dimension()
@@ -279,8 +285,10 @@ class BlockItemGenerator(AbstractState.AbstractState):
             block.face_info.hide_all()
 
         try:
-            instance = dimension.add_block(
-                (0, 0, 0), self.tasks[self.block_index], block_update=False
+            instance = asyncio.get_event_loop().run_until_complete(
+                dimension.add_block(
+                    (0, 0, 0), self.tasks[self.block_index], block_update=False
+                )
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
@@ -361,9 +369,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
 block_item_generator = None
 
 
-def create():
+async def create():
     global block_item_generator
     block_item_generator = BlockItemGenerator()
 
 
-minecraft.eventbus.subscribe("stage:states", create)
+minecraft.eventbus.subscribe("stage:states", create())

@@ -46,37 +46,37 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     DEBUG_WORLD_BLOCK_STATES = [{"axis": "x"}, {"axis": "z"}]
 
-    def on_block_update(self):
-        self.on_redstone_update()
-        self.check_valid_surrounding()
+    async def on_block_update(self):
+        await self.on_redstone_update()
+        await self.check_valid_surrounding()
 
-    def check_valid_surrounding(self):
+    async def check_valid_surrounding(self):
         x, y, z = self.position
         chunk = shared.world.get_dimension_by_name(
             self.dimension
         ).get_chunk_for_position(self.position)
 
-        if self.check_valid_block((x, y + 1, z), chunk):
+        if await self.check_valid_block((x, y + 1, z), chunk):
             return
 
-        if self.check_valid_block((x, y - 1, z), chunk):
+        if await self.check_valid_block((x, y - 1, z), chunk):
             return
 
         if self.axis == "x":
-            if self.check_valid_block((x + 1, y, z)):
+            if await self.check_valid_block((x + 1, y, z)):
                 return
-            if self.check_valid_block((x - 1, y, z)):
+            if await self.check_valid_block((x - 1, y, z)):
                 return
 
         elif self.axis == "z":
-            if self.check_valid_block((x, y, z + 1)):
+            if await self.check_valid_block((x, y, z + 1)):
                 return
-            if self.check_valid_block((x, y, z - 1)):
+            if await self.check_valid_block((x, y, z - 1)):
                 return
 
-        self.schedule_network_update()
+        await self.schedule_network_update()
 
-    def check_valid_block(self, position: tuple, chunk=None):
+    async def check_valid_block(self, position: tuple, chunk=None):
         if chunk is None:
             chunk = shared.world.get_dimension_by_name(
                 self.dimension
@@ -85,7 +85,7 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
         block = chunk.get_block(position, none_if_str=True)
 
         if block is None or "#minecraft:supports_nether_portal" not in block.TAGS:
-            chunk.remove_block(self.position)
+            await chunk.remove_block(self.position)
             return True
 
         return False

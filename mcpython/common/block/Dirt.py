@@ -30,7 +30,7 @@ class Dirt(AbstractBlock.AbstractBlock):
 
     ENABLE_RANDOM_TICKS = True
 
-    def on_random_update(self):
+    async def on_random_update(self):
         dim = shared.world.get_dimension_by_name(self.dimension)
         x, y, z = self.position
         for dy in range(y + 1, dim.get_world_height_range()[1] + 1):
@@ -49,7 +49,7 @@ class Dirt(AbstractBlock.AbstractBlock):
                                 type(instance) != str
                                 and instance.NAME == "minecraft:grass_block"
                             ):
-                                dim.get_chunk_for_position(self.position).add_block(
-                                    self.position, "minecraft:grass_block"
-                                )
+                                await dim.get_chunk_for_position(
+                                    self.position
+                                ).add_block(self.position, "minecraft:grass_block")
                                 return

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import random
 
 import mcpython.client.gui.HoveringItemBox
@@ -20,7 +21,7 @@ from mcpython import shared
 from mcpython.util.enums import ToolType
 
 
-def load_item():
+async def load_item():
     template = (
         mcpython.common.factory.ItemFactory.ItemFactory()
         .set_global_mod_name("minecraft")
@@ -68,7 +69,9 @@ def load_item():
     template.set_name("ender_eye").set_max_stack_size(16).finish()
 
     def lambda_add_random_xp(instance, itemstack):
-        shared.world.get_active_player().add_xp(random.randint(3, 11))
+        asyncio.get_event_loop().run_until_complete(
+            shared.world.get_active_player().add_xp(random.randint(3, 11))
+        )
         itemstack.add_amount(-1)
         return True
 
@@ -278,5 +281,5 @@ def load_item():
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:item:factory_usage", load_item, info="generating items"
+    "stage:item:factory_usage", load_item(), info="generating items"
 )

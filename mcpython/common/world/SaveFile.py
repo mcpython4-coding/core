@@ -162,7 +162,7 @@ class SaveFile:
         """
         Async-loads all setup-data into the world using the default configuration for worlds
         """
-        shared.world.cleanup()  # make sure everything is removed before we start
+        await shared.world.cleanup()  # make sure everything is removed before we start
 
         try:
             await self.read_async("minecraft:general")
@@ -175,10 +175,10 @@ class SaveFile:
                             self.version
                         )
                     )
-                    shared.world.cleanup()
+                    await shared.world.cleanup()
 
                     if shared.IS_CLIENT:
-                        shared.state_handler.change_state("minecraft:start_menu")
+                        await shared.state_handler.change_state("minecraft:start_menu")
                     else:
                         sys.exit(-1)
                     return
@@ -208,16 +208,16 @@ class SaveFile:
                     self.directory
                 )
             )
-            shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:world_selection")
+            await shared.world.cleanup()
+            await shared.state_handler.change_state("minecraft:world_selection")
             return
 
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
 
         except:
-            shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:start_menu")
+            await shared.world.cleanup()
+            await shared.state_handler.change_state("minecraft:start_menu")
             logger.print_exception(
                 "exception during loading world. falling back to start menu..."
             )
@@ -296,12 +296,12 @@ class SaveFile:
                 logger.print_exception(
                     "Exception during saving world. Falling back to start menu"
                 )
-                shared.world.cleanup()
-                shared.state_handler.change_state("minecraft:start_menu")
+                await shared.world.cleanup()
+                await shared.state_handler.change_state("minecraft:start_menu")
 
             else:
                 logger.print_exception("Exception during saving world")
-                shared.NETWORK_MANAGER.disconnect()
+                await shared.NETWORK_MANAGER.disconnect()
                 sys.exit(-1)
 
     async def apply_storage_fixer_async(self, name: str, *args, **kwargs):
@@ -335,7 +335,7 @@ class SaveFile:
             logger.print_exception(
                 "during data-fixing storage version '{}'".format(name)
             )
-            shared.state_handler.change_state("minecraft:start_menu")
+            await shared.state_handler.change_state("minecraft:start_menu")
 
     async def apply_group_fixer_async(self, name: str, *args, **kwargs):
         """
@@ -367,8 +367,8 @@ class SaveFile:
             logger.print_exception(
                 "During data-fixing group fixer '{}' (FATAL)".format(name)
             )
-            shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:start_menu")
+            await shared.world.cleanup()
+            await shared.state_handler.change_state("minecraft:start_menu")
 
     async def apply_part_fixer_async(self, name: str, *args, **kwargs):
         """
@@ -389,8 +389,8 @@ class SaveFile:
             await fixer.apply(self, *args, **kwargs)
         except:
             logger.print_exception("During data-fixing part '{}' (fatal)".format(name))
-            shared.world.cleanup()
-            shared.state_handler.change_state("minecraft:start_menu")
+            await shared.world.cleanup()
+            await shared.state_handler.change_state("minecraft:start_menu")
 
     async def apply_mod_fixer_async(
         self, modname: str, source_version: tuple, *args, **kwargs
@@ -455,8 +455,8 @@ class SaveFile:
                         modname, fixer.FIXES_FROM, fixer.FIXES_TO
                     )
                 )
-                shared.world.cleanup()
-                shared.state_handler.change_state("minecraft:start_menu")
+                await shared.world.cleanup()
+                await shared.state_handler.change_state("minecraft:start_menu")
                 return
 
             source_version = fixer.FIXES_TO
@@ -719,5 +719,5 @@ class SaveFile:
 
 
 @shared.mod_loader("minecraft", "stage:datafixer:general")
-def load_elements():
+async def load_elements():
     from mcpython.common.world.datafixers.versions import blocks

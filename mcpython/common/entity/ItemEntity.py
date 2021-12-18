@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 import mcpython.common.entity.AbstractEntity
 import mcpython.util.math
 import pyglet
@@ -72,8 +74,8 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             shared.tick_handler.schedule_once(self.kill)
             self.test_block = None
 
-    def tick(self, dt):
-        super().tick(dt)
+    async def tick(self, dt):
+        await super().tick(dt)
 
         if self.pickup_delay > 0:
             self.pickup_delay -= dt
@@ -81,9 +83,10 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             self.pickup_delay = max(self.pickup_delay, 0)
 
         if self.item_stack is None or self.item_stack.is_empty():
-            self.kill(force=True)
+            await self.kill(force=True)
             return
 
+        # todo: all entities should be able to pick up items!
         for player in self.dimension.get_world().player_iterator():
             if player.dimension == self.dimension:
                 p = player.position
@@ -100,17 +103,17 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                     self.position = vector_offset(self.position, vector_negate(v))
 
                 if d <= self.PICKUP_DISTANCE and self.pickup_delay == 0:
-                    player.pick_up_item(self.item_stack)
-                    self.kill()
+                    await player.pick_up_item(self.item_stack)
+                    await self.kill()
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
-        self.item_stack.write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+        await self.item_stack.write_to_network_buffer(buffer)
         buffer.write_int(self.pickup_delay)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
         if self.item_stack is None:
             self.item_stack = ItemStack()
-        self.item_stack.read_from_network_buffer(buffer)
+        await self.item_stack.read_from_network_buffer(buffer)
         self.pickup_delay = buffer.read_int()

@@ -13,10 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import TestCase
 
+from mcpython.util.enums import BlockRotationType, EnumSide
 from pyglet.window import mouse
-
-from mcpython.util.enums import BlockRotationType
-from mcpython.util.enums import EnumSide
 
 
 class TestAbstractBlock(TestCase):
@@ -28,7 +26,7 @@ class TestAbstractBlock(TestCase):
             "minecraft:block_registry",
         )
 
-    def test_network_serializer(self):
+    async def test_network_serializer(self):
         import mcpython.common.block.AbstractBlock
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
@@ -46,10 +44,10 @@ class TestAbstractBlock(TestCase):
 
         buffer = WriteBuffer()
         block = TestBlock()
-        block.write_to_network_buffer(buffer)
+        await block.write_to_network_buffer(buffer)
 
         block = TestBlock()
-        block.read_from_network_buffer(ReadBuffer(buffer.get_data()))
+        await block.read_from_network_buffer(ReadBuffer(buffer.get_data()))
 
         self.assertTrue(TestBlock.model_state_set)
 
@@ -80,9 +78,10 @@ class TestAbstractBlock(TestCase):
         self.assertIsInstance(b2, Block)
         self.assertTrue(b2.invoked)
 
-    def test_on_player_interaction_default_result(self):
+    async def test_on_player_interaction_default_result(self):
         import mcpython.common.block.AbstractBlock
 
         block = mcpython.common.block.AbstractBlock.AbstractBlock()
-        self.assertFalse(block.on_player_interaction(None, mouse.LEFT, 0, (0, 0, 0), None))
-
+        self.assertFalse(
+            await block.on_player_interaction(None, mouse.LEFT, 0, (0, 0, 0), None)
+        )

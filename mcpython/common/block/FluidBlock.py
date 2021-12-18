@@ -66,19 +66,19 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
         self.height = 7
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if shared.IS_CLIENT:
             self.face_info.custom_renderer = self.FLUID_RENDERER
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
         buffer.write_bool(self.is_flowing)
         buffer.write_int(self.flow_direction[0])
         buffer.write_int(self.flow_direction[1])
         buffer.write_int(self.height)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
         self.is_flowing = buffer.read_bool()
         self.flow_direction = buffer.read_int(), buffer.read_int()
         self.height = buffer.read_int()

@@ -19,7 +19,7 @@ class TestDisconnectionInitPackage(TestCase):
     def test_module_import(self):
         import mcpython.common.network.packages.DisconnectionPackage
 
-    def test_buffer_io(self):
+    async def test_buffer_io(self):
         from mcpython.common.network.packages.DisconnectionPackage import (
             DisconnectionInitPackage,
         )
@@ -29,16 +29,16 @@ class TestDisconnectionInitPackage(TestCase):
         self.assertEqual(package.reason, "test reason!")
 
         buffer = WriteBuffer()
-        package.write_to_buffer(buffer)
+        await package.write_to_buffer(buffer)
 
         buffer = ReadBuffer(io.BytesIO(buffer.get_data()))
         package2 = DisconnectionInitPackage()
-        package2.read_from_buffer(buffer)
+        await package2.read_from_buffer(buffer)
 
         self.assertEqual(package.reason, "test reason!")
         self.assertEqual(package.reason, package2.reason)
 
-    def test_handle_inner(self):
+    async def test_handle_inner(self):
         from mcpython import shared
         from mcpython.common.network.packages.DisconnectionPackage import (
             DisconnectionConfirmPackage,
@@ -49,16 +49,16 @@ class TestDisconnectionInitPackage(TestCase):
 
         status_a = False
 
-        def a(p):
+        async def a(p):
             nonlocal status_a
             status_a = isinstance(p, DisconnectionConfirmPackage)
 
         package = DisconnectionInitPackage().set_reason("test reason!")
         package.answer = a
 
-        package.handle_inner()
+        await package.handle_inner()
 
         self.assertTrue(status_a)
 
 
-# the confirm package does not need a unit test here, as the underlying systems are hard to test
+# the confirmation package does not need a unit test here, as the underlying systems are hard to test

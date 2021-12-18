@@ -11,8 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import math
 import typing
+
+import deprecation
 
 import mcpython.client.gui.Slot
 import mcpython.client.rendering.entities.EntityRenderer
@@ -108,12 +111,12 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if not shared.mod_loader.finished and not shared.IS_TEST_ENV:
             shared.mod_loader["minecraft"].eventbus.subscribe(
                 "stage:inventories",
-                self.create_inventories,
+                self.create_inventories(),
                 info="setting up player inventory",
             )
 
         else:
-            self.create_inventories()
+            shared.tick_handler.schedule_once(self.create_inventories())
 
         # todo: move to somewhere else! (Each player creation does a new one!)
         # todo: client-only
@@ -159,8 +162,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     def __repr__(self):
         return super().__repr__() + "::" + self.name
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
 
         buffer.write_string(self.name)
         buffer.write_int(self.gamemode)
@@ -174,14 +177,13 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         buffer.write_float(self.fallen_since_y)
         buffer.write_int(self.active_inventory_slot)
 
-        self.create_inventories()
-        self.inventory_hotbar.write_to_network_buffer(buffer)
-        self.inventory_main.write_to_network_buffer(buffer)
-        self.inventory_enderchest.write_to_network_buffer(buffer)
+        await self.create_inventories()
+        await self.inventory_hotbar.write_to_network_buffer(buffer)
+        await self.inventory_main.write_to_network_buffer(buffer)
+        await self.inventory_enderchest.write_to_network_buffer(buffer)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
-
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
         self.name = buffer.read_string()
         self.gamemode = buffer.read_int()
         self.hearts = buffer.read_int()
@@ -194,10 +196,10 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.fallen_since_y = buffer.read_float()
         self.active_inventory_slot = buffer.read_int()
 
-        self.create_inventories()
-        self.inventory_hotbar.read_from_network_buffer(buffer)
-        self.inventory_main.read_from_network_buffer(buffer)
-        self.inventory_enderchest.read_from_network_buffer(buffer)
+        await self.create_inventories()
+        await self.inventory_hotbar.read_from_network_buffer(buffer)
+        await self.inventory_main.read_from_network_buffer(buffer)
+        await self.inventory_enderchest.read_from_network_buffer(buffer)
 
         return self
 
@@ -217,7 +219,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
         return package
 
-    def write_update_package(self, package: PlayerUpdatePackage):
+    async def write_update_package(self, package: PlayerUpdatePackage):
         if package.update_flags == -1:
             self.position, self.rotation, self.nbt_data["motion"] = (
                 package.position,
@@ -238,21 +240,21 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             if flag & 8:
                 self.dimension = shared.world.get_dimension_by_name(package.dimension)
             if flag & 16:
-                self.active_inventory_slot = package.selected_slot
+                await self.set_active_inventory_slot(package.selected_slot)
             if flag & 32:
                 self.set_gamemode(package.gamemode)
 
         return self
 
-    def send_update_package_when_client(self):
+    async def send_update_package_when_client(self):
         if shared.IS_CLIENT and shared.IS_NETWORKING and not self.is_in_init:
-            shared.NETWORK_MANAGER.send_package(self.create_update_package(), 0)
+            await shared.NETWORK_MANAGER.send_package(self.create_update_package(), 0)
 
-    def send_update_package_when_server(self, update_flags=-1):
+    async def send_update_package_when_server(self, update_flags=-1):
         if not shared.IS_CLIENT:
             package = self.create_update_package()
             package.update_flags = update_flags
-            shared.NETWORK_MANAGER.send_package_to_all(package)
+            await shared.NETWORK_MANAGER.send_package_to_all(package)
 
     def hotkey_get_position(self):
         # todo: remove this check when only the current player uses this event
@@ -276,7 +278,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         elif self.gamemode == 3:
             self.set_gamemode(1)
 
-    def create_inventories(self):
+    async def create_inventories(self):
         """
         Helper method for setting up the player inventory
         todo: can we re-use inventories from previous players?
@@ -292,10 +294,27 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         import mcpython.client.gui.MainPlayerInventory as Main
 
         self.inventory_hotbar = InvHotbar.InventoryPlayerHotbar.create(self)
+        await self.inventory_hotbar.init()
+
         self.inventory_main = Main.MainPlayerInventory.create(self.inventory_hotbar)
-        self.inventory_chat = Chat.ChatInventory()
+        await self.inventory_main.init()
+
+        if shared.IS_CLIENT:
+            self.inventory_chat = Chat.ChatInventory()
+            await self.inventory_chat.init()
+
         self.inventory_enderchest = Chest.InventoryChest()
+        await self.inventory_enderchest.init()
+
         self.inventory_crafting_table = InvCrafting.InventoryCraftingTable()
+        await self.inventory_crafting_table.init()
+
+        if shared.IS_CLIENT:
+            await self.inventory_hotbar.reload_config()
+            await self.inventory_main.reload_config()
+            await self.inventory_chat.reload_config()
+            await self.inventory_enderchest.reload_config()
+            await self.inventory_crafting_table.reload_config()
 
         self.inventory_order.extend(
             [
@@ -330,7 +349,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             logger.println("[ERROR] invalid gamemode:", gamemode)
 
         if not shared.IS_TEST_ENV:
-            self.send_update_package_when_server(update_flags=32)
+            shared.tick_handler.schedule_once(
+                self.send_update_package_when_server(update_flags=32)
+            )
 
     def get_needed_xp_for_next_level(self) -> int:
         """
@@ -343,7 +364,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         else:
             return 107 + (self.xp_level - 29) * 9
 
-    def add_xp(self, xp: int):
+    async def add_xp(self, xp: int):
         while xp > 0:
             needed = self.get_needed_xp_for_next_level()
             if self.xp + xp < needed:
@@ -355,21 +376,21 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             else:
                 xp = xp - (needed - self.xp)
                 self.xp_level += 1
-        self.send_update_package_when_client()
+        await self.send_update_package_when_client()
         return self
 
-    def add_xp_level(self, xp_levels: int):
+    async def add_xp_level(self, xp_levels: int):
         self.xp_level += xp_levels
-        self.send_update_package_when_client()
+        await self.send_update_package_when_client()
         return self
 
-    def clear_xp(self):
+    async def clear_xp(self):
         self.xp_level = 0
         self.xp = 0
-        self.send_update_package_when_client()
+        await self.send_update_package_when_client()
         return self
 
-    def pick_up_item(
+    async def pick_up_item(
         self,
         itemstack: typing.Union[
             mcpython.common.container.ResourceStack.ItemStack,
@@ -385,7 +406,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if itemstack is None:
             return True
 
-        if not shared.event_handler.call_cancelable(
+        if not await shared.event_handler.call_cancelable_async(
             "gameplay:player:pick_up_item", self, itemstack
         ):
             return False
@@ -394,7 +415,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if isinstance(itemstack, mcpython.client.gui.Slot.Slot):
             itemstack = itemstack.get_itemstack()
         if type(itemstack) == list:
-            return all([self.pick_up_item(itemstack) for itemstack in itemstack])
+            return all([await self.pick_up_item(itemstack) for itemstack in itemstack])
 
         if not itemstack.item or itemstack.amount == 0:
             return True
@@ -434,25 +455,35 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                     return True
         return False
 
-    def set_active_inventory_slot(self, slot: int):
+    async def set_active_inventory_slot(self, slot: int):
         """
         Sets the active inventory slot by ID (0-8)
         Clamped in the range when out of range
         """
         self.active_inventory_slot = max(min(round(slot), 8), 0)
-        self.send_update_package_when_client()
+        await self.send_update_package_when_client()
         return self
 
+    @deprecation.deprecated()
     def get_active_inventory_slot(self):
         """
         Gets the slot of the selected slot
         """
         if self.inventory_hotbar is None:
-            self.create_inventories()
+            asyncio.get_event_loop().run_until_complete(self.create_inventories())
 
         return self.inventory_hotbar.slots[self.active_inventory_slot]
 
-    def kill(
+    async def get_active_inventory_slot_async(self):
+        """
+        Gets the slot of the selected slot
+        """
+        if self.inventory_hotbar is None:
+            await self.create_inventories()
+
+        return self.inventory_hotbar.slots[self.active_inventory_slot]
+
+    async def kill(
         self,
         drop_items=True,
         kill_animation=True,
@@ -466,7 +497,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             # todo: add list to player of possible slots with possibility of being callable
             # todo: add tag for this functionality
             a = (
-                self.get_active_inventory_slot().get_itemstack().get_item_name()
+                (await self.get_active_inventory_slot_async()).get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
             )
             b = (
@@ -484,7 +515,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 self.hunger = 20
                 return
 
-        super().kill()
+        await super().kill()
 
         # We don't need them anymore? todo: this feels wrong!
         self.inventory_main.free()
@@ -495,7 +526,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if not internal:
             shared.world.change_chunks(sector, None, dimension=self.dimension)
 
-        self.reset_moving_slot()
+        shared.tick_handler.schedule_once(self.reset_moving_slot)
         if (
             not shared.world.gamerule_handler.table["keepInventory"].status.status
             or internal
@@ -541,13 +572,15 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             and not internal
         ):
             # todo: add special state [see above]
-            shared.state_handler.change_state("minecraft:escape_menu")
+            await shared.state_handler.change_state("minecraft:escape_menu")
 
         if not internal:
-            shared.event_handler.call("gameplay:player:die", self, damage_source)
+            await shared.event_handler.call_async(
+                "gameplay:player:die", self, damage_source
+            )
 
         # self.send_update_package_when_client()
-        self.send_update_package_when_server()
+        await self.send_update_package_when_server()
 
     def _get_position(self):
         return self.position
@@ -559,28 +592,25 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         """
         Damage the player and removes the given amount of hearts (two hearts are one full displayed hart)
         """
-        hearts = hearts * (
-            1
-            - min(
-                [
-                    20,
-                    max(
-                        [
-                            self.armor_level / 5,
-                            self.armor_level - hearts / (2 + self.armor_toughness / 4),
-                        ]
-                    ),
-                ]
-            )
+        hearts *= 1 - min(
+            [
+                20,
+                max(
+                    [
+                        self.armor_level / 5,
+                        self.armor_level - hearts / (2 + self.armor_toughness / 4),
+                    ]
+                ),
+            ]
         )
         if self.gamemode in [0, 2] or not check_gamemode:
             self.hearts -= hearts
             if self.hearts <= 0:
-                self.kill()
+                shared.tick_handler.schedule_once(self.kill())
 
-    def reset_moving_slot(self):
+    async def reset_moving_slot(self):
         stack = shared.inventory_handler.moving_slot.get_itemstack()
-        self.pick_up_item(stack.copy())
+        await self.pick_up_item(stack.copy())
         stack.clean()
 
     def teleport_to_spawn_point(self):
@@ -607,13 +637,17 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def tell(self, msg: str):
         if not shared.IS_CLIENT:
-            shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
+            asyncio.get_event_loop().run_until_complete(
+                shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
+            )
             return
 
         if self == shared.world.get_active_player():
             shared.chat.print_ln(msg)
         else:
-            shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
+            asyncio.get_event_loop().run_until_complete(
+                shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
+            )
 
     def draw(self, position=None, rotation=None, full=None):
         old_position = self.position

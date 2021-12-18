@@ -39,12 +39,12 @@ class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
         super().__init__()
         self.type = SlabModes.TOP
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if self.real_hit and self.real_hit[1] - self.position[1] > 0:
             self.type = SlabModes.TOP
         else:
             self.type = SlabModes.BOTTOM
-        self.schedule_network_update()
+        await self.schedule_network_update()
 
     def get_model_state(self):
         return {"type": self.type.name.lower()}

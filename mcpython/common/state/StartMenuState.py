@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 import mcpython.common.mod.ModMcpython
 import mcpython.common.state.AbstractState
 import pyglet
@@ -19,6 +21,7 @@ from mcpython.util.annotation import onlyInClient
 
 
 class StartMenu(mcpython.common.state.AbstractState.AbstractState):
+
     NAME = "minecraft:start_menu"
     CONFIG_LOCATION = "data/minecraft/states/start_menu.json"
 
@@ -28,37 +31,39 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
         shared.world.world_loaded = False
         shared.ENABLE_ANIMATED_TEXTURES = True
 
     @staticmethod
-    def on_new_game_press(x, y):
-        shared.state_handler.change_state("minecraft:world_selection", immediate=False)
+    async def on_new_game_press(x, y):
+        await shared.state_handler.change_state(
+            "minecraft:world_selection", immediate=False
+        )
 
     @staticmethod
     def on_quit_game_press(x, y):
         shared.window.close()
 
     @staticmethod
-    def on_key_press(key, modifier):
+    async def on_key_press(key, modifier):
         if key == pyglet.window.key.ENTER:
-            shared.state_handler.change_state(
+            await shared.state_handler.change_state(
                 "minecraft:world_selection", immediate=False
             )
 
     @staticmethod
-    def on_multiplayer_press(x, y):
-        shared.state_handler.change_state("minecraft:server_selection")
+    async def on_multiplayer_press(x, y):
+        await shared.state_handler.change_state("minecraft:server_selection")
 
 
 start_menu = None
 
 
-def create():
+async def create():
     global start_menu
     start_menu = StartMenu()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

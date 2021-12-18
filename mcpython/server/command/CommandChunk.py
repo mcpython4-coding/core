@@ -19,6 +19,17 @@ from mcpython import shared
 from mcpython.engine import logger
 from mcpython.server.command.Builder import Command, CommandNode, DefinedString, Int
 
+
+async def generate_area(env, data):
+    for x, z in itertools.product(
+        range(data[3], data[5] + 1), range(data[4], data[6] + 1)
+    ):
+        logger.println(f"generating chunk {x} {z}")
+        await shared.world_generation_handler.generate_chunk(
+            env.get_dimension().get_chunk(x, z)
+        )
+
+
 chunk = (
     Command("chunk")
     .than(
@@ -62,19 +73,7 @@ chunk = (
                             CommandNode(Int())
                             .of_name("end Z")
                             .info("generates the given area")
-                            .on_execution(
-                                lambda env, data: [
-                                    logger.println(f"generating chunk {x} {z}")
-                                    # == for executing both sides in all cases
-                                    == shared.world_generation_handler.generate_chunk(
-                                        env.get_dimension().get_chunk(x, z)
-                                    )
-                                    for x, z in itertools.product(
-                                        range(data[3], data[5] + 1),
-                                        range(data[4], data[6] + 1),
-                                    )
-                                ]
-                            )
+                            .on_execution(generate_area)
                         )
                     )
                 )

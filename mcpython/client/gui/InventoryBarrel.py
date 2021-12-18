@@ -37,8 +37,8 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def get_config_file() -> str or None:
         return "assets/config/inventory/block_inventory_chest.json"
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -46,8 +46,8 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         if shared.IS_CLIENT:
             self.block.face_info.update(True)
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -56,7 +56,7 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             self.block.face_info.update(True)
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
 
@@ -71,9 +71,9 @@ class InventoryBarrel(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
         shared.inventory_handler.shift_container_handler.container_A = (

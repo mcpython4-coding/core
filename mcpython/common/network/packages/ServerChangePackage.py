@@ -35,28 +35,28 @@ class ServerChangePackage(AbstractPackage):
         self.new_server_port = port
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.new_server_ip)
         buffer.write_int(self.new_server_port)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.new_server_ip = buffer.read_string()
         self.new_server_port = buffer.read_int()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         logger.println(
             "[NETWORK][INFO] Preparing for server change, please stand by for new connection..."
         )
         shared.tick_handler.schedule_once(self.reconnect)
-        shared.NETWORK_MANAGER.disconnect()
+        await shared.NETWORK_MANAGER.disconnect()
 
-    def reconnect(self):
+    async def reconnect(self):
         pair = self.new_server_ip, self.new_server_port
         if not connectClient2Server(pair[0], int(pair[1])):
             logger.println(
                 "[NETWORK][FATAL] server change FAILED. See above for reason"
             )
-            shared.state_handler.change_state("minecraft:start_menu")
+            await shared.state_handler.change_state("minecraft:start_menu")
             return
 
         logger.println("[NETWORK][INFO] Server connection established")
@@ -65,8 +65,8 @@ class ServerChangePackage(AbstractPackage):
             Client2ServerHandshake,
         )
 
-        shared.NETWORK_MANAGER.send_package(
+        await shared.NETWORK_MANAGER.send_package(
             Client2ServerHandshake().setup("test:player")
         )
 
-        shared.state_handler.change_state("minecraft:server_connecting")
+        await shared.state_handler.change_state("minecraft:server_connecting")

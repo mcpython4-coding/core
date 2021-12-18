@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import gc
 import typing
 
@@ -23,59 +24,55 @@ from mcpython import shared
 from .abstract import AbstractReloadListener
 
 
-def recipe_mapper(modname, pathname):
+async def recipe_mapper(modname: str, pathname: str):
     import mcpython.common.container.crafting.CraftingManager
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:recipes",
-        shared.crafting_handler.load,
-        pathname,
+        shared.crafting_handler.load(pathname),
         info="loading crafting recipes for mod {}".format(modname),
     )
 
 
-def model_mapper(modname, pathname):
+async def model_mapper(modname: str, pathname: str):
     from mcpython.client.rendering.model.BlockState import BlockStateContainer
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:model_search",
-        shared.model_handler.add_from_mod,
-        pathname,
+        shared.model_handler.add_from_mod(pathname),
         info="searching for block models for mod {}".format(modname),
     )
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:model:blockstate_search",
-        BlockStateContainer.from_directory,
-        "assets/{}/blockstates".format(pathname),
-        modname,
+        BlockStateContainer.from_directory(
+            "assets/{}/blockstates".format(pathname), modname
+        ),
         info="searching for block states for mod {}".format(modname),
     )
 
 
-def model_bake():
-    shared.model_handler.build(immediate=True)
+async def model_bake():
+    await shared.model_handler.build(immediate=True)
 
 
-def tag_mapper(modname, pathname):
+async def tag_mapper(modname: str, pathname: str):
     import mcpython.common.data.serializer.tags.TagHandler
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:tag:group",
-        lambda: mcpython.common.data.serializer.tags.TagHandler.add_from_location(
-            pathname
-        ),
+        mcpython.common.data.serializer.tags.TagHandler.add_from_location(pathname),
         info="adding tag groups for mod {}".format(modname),
     )
 
 
-def language_mapper(modname, pathname):
+async def language_mapper(modname: str, pathname: str):
     import mcpython.common.data.Language
 
     mcpython.common.data.Language.from_mod_name(modname)
 
 
-def loot_table_mapper(modname, pathname):
+async def loot_table_mapper(modname: str, pathname: str):
     from mcpython.common.data.serializer.loot import (
         LootTable,
         LootTableCondition,
@@ -84,7 +81,7 @@ def loot_table_mapper(modname, pathname):
 
     shared.mod_loader.mods[modname].eventbus.subscribe(
         "stage:loottables:load",
-        lambda: LootTable.handler.for_mod_name(modname, pathname),
+        LootTable.handler.for_mod_name(modname, pathname),
         info="adding loot tables for mod {}".format(modname),
     )
 
@@ -99,30 +96,38 @@ class ResourcePipeHandler:
 
         self.listeners: typing.List[typing.Type[AbstractReloadListener]] = []
 
-        shared.mod_loader("minecraft", "stage:post")(self.reload_content)
+        shared.mod_loader("minecraft", "stage:post")(self.reload_content())
 
     def register_listener(self, listener: typing.Type[AbstractReloadListener]):
         self.listeners.append(listener)
 
-        def l():
-            listener.on_reload(True)
+        async def l():
+            await listener.on_reload(True)
 
-        shared.mod_loader("minecraft", "stage:post")(l)
+        shared.mod_loader("minecraft", "stage:post")(l())
 
         return self
 
-    def register_for_mod(self, providing_mod: str, namespace: str = None):
+    async def register_for_mod(self, providing_mod: str, namespace: str = None):
         """
         Used internally to add new namespaces to the loading system
         """
         if namespace is None:
             namespace = providing_mod
+
         self.namespaces.append((providing_mod, namespace))
-        for mapper in self.mappers:
-            mapper(providing_mod, namespace)
+
+        await asyncio.gather(
+            *filter(
+                lambda e: e is not None,
+                map(lambda e: e(providing_mod, namespace), self.mappers),
+            )
+        )
 
     def register_mapper(
-        self, mapper: typing.Callable[[str, str], None], on_dedicated_server=True
+        self,
+        mapper: typing.Callable[[str, str], None | typing.Awaitable],
+        on_dedicated_server=True,
     ):
         """
         To use in "stage:resources:pipe:add_mapper"
@@ -132,8 +137,13 @@ class ResourcePipeHandler:
 
         self.mappers.append(mapper)
 
-        for name, pathname in self.namespaces:
-            mapper(name, pathname)
+        asyncio.get_event_loop().run_until_complete(
+            asyncio.gather(
+                *filter(
+                    lambda e: e is not None, map(lambda e: mapper(*e), self.namespaces)
+                )
+            )
+        )
 
         return self
 
@@ -149,58 +159,69 @@ class ResourcePipeHandler:
         self.data_processors.append(listener)
         return self
 
-    def reload_content(self):
-        if not shared.event_handler.call_cancelable("data:reload:cancel"):
-            return
+    async def reload_content(self):
+        print("starting reload cycle...")
 
-        mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
-        shared.tag_handler.reload()  # reloads all tags
-        shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
+        await mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
+        await shared.tag_handler.reload()  # reloads all tags
+        await shared.crafting_handler.reload_crafting_recipes()  # reloads all recipes
 
         import mcpython.common.data.serializer.loot.LootTable as LootTable
 
-        LootTable.handler.reload()
+        await LootTable.handler.reload()
 
         # as we are reloading, this may get mixed up...
         shared.crafting_handler.recipe_relink_table.clear()
         shared.loot_table_handler.relink_table.clear()
-        shared.event_handler.call("data:shuffle:clear")
+        await shared.event_handler.call_async("data:shuffle:clear")
 
         if mcpython.common.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
-            shared.event_handler.call("minecraft:data:shuffle:all")
+            await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
         if shared.IS_CLIENT:
-            shared.inventory_handler.reload_config()  # reloads inventory configuration
-            shared.model_handler.reload_models()
+            await shared.inventory_handler.reload_config()  # reloads inventory configuration
+            await shared.model_handler.reload_models()
             mcpython.engine.rendering.util.setup()
 
             # todo: regenerate block item images, regenerate item atlases
 
         # reload entity model files
-        [
-            e.reload()
-            for e in mcpython.client.rendering.entities.EntityRenderer.RENDERERS
-        ]
+        await asyncio.gather(
+            *[
+                e.reload()
+                for e in mcpython.client.rendering.entities.EntityRenderer.RENDERERS
+            ]
+        )
 
-        for function in self.reload_handlers:
-            function()
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e(), self.reload_handlers))
+        )
+        await asyncio.gather(
+            *filter(
+                lambda e: e is not None, map(lambda e: e.on_unload(), self.listeners)
+            )
+        )
+        await asyncio.gather(
+            *filter(
+                lambda e: e is not None, map(lambda e: e.on_reload(), self.listeners)
+            )
+        )
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e(), self.bake_handlers))
+        )
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e.on_bake(), self.listeners))
+        )
 
-        for listener in self.listeners:
-            listener.on_unload()
-            listener.on_reload()
+        await shared.inventory_handler.reload_config()
 
-        for function in self.bake_handlers:
-            function()
-
-        for listener in self.listeners:
-            listener.on_bake()
-
-        shared.event_handler.call("data:reload:work")
+        await shared.event_handler.call_async("data:reload:work")
 
         gc.collect()  # make sure that memory was cleaned up
 
-        for function in self.data_processors:
-            function()
+        await asyncio.gather(
+            *filter(lambda e: e is not None, map(lambda e: e(), self.data_processors))
+        )
 
 
 handler = ResourcePipeHandler()

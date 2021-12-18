@@ -61,14 +61,14 @@ class IStairs(mcpython.common.block.AbstractBlock.AbstractBlock):
         self.is_top = False
         self.shape = StairShape.STRAIGHT
 
-    def on_block_added(self):
-        IHorizontalOrientableBlock.on_block_added(self)
+    async def on_block_added(self):
+        await IHorizontalOrientableBlock.on_block_added(self)
 
         if self.real_hit and self.real_hit[1] > self.position[1]:
             self.is_top = True
-            self.schedule_network_update()
+            await self.schedule_network_update()
 
-    def on_block_update(self):
+    async def on_block_update(self):
         pass  # todo: calculate shape!
 
     def get_model_state(self):

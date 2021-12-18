@@ -23,7 +23,7 @@ class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlo
         super().__init__()
         self.face = EnumSide.NORTH
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if self.real_hit:
             sx, sy, sz = self.real_hit
             px, py, pz = self.position
@@ -48,7 +48,7 @@ class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlo
                 elif dz > 0 and abs(dx) < abs(dz):
                     self.face = EnumSide.SOUTH
 
-            self.schedule_network_update()
+            await self.schedule_network_update()
 
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}

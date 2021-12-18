@@ -31,18 +31,18 @@ class PackageReroute(AbstractPackage):
         self.inner_package = package
         return self
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.route_target = buffer.read_int()
-        self.inner_package = shared.NETWORK_MANAGER.fetch_package_from_buffer(
+        self.inner_package = await shared.NETWORK_MANAGER.fetch_package_from_buffer(
             bytearray(buffer.read_bytes(size_size=4))
         )
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_int(self.route_target)
         buffer.write_bytes(
-            shared.NETWORK_MANAGER.encode_package(self.inner_package), size_size=4
+            await shared.NETWORK_MANAGER.encode_package(self.inner_package), size_size=4
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         # todo: can we prevent the encoding / decoding bit (we are routing, encoding should be equal)
-        shared.NETWORK_MANAGER.send_package(self.inner_package, self.route_target)
+        await shared.NETWORK_MANAGER.send_package(self.inner_package, self.route_target)

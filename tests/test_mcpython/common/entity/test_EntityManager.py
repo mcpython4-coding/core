@@ -34,11 +34,11 @@ class BaseTestEntity:
         pass
 
     @classmethod
-    def tick(cls, dt: float):
+    async def tick(cls, dt: float):
         pass
 
     @classmethod
-    def kill(cls, *_, **__):
+    async def kill(cls, *_, **__):
         pass
 
 
@@ -105,14 +105,14 @@ class TestEntityManager(TestCase):
             self.entity_manager_instance.entity_map[instance.uuid], instance
         )
 
-    def test_tick(self):
+    async def test_tick(self):
         self.ensure_setup()
 
         ticked = False
 
         class TestEntity(BaseTestEntity):
             @classmethod
-            def tick(cls, dt: float):
+            async def tick(cls, dt: float):
                 nonlocal ticked
                 ticked = True
 
@@ -121,29 +121,29 @@ class TestEntityManager(TestCase):
         instance = TestEntity()
 
         self.entity_manager_instance.spawn_entity(instance, (0, 0, 0))
-        self.entity_manager_instance.tick(0.05)
+        await self.entity_manager_instance.tick(0.05)
 
         self.assertTrue(ticked)
 
-    def test_tick_kill(self):
+    async def test_tick_kill(self):
         self.ensure_setup()
 
         killed = False
 
         class TestEntity(BaseTestEntity):
             @classmethod
-            def kill(cls):
+            async def kill(cls):
                 nonlocal killed
                 killed = True
 
         instance = TestEntity(position=(0, -1001, 0))
 
         self.entity_manager_instance.spawn_entity(instance, (0, -1001, 0))
-        self.entity_manager_instance.tick(0.05)
+        await self.entity_manager_instance.tick(0.05)
 
         self.assertTrue(killed)
 
-    def test_tick_child_handling(self):
+    async def test_tick_child_handling(self):
         """
         Checks if passenger handling works as it is expected
         Spawns to entities, links them and ticks the handler ones
@@ -157,15 +157,15 @@ class TestEntityManager(TestCase):
 
         self.entity_manager_instance.spawn_entity(parent, (0, 0, 0))
         self.entity_manager_instance.spawn_entity(child, (0, 0, 0))
-        self.entity_manager_instance.tick(0.05)
+        await self.entity_manager_instance.tick(0.05)
 
         self.assertEqual(child.position, (0, 1, 0))
 
-    def test_clear(self):
+    async def test_clear(self):
         self.ensure_setup()
 
         instance = BaseTestEntity()
         self.entity_manager_instance.spawn_entity(instance, (0, 0, 0))
-        self.entity_manager_instance.clear()
+        await self.entity_manager_instance.clear()
 
         self.assertEqual(len(self.entity_manager_instance.entity_map), 0)

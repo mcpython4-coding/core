@@ -16,10 +16,10 @@ from mcpython import shared
 from mcpython.server.command.Builder import Command
 
 
-def reload_func():
+async def reload_func():
     import mcpython.common.data.ResourcePipe
 
-    mcpython.common.data.ResourcePipe.handler.reload_content()
+    await mcpython.common.data.ResourcePipe.handler.reload_content()
 
 
 def reload_chunks():
@@ -38,7 +38,7 @@ mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "hotkey:chunk_reload", reload_chunks
 )
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "hotkey:reload_textures", reload_func
+    "hotkey:reload_textures", reload_func()
 )
 
 

@@ -58,7 +58,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
 
         self.broken_count = 0
 
-    def on_block_added(self):
+    async def on_block_added(self):
         # only if this is set, decode it
         if self.set_to is not None:
             dx, dy, dz = tuple([self.position[i] - self.set_to[i] for i in range(3)])
@@ -74,32 +74,32 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
             if shared.IS_CLIENT:
                 self.face_info.update()
 
-            self.schedule_network_update()
+            await self.schedule_network_update()
 
-    def on_anvil_use(self):
+    async def on_anvil_use(self):
         if random.random() < self.BREAK_CHANCE:
             self.broken_count += 1
 
             if self.broken_count >= self.BREAKS_BLOCK_RESIST:
-                self.dimension.add_block(self.position, self.BROKEN_BLOCK)
+                await self.dimension.add_block(self.position, self.BROKEN_BLOCK)
 
-            self.schedule_network_update()
+            await self.schedule_network_update()
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super().write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
 
-        # self.inventory.write_to_network_buffer(buffer)
+        # await self.inventory.write_to_network_buffer(buffer)
         buffer.write_int(self.broken_count)
         buffer.write_int(EnumSide[self.facing.upper()].index)
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super().read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
 
-        # self.inventory.read_from_network_buffer(buffer)
+        # await self.inventory.read_from_network_buffer(buffer)
         self.broken_count = buffer.read_int()
         self.facing = EnumSide.by_index(buffer.read_int()).normal_name
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
     ):
         return False
@@ -108,7 +108,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         if button == mouse.RIGHT and not modifiers & (
             key.MOD_SHIFT | key.MOD_ALT | key.MOD_CTRL
         ):
-            shared.inventory_handler.show(self.inventory)
+            await shared.inventory_handler.show(self.inventory)
             return True
         else:
             return False"""
@@ -148,15 +148,17 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         ):
             itemstack.item.inventory = self.inventory.copy()
 
-    def on_block_remove(self, reason):
+    async def on_block_remove(self, reason):
         return
 
         if shared.world.gamerule_handler.table["doTileDrops"].status.status:
             for slot in self.inventory.slots:
-                shared.world.get_active_player().pick_up_item(slot.itemstack.copy())
+                await shared.world.get_active_player().pick_up_item(
+                    slot.itemstack.copy()
+                )
                 slot.itemstack.clean()
 
-        shared.inventory_handler.hide(self.inventory)
+        await shared.inventory_handler.hide(self.inventory)
         del self.inventory
 
 

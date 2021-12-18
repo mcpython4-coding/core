@@ -220,12 +220,13 @@ class LaunchWrapper:
         # )
 
         @shared.mod_loader("minecraft", "special:exit")
-        def exit():
+        async def exit():
             logger.println(
                 "[INFO] stopping program as requested. If you the program continues execution, please report this"
             )
 
-            shared.window.close()
+            if shared.IS_CLIENT:
+                shared.window.close()
 
             import pyglet.app
 

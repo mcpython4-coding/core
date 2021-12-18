@@ -31,27 +31,31 @@ class RegistrySyncInitPackage(AbstractPackage):
         super().__init__()
         self.registries = []
 
-    def setup(self):
+    async def setup(self):
         for registry_name, instance in shared.registry.registries.items():
             if instance.sync_via_network:
                 self.registries.append(registry_name)
 
-        shared.event_handler.call("minecraft:network:registry_sync:setup", self)
+        await shared.event_handler.call_async(
+            "minecraft:network:registry_sync:setup", self
+        )
 
         return self
 
-    def read_from_buffer(self, buffer: ReadBuffer):
-        self.registries = buffer.read_list(lambda: buffer.read_string())
+    async def read_from_buffer(self, buffer: ReadBuffer):
+        self.registries = [e async for e in buffer.read_list(buffer.read_string)]
 
-    def write_to_buffer(self, buffer: WriteBuffer):
-        buffer.write_list(self.registries, lambda e: buffer.write_string(e))
+    async def write_to_buffer(self, buffer: WriteBuffer):
+        await buffer.write_list(self.registries, buffer.write_string)
 
-    def handle_inner(self):
+    async def handle_inner(self):
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"] = {
             e: -1 for e in self.registries
         }
 
-        shared.event_handler.call("minecraft:network:registry_sync:init", self)
+        await shared.event_handler.call_async(
+            "minecraft:network:registry_sync:init", self
+        )
 
         for name in self.registries:
             registry = shared.registry.get_by_name(name)
@@ -62,10 +66,10 @@ class RegistrySyncInitPackage(AbstractPackage):
                 )
                 continue
 
-            package = (
+            package = await (
                 registry.registry_sync_package_class or RegistrySyncPackage
             )().setup(name)
-            self.answer(package)
+            await self.answer(package)
 
 
 class RegistrySyncPackage(AbstractPackage):
@@ -81,7 +85,7 @@ class RegistrySyncPackage(AbstractPackage):
         self.content = []
         self.name = None
 
-    def setup(self, name: str):
+    async def setup(self, name: str):
         self.name = name
 
         for entry in shared.registry.get_by_name(name).entries.values():
@@ -89,30 +93,35 @@ class RegistrySyncPackage(AbstractPackage):
                 (entry.NAME, entry.INFO if entry.INFO is not None else "")
             )
 
-        shared.event_handler.call("minecraft:network:registry_sync:setup", self)
+        await shared.event_handler.call_async(
+            "minecraft:network:registry_sync:setup", self
+        )
 
         return self
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.name = buffer.read_string()
-        self.content = buffer.read_list(
-            lambda: (buffer.read_string(), buffer.read_string())
-        )
+        self.content = [
+            e
+            async for e in buffer.read_list(
+                lambda: (buffer.read_string(), buffer.read_string())
+            )
+        ]
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.name)
-        buffer.write_list(
+        await buffer.write_list(
             self.content, lambda e: buffer.write_string(e[0]).write_string(e[1])
         )
 
-    def handle_inner(self):
+    async def handle_inner(self):
         entries_there = set(self.content)
         entries_here = set(
             (entry.NAME, entry.INFO if entry.INFO is not None else "")
             for entry in shared.registry.get_by_name(self.name).entries.values()
         )
 
-        shared.event_handler.call(
+        await shared.event_handler.call_async(
             "minecraft:network:registry_sync:data_recv",
             self,
             entries_here,
@@ -132,7 +141,7 @@ class RegistrySyncPackage(AbstractPackage):
                 header=f"registry mismatches in registry {self.name} (first missing on client, second missing on server)",
             )
 
-            self.answer(RegistrySyncResultPackage().setup(self.name, False))
+            await self.answer(RegistrySyncResultPackage().setup(self.name, False))
             if not shared.event_handler.call_cancelable(
                 "minecraft:network:registry_sync:fail",
                 self,
@@ -144,7 +153,7 @@ class RegistrySyncPackage(AbstractPackage):
         logger.println(
             f"[REGISTRY][SYNC] registry {self.name} seems to be equal in client & server"
         )
-        self.answer(RegistrySyncResultPackage().setup(self.name, True))
+        await self.answer(RegistrySyncResultPackage().setup(self.name, True))
 
 
 class RegistrySyncResultPackage(AbstractPackage):
@@ -161,15 +170,15 @@ class RegistrySyncResultPackage(AbstractPackage):
         self.status = status
         return self
 
-    def write_to_buffer(self, buffer: WriteBuffer):
+    async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.name)
         buffer.write_bool(self.status)
 
-    def read_from_buffer(self, buffer: ReadBuffer):
+    async def read_from_buffer(self, buffer: ReadBuffer):
         self.name = buffer.read_string()
         self.status = buffer.read_bool()
 
-    def handle_inner(self):
+    async def handle_inner(self):
         from .DisconnectionPackage import DisconnectionInitPackage
 
         if shared.IS_CLIENT:
@@ -177,17 +186,17 @@ class RegistrySyncResultPackage(AbstractPackage):
                 logger.println(
                     "[NETWORK][INFO] registry compare results are back from server, everything fine"
                 )
-                if shared.event_handler.call_cancelable(
+                if await shared.event_handler.call_cancelable_async(
                     "minecraft:network:registry_sync:success", self
                 ):
                     logger.println("[NETWORK][INFO] requesting world now...")
                     from .WorldDataExchangePackage import DataRequestPackage
 
-                    def handle(*_):
+                    async def handle(*_):
                         logger.println(
                             "[NETWORK][WORLD] world data received successful, handing over to user..."
                         )
-                        shared.state_handler.change_state("minecraft:game")
+                        await shared.state_handler.change_state("minecraft:game")
                         shared.world.get_active_player().teleport((0, 100, 0))
                         shared.world.get_active_dimension().get_chunk(
                             0, 0
@@ -197,15 +206,19 @@ class RegistrySyncResultPackage(AbstractPackage):
                         DataRequestPackage().request_player_info().request_world_info()
                     )
                     shared.NETWORK_MANAGER.register_answer_handler(package, handle)
-                    self.answer(package)
+                    await self.answer(package)
 
                     return
 
             else:
                 logger.println("[NETWORK][WARN] registry sync FAILED on server side")
-                shared.event_handler.call("minecraft:network:registry_sync:fail", self)
+                await shared.event_handler.call_async(
+                    "minecraft:network:registry_sync:fail", self
+                )
 
-            self.answer(DisconnectionInitPackage().set_reason("registry sync fatal"))
+            await self.answer(
+                DisconnectionInitPackage().set_reason("registry sync fatal")
+            )
             return
 
         shared.NETWORK_MANAGER.client_profiles[self.sender_id]["registry_sync"][
@@ -224,8 +237,8 @@ class RegistrySyncResultPackage(AbstractPackage):
                     "registry_sync"
                 ].values()
             ):
-                self.answer(
+                await self.answer(
                     DisconnectionInitPackage().set_reason("registry miss-matches")
                 )
             else:
-                self.answer(RegistrySyncResultPackage().setup("all", True))
+                await self.answer(RegistrySyncResultPackage().setup("all", True))

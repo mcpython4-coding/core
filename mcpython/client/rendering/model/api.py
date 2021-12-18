@@ -87,7 +87,7 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
     def parse_data(self, data: dict):
         raise NotImplementedError
 
-    def bake(self) -> bool:
+    async def bake(self) -> bool:
         """
         Bake method for doing some stuff after loading all block-states
         :return: if successful or not

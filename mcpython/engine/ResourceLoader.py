@@ -598,7 +598,8 @@ def read_json(file: str):
         print("during accessing", file)
         raise
 
-    if not data: raise ValueError
+    if not data:
+        raise ValueError
 
     try:
         return json.loads(data)

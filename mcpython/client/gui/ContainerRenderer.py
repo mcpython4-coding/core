@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import random
 import typing
 import uuid
@@ -115,8 +116,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.position = (0, 0)
         self.bg_image_pos = (0, 0)
         self.uuid = uuid.uuid4()
-        shared.inventory_handler.add(self)
-        self.slots: typing.List[ISlot] = self.create_slot_renderers()
+        self.slots: typing.List[ISlot] = []
 
         for slot in self.slots:
             slot.assigned_inventory = self
@@ -124,18 +124,31 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         # todo: add special class holding this information with serializer for it
         self.config = {}
 
-        self.reload_config()
+        # asyncio.get_event_loop().run_until_complete(self.reload_config())
         self.custom_name = None  # the custom name; If set, rendered in the inventory
         self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
         self.custom_name_label.anchor_y = "top"
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
+        shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
+
+        shared.tick_handler.schedule_once(self.init())
+        self.created_slots = False
+
+    async def init(self):
+        if self.created_slots: return
+
+        self.created_slots = True
+        self.slots = await self.create_slot_renderers()
+
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.active)
         buffer.write_string(self.custom_name if self.custom_name is not None else "")
 
-        buffer.write_list(self.slots, lambda slot: slot.write_to_network_buffer(buffer))
+        await buffer.write_list(
+            self.slots, lambda slot: slot.write_to_network_buffer(buffer)
+        )
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
         self.active = buffer.read_bool()
 
         self.custom_name = buffer.read_string()
@@ -147,10 +160,10 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         size = buffer.read_int()
 
         if size != len(self.slots):
-            raise RuntimeError("invalid slot count received!")
+            raise RuntimeError(f"invalid slot count received for container {self}!")
 
         for slot in self.slots:
-            slot.read_from_network_buffer(buffer)
+            await slot.read_from_network_buffer(buffer)
 
     def on_mouse_button_press(
         self,
@@ -163,7 +176,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
     ) -> bool:
         return False
 
-    def reload_config(self):
+    async def reload_config(self):
         """
         Reload the config file
         """
@@ -279,7 +292,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
     def tick(self, dt: float):
         pass
 
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         """
         Creates the slots
         :return: the slots the inventory uses
@@ -321,12 +334,12 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
         return 0 <= x - px <= sx and 0 <= y - py <= sy
 
-    def on_activate(self):
+    async def on_activate(self):
         """
         Called when the inventory is shown
         """
 
-    def on_deactivate(self):
+    async def on_deactivate(self):
         """
         Called when the inventory is hidden
         """
@@ -374,10 +387,10 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
             self.custom_name_label.draw()
 
     # todo: remove
-    def on_world_cleared(self):
+    async def on_world_cleared(self):
         [slot.get_itemstack().clean() for slot in self.slots]
         if self in shared.inventory_handler.open_containers:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def get_interaction_slots(self):
         return self.slots

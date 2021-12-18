@@ -127,8 +127,8 @@ class AbstractEntity(
     def get_collision_box(self):
         return EMPTY_BOUNDING_BOX
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         dim_name = buffer.read_string()
         self.dimension = shared.world.get_dimension_by_name(
             dim_name if dim_name != "" else "overworld"
@@ -148,8 +148,8 @@ class AbstractEntity(
         self.nbt_data["motion"] = tuple((buffer.read_float() for _ in range(3)))
         self.nbt_data["invulnerable"] = buffer.read_bool()
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         buffer.write_string(
             self.dimension.get_name() if self.dimension is not None else ""
         )
@@ -248,10 +248,6 @@ class AbstractEntity(
         :param dimension: to which dimension-id to teleport to, if None, no dimension change is used
         :param force_chunk_save_update: if the system should force updating were player data is stored
         """
-        if not shared.event_handler.call_cancelable(
-            "world:entity:teleport", self, dimension, force_chunk_save_update
-        ):
-            return
         if self.chunk is None:
             sector_before = mcpython.util.math.position_to_chunk(self.position)
         else:
@@ -281,8 +277,6 @@ class AbstractEntity(
         else:
             self.unsafe_position = position
 
-        shared.event_handler.call("world:entity:teleport:post", self)
-
     # interaction functions
 
     def tell(self, msg: str):
@@ -292,7 +286,7 @@ class AbstractEntity(
         :param msg: the msg to tell
         """
 
-    def kill(
+    async def kill(
         self,
         drop_items=True,
         kill_animation=True,
@@ -323,7 +317,7 @@ class AbstractEntity(
 
         self.dead = True
 
-    def pick_up_item(
+    async def pick_up_item(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack
     ) -> bool:
         """
@@ -350,7 +344,7 @@ class AbstractEntity(
         """
         self.hearts -= damage
         if self.hearts <= 0:
-            self.kill()
+            shared.tick_handler.schedule_once(self.kill())
 
     def on_interact(self, player, button: int, modifiers: int, itemstack) -> bool:
         """
@@ -388,7 +382,7 @@ class AbstractEntity(
         Invoked in the correct rendering phase
         """
 
-    def tick(self, dt: float):
+    async def tick(self, dt: float):
         """
         Called every tick to update the entity
         Can be used to update animations, movement, do path finding stuff, damage other entities, ...

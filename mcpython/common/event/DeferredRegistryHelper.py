@@ -45,7 +45,7 @@ class DeferredRegistry:
             raise ValueError(factory_instance)
 
         shared.mod_loader(self.modname, self.registry.phase)(
-            lambda: factory_instance.finish()
+            factory_instance.finish_async()
         )
 
     def create_named(self, name: str, factory_instance):

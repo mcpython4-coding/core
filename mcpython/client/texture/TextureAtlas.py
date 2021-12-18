@@ -115,18 +115,22 @@ class TextureAtlasGenerator:
             try:
                 images.append(mcpython.engine.ResourceLoader.read_image(file))
             except ValueError:
-                logger.println("[WARN] could not find texture "+file)
-                images.append(mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png"))
+                logger.println("[WARN] could not find texture " + file)
+                images.append(
+                    mcpython.engine.ResourceLoader.read_image(
+                        "assets/missing_texture.png"
+                    )
+                )
         return self.add_images(
             images,
             identifier,
             single_atlas=single_atlas,
         )
 
-    def output(self):
+    async def output(self):
         # todo: add per-mod, at end of every processing of models
 
-        shared.event_handler.call("minecraft:textures:atlas:build", self)
+        await shared.event_handler.call_async("minecraft:textures:atlas:build", self)
         os.makedirs(shared.tmp.name + "/texture_atlases", exist_ok=True)
 
         for identifier in self.atlases:
@@ -254,4 +258,4 @@ class TextureAtlas:
 handler = TextureAtlasGenerator()
 
 if shared.IS_CLIENT:
-    shared.mod_loader("minecraft", "stage:textureatlas:on_bake")(handler.output)
+    shared.mod_loader("minecraft", "stage:textureatlas:on_bake")(handler.output())

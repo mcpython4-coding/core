@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import threading
 
 from mcpython import shared
@@ -25,7 +26,9 @@ class ServerConsoleHandler:
         while self.running:
             command = input(">>> ")
             if command.startswith("/"):
-                shared.command_parser.run(command)
+                asyncio.get_event_loop().run_until_complete(
+                    shared.command_parser.run(command)
+                )
             else:
                 shared.chat.print_ln("<SERVER>", command)
 

@@ -46,7 +46,7 @@ def build():
             )
 
 
-def load_data():
+async def load_data():
     if not shared.invalidate_cache and os.path.exists(
         shared.build + "/item_block_factory.json"
     ):
@@ -116,7 +116,7 @@ items = mcpython.common.event.Registry.Registry(
 items.item_index_table = {}
 
 
-def load_items():
+async def load_items():
     from . import BucketItem
 
 
@@ -124,10 +124,10 @@ if not shared.IS_TEST_ENV:
     import mcpython.common.mod.ModMcpython
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-        "stage:block:overwrite", load_data, info="loading prepared item data"
+        "stage:block:overwrite", load_data(), info="loading prepared item data"
     )
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-        "stage:item:load", load_items, info="loading items"
+        "stage:item:load", load_items(), info="loading items"
     )
 
     import mcpython.common.item.Items

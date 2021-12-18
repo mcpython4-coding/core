@@ -81,24 +81,26 @@ class DataSerializationService(
         self.serializer.append(serializer)
         return self
 
-    def on_reload(self, is_first_load=False):
+    async def on_reload(self, is_first_load=False):
         if not (is_first_load or self.re_run_on_reload):
             return
 
-        super().on_reload(is_first_load)
+        await super().on_reload(is_first_load)
 
-    def load_file(self, file: str, is_first_load=False):
+    async def load_file(self, file: str, is_first_load=False):
         try:
             data = mcpython.engine.ResourceLoader.read_raw(file)
 
             if callable(self.data_deserializer):
-                data = self.data_deserializer(data)
+                data = await self.data_deserializer(data)
 
             for serializer in self.serializer:
-                if serializer.check(data):
-                    obj = serializer.deserialize(data)
+                if await serializer.check(data):
+                    obj = await serializer.deserialize(data)
+
                     if callable(self.on_deserialize):
-                        self.on_deserialize(obj)
+                        await self.on_deserialize(obj)
+
                     break
 
             else:

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import gzip
 import io
 import typing
@@ -66,7 +67,7 @@ class NetworkManager:
 
         self.playername2connectionID = {}
 
-    def request_chunk(self, chunk: IChunk):
+    async def request_chunk(self, chunk: IChunk):
         if not shared.IS_CLIENT or not shared.IS_NETWORKING:
             raise RuntimeError
 
@@ -74,13 +75,13 @@ class NetworkManager:
             DataRequestPackage,
         )
 
-        self.send_package(
+        await self.send_package(
             DataRequestPackage().request_chunk(
                 chunk.get_dimension().get_name(), *chunk.get_position()
             )
         )
 
-    def send_to_player_chat(self, player: typing.Union[str, int], msg: str):
+    async def send_to_player_chat(self, player: typing.Union[str, int], msg: str):
         from mcpython.common.network.packages.PlayerChatPackage import (
             PlayerMessageShowPackage,
         )
@@ -91,7 +92,7 @@ class NetworkManager:
 
             player = self.playername2connectionID[player]
 
-        self.send_package(PlayerMessageShowPackage().setup(msg), player)
+        await self.send_package(PlayerMessageShowPackage().setup(msg), player)
 
     def reset_package_registry(self):
         self.next_package_type_id = 1
@@ -107,7 +108,7 @@ class NetworkManager:
 
         return d
 
-    def set_dynamic_id_info(self, data: typing.List[typing.Tuple[str, int]]):
+    async def set_dynamic_id_info(self, data: typing.List[typing.Tuple[str, int]]):
         logger.println("[NETWORK][SYNC] starting package ID sync...")
 
         for name, package_id in data:
@@ -139,54 +140,60 @@ class NetworkManager:
                 ] = self.general_package_handlers[package_id_here]
                 del self.general_package_handlers[package_id_here]
 
-        shared.event_handler.call("minecraft:package_rearrangement")
+        await shared.event_handler.call_async("minecraft:package_rearrangement")
 
         logger.println("[NETWORK][SYNC] package ID sync was successful!")
 
-    def disconnect(self, target=-1):
+    async def disconnect(self, target=-1):
         logger.println(
             f"disconnecting connection to {target if target != -1 else ('all' if not shared.IS_CLIENT else 'server')}"
         )
 
         if shared.IS_CLIENT:
             shared.CLIENT_NETWORK_HANDLER.disconnect()
-            shared.state_handler.change_state("minecraft:start_menu")
+            await shared.state_handler.change_state("minecraft:start_menu")
         else:
             if target == -1:
                 shared.SERVER_NETWORK_HANDLER.disconnect_all()
             else:
                 shared.SERVER_NETWORK_HANDLER.disconnect_client(target)
 
-    def send_package_to_all(self, package, not_including=-1):
-        for client_id in self.valid_client_ids:
-            if client_id != not_including:
+    async def send_package_to_all(self, package, not_including=-1):
+        await asyncio.gather(
+            *(
                 self.send_package(package, client_id)
+                for client_id in self.valid_client_ids
+                if client_id != not_including
+            )
+        )
 
-    def send_package(
+    async def send_package(
         self,
         package: mcpython.engine.network.AbstractPackage.AbstractPackage,
         destination: int = 0,
     ):
-        data = self.encode_package(destination, package)
+        data = await self.encode_package(destination, package)
 
         if shared.IS_CLIENT:
             if destination == 0:
-                shared.CLIENT_NETWORK_HANDLER.send_package(data)
+                await shared.CLIENT_NETWORK_HANDLER.send_package(data)
             else:
                 from mcpython.common.network.packages.PackageReroutingPackage import (
                     PackageReroute,
                 )
 
                 # todo: do not encode package above there!
-                self.send_package(PackageReroute().set_package(destination, package), 0)
+                await self.send_package(
+                    PackageReroute().set_package(destination, package), 0
+                )
 
         else:
             if destination == 0:
                 raise ValueError("destination must be non-zero on server")
 
-            shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
+            await shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
 
-    def encode_package(self, destination, package) -> bytes:
+    async def encode_package(self, destination, package) -> bytes:
         if package.PACKAGE_TYPE_ID == -1:
             raise RuntimeError(
                 f"{package}: Package type must be registered for sending it"
@@ -210,7 +217,7 @@ class NetworkManager:
             else package.previous_packages[-1].to_bytes(4, "big", signed=False)
         )
         buffer = WriteBuffer()
-        package.write_to_buffer(buffer)
+        await package.write_to_buffer(buffer)
         package_data = buffer.get_data()
 
         compress_data = len(package_data) > 200 and package.ALLOW_PACKAGE_COMPRESSION
@@ -292,7 +299,7 @@ class NetworkManager:
         self.valid_package_ids.clear()
         self.custom_package_handlers.clear()
 
-    def fetch_as_client(self):
+    async def fetch_as_client(self):
         if not shared.CLIENT_NETWORK_HANDLER.connected:
             return
 
@@ -301,12 +308,12 @@ class NetworkManager:
 
         while buffer:
             try:
-                package = self.fetch_package_from_buffer(buffer)
+                package = await self.fetch_package_from_buffer(buffer)
             except (SystemExit, KeyboardInterrupt):
                 raise
             except:
                 logger.print_exception("during fetching package data @client")
-                self.disconnect()
+                await self.disconnect()
                 return
 
             if package is None:
@@ -315,7 +322,7 @@ class NetworkManager:
             package.sender_id = 0
 
             try:
-                package.handle_inner()
+                await package.handle_inner()
             except (SystemExit, KeyboardInterrupt):
                 raise
             except:
@@ -324,26 +331,30 @@ class NetworkManager:
 
             if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                 for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
-                    func(package, self.client_id)
+                    result = func(package, self.client_id)
+                    if isinstance(result, typing.Awaitable):
+                        await result
 
             if package.package_id in self.custom_package_handlers:
                 for func in self.custom_package_handlers[package.package_id]:
-                    func(package, self.client_id)
+                    result = func(package, self.client_id)
+                    if isinstance(result, typing.Awaitable):
+                        await result
 
                 self.custom_package_handlers[package.package_id].clear()
 
-    def fetch_as_server(self):
+    async def fetch_as_server(self):
         for client_id, buffer in shared.SERVER_NETWORK_HANDLER.get_package_streams():
             while buffer:
                 try:
-                    package = self.fetch_package_from_buffer(buffer)
+                    package = await self.fetch_package_from_buffer(buffer)
                 except (SystemExit, KeyboardInterrupt):
                     raise
                 except:
                     logger.print_exception(
                         f"during fetching data @server from @{client_id}"
                     )
-                    self.disconnect(client_id)
+                    await self.disconnect(client_id)
                     break
 
                 if package is None:
@@ -352,7 +363,7 @@ class NetworkManager:
                 package.sender_id = client_id
 
                 try:
-                    package.handle_inner()
+                    await package.handle_inner()
                 except (SystemExit, KeyboardInterrupt):
                     raise
                 except:
@@ -363,21 +374,25 @@ class NetworkManager:
 
                 if package.PACKAGE_TYPE_ID in self.general_package_handlers:
                     for func in self.general_package_handlers[package.PACKAGE_TYPE_ID]:
-                        func(package, 0)
+                        result = func(package, 0)
+                        if isinstance(result, typing.Awaitable):
+                            await result
 
                 if package.package_id in self.custom_package_handlers:
                     for func in self.custom_package_handlers[package.package_id]:
-                        func(package, 0)
+                        result = func(package, 0)
+                        if isinstance(result, typing.Awaitable):
+                            await result
                     self.custom_package_handlers[package.package_id].clear()
 
-    def fetch_package_from_buffer(self, buffer):
+    async def fetch_package_from_buffer(self, buffer):
         try:
             head = int.from_bytes(buffer[:4], "big", signed=False)
 
             package_type = head >> 2
 
             if not self.package_types:
-                load_packages()
+                await load_packages()
 
             if package_type not in self.package_types:
                 logger.println(
@@ -429,7 +444,7 @@ class NetworkManager:
         buffer = ReadBuffer(io.BytesIO(package_data))
 
         package = self.package_types[package_type]()
-        package.read_from_buffer(buffer)
+        await package.read_from_buffer(buffer)
 
         package.package_id = package_id
         if previous_id:
@@ -441,7 +456,7 @@ class NetworkManager:
 shared.NETWORK_MANAGER = NetworkManager()
 
 
-def load_packages():
+async def load_packages():
     from mcpython.common.network.packages import (
         ClientStateChangePackage,
         DisconnectionPackage,
@@ -516,4 +531,5 @@ def load_packages():
     )
 
 
-shared.mod_loader("minecraft", "stage:network:package_register")(load_packages)
+if not shared.IS_TEST_ENV:
+    shared.mod_loader("minecraft", "stage:network:package_register")(load_packages)

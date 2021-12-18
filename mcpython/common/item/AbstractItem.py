@@ -56,19 +56,19 @@ class AbstractItem(
         self.can_destroy = None
         self.can_be_set_on = None
 
-    def read_from_network_buffer(self, buffer: ReadBuffer):
-        super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         can_destroy_flag = buffer.read_bool()
         can_be_set_on_flag = buffer.read_bool()
 
         if can_destroy_flag:
-            self.can_destroy = buffer.read_list(lambda: buffer.read_string())
+            self.can_destroy = [e async for e in buffer.read_list(buffer.read_string)]
 
         if can_be_set_on_flag:
-            self.can_be_set_on = buffer.read_list(lambda: buffer.read_string())
+            self.can_be_set_on = [e async for e in buffer.read_list(buffer.read_string)]
 
-    def write_to_network_buffer(self, buffer: WriteBuffer):
-        super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         can_destroy_flag = self.can_destroy is not None
         can_be_set_on_flag = self.can_be_set_on is not None
 
@@ -76,10 +76,12 @@ class AbstractItem(
         buffer.write_bool(can_be_set_on_flag)
 
         if can_destroy_flag:
-            buffer.write_list(self.can_destroy, lambda e: buffer.write_string(e))
+            await buffer.write_list(self.can_destroy, lambda e: buffer.write_string(e))
 
         if can_be_set_on_flag:
-            buffer.write_list(self.can_be_set_on, lambda e: buffer.write_string(e))
+            await buffer.write_list(
+                self.can_be_set_on, lambda e: buffer.write_string(e)
+            )
 
     def check_can_be_set_on(self, block, player):
         return player.gamemode != 2 or (

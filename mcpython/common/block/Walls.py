@@ -47,9 +47,9 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
             "up": False,
         }
 
-    def on_block_added(self):
+    async def on_block_added(self):
         if self.NAME in shared.model_handler.blockstates:
-            self.on_block_update()
+            await self.on_block_update()
 
     def get_model_state(self) -> dict:
         state = {
@@ -58,7 +58,7 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         state["up"] = str(self.connections["up"]).lower()
         return state
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
 
         dim = shared.world.get_dimension_by_name(self.dimension)
@@ -101,7 +101,7 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         if shared.IS_CLIENT:
             self.face_info.update(redraw_complete=True)
 
-        self.schedule_network_update()
+        await self.schedule_network_update()
 
     def set_model_state(self, state: dict):
         for key in state:

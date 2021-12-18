@@ -222,7 +222,7 @@ class WorldGenerationHandler:
             dimension.set_world_generation_config_for_layer(layer_name, layer_config)
             layer_config.layer = layer
 
-    def generate_chunk(
+    async def generate_chunk(
         self,
         chunk: typing.Union[mcpython.engine.world.AbstractInterface.IChunk, tuple],
         dimension: typing.Union[
@@ -241,7 +241,7 @@ class WorldGenerationHandler:
             chunk = dimension.get_chunk(chunk, generate=False)
 
         self.add_chunk_to_generation_list(chunk, dimension)
-        self.task_handler.process_chunk(chunk)
+        await self.task_handler.process_chunk(chunk)
 
     def get_current_config(
         self, dimension: mcpython.engine.world.AbstractInterface.IDimension
@@ -264,7 +264,9 @@ class WorldGenerationHandler:
         """
         dimension.set_world_generation_config_entry("configname", config)
 
-    def mark_finished(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
+    async def mark_finished(
+        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
+    ):
         """
         Internal helper for marking a chunk as finished. Will call the needed events.
         :param chunk: the chunk instance
@@ -273,7 +275,7 @@ class WorldGenerationHandler:
             "configname"
         )
         config = self.configs[chunk.get_dimension().get_name()][config_name]
-        shared.event_handler.call("worldgen:chunk:finished", chunk)
+        await shared.event_handler.call_async("worldgen:chunk:finished", chunk)
         config.on_chunk_generation_finished(chunk)
 
         if not shared.IS_CLIENT:
@@ -281,7 +283,7 @@ class WorldGenerationHandler:
                 ChunkDataPackage,
             )
 
-            shared.NETWORK_MANAGER.send_package_to_all(
+            await shared.NETWORK_MANAGER.send_package_to_all(
                 ChunkDataPackage().setup(
                     chunk.get_dimension().get_name(), chunk.get_position(), force=True
                 )
@@ -324,7 +326,7 @@ class WorldGenerationHandler:
 shared.world_generation_handler = WorldGenerationHandler()
 
 
-def load_layers():
+async def load_layers():
     from .layer import (
         DefaultBedrockLayer,
         DefaultBiomeLayer,
@@ -337,7 +339,7 @@ def load_layers():
     )
 
 
-def load_modes():
+async def load_modes():
     from .mode import (
         AmplifiedWorldGenerator,
         BiomeGenDebugGenerator,
@@ -349,7 +351,7 @@ def load_modes():
     )
 
 
-def load_features():
+async def load_features():
     from .feature import (
         BirchTreeFeature,
         CactusFeature,
@@ -369,19 +371,19 @@ def load_features():
     from .feature.village import VillageFeatureDefinition
 
 
-def load_maps():
+async def load_maps():
     from .map import BiomeMap, FeatureMap, HeightMap, LandMassMap, TemperatureMap
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:layer", load_layers, info="loading generation layers"
+    "stage:worldgen:layer", load_layers(), info="loading generation layers"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:mode", load_modes, info="loading generation modes"
+    "stage:worldgen:mode", load_modes(), info="loading generation modes"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:feature", load_features, info="loading world gen features"
+    "stage:worldgen:feature", load_features(), info="loading world gen features"
 )
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:worldgen:maps", load_maps, info="loading chunk maps"
+    "stage:worldgen:maps", load_maps(), info="loading chunk maps"
 )

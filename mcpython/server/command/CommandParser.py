@@ -82,7 +82,7 @@ class CommandParser:
     def __init__(self):
         self.commands: typing.Dict[str, mcpython.server.command.Builder.Command] = {}
 
-    def run(self, string: str, env: CommandExecutionEnvironment) -> bool:
+    async def run(self, string: str, env: CommandExecutionEnvironment) -> bool:
         parsed = self.parse(string)
 
         if parsed is None:
@@ -94,7 +94,7 @@ class CommandParser:
             return False
 
         try:
-            node.run(env, data)
+            await node.run(env, data)
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
@@ -104,9 +104,11 @@ class CommandParser:
 
         return True
 
-    def run_function(self, name: str, info=None):
+    async def run_function(self, name: str, info=None):
         # todo: move here
-        mcpython.common.data.DataPacks.datapack_handler.try_call_function(name, info)
+        await mcpython.common.data.DataPacks.datapack_handler.try_call_function(
+            name, info
+        )
 
     def parse(self, string: str):
         tracker = mcpython.server.command.Builder.CommandExecutionTracker.from_string(
@@ -163,7 +165,7 @@ class CommandParser:
 shared.command_parser = CommandParser()
 
 
-def load_commands():
+async def load_commands():
     # This is the deal, we import & register here, so others can safely import our classes without worrying about
     # flooding the registry in the wrong moment
     # And it also resolves errors during dynamic reload / cross process loading
@@ -222,5 +224,5 @@ if not shared.IS_TEST_ENV:
     import mcpython.common.mod.ModMcpython
 
     mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-        "stage:commands", load_commands
+        "stage:commands", load_commands()
     )

@@ -321,69 +321,69 @@ def build_class_default_state(
             for function in configs["on_properties_set"]:
                 function(self)
 
-        def on_block_added(self, *args, **kwargs):
+        async def on_block_added(self, *args, **kwargs):
             if not is_super_base:
-                super().on_block_added(*args, **kwargs)
+                await super().on_block_added(*args, **kwargs)
 
             for base in bases:
-                base.on_block_added(self, *args, **kwargs)
+                await base.on_block_added(self, *args, **kwargs)
 
             for function in configs["on_block_added"]:
-                function(self)
+                await function(self)
 
-        def on_block_remove(self, *args, **kwargs):
+        async def on_block_remove(self, *args, **kwargs):
             if not is_super_base:
-                super().on_block_remove(*args, **kwargs)
+                await super().on_block_remove(*args, **kwargs)
 
             for base in bases:
-                base.on_block_remove(self, *args, **kwargs)
+                await base.on_block_remove(self, *args, **kwargs)
 
             for function in configs["on_block_remove"]:
-                function(self, *args, **kwargs)
+                await function(self, *args, **kwargs)
 
-        def on_random_update(self, *args, **kwargs):
+        async def on_random_update(self, *args, **kwargs):
             if not is_super_base:
-                super().on_random_update(*args, **kwargs)
+                await super().on_random_update(*args, **kwargs)
 
             for base in bases:
-                base.on_random_update(self, *args, **kwargs)
+                await base.on_random_update(self, *args, **kwargs)
 
             for function in configs["on_random_update"]:
-                function(self)
+                await function(self)
 
-        def on_block_update(self, *args, **kwargs):
+        async def on_block_update(self, *args, **kwargs):
             if not is_super_base:
-                super().on_block_update(*args, **kwargs)
+                await super().on_block_update(*args, **kwargs)
 
             for base in bases:
-                base.on_block_update(self, *args, **kwargs)
+                await base.on_block_update(self, *args, **kwargs)
 
             for function in configs["on_block_update"]:
-                function(self)
+                await function(self)
 
-            self.on_redstone_update()
+            await self.on_redstone_update()
 
-        def on_redstone_update(self, *args, **kwargs):
+        async def on_redstone_update(self, *args, **kwargs):
             if not is_super_base:
-                super().on_redstone_update(*args, **kwargs)
+                await super().on_redstone_update(*args, **kwargs)
 
             for base in bases:
-                base.on_redstone_update(self, *args, **kwargs)
+                await base.on_redstone_update(self, *args, **kwargs)
 
             for function in configs["on_redstone_update"]:
-                function(self)
+                await function(self)
 
-        def on_player_interaction(self, *args, **kwargs):
+        async def on_player_interaction(self, *args, **kwargs):
             for function in configs["on_player_interaction"]:
                 if not function(self, *args, **kwargs):
                     return True
 
             if not is_super_base:
-                if super().on_player_interaction(*args, **kwargs):
+                if await super().on_player_interaction(*args, **kwargs):
                     return True
 
             for base in bases:
-                if base.on_player_interaction(self, *args, **kwargs):
+                if await base.on_player_interaction(self, *args, **kwargs):
                     return True
 
             return False

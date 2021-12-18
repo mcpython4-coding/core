@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import random
 import typing
 
@@ -69,7 +70,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             mcpython.common.world.GameRule.GameRuleHandler, None
         ] = None
 
-        self.reset_config()  # will reset the config
+        asyncio.get_event_loop().run_until_complete(
+            self.reset_config()
+        )  # will reset the config
 
         # todo: move to configs / game rules
         self.hide_faces_to_not_generated_chunks: bool = True
@@ -103,7 +106,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
         self.world_generation_process.run_tasks()
 
-    def add_player(
+    async def add_player(
         self,
         name: str,
         add_inventories: bool = True,
@@ -130,7 +133,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             dimension=dimension,
         )
         if add_inventories:
-            self.players[name].create_inventories()
+            await self.players[name].create_inventories()
         return self.players[name]
 
     @onlyInClient()
@@ -142,18 +145,48 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         :param create: if the player should be created or not (by calling add_player())
         :return: the player instance or None if no player with the name is arrival
         """
-        if not create and self.local_player is None:
+        if not create and (
+            self.local_player is None or self.local_player not in self.players
+        ):
             return
 
         return (
             self.players[self.local_player]
             if self.local_player in self.players
-            else self.add_player(self.local_player)
+            else asyncio.get_event_loop().run_until_complete(
+                self.add_player(self.local_player)
+            )
+        )
+
+    @onlyInClient()
+    async def get_active_player_async(
+        self, create: bool = True
+    ) -> typing.Union[mcpython.common.entity.PlayerEntity.PlayerEntity, None]:
+        """
+        Returns the player instance for this client
+        :param create: if the player should be created or not (by calling add_player())
+        :return: the player instance or None if no player with the name is arrival
+        """
+        if not create and (
+            self.local_player is None or self.local_player not in self.players
+        ):
+            return
+
+        return (
+            self.players[self.local_player]
+            if self.local_player in self.players
+            else await self.add_player(self.local_player)
         )
 
     def get_player_by_name(self, name: str):
         if name not in self.players:
-            self.add_player(name)
+            asyncio.get_event_loop().run_until_complete(self.add_player(name))
+
+        return self.players[name]
+
+    async def get_player_by_name_async(self, name: str):
+        if name not in self.players:
+            await self.add_player(name)
 
         return self.players[name]
 
@@ -164,7 +197,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         for dimension in self.dimensions.values():
             yield from dimension.entity_iterator()
 
-    def reset_config(self):
+    async def reset_config(self):
         """
         Will reset the internal config of the system.
         todo: change game rule handler reset to an non-new-instance
@@ -172,7 +205,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         calls event world:reset_config in the process
         """
         self.config = {"enable_auto_gen": False, "enable_world_barrier": False}
-        shared.event_handler.call("world:reset_config")
+        await shared.event_handler.call_async("world:reset_config")
         self.gamerule_handler = mcpython.common.world.GameRule.GameRuleHandler(self)
 
     @onlyInClient()
@@ -252,10 +285,12 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         """
         logger.println("changing dimension to '{}'...".format(dim_id))
 
-        shared.event_handler.call("dimension:change:pre", self.active_dimension, dim_id)
+        await shared.event_handler.call_async(
+            "dimension:change:pre", self.active_dimension, dim_id
+        )
 
         sector = mcpython.util.math.position_to_chunk(
-            shared.world.get_active_player().position
+            (await shared.world.get_active_player_async()).position
         )
         logger.println("unloading chunks...")
         await self.change_chunks_async(sector, None)
@@ -263,7 +298,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         self.active_dimension = dim_id
         logger.println("loading new chunks...")
         await self.change_chunks_async(None, sector)
-        shared.event_handler.call("dimension:change:post", old, dim_id)
+        await shared.event_handler.call_async("dimension:change:post", old, dim_id)
         logger.println("finished!")
 
     def get_dimension(
@@ -576,7 +611,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
                             chunk
                         )
 
-    def cleanup(self, remove_dims=False, filename=None):
+    async def cleanup(self, remove_dims=False, filename=None):
         """
         Will clean up the world
         :param remove_dims: if dimensions should be cleared
@@ -596,27 +631,30 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             shared.dimension_handler.init_dims()
 
         [
-            inventory.on_world_cleared()
+            await inventory.on_world_cleared()
             for inventory in shared.inventory_handler.containers
         ]
 
-        self.reset_config()
+        await self.reset_config()
 
         if shared.IS_CLIENT:
-            shared.world.get_active_player().flying = False
-            for inv in shared.world.get_active_player().get_inventories():
-                inv.clear()
+            player = shared.world.get_active_player(create=False)
+
+            if player is not None:
+                player.flying = False
+                for inv in shared.world.get_active_player().get_inventories():
+                    inv.clear()
 
         self.spawn_point = (random.randint(0, 15), random.randint(0, 15))
         shared.world_generation_handler.task_handler.clear()
-        shared.entity_manager.clear()
+        await shared.entity_manager.clear()
         self.players.clear()
 
         if filename is not None:
             self.setup_by_filename(filename)
 
-        mcpython.common.data.DataPacks.datapack_handler.cleanup()
-        shared.event_handler.call("world:clean")
+        await mcpython.common.data.DataPacks.datapack_handler.cleanup()
+        await shared.event_handler.call_async("world:clean")
 
     def setup_by_filename(self, filename: str):
         """

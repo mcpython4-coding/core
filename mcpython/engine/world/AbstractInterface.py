@@ -37,7 +37,7 @@ class ISupportWorldInterface(ABC):
     Abstract intermediate common to chunk & dimension; Defines interaction with underlying world
     """
 
-    def add_block(
+    async def add_block(
         self,
         position: tuple,
         block_name: typing.Union[str, typing.Any],
@@ -51,7 +51,7 @@ class ISupportWorldInterface(ABC):
     ) -> typing.Optional[typing.Any]:
         raise NotImplementedError
 
-    def remove_block(
+    async def remove_block(
         self,
         position: typing.Union[
             typing.Tuple[int, int, int],
@@ -137,7 +137,9 @@ class IChunk(ISupportWorldInterface, ABC):
         for entity in self.entities.copy():
             # We should not remove players...
             if not isinstance(entity, mcpython.common.entity.PlayerEntity.PlayerEntity):
-                entity.kill(force=True)
+                from mcpython import shared
+
+                shared.tick_handler.schedule_once(entity.kill(force=True))
 
     def get_map(self, name: str):
         return self.data_maps[name]
@@ -256,7 +258,7 @@ class IChunk(ISupportWorldInterface, ABC):
         """
         raise NotImplementedError
 
-    def add_block(
+    async def add_block(
         self,
         position: typing.Tuple[int, int, int],
         block_name: typing.Union[str, typing.Any],
@@ -284,7 +286,7 @@ class IChunk(ISupportWorldInterface, ABC):
         """
         raise NotImplementedError
 
-    def on_block_updated(
+    async def on_block_updated(
         self, position: typing.Tuple[float, float, float], itself=True
     ):
         """
@@ -292,7 +294,7 @@ class IChunk(ISupportWorldInterface, ABC):
         """
         raise NotImplementedError
 
-    def remove_block(
+    async def remove_block(
         self,
         position: typing.Union[
             typing.Tuple[int, int, int],
@@ -471,7 +473,7 @@ class IDimension(ISupportWorldInterface, ABC):
     ) -> typing.Union[typing.Any, str, None]:
         raise NotImplementedError
 
-    def add_block(
+    async def add_block(
         self,
         position: tuple,
         block_name: str,
@@ -485,7 +487,7 @@ class IDimension(ISupportWorldInterface, ABC):
     ):
         raise NotImplementedError
 
-    def remove_block(
+    async def remove_block(
         self,
         position: tuple,
         immediate=True,

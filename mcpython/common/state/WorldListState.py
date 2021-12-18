@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import datetime
 import json
 import os
@@ -126,7 +127,7 @@ class WorldList(AbstractState.AbstractState):
             ),
         ]
 
-    def on_mouse_press(self, x, y, button, modifiers):
+    async def on_mouse_press(self, x, y, button, modifiers):
         if not button == mouse.LEFT:
             return
 
@@ -136,12 +137,12 @@ class WorldList(AbstractState.AbstractState):
             px, py = icon.position
             if 0 <= x - px <= wx - 130 and 0 <= y - py <= 50:
                 if 0 <= x - px <= 50:
-                    self.enter_world(i)
+                    await self.enter_world(i)
                 else:
                     if self.selected_world != i:
                         self.selected_world = i
                     else:
-                        self.enter_world(i)
+                        await self.enter_world(i)
                 return
 
         self.selected_world = None
@@ -175,15 +176,15 @@ class WorldList(AbstractState.AbstractState):
         if (wy - 140) / 60 > len(self.world_data):
             self.parts[-1].active = False
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            self.on_back_press(0, 0)
+            await self.on_back_press(0, 0)
         elif symbol == key.R:  # "R" will reload the world list
             self.reload_world_icons()
         elif (
             symbol == key.ENTER and self.selected_world is not None
         ):  # selecting world & pressing enter will launch it
-            self.enter_world(self.selected_world)
+            await self.enter_world(self.selected_world)
         elif (
             symbol == key.UP
             and self.selected_world is not None
@@ -199,8 +200,8 @@ class WorldList(AbstractState.AbstractState):
             self.selected_world += 1
             self.parts[-1].move(-60)
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
         self.reload_world_icons()
         self.parts[-1].set_status(1)
@@ -253,11 +254,11 @@ class WorldList(AbstractState.AbstractState):
         self.recalculate_sprite_position()
         self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
 
-    def on_back_press(self, *_):
-        shared.state_handler.change_state("minecraft:start_menu")
+    async def on_back_press(self, *_):
+        await shared.state_handler.change_state("minecraft:start_menu")
 
-    def on_new_world_press(self, *_):
-        shared.state_handler.change_state("minecraft:world_generation_config")
+    async def on_new_world_press(self, *_):
+        await shared.state_handler.change_state("minecraft:world_generation_config")
 
     def on_delete_press(self, *_):
         if self.selected_world is None:
@@ -266,14 +267,14 @@ class WorldList(AbstractState.AbstractState):
         shutil.rmtree(self.world_data[self.selected_world][3])
         self.reload_world_icons()
 
-    def on_world_load_press(self, *_):
+    async def on_world_load_press(self, *_):
         if self.selected_world is None:
             return
 
-        self.enter_world(self.selected_world)
+        await self.enter_world(self.selected_world)
 
-    def enter_world(self, number: int):
-        shared.state_handler.states["minecraft:world_loading"].load_world_from(
+    async def enter_world(self, number: int):
+        await shared.state_handler.states["minecraft:world_loading"].load_world_from(
             self.world_data[number][2][0].text
         )
 
@@ -281,9 +282,9 @@ class WorldList(AbstractState.AbstractState):
 world_selection = None
 
 
-def create():
+async def create():
     global world_selection
     world_selection = WorldList()
 
 
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create)
+mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe("stage:states", create())

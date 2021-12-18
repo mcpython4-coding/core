@@ -49,7 +49,7 @@ class BlockDataFixer(AbstractNetworkFixer, ABC):
     Use the Block.NETWORK_BUFFER_DATA_FIXERS for manual registration
 
     WARNING: returning True from apply2stream() will intercept any further buffer loading, so also the stuff
-             you don't need to do yourself, but instead you use super().read_from_network_buffer(...)
+             you don't need to do yourself, but instead you use await super().read_from_network_buffer(...)
     """
 
     BLOCK_NAME: str | typing.List[str] = None

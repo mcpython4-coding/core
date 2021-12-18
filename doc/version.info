@@ -1932,7 +1932,7 @@ f   [uuk]: changed height map generation from biome-based to global, preparing f
 b   [uuk]: fixed desserts generating one block lower than surrounding terrain
 G   [github]: released snapshot 21w46a
 
-G   [github]: started development cycle for snapshot <21w48a>
+G   [github]: started development cycle for snapshot <21w50a>
     [uuk]: deprecated the mod config system
 IA* [uuk]: FaceInfo will now use two ints to represent the visual state of the block instead of two bool arrays
 A** [uuk]: For optimisation reasons, the show_face() and hide_face() method of FaceInfo are now removed;
@@ -1950,4 +1950,8 @@ f   [uuk]: block stone creation API allows now for custom mod names, so mods may
            (you need to set the DEFERRED_PIPE property for it to work, but still...)
 b   [uuk]: fixed a lot small issues; improved error handling all over the place
 b   [uuk]: fixed scrolling is creative tab over slots leading to moving that item into your inventory
+FA* [uuk]: async mod loading is here
+FA* [uuk]: async event handling, block events and general events
+IA* [uuk]: event handler will crash now when invoked from an async context
+f   [uuk]: some edge cases are now dropping items instead of silently consuming them
 

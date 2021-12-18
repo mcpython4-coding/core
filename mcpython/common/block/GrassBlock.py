@@ -36,7 +36,7 @@ class GrassBlock(IFoliageColoredBlock.IFoliageColoredBlock):
     def get_model_state(self) -> dict:
         return {"snowy": "false"}
 
-    def on_random_update(self):
+    async def on_random_update(self):
         x, y, z = self.position
         dim = shared.world.get_dimension_by_name(self.dimension)
 
@@ -48,11 +48,11 @@ class GrassBlock(IFoliageColoredBlock.IFoliageColoredBlock):
         else:
             instance = dim.get_block((x, y + 1, z), none_if_str=True)
             if instance is not None and (instance.face_solid & 3):
-                dim.get_chunk_for_position(self.position).add_block(
+                await dim.get_chunk_for_position(self.position).add_block(
                     self.position, "minecraft:dirt"
                 )
 
-    def on_player_interaction(
+    async def on_player_interaction(
         self,
         player,
         button: int,
@@ -70,7 +70,7 @@ class GrassBlock(IFoliageColoredBlock.IFoliageColoredBlock):
         if not itemstack.item.add_damage(1):
             itemstack.clean()
 
-        shared.world.get_dimension_by_name(self.dimension).add_block(
+        await shared.world.get_dimension_by_name(self.dimension).add_block(
             self.position, "minecraft:dirt_path"
         )
         return True

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import sys
 
 import pyglet
@@ -75,7 +76,9 @@ class LoadingExceptionView(AbstractState.AbstractState):
             "[MOD LOADER][EXCEPTION MANAGER][WARN] The game might be in an invalid state, errors down the road may be caused by above!"
         )
 
-        shared.state_handler.change_state("minecraft:mod_loading")
+        asyncio.get_event_loop().run_until_complete(
+            shared.state_handler.change_state("minecraft:mod_loading")
+        )
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:window:resize", self.on_resize)
@@ -102,12 +105,12 @@ class LoadingExceptionView(AbstractState.AbstractState):
     def on_update(self, dt):
         pass
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
         shared.world.get_active_player().init_creative_tabs()
 
-    def activate(self):
-        super().activate()
+    async def activate(self):
+        await super().activate()
 
 
 loading_exception = LoadingExceptionView()
@@ -124,4 +127,6 @@ def error_occur(text: str):
         print(text)
     else:
         loading_exception.set_text(text)
-        shared.state_handler.change_state(loading_exception.NAME)
+        shared.tick_handler.schedule_once(
+            shared.state_handler.change_state(loading_exception.NAME)
+        )

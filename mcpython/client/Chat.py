@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import html
 import time
 
@@ -69,13 +70,13 @@ class ChatInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
                 "<font color='white'>" + text + "<span>&#95;</span></font>"
             )
 
-    def on_activate(self):
+    async def on_activate(self):
         shared.chat.text = ""
         shared.chat.active_index = 0
         shared.chat.has_entered_t = False
         self.eventbus.activate()
 
-    def on_deactivate(self):
+    async def on_deactivate(self):
         self.eventbus.deactivate()
 
     def draw(self, hovering_slot=None):
@@ -121,7 +122,7 @@ class Chat:
         )
         self.active_index += len(text)
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    async def on_key_press(self, symbol: int, modifiers: int):
         """
         called when an key is pressed
         :param symbol: the symbol that is pressed
@@ -147,7 +148,7 @@ class Chat:
 
         elif symbol == key.ENTER:  # execute command
             if shared.IS_CLIENT and shared.IS_NETWORKING:
-                shared.NETWORK_MANAGER.send_package(
+                await shared.NETWORK_MANAGER.send_package(
                     PlayerChatInputPackage().setup(self.text)
                 )
 
@@ -163,7 +164,7 @@ class Chat:
                     self.executing_command_info.position = player.get_position()
                     self.executing_command_info.dimension = player.get_dimension()
 
-                shared.command_parser.run(self.text, self.executing_command_info)
+                await shared.command_parser.run(self.text, self.executing_command_info)
 
             else:
                 self.print_ln(self.text)
@@ -215,7 +216,11 @@ class Chat:
         """
         closes the chat
         """
-        shared.inventory_handler.hide(shared.world.get_active_player().inventory_chat)
+        shared.tick_handler.schedule_once(
+            shared.inventory_handler.hide(
+                shared.world.get_active_player().inventory_chat
+            )
+        )
         self.active_index = 0
 
     def clear(self):

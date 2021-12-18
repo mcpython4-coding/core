@@ -117,11 +117,11 @@ class AbstractState(IRegistryContent, ABC):
         Invoked somewhere during state construction; Not further defined by API
         """
 
-    def activate(self):
+    async def activate(self):
         self.eventbus.activate()
 
         for part in self.parts:
-            part.activate()
+            await part.activate()
 
             if shared.IS_CLIENT:
                 part.init_rendering()
@@ -129,11 +129,11 @@ class AbstractState(IRegistryContent, ABC):
         if self.state_renderer is not None:
             self.state_renderer.on_activate()
 
-    def deactivate(self):
+    async def deactivate(self):
         self.eventbus.deactivate()
 
         for part in self.parts:
-            part.deactivate()
+            await part.deactivate()
 
         if self.state_renderer is not None:
             self.state_renderer.on_deactivate()

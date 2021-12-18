@@ -56,7 +56,7 @@ class IStraightRail(IRail, ABC):
         if "shape" in state:
             self.shape = state["shape"]
 
-    def on_block_update(self):
+    async def on_block_update(self):
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
@@ -81,7 +81,7 @@ class IStraightRail(IRail, ABC):
                 self.shape = "north_south"
 
         self.face_info.update(True)
-        self.schedule_network_update()
+        await self.schedule_network_update()
 
     def is_currently_orientated_for_side(self, side: EnumSide, up: bool) -> bool:
         if "ascending" in self.shape:

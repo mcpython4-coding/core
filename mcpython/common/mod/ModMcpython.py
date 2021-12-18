@@ -29,9 +29,9 @@ if not shared.IS_TEST_ENV:
     mcpython.add_load_default_resources()
 
 
-def init():
+async def init():
     import mcpython.common.data.serializer.loot.LootTable
     import mcpython.common.entity.EntityManager
 
 
-mcpython.eventbus.subscribe("stage:mod:init", init)
+mcpython.eventbus.subscribe("stage:mod:init", init())

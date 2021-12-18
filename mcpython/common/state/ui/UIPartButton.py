@@ -144,27 +144,27 @@ class UIPartButton(AbstractUIPart.AbstractUIPart):
             MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d
         )
 
-    def deactivate(self):
-        super().deactivate()
+    async def deactivate(self):
+        await super().deactivate()
         self.hovering = False
 
-    def on_mouse_press(self, x, y, button, modifiers):
+    async def on_mouse_press(self, x, y, button, modifiers):
         mx, my = self.get_real_position()
         sx, sy = self.bounding_box_size
         self.press.area = ((mx, my), (mx + sx, my + sy))
         if self.press.equals(x, y, button, modifiers):
             if self.on_press:
-                self.on_press(x, y)
+                await self.on_press(x, y)
         else:
             if self.on_try_press:
-                self.on_try_press(x, y)
+                await self.on_try_press(x, y)
 
-    def on_mouse_motion(self, x, y, dx, dy):
+    async def on_mouse_motion(self, x, y, dx, dy):
         mx, my = self.get_real_position()
         sx, sy = self.bounding_box_size
         if 0 <= x - mx <= sx and 0 <= y - my <= sy:
             if self.on_hover:
-                self.on_hover(x, y)
+                await self.on_hover(x, y)
             self.hovering = True
         else:
             self.hovering = False

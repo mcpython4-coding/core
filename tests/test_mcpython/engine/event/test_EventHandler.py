@@ -78,3 +78,18 @@ class TestEventHandler(TestCase):
         shared.event_handler.call("test_event")
 
         self.assertTrue(state)
+
+    async def test_call_async(self):
+        from mcpython import shared
+        from mcpython.engine.event.EventHandler import PUBLIC_EVENT_BUS
+
+        state = False
+
+        async def test():
+            nonlocal state
+            state = True
+
+        PUBLIC_EVENT_BUS.subscribe("test_event", test())
+        await shared.event_handler.call_async("test_event")
+
+        self.assertTrue(state)

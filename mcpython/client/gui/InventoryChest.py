@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
@@ -55,8 +57,8 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         if self.custom_name is None and block is not None:
             self.custom_name = block.DEFAULT_DISPLAY_NAME
 
-    def on_activate(self):
-        super().on_activate()
+    async def on_activate(self):
+        await super().on_activate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -67,8 +69,8 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
             self.block.face_info.custom_renderer.play_open_animation(self.block)
 
-    def on_deactivate(self):
-        super().on_deactivate()
+    async def on_deactivate(self):
+        await super().on_deactivate()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.unsubscribe(
             "user:keyboard:press", self.on_key_press
         )
@@ -77,7 +79,7 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
             self.block.face_info.custom_renderer.play_close_animation(self.block)
 
     # todo: move to container
-    def create_slot_renderers(self) -> list:
+    async def create_slot_renderers(self) -> list:
         # 3 rows of 9 slots of storage
         return [mcpython.client.gui.Slot.Slot() for _ in range(9 * 3)]
 
@@ -91,9 +93,9 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def get_interaction_slots(self):
         return shared.world.get_active_player().inventory_main.slots[:36] + self.slots
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == pyglet.window.key.E:
-            shared.inventory_handler.hide(self)
+            await shared.inventory_handler.hide(self)
 
     def update_shift_container(self):
         shared.inventory_handler.shift_container_handler.container_A = (

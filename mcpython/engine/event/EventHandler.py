@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 __all__ = ["EventHandler", "PUBLIC_EVENT_BUS", "LOADING_EVENT_BUS"]
 
+import asyncio
+
 from mcpython import shared
 from mcpython.engine.event.EventBus import EventBus
 
@@ -43,9 +45,20 @@ class EventHandler:
         for bus in self.active_buses:
             bus.call(event_name, *args, *kwargs)
 
+    async def call_async(self, event_name, *args, **kwargs):
+        await asyncio.gather(
+            *(bus.call_async(event_name, *args, **kwargs) for bus in self.active_buses)
+        )
+
     def call_cancelable(self, event_name, *args, **kwargs):
         for bus in self.active_buses:
             if bus.call_cancelable(event_name, *args, **kwargs).canceled:
+                return False
+        return True
+
+    async def call_cancelable_async(self, event_name, *args, **kwargs):
+        for bus in self.active_buses:
+            if (await bus.call_cancelable_async(event_name, *args, **kwargs)).canceled:
                 return False
         return True
 

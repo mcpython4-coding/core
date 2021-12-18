@@ -365,7 +365,7 @@ class BoxModel(AbstractBoxModel):
                         )
                         continue
 
-                    raise RuntimeError
+                    continue
 
                 collected_data[0].extend(vertex[i])
                 collected_data[1].extend(self.tex_data[i2])

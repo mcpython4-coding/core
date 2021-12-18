@@ -65,9 +65,9 @@ class DimensionHandler:
 
         from mcpython.common.mod.ModMcpython import mcpython
 
-        mcpython.eventbus.subscribe("stage:post", self.finish)
+        mcpython.eventbus.subscribe("stage:post", self.finish())
 
-    def finish(self):
+    async def finish(self):
         """
         Called to finish up and assign ids to dynamic dimensions
         """
@@ -78,7 +78,7 @@ class DimensionHandler:
             dim.id = i
             self.add_dimension(dim)
 
-    def add_default_dimensions(self):
+    async def add_default_dimensions(self):
         """
         Implementation for mcpython: will add the dimensions used by the core into the system
         """
@@ -124,7 +124,7 @@ if not shared.IS_TEST_ENV:
     from mcpython.common.mod.ModMcpython import mcpython as mc
 
     mc.eventbus.subscribe(
-        "stage:dimension", shared.dimension_handler.add_default_dimensions
+        "stage:dimension", shared.dimension_handler.add_default_dimensions()
     )
 
 
@@ -337,7 +337,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
             network_sync=network_sync,
         )
 
-    def remove_block(
+    async def remove_block(
         self,
         position: tuple,
         immediate=True,
@@ -346,7 +346,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
         network_sync=True,
     ):
         chunk = self.get_chunk_for_position(position)
-        chunk.remove_block(
+        await chunk.remove_block(
             position,
             immediate=immediate,
             block_update=block_update,

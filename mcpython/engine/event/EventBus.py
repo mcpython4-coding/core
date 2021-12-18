@@ -119,13 +119,7 @@ class EventBus:
         if not any_found:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
-    def call(self, event_name: str, *args, **kwargs):
-        """
-        Call an event on this event bus. Also works when deactivated
-        :param event_name: the name of the event to call
-        :param args: arguments to give
-        :param kwargs: kwargs to give
-        """
+    async def call_async(self, event_name: str, *args, **kwargs):
         from mcpython.common.mod.util import LoadingInterruptException
 
         if event_name not in self.event_subscriptions:
@@ -139,17 +133,14 @@ class EventBus:
         ]:
             try:
                 if asyncio.iscoroutine(function):
-                    function = asyncio.get_event_loop().create_task(function)
-                    asyncio.get_event_loop().run_until_complete(function)
-
-                    ex = function.exception()
-                    if ex:
-                        raise ex
+                    await function
                 else:
-                    function(
+                    result = function(
                         *list(args) + list(extra_args),
                         **{**kwargs, **extra_kwargs},
                     )
+                    if isinstance(result, typing.Awaitable):
+                        await result
 
             except (SystemExit, KeyboardInterrupt):
                 raise
@@ -194,36 +185,30 @@ class EventBus:
             else:
                 raise RuntimeError
 
-    def call_cancelable(self, event_name: str, *args, **kwargs):
-        """
-        Will call a cancel able event.
-        Works the same way as call, but will use call_until() with an CancelAbleEvent as first parameter which is checked after each call
-        :param event_name: the name to call
-        :param args: args to call with
-        :param kwargs:  kwargs to call with
-        :return: if it was canceled or not
-        """
+    def call(self, event_name: str, *args, **kwargs):
+        asyncio.get_event_loop().run_until_complete(
+            self.call_async(event_name, *args, **kwargs)
+        )
+
+    async def call_cancelable_async(self, event_name: str, *args, **kwargs):
         handler = CancelAbleEvent()
-        self.call_until(
+        await self.call_until_async(
             event_name, lambda _: handler.canceled, *((handler,) + args), **kwargs
         )
         return handler
 
-    def call_until(
+    def call_cancelable(self, event_name: str, *args, **kwargs):
+        return asyncio.get_event_loop().run_until_complete(
+            self.call_cancelable_async(event_name, *args, **kwargs)
+        )
+
+    async def call_until_async(
         self,
         event_name: str,
         check_function: typing.Callable[[typing.Any], bool],
         *args,
         **kwargs,
     ):
-        """
-        Will call the event stack until an check_function returns True or all subscriptions where done
-        :param event_name: the name of the event
-        :param check_function: the check function to call with
-        :param args: the args to call with
-        :param kwargs: the kwargs to call with
-        :return: the result in the moment of True or None
-        """
         if event_name not in self.event_subscriptions:
             return
 
@@ -234,20 +219,14 @@ class EventBus:
         ]:
             try:
                 if asyncio.iscoroutine(function):
-                    function = asyncio.get_event_loop().create_task(function)
-
-                    asyncio.get_event_loop().run_until_complete(function)
-
-                    result = function.result()
-
-                    ex = function.exception()
-                    if ex:
-                        raise ex
+                    result = await function
                 else:
                     result = function(
                         *list(args) + list(extra_args),
                         **{**kwargs, **extra_kwargs},
                     )
+                    if isinstance(result, typing.Awaitable):
+                        result = await result
 
                 if check_function(result):
                     return result
@@ -274,6 +253,17 @@ class EventBus:
                     event_name,
                 )
                 raise
+
+    def call_until(
+        self,
+        event_name: str,
+        check_function: typing.Callable[[typing.Any], bool],
+        *args,
+        **kwargs,
+    ):
+        return asyncio.get_event_loop().run_until_complete(
+            self.call_until_async(event_name, check_function, *args, **kwargs)
+        )
 
     def activate(self):
         shared.event_handler.activate_bus(self)

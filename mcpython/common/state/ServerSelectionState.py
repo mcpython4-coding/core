@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import random
 
 from mcpython import shared
@@ -42,8 +43,8 @@ class ServerSelectionState(AbstractState):
             (-180, 30),
             anchor_window="MD",
             anchor_button="MD",
-            on_press=lambda *_: shared.state_handler.change_state(
-                "minecraft:start_menu"
+            on_press=lambda *_: asyncio.get_event_loop().run_until_complete(
+                shared.state_handler.change_state("minecraft:start_menu")
             ),
         )
         self.join_button = UIPartButton(
@@ -70,23 +71,23 @@ class ServerSelectionState(AbstractState):
             self.server_ip_input,
         ]
 
-    def open_server_connection(self, *_):
+    async def open_server_connection(self, *_):
         pair = self.server_ip_input.entered_text.split(":")
         if not connectClient2Server(pair[0], int(pair[1])):
-            shared.state_handler.change_state("minecraft:start_menu")
+            await shared.state_handler.change_state("minecraft:start_menu")
             return
 
         from mcpython.common.network.packages.HandShakePackage import (
             Client2ServerHandshake,
         )
 
-        shared.NETWORK_MANAGER.send_package(
+        await shared.NETWORK_MANAGER.send_package(
             Client2ServerHandshake().setup(
                 "test:player" + str(random.randint(10, 1000))
             )
         )
 
-        shared.state_handler.change_state("minecraft:server_connecting")
+        await shared.state_handler.change_state("minecraft:server_connecting")
 
 
 server_selection = ServerSelectionState()
