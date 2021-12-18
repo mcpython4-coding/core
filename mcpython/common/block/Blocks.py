@@ -250,13 +250,13 @@ def stone_like(
         instance.create_slab_block(
             f"{modname}:{fname}_slab", block_factory_consumer=consumer
         )
-        StoneCuttingRecipe(
+        shared.tick_handler.schedule_once(StoneCuttingRecipe(
             f"{modname}:{name}", f"{modname}:{fname}_slab", 2
-        ).prepare_static()
+        ).prepare_static())
         key = [(f"{modname}:{name}", 1)]
-        GridShaped(
+        shared.tick_handler.schedule_once(GridShaped(
             {(0, 0): key, (1, 0): key, (2, 0): key}, (f"{modname}:{fname}_slab", 6)
-        ).prepare_static()
+        ).prepare_static())
 
     if existing_wall:
         obj = BlockFactory().set_name(f"{modname}:{fname}_wall").set_wall()
@@ -264,11 +264,11 @@ def stone_like(
         DEFERRED_PIPE.create_later(obj)
     else:
         instance.create_wall(f"{modname}:{fname}_wall", block_factory_consumer=consumer)
-        StoneCuttingRecipe(
+        shared.tick_handler.schedule_once(StoneCuttingRecipe(
             f"{modname}:{name}", f"{modname}:{fname}_wall", 6
-        ).prepare_static()
+        ).prepare_static())
         key = [(f"{modname}:{name}", 1)]
-        GridShaped(
+        shared.tick_handler.schedule_once(GridShaped(
             {
                 (0, 0): key,
                 (1, 0): key,
@@ -278,7 +278,7 @@ def stone_like(
                 (2, 1): key,
             },
             (f"{modname}:{fname}_wall", 6),
-        ).prepare_static()
+        ).prepare_static())
 
     if existing_stairs:
         obj = (
@@ -301,9 +301,9 @@ def stone_like(
         instance.create_fence(
             f"{modname}:{fname}_fence", block_factory_consumer=consumer
         )
-        StoneCuttingRecipe(
+        shared.tick_handler.schedule_once(StoneCuttingRecipe(
             f"{modname}:{name}", f"{modname}:{fname}_fence"
-        ).prepare_static()
+        ).prepare_static())
 
     if existing_button:
         DEFERRED_PIPE.create_later(
@@ -313,9 +313,9 @@ def stone_like(
             .set_solid(False)
             .set_all_side_solid(False)
         )
-        StoneCuttingRecipe(
+        shared.tick_handler.schedule_once(StoneCuttingRecipe(
             f"{modname}:{name}", f"{modname}:{fname}_button", 2
-        ).prepare_static()
+        ).prepare_static())
     else:
         # instance.create_button_block(f"{modname}:{fname}_button", block_factory_consumer=consumer)
         # todo: implement
@@ -358,9 +358,9 @@ def colored(name: str):
         .set_name(f"minecraft:{name}_carpet")
         .add_base_class(AbstractCarpet)
     )
-    StoneCuttingRecipe(
+    shared.tick_handler.schedule_once(StoneCuttingRecipe(
         f"minecraft:{name}_wool", f"minecraft:{name}_carpet", 2
-    ).prepare_static()
+    ).prepare_static())
 
     stone_like(
         f"{name}_concrete",

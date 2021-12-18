@@ -158,7 +158,7 @@ class GridShaped(AbstractCraftingGridRecipe):
         sy = max(self.inputs, key=lambda x: x[1])[1] + 1
         self.bounding_box_size = (sx, sy)
 
-    def prepare(self):
+    async def prepare(self):
         shared.crafting_handler.crafting_recipes_shaped.setdefault(
             len(self.inputs), {}
         ).setdefault(self.bounding_box_size, []).append(self)
@@ -229,7 +229,7 @@ class GridShapeless(AbstractCraftingGridRecipe):
         self.inputs = inputs
         self.output = output
 
-    def prepare(self):
+    async def prepare(self):
         shared.crafting_handler.crafting_recipes_shapeless.setdefault(
             len(self.inputs), []
         ).append(self)

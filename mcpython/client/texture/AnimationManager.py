@@ -99,7 +99,7 @@ class AnimationController:
 
         return pos
 
-    def bake(self):
+    async def bake(self):
         for i, atlas in enumerate(self.atlases):
             self.textures[i] = atlas.get_pyglet_texture()
             # atlas.texture.save(shared.build+f"/atlas_{self.frames}_{self.timing}_{i}.png")
@@ -217,9 +217,9 @@ class AnimationManager:
         for controller in self.controllers.values():
             controller.tick(ticks)
 
-    def bake(self):
+    async def bake(self):
         for controller in self.controllers.values():
-            controller.bake()
+            await controller.bake()
 
 
 if shared.IS_CLIENT or typing.TYPE_CHECKING:

@@ -163,7 +163,7 @@ class ItemModel:
         self.overrides.append((predicate, replacement))
         return self
 
-    def bake(self, helper: "ItemModelHandler"):
+    async def bake(self, helper: "ItemModelHandler"):
         for i, texture in enumerate(self.layers):
             if texture is None:
                 continue
@@ -215,7 +215,7 @@ class ItemModelHandler:
         self.atlas.load()
         for model in self.models.values():
             try:
-                model.bake(self)
+                await model.bake(self)
             except (SystemExit, KeyboardInterrupt):
                 raise
             except:

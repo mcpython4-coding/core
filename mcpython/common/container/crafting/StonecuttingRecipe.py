@@ -37,5 +37,5 @@ class StoneCuttingRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
         self.result = result
         self.count = count
 
-    def prepare(self):
+    async def prepare(self):
         StoneCuttingRecipe.RECIPES.setdefault(self.ingredient, []).append(self)

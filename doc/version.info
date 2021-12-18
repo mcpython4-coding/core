@@ -1954,4 +1954,5 @@ FA* [uuk]: async mod loading is here
 FA* [uuk]: async event handling, block events and general events
 IA* [uuk]: event handler will crash now when invoked from an async context
 f   [uuk]: some edge cases are now dropping items instead of silently consuming them
+I   [uuk]: more recipe stuff is now async
 

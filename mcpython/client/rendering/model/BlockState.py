@@ -784,14 +784,14 @@ class BlockStateContainer:
 
         self.baked = False
 
-        if not immediate:
+        if not immediate and not shared.mod_loader.finished:
             shared.mod_loader.mods[name.split(":")[0]].eventbus.subscribe(
                 "stage:model:blockstate_bake",
                 self.bake(),
                 info="baking block state {}".format(name),
             )
-        # else:
-        # asyncio.get_event_loop().run_until_complete(self.bake())
+        else:
+            shared.tick_handler.schedule_once(self.bake())
 
     async def parse_data(self, data: dict):
         for loader in blockstate_decoder_registry.entries.values():

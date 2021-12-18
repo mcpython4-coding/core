@@ -51,12 +51,12 @@ class IRecipe(mcpython.common.event.api.IRegistryContent, ABC):
     def get_outputs(self) -> typing.Iterable[ItemStack]:
         return tuple()
 
-    def bake(self):
+    async def bake(self):
         pass
 
-    def prepare(self):
+    async def prepare(self):
         pass
 
-    def prepare_static(self):
-        shared.crafting_handler.add_recipe(self)
+    async def prepare_static(self):
+        await shared.crafting_handler.add_recipe(self)
         shared.crafting_handler.static_recipes.append(self)

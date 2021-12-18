@@ -447,7 +447,7 @@ class ModelHandler:
         logger.println("walking across requested models...")
         await self.build(immediate=True)
         await self.process_models(immediate=True)
-        animation_manager.bake()
+        await animation_manager.bake()
 
         logger.println("finished!")
 

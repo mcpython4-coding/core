@@ -49,6 +49,9 @@ class CraftingManager:
 
         self.static_recipes = []
 
+        self.prepare_for_loading_lock = asyncio.Lock()
+        # todo: add locks for other stuff
+
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "minecraft:data:shuffle:all", self.shuffle_data
         )
@@ -75,7 +78,7 @@ class CraftingManager:
         [self.recipe_info_table.setdefault(name, obj) for name in obj.RECIPE_TYPE_NAMES]
         return obj
 
-    def add_recipe(
+    async def add_recipe(
         self,
         recipe: mcpython.common.container.crafting.IRecipe.IRecipe,
         name: str = None,
@@ -86,10 +89,10 @@ class CraftingManager:
             recipe.name = name
 
         try:
-            recipe.bake()
-            recipe.prepare()
+            await recipe.bake()
+            await recipe.prepare()
         except:
-            logger.print_exception("during preparing recipe " + name)
+            logger.print_exception("during preparing recipe " + str(name))
             return self
 
         if name is not None:
@@ -97,7 +100,7 @@ class CraftingManager:
 
         return self
 
-    def add_recipe_from_data(self, data: dict, name: str, file: str = None):
+    async def add_recipe_from_data(self, data: dict, name: str, file: str = None):
         recipe_type = data["type"]
         if recipe_type in self.recipe_info_table:
             try:
@@ -108,7 +111,7 @@ class CraftingManager:
 
             if recipe is None:
                 return 0
-            self.add_recipe(recipe, name)
+            await self.add_recipe(recipe, name)
             return recipe
         else:
             logger.println(
@@ -142,7 +145,7 @@ class CraftingManager:
             s[s.index("data") + 1], "/".join(s[s.index("recipes") + 1 :])
         ).removesuffix(".json")
         # todo: add option to run later
-        result = self.add_recipe_from_data(data, name, file)
+        result = await self.add_recipe_from_data(data, name, file)
 
         if result is None and "--debugrecipes" in sys.argv:
             logger.println(
@@ -152,35 +155,49 @@ class CraftingManager:
             )
 
     async def load(self, modname: str, check_mod_dirs=True, load_direct=False):
+        await self.prepare_for_loading_lock.acquire()
+
         if modname in self.loaded_mod_dirs and check_mod_dirs:
             logger.println(
                 "ERROR: mod '{}' has tried to load crafting recipes twice or more".format(
                     modname
                 )
             )
+            self.prepare_for_loading_lock.release()
             return  # make sure to load only ones!
 
         self.loaded_mod_dirs.add(modname)
-        for file in mcpython.engine.ResourceLoader.get_all_entries(
-            "data/{}/recipes".format(modname)
-        ):
-            if not file.endswith(".json"):
-                continue
 
-            if not load_direct:
+        self.prepare_for_loading_lock.release()
+
+        if load_direct:
+            await asyncio.gather(*(
+                self.add_recipe_from_file(file)
+                for file in mcpython.engine.ResourceLoader.get_all_entries(
+                    "data/{}/recipes".format(modname)
+                )
+                if file.endswith(".json")
+            ))
+
+        else:
+            for file in mcpython.engine.ResourceLoader.get_all_entries(
+                "data/{}/recipes".format(modname)
+            ):
+                if not file.endswith(".json"):
+                    continue
                 shared.mod_loader.mods[modname].eventbus.subscribe(
                     "stage:recipe:on_bake",
                     self.add_recipe_from_file(file),
                     info="loading crafting recipe from {}".format(file),
                 )
-            else:
-                await self.add_recipe_from_file(file)
 
     async def reload_crafting_recipes(self):
         if not await shared.event_handler.call_cancelable_async(
             "crafting_manager:reload:pre", self
         ):
             return
+
+        await self.prepare_for_loading_lock.acquire()
 
         # all shapeless recipes sorted after item count
         self.crafting_recipes_shapeless = {}
@@ -199,6 +216,8 @@ class CraftingManager:
             "crafting_manager:reload:intermediate", self
         )
 
+        self.prepare_for_loading_lock.release()
+
         await asyncio.gather(
             *(
                 self.load(modname, check_mod_dirs=False, load_direct=True)
@@ -206,8 +225,12 @@ class CraftingManager:
             )
         )
 
-        for recipe in self.static_recipes:
-            self.add_recipe(recipe)
+        await asyncio.gather(
+            *(
+                self.add_recipe(recipe)
+                for recipe in self.static_recipes
+            )
+        )
 
         await shared.event_handler.call_async("crafting_manager:reload:end", self)
 
