@@ -232,11 +232,15 @@ class OpenedInventoryStatePart(
                 return
 
         if button == mouse.LEFT:
-            if await self.handle_left_click(button, modifiers, moving_itemstack, slot, x, y):
+            if await self.handle_left_click(
+                button, modifiers, moving_itemstack, slot, x, y
+            ):
                 return
 
         elif button == mouse.RIGHT:
-            if await self.handle_right_click(button, modifiers, moving_itemstack, slot, x, y):
+            if await self.handle_right_click(
+                button, modifiers, moving_itemstack, slot, x, y
+            ):
                 return
 
         elif button == mouse.MIDDLE:
@@ -245,7 +249,9 @@ class OpenedInventoryStatePart(
             ):
                 return
 
-    async def handle_shift_click(self, button: int, modifiers: int, slot, x: int, y: int):
+    async def handle_shift_click(
+        self, button: int, modifiers: int, slot, x: int, y: int
+    ):
         if slot.on_shift_click:
             try:
                 flag = await slot.handle_shift_click(
@@ -443,7 +449,11 @@ class OpenedInventoryStatePart(
             slot = self._get_slot_for(x, y)
             try:
                 flag = await slot.handle_shift_click(
-                    x, y, button, modifiers, await shared.world.get_active_player_async()
+                    x,
+                    y,
+                    button,
+                    modifiers,
+                    await shared.world.get_active_player_async(),
                 )
                 # no default logic should go on
                 if flag is not True:

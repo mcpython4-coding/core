@@ -39,6 +39,10 @@ class IRecipeUser(mcpython.common.event.api.IRegistryContent):
     ):
         pass
 
-    def insert_items_from(self, recipe: mcpython.common.container.crafting.IRecipe.IRecipe,
-                          item_source: typing.List[ItemStack], items_to_remove_consumer: typing.Callable[[ItemStack], None]) -> bool:
+    def insert_items_from(
+        self,
+        recipe: mcpython.common.container.crafting.IRecipe.IRecipe,
+        item_source: typing.List[ItemStack],
+        items_to_remove_consumer: typing.Callable[[ItemStack], None],
+    ) -> bool:
         return False

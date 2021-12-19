@@ -18,7 +18,6 @@ import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.InventoryCreativeTab
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
-from mcpython.common.container.crafting.CraftingGridHelperInterface import CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractArmorItem
@@ -27,6 +26,9 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.texture
 import PIL.Image
 from mcpython import shared
+from mcpython.common.container.crafting.CraftingGridHelperInterface import (
+    CraftingGridHelperInterface,
+)
 
 
 class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRenderer):

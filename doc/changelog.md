@@ -13,18 +13,18 @@ Contains only some information, in ordered form, in a better form for the end us
 - this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
     for creating the entries. Every new snapshot Changelog starts with "Changelog of <type> <name>" with optional
     following the theme of the snapshot, the release date and additional information. The Changelog should be
-    an grouped list of changes after topic in an logical order with all not noticeable changes removed
-    followed optional by an table of issues starting with "Fixed issues:" followed by an list of grouped after
-    first occurrence of the bug the list of issues with an short description and when based on a github bug report
-    its github id.
+    a grouped list of changes after topic in a logical order with all not noticeable changes removed
+    followed optional by a table of issues starting with "Fixed issues:" followed by a list of grouped after
+    first occurrence of the bug the list of issues with a short description and when based on a GitHub bug report
+    its GitHub id.
 - developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
     When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID counter
 
 ----
 
 
-# Changelog of snapshot <21w50a>
-Planned to be released on 15.12.2021
+# Changelog of snapshot <21w52a>
+Planned to be released on 29.12.2021
 targeting <1.18.1>
 
 Backwards-incompatible:

@@ -40,7 +40,9 @@ class ISlot(IBufferSerializeAble, ABC):
         self.on_update = []
         self.assigned_inventory = None
 
-    async def handle_shift_click(self, x: int, y: int, button: int, modifiers: int, player):
+    async def handle_shift_click(
+        self, x: int, y: int, button: int, modifiers: int, player
+    ):
         pass
 
     def handle_click(self, button: int, modifiers: int) -> bool:
@@ -197,7 +199,9 @@ class Slot(ISlot):
     def handle_click(self, button: int, modifiers: int) -> bool:
         return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
-    async def handle_shift_click(self, x: int, y: int, button: int, modifiers: int, player) -> bool:
+    async def handle_shift_click(
+        self, x: int, y: int, button: int, modifiers: int, player
+    ) -> bool:
         if self.on_shift_click:
             result = self.on_shift_click(self, x, y, button, modifiers, player)
             if isinstance(result, typing.Awaitable):

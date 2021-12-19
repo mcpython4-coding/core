@@ -30,6 +30,7 @@ class IRecipe(mcpython.common.event.api.IRegistryContent, ABC):
     After all that, prepare() is called. This should create the needed lookups for the crafting systems
     [e.g. maps from input -> output, ...]
     """
+
     __slots__ = ("name",)
 
     TYPE = "minecraft:recipe_type"

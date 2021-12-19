@@ -171,13 +171,15 @@ class CraftingManager:
         self.prepare_for_loading_lock.release()
 
         if load_direct:
-            await asyncio.gather(*(
-                self.add_recipe_from_file(file)
-                for file in mcpython.engine.ResourceLoader.get_all_entries(
-                    "data/{}/recipes".format(modname)
+            await asyncio.gather(
+                *(
+                    self.add_recipe_from_file(file)
+                    for file in mcpython.engine.ResourceLoader.get_all_entries(
+                        "data/{}/recipes".format(modname)
+                    )
+                    if file.endswith(".json")
                 )
-                if file.endswith(".json")
-            ))
+            )
 
         else:
             for file in mcpython.engine.ResourceLoader.get_all_entries(
@@ -226,10 +228,7 @@ class CraftingManager:
         )
 
         await asyncio.gather(
-            *(
-                self.add_recipe(recipe)
-                for recipe in self.static_recipes
-            )
+            *(self.add_recipe(recipe) for recipe in self.static_recipes)
         )
 
         await shared.event_handler.call_async("crafting_manager:reload:end", self)
@@ -247,7 +246,9 @@ class CraftingManager:
             recipe = recipe_name
 
         if not hasattr(recipe, "RECIPE_VIEW"):
-            logger.println(f"recipe '{recipe_name}' cannot be shown as it has not the required tag")
+            logger.println(
+                f"recipe '{recipe_name}' cannot be shown as it has not the required tag"
+            )
             return
 
         if recipe.RECIPE_VIEW is None:
@@ -322,7 +323,9 @@ class CraftingManager:
 
         for recipe in recipes:
             if not hasattr(recipe, "RECIPE_VIEW"):
-                logger.println(f"recipe '{recipe}' cannot be shown as it has not the required tag")
+                logger.println(
+                    f"recipe '{recipe}' cannot be shown as it has not the required tag"
+                )
                 continue
 
             if recipe.RECIPE_VIEW is None:
