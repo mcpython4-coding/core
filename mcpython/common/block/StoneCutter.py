@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import random
 
+import typing
+
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
 from mcpython.common.container.crafting.IRecipeUser import IRecipeUser
@@ -22,6 +24,8 @@ from pyglet.window import key, mouse
 
 from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
+from ..container.crafting.StonecuttingRecipe import StoneCuttingRecipe
+from ..container.ResourceStack import ItemStack
 
 if shared.IS_CLIENT:
     from mcpython.client.gui.StoneCutterContainerRenderer import (
@@ -81,6 +85,27 @@ class StoneCutter(IHorizontalOrientableBlock, IRecipeUser):
 
     def get_inventories(self):
         return [self.inventory]
+
+    def insert_items_from(self, recipe: StoneCuttingRecipe, item_source: typing.List[ItemStack],
+                          items_to_remove_consumer: typing.Callable[[ItemStack], None]) -> bool:
+        if not any(stack.get_item_name() == recipe.result for stack in item_source):
+            return False
+
+        previous = self.inventory.slots[0].get_itemstack()
+        self.inventory.slots[0].set_itemstack(ItemStack(recipe.ingredient))
+
+        recipe_index_key = recipe.result, recipe.count
+        if recipe_index_key not in self.inventory.possible_outputs:
+            self.inventory.slots[0].set_itemstack(previous)
+            return False
+
+        index = self.inventory.possible_outputs.index(recipe_index_key)
+        self.inventory.currently_selected = index
+        self.inventory.slots[-1].set_itemstack(ItemStack(recipe.result, recipe.count))
+
+        items_to_remove_consumer(previous)
+
+        return True
 
     @classmethod
     def set_block_data(cls, item, block):

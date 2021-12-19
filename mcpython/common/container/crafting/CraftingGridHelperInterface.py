@@ -23,6 +23,8 @@ from mcpython import shared
 from mcpython.client.gui.Slot import ISlot
 from mcpython.common.container.crafting import IRecipe
 from mcpython.engine import logger
+from mcpython.common.container.ResourceStack import ItemStack
+from mcpython.common.container.crafting.GridRecipeInstances import AbstractCraftingGridRecipe
 
 
 class IRecipeAdapter:
@@ -80,6 +82,7 @@ class CraftingGridHelperInterface(
         for y, row in enumerate(slot_input_map):
             for x, slot in enumerate(row):
                 slot.on_update.append(self.on_input_update)
+
         slot_output_map.on_update.append(self.on_output_update)
         slot_output_map.allow_half_getting = False
         slot_output_map.on_shift_click = self.on_output_shift_click

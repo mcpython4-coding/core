@@ -22,6 +22,7 @@ import mcpython.engine.rendering.util
 from mcpython import shared
 
 from .abstract import AbstractReloadListener
+from ...engine import logger
 
 
 async def recipe_mapper(modname: str, pathname: str):
@@ -160,7 +161,7 @@ class ResourcePipeHandler:
         return self
 
     async def reload_content(self):
-        print("starting reload cycle...")
+        logger.println("starting reload cycle...")
 
         await mcpython.common.data.DataPacks.datapack_handler.reload()  # reloads all data packs
         await shared.tag_handler.reload()  # reloads all tags
@@ -175,7 +176,7 @@ class ResourcePipeHandler:
         shared.loot_table_handler.relink_table.clear()
         await shared.event_handler.call_async("data:shuffle:clear")
 
-        if mcpython.common.config.SHUFFLE_DATA:  # .. and we need to re-do if needed
+        if mcpython.common.config.SHUFFLE_DATA:  # ... and we need to re-do if needed
             await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
         if shared.IS_CLIENT:
