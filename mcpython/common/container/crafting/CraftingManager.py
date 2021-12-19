@@ -246,6 +246,10 @@ class CraftingManager:
         else:
             recipe = recipe_name
 
+        if not hasattr(recipe, "RECIPE_VIEW"):
+            logger.println(f"recipe '{recipe_name}' cannot be shown as it has not the required tag")
+            return
+
         if recipe.RECIPE_VIEW is None:
             logger.println(f"recipe {recipe_name} does not support showing")
             return
@@ -317,14 +321,18 @@ class CraftingManager:
                 recipes.remove(recipe)
 
         for recipe in recipes:
-            self.RECIPE_VIEW_INVENTORY.add_recipe_renderer(
-                recipe.RECIPE_VIEW.copy().prepare_for_recipe(recipe)
-            )
+            if not hasattr(recipe, "RECIPE_VIEW"):
+                logger.println(f"recipe '{recipe}' cannot be shown as it has not the required tag")
+                continue
 
             if recipe.RECIPE_VIEW is None:
                 logger.println(f"recipe {recipe.name} does not support showing")
                 self.RECIPE_VIEW_INVENTORY = None
-                return
+                continue
+
+            self.RECIPE_VIEW_INVENTORY.add_recipe_renderer(
+                recipe.RECIPE_VIEW.copy().prepare_for_recipe(recipe)
+            )
 
         await shared.inventory_handler.show(self.RECIPE_VIEW_INVENTORY)
 

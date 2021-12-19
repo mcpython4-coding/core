@@ -99,6 +99,7 @@ class ItemStack(AbstractResourceStack):
             self.item = None
 
         self.amount = amount if self.item and 0 <= amount <= self.item.STACK_SIZE else 0
+        self.nbt = {}
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.is_empty())
@@ -114,9 +115,14 @@ class ItemStack(AbstractResourceStack):
         else:
             self.amount = buffer.read_int()
             item_name = buffer.read_string()
-            self.item = shared.registry.get_by_name("minecraft:item").full_entries[
-                item_name
-            ]()
+            try:
+                self.item = shared.registry.get_by_name("minecraft:item").full_entries[
+                    item_name
+                ]()
+            except KeyError:
+                self.item = None
+                self.amount = 0
+
             await self.item.read_from_network_buffer(buffer)
         return self
 
