@@ -347,6 +347,165 @@ class EventBus:
 
         return result
 
+    def call_as_stack_no_result(
+        self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
+    ):
+        if event_name not in self.event_subscriptions:
+            raise RuntimeError(
+                "Event bus has no notation for the '{}' event".format(event_name)
+            )
+
+        if len(self.event_subscriptions[event_name]) < amount:
+            raise RuntimeError(
+                "Can't run event. EventBus has for the event '{}' not enough subscriber(s) (expected: {})".format(
+                    event_name, amount
+                )
+            )
+
+        # todo: run all async stuff parallel
+
+        for _ in range(amount):
+            function, extra_args, extra_kwargs, info = d = self.event_subscriptions[
+                event_name
+            ].pop(0)
+
+            if store_stuff:
+                self.popped_event_subscriptions.setdefault(event_name, []).append(d)
+
+            try:
+                if asyncio.iscoroutine(function):
+                    asyncio.get_event_loop().run_until_complete(function)
+                else:
+                    result = function(
+                        *list(args) + list(extra_args),
+                        **{**kwargs, **extra_kwargs},
+                    )
+                    if isinstance(result, typing.Awaitable):
+                        asyncio.get_event_loop().run_until_complete(result)
+
+            except (SystemExit, KeyboardInterrupt):
+                raise
+            except MemoryError:
+                import mcpython.common.state.LoadingExceptionViewState
+                from mcpython.common.mod.util import LoadingInterruptException
+
+                mcpython.common.state.LoadingExceptionViewState.error_occur(
+                    traceback.format_exc()
+                )
+                return
+            except:
+                raise
+
+    async def call_as_stack_async(
+        self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
+    ):
+        result = []
+        if event_name not in self.event_subscriptions:
+            raise RuntimeError(
+                "event bus has no notation for the '{}' event".format(event_name)
+            )
+
+        if len(self.event_subscriptions[event_name]) < amount:
+            raise RuntimeError(
+                "can't run event. EventBus has for the event '{}' not enough subscriber(s) (expected: {})".format(
+                    event_name, amount
+                )
+            )
+
+        # todo: run all async stuff parallel
+
+        for _ in range(amount):
+            function, extra_args, extra_kwargs, info = d = self.event_subscriptions[
+                event_name
+            ].pop(0)
+
+            if store_stuff:
+                self.popped_event_subscriptions.setdefault(event_name, []).append(d)
+
+            try:
+                if asyncio.iscoroutine(function):
+                    result.append((await function, info))
+                else:
+                    r = function(
+                        *list(args) + list(extra_args),
+                        **{**kwargs, **extra_kwargs},
+                    )
+
+                    if isinstance(r, typing.Awaitable):
+                        r = await r
+
+                    result.append(
+                        (
+                            r,
+                            info,
+                        )
+                    )
+
+            except (SystemExit, KeyboardInterrupt):
+                raise
+            except MemoryError:
+                import mcpython.common.state.LoadingExceptionViewState
+                from mcpython.common.mod.util import LoadingInterruptException
+
+                mcpython.common.state.LoadingExceptionViewState.error_occur(
+                    traceback.format_exc()
+                )
+                return
+            except:
+                raise
+
+        return result
+
+    async def call_as_stack_no_result_async(
+        self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
+    ):
+        if event_name not in self.event_subscriptions:
+            raise RuntimeError(
+                "event bus has no notation for the '{}' event".format(event_name)
+            )
+
+        if len(self.event_subscriptions[event_name]) < amount:
+            raise RuntimeError(
+                "can't run event. EventBus has for the event '{}' not enough subscriber(s) (expected: {})".format(
+                    event_name, amount
+                )
+            )
+
+        # todo: run all async stuff parallel
+
+        for _ in range(amount):
+            function, extra_args, extra_kwargs, info = d = self.event_subscriptions[
+                event_name
+            ].pop(0)
+
+            if store_stuff:
+                self.popped_event_subscriptions.setdefault(event_name, []).append(d)
+
+            try:
+                if asyncio.iscoroutine(function):
+                    await function
+                else:
+                    r = function(
+                        *list(args) + list(extra_args),
+                        **{**kwargs, **extra_kwargs},
+                    )
+
+                    if isinstance(r, typing.Awaitable):
+                        r = await r
+
+            except (SystemExit, KeyboardInterrupt):
+                raise
+            except MemoryError:
+                import mcpython.common.state.LoadingExceptionViewState
+                from mcpython.common.mod.util import LoadingInterruptException
+
+                mcpython.common.state.LoadingExceptionViewState.error_occur(
+                    traceback.format_exc()
+                )
+                return
+            except:
+                raise
+
     def reset_event_stack(self, event_name: str):
         """
         Will reset all event subscriptions which where popped from the normal list
