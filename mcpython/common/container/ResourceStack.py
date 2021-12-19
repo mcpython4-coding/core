@@ -122,8 +122,9 @@ class ItemStack(AbstractResourceStack):
             except KeyError:
                 self.item = None
                 self.amount = 0
+            else:
+                await self.item.read_from_network_buffer(buffer)
 
-            await self.item.read_from_network_buffer(buffer)
         return self
 
     def copy(self) -> "ItemStack":
