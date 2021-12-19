@@ -15,9 +15,9 @@ import asyncio
 import random
 
 import mcpython.client.gui.HoveringItemBox
-from mcpython.common.factory.ItemFactory import ItemFactory
 import mcpython.common.mod.ModMcpython
 from mcpython import shared
+from mcpython.common.factory.ItemFactory import ItemFactory
 from mcpython.util.enums import ToolType
 
 
@@ -26,14 +26,18 @@ async def load_item():
     ItemFactory().set_name("minecraft:baked_potato").set_food_value(5).finish()
     ItemFactory().set_name("minecraft:beef").set_food_value(3).finish()
     ItemFactory().set_name("minecraft:beetroot").set_food_value(1).finish()
-    ItemFactory().set_name("minecraft:beetroot_soup").set_food_value(6).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:beetroot_soup").set_food_value(
+        6
+    ).set_max_stack_size(1).finish()
     ItemFactory().set_name("minecraft:blaze_powder").finish()
     ItemFactory().set_name("minecraft:blaze_rod").set_fuel_level(120).finish()
     ItemFactory().set_name("minecraft:bone").finish()
     ItemFactory().set_name("minecraft:bone_meal").finish()
     ItemFactory().set_name("minecraft:book").finish()
     ItemFactory().set_name("minecraft:bow").finish()
-    ItemFactory().set_name("minecraft:bowl").set_fuel_level(5).set_max_stack_size(8).finish()
+    ItemFactory().set_name("minecraft:bowl").set_fuel_level(5).set_max_stack_size(
+        8
+    ).finish()
     ItemFactory().set_name("minecraft:bread").set_food_value(5).finish()
     ItemFactory().set_name("minecraft:brick").finish()
     ItemFactory().set_name("minecraft:broken_elytra").set_max_stack_size(1).finish()
@@ -79,9 +83,9 @@ async def load_item():
     ItemFactory().set_name("minecraft:firework_rocket").finish()
     ItemFactory().set_name("minecraft:firework_star").finish()
     ItemFactory().set_name("minecraft:flint").finish()
-    ItemFactory().set_name("minecraft:flint_and_steel").set_max_stack_size(1).set_durability(
-        64
-    ).finish()
+    ItemFactory().set_name("minecraft:flint_and_steel").set_max_stack_size(
+        1
+    ).set_durability(64).finish()
     ItemFactory().set_name("minecraft:ghast_tear").finish()
     ItemFactory().set_name("minecraft:glass_bottle").set_max_stack_size(16).finish()
     ItemFactory().set_name("minecraft:glistering_melon_slice").finish()
@@ -104,7 +108,9 @@ async def load_item():
     ItemFactory().set_name("minecraft:map").finish()
     ItemFactory().set_name("minecraft:melon_slice").set_food_value(2).finish()
     ItemFactory().set_name("minecraft:milk_bucket").set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:mushroom_stew").set_food_value(6).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:mushroom_stew").set_food_value(
+        6
+    ).set_max_stack_size(1).finish()
     ItemFactory().set_name("minecraft:mutton").set_food_value(2).finish()
     ItemFactory().set_name("minecraft:name_tag").finish()
     ItemFactory().set_name("minecraft:nautilus_shell").finish()
@@ -127,7 +133,9 @@ async def load_item():
     ItemFactory().set_name("minecraft:rabbit").set_food_value(3).finish()
     ItemFactory().set_name("minecraft:rabbit_foot").finish()
     ItemFactory().set_name("minecraft:rabbit_hide").finish()
-    ItemFactory().set_name("minecraft:rabbit_stew").set_food_value(10).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:rabbit_stew").set_food_value(
+        10
+    ).set_max_stack_size(1).finish()
     ItemFactory().set_name("minecraft:redstone").finish()  # todo: binding to block
     ItemFactory().set_name("minecraft:rotten_flesh").set_food_value(4).finish()
     ItemFactory().set_name("minecraft:saddle").set_max_stack_size(1).finish()
@@ -146,7 +154,9 @@ async def load_item():
 
     # tools
 
-    ItemFactory().set_name("minecraft:shears").set_tool_type([ToolType.SHEAR]).set_tool_break_multi(5)
+    ItemFactory().set_name("minecraft:shears").set_tool_type(
+        [ToolType.SHEAR]
+    ).set_tool_break_multi(5)
     for tool_type, tool_name in [
         (ToolType.PICKAXE, "pickaxe"),
         (ToolType.AXE, "axe"),
@@ -189,9 +199,11 @@ async def load_item():
         ).set_max_stack_size(
             1
         ).finish()
-        ItemFactory().set_name("minecraft:netherite_{}".format(tool_name)).set_tool_type(
-            [tool_type]
-        ).set_tool_break_multi(14).set_tool_level(6).set_durability(
+        ItemFactory().set_name(
+            "minecraft:netherite_{}".format(tool_name)
+        ).set_tool_type([tool_type]).set_tool_break_multi(14).set_tool_level(
+            6
+        ).set_durability(
             2031
         ).set_max_stack_size(
             1
@@ -202,74 +214,76 @@ async def load_item():
 
     # armor
 
-    ItemFactory().set_name("minecraft:golden_helmet").set_armor_points(2).set_durability(
-        77
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:golden_chestplate").set_armor_points(5).set_durability(
-        112
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:golden_leggings").set_armor_points(3).set_durability(
-        105
-    ).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:golden_helmet").set_armor_points(
+        2
+    ).set_durability(77).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:golden_chestplate").set_armor_points(
+        5
+    ).set_durability(112).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:golden_leggings").set_armor_points(
+        3
+    ).set_durability(105).set_max_stack_size(1).finish()
     ItemFactory().set_name("minecraft:golden_boots").set_armor_points(1).set_durability(
         91
     ).set_max_stack_size(1).finish()
 
-    ItemFactory().set_name("minecraft:chainmail_helmet").set_armor_points(2).set_durability(
-        165
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:chainmail_chestplate").set_armor_points(5).set_durability(
-        240
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:chainmail_leggings").set_armor_points(4).set_durability(
-        225
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:chainmail_boots").set_armor_points(1).set_durability(
-        195
-    ).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:chainmail_helmet").set_armor_points(
+        2
+    ).set_durability(165).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:chainmail_chestplate").set_armor_points(
+        5
+    ).set_durability(240).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:chainmail_leggings").set_armor_points(
+        4
+    ).set_durability(225).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:chainmail_boots").set_armor_points(
+        1
+    ).set_durability(195).set_max_stack_size(1).finish()
 
     ItemFactory().set_name("minecraft:iron_helmet").set_armor_points(2).set_durability(
         165
     ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:iron_chestplate").set_armor_points(6).set_durability(
-        240
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:iron_leggings").set_armor_points(5).set_durability(
-        225
-    ).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:iron_chestplate").set_armor_points(
+        6
+    ).set_durability(240).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:iron_leggings").set_armor_points(
+        5
+    ).set_durability(225).set_max_stack_size(1).finish()
     ItemFactory().set_name("minecraft:iron_boots").set_armor_points(2).set_durability(
         195
     ).set_max_stack_size(1).finish()
 
-    ItemFactory().set_name("minecraft:diamond_helmet").set_armor_points(3).set_durability(
-        363
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:diamond_chestplate").set_armor_points(8).set_durability(
-        528
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:diamond_leggings").set_armor_points(6).set_durability(
-        495
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:diamond_boots").set_armor_points(3).set_durability(
-        429
-    ).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:diamond_helmet").set_armor_points(
+        3
+    ).set_durability(363).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:diamond_chestplate").set_armor_points(
+        8
+    ).set_durability(528).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:diamond_leggings").set_armor_points(
+        6
+    ).set_durability(495).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:diamond_boots").set_armor_points(
+        3
+    ).set_durability(429).set_max_stack_size(1).finish()
 
-    ItemFactory().set_name("minecraft:netherite_boots").set_armor_points(3).set_durability(
-        407
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:netherite_chestplate").set_armor_points(8).set_durability(
-        592
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:netherite_helmet").set_armor_points(6).set_durability(
-        555
-    ).set_max_stack_size(1).finish()
-    ItemFactory().set_name("minecraft:netherite_leggings").set_armor_points(3).set_durability(
-        481
-    ).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:netherite_boots").set_armor_points(
+        3
+    ).set_durability(407).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:netherite_chestplate").set_armor_points(
+        8
+    ).set_durability(592).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:netherite_helmet").set_armor_points(
+        6
+    ).set_durability(555).set_max_stack_size(1).finish()
+    ItemFactory().set_name("minecraft:netherite_leggings").set_armor_points(
+        3
+    ).set_durability(481).set_max_stack_size(1).finish()
 
     ItemFactory().set_name("minecraft:arrow").finish()
 
-    ItemFactory().set_name("minecraft:barrier").set_has_block_flag(True).set_tool_tip_renderer(
+    ItemFactory().set_name("minecraft:barrier").set_has_block_flag(
+        True
+    ).set_tool_tip_renderer(
         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
     ).finish()
 

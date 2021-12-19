@@ -23,8 +23,8 @@ Contains only some information, in ordered form, in a better form for the end us
 ----
 
 
-# Changelog of snapshot <21w50a>
-Planned to be released on 15.12.2021
+# Changelog of snapshot <21w52a>
+Planned to be released on 29.12.2021
 targeting <1.18.1>
 
 Backwards-incompatible:

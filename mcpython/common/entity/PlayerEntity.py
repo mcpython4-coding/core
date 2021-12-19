@@ -16,7 +16,6 @@ import math
 import typing
 
 import deprecation
-
 import mcpython.client.gui.Slot
 import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.common.container.ResourceStack
@@ -497,9 +496,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             # todo: add list to player of possible slots with possibility of being callable
             # todo: add tag for this functionality
             a = (
-                (await self.get_active_inventory_slot_async()).get_itemstack().get_item_name()
-                == "minecraft:totem_of_undying"
-            )
+                await self.get_active_inventory_slot_async()
+            ).get_itemstack().get_item_name() == "minecraft:totem_of_undying"
             b = (
                 self.inventory_main.slots[45].get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"

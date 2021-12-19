@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import random
-
 import typing
 
 import mcpython.common.block.PossibleBlockStateBuilder
@@ -22,10 +21,10 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide, ToolType
 from pyglet.window import key, mouse
 
-from . import AbstractBlock
-from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from ..container.crafting.StonecuttingRecipe import StoneCuttingRecipe
 from ..container.ResourceStack import ItemStack
+from . import AbstractBlock
+from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
 if shared.IS_CLIENT:
     from mcpython.client.gui.StoneCutterContainerRenderer import (
@@ -86,8 +85,12 @@ class StoneCutter(IHorizontalOrientableBlock, IRecipeUser):
     def get_inventories(self):
         return [self.inventory]
 
-    def insert_items_from(self, recipe: StoneCuttingRecipe, item_source: typing.List[ItemStack],
-                          items_to_remove_consumer: typing.Callable[[ItemStack], None]) -> bool:
+    def insert_items_from(
+        self,
+        recipe: StoneCuttingRecipe,
+        item_source: typing.List[ItemStack],
+        items_to_remove_consumer: typing.Callable[[ItemStack], None],
+    ) -> bool:
         if not any(stack.get_item_name() == recipe.result for stack in item_source):
             return False
 

@@ -135,7 +135,8 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.created_slots = False
 
     async def init(self):
-        if self.created_slots: return
+        if self.created_slots:
+            return
 
         self.created_slots = True
         self.slots = await self.create_slot_renderers()

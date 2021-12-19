@@ -21,8 +21,8 @@ import mcpython.common.data.DataPacks
 import mcpython.engine.rendering.util
 from mcpython import shared
 
-from .abstract import AbstractReloadListener
 from ...engine import logger
+from .abstract import AbstractReloadListener
 
 
 async def recipe_mapper(modname: str, pathname: str):

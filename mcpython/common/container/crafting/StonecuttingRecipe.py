@@ -19,7 +19,11 @@ from mcpython import shared
 
 @shared.crafting_handler
 class StoneCuttingRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
-    __slots__ = mcpython.common.container.crafting.IRecipe.IRecipe.__slots__ + ("ingredient", "result", "count")
+    __slots__ = mcpython.common.container.crafting.IRecipe.IRecipe.__slots__ + (
+        "ingredient",
+        "result",
+        "count",
+    )
 
     # The list of type descriptors to decode
     RECIPE_TYPE_NAMES = ["minecraft:stonecutting"]
