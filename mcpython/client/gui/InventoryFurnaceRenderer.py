@@ -29,12 +29,14 @@ from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
-class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
+class InventoryFurnaceRenderer(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     """
-    Inventory class for the furnace
+    Inventory renderer class for the furnace
+
     todo: move a LOT of stuff to the container
     """
 
+    # The texture properties, provided when reloading
     TEXTURE_BG = None
     TEXTURE_BG_SIZE = None
     TEXTURE_ARROW = None
@@ -80,46 +82,72 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         cls.TEXTURE_ARROW = mcpython.util.texture.to_pyglet_image(texture_fire)
         cls.TEXTURE_ARROW_SIZE = texture_fire.size
 
+    @classmethod
+    def get_config_file(cls) -> str or None:
+        return "assets/config/inventory/block_inventory_furnace.json"
+
+    @classmethod
+    def is_fuel(cls, itemstack):
+        return not itemstack.is_empty() and hasattr(itemstack.item, "FUEL")
+
     def __init__(self, block, types: typing.List[str]):
         super().__init__()
 
+        # todo: this should be at the container
         self.block = block
-        self.fuel_left = 0
-        self.fuel_max = 0
-        self.xp_stored = 0
+        self.fuel_left = 0.
+        self.fuel_max = 0.
+        self.xp_stored = 0.
         self.smelt_start: typing.Optional[float] = None
         self.old_item_name = None
         self.recipe = None
-        self.progress = 0
+        self.progress = 0.
         self.types = types
 
         if self.custom_name is None:
             self.custom_name = "Furnace"
 
+    async def create_slot_renderers(self) -> list:
+        # 1 input, 1 fuel and 1 output
+        slots = [
+            mcpython.client.gui.Slot.Slot(
+                on_update=self.on_input_update, on_shift_click=self.on_shift_click
+            ),
+            mcpython.client.gui.Slot.Slot(
+                on_update=self.on_fuel_slot_update,
+                on_shift_click=self.on_shift_click,
+                allowed_item_test=self.is_fuel,
+            ),
+            mcpython.client.gui.Slot.Slot(
+                on_update=self.on_output_update, on_shift_click=self.on_shift_click
+            ),
+        ]
+
+        return slots
+
+    # todo: this should be at the container
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super().write_to_network_buffer(buffer)
-        buffer.write_int(self.fuel_left)
-        buffer.write_int(self.fuel_max)
-        buffer.write_int(self.xp_stored)
+        buffer.write_float(self.fuel_left)
+        buffer.write_float(self.fuel_max)
+        buffer.write_float(self.xp_stored)
         buffer.write_float(
             time.time() - self.smelt_start if self.smelt_start else time.time()
         )
-        buffer.write_int(self.progress)
+        buffer.write_float(self.progress)
         await buffer.write_list(self.types, buffer.write_string)
 
+    # todo: this should be at the container
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
-        self.fuel_left = buffer.read_int()
-        self.fuel_max = buffer.read_int()
-        self.xp_stored = buffer.read_int()
+        self.fuel_left = buffer.read_float()
+        self.fuel_max = buffer.read_float()
+        self.xp_stored = buffer.read_float()
         self.smelt_start = buffer.read_float() + time.time()
-        self.progress = buffer.read_int()
+        self.progress = buffer.read_float()
         self.types = [e async for e in buffer.read_list(buffer.read_string)]
 
-    @staticmethod
-    def get_config_file() -> str or None:
-        return "assets/config/inventory/block_inventory_furnace.json"
-
+    # todo: this should be at the container
     def reset(self):
         self.block.active = False
         self.smelt_start = None
@@ -192,30 +220,8 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         else:
             self.reset()
 
-    async def create_slot_renderers(self) -> list:
-        # 36 slots of main, 1 input, 1 fuel and 1 output
-        slots = [
-            mcpython.client.gui.Slot.Slot(
-                on_update=self.on_input_update, on_shift_click=self.on_shift
-            ),
-            mcpython.client.gui.Slot.Slot(
-                on_update=self.on_fuel_slot_update,
-                on_shift_click=self.on_shift,
-                allowed_item_test=self.is_fuel,
-            ),
-            mcpython.client.gui.Slot.Slot(
-                on_update=self.on_output_update, on_shift_click=self.on_shift
-            ),
-        ]
-
-        return slots
-
-    @classmethod
-    def is_fuel(cls, itemstack):
-        return not itemstack.is_empty() and hasattr(itemstack.item, "FUEL")
-
     @staticmethod
-    async def on_shift(slot, x, y, button, mod, player):
+    async def on_shift_click(slot, x, y, button, mod, player):
         slot_copy = slot.itemstack.copy()
 
         if await shared.world.get_active_player().pick_up_item(slot_copy):
@@ -305,26 +311,33 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         if symbol == pyglet.window.key.E:
             await shared.inventory_handler.hide(self)
 
-    def on_tick(self, dt):
+    async def on_tick(self, dt):
+        elapsed_time = time.time() - self.smelt_start if self.smelt_start else 0
+
         if self.fuel_left > 0:
             self.fuel_left = max(self.fuel_left - round(dt * 100) / 100, 0)
+        elif self.progress and self.recipe:
+            self.progress -= elapsed_time / self.recipe.time
+            self.progress = max(self.progress, 0)
+
         if self.recipe is not None:
             if self.fuel_left == 0:
                 if self.progress > 0.99:
-                    self.finish()
+                    await self.finish()
                 else:
                     self.update_status()
                 return
-            elapsed_time = time.time() - self.smelt_start
+
             self.progress = min(elapsed_time / self.recipe.time, 1)
             if self.progress >= 1:
-                self.finish()
+                await self.finish()
+
         elif not self.slots[0].get_itemstack().is_empty() and (
             not self.slots[1].get_itemstack().is_empty() or self.fuel_left > 0
         ):
             self.update_status()
 
-    def finish(self):
+    async def finish(self):
         if self.slots[2].get_itemstack().is_empty():
             self.slots[2].set_itemstack(
                 mcpython.common.container.ResourceStack.ItemStack(self.recipe.output)
@@ -338,11 +351,10 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
         self.slots[0].get_itemstack().add_amount(-1)
         try:
-            asyncio.get_event_loop().run_until_complete(
-                shared.world.get_active_player().add_xp(self.recipe.xp)
-            )
+            await (await shared.world.get_active_player_async()).add_xp(self.recipe.xp)
         except AttributeError:
             pass
+
         self.smelt_start = time.time()
         self.update_status()
 
@@ -368,5 +380,5 @@ class InventoryFurnace(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
 
 
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "data:reload:work", InventoryFurnace.update_texture
+    "data:reload:work", InventoryFurnaceRenderer.update_texture
 )

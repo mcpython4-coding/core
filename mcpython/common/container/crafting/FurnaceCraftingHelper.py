@@ -68,7 +68,7 @@ class FurnaceRecipe(mcpython.common.container.crafting.IRecipe.IRecipe):
         self.time = time
         self.type = t
 
-    def register(self):
+    async def prepare(self):
         [
             shared.crafting_handler.furnace_recipes.setdefault(
                 self.type, {}

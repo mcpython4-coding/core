@@ -172,7 +172,7 @@ class WorldGenerationConfig(AbstractState.AbstractState):
 
     async def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            self.on_back_press(0, 0)
+            await self.on_back_press(0, 0)
         elif symbol == key.ENTER:
             await self.on_generate_press(0, 0)
 

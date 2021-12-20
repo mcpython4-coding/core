@@ -19,11 +19,11 @@ from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, Write
 
 
 class AbstractNetworkFixer(ABC):
-    BEFORE_VERSION: int = 0
-    AFTER_VERSION: int = 0
+    BEFORE_VERSION: int = -1
+    AFTER_VERSION: int = -1
 
     @classmethod
-    def apply2stream(
+    async def apply2stream(
         cls,
         target: IBufferSerializeAble,
         source_buffer: ReadBuffer,

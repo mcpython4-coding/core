@@ -1957,4 +1957,7 @@ f   [uuk]: some edge cases are now dropping items instead of silently consuming 
 I   [uuk]: more recipe stuff is now async
 b   [uuk]: fixed some item stack sizes
 OS  [uuk]: ItemStack deserialization will now not crash when encountering an item not in current registries
+B   [uuk]: fixed internal registration bug of furnace recipes
+b   [uuk]: fixed the block data fixer system
+f   [uuk]: network buffers support not writing dicts directly
 

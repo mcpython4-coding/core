@@ -178,11 +178,11 @@ class LoadingStage:
         else:
             astate.parts[2].progress_max = 0
 
-    def prepare_next_stage(self, astate):
+    async def prepare_next_stage(self, astate):
         self.active_mod_index = 0
 
         if self.finished():
-            return self.finish(astate)
+            return await self.finish(astate)
 
         self.next_event()
         mod_instance = shared.mod_loader.mods[
@@ -212,7 +212,7 @@ class LoadingStage:
             self.active_mod_index >= len(shared.mod_loader.mods)
             or self.active_event is None
         ):
-            self.prepare_next_stage(astate)
+            await self.prepare_next_stage(astate)
 
         # print(self.active_event)
 
@@ -576,6 +576,7 @@ manager.add_stage(
         "minecraft:file_interface",
         "loading world serializer stuff",
         "minecraft:configs",
+        "minecraft:blocks",
     )
     .add_event_stage("stage:serializer:parts")
     .add_event_stage("stage:datafixer:general")

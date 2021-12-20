@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
-from mcpython.client.gui.InventoryFurnace import InventoryFurnace
+from mcpython.client.gui.InventoryFurnaceRenderer import InventoryFurnaceRenderer
 from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide
@@ -24,6 +24,7 @@ class Furnace(IHorizontalOrientableBlock):
     """
     Class for the furnace block
     """
+    NETWORK_BUFFER_SERIALIZER_VERSION = 1
 
     # the list of recipe groups to use for this furnace
     FURNACE_RECIPES = ["minecraft:smelting"]
@@ -47,7 +48,7 @@ class Furnace(IHorizontalOrientableBlock):
         super().__init__()
         self.active = False
 
-        self.inventory = InventoryFurnace(self, self.FURNACE_RECIPES)
+        self.inventory = InventoryFurnaceRenderer(self, self.FURNACE_RECIPES)
 
     async def on_block_added(self):
         await super().on_block_added()

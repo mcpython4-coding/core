@@ -31,7 +31,7 @@ class ICapabilityContainer(IBufferSerializeAble):
         if flag:
             return
 
-        buffer.write_list(
+        await buffer.write_list(
             list(self.capability_data.items()),
             lambda e: buffer.write_string(e[0]).write_bytes(pickle.dumps(e[1])),
         )

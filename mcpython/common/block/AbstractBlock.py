@@ -194,40 +194,62 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
 
-        buffer.write_int(len(state))
-        for key, value in state.items():
-            if not isinstance(value, str):
-                logger.println(
-                    "Skipping serialization of block "
-                    + self.NAME
-                    + " as key "
-                    + key
-                    + " has the invalid value "
-                    + str(value)
-                )
-                continue
+        if not state:
+            buffer.write_int(0)
 
-            buffer.write_string(key).write_string(value)
+        else:
+            state = {key: value for key, value in state.items() if isinstance(key, str) and isinstance(value, str)}
+            if not state:
+                buffer.write_int(0)
+            else:
+                await buffer.write_dict(state, buffer.write_string, buffer.write_string)
+
+    async def write_internal_for_migration(self, buffer: WriteBuffer):
+        # buffer.write_int(version)
+
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        state: dict = self.get_model_state()
+
+        if not state:
+            buffer.write_int(0)
+        else:
+            state = {key: value for key, value in state.items() if isinstance(key, str) and isinstance(value, str)}
+            if not state:
+                buffer.write_int(0)
+            else:
+                await buffer.write_dict(state, buffer.write_string, buffer.write_string)
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         version = buffer.read_int()
         await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        original_buffer = buffer
 
         # Apply these fixers locally
         if version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
-            while version in self.NETWORK_BUFFER_DATA_FIXERS:
+            while version in self.NETWORK_BUFFER_DATA_FIXERS and version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
                 fixer = self.NETWORK_BUFFER_DATA_FIXERS[version]
                 write = WriteBuffer()
 
-                if fixer.apply2stream(self, buffer, write) is True:
+                try:
+                    if await fixer.apply2stream(self, buffer, write) is True:
+                        return
+                except:
+                    logger.print_exception("during applying data fixer; discarding data")
                     return
 
                 buffer = ReadBuffer(write.get_data())
                 version = fixer.AFTER_VERSION
 
-        state = {
-            buffer.read_string(): buffer.read_string() for _ in range(buffer.read_int())
-        }
+            # Our fixed stream belongs now here...
+            original_buffer.stream = buffer.stream
+
+        state = await original_buffer.read_dict(original_buffer.read_string, original_buffer.read_string)
+        self.set_model_state(state)
+
+    async def read_internal_for_migration(self, buffer: ReadBuffer):
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+
+        state = await buffer.read_dict(buffer.read_string, buffer.read_string)
         self.set_model_state(state)
 
     async def schedule_network_update(self):
