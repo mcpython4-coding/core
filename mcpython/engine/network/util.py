@@ -73,9 +73,18 @@ class ReadBuffer:
             else:
                 yield result
 
-    async def read_dict(self, key: typing.Callable[[], typing.Awaitable | typing.Hashable], value: typing.Callable[[], typing.Awaitable | typing.Any]):
+    async def read_dict(
+        self,
+        key: typing.Callable[[], typing.Awaitable | typing.Hashable],
+        value: typing.Callable[[], typing.Awaitable | typing.Any],
+    ):
         size = self.read_int()
-        return {(await key() if isinstance(key, typing.Awaitable) else key()): (await value() if isinstance(key, typing.Awaitable) else value()) for _ in range(size)}
+        return {
+            (await key() if isinstance(key, typing.Awaitable) else key()): (
+                await value() if isinstance(key, typing.Awaitable) else value()
+            )
+            for _ in range(size)
+        }
 
     def read_bytes(self, size_size=2):
         size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
@@ -149,7 +158,9 @@ class WriteBuffer:
 
         return self
 
-    async def write_dict(self, data: typing.Dict, key: typing.Callable, value: typing.Callable):
+    async def write_dict(
+        self, data: typing.Dict, key: typing.Callable, value: typing.Callable
+    ):
         self.write_int(len(data))
         for k, v in data.items():
             k = key(k)

@@ -95,13 +95,13 @@ class InventoryFurnaceRenderer(mcpython.client.gui.ContainerRenderer.ContainerRe
 
         # todo: this should be at the container
         self.block = block
-        self.fuel_left = 0.
-        self.fuel_max = 0.
-        self.xp_stored = 0.
+        self.fuel_left = 0.0
+        self.fuel_max = 0.0
+        self.xp_stored = 0.0
         self.smelt_start: typing.Optional[float] = None
         self.old_item_name = None
         self.recipe = None
-        self.progress = 0.
+        self.progress = 0.0
         self.types = types
 
         if self.custom_name is None:

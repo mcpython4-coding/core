@@ -24,6 +24,7 @@ class Furnace(IHorizontalOrientableBlock):
     """
     Class for the furnace block
     """
+
     NETWORK_BUFFER_SERIALIZER_VERSION = 1
 
     # the list of recipe groups to use for this furnace

@@ -198,7 +198,11 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             buffer.write_int(0)
 
         else:
-            state = {key: value for key, value in state.items() if isinstance(key, str) and isinstance(value, str)}
+            state = {
+                key: value
+                for key, value in state.items()
+                if isinstance(key, str) and isinstance(value, str)
+            }
             if not state:
                 buffer.write_int(0)
             else:
@@ -213,7 +217,11 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         if not state:
             buffer.write_int(0)
         else:
-            state = {key: value for key, value in state.items() if isinstance(key, str) and isinstance(value, str)}
+            state = {
+                key: value
+                for key, value in state.items()
+                if isinstance(key, str) and isinstance(value, str)
+            }
             if not state:
                 buffer.write_int(0)
             else:
@@ -226,7 +234,10 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
         # Apply these fixers locally
         if version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
-            while version in self.NETWORK_BUFFER_DATA_FIXERS and version != self.NETWORK_BUFFER_SERIALIZER_VERSION:
+            while (
+                version in self.NETWORK_BUFFER_DATA_FIXERS
+                and version != self.NETWORK_BUFFER_SERIALIZER_VERSION
+            ):
                 fixer = self.NETWORK_BUFFER_DATA_FIXERS[version]
                 write = WriteBuffer()
 
@@ -234,7 +245,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
                     if await fixer.apply2stream(self, buffer, write) is True:
                         return
                 except:
-                    logger.print_exception("during applying data fixer; discarding data")
+                    logger.print_exception(
+                        "during applying data fixer; discarding data"
+                    )
                     return
 
                 buffer = ReadBuffer(write.get_data())
@@ -243,7 +256,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             # Our fixed stream belongs now here...
             original_buffer.stream = buffer.stream
 
-        state = await original_buffer.read_dict(original_buffer.read_string, original_buffer.read_string)
+        state = await original_buffer.read_dict(
+            original_buffer.read_string, original_buffer.read_string
+        )
         self.set_model_state(state)
 
     async def read_internal_for_migration(self, buffer: ReadBuffer):

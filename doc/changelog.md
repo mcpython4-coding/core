@@ -60,6 +60,9 @@ Backwards-incompatible:
 
     Fixed issues:
         - fixed rendering of block top for non cubic blocks
+        - fixed furnace recipes not working (never registered)
+        - fixed running furnace crashing during saving
+        - fixed internal datafixer system for block meta data
 
 
 # Changelog of snapshot 21w46a
