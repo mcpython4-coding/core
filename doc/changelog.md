@@ -23,11 +23,11 @@ Contains only some information, in ordered form, in a better form for the end us
 ----
 
 
-# Changelog of snapshot <21w52a>
+# Changelog of snapshot 21w52a
 Planned to be released on 29.12.2021
-targeting <1.18.1>
+targeting 1.18.1
 
-Backwards-incompatible:
+Mostly Backwards-incompatible:
 - mod config system (deprecated and scheduled for removal until next alpha)
 - things touching FaceInfo, beside lookup if the block is shown/hidden, breaking also custom renderers with 
   an optimised implementation for multi faces, and anything touching the show/hide methods for faces 
@@ -40,7 +40,7 @@ Backwards-incompatible:
 
     Rendering
         - optimised block rendering (again)
-        - added more possibiliteis for block rendering to do fancy stuff
+        - added more possibilities for block rendering to do fancy stuff
         - block models can now be animated by the vanilla way (or by doing some fancy stuff 
             with the AnimationManager)
 
@@ -56,7 +56,7 @@ Backwards-incompatible:
         - moved a lot of stuff to async system, so we are future proof with threading
 
     Commands:
-        - added /data missing blocks to print a list of all blocks for which a BlockState exists, but no Block definition is found
+        - added "/data missing blocks" to print a list of all blocks for which a BlockState exists, but no Block definition is found
 
     Fixed issues:
         - fixed rendering of block top for non cubic blocks
