@@ -12,11 +12,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import dis
-import functools
 import typing
 
-from mcpython.engine import logger
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
+from .util import PyOpcodes
 
 
 def reconstruct_instruction(
@@ -66,6 +65,7 @@ class MixinPatchHelper:
     def __init__(self, patcher: FunctionPatcher):
         self.patcher = patcher
         self.instruction_listing = list(self.patcher.get_instruction_list())
+        self.is_async = self.instruction_listing[0].opname == "GEN_START"
 
     def walk(self) -> typing.Iterable[typing.Tuple[int, dis.Instruction]]:
         yield from zip(range(len(self.instruction_listing)), self.instruction_listing)
@@ -205,6 +205,18 @@ class MixinPatchHelper:
         """
         raise RuntimeError
 
+    def makeMethodAsync(self):
+        """
+        Simply makes this method async, like it was declared by "async def"
+        """
+        # don't insert the GEN_START instruction twice
+        if self.is_async:
+            return
+
+        self.insertRegion(-1, [dis.Instruction("GEN_START", 129, 0, None, None, False, 0, 0)])
+        self.is_async = True
+        return self
+
     def insertStaticMethodCallAt(self, offset: int, method: str, *args):
         """
         Injects a static method call into another method
@@ -343,6 +355,198 @@ class MixinPatchHelper:
             offset,
             instructions,
         )
+        return self
+
+    def insertAsyncStaticMethodCallAt(self, offset: int, method: str, *args):
+        """
+        Injects a static method call to an async method into another method
+        :param offset: the offset to inject at, from function head
+        :param method: the method address to inject, by module:path
+        :param args: the args to invoke with
+
+        WARNING: due to the need of a dynamic import instruction, the method to inject into cannot lie in the same
+            package as the method call to inject
+        todo: add option to load the method beforehand and inject as constant
+        """
+
+        if not self.is_async:
+            raise RuntimeError("cannot insert async method call when surrounding method is not async")
+
+        module, path = method.split(":")
+        real_name = path.split(".")[-1]
+
+        if path.count(".") > 0:
+            real_module = module + "." + ".".join(path.split(".")[:-1])
+        else:
+            real_module = module
+
+        instructions = [
+            dis.Instruction(
+                "LOAD_CONST",
+                100,
+                self.patcher.ensureConstant(0),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "LOAD_CONST",
+                100,
+                self.patcher.ensureConstant((real_name,)),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "IMPORT_NAME",
+                108,
+                self.patcher.ensureName(real_module),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "IMPORT_FROM",
+                109,
+                self.patcher.ensureName(real_name),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "STORE_FAST",
+                125,
+                self.patcher.ensureName(real_module),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "POP_TOP",
+                1,
+                None,
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "LOAD_FAST",
+                124,
+                self.patcher.ensureName(real_module),
+                None,
+                None,
+                False,
+                0,
+                0.0,
+            ),
+        ]
+
+        for arg in args:
+            instructions.append(
+                dis.Instruction(
+                    "LOAD_CONST",
+                    100,
+                    self.patcher.ensureConstant(arg),
+                    None,
+                    None,
+                    False,
+                    0,
+                    0,
+                )
+            )
+
+        instructions += [
+            dis.Instruction(
+                "CALL_FUNCTION",
+                131,
+                len(args),
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "GET_AWAITABLE",
+                73,
+                0,
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "LOAD_CONST",
+                100,
+                self.patcher.ensureConstant(None),
+                0,
+                0,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "YIELD_FROM",
+                72,
+                0,
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+            dis.Instruction(
+                "POP_TOP",
+                1,
+                0,
+                None,
+                None,
+                False,
+                0,
+                0,
+            ),
+        ]
+
+        self.patcher.max_stack_size += max(2, len(args))
+        self.patcher.number_of_locals += 1
+        self.patcher.variable_names.append(real_name)
+
+        self.insertRegion(
+            offset,
+            instructions,
+        )
+        return self
+
+    def identify_call_instruction(self, target_method_name: str) -> typing.Iterable[int]:
+        def identify(info):
+            return info.function_name == target_method_name
+
+        yield from self.identify_call_instruction_custom(identify)
+
+    def identify_call_instruction_custom(self, comparator: typing.Callable[[typing.Any], bool]) -> typing.Iterable[int]:
+        from mcpython.mixin.StackAnalyser import StackAnalyser
+        stack_analyser = StackAnalyser(self)
+        stack_analyser.prepareSimpleStack()
+
+        for i, instruction in enumerate(self.instruction_listing):
+            if instruction.opcode in (PyOpcodes.CALL_FUNCTION, PyOpcodes.CALL_FUNCTION_KW, PyOpcodes.CALL_FUNCTION_EX, PyOpcodes.CALL_METHOD):
+                context = stack_analyser.identifyMethodInvocationContext(i)
+
+                if comparator(context):
+                    yield i
 
     @staticmethod
     def prepare_method_for_insert(method: FunctionPatcher) -> FunctionPatcher:

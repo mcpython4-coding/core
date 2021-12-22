@@ -323,3 +323,28 @@ class StackAnalyser:
             del stack[-(instr.arg + 2) :]
             stack.append(None)
             return self.visitCp(cp + 1, visited, stack, local, named_locals)
+
+    def identifyMethodInvocationContext(self, i: int) -> "FunctionCallInformation":
+        pass
+
+
+class PyTrackingObjectIdentifier:
+    def __init__(self):
+        self.returned_by: FunctionCallInformation | None = None
+        self.primitive_value = None
+        self.primitive_type = None
+
+
+class FunctionCallInformation:
+    def __init__(self):
+        self.invoke_opcode: int = -1
+        self.offset = 0
+        self.function_name: str | None = None
+        self.is_static_call = True
+        self.argument_count = 0
+
+    def lookup_argument_types(self) -> typing.Iterable[PyTrackingObjectIdentifier]:
+        pass
+
+    def lookup_possible_targets(self) -> typing.Iterable:
+        pass
