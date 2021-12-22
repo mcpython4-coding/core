@@ -55,7 +55,7 @@ class ISlab(mcpython.common.block.AbstractBlock.AbstractBlock):
 
     DEBUG_WORLD_BLOCK_STATES = [{"type": x.name.upper()} for x in SlabModes]
 
-    def on_player_interact(
+    async def on_player_interact(
         self, player, itemstack, button, modifiers, exact_hit
     ) -> bool:
         # todo: add half -> double convert

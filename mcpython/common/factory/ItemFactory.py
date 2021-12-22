@@ -194,10 +194,10 @@ def build_class(
         if "armor_points" in configs:
             DEFENSE_POINTS = configs["armor_points"]
 
-        def on_set_from_item(self, block):
+        async def on_set_from_item(self, block):
             for func in configs["custom_from_item_funcs"]:
-                func(self, block)
-            super().on_set_from_item(block)
+                await func(self, block)
+            await super().on_set_from_item(block)
 
     return ModifiedClass
 

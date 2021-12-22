@@ -15,6 +15,7 @@ import dis
 import typing
 
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
+
 from .util import PyOpcodes
 
 
@@ -213,7 +214,9 @@ class MixinPatchHelper:
         if self.is_async:
             return
 
-        self.insertRegion(-1, [dis.Instruction("GEN_START", 129, 0, None, None, False, 0, 0)])
+        self.insertRegion(
+            -1, [dis.Instruction("GEN_START", 129, 0, None, None, False, 0, 0)]
+        )
         self.is_async = True
         return self
 
@@ -370,7 +373,9 @@ class MixinPatchHelper:
         """
 
         if not self.is_async:
-            raise RuntimeError("cannot insert async method call when surrounding method is not async")
+            raise RuntimeError(
+                "cannot insert async method call when surrounding method is not async"
+            )
 
         module, path = method.split(":")
         real_name = path.split(".")[-1]
@@ -530,19 +535,29 @@ class MixinPatchHelper:
         )
         return self
 
-    def identify_call_instruction(self, target_method_name: str) -> typing.Iterable[int]:
+    def identify_call_instruction(
+        self, target_method_name: str
+    ) -> typing.Iterable[int]:
         def identify(info):
             return info.function_name == target_method_name
 
         yield from self.identify_call_instruction_custom(identify)
 
-    def identify_call_instruction_custom(self, comparator: typing.Callable[[typing.Any], bool]) -> typing.Iterable[int]:
+    def identify_call_instruction_custom(
+        self, comparator: typing.Callable[[typing.Any], bool]
+    ) -> typing.Iterable[int]:
         from mcpython.mixin.StackAnalyser import StackAnalyser
+
         stack_analyser = StackAnalyser(self)
         stack_analyser.prepareSimpleStack()
 
         for i, instruction in enumerate(self.instruction_listing):
-            if instruction.opcode in (PyOpcodes.CALL_FUNCTION, PyOpcodes.CALL_FUNCTION_KW, PyOpcodes.CALL_FUNCTION_EX, PyOpcodes.CALL_METHOD):
+            if instruction.opcode in (
+                PyOpcodes.CALL_FUNCTION,
+                PyOpcodes.CALL_FUNCTION_KW,
+                PyOpcodes.CALL_FUNCTION_EX,
+                PyOpcodes.CALL_METHOD,
+            ):
                 context = stack_analyser.identifyMethodInvocationContext(i)
 
                 if comparator(context):

@@ -116,7 +116,7 @@ class AbstractItem(
 
     # events
 
-    def on_player_interact(
+    async def on_player_interact(
         self, player, block, button: int, modifiers: int, itemstack, previous
     ) -> bool:
         """
@@ -132,10 +132,10 @@ class AbstractItem(
         """
         return False
 
-    def on_block_broken_with(self, itemstack, player, block):
+    async def on_block_broken_with(self, itemstack, player, block):
         pass
 
-    def on_set_from_item(self, block):
+    async def on_set_from_item(self, block):
         if self.stored_block_state is not None and self.NAME == block.NAME:
             block.set_item_saved_state(self.stored_block_state)
 
@@ -152,6 +152,7 @@ class AbstractItem(
     def set_data(self, data):
         if data == "no:data":
             return
+
         self.stored_block_state, self.can_destroy, self.can_be_set_on, *extra = data
 
         if len(extra) == 1:

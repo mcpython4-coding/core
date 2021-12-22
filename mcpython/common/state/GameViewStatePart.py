@@ -272,7 +272,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                         await chunk.remove_block(block_position)
 
                         if not selected_itemstack.is_empty():
-                            selected_itemstack.item.on_block_broken_with(
+                            await selected_itemstack.item.on_block_broken_with(
                                 selected_itemstack, player, block
                             )
 
@@ -337,7 +337,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                             ),
                         )
 
-                        active_itemstack.item.on_set_from_item(instance)
+                        await active_itemstack.item.on_set_from_item(instance)
 
                         if player.gamemode == 0:
                             slot.get_itemstack().add_amount(-1)
@@ -532,7 +532,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         cancel = False
 
         if not slot.get_itemstack().is_empty():
-            if slot.get_itemstack().item.on_player_interact(
+            if await slot.get_itemstack().item.on_player_interact(
                 player,
                 block,
                 button,

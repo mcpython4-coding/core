@@ -69,10 +69,7 @@ async def collide(position: tuple, height: int, previous=None):
                 if not blockstate:
                     continue
 
-                if (
-                    block is not None
-                    and block.NO_ENTITY_COLLISION
-                ):
+                if block is not None and block.NO_ENTITY_COLLISION:
                     await block.on_no_collision_collide(
                         player,
                         block.position in previous_positions,
@@ -110,7 +107,9 @@ async def collide(position: tuple, height: int, previous=None):
     return tuple(p)
 
 
-def get_colliding_blocks(position: tuple, height: int) -> typing.Tuple[typing.List, typing.List]:
+def get_colliding_blocks(
+    position: tuple, height: int
+) -> typing.Tuple[typing.List, typing.List]:
     """
     Similar to collide(), but will simply return a list of block-positions the player collides with and
     a list of blocks the player is in, but should not collide
