@@ -388,15 +388,15 @@ def build_class_default_state(
 
             return False
 
-        def on_no_collision_collide(self, *args, **kwargs):
+        async def on_no_collision_collide(self, *args, **kwargs):
             if not is_super_base:
-                super().on_no_collision_collide(*args, **kwargs)
+                await super().on_no_collision_collide(*args, **kwargs)
 
             for base in bases:
-                base.on_no_collision_collide(self, *args, **kwargs)
+                await base.on_no_collision_collide(self, *args, **kwargs)
 
             for function in configs["on_no_collision_collide"]:
-                function(self, *args, **kwargs)
+                await function(self, *args, **kwargs)
 
         def get_item_saved_state(self):
             if len(configs["get_item_save_data"]) > 0:

@@ -4,12 +4,15 @@ Contains only some information, in ordered form, in a better form for the end us
 
 ### Information on development
 - the development is split up into 2 phases: the dev-branch with changes to the code and after a full release,
-    the "maintain" branch of that release, for hotfixes for versions. Version maintain branches may be deleted 
+    the "maintain" branch of that release, for hotfixes for versions. Version maintain branches may get deleted 
     at a later date.
-- developing happens also on feature branches were bigger features can be tested. It is not guaranteed that any
-    if this features will make its way into the final release.
-- PR's should target dev or in some cases the feature branches, only for critical bug fixes the maintain-branch,
+
+- developing may happen also on feature branches were bigger features can be tested. It is not guaranteed that any
+    if this features will make its way into the final release
+
+- PR's should target dev or in some cases the feature branches, only for critical bug fixes the maintain-branches,
     after a PR to the dev or for fixes only applicable to the target release, not the latest dev
+
 - this file will keep track on every development leading into an snapshot or release. The dev-branch will be used
     for creating the entries. Every new snapshot Changelog starts with "Changelog of <type> <name>" with optional
     following the theme of the snapshot, the release date and additional information. The Changelog should be
@@ -17,8 +20,14 @@ Contains only some information, in ordered form, in a better form for the end us
     followed optional by a table of issues starting with "Fixed issues:" followed by a list of grouped after
     first occurrence of the bug the list of issues with a short description and when based on a GitHub bug report
     its GitHub id.
+
 - developers may want to create test builds for themselves. run dev/generate_test_build.py for it.
     When doing so, DO NOT INCLUDE version.json from root, as it will update the build ID counter
+
+- You can run our test set via 
+```shell 
+python -m unittest discover -s ./tests -t . in .
+```
 
 ----
 
@@ -48,6 +57,7 @@ Mostly Backwards-incompatible:
         - implemented real stair behaviour
         - block solid flag is now also only a bit flag
         - added some left over blocks
+        - a lot of functions are now async
 
     Mixins:
         - improved some stuff
@@ -57,6 +67,10 @@ Mostly Backwards-incompatible:
 
     Commands:
         - added "/data missing blocks" to print a list of all blocks for which a BlockState exists, but no Block definition is found
+
+    Mixins:
+        - improved support for async code injection
+        - made it possible to make methods async via mixin system
 
     Fixed issues:
         - fixed rendering of block top for non cubic blocks

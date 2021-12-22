@@ -421,7 +421,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         x, y, z = player.position
         # before = mcpython.util.math.position_to_chunk(player.position)
         if player.gamemode != 3:
-            x, y, z = collide((x + dx, y + dy, z + dz), 2, player.position)
+            x, y, z = await collide((x + dx, y + dy, z + dz), 2, player.position)
         else:
             x, y, z = x + dx, y + dy, z + dz
 

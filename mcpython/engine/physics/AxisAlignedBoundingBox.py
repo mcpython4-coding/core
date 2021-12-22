@@ -24,6 +24,7 @@ from mcpython.util.vertex import VertexProvider
 class AbstractBoundingBox(ABC):
     """
     Abstract base class for bounding-box like classes to use in the corresponding systems
+    todo: add ray hit system
     """
 
     def test_point_hit(

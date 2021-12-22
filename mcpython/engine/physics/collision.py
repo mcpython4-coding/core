@@ -11,12 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 from mcpython import shared
 from mcpython.common.config import ADVANCED_FACES
 from mcpython.util.math import normalize
 
 
-def collide(position: tuple, height: int, previous=None):
+async def collide(position: tuple, height: int, previous=None):
     """
     Checks to see if the player at the given `position` and `height`
     is colliding with any blocks in the world.
@@ -46,6 +48,7 @@ def collide(position: tuple, height: int, previous=None):
         for i in range(3):  # check each dimension independently
             if not face[i]:
                 continue
+
             # How much overlap you have with this dimension.
             d = (p[i] - np[i]) * face[i]
             if d < pad:
@@ -56,22 +59,21 @@ def collide(position: tuple, height: int, previous=None):
                 op[1] -= dy
                 op[i] += face[i]
                 chunk = dimension.get_chunk_for_position(tuple(op), generate=False)
-                block = chunk.get_block(tuple(op))
+                block = chunk.get_block(tuple(op), none_if_str=True)
                 blockstate = block is not None
 
-                if not chunk.generated:
-                    if shared.world.config["enable_world_barrier"]:
-                        blockstate = True
+                # if not chunk.generated:
+                #     if shared.world.config["enable_world_barrier"]:
+                #         blockstate = True
 
                 if not blockstate:
                     continue
 
                 if (
                     block is not None
-                    and type(block) != str
                     and block.NO_ENTITY_COLLISION
                 ):
-                    block.on_no_collision_collide(
+                    await block.on_no_collision_collide(
                         player,
                         block.position in previous_positions,
                     )
@@ -88,11 +90,14 @@ def collide(position: tuple, height: int, previous=None):
 
                 if face == (0, -1, 0):
                     player.flying = False
+
+                    # todo: spawn particles when fallen down
                     if player.gamemode in (0, 2) and player.fallen_since_y is not None:
                         dy = player.fallen_since_y - player.position[1] - 3
 
                         if (
                             dy > 0
+                            # todo: cache this property somewhere / use mixins to remove this check
                             and shared.world.gamerule_handler.table[
                                 "fallDamage"
                             ].status.status
@@ -105,9 +110,11 @@ def collide(position: tuple, height: int, previous=None):
     return tuple(p)
 
 
-def get_colliding_blocks(position: tuple, height: int) -> tuple:
+def get_colliding_blocks(position: tuple, height: int) -> typing.Tuple[typing.List, typing.List]:
     """
-    Similar to collide(), but will simply return an list of block-positions the player collides with and an list of blocks the player is in, but should not collide
+    Similar to collide(), but will simply return a list of block-positions the player collides with and
+    a list of blocks the player is in, but should not collide
+
     :param position: the position to use as center
     :param height: the height of the player
     :return: a tuple of colliding full blocks and colliding no collision blocks

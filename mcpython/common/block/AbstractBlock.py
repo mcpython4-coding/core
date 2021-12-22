@@ -361,7 +361,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         """
         return False
 
-    def on_no_collision_collide(self, entity, previous: bool):
+    async def on_no_collision_collide(self, entity, previous: bool):
         """
         Called when NO_COLLIDE is True and the entity is in the block every collision check [so more than ones per tick]
         :param entity: the entity entering the block

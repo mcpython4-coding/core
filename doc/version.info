@@ -1960,4 +1960,5 @@ OS  [uuk]: ItemStack deserialization will now not crash when encountering an ite
 B   [uuk]: fixed internal registration bug of furnace recipes
 b   [uuk]: fixed the block data fixer system
 f   [uuk]: network buffers support not writing dicts directly
+f   [uuk]: mixins allow now mixing into async methods
 

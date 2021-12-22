@@ -90,7 +90,7 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
 
         return False
 
-    def on_no_collision_collide(self, entity, previous: bool):
+    async def on_no_collision_collide(self, entity, previous: bool):
         if entity.should_leave_nether_portal_before_dim_change:
             if not previous:
                 entity.should_leave_nether_portal_before_dim_change = False
