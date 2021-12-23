@@ -22,6 +22,8 @@ from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
 
 # RETURN_VALUE, RAISE_VARARGS
+from mcpython.mixin.util import PyOpcodes
+
 FLOW_INTERRUPT = [83, 130]
 
 # SETUP_WITH, FOR_ITER, SETUP_FINALLY
@@ -36,13 +38,15 @@ class Branch:
     def __init__(self, container: "ControlFlowAnalyser"):
         self.container = container
         self.following_branches = weakref.WeakSet()
-        self.instructions = []
+        self.instructions: typing.List[dis.Instruction] = []
+        self.dataflow_for_instructions = []
 
         self.batch = None
         self.rendering_objects = []
 
     def add_instruction(self, instr: dis.Instruction):
         self.instructions.append(instr)
+        self.dataflow_for_instructions.append(None)
         return self
 
     def prepare_rendering(self):
@@ -50,6 +54,106 @@ class Branch:
 
     def draw(self):
         self.batch.draw()
+
+    def prepare_dataflow(self, tracker: "StackAnalyserTracker"):
+        for instr in self.instructions:
+            match instr.opcode:
+                case PyOpcodes.POP_TOP:
+                    tracker.pop()
+
+                case PyOpcodes.ROT_TWO:
+                    a = tracker.pop()
+                    b = tracker.pop()
+                    tracker.push(a)
+                    tracker.push(b)
+
+                case PyOpcodes.ROT_THREE:
+                    a = tracker.pop()
+                    b = tracker.pop()
+                    c = tracker.pop()
+                    tracker.push(a)
+                    tracker.push(c)
+                    tracker.push(b)
+
+                case PyOpcodes.ROT_FOUR:
+                    a = tracker.pop()
+                    b = tracker.pop()
+                    c = tracker.pop()
+                    d = tracker.pop()
+                    tracker.push(a)
+                    tracker.push(d)
+                    tracker.push(c)
+                    tracker.push(b)
+
+                case PyOpcodes.DUP_TOP:
+                    a = tracker.pop()
+                    tracker.push(a)
+                    tracker.push(a)
+
+                case PyOpcodes.DUP_TOP_TWO:
+                    a = tracker.pop()
+                    b = tracker.pop()
+                    tracker.push(b)
+                    tracker.push(a)
+                    tracker.push(b)
+                    tracker.push(a)
+
+
+class IDataFlowDataSource:
+    pass
+
+
+class StackAnalyserTracker:
+    def __init__(self):
+        self.stack_data_flow: typing.List[IDataFlowDataSource] = []
+
+    def pop(self):
+        return self.stack_data_flow.pop(-1)
+
+    def push(self, value: IDataFlowDataSource):
+        self.stack_data_flow.append(value)
+        return self
+
+
+class ConstantDataSource(IDataFlowDataSource):
+    def __init__(self):
+        self.value = ...
+
+
+class InvokeResultSource(IDataFlowDataSource):
+    def __init__(self):
+        self.body_ref: str = None
+
+        # For non-static methods, this holds the IDataFlowDataSource to the object used as "self"
+        self.this_source: IDataFlowDataSource | None = None
+
+        self.arg_sources: typing.List[IDataFlowDataSource] = []
+        self.kwarg_sources: typing.Dict[str, IDataFlowDataSource] = {}
+
+        # The args with a * or a ** in front
+        self.star_args: typing.Tuple[IDataFlowDataSource | None, IDataFlowDataSource |None ] = None, None
+
+
+class IterItemSource(IDataFlowDataSource):
+    def __init__(self):
+        self.iter_source: IDataFlowDataSource = None
+
+
+class IterUnpackSource(IDataFlowDataSource):
+    def __init__(self):
+        self.iter_source: IDataFlowDataSource = None
+        self.iter_item = 0
+
+
+class AttributSource(IDataFlowDataSource):
+    def __init__(self):
+        self.name: str = None
+        self.target: IDataFlowDataSource = None
+
+
+class ModuleImportSource(IDataFlowDataSource):
+    def __init__(self):
+        self.module_name: str = None
 
 
 class ControlFlowAnalyser:
@@ -66,6 +170,9 @@ class ControlFlowAnalyser:
 
         self.entry_branch = None
         self.offset2branch = {}
+
+    def calculate_data_flow(self):
+        pass
 
     def calculate_branches(self):
         # self.helper.re_eval_instructions()
@@ -144,11 +251,11 @@ class ControlFlowAnalyser:
     # todo: add a way to reassemble the branches to a single method
 
 
-if __name__ == "__main__":
-    obj = ControlFlowAnalyser(ControlFlowAnalyser.calculate_branches)
-
-    for i, instr in enumerate(obj.helper.instruction_listing):
-        print(i, instr)
-
-    obj.calculate_branches()
-    print(obj)
+# if __name__ == "__main__":
+#     obj = ControlFlowAnalyser(ControlFlowAnalyser.calculate_branches)
+#
+#     for i, instr in enumerate(obj.helper.instruction_listing):
+#         print(i, instr)
+#
+#     obj.calculate_branches()
+#     print(obj)
