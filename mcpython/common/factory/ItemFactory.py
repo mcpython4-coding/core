@@ -153,9 +153,9 @@ def build_class(
 
     class ModifiedClass(cls):
         NAME = name
-        STACK_SIZE = configs.setdefault("max_stack_size", 64)
-        HUNGER_ADDITION = configs.setdefault("food_value", 0)
-        HAS_BLOCK = configs.setdefault("has_block", False)
+        STACK_SIZE = configs.setdefault("max_stack_size", cls.STACK_SIZE)
+        HUNGER_ADDITION = configs.setdefault("food_value", cls.HUNGER_ADDITION if hasattr(cls, "HUNGER_ADDITION") else 0)
+        HAS_BLOCK = configs.setdefault("has_block", cls.HAS_BLOCK)
 
         if "fuel_level" in configs:
             FUEL = configs["fuel_level"]
@@ -164,25 +164,30 @@ def build_class(
         def get_used_texture_files(
             cls,
         ):
-            return configs["used_item_files"]
+            return configs["used_item_files"] if "used_item_files" in configs else cls.get_used_texture_files()
 
-        @staticmethod
-        def get_default_item_image_location() -> str:
-            return configs["default_item_file"]
+        @classmethod
+        def get_default_item_image_location(cls) -> str:
+            return configs["default_item_file"] if "default_item_file" in configs else cls.get_default_item_image_location()
 
         def get_active_image_location(self):
-            return configs["default_item_file"]
+            return configs["default_item_file"] if "default_item_file" in configs else cls.get_active_image_location(self)
 
         def get_tooltip_provider(self):
-            return configs["tool_tip_renderer"]
+            return configs["tool_tip_renderer"] if "tool_tip_renderer" in configs else cls.get_tooltip_provider(self)
 
         if "eat_callback" in configs:
 
-            def on_eat(self, itemstack):
-                configs["eat_callback"](self, itemstack)
+            async def on_eat(self, itemstack):
+                await configs["eat_callback"](self, itemstack)
+
+                if hasattr(cls, "on_eat"):
+                    await cls.on_eat(self, itemstack)
 
         if "durability" in configs:
             DURABILITY = configs["durability"]
+        elif hasattr(cls, "DURABILITY"):
+            DURABILITY = cls.DURABILITY
 
         if "tool_type" in configs:
             TOOL_TYPE = configs["tool_type"]
@@ -191,12 +196,22 @@ def build_class(
             def get_speed_multiplyer(self, itemstack):
                 return configs.setdefault("tool_break_multi", 1)
 
+        elif hasattr(cls, "TOOL_TYPE"):
+            TOOL_TYPE = cls.TOOL_TYPE
+            TOOL_LEVEL = cls.TOOL_LEVEL
+
+            def get_speed_multiplyer(self, itemstack):
+                return cls.get_speed_multiplyer(self, itemstack)
+
         if "armor_points" in configs:
             DEFENSE_POINTS = configs["armor_points"]
+        elif hasattr(cls, "DEFENSE_POINTS"):
+            DEFENSE_POINTS = cls.DEFENSE_POINTS
 
         async def on_set_from_item(self, block):
             for func in configs["custom_from_item_funcs"]:
                 await func(self, block)
+
             await super().on_set_from_item(block)
 
     return ModifiedClass

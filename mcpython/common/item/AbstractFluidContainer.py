@@ -25,7 +25,7 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
     """
 
     @classmethod
-    def get_underlying_fluid_stacks(
+    async def get_underlying_fluid_stacks(
         cls, itemstack: ItemStack
     ) -> typing.Iterable[FluidStack]:
         """
@@ -34,7 +34,7 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
         return tuple()
 
     @classmethod
-    def could_accept(
+    async def could_accept(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -46,7 +46,7 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
         return False
 
     @classmethod
-    def accept(
+    async def accept(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -59,7 +59,7 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
         return False
 
     @classmethod
-    def can_provide(
+    async def can_provide(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -70,7 +70,7 @@ class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC
         return False
 
     @classmethod
-    def provide(
+    async def provide(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,

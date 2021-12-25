@@ -30,7 +30,7 @@ class BucketItem(AbstractFluidContainer):
     STACK_SIZE = 16
 
     @classmethod
-    def could_accept(
+    async def could_accept(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -42,7 +42,7 @@ class BucketItem(AbstractFluidContainer):
         )
 
     @classmethod
-    def accept(
+    async def accept(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -88,13 +88,13 @@ class FilledBucketItem(AbstractFluidContainer, ABC):
     STACK_SIZE = 1
 
     @classmethod
-    def get_underlying_fluid_stacks(
+    async def get_underlying_fluid_stacks(
         cls, itemstack: ItemStack
     ) -> typing.Iterable[FluidStack]:
-        return (FluidStack(cls.ASSIGNED_FLUID, amount=1000),)
+        return FluidStack(cls.ASSIGNED_FLUID, amount=1000),
 
     @classmethod
-    def can_provide(
+    async def can_provide(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -102,7 +102,7 @@ class FilledBucketItem(AbstractFluidContainer, ABC):
         return fluidstack.fluid == cls.ASSIGNED_FLUID and fluidstack.amount >= 1000
 
     @classmethod
-    def provide(
+    async def provide(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,

@@ -20,7 +20,7 @@ from mcpython import shared
 class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
     HUNGER_ADDITION = None
 
-    def on_eat(self, itemstack):
+    async def on_eat(self, itemstack):
         """
         Called when the player eats the item
         :param itemstack: the itemstack to eat from
@@ -29,10 +29,10 @@ class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
         if shared.world.get_active_player().hunger == 20:
             return False
         shared.world.get_active_player().hunger = min(
-            self.HUNGER_ADDITION + shared.world.get_active_player().hunger, 20
+            await self.get_eat_hunger_addition() + shared.world.get_active_player().hunger, 20
         )
         itemstack.add_amount(-1)
         return True
 
-    def get_eat_hunger_addition(self) -> int:
+    async def get_eat_hunger_addition(self) -> int:
         return self.HUNGER_ADDITION

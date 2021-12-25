@@ -289,7 +289,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 active_itemstack.item, ItemFood.AbstractFoodItem
             ):
                 food = active_itemstack.item
-                if food.on_eat(active_itemstack):
+                if await food.on_eat(active_itemstack):
                     self.set_cooldown = time.time() - 1
                     return
 

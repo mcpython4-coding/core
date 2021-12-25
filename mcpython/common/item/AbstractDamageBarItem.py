@@ -65,7 +65,7 @@ class DamageOnUseItem(DefaultDamageBarItem, ABC):
     def get_damage(self) -> float:
         return self.damage / self.DURABILITY
 
-    def on_block_broken_with(self, itemstack, player, block):
+    async def on_block_broken_with(self, itemstack, player, block):
         if player.gamemode in (0, 2):
             self.damage -= 1
         if self.damage <= 0:

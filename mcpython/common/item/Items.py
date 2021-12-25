@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import asyncio
 import random
+import typing
 
 import mcpython.client.gui.HoveringItemBox
 import mcpython.common.mod.ModMcpython
@@ -157,57 +158,13 @@ async def load_item():
     ItemFactory().set_name("minecraft:shears").set_tool_type(
         [ToolType.SHEAR]
     ).set_tool_break_multi(5)
-    for tool_type, tool_name in [
-        (ToolType.PICKAXE, "pickaxe"),
-        (ToolType.AXE, "axe"),
-        (ToolType.SWORD, "sword"),
-        (ToolType.HOE, "hoe"),
-        (ToolType.SHOVEL, "shovel"),
-    ]:
-        ItemFactory().set_name("minecraft:wooden_{}".format(tool_name)).set_tool_type(
-            [tool_type]
-        ).set_tool_break_multi(2).set_tool_level(1).set_fuel_level(10).set_durability(
-            59
-        ).set_max_stack_size(
-            1
-        ).finish()
-        ItemFactory().set_name("minecraft:stone_{}".format(tool_name)).set_tool_type(
-            [tool_type]
-        ).set_tool_break_multi(4).set_tool_level(2).set_durability(
-            131
-        ).set_max_stack_size(
-            1
-        ).finish()
-        ItemFactory().set_name("minecraft:iron_{}".format(tool_name)).set_tool_type(
-            [tool_type]
-        ).set_tool_break_multi(6).set_tool_level(3).set_durability(
-            250
-        ).set_max_stack_size(
-            1
-        ).finish()
-        ItemFactory().set_name("minecraft:golden_{}".format(tool_name)).set_tool_type(
-            [tool_type]
-        ).set_tool_break_multi(8).set_tool_level(4).set_durability(
-            32
-        ).set_max_stack_size(
-            1
-        ).finish()
-        ItemFactory().set_name("minecraft:diamond_{}".format(tool_name)).set_tool_type(
-            [tool_type]
-        ).set_tool_break_multi(12).set_tool_level(5).set_durability(
-            1561
-        ).set_max_stack_size(
-            1
-        ).finish()
-        ItemFactory().set_name(
-            "minecraft:netherite_{}".format(tool_name)
-        ).set_tool_type([tool_type]).set_tool_break_multi(14).set_tool_level(
-            6
-        ).set_durability(
-            2031
-        ).set_max_stack_size(
-            1
-        ).finish()
+
+    from mcpython.common.item.AxeItem import AbstractAxeItem
+    await createToolGroup("pickaxe", ToolType.PICKAXE)
+    await createToolGroup("axe", ToolType.AXE, modifier=lambda factory: factory.add_base_class(AbstractAxeItem))
+    await createToolGroup("sword", ToolType.SWORD)
+    await createToolGroup("hoe", ToolType.HOE)
+    await createToolGroup("shovel", ToolType.SHOVEL)
 
     for color in mcpython.util.enums.COLORS:
         ItemFactory().set_name("minecraft:{}_dye".format(color)).finish()
@@ -286,6 +243,36 @@ async def load_item():
     ).set_tool_tip_renderer(
         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
     ).finish()
+
+
+async def createToolGroup(tool_name: str, tool_type: ToolType, modifier: typing.Callable[[ItemFactory], typing.Any] = lambda e: e, namespace="minecraft"):
+    def modify(factory):
+        factory.set_tool_type([tool_type])
+        modifier(factory)
+
+    wooden = ItemFactory().set_name(f"{namespace}:wooden_{tool_name}").set_tool_break_multi(2).set_tool_level(1).set_fuel_level(10).set_durability(59)
+    modify(wooden)
+    wooden.finish()
+
+    stone = ItemFactory().set_name(f"{namespace}:stone_{tool_name}").set_tool_break_multi(4).set_tool_level(2).set_durability(131)
+    modify(stone)
+    stone.finish()
+
+    iron = ItemFactory().set_name(f"{namespace}:iron_{tool_name}").set_tool_break_multi(6).set_tool_level(3).set_durability(250)
+    modify(iron)
+    iron.finish()
+
+    golden = ItemFactory().set_name(f"{namespace}:golden_{tool_name}").set_tool_break_multi(8).set_tool_level(4).set_durability(32)
+    modify(golden)
+    golden.finish()
+
+    diamond = ItemFactory().set_name(f"{namespace}:diamond_{tool_name}").set_tool_break_multi(12).set_tool_level(5).set_durability(1561)
+    modify(diamond)
+    diamond.finish()
+
+    netherite = ItemFactory().set_name(f"{namespace}:netherite_{tool_name}").set_tool_break_multi(14).set_tool_level(6).set_durability(2031)
+    modify(netherite)
+    netherite.finish()
 
 
 mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
