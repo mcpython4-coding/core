@@ -420,7 +420,7 @@ class ModLoader:
 
     def __call__(
         self, modname: str, event_name: str, *args, **kwargs
-    ) -> typing.Callable[[typing.Callable], typing.Callable]:
+    ) -> typing.Callable[[typing.Callable | typing.Awaitable], typing.Callable | typing.Awaitable]:
         """
         Annotation to the event system
         :param modname: the mod name
@@ -432,10 +432,25 @@ class ModLoader:
         @shared.mod_loader("minecraft", "stage:mod:init")
         def test():
             print("Hello world!")
+
+        Will wrap the target around an async method if needed
         """
-        return lambda function: self.mods[modname].eventbus.subscribe(
-            event_name, function() if callable(function) else function, *args, **kwargs
-        )
+        def annotate(target):
+            if not isinstance(target, typing.Awaitable):
+                async def wrap(*args2, **kwargs2):
+                    result = target(*args, *args2)
+                    if isinstance(result, typing.Awaitable):
+                        result = await result
+                    return result
+
+                self.mods[modname].eventbus.subscribe(event_name, wrap(), *args, **kwargs)
+            else:
+                self.mods[modname].eventbus.subscribe(
+                    event_name, target, *args, **kwargs
+                )
+            return target
+
+        return annotate
 
     def __getitem__(self, item: str):
         if item in self.mods:

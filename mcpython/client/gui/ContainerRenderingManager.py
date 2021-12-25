@@ -224,7 +224,7 @@ class OpenedInventoryStatePart(
 
             return
 
-        if slot.handle_click(button, modifiers):
+        if await slot.handle_click(button, modifiers):
             return
 
         if modifiers & key.MOD_SHIFT:

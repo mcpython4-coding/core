@@ -52,13 +52,14 @@ class Tag:
                 dep.append(entry)
         return dep
 
-    def build(self):
+    async def build(self):
         """
         Will build the tag
         """
         raw = self.entries.copy()
         old_entries = self.entries.copy()
         self.entries.clear()
+
         for entry in raw:
             if isinstance(entry, str) and entry.startswith("#"):
                 if entry not in self.master.tags:
@@ -74,7 +75,7 @@ class Tag:
 
                     self.entries = old_entries
                     shared.mod_loader["minecraft"].eventbus.subscribe(
-                        "stage:tag:load", self.build
+                        "stage:tag:load", self.build()
                     )
                     self.load_tries += 1
                     return

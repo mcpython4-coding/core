@@ -460,8 +460,7 @@ class ConfigFile:
         shared.mod_loader(
             self.assigned_mod,
             "stage:mod:config:load",
-            info="building config file {}".format(self.file),
-        )(self.build)
+        )(self.build())
 
     @deprecation.deprecated()
     def add_entry(self, key: str, default_mapper=None, description=None):
@@ -481,7 +480,7 @@ class ConfigFile:
         return item in self.main_tag
 
     @deprecation.deprecated()
-    async def build(self):
+    async def build(self, info=None):
         if os.path.exists(self.file) and "--delete-configs" not in sys.argv:
             old_buffer = self.main_tag
             try:

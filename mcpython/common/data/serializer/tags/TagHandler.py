@@ -183,7 +183,7 @@ async def add_from_location(loc: str):
     ]
 
 
-@shared.mod_loader("minecraft", "stage:tag:group", info="adding tag group locations")
+@shared.mod_loader("minecraft", "stage:tag:group")
 async def load_default_tags():
     await add_from_location("minecraft")
     await add_from_location("forge")

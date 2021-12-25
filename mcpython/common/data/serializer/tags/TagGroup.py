@@ -65,7 +65,7 @@ class TagGroup:
         sort = mcpython.util.math.topological_sort(depend_list)
 
         for tagname in sort:
-            self.tags[tagname].build()
+            await self.tags[tagname].build()
 
         self.cache.clear()
         if self.name in TagGroup.TAG_HOLDERS:

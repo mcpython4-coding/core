@@ -16,6 +16,7 @@ import typing
 from abc import ABC
 
 import mcpython.common.container.ResourceStack
+from mcpython.common.container.ResourceStack import ItemStack
 import mcpython.common.item.ItemManager
 import mcpython.engine.ResourceLoader
 import pyglet
@@ -36,6 +37,11 @@ else:
 
 
 class ISlot(IBufferSerializeAble, ABC):
+    """
+    Base class for everything slot-like
+    Provides some API for interaction with the user
+    """
+    
     def __init__(self):
         self.on_update = []
         self.assigned_inventory = None
@@ -45,7 +51,7 @@ class ISlot(IBufferSerializeAble, ABC):
     ):
         pass
 
-    def handle_click(self, button: int, modifiers: int) -> bool:
+    async def handle_click(self, button: int, modifiers: int) -> bool:
         return False
 
     def get_capacity(self) -> int:
@@ -196,7 +202,7 @@ class Slot(ISlot):
         self.__capacity = capacity
         self.check_function = check_function
 
-    def handle_click(self, button: int, modifiers: int) -> bool:
+    async def handle_click(self, button: int, modifiers: int) -> bool:
         return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
     async def handle_shift_click(
@@ -480,7 +486,7 @@ class SlotCopy(ISlot):
     def get_linked_itemstack_for_sift_clicking(self):
         return self.get_itemstack()
 
-    def handle_click(self, button: int, modifiers: int) -> bool:
+    async def handle_click(self, button: int, modifiers: int) -> bool:
         return self.on_click_on_slot and self.on_click_on_slot(self, button, modifiers)
 
     def get_allowed_item_tags(self):
@@ -491,8 +497,8 @@ class SlotCopy(ISlot):
 
     allowed_item_tags = property(get_allowed_item_tags, set_allowed_item_tags)
 
-    def get_itemstack(self):
-        return self.master.itemstack
+    def get_itemstack(self) -> ItemStack:
+        return self.master.itemstack if self.master is not None else ItemStack.create_empty()
 
     def set_itemstack(self, stack, **kwargs):
         self.master.set_itemstack(stack, **kwargs)

@@ -197,7 +197,7 @@ class CreativeItemTab(ICreativeView):
         """
 
         def work(i):
-            return lambda: shared.world.get_active_player().inventory_main.slots[i]
+            return lambda: shared.world.get_active_player().inventory_main.slots[i] if shared.world.world_loaded else None
 
         slots = [
             [
