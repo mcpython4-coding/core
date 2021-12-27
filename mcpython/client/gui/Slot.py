@@ -16,11 +16,11 @@ import typing
 from abc import ABC
 
 import mcpython.common.container.ResourceStack
-from mcpython.common.container.ResourceStack import ItemStack
 import mcpython.common.item.ItemManager
 import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython import shared
+from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
@@ -41,7 +41,7 @@ class ISlot(IBufferSerializeAble, ABC):
     Base class for everything slot-like
     Provides some API for interaction with the user
     """
-    
+
     def __init__(self):
         self.on_update = []
         self.assigned_inventory = None
@@ -342,7 +342,9 @@ class Slot(ISlot):
             self.sprite.draw()
 
         if not self.itemstack.is_empty():
-            self.itemstack.item.draw_in_inventory(self.itemstack, (center_position[0]+dx, center_position[1]+dy), 1)
+            self.itemstack.item.draw_in_inventory(
+                self.itemstack, (center_position[0] + dx, center_position[1] + dy), 1
+            )
 
         self.__last_item_file = (
             self.itemstack.item.get_default_item_image_location()
@@ -501,7 +503,11 @@ class SlotCopy(ISlot):
     allowed_item_tags = property(get_allowed_item_tags, set_allowed_item_tags)
 
     def get_itemstack(self) -> ItemStack:
-        return self.master.itemstack if self.master is not None else ItemStack.create_empty()
+        return (
+            self.master.itemstack
+            if self.master is not None
+            else ItemStack.create_empty()
+        )
 
     def set_itemstack(self, stack, **kwargs):
         self.master.set_itemstack(stack, **kwargs)

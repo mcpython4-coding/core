@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -22,25 +22,18 @@ class AbstractAxeItem(AbstractToolItem):
     AXE_TRANSFORMS = {
         "minecraft:oak_log": "minecraft:stripped_oak_log",
         "minecraft:oak_wood": "minecraft:stripped_oak_wood",
-
         "minecraft:spruce_log": "minecraft:stripped_spruce_log",
         "minecraft:spruce_wood": "minecraft:stripped_spruce_wood",
-
         "minecraft:birch_log": "minecraft:stripped_birch_log",
         "minecraft:birch_wood": "minecraft:stripped_birch_wood",
-
         "minecraft:jungle_log": "minecraft:stripped_jungle_log",
         "minecraft:jungle_wood": "minecraft:stripped_jungle_wood",
-
         "minecraft:dark_oak_log": "minecraft:stripped_dark_oak_log",
         "minecraft:dark_oak_wood": "minecraft:stripped_dark_oak_wood",
-
         "minecraft:acacia_log": "minecraft:stripped_acacia_log",
         "minecraft:stripped_acacia_log": "minecraft:stripped_acacia_log",
-
         "minecraft:warped_stem": "minecraft:stripped_warped_stem",
         "minecraft:warped_hyphae": "minecraft:stripped_warped_hyphae",
-
         "minecraft:crimson_stem": "minecraft:stripped_crimson_stem",
         "minecraft:crimson_hyphae": "minecraft:stripped_crimson_hyphae",
     }
@@ -53,7 +46,9 @@ class AbstractAxeItem(AbstractToolItem):
 
         if block.NAME in self.AXE_TRANSFORMS:
             state = block.get_model_state()
-            new = await shared.world.get_active_dimension().add_block(block.position, self.AXE_TRANSFORMS[block.NAME])
+            new = await shared.world.get_active_dimension().add_block(
+                block.position, self.AXE_TRANSFORMS[block.NAME]
+            )
             new.set_model_state(state)
 
             if shared.IS_CLIENT:
@@ -70,4 +65,3 @@ class AbstractAxeItem(AbstractToolItem):
             return True
 
         return False
-

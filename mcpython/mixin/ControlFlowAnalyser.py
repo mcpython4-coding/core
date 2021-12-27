@@ -20,7 +20,6 @@ from collections import defaultdict
 import pyglet
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
-
 # RETURN_VALUE, RAISE_VARARGS
 from mcpython.mixin.util import PyOpcodes
 

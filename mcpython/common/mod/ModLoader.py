@@ -420,7 +420,9 @@ class ModLoader:
 
     def __call__(
         self, modname: str, event_name: str, *args, **kwargs
-    ) -> typing.Callable[[typing.Callable | typing.Awaitable], typing.Callable | typing.Awaitable]:
+    ) -> typing.Callable[
+        [typing.Callable | typing.Awaitable], typing.Callable | typing.Awaitable
+    ]:
         """
         Annotation to the event system
         :param modname: the mod name
@@ -435,15 +437,19 @@ class ModLoader:
 
         Will wrap the target around an async method if needed
         """
+
         def annotate(target):
             if not isinstance(target, typing.Awaitable):
+
                 async def wrap(*args2, **kwargs2):
                     result = target(*args, *args2)
                     if isinstance(result, typing.Awaitable):
                         result = await result
                     return result
 
-                self.mods[modname].eventbus.subscribe(event_name, wrap(), *args, **kwargs)
+                self.mods[modname].eventbus.subscribe(
+                    event_name, wrap(), *args, **kwargs
+                )
             else:
                 self.mods[modname].eventbus.subscribe(
                     event_name, target, *args, **kwargs

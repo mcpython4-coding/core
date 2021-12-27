@@ -29,7 +29,9 @@ class AbstractFoodItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
         if shared.world.get_active_player().hunger == 20:
             return False
         shared.world.get_active_player().hunger = min(
-            await self.get_eat_hunger_addition() + shared.world.get_active_player().hunger, 20
+            await self.get_eat_hunger_addition()
+            + shared.world.get_active_player().hunger,
+            20,
         )
         itemstack.add_amount(-1)
         return True

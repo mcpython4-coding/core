@@ -23,7 +23,12 @@ from mcpython.util.opengl import draw_rectangle
 
 class ToolTipRendererForDamage(DefaultHoveringItemBoxDefinition):
     def getAdditionalText(self, itemstack: ItemStack) -> typing.List[str]:
-        return [self.default_style.format(text=f"Durability: {itemstack.item.getDamageBarInfo(itemstack)}", color="gray")]
+        return [
+            self.default_style.format(
+                text=f"Durability: {itemstack.item.getDamageBarInfo(itemstack)}",
+                color="gray",
+            )
+        ]
 
 
 class AbstractDamageBarItem(mcpython.common.item.AbstractItem.AbstractItem, ABC):
@@ -53,16 +58,25 @@ class AbstractDamageBarItem(mcpython.common.item.AbstractItem.AbstractItem, ABC)
     def getDamageBarInfo(self, itemstack: ItemStack) -> str:
         return str(self.get_damage_info(itemstack)[0])
 
-    def draw_in_inventory(self, itemstack, position: typing.Tuple[int, int], scale: float):
+    def draw_in_inventory(
+        self, itemstack, position: typing.Tuple[int, int], scale: float
+    ):
         width = 28 * scale
         height = 2 * scale
 
         d = self.get_damage_info(itemstack)
-        if d is None: return
+        if d is None:
+            return
 
         progress, color = d
-        draw_rectangle((position[0]+2, position[1]+2), (round(width), round(height)), (0, 0, 0))
-        draw_rectangle((position[0]+2, position[1]+2), (round(width * progress), round(height)), color)
+        draw_rectangle(
+            (position[0] + 2, position[1] + 2), (round(width), round(height)), (0, 0, 0)
+        )
+        draw_rectangle(
+            (position[0] + 2, position[1] + 2),
+            (round(width * progress), round(height)),
+            color,
+        )
 
 
 class DefaultDamageBarItem(AbstractDamageBarItem, ABC):

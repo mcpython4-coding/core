@@ -15,8 +15,9 @@ from abc import ABC
 
 import mcpython.common.item.AbstractDamageBarItem
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-from .AbstractDamageBarItem import ToolTipRendererForDamage
+
 from ..container.ResourceStack import ItemStack
+from .AbstractDamageBarItem import ToolTipRendererForDamage
 
 
 class AbstractArmorItem(
@@ -26,6 +27,7 @@ class AbstractArmorItem(
     Base class for armor
     Provides the properties specific to an armor item
     """
+
     DURABILITY = 0
     DEFENSE_POINTS = 0
     STACK_SIZE = 1

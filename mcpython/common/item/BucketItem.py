@@ -91,7 +91,7 @@ class FilledBucketItem(AbstractFluidContainer, ABC):
     async def get_underlying_fluid_stacks(
         cls, itemstack: ItemStack
     ) -> typing.Iterable[FluidStack]:
-        return FluidStack(cls.ASSIGNED_FLUID, amount=1000),
+        return (FluidStack(cls.ASSIGNED_FLUID, amount=1000),)
 
     @classmethod
     async def can_provide(

@@ -11,9 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from abc import ABC
-
 import typing
+from abc import ABC
 
 import mcpython.common.event.api
 import mcpython.common.event.Registry
@@ -58,7 +57,9 @@ class AbstractItem(
         self.can_destroy = None
         self.can_be_set_on = None
 
-    def draw_in_inventory(self, itemstack, position: typing.Tuple[int, int], scale: float):
+    def draw_in_inventory(
+        self, itemstack, position: typing.Tuple[int, int], scale: float
+    ):
         pass
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):

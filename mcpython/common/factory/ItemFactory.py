@@ -154,7 +154,9 @@ def build_class(
     class ModifiedClass(cls):
         NAME = name
         STACK_SIZE = configs.setdefault("max_stack_size", cls.STACK_SIZE)
-        HUNGER_ADDITION = configs.setdefault("food_value", cls.HUNGER_ADDITION if hasattr(cls, "HUNGER_ADDITION") else 0)
+        HUNGER_ADDITION = configs.setdefault(
+            "food_value", cls.HUNGER_ADDITION if hasattr(cls, "HUNGER_ADDITION") else 0
+        )
         HAS_BLOCK = configs.setdefault("has_block", cls.HAS_BLOCK)
 
         if "fuel_level" in configs:
@@ -164,17 +166,33 @@ def build_class(
         def get_used_texture_files(
             cls,
         ):
-            return configs["used_item_files"] if "used_item_files" in configs else cls.get_used_texture_files()
+            return (
+                configs["used_item_files"]
+                if "used_item_files" in configs
+                else cls.get_used_texture_files()
+            )
 
         @classmethod
         def get_default_item_image_location(cls) -> str:
-            return configs["default_item_file"] if "default_item_file" in configs else cls.get_default_item_image_location()
+            return (
+                configs["default_item_file"]
+                if "default_item_file" in configs
+                else cls.get_default_item_image_location()
+            )
 
         def get_active_image_location(self):
-            return configs["default_item_file"] if "default_item_file" in configs else cls.get_active_image_location(self)
+            return (
+                configs["default_item_file"]
+                if "default_item_file" in configs
+                else cls.get_active_image_location(self)
+            )
 
         def get_tooltip_provider(self):
-            return configs["tool_tip_renderer"] if "tool_tip_renderer" in configs else cls.get_tooltip_provider(self)
+            return (
+                configs["tool_tip_renderer"]
+                if "tool_tip_renderer" in configs
+                else cls.get_tooltip_provider(self)
+            )
 
         if "eat_callback" in configs:
 

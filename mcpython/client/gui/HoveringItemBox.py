@@ -14,10 +14,10 @@ This project is not official by mojang and does not relate to it.
 import typing
 
 import mcpython.common.container.ResourceStack
-from mcpython.common.container.ResourceStack import ItemStack
 import mcpython.common.data.Language
 import pyglet
 from mcpython import shared
+from mcpython.common.container.ResourceStack import ItemStack
 
 
 class IHoveringItemBoxDefinitionPlugin:

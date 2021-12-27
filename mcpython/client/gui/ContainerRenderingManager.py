@@ -609,7 +609,7 @@ class InventoryHandler:
 
     async def show(self, inventory):
         """
-        Shows a inventory by adding it to the corresponding structure
+        Shows an inventory by adding it to the corresponding structure
         :param inventory: the inventory to show
         """
         if inventory in self.open_containers:
