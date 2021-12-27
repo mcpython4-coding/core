@@ -14,10 +14,13 @@ This project is not official by mojang and does not relate to it.
 import random
 import string
 import typing
+import unittest
 import uuid
 from unittest import TestCase
 
 # These is a list of tests that we can execute on buffers, used for the multi test
+from mcpython.engine.network.util import IBufferSerializeAble
+
 MULTI_TEST_POOL: typing.List[
     typing.Tuple[typing.Callable, typing.Callable, typing.Callable]
 ] = [
@@ -67,9 +70,6 @@ MULTI_TEST_POOL: typing.List[
 
 
 class TestBuffer(TestCase):
-    def test_module_import(self):
-        import mcpython.engine.network.util
-
     def test_empty(self):
         from mcpython.engine.network.util import WriteBuffer
 
@@ -220,3 +220,35 @@ class TestBuffer(TestCase):
 
             for i, e in enumerate(entries):
                 self.assertTrue(e[2](read, data[i]))
+
+
+class Simple(IBufferSerializeAble):
+    def __init__(self):
+        self.valid = True
+
+    async def read_from_network_buffer(self, buffer):
+        self.valid = buffer.read_int() == 42
+
+    async def write_to_network_buffer(self, buffer):
+        buffer.write_int(42)
+
+
+class TestContainerSerializer(unittest.TestCase):
+    async def test_basic(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        obj = Simple()
+        await buffer.write_nullable_container(obj)
+
+        read = ReadBuffer(buffer.get_data())
+        obj = await read.read_nullable_container()
+
+    async def test_basic_null(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        await buffer.write_nullable_container(None)
+
+        read = ReadBuffer(buffer.get_data())
+        self.assertIsNone(await read.read_nullable_container())

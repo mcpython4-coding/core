@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import importlib
 import io
 import math
 import struct
@@ -96,6 +97,22 @@ class ReadBuffer:
     def read_uuid(self):
         data = self.read_big_long()
         return uuid.UUID(int=data)
+
+    async def read_nullable_container(self, container_instance=None) -> typing.Optional["IBufferSerializeAble"]:
+        module = self.read_string()
+        name = self.read_string()
+
+        if not self.read_bool():
+            return
+
+        if container_instance is None:
+            module = importlib.import_module(module)
+
+            cls: "IBufferSerializeAble" = getattr(module, name)
+            container_instance = cls.create_new()
+
+        await container_instance.read_from_network_buffer(self)
+        return container_instance
 
 
 class WriteBuffer:
@@ -185,8 +202,26 @@ class WriteBuffer:
         self.write_big_long(uid.int)
         return self
 
+    async def write_nullable_container(self, container: typing.Optional["IBufferSerializeAble"]):
+        cls = container.__class__
+
+        self.write_string(cls.__module__)
+        self.write_string(cls.__name__)
+
+        if container is None:
+            self.write_bool(False)
+            return
+
+        self.write_bool(True)
+        await container.write_to_network_buffer(self)
+        return self
+
 
 class IBufferSerializeAble(ABC):
+    @classmethod
+    def create_new(cls) -> "IBufferSerializeAble":
+        return cls()
+
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         pass
 
