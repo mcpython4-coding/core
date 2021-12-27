@@ -15,12 +15,22 @@ from abc import ABC
 
 import mcpython.common.item.AbstractDamageBarItem
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from .AbstractDamageBarItem import ToolTipRendererForDamage
+from ..container.ResourceStack import ItemStack
 
 
 class AbstractArmorItem(
     mcpython.common.item.AbstractDamageBarItem.DefaultDamageBarItem, ABC
 ):
+    """
+    Base class for armor
+    Provides the properties specific to an armor item
+    """
     DURABILITY = 0
+    DEFENSE_POINTS = 0
+    STACK_SIZE = 1
+
+    TOOL_TIP_RENDERER = ToolTipRendererForDamage()
 
     def __init__(self):
         super().__init__()
@@ -34,15 +44,17 @@ class AbstractArmorItem(
         await super().read_from_network_buffer(buffer)
         self.damage = buffer.read_int()
 
-    DEFENSE_POINTS = 0
-
     async def get_defense_points(self):
         return self.DEFENSE_POINTS
 
-    STACK_SIZE = 1
-
     def get_damage(self, itemstack) -> float:
         return self.damage / self.DURABILITY
+
+    def get_tooltip_provider(self):
+        return self.TOOL_TIP_RENDERER
+
+    def getDamageBarInfo(self, itemstack: ItemStack) -> str:
+        return f"{self.damage}/{self.DURABILITY}"
 
     def get_data(self):
         return self.damage

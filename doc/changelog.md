@@ -59,6 +59,11 @@ Mostly Backwards-incompatible:
         - added some left over blocks
         - a lot of functions are now async
 
+    Items:
+        - items are able to draw a custom overlay now
+        - tool & armor damage bar is now renderered correctly
+        - they display now also the durability in the tool tip
+
     Mixins:
         - improved some stuff
 
