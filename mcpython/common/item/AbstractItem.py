@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 from abc import ABC
 
+import typing
+
 import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
@@ -55,6 +57,9 @@ class AbstractItem(
         self.stored_block_state = None
         self.can_destroy = None
         self.can_be_set_on = None
+
+    def draw_in_inventory(self, itemstack, position: typing.Tuple[int, int], scale: float):
+        pass
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super(ICapabilityContainer, self).read_from_network_buffer(buffer)

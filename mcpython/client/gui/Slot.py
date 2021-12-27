@@ -112,27 +112,27 @@ class ISlot(IBufferSerializeAble, ABC):
 
 class Slot(ISlot):
     """
-    slot class
+    Basic slot class
     """
 
     def __init__(
         self,
-        itemstack=None,
-        position=(0, 0),
+        itemstack: ItemStack = None,
+        position: typing.Tuple[int, int] = (0, 0),
         allow_player_remove=True,
         allow_player_insert=True,
         allow_player_add_to_free_place=True,
         allow_half_getting=True,
-        allowed_item_tags=None,
-        disallowed_item_tags=None,
-        allowed_item_test=None,
-        on_update=None,
-        on_shift_click=None,
-        on_button_press=None,
-        on_click_on_slot=None,
-        empty_image=None,
+        allowed_item_tags: typing.Optional[typing.List[str]] = None,
+        disallowed_item_tags: typing.Optional[typing.List[str]] = None,
+        allowed_item_test: typing.Optional[typing.Callable] = None,
+        on_update: typing.Optional[typing.Callable] = None,
+        on_shift_click: typing.Optional[typing.Callable] = None,
+        on_button_press: typing.Optional[typing.Callable] = None,
+        on_click_on_slot: typing.Optional[typing.Callable] = None,
+        empty_image: typing.Optional[pyglet.image.AbstractImage] = None,
         enable_hovering_background=True,
-        capacity=None,
+        capacity: typing.Optional[int] = None,
         check_function=None,
     ):
         """
@@ -340,6 +340,9 @@ class Slot(ISlot):
         if self.sprite:
             self.sprite.position = (center_position[0] + dx, center_position[1] + dy)
             self.sprite.draw()
+
+        if not self.itemstack.is_empty():
+            self.itemstack.item.draw_in_inventory(self.itemstack, (center_position[0]+dx, center_position[1]+dy), 1)
 
         self.__last_item_file = (
             self.itemstack.item.get_default_item_image_location()

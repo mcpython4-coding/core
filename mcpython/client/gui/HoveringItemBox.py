@@ -11,7 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import typing
+
 import mcpython.common.container.ResourceStack
+from mcpython.common.container.ResourceStack import ItemStack
 import mcpython.common.data.Language
 import pyglet
 from mcpython import shared
@@ -60,6 +63,9 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
     """
     Class representing an normal translate-able-configure-able tooltip with an given default style and layout
     Uses the default Item-class-methods to render certain stuff
+
+    Subclasses can safely override getAdditionalText() to insert informal text, without breaking
+    mods mixin into the getHoveringText() method
     """
 
     def __init__(
@@ -70,9 +76,12 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
         self.localize_builder = localize_builder
         self.default_style = default_style
 
+    def getAdditionalText(self, itemstack: ItemStack) -> typing.List[str]:
+        return []
+
     def getHoveringText(
         self, itemstack: mcpython.common.container.ResourceStack.ItemStack
-    ) -> list:
+    ) -> typing.List[str]:
         if itemstack.is_empty():
             return []
 
@@ -97,22 +106,27 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
             tags = tags + [tag for tag in block_cls.TAGS if tag not in tags]
 
         stuff = (
+            # Display name
             [
                 self.default_style.format(
                     color=itemstack.item.ITEM_NAME_COLOR, text=localized_name
                 )
             ]
+            + self.getAdditionalText(itemstack)
+            # Namespaced name
             + [
                 self.default_style.format(
                     color="gray", text=mcpython.common.data.Language.translate(line)
                 )
                 for line in itemstack.item.get_additional_tooltip_text(itemstack, self)
             ]
+            # Tags
             + (
                 [self.default_style.format(color="gray", text=tag) for tag in tags]
                 if not itemstack.is_empty()
                 else []
             )
+            # Namespace
             + [
                 self.default_style.format(color="gray", text=item_name),
                 self.default_style.format(

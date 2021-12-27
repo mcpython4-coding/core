@@ -41,7 +41,7 @@ class AbstractArmorItem(
 
     STACK_SIZE = 1
 
-    def get_damage(self) -> float:
+    def get_damage(self, itemstack) -> float:
         return self.damage / self.DURABILITY
 
     def get_data(self):

@@ -138,9 +138,9 @@ def build_class(
     configs: dict = instance.config_table
     import mcpython.client.gui.HoveringItemBox
 
-    configs.setdefault(
-        "tool_tip_renderer", mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP
-    )
+    # configs.setdefault(
+    #     "tool_tip_renderer", mcpython.client.gui.HoveringItemBox.DEFAULT_ITEM_TOOLTIP
+    # )
     name = configs["name"]
     if ":" not in name and "global_name" in configs:
         name = configs["global_name"] + ":" + name

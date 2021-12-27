@@ -1962,4 +1962,7 @@ b   [uuk]: fixed the block data fixer system
 f   [uuk]: network buffers support not writing dicts directly
 f   [uuk]: mixins allow now mixing into async methods
 f   [uuk]: axe can now strip blocks
+f   [uuk]: implemented a way for items to draw a custom overlay over the item in inventory
+f   [uuk]: damage bar items draw now their damage bar with above API
+f   [uuk]: tools will now display their damage in the tooltip
 
