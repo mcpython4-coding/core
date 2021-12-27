@@ -80,11 +80,11 @@ class DataPackHandler:
             return
 
         for path in os.listdir(shared.home + "/datapacks"):
-            self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
+            await self.load_datapack_from_directory(shared.home + "/datapacks/" + path)
 
         await shared.event_handler.call_async("datapack:search")
 
-    def load_datapack_from_directory(
+    async def load_datapack_from_directory(
         self, directory: str, raise_on_error=False
     ) -> typing.Optional["DataPack"]:
         """
@@ -95,7 +95,7 @@ class DataPackHandler:
         try:
             datapack = DataPack(directory)
             datapack.load()
-            shared.event_handler.call("datapack:load", datapack)
+            await shared.event_handler.call_async("datapack:load", datapack)
             self.loaded_data_packs.append(datapack)
             return datapack
         except:

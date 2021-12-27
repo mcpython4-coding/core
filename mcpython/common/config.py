@@ -370,18 +370,19 @@ def load():
         if SHUFFLE_DATA and SHUFFLE_INTERVAL > 0:
             import pyglet
 
-            def on_shuffle(dt):
+            async def on_shuffle(dt):
                 from mcpython.engine import logger
 
                 if shared.world.world_loaded:
                     logger.println("shuffling data...")
-                    shared.event_handler.call("minecraft:data:shuffle:all")
+                    await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
-            pyglet.clock.schedule_interval(on_shuffle, SHUFFLE_INTERVAL)
+            shared.tick_handler.schedule_once(on_shuffle)
 
         if "--enable-all-blocks" not in sys.argv:
             for key in ENABLED_EXTRA_BLOCKS:
                 ENABLED_EXTRA_BLOCKS[key] = block_config[key].read()
+
         else:  # we want to enable ALL without writing them to the config file
             for key in ENABLED_EXTRA_BLOCKS:
                 ENABLED_EXTRA_BLOCKS[key] = True

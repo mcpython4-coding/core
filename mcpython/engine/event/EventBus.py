@@ -47,7 +47,7 @@ class EventBus:
     ):
         """
         Creates a new EventBus instance
-        :param crash_on_error: if an crash should be triggered on an exception of a function
+        :param crash_on_error: if a crash should be triggered on an exception of a function
         """
         self.id = shared.NEXT_EVENT_BUS_ID
         shared.NEXT_EVENT_BUS_ID += 1

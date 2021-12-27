@@ -220,6 +220,7 @@ class LoadingStage:
         mod_instance = shared.mod_loader.mods[modname]
 
         try:
+            # todo: can we load really parallel
             await mod_instance.eventbus.call_as_stack(self.active_event)  # , amount=4))
 
         except RuntimeError:  # when we are empty

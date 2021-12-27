@@ -42,8 +42,7 @@ class EventHandler:
         self.active_buses.remove(bus)
 
     def call(self, event_name, *args, **kwargs):
-        for bus in self.active_buses:
-            bus.call(event_name, *args, *kwargs)
+        return asyncio.get_event_loop().run_until_complete(self.call_async(event_name, *args, **kwargs))
 
     async def call_async(self, event_name, *args, **kwargs):
         await asyncio.gather(
@@ -51,10 +50,7 @@ class EventHandler:
         )
 
     def call_cancelable(self, event_name, *args, **kwargs):
-        for bus in self.active_buses:
-            if bus.call_cancelable(event_name, *args, **kwargs).canceled:
-                return False
-        return True
+        return asyncio.get_event_loop().run_until_complete(self.call_cancelable_async(event_name, *args, **kwargs))
 
     async def call_cancelable_async(self, event_name, *args, **kwargs):
         for bus in self.active_buses:

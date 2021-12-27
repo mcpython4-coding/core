@@ -11,37 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-# TODO: export this to the client backend
-# CallbackHelper removed as functools.partial is the same
 
 
-class IEventInfo:
-    """
-    Base class for every event info declared here
-    """
-
-    def equals(self, *args):
-        raise NotImplementedError()
-
-
-class KeyPressEventInfo(IEventInfo):
-    """
-    info for key press
-    """
-
-    def __init__(self, symbol: int, modifier=None):
-        if modifier is None:
-            modifier = []
-        self.symbol = symbol
-        self.modifier = modifier
-
-    def equals(self, symbol, modifiers):
-        return symbol == self.symbol and all([modifiers & x for x in self.modifier])
-
-
-class MousePressEventInfo(IEventInfo):
+class MousePressEventInfo:
     """
     Info for mouse press
+    todo: remove this
     """
 
     def __init__(self, mouse: int, modifier=None, area=None):

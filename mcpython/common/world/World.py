@@ -254,26 +254,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
     @deprecation.deprecated()
     def join_dimension(self, dim_id: int):
-        """
-        will change the dimension of the active player
-        :param dim_id: the dimension to change to todo: make str
-        todo: move to player
-        """
-        logger.println("changing dimension to '{}'...".format(dim_id))
-
-        shared.event_handler.call("dimension:change:pre", self.active_dimension, dim_id)
-
-        sector = mcpython.util.math.position_to_chunk(
-            shared.world.get_active_player().position
-        )
-        logger.println("unloading chunks...")
-        self.change_chunks(sector, None)
-        old = self.active_dimension
-        self.active_dimension = dim_id
-        logger.println("loading new chunks...")
-        self.change_chunks(None, sector)
-        shared.event_handler.call("dimension:change:post", old, dim_id)
-        logger.println("finished!")
+        return asyncio.get_event_loop().run_until_complete(self.join_dimension_async(dim_id))
 
     async def join_dimension_async(self, dim_id: int):
         """

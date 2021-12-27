@@ -24,9 +24,11 @@ from mcpython.engine import logger
 from mcpython.engine.event.EventBus import CancelAbleEvent
 
 
-class AsyncEventBus:
+class SingleInvokeAsyncEventBus:
     """
-    Async variant of the normal event bus
+    Special async variant of the normal event bus
+
+    Allows by design only one invocation
     """
 
     def __init__(
@@ -67,30 +69,10 @@ class AsyncEventBus:
         :param function: the awaitable object to run
         :param info: an info to give for the caller
         """
-
-        assert isinstance(function, typing.Awaitable)
+        assert isinstance(function, typing.Awaitable), f"This event bus only accepts coroutines, got {type(function)}"
 
         self.event_subscriptions.setdefault(event_name, []).append((function, info))
-
-    @deprecation.deprecated()
-    def unsubscribe(self, event_name: str, function: typing.Awaitable):
-        """
-        Remove a function from the event bus from a given event
-        :param event_name: the event name the function was registered to
-        :param function: the function itself
-        :raise ValueError: when event name is unknown OR function was never assigned
-        """
-        if event_name not in self.event_subscriptions:
-            raise ValueError(f"cannot find function {function} in event {event_name}")
-
-        any_found = False
-        for signature in self.event_subscriptions[event_name][:]:
-            if signature[0] == function:
-                self.event_subscriptions[event_name].remove(signature)
-                any_found = True
-
-        if not any_found:
-            raise ValueError(f"cannot find function {function} in event {event_name}")
+        return self
 
     async def call(self, event_name: str):
         """
@@ -105,10 +87,10 @@ class AsyncEventBus:
         try:
             await asyncio.gather(*(e[0] for e in self.event_subscriptions[event_name]))
 
-        except (SystemExit, KeyboardInterrupt):
-            raise
+            # We can remove the data as coroutines can only be invoked ones
+            del self.event_subscriptions[event_name]
 
-        except LoadingInterruptException:
+        except (SystemExit, KeyboardInterrupt, LoadingInterruptException):
             raise
 
         except MemoryError:  # Memory error is something fatal
@@ -134,58 +116,59 @@ class AsyncEventBus:
 
             raise RuntimeError
 
-    async def call_cancelable(self, event_name: str):
-        """
-        Will call a cancel able event.
-        Works the same way as call, but will use call_until() with an CancelAbleEvent as first parameter which is checked after each call
-        :param event_name: the name to call
-        :return: if it was canceled or not
-        """
-        handler = CancelAbleEvent()
-        await self.call_until(event_name, lambda _: handler.canceled)
-        return handler
-
-    async def call_until(
-        self,
-        event_name: str,
-        check_function: typing.Callable[[typing.Any], bool],
-    ):
-        """
-        Will call the event stack until an check_function returns True or all subscriptions where done
-        :param event_name: the name of the event
-        :param check_function: the check function to call with
-        :return: the result in the moment of True or None
-        """
-        if event_name not in self.event_subscriptions:
-            return
-
-        for function, info in self.event_subscriptions[event_name]:
-            try:
-                result = await function
-
-                if check_function(result):
-                    return result
-
-            except MemoryError:
-                shared.window.close()
-                pyglet.app.exit()
-                print("closing due to missing memory")
-                sys.exit(-1)
-
-            except (SystemExit, KeyboardInterrupt):
-                raise
-
-            except:
-                logger.print_exception(
-                    "during calling coroutine: {}".format(
-                        function,
-                        sep="\n",
-                    ),
-                    "function info: '{}'".format(info) if info is not None else "",
-                    "during event:",
-                    event_name,
-                )
-                raise
+    # This code is currently not used
+    # async def call_cancelable(self, event_name: str):
+    #     """
+    #     Will call a cancel able event.
+    #     Works the same way as call, but will use call_until() with an CancelAbleEvent as first parameter which is checked after each call
+    #     :param event_name: the name to call
+    #     :return: if it was canceled or not
+    #     """
+    #     handler = CancelAbleEvent()
+    #     await self.call_until(event_name, lambda _: handler.canceled)
+    #     return handler
+    #
+    # async def call_until(
+    #     self,
+    #     event_name: str,
+    #     check_function: typing.Callable[[typing.Any], bool],
+    # ):
+    #     """
+    #     Will call the event stack until an check_function returns True or all subscriptions where done
+    #     :param event_name: the name of the event
+    #     :param check_function: the check function to call with
+    #     :return: the result in the moment of True or None
+    #     """
+    #     if event_name not in self.event_subscriptions:
+    #         return
+    #
+    #     for function, info in self.event_subscriptions[event_name]:
+    #         try:
+    #             result = await function
+    #
+    #             if check_function(result):
+    #                 return result
+    #
+    #         except MemoryError:
+    #             shared.window.close()
+    #             pyglet.app.exit()
+    #             print("closing due to missing memory")
+    #             sys.exit(-1)
+    #
+    #         except (SystemExit, KeyboardInterrupt):
+    #             raise
+    #
+    #         except:
+    #             logger.print_exception(
+    #                 "during calling coroutine: {}".format(
+    #                     function,
+    #                     sep="\n",
+    #                 ),
+    #                 "function info: '{}'".format(info) if info is not None else "",
+    #                 "during event:",
+    #                 event_name,
+    #             )
+    #             raise
 
     def activate(self):
         shared.event_handler.activate_bus(self)
@@ -200,7 +183,7 @@ class AsyncEventBus:
             eventbus.deactivate()
 
     def create_sub_bus(self, *args, activate=True, **kwargs):
-        bus = AsyncEventBus(*args, **kwargs)
+        bus = SingleInvokeAsyncEventBus(*args, **kwargs)
 
         if activate:
             bus.activate()
