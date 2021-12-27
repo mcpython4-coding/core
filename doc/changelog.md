@@ -77,6 +77,9 @@ Mostly Backwards-incompatible:
         - improved support for async code injection
         - made it possible to make methods async via mixin system
 
+    Networking:
+        - API for serialization can do now more stuff
+
     Fixed issues:
         - fixed rendering of block top for non cubic blocks
         - fixed furnace recipes not working (never registered)
