@@ -22,6 +22,7 @@ from abc import ABC
 INT = struct.Struct("!i")
 LONG = struct.Struct("!q")
 FLOAT = struct.Struct("!d")
+BYTE = struct.Struct("!B")
 
 
 class ReadBuffer:
@@ -46,6 +47,9 @@ class ReadBuffer:
 
     def read_struct(self, structure: struct.Struct):
         return structure.unpack(self.stream.read(structure.size))
+
+    def read_byte(self):
+        return self.read_struct(BYTE)[0]
 
     def read_int(self):
         return self.read_struct(INT)[0]
@@ -73,6 +77,9 @@ class ReadBuffer:
                 yield await result
             else:
                 yield result
+
+    async def collect_list(self, handling: typing.Callable[[], typing.Any]):
+        return [e async for e in self.read_list(handling)]
 
     async def read_dict(
         self,
@@ -114,6 +121,33 @@ class ReadBuffer:
         await container_instance.read_from_network_buffer(self)
         return container_instance
 
+    async def read_any(self):
+        tag = self.read_byte()
+
+        match tag:
+            case 0:
+                return await self.collect_list(self.read_any)
+            case 1:
+                return tuple(await self.collect_list(self.read_any))
+            case 2:
+                return set(await self.collect_list(self.read_any))
+            case 3:
+                return await self.read_dict(self.read_any, self.read_any)
+            case 4:
+                return self.read_long()
+            case 5:
+                return self.read_float()
+            case 6:
+                return self.read_string()
+            case 7:
+                return self.read_bool()
+            case 8:
+                return self.read_uuid()
+            case 9:
+                return self.read_bytes()
+
+        raise RuntimeError(tag)
+
 
 class WriteBuffer:
     def __init__(self):
@@ -141,6 +175,9 @@ class WriteBuffer:
         self.data.append(structure.pack(*data))
         return self
 
+    def write_byte(self, value: int):
+        return self.write_struct(BYTE, value)
+
     def write_int(self, value: int):
         return self.write_struct(INT, value)
 
@@ -165,8 +202,9 @@ class WriteBuffer:
         return self
 
     async def write_list(
-        self, data: typing.List, handling: typing.Callable[[typing.Any], typing.Any]
+        self, data: typing.Iterable, handling: typing.Callable[[typing.Any], typing.Any]
     ):
+        data = tuple(data)
         self.write_int(len(data))
         for e in data:
             result = handling(e)
@@ -215,6 +253,40 @@ class WriteBuffer:
         self.write_bool(True)
         await container.write_to_network_buffer(self)
         return self
+
+    async def write_any(self, data):
+        if isinstance(data, list):
+            self.write_byte(0)
+            await self.write_list(data, self.write_any)
+        elif isinstance(data, tuple):
+            self.write_byte(1)
+            await self.write_list(data, self.write_any)
+        elif isinstance(data, set):
+            self.write_byte(2)
+            await self.write_list(data, self.write_any)
+        elif isinstance(data, dict):
+            self.write_byte(3)
+            await self.write_dict(data, self.write_any, self.write_any)
+        elif isinstance(data, int):
+            self.write_byte(4)
+            self.write_long(data)
+        elif isinstance(data, float):
+            self.write_byte(5)
+            self.write_float(data)
+        elif isinstance(data, str):
+            self.write_byte(6)
+            self.write_string(data)
+        elif isinstance(data, bool):
+            self.write_byte(7)
+            self.write_bool(data)
+        elif isinstance(data, uuid.UUID):
+            self.write_byte(8)
+            self.write_uuid(data)
+        elif isinstance(data, (bytes, bytearray)):
+            self.write_byte(9)
+            self.write_bytes(data)
+        else:
+            raise ValueError(data)
 
 
 class IBufferSerializeAble(ABC):

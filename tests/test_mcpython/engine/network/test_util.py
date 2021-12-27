@@ -66,6 +66,11 @@ MULTI_TEST_POOL: typing.List[
         lambda buffer, v: buffer.write_bool_group(v),
         lambda buffer, v: list(buffer.read_bool_group(len(v))) == v,
     ),
+    (
+        lambda: random.randint(0, 255),
+        lambda buffer, v: buffer.write_byte(v),
+        lambda buffer, v: buffer.read_byte() == v,
+    ),
 ]
 
 
@@ -112,6 +117,20 @@ class TestBuffer(TestCase):
             read = ReadBuffer(write.get_data())
 
             self.assertEqual(list(read.read_bool_group(len(group))), group)
+
+    def test_bytes(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        for _ in range(20):
+            v = random.randint(0, 255)
+
+            write = WriteBuffer()
+
+            write.write_byte(v)
+
+            read = ReadBuffer(write.get_data())
+
+            self.assertEqual(read.read_byte(), v)
 
     def test_int(self):
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
@@ -221,10 +240,29 @@ class TestBuffer(TestCase):
             for i, e in enumerate(entries):
                 self.assertTrue(e[2](read, data[i]))
 
+    async def test_multi_any(self):
+        # tests out chains of data
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        for _ in range(10):
+            count = random.randint(4, 20)
+            entries = [random.choice(MULTI_TEST_POOL) for _ in range(count)]
+            data = [e[0]() for e in entries]
+
+            write = WriteBuffer()
+
+            for i, e in enumerate(entries):
+                await write.write_any(data[i])
+
+            read = ReadBuffer(write.get_data())
+
+            for i, e in enumerate(entries):
+                self.assertEqual(data[i], await read.read_any())
+
 
 class Simple(IBufferSerializeAble):
     def __init__(self):
-        self.valid = True
+        self.valid = False
 
     async def read_from_network_buffer(self, buffer):
         self.valid = buffer.read_int() == 42
@@ -242,7 +280,8 @@ class TestContainerSerializer(unittest.TestCase):
         await buffer.write_nullable_container(obj)
 
         read = ReadBuffer(buffer.get_data())
-        obj = await read.read_nullable_container()
+        obj: Simple = await read.read_nullable_container()
+        self.assertTrue(obj.valid)
 
     async def test_basic_null(self):
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
