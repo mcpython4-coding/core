@@ -21,3 +21,7 @@ class ConfigBackground(AbstractStatePart):
         import mcpython.client.state.ConfigBackgroundRenderer
 
         return mcpython.client.state.ConfigBackgroundRenderer.ConfigBackgroundRenderer()
+
+    async def init_rendering(self):
+        await super().init_rendering()
+        await self.state_renderer.reload()

@@ -45,10 +45,10 @@ class StoneCutterContainerRenderer(
     SCROLLBAR_TEXTURE = None
 
     @classmethod
-    def update_texture(cls):
+    async def update_texture(cls):
         import mcpython.util.texture
 
-        texture = mcpython.engine.ResourceLoader.read_image(
+        texture = await mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/stonecutter"
         )
         size = texture.size

@@ -43,11 +43,11 @@ class _TEXTURES:
 TEXTURES = _TEXTURES
 
 
-def reload():
+async def reload():
     import mcpython.engine.ResourceLoader as ResourceLoader
 
     try:
-        base: pyglet.image.AbstractImage = ResourceLoader.read_pyglet_image("gui/icons")
+        base: pyglet.image.AbstractImage = await ResourceLoader.read_pyglet_image("gui/icons")
     except:
         logger.print_exception("[FATAL] failed to load hotbar image")
         import mcpython.common.state.LoadingExceptionViewState as StateLoadingException
@@ -63,6 +63,9 @@ def reload():
             round(((rey - ry) / 255) * base.height),
         )
         return image
+
+    base1 = await ResourceLoader.read_image("minecraft:gui/widgets")
+    base2 = await mcpython.engine.ResourceLoader.read_image("minecraft:gui/icons")
 
     class Textures:
         # todo: make %-based
@@ -125,23 +128,20 @@ def reload():
             ],
         ]
 
-        base = ResourceLoader.read_image("minecraft:gui/widgets")
-
         bar = mcpython.util.texture.to_pyglet_image(
-            base.crop((0, 0, 182, 22)).resize((364, 44), PIL.Image.NEAREST)
+            base1.crop((0, 0, 182, 22)).resize((364, 44), PIL.Image.NEAREST)
         )
         bar_size = (364, 44)
         selection = mcpython.util.texture.to_pyglet_image(
-            base.crop((0, 22, 24, 46)).resize((48, 48), PIL.Image.NEAREST)
+            base1.crop((0, 22, 24, 46)).resize((48, 48), PIL.Image.NEAREST)
         )
 
-        base = mcpython.engine.ResourceLoader.read_image("minecraft:gui/icons")
         xp_bars = [
             mcpython.util.texture.to_pyglet_image(
-                base.crop((0, 69, 182, 74)).resize((364, 10), PIL.Image.NEAREST)
+                base2.crop((0, 69, 182, 74)).resize((364, 10), PIL.Image.NEAREST)
             ),
             mcpython.util.texture.to_pyglet_image(
-                base.crop((0, 64, 182, 69)).resize((364, 10), PIL.Image.NEAREST)
+                base2.crop((0, 64, 182, 69)).resize((364, 10), PIL.Image.NEAREST)
             ),
         ]
 
@@ -154,7 +154,7 @@ mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
 )
 
 if shared.IS_CLIENT:
-    reload()
+    shared.tick_handler.schedule_once(reload())
 
 
 class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRenderer):

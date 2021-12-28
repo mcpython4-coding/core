@@ -15,14 +15,14 @@ from mcpython import shared
 from mcpython.engine import ResourceLoader
 
 
-def print_block_missing():
+async def print_block_missing():
     block_registry = shared.registry.get_by_name("minecraft:block")
 
     print("The following blocks are missing an implementation:")
 
     for modname in sorted(shared.mod_loader.mods.keys()):
         path = f"assets/{modname}/blockstates/"
-        for block in sorted(list(ResourceLoader.get_all_entries(path))):
+        for block in sorted(list(await ResourceLoader.get_all_entries(path))):
             name = modname + ":" + block.removeprefix(path).removesuffix(".json")
             if name not in block_registry:
                 print("-", name)

@@ -39,11 +39,15 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.PICKAXE}
 
     if shared.IS_CLIENT:
-        CHEST_BLOCK_RENDERER = (
-            mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-                "minecraft:entity/chest/ender"
+        CHEST_BLOCK_RENDERER = None
+
+        @classmethod
+        async def reload(cls):
+            cls.CHEST_BLOCK_RENDERER = (
+                mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+                    "minecraft:entity/chest/ender"
+                )
             )
-        )
 
         async def on_block_added(self):
             self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER
@@ -84,3 +88,6 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
             await shared.inventory_handler.hide(
                 shared.world.get_active_player().inventory_enderchest
             )
+
+
+shared.tick_handler.schedule_once(EnderChest.reload())

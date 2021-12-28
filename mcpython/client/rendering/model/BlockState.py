@@ -676,7 +676,7 @@ class BlockStateContainer:
 
     @classmethod
     async def from_directory(cls, directory: str, modname: str, immediate=False):
-        for file in mcpython.engine.ResourceLoader.get_all_entries(directory):
+        for file in await mcpython.engine.ResourceLoader.get_all_entries(directory):
             if not file.endswith("/"):
                 await cls.from_file(file, modname, immediate=immediate)
 
@@ -701,7 +701,7 @@ class BlockStateContainer:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
             return await cls("{}:{}".format(modname, s[-1].split(".")[0])).parse_data(
-                mcpython.engine.ResourceLoader.read_json(file)
+                await mcpython.engine.ResourceLoader.read_json(file)
             )
         except BlockStateNotNeeded:
             pass
@@ -759,10 +759,10 @@ class BlockStateContainer:
             return shared.model_handler.blockstates[name]
 
         file = "assets/{}/blockstates/{}.json".format(*name.split(":"))
-        if not mcpython.engine.ResourceLoader.exists(file):
+        if not await mcpython.engine.ResourceLoader.exists(file):
             raise FileNotFoundError("for blockstate '{}'".format(name))
 
-        data = mcpython.engine.ResourceLoader.read_json(file)
+        data = await mcpython.engine.ResourceLoader.read_json(file)
         return await cls.unsafe_from_data(name, data, immediate=True, force=True)
 
     def __init__(self, name: str, immediate=False, force=False):

@@ -45,8 +45,8 @@ class InventoryFurnaceRenderer(mcpython.client.gui.ContainerRenderer.ContainerRe
     TEXTURE_FIRE_SIZE = None
 
     @classmethod
-    def update_texture(cls):
-        texture = mcpython.engine.ResourceLoader.read_image(
+    async def update_texture(cls):
+        texture = await mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/furnace"
         )
         size = texture.size

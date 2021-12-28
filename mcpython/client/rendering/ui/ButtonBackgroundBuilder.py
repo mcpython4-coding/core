@@ -73,10 +73,10 @@ DefaultButtonTexture = None
 
 
 # todo: bind to reload event
-def reload():
+async def reload():
     global WIDGETS, DefaultButtonTexture
 
-    WIDGETS = mcpython.engine.ResourceLoader.read_image(
+    WIDGETS = await mcpython.engine.ResourceLoader.read_image(
         "assets/minecraft/textures/gui/widgets.png"
     )
 
@@ -87,5 +87,9 @@ def reload():
     )
 
 
+def getDefaultTexture():
+    return DefaultButtonTexture
+
+
 if not shared.IS_TEST_ENV:
-    reload()
+    shared.tick_handler.schedule_once(reload())

@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import asyncio
+
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import pyglet
@@ -51,8 +53,18 @@ class ChestRenderer(
         super().__init__()
 
         self.texture_location = texture_location
-        self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
-            texture_location
+        self.texture = None
+        self.group = None
+
+        self.box_model_top = None
+        self.box_model_bottom = None
+        self.lock_model = None
+
+        shared.tick_handler.schedule_once(self.reload())
+
+    async def reload(self):
+        self.texture = await mcpython.engine.ResourceLoader.read_pyglet_image(
+            self.texture_location
         )
         self.group = pyglet.graphics.TextureGroup(self.texture.get_texture())
 

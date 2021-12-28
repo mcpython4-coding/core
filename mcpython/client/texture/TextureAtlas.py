@@ -15,6 +15,8 @@ import itertools
 import os
 import typing
 
+import asyncio
+
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
 import mcpython.util.texture
@@ -26,9 +28,9 @@ from mcpython.util.annotation import onlyInClient
 
 # We need the missing texture image only on the client, the server will never need this
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
-    MISSING_TEXTURE = mcpython.engine.ResourceLoader.read_image(
+    MISSING_TEXTURE = asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_image(
         "assets/missing_texture.png"
-    ).resize((16, 16), PIL.Image.NEAREST)
+    )).resize((16, 16), PIL.Image.NEAREST)
 else:
     MISSING_TEXTURE = PIL.Image.new("RGBA", (16, 16))
 
@@ -65,7 +67,7 @@ class TextureAtlasGenerator:
             self.atlases[identifier][-1],
         )
 
-    def add_image_file(
+    async def add_image_file(
         self,
         file: str,
         identifier: typing.Hashable = None,
@@ -74,7 +76,7 @@ class TextureAtlasGenerator:
         Adds a single image by file name (loadable by resource system!)
         """
         return self.add_image(
-            mcpython.engine.ResourceLoader.read_image(file), identifier
+            await mcpython.engine.ResourceLoader.read_image(file), identifier
         )
 
     def add_images(
@@ -107,17 +109,17 @@ class TextureAtlasGenerator:
         self.atlases[identifier].append(atlas)
         return [(atlas.add_image(image), atlas) for image in images]
 
-    def add_image_files(
+    async def add_image_files(
         self, files: list, identifier: typing.Hashable = None, single_atlas=True
     ) -> typing.List[typing.Tuple[typing.Tuple[int, int], "TextureAtlas"]]:
         images = []
         for file in files:
             try:
-                images.append(mcpython.engine.ResourceLoader.read_image(file))
+                images.append(await mcpython.engine.ResourceLoader.read_image(file))
             except ValueError:
                 logger.println("[WARN] could not find texture " + file)
                 images.append(
-                    mcpython.engine.ResourceLoader.read_image(
+                    await mcpython.engine.ResourceLoader.read_image(
                         "assets/missing_texture.png"
                     )
                 )

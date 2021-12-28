@@ -29,7 +29,7 @@ class DefaultLoader(IItemModelLoader):
         return "mod_maker" not in data
 
     @classmethod
-    def decode(cls, data: dict, model: "ItemModel"):
+    async def decode(cls, data: dict, model: "ItemModel"):
         if "parent" in data:
             parent = data["parent"]
             if parent == "builtin/entity":
@@ -65,7 +65,7 @@ class DefaultLoader(IItemModelLoader):
 
         for e, pos in zip(
             textures,
-            TextureAtlas.handler.add_image_files(
+            await TextureAtlas.handler.add_image_files(
                 [x[1] for x in textures], model.name.split(":")[0]
             ),
         ):
@@ -94,16 +94,16 @@ class ItemModel:
     LOADERS = [DefaultLoader]
 
     @classmethod
-    def from_file(cls, file: str, item: str):
-        data = mcpython.engine.ResourceLoader.read_json(file)
-        return cls.from_data(data, item)
+    async def from_file(cls, file: str, item: str):
+        data = await mcpython.engine.ResourceLoader.read_json(file)
+        return await cls.from_data(data, item)
 
     @classmethod
-    def from_data(cls, data, item):
+    async def from_data(cls, data, item):
         model = cls(item)
         for loader in cls.LOADERS:
             if loader.validate(data):
-                loader.decode(data, model)
+                await loader.decode(data, model)
         return model
 
     def __init__(self, item: str):
@@ -199,17 +199,17 @@ class ItemModelHandler:
     @staticmethod
     @shared.mod_loader("minecraft", "stage:model:item:search")
     async def load():
-        handler.from_folder("assets/minecraft/models/item", "minecraft")
+        await handler.from_folder("assets/minecraft/models/item", "minecraft")
 
     def from_data(self, data: dict, name: str):
         self.models[name] = ItemModel.from_data(data, name)
 
-    def from_folder(self, folder: str, modname: str):
-        for file in mcpython.engine.ResourceLoader.get_all_entries(folder):
+    async def from_folder(self, folder: str, modname: str):
+        for file in await mcpython.engine.ResourceLoader.get_all_entries(folder):
             if file.endswith("/"):
                 continue
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])
-            self.models[item] = ItemModel.from_file(file, item)
+            self.models[item] = await ItemModel.from_file(file, item)
 
     async def bake(self):
         self.atlas.load()
@@ -223,7 +223,7 @@ class ItemModelHandler:
                     "error during baking item model for '{}'".format(model.item)
                 )
 
-        self.atlas.build()
+        await self.atlas.build()
         self.atlas.dump()
 
     def add_to_batch(

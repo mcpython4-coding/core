@@ -128,7 +128,7 @@ class LootTableHandler:
             if modname in shared.mod_loader.mods
             else shared.mod_loader.mods["minecraft"]
         )
-        for path in mcpython.engine.ResourceLoader.get_all_entries(
+        for path in await mcpython.engine.ResourceLoader.get_all_entries(
             "data/{}/loot_tables".format(path_name)
         ):
             if not path.endswith(".json"):
@@ -149,7 +149,7 @@ class LootTableHandler:
             await self.from_file(path)
 
     async def from_file(self, file: str):
-        return LootTable.from_file(file)
+        return await LootTable.from_file(file)
 
     @classmethod
     def parse_function(
@@ -360,7 +360,7 @@ class LootTablePool:
 
 class LootTable:
     @classmethod
-    def from_file(cls, file: str, name=None):
+    async def from_file(cls, file: str, name=None):
         if name is None:
             s = file.split("/")
             name = "{}:{}/{}".format(
@@ -369,7 +369,7 @@ class LootTable:
                 "/".join(s[s.index("data") + 4 :]).split(".")[0],
             )
         try:
-            data = mcpython.engine.ResourceLoader.read_json(file)
+            data = await mcpython.engine.ResourceLoader.read_json(file)
         except json.decoder.JSONDecodeError:
             logger.println(
                 "[WARN][CORRUPTION] invalid or corrupted .json file: " + file

@@ -15,6 +15,8 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
+import asyncio
+
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemManager
 import mcpython.engine.ResourceLoader
@@ -28,9 +30,9 @@ SLOT_WIDTH = 32
 
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
     PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
-        mcpython.engine.ResourceLoader.read_pyglet_image(
+        asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_pyglet_image(
             "assets/minecraft/textures/gui/hotbar_selected.png"
-        )
+        ))
     )
 else:
     PYGLET_IMAGE_HOVERING = None

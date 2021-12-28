@@ -66,7 +66,7 @@ class Language:
         """
         try:
             try:
-                data = mcpython.engine.ResourceLoader.read_json(file)
+                data = await mcpython.engine.ResourceLoader.read_json(file)
             except ValueError:
                 return
 
@@ -96,7 +96,7 @@ class Language:
         language = LANGUAGES[name]
         try:
             lines = (
-                mcpython.engine.ResourceLoader.read_raw(file)
+                (await mcpython.engine.ResourceLoader.read_raw(file))
                 .decode("UTF-8", "ignore")
                 .split("\n")
             )
@@ -139,7 +139,7 @@ class Language:
         return self.table[key] if key in self.table else key
 
 
-def from_directory(directory: str, modname: str):
+async def from_directory(directory: str, modname: str):
     """
     will create Language data for an directory
     :param directory: the directory name
@@ -147,7 +147,7 @@ def from_directory(directory: str, modname: str):
     """
     if modname not in shared.mod_loader.mods:
         modname = "minecraft"
-    files = list(mcpython.engine.ResourceLoader.get_all_entries_special(directory))
+    files = list(await mcpython.engine.ResourceLoader.get_all_entries_special(directory))
     m = len(files)
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format
@@ -164,13 +164,13 @@ def from_directory(directory: str, modname: str):
             )
 
 
-def from_mod_name(modname: str):
-    from_directory("assets/{}/lang".format(modname), modname)
+async def from_mod_name(modname: str):
+    await from_directory("assets/{}/lang".format(modname), modname)
 
 
-def load():
-    from_mod_name("mcpython")
-    from_mod_name("minecraft")
+async def load():
+    await from_mod_name("mcpython")
+    await from_mod_name("minecraft")
 
 
 # todo: make load of only the active language and load others when needed -> reduce RAM usage

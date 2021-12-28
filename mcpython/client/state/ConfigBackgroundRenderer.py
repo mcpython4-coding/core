@@ -27,13 +27,16 @@ class ConfigBackgroundRenderer(AbstractStateRenderer):
     def __init__(self):
         super().__init__()
 
-        background_raw: PIL.Image.Image = mcpython.engine.ResourceLoader.read_image(
+        self.background_image = None
+        self.objects = []
+
+    async def reload(self):
+        background_raw = await mcpython.engine.ResourceLoader.read_image(
             "assets/minecraft/textures/gui/options_background.png"
         )
         self.background_image = mcpython.util.texture.to_pyglet_image(
             background_raw.resize((32, 32), PIL.Image.NEAREST)
         )
-        self.objects = []
 
     def recreate(self, wx, wy):
         [obj.delete() for obj in self.objects]

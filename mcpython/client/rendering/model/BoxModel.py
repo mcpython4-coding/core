@@ -15,6 +15,7 @@ import itertools
 import typing
 from functools import reduce
 
+import asyncio
 import deprecation
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
@@ -656,13 +657,12 @@ class RawBoxModel(AbstractBoxModel):
         self.relative_position = relative_position
         self.size = size
         self.raw_texture = texture if type(texture) == str else None
+        self.texture_source = texture
 
         self.texture = (
             texture
             if type(texture) == pyglet.graphics.TextureGroup
-            else pyglet.graphics.TextureGroup(
-                mcpython.engine.ResourceLoader.read_pyglet_image(texture).get_texture()
-            )
+            else shared.tick_handler.schedule_once(self.load())
         )
 
         self.__texture_region = texture_region
@@ -677,6 +677,13 @@ class RawBoxModel(AbstractBoxModel):
         self.vertex_provider: typing.Optional[VertexProvider] = None
 
         self.recalculate_cache()
+
+    async def load(self):
+        if self.texture_source is None: return
+
+        self.texture = pyglet.graphics.TextureGroup(
+            (await mcpython.engine.ResourceLoader.read_pyglet_image(self.texture_source)).get_texture()
+        )
 
     def auto_value_region(
         self,

@@ -226,15 +226,15 @@ def get_config(file: str):
 
 class StateConfigFile:
     """
-    Class for deserialize an config file for an state into an state
+    Class for deserialize a config file for a state into a state
     """
 
     def __init__(self, file: str):
         """
-        Constructs an new deserializer for an file
+        Constructs n new deserializer for a file
         """
         self.file = file
-        self.data = mcpython.engine.ResourceLoader.read_json(file)
+        self.data = None
         self.injected_objects = set()
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "command:reload:end", self.reload
@@ -246,15 +246,25 @@ class StateConfigFile:
             mcpython.common.state.AbstractState.AbstractState,
             mcpython.common.state.AbstractStatePart.AbstractStatePart,
         ],
+        retry: bool = True,
     ):
         """
-        will make the given state an state of the kind specified by this file
+        Will make the given state an state of the kind specified by this file
         :param state_instance: the state to inject the data into
+        :param retry: internal flag if to schedule a reload if the data is not arrival
         WARNING: will override ALL existing data from state parts and their config
         """
+        if self.data is None:
+            if retry:
+                shared.tick_handler.schedule_once(self.reload())
+                shared.tick_handler.schedule_once(lambda: self.inject(state_instance, retry=False))
+            return
+
         self.injected_objects.add(state_instance)
+
         if "mouse_interactive" in self.data:
             state_instance.IS_MOUSE_EXCLUSIVE = self.data["mouse_interactive"]
+
         if "parts" in self.data:
             for name in self.data["parts"]:
                 d = self.data["parts"][name]
@@ -280,13 +290,13 @@ class StateConfigFile:
                 if part not in state_instance.parts:
                     state_instance.parts.append(part)
 
-    def reload(self):
+    async def reload(self):
         """
         Will reload the context and parse into the previous injected states
         Called by the system on data reload
         Will internally re-call the inject()-function on every state
         """
-        self.data = mcpython.engine.ResourceLoader.read_json(self.file)
+        self.data = await mcpython.engine.ResourceLoader.read_json(self.file)
         for state_instance in self.injected_objects:
             self.inject(state_instance)
 

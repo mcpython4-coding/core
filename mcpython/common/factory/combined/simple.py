@@ -71,7 +71,7 @@ class CombinedFactoryInstance:
 
         self.block_phase = block_phase
 
-    def create_colored_texture(
+    async def create_colored_texture(
         self, texture: typing.Union[PIL.Image.Image, str], color=None
     ):
         """
@@ -83,7 +83,7 @@ class CombinedFactoryInstance:
             os.makedirs(shared.build + "/colorized_images")
 
         if isinstance(texture, str):
-            texture = mcpython.engine.ResourceLoader.read_image(texture)
+            texture = await mcpython.engine.ResourceLoader.read_image(texture)
 
         file = shared.build + "/colorized_images/{}.png".format(
             CombinedFactoryInstance.FILE_COUNTER
@@ -97,7 +97,7 @@ class CombinedFactoryInstance:
             self.color_texture_consumer(self, texture, color).save(file)
         return file
 
-    def create_full_block(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_full_block(self, suffix=None, texture=None, color=None, **consumers):
         """
         Creates a full block using the "minecraft:block/cube_all"-model
         :param suffix: suffix for the name, when None, the name itself is used, when not None, a _ is inserted in
@@ -121,7 +121,7 @@ class CombinedFactoryInstance:
         )
         self.create_block_simple(
             name,
-            textures={"all": self.create_colored_texture(texture, color=color)},
+            textures={"all": await self.create_colored_texture(texture, color=color)},
             block_parent="minecraft:block/cube_all",
             **consumers,
         )
@@ -210,7 +210,7 @@ class CombinedFactoryInstance:
 
         return self
 
-    def generate_log_like(
+    async def generate_log_like(
         self,
         suffix=None,
         front_texture=None,
@@ -241,8 +241,8 @@ class CombinedFactoryInstance:
             if not suffix or ":" not in suffix
             else suffix
         )
-        front_texture = self.create_colored_texture(front_texture, color=color)
-        side_texture = self.create_colored_texture(side_texture, color=color)
+        front_texture = await self.create_colored_texture(front_texture, color=color)
+        side_texture = await self.create_colored_texture(side_texture, color=color)
         textures = {"end": front_texture, "side": side_texture}
         self.create_multi_variant_block(
             name,
@@ -274,7 +274,7 @@ class CombinedFactoryInstance:
         )
         return self
 
-    def create_button_block(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_button_block(self, suffix=None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
         name = (
@@ -331,7 +331,7 @@ class CombinedFactoryInstance:
 
         return self
 
-    def create_slab_block(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_slab_block(self, suffix=None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
         name = (
@@ -345,7 +345,7 @@ class CombinedFactoryInstance:
             if not suffix or ":" not in suffix
             else suffix
         )
-        texture = self.create_colored_texture(texture, color=color)
+        texture = await self.create_colored_texture(texture, color=color)
         slab_data = {"top": texture, "bottom": texture, "side": texture}
         self.create_multi_variant_block(
             name,
@@ -456,7 +456,7 @@ class CombinedFactoryInstance:
 
         return self
 
-    def create_wall(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_wall(self, suffix=None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
 
@@ -472,7 +472,7 @@ class CombinedFactoryInstance:
             else suffix
         )
 
-        texture = self.create_colored_texture(texture, color=color)
+        texture = await self.create_colored_texture(texture, color=color)
         wall_textures = {"wall": texture}
         # todo: can we use some form of template here?
         self.create_multipart_block(
@@ -555,7 +555,7 @@ class CombinedFactoryInstance:
         )
         return self
 
-    def create_fence(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_fence(self, suffix=None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
         name = (
@@ -569,7 +569,7 @@ class CombinedFactoryInstance:
             if not suffix or ":" not in suffix
             else suffix
         )
-        texture = self.create_colored_texture(texture, color=color)
+        texture = await self.create_colored_texture(texture, color=color)
         fence_textures = {"texture": texture}
         # todo: can we use some form of template here?
         self.create_multipart_block(

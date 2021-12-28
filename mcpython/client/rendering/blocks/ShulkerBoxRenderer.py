@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import asyncio
+
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import pyglet
@@ -33,9 +35,9 @@ class ShulkerBoxRenderer(
         super().__init__()
 
         self.texture_location = texture_location
-        self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
+        self.texture = asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_pyglet_image(
             texture_location
-        )
+        ))
         self.group = pyglet.graphics.TextureGroup(self.texture.get_texture())
 
         self.box_model = RawBoxModel(

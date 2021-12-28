@@ -56,9 +56,9 @@ class Model:
         # check out assigned textures
         if "textures" in data:
             for name in data["textures"].keys():
-                self.parse_texture(data["textures"][name], name)
+                await self.parse_texture(data["textures"][name], name)
 
-        self.bake_textures()
+        await self.bake_textures()
 
         # prepare the box models from parent
         self.box_models = (
@@ -78,7 +78,7 @@ class Model:
 
         return self
 
-    def bake_textures(self):
+    async def bake_textures(self):
         """
         Informs the texture bake system about our new textures we want to be in there
         Prepares the texture_addresses attribute with the location of the texture
@@ -87,7 +87,7 @@ class Model:
         for name in self.used_textures:
             to_add.append((name, self.used_textures[name]))
 
-        add = TextureAtlas.handler.add_image_files([x[1] for x in to_add], self.modname)
+        add = await TextureAtlas.handler.add_image_files([x[1] for x in to_add], self.modname)
         for i, (name, _) in enumerate(to_add):
             if name not in self.animated_textures:
                 self.texture_addresses[name] = add[i][0]
@@ -121,7 +121,7 @@ class Model:
             self.used_textures = self.parent.used_textures.copy()
             self.texture_names = self.parent.texture_names.copy()
 
-    def parse_texture(self, texture: str, name: str):
+    async def parse_texture(self, texture: str, name: str):
         if not isinstance(texture, str):
             logger.println("invalid texture", texture, name, self.name)
             self.texture_names[name] = "assets/missing_texture.png"
@@ -136,10 +136,10 @@ class Model:
                 texture_f = texture
 
             # todo: add a way to disable animated textures
-            if mcpython.engine.ResourceLoader.exists(texture_f + ".mcmeta"):
+            if await mcpython.engine.ResourceLoader.exists(texture_f + ".mcmeta"):
                 self.animated_textures[
                     name
-                ] = animation_manager.prepare_animated_texture(texture)
+                ] = await animation_manager.prepare_animated_texture(texture)
 
             self.used_textures[name] = texture
 

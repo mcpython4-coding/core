@@ -110,7 +110,7 @@ class TickHandler:
                     await func
 
             except (SystemExit, KeyboardInterrupt, OSError) as e:
-                print(e)
+                logger.print_exception("during invoking ticks")
                 sys.exit(-1)
 
             except:

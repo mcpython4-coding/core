@@ -121,7 +121,7 @@ class CraftingManager:
 
     async def add_recipe_from_file(self, file: str):
         try:
-            data = mcpython.engine.ResourceLoader.read_raw(file).decode("utf-8")
+            data = (await mcpython.engine.ResourceLoader.read_raw(file)).decode("utf-8")
         except:
             logger.print_exception("during loading recipe file '{}'".format(file))
             return
@@ -174,7 +174,7 @@ class CraftingManager:
             await asyncio.gather(
                 *(
                     self.add_recipe_from_file(file)
-                    for file in mcpython.engine.ResourceLoader.get_all_entries(
+                    for file in await mcpython.engine.ResourceLoader.get_all_entries(
                         "data/{}/recipes".format(modname)
                     )
                     if file.endswith(".json")
@@ -182,7 +182,7 @@ class CraftingManager:
             )
 
         else:
-            for file in mcpython.engine.ResourceLoader.get_all_entries(
+            for file in await mcpython.engine.ResourceLoader.get_all_entries(
                 "data/{}/recipes".format(modname)
             ):
                 if not file.endswith(".json"):

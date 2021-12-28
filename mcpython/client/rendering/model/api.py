@@ -147,7 +147,7 @@ class IItemModelLoader:
         raise NotImplementedError()
 
     @classmethod
-    def decode(cls, data: dict, model):
+    async def decode(cls, data: dict, model):
         raise NotImplementedError()
 
 

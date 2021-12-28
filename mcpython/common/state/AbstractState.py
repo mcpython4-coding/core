@@ -85,7 +85,7 @@ class AbstractState(IRegistryContent, ABC):
                 self.state_renderer.init()
 
             for state in self.parts:
-                state.init_rendering()
+                shared.tick_handler.schedule_once(state.init_rendering())
 
         else:
             self.state_renderer = None
@@ -124,7 +124,7 @@ class AbstractState(IRegistryContent, ABC):
             await part.activate()
 
             if shared.IS_CLIENT:
-                part.init_rendering()
+                await part.init_rendering()
 
         if self.state_renderer is not None:
             self.state_renderer.on_activate()

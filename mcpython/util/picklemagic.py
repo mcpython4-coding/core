@@ -580,7 +580,7 @@ class SafePickler(pickle._Pickler):
             self.memoize(obj)
             return
 
-        pickle.Pickler.save_global(self, obj, name, pack)
+        super().save_global(obj, name)  # , pack)
 
 
 # the main API

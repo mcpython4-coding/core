@@ -33,8 +33,8 @@ class InventoryCraftingTable(mcpython.client.gui.ContainerRenderer.ContainerRend
     TEXTURE_SIZE = None
 
     @classmethod
-    def update_texture(cls):
-        texture = mcpython.engine.ResourceLoader.read_image(
+    async def update_texture(cls):
+        texture = await mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/crafting_table"
         )
         size = texture.size

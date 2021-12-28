@@ -51,9 +51,9 @@ class AbstractFileWalkingReloadListener(AbstractReloadListener, ABC):
     @classmethod
     async def on_reload(cls, is_first_load=False):
         if not cls.SPECIAL_WALK:
-            entries = ResourceLoader.get_all_entries(cls.DIRECTORY)
+            entries = await ResourceLoader.get_all_entries(cls.DIRECTORY)
         else:
-            entries = ResourceLoader.get_all_entries_special(cls.DIRECTORY)
+            entries = await ResourceLoader.get_all_entries_special(cls.DIRECTORY)
 
         for entry in entries:
             if entry.endswith("/"):
@@ -79,9 +79,9 @@ class AbstractFileWalkingReloadListenerInstanceBased(AbstractReloadListener, ABC
 
     async def on_reload(self, is_first_load=False):
         if not self.SPECIAL_WALK:
-            entries = ResourceLoader.get_all_entries(self.DIRECTORY)
+            entries = await ResourceLoader.get_all_entries(self.DIRECTORY)
         else:
-            entries = ResourceLoader.get_all_entries_special(self.DIRECTORY)
+            entries = await ResourceLoader.get_all_entries_special(self.DIRECTORY)
 
         for entry in entries:
             if entry.endswith("/"):

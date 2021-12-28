@@ -30,7 +30,7 @@ class AbstractStatePart(ABC):
 
         self.state_renderer_init = False
 
-    def init_rendering(self):
+    async def init_rendering(self):
         if self.state_renderer_init:
             return
         self.state_renderer_init = True

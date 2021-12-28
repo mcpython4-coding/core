@@ -89,7 +89,7 @@ class DataSerializationService(
 
     async def load_file(self, file: str, is_first_load=False):
         try:
-            data = mcpython.engine.ResourceLoader.read_raw(file)
+            data = await mcpython.engine.ResourceLoader.read_raw(file)
 
             if callable(self.data_deserializer):
                 data = await self.data_deserializer(data)

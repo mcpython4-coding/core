@@ -52,16 +52,21 @@ class Chest(
     DEFAULT_FACE_SOLID = 0
 
     if shared.IS_CLIENT:
-        CHEST_BLOCK_RENDERER = (
-            mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-                "minecraft:entity/chest/normal"
+        CHEST_BLOCK_RENDERER = None
+        CHEST_BLOCK_RENDERER_CHRISTMAS = None
+
+        @classmethod
+        async def reload(cls):
+            cls.CHEST_BLOCK_RENDERER = (
+                mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+                    "minecraft:entity/chest/normal"
+                )
             )
-        )
-        CHEST_BLOCK_RENDERER_CHRISTMAS = (
-            mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
-                "minecraft:entity/chest/christmas"
+            cls.CHEST_BLOCK_RENDERER_CHRISTMAS = (
+                mcpython.client.rendering.blocks.ChestRenderer.ChestRenderer(
+                    "minecraft:entity/chest/christmas"
+                )
             )
-        )
 
         # As this can be statically decided, we use this trick for some performance gain
         if is_christmas:
@@ -195,3 +200,7 @@ class TrappedChest(Chest):
 
     # todo: add custom renderer
     # todo: add redstone control
+
+
+shared.tick_handler.schedule_once(Chest.reload())
+shared.tick_handler.schedule_once(TrappedChest.reload())

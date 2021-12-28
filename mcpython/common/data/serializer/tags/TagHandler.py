@@ -69,7 +69,7 @@ class TagHandler:
         :param direct_call: if build now or in the loading stage for it
         """
         for row in [
-            mcpython.engine.ResourceLoader.get_all_entries(x)
+            await mcpython.engine.ResourceLoader.get_all_entries(x)
             for x in self.tag_locations
         ]:
             for address in row:
@@ -77,7 +77,7 @@ class TagHandler:
                     continue
 
                 try:
-                    data = mcpython.engine.ResourceLoader.read_json(address)
+                    data = await mcpython.engine.ResourceLoader.read_json(address)
                 except ValueError:
                     continue
 

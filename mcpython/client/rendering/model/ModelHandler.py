@@ -114,7 +114,7 @@ class ModelHandler:
         todo: add datapack locations
         """
         for location in self.lookup_locations:
-            found_models = mcpython.engine.ResourceLoader.get_all_entries(location)
+            found_models = await mcpython.engine.ResourceLoader.get_all_entries(location)
             for model in found_models:
                 s = model.split("/")
                 mod_fix = s[s.index("block") - 2]
@@ -177,7 +177,7 @@ class ModelHandler:
 
         if type(file) == str:
             try:
-                data = mcpython.engine.ResourceLoader.read_json(file)
+                data = await mcpython.engine.ResourceLoader.read_json(file)
             except json.decoder.JSONDecodeError:
                 data = {
                     "parent": "minecraft:block/cube_all",
@@ -242,7 +242,7 @@ class ModelHandler:
         try:
             if type(location) == str:
                 try:
-                    model_data = mcpython.engine.ResourceLoader.read_json(location)
+                    model_data = await mcpython.engine.ResourceLoader.read_json(location)
                 except json.decoder.JSONDecodeError:
                     logger.println(
                         "[WARN] invalid or corrupted .json file: " + location

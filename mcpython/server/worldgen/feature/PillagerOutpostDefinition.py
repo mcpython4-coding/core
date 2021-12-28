@@ -28,7 +28,15 @@ POSSIBLE_STRUCTURES = [
 
 from .NBTStructureHelper import StructureNBTHelper
 
-STRUCTURES = [StructureNBTHelper.from_file(e) for e in POSSIBLE_STRUCTURES]
+STRUCTURES = []
+
+
+async def reload():
+    global STRUCTURES
+    STRUCTURES = [await StructureNBTHelper.from_file(e) for e in POSSIBLE_STRUCTURES]
+
+
+shared.tick_handler.schedule_once(reload())
 
 
 @shared.registry

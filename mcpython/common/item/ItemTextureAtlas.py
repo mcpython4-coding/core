@@ -40,12 +40,12 @@ class ItemAtlasHandler:
     def add_file(self, internal_name: str, file: str):
         self.scheduled_item_files.setdefault(file, set()).add(internal_name)
 
-    def add_file_dynamic(self, internal_name: str, file: str):
+    async def add_file_dynamic(self, internal_name: str, file: str):
         arrival = file in self.scheduled_item_files
         self.add_file(internal_name, file)
 
         if not arrival:
-            image = ResourceLoader.read_image(file).resize((32, 32), PIL.Image.NEAREST)
+            image = (await ResourceLoader.read_image(file)).resize((32, 32), PIL.Image.NEAREST)
             for i, atlas in enumerate(self.atlases):
                 if atlas.is_free_for_slow([image]):
                     self.position_map[file] = (i, atlas.add_image(image))
@@ -63,7 +63,7 @@ class ItemAtlasHandler:
     def load(self):
         pass
 
-    def build(self):
+    async def build(self):
         self.atlases.clear()
         self.lookup_map.clear()
 
@@ -71,7 +71,7 @@ class ItemAtlasHandler:
 
         while len(self.scheduled_item_files) > 0:
             for file in self.scheduled_item_files.copy():
-                if not ResourceLoader.exists(file):
+                if not await ResourceLoader.exists(file):
                     if file == "assets/missing_texture.png":
                         logger.println("[FATAL] error during atlas-work")
                         del self.scheduled_item_files[file]
@@ -90,7 +90,7 @@ class ItemAtlasHandler:
                 added.setdefault(file, []).extend(self.scheduled_item_files[file])
                 del self.scheduled_item_files[file]
 
-                image = ResourceLoader.read_image(file).resize(
+                image = (await ResourceLoader.read_image(file)).resize(
                     (32, 32), PIL.Image.NEAREST
                 )
                 for i, atlas in enumerate(self.atlases):
@@ -132,14 +132,14 @@ class ItemAtlasHandler:
         index, pos = self.lookup_map[name]
         return self.grids[index][tuple(reversed(pos))]
 
-    def get_texture_info_or_add(self, name: str, file: str):
+    async def get_texture_info_or_add(self, name: str, file: str):
         """
         Save variant for adding an texture to the atlas
         Will ensure that the file is there, but must be fed with the texture file and name
         """
 
         if name not in self.lookup_map:
-            self.add_file_dynamic(name, file)
+            await self.add_file_dynamic(name, file)
 
         index, pos = self.lookup_map[name]
         return self.grids[index][tuple(reversed(pos))]

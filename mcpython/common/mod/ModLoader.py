@@ -20,6 +20,8 @@ import typing
 import zipfile
 from abc import ABC
 
+import asyncio
+
 import mcpython.common.config
 import mcpython.common.mod.ExtensionPoint
 import mcpython.common.mod.Mod
@@ -98,7 +100,7 @@ class ModContainer:
                 mcpython.engine.ResourceLoader.SimulatedResourceLoader()
             )
             self.assigned_mod_loader = PyFileModLoader(self)
-            self.assigned_mod_loader.on_select()
+            asyncio.get_event_loop().run_until_complete(self.assigned_mod_loader.on_select())
 
         else:
             raise RuntimeError(f"Invalid mod source file: {path}")
@@ -113,7 +115,7 @@ class ModContainer:
     def add_resources(self):
         mcpython.engine.ResourceLoader.RESOURCE_LOCATIONS.append(self.resource_access)
 
-    def try_identify_mod_loader(self):
+    async def try_identify_mod_loader(self):
         """
         Does some lookup for identifying the mod loader
         """
@@ -130,7 +132,7 @@ class ModContainer:
             )
             return
 
-        self.assigned_mod_loader.on_select()
+        await self.assigned_mod_loader.on_select()
 
     def load_meta_files(self):
         """
@@ -159,7 +161,7 @@ class AbstractModLoaderInstance(ABC):
         self.parent = None
         self.raw_data = None
 
-    def on_select(self):
+    async def on_select(self):
         """
         Informal method called sometime after construction
         """
@@ -177,15 +179,15 @@ class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
     def match_container_loader(cls, container: ModContainer) -> bool:
         return container.resource_access.is_in_path("mods.json")
 
-    def on_select(self):
+    async def on_select(self):
         data = json.loads(
             self.container.resource_access.read_raw("mods.json").decode("utf-8")
         )
 
         self.raw_data = data
-        self.load_from_data(data)
+        await self.load_from_data(data)
 
-    def load_from_data(self, data):
+    async def load_from_data(self, data):
 
         version = data["version"]
         if version == "1.2.0":  # latest
@@ -256,7 +258,7 @@ class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
                 elif loader in ModLoader.JSON_LOADERS:
                     mod_loader = ModLoader.JSON_LOADERS[loader](self.container)
                     mod_loader.parent = self
-                    mod_loader.on_select()
+                    await mod_loader.on_select()
                 else:
                     shared.mod_loader.error_builder.println(
                         f"mod version file {self.container} specified dependency on mod loader {loader}, which is not arrival!"
@@ -272,7 +274,7 @@ class TomlModLoader(DefaultModJsonBasedLoader):
             "mods.toml"
         ) or container.resource_access.is_in_path("META-INF/mods.toml")
 
-    def on_select(self):
+    async def on_select(self):
         if self.container.resource_access.is_in_path("mods.toml"):
             data = self.container.resource_access.read_raw("mods.toml")
         else:
@@ -284,9 +286,9 @@ class TomlModLoader(DefaultModJsonBasedLoader):
             raise RuntimeError(self.container)
 
         self.raw_data = data
-        self.load_from_data(data)
+        await self.load_from_data(data)
 
-    def load_from_data(self, data):
+    async def load_from_data(self, data):
         if "modLoader" in data:
             if data["modLoader"] != "pythonml":
                 loader = data["modLoader"]
@@ -295,7 +297,7 @@ class TomlModLoader(DefaultModJsonBasedLoader):
                     mod_loader = ModLoader.TOML_LOADERS[loader](self.container)
                     mod_loader.parent = self
                     try:
-                        mod_loader.on_select()
+                        await mod_loader.on_select()
                     except:
                         logger.print_exception(
                             f"during decoding container {self.container}"
@@ -335,7 +337,7 @@ class TomlModLoader(DefaultModJsonBasedLoader):
         else:
             mc_version = None
 
-        super().load_from_data(
+        await super().load_from_data(
             {"main files": [e["importable"] for e in data["main_files"]]}
         )
 

@@ -131,7 +131,7 @@ class AnimationManager:
         self.texture2controller: typing.List[AnimationController] = []
         self.texture_lookup: typing.Dict[str, int] = {}
 
-    def prepare_animated_texture(self, location: str) -> int:
+    async def prepare_animated_texture(self, location: str) -> int:
         """
         Prepares a texture for later animation; Internally loads the .mcmeta file for the image,
         and does some parsing for knowing how the animation should play
@@ -142,7 +142,7 @@ class AnimationManager:
         if location in self.texture_lookup:
             return self.texture_lookup[location]
 
-        texture = mcpython.engine.ResourceLoader.read_image(location)
+        texture = await mcpython.engine.ResourceLoader.read_image(location)
 
         if ":" in location:
             t_location = "assets/{}/textures/{}.png".format(*location.split(":"))
@@ -151,13 +151,13 @@ class AnimationManager:
         else:
             t_location = location
 
-        if not mcpython.engine.ResourceLoader.exists(t_location + ".mcmeta"):
+        if not await mcpython.engine.ResourceLoader.exists(t_location + ".mcmeta"):
             logger.println(
                 "skipping animated texture @" + location + " / " + t_location
             )
             return -1
 
-        meta: dict = mcpython.engine.ResourceLoader.read_json(t_location + ".mcmeta")[
+        meta: dict = (await mcpython.engine.ResourceLoader.read_json(t_location + ".mcmeta"))[
             "animation"
         ]
 

@@ -238,6 +238,12 @@ def print_exception(*info):
     pdata = [["EXCEPTION", random.choice(FUNNY_STRINGS)] + list(info)]
     sdata = traceback.format_stack()[:-2]
     data = escape(traceback.format_exc()).split("\n")
+
+    if any(len(line) > 200 for line in data) or any(len(str(e)) > 200 for e in info):
+        println(info)
+        traceback.print_exc()
+        return
+
     pdata.append([data[0]] + "".join(sdata).split("\n") + data[1:-1])
     write_into_container(*pdata)
     if mcpython.common.config.WRITE_NOT_FORMATTED_EXCEPTION:

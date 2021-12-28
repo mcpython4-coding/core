@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+import asyncio
+
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
@@ -38,25 +40,9 @@ class FluidRenderer(
 
         self.texture_location = texture_location
 
-        try:
-            self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
-                texture_location
-            )
-        except (ValueError, FileNotFoundError):
-            self.texture = mcpython.engine.ResourceLoader.read_pyglet_image(
-                "assets/missing_texture.png"
-            )
-            self.texture_location = "assets/missing_texture.png"
-
-            if shared.IS_CLIENT:
-                logger.println(
-                    f"[FLUID][WARN] could not look up texture {texture_location}!"
-                )
-
-        self.texture = self.texture.get_region(
-            0, 0, self.texture.width, self.texture.width
-        )
-        self.group = pyglet.graphics.TextureGroup(self.texture.get_texture())
+        self.texture = None
+        self.group = None
+        shared.tick_handler.schedule_once(self.reload())
 
         self.color = color
 
@@ -77,6 +63,30 @@ class FluidRenderer(
             )
             for i in range(1, 8)
         ]
+
+    async def reload(self):
+        try:
+            self.texture = await mcpython.engine.ResourceLoader.read_pyglet_image(
+                self.texture_location
+            )
+        except (ValueError, FileNotFoundError):
+            self.texture = await mcpython.engine.ResourceLoader.read_pyglet_image(
+                "assets/missing_texture.png"
+            )
+            self.texture_location = "assets/missing_texture.png"
+
+            if shared.IS_CLIENT:
+                logger.println(
+                    f"[FLUID][WARN] could not look up fluid texture {self.texture_location}!"
+                )
+
+        self.texture = self.texture.get_region(
+            0, 0, self.texture.width, self.texture.width
+        )
+        self.group = pyglet.graphics.TextureGroup(self.texture.get_texture())
+
+        for layer in self.layered_models:
+            layer.texture = self.group
 
     def add(self, position: typing.Tuple[int, int, int], block, face, batches):
         return self.layered_models[block.height - 1].add_face_to_batch(

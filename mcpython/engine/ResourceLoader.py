@@ -11,6 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import io
+
+import aiofiles
 import itertools
 import json
 import os
@@ -25,13 +28,16 @@ try:
     import PIL.Image as PIL_Image
 except ImportError:
 
-    class PIL_Image:
-        class Image:
-            pass
+    if not typing.TYPE_CHECKING:
+        class PIL_Image:
+            class Image:
+                pass
 
-        @classmethod
-        def open(cls, file: str):
-            raise IOError()
+            @classmethod
+            def open(cls, file: str | io.BytesIO):
+                raise IOError()
+    else:
+        import PIL.Image as PIL_Image
 
 
 import mcpython.common.config
@@ -81,7 +87,7 @@ class IResourceLoader(ABC):
         """
         raise NotImplementedError()
 
-    def is_in_path(self, path: str) -> bool:
+    async def is_in_path(self, path: str) -> bool:
         """
         Checks if a local file-name is in the given path, so it can be loaded
         :param path: the file path to check
@@ -89,7 +95,7 @@ class IResourceLoader(ABC):
         """
         raise NotImplementedError()
 
-    def read_raw(self, path: str) -> bytes:
+    async def read_raw(self, path: str) -> bytes:
         """
         Will read a file in binary mode
         :param path: the file name to use
@@ -97,24 +103,23 @@ class IResourceLoader(ABC):
         """
         raise NotImplementedError()
 
-    def read_image(self, path: str) -> PIL_Image.Image:
+    async def read_image(self, path: str) -> PIL_Image.Image:
         """
         Will read a file as a PIL.Image.Image
         :param path: the file name to use
         :return: the content of the file loaded as image
         """
-        with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
-            f.write(self.read_raw(path))
-        return PIL_Image.open(shared.tmp.name + "/resource_output.png")
+        data = await self.read_raw(path)
+        return PIL_Image.open(io.BytesIO(data))
 
-    def read_decoding(self, path: str, encoding: str = "utf-8") -> str:
+    async def read_decoding(self, path: str, encoding: str = "utf-8") -> str:
         """
         Will read a file into the system as a string, decoding the raw bytes in the given encoding
         :param path: the file name to use
         :param encoding: the encoding to use
         :return: the content of the file loaded as string
         """
-        return self.read_raw(path).decode(encoding)
+        return (await self.read_raw(path)).decode(encoding)
 
     def close(self):
         """
@@ -153,16 +158,15 @@ class ResourceZipFile(IResourceLoader):
     def get_path_info(self) -> str:
         return self.path
 
-    def is_in_path(self, filename: str) -> bool:
+    async def is_in_path(self, filename: str) -> bool:
         return filename in self.namelist_cache
 
-    def read_raw(self, path: str) -> bytes:
+    async def read_raw(self, path: str) -> bytes:
         return self.archive.read(path)
 
-    def read_image(self, path: str) -> PIL_Image.Image:
-        with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
-            f.write(self.archive.read(path))
-        return PIL_Image.open(shared.tmp.name + "/resource_output.png")
+    async def read_image(self, path: str) -> PIL_Image.Image:
+        data = self.archive.read(path)
+        return PIL_Image.open(io.BytesIO(data))
 
     def close(self):
         if self.close_when_scheduled:
@@ -202,17 +206,17 @@ class ResourceDirectory(IResourceLoader):
     def get_path_info(self) -> str:
         return self.path
 
-    def is_in_path(self, filename: str) -> bool:
+    async def is_in_path(self, filename: str) -> bool:
         return os.path.isfile(os.path.join(self.path, filename))
 
-    def read_raw(self, path: str) -> bytes:
+    async def read_raw(self, path: str) -> bytes:
         if not os.path.exists(path):
             path = self.path + ("" if path.startswith("/") else "/") + path
         with open(path, mode="rb") as f:
             data: bytes = f.read()
         return data
 
-    def read_image(self, path: str) -> PIL_Image.Image:
+    async def read_image(self, path: str) -> PIL_Image.Image:
         return PIL_Image.open(os.path.join(self.path, path))
 
     def get_all_entries_in_directory(
@@ -286,15 +290,15 @@ class SimulatedResourceLoader(IResourceLoader):
     def get_path_info(self) -> str:
         return "simulated:{}".format(self.id)
 
-    def is_in_path(self, path: str) -> bool:
+    async def is_in_path(self, path: str) -> bool:
         return path in self.raw or (path.endswith(".png") and path in self.images)
 
-    def read_raw(self, path: str) -> bytes:
+    async def read_raw(self, path: str) -> bytes:
         if path in self.raw:
             return self.raw[path]
         raise IOError("could not find {}".format(path))
 
-    def read_image(self, path: str) -> PIL_Image.Image:
+    async def read_image(self, path: str) -> PIL_Image.Image:
         if path in self.raw:
             with open(shared.tmp.name + "/resource_output.png", mode="wb") as f:
                 f.write(self.raw[path])
@@ -425,7 +429,7 @@ MC_IMAGE_LOCATIONS = [
 ]
 
 
-def transform_name(file: str, raise_on_error=True) -> str:
+async def transform_name(file: str, raise_on_error=True) -> str:
     """
     Will transform an MC-ResourceLocation string into a local path
     :param file: the thing to use
@@ -460,7 +464,7 @@ def transform_name(file: str, raise_on_error=True) -> str:
     return file
 
 
-def exists(file: str, transform=True):
+async def exists(file: str, transform=True):
     """
     Checks if a given file exists in the system
     :param file: the file to check
@@ -479,24 +483,24 @@ def exists(file: str, transform=True):
 
         for x in RESOURCE_LOCATIONS:
             if x.path == resource:
-                return x.is_in_path(file)
+                return await x.is_in_path(file)
 
         return False
 
     for x in RESOURCE_LOCATIONS:
-        if x.is_in_path(file):
+        if await x.is_in_path(file):
             return True
 
     if transform:
         try:
-            return exists(transform_name(file), transform=False)
+            return await exists(await transform_name(file), transform=False)
         except (NotImplementedError, FileNotFoundError):
             pass
 
     return False
 
 
-def read_raw(file: str):
+async def read_raw(file: str):
     """
     Will read the content of a file in binary mode
     :param file: the file to load
@@ -517,20 +521,20 @@ def read_raw(file: str):
             x: IResourceLoader
             if x.get_path_info() == resource:
                 try:
-                    return x.read_raw(file)
+                    return await x.read_raw(file)
                 except:
                     logger.println("exception during loading file '{}'".format(file))
                     raise
         raise RuntimeError("can't find resource named {}".format(resource))
 
-    if not exists(file, transform=False):
-        file = transform_name(file)
+    if not await exists(file, transform=False):
+        file = await transform_name(file)
 
     loc = RESOURCE_LOCATIONS[:]
     for x in loc:
-        if x.is_in_path(file):
+        if await x.is_in_path(file):
             try:
-                return x.read_raw(file)
+                return await x.read_raw(file)
             except:
                 logger.println("exception during loading file '{}'".format(file))
                 raise
@@ -538,12 +542,15 @@ def read_raw(file: str):
     raise ValueError("can't find resource '{}' in any path".format(file))
 
 
-def read_image(file: str):
+async def read_image(file: str):
     """
-    will read the content of an file in binary mode
+    Will read the content of a file in binary mode
     :param file: the file to load
     :return: the content
     """
+    if file is None:
+        raise ValueError(file)
+
     if file.startswith("build/"):
         file = file.replace("build/", shared.build + "/", 1)
 
@@ -555,28 +562,30 @@ def read_image(file: str):
         file = "|".join(data[1:])
         if file.startswith("build/"):
             file = file.replace("build/", shared.build + "/", 1)
+
         for x in RESOURCE_LOCATIONS:
             x: IResourceLoader
             if x.get_path_info() == resource:
                 try:
-                    return x.read_image(file)
+                    return await x.read_image(file)
                 except:
                     logger.println("exception during loading file '{}'".format(file))
                     raise
+
         raise RuntimeError("can't find resource named {}".format(resource))
 
-    if not exists(file, transform=False):
+    if not await exists(file, transform=False):
         try:
-            file = transform_name(file)
+            file = await transform_name(file)
         except FileNotFoundError:
             logger.println("[WARN] could not find texture", file)
             file = "assets/missing_texture.png"
 
     loc = RESOURCE_LOCATIONS[:]
     for x in loc:
-        if x.is_in_path(file):
+        if await x.is_in_path(file):
             try:
-                return x.read_image(file)
+                return await x.read_image(file)
 
             except (SystemExit, KeyboardInterrupt):
                 sys.exit(-1)
@@ -588,12 +597,12 @@ def read_image(file: str):
     raise ValueError("can't find resource '{}' in any path".format(file))
 
 
-def read_json(file: str):
+async def read_json(file: str):
     """
     Reads a .json file from the system
     """
     try:
-        data = read_raw(file).decode("utf-8")
+        data = (await read_raw(file)).decode("utf-8")
     except:
         print("during accessing", file)
         raise
@@ -608,15 +617,15 @@ def read_json(file: str):
         raise
 
 
-def read_pyglet_image(file):
-    return mcpython.util.texture.to_pyglet_image(read_image(file))
+async def read_pyglet_image(file):
+    return mcpython.util.texture.to_pyglet_image(await read_image(file))
 
 
-def get_all_entries(directory: str) -> typing.Iterator[str]:
+async def get_all_entries(directory: str) -> typing.Iterator[str]:
     """
     Will get all files & directories [ending with an "/"] of an given directory across all resource locations
     :param directory: the directory to use
-    :return: an list of all found files
+    :return: a list of all found files
     """
     loc = RESOURCE_LOCATIONS
     loc.reverse()
@@ -625,11 +634,11 @@ def get_all_entries(directory: str) -> typing.Iterator[str]:
     )
 
 
-def get_all_entries_special(directory: str) -> typing.Iterator[str]:
+async def get_all_entries_special(directory: str) -> typing.Iterator[str]:
     """
     Returns all entries found with their corresponding '@<path>:<file>'-notation
     :param directory: the directory to search from
-    :return: an list of found resources
+    :return: a list of found resources
     """
     return itertools.chain.from_iterable(
         map(

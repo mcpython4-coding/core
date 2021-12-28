@@ -70,7 +70,7 @@ async def tag_mapper(modname: str, pathname: str):
 async def language_mapper(modname: str, pathname: str):
     import mcpython.common.data.Language
 
-    mcpython.common.data.Language.from_mod_name(modname)
+    await mcpython.common.data.Language.from_mod_name(modname)
 
 
 async def loot_table_mapper(modname: str, pathname: str):

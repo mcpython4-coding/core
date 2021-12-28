@@ -34,9 +34,9 @@ class CraftingTableLikeRecipeViewRenderer(
     TEXTURE_SIZE: typing.Optional[typing.Tuple[int, int]] = None
 
     @classmethod
-    def update_texture(cls):
+    async def update_texture(cls):
         # the custom view background
-        texture = mcpython.engine.ResourceLoader.read_image(
+        texture = await mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/crafting_table_view"
         )
 

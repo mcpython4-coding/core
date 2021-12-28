@@ -36,12 +36,12 @@ else:
     ITEM_ATLAS = None
 
 
-def build():
-    ITEM_ATLAS.build()
+async def build():
+    await ITEM_ATLAS.build()
     ITEM_ATLAS.dump()
     for cls in COLLECTED_ITEMS:
         for i, file in enumerate(cls.get_used_texture_files()):
-            items.item_index_table[cls.NAME][file] = ITEM_ATLAS.get_texture_info_or_add(
+            items.item_index_table[cls.NAME][file] = await ITEM_ATLAS.get_texture_info_or_add(
                 cls.NAME + "#?" + str(i), file
             )
 

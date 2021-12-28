@@ -254,7 +254,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         item_registry.lock()
 
     async def bake_items(self):
-        ItemManager.build()
+        await ItemManager.build()
         ItemManager.ITEM_ATLAS.load()
         await ItemModel.handler.bake()
 
@@ -331,7 +331,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
             return
 
-        image: PIL.Image.Image = read_image(file)
+        image: PIL.Image.Image = asyncio.get_event_loop().run_until_complete(read_image(file))
 
         image = image.crop(
             (240, 129, 558, 447)

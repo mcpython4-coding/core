@@ -196,9 +196,9 @@ class WorldGenerationProgress(AbstractState.AbstractState):
                 )
             )
             try:
-                mcpython.engine.ResourceLoader.read_image(
+                (await mcpython.engine.ResourceLoader.read_image(
                     "assets/minecraft/textures/entity/steve.png"
-                ).save(shared.build + "/skin.png")
+                )).save(shared.build + "/skin.png")
             except:
                 logger.print_exception(
                     "[FATAL] failed to load fallback skin. This is an serious issue!"

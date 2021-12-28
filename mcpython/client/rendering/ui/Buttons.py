@@ -19,7 +19,7 @@ import pyglet
 from mcpython import shared
 from mcpython.client.rendering.ui.ButtonBackgroundBuilder import (
     ButtonState,
-    DefaultButtonTexture,
+    getDefaultTexture,
 )
 from pyglet.window import key, mouse
 
@@ -32,11 +32,7 @@ class ImageOverlayButtonRenderer:
         on_press: typing.Callable,
         icon_offset=(0, 0),
     ):
-        self.backgrounds = (
-            DefaultButtonTexture.get_pyglet_texture(*button_size, ButtonState.ACTIVE),
-            DefaultButtonTexture.get_pyglet_texture(*button_size, ButtonState.HOVERING),
-            DefaultButtonTexture.get_pyglet_texture(*button_size, ButtonState.DISABLED),
-        )
+        self.backgrounds = None, None, None
         self.icon = icon
         self.icon_offset = icon_offset
         self.on_press = on_press
@@ -51,6 +47,15 @@ class ImageOverlayButtonRenderer:
         self.underlying_event_bus.subscribe("user:mouse:motion", self.on_mouse_move)
         self.underlying_event_bus.subscribe("user:keyboard:press", self.on_key_press)
         self.underlying_event_bus.subscribe("user:mouse:press", self.on_mouse_press)
+
+        shared.tick_handler.schedule_once(self.reload())
+
+    async def reload(self):
+        self.backgrounds = (
+            getDefaultTexture().get_pyglet_texture(*self.size, ButtonState.ACTIVE),
+            getDefaultTexture().get_pyglet_texture(*self.size, ButtonState.HOVERING),
+            getDefaultTexture().get_pyglet_texture(*self.size, ButtonState.DISABLED),
+        )
 
     def on_mouse_move(self, x, y, dx, dy):
         self.hovering = self.over_button(x, y)
@@ -101,9 +106,9 @@ LEFT_ARROW = None
 
 
 # todo: add to reload handler
-def reload():
+async def reload():
     global ARROW_TEXTURE_SHEET, RIGHT_ARROW, LEFT_ARROW
-    ARROW_TEXTURE_SHEET = mcpython.engine.ResourceLoader.read_pyglet_image(
+    ARROW_TEXTURE_SHEET = await mcpython.engine.ResourceLoader.read_pyglet_image(
         "minecraft:gui/recipe_book"
     )
     RIGHT_ARROW = ARROW_TEXTURE_SHEET.get_region(0, 32, 12, 17)
@@ -111,7 +116,7 @@ def reload():
 
 
 if not shared.IS_TEST_ENV:
-    reload()
+    shared.tick_handler.schedule_once(reload())
 
 
 def arrow_button_left(position, callback):

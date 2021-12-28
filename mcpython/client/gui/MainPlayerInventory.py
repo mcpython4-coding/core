@@ -49,8 +49,8 @@ class MainPlayerInventory(mcpython.client.gui.ContainerRenderer.ContainerRendere
         return cls(hotbar)
 
     @classmethod
-    def update_texture(cls):
-        texture = mcpython.engine.ResourceLoader.read_image(
+    async def update_texture(cls):
+        texture = await mcpython.engine.ResourceLoader.read_image(
             "minecraft:gui/container/inventory"
         )
         size = texture.size

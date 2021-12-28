@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 import mcpython.common.data.Language
 import mcpython.engine.event.EventHandler
 import mcpython.engine.event.EventInfo
@@ -28,10 +30,10 @@ image = disabled = enabled = hovering = None
 IMAGES = {}
 
 
-def load_images():
+async def load_images():
     global image, disabled, enabled, hovering
 
-    image = mcpython.engine.ResourceLoader.read_pyglet_image("gui/widgets")
+    image = await mcpython.engine.ResourceLoader.read_pyglet_image("gui/widgets")
     disabled = image.get_region(2, 256 - 46 - 17, 196, 14)
     enabled = image.get_region(2, 256 - 66 - 17, 196, 14)
     hovering = image.get_region(2, 256 - 86 - 17, 196, 14)
@@ -49,7 +51,7 @@ def load_images():
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", load_images
 )
-load_images()
+asyncio.get_event_loop().run_until_complete(load_images())
 
 
 def draw_button(position, size, mode):

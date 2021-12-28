@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import math
 import typing
 
+import asyncio
+
 import mcpython.engine
 import mcpython.engine.event.EventBus
 import mcpython.engine.ResourceLoader
@@ -21,13 +23,21 @@ from mcpython import shared
 from mcpython.util import texture as texture_util
 from pyglet.window import key, mouse
 
-TAB_TEXTURE = (
-    None
-    if shared.IS_TEST_ENV
-    else mcpython.engine.ResourceLoader.read_pyglet_image(
+TAB_TEXTURE = None
+
+
+def getTabTexture():
+    return TAB_TEXTURE
+
+
+async def reload():
+    global TAB_TEXTURE
+    TAB_TEXTURE = await mcpython.engine.ResourceLoader.read_pyglet_image(
         "minecraft:gui/container/creative_inventory/tabs"
     )
-)
+
+if not shared.IS_TEST_ENV:
+    shared.tick_handler.schedule_once(reload())
 
 
 class CreativeTabScrollbar:
@@ -45,7 +55,7 @@ class CreativeTabScrollbar:
 
     # todo: bind to reload handler
     @classmethod
-    def reload(cls):
+    async def reload(cls):
         cls.NON_SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
             TAB_TEXTURE.get_region(232, 241, 12, 15), cls.SCROLLBAR_SIZE
         )
@@ -153,4 +163,4 @@ class CreativeTabScrollbar:
 
 
 if not shared.IS_TEST_ENV:
-    CreativeTabScrollbar.reload()
+    shared.tick_handler.schedule_once(CreativeTabScrollbar.reload())

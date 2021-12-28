@@ -99,6 +99,8 @@ async def load():
         logger.print_exception()
         sys.exit(-1)
 
+    await Blocks.load_blocks()
+
     block_registry.register(Anvil.Anvil)
     block_registry.register(Anvil.ChippedAnvil)
     block_registry.register(Anvil.DamagedAnvil)

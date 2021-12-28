@@ -67,7 +67,7 @@ class EntityRenderer:
             }
         }
         """
-        self.data = mcpython.engine.ResourceLoader.read_json(self.path)
+        self.data = await mcpython.engine.ResourceLoader.read_json(self.path)
         self.box_models.clear()
         self.states.clear()
         reloaded = []
@@ -78,17 +78,17 @@ class EntityRenderer:
             if texture in TEXTURES and texture in reloaded:
                 group = TEXTURES[texture]
             else:
-                if mcpython.engine.ResourceLoader.exists(texture):
+                if await mcpython.engine.ResourceLoader.exists(texture):
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.engine.ResourceLoader.read_pyglet_image(
+                        (await mcpython.engine.ResourceLoader.read_pyglet_image(
                             texture
-                        ).get_texture()
+                        )).get_texture()
                     )
                 else:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        mcpython.engine.ResourceLoader.read_pyglet_image(
+                        (await mcpython.engine.ResourceLoader.read_pyglet_image(
                             "assets/missing_texture.png"
-                        ).get_texture()
+                        )).get_texture()
                     )
                 reloaded.append(texture)
             if "invert_indexes" not in box or not box["invert_indexes"]:
