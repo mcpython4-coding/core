@@ -1,6 +1,6 @@
 
 
-Features scheduled for implementation for alpha 1.3.0, [planned to be released sometime in december 2021]
+Features scheduled for implementation for alpha 1.3.0, [planned to be released sometime in 2022]
 - abstraction of direct rendering calls to some higher level (-> pyglet 2.0 preparations)
 - reload data only when needed, so a resource pack / data pack change occurred
 - split gui system into rendering & container
@@ -8,13 +8,7 @@ Features scheduled for implementation for alpha 1.3.0, [planned to be released s
 - refactor event names
 - moved tool system to tags (see mc)
 - do not read inventory config for each inventory, load it ones & share
-
-
-Animated textures:
-- New atlases for textures with animation, where for each frame a new one is created, so we can switch between them 
-each rendering frame (So, for each frame count & timing, a new one is needed)
-- WARNING: for that to work, we need to add a way for block models to prevent optimisation for mass-addition 
-    as animated textures need their own texture atlas & group, not the same as the normals
+- optimise save system, is really slow somehow (region access?)
 
 
 Issues:
@@ -40,6 +34,7 @@ Toolchain:
 
 Library backend:
 - upgrade to pyglet 2.0 [For consideration]
+- upgrade to opensimplex 0.4 [breaking change]
 
 Blocks:
 - add anvil UI
@@ -47,7 +42,7 @@ Blocks:
 a) Fluid bucket name (on FluidBlock)
 b) Fluid block name (on Bucket)
 c) events for above @ Fluid class
-- real stairs
+- real stairs [WIP]
 - collision detection based on physic bounding boxes
 
 Data generation:
@@ -68,7 +63,7 @@ Data driver:
 
 Parallelization:
 - When python releases the GIL better across threads, use another thread for our world gen process
-- Use threads for async workflow currently done in Lifecycle
+- Use threads for async workflow currently done in one thread
 
 UI:
 - system for the end user to create your own WorldGenerationMode, which is dumped to a save-based file

@@ -33,10 +33,10 @@ python -m unittest discover -s ./tests -t . in .
 
 
 # Changelog of snapshot 21w52a
-Planned to be released on 29.12.2021
+To be released on 29.12.2021
 targeting 1.18.1
 
-Mostly Backwards-incompatible:
+Mostly API-Backwards-incompatible:
 - mod config system (deprecated and scheduled for removal until next alpha)
 - things touching FaceInfo, beside lookup if the block is shown/hidden, breaking also custom renderers with 
   an optimised implementation for multi faces, and anything touching the show/hide methods for faces 
