@@ -94,7 +94,7 @@ class DataPackHandler:
         """
         try:
             datapack = DataPack(directory)
-            datapack.load()
+            await datapack.load()
             await shared.event_handler.call_async("datapack:load", datapack)
             self.loaded_data_packs.append(datapack)
             return datapack
@@ -185,7 +185,7 @@ class DataPack:
         self.access = None
         self.description = ""
 
-    def load(self):
+    async def load(self):
         """
         Will load the data pack
         """
@@ -201,7 +201,7 @@ class DataPack:
                 if os.path.isdir(self.directory)
                 else mcpython.engine.ResourceLoader.ResourceZipFile(self.directory)
             )
-            info = json.loads(self.access.read_raw("pack.mcmeta").decode("utf-8"))[
+            info = json.loads((await self.access.read_raw("pack.mcmeta")).decode("utf-8"))[
                 "pack"
             ]
             if info["pack_format"] not in (1, 2, 3):
@@ -221,9 +221,7 @@ class DataPack:
                     name = "{}:{}".format(split[1], "/".join(split[3:]).split(".")[0])
                     self.function_table[
                         name
-                    ] = mcpython.server.command.McFunctionFile.McFunctionFile(
-                        self.access.read_raw(file).decode("UTF-8"), name
-                    )
+                    ] = mcpython.server.command.McFunctionFile.FunctionFile.from_file(file)
 
         except:
             self.status = DataPackStatus.SYSTEM_ERROR

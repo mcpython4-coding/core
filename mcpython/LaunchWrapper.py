@@ -91,11 +91,11 @@ class LaunchWrapper:
         import mcpython.common.mod.ModMcpython
 
         shared.mod_loader.look_for_mod_files()
-        shared.mod_loader.parse_mod_files()
+        asyncio.get_event_loop().run_until_complete(shared.mod_loader.parse_mod_files())
 
         shared.mod_loader.check_errors()
 
-        shared.mod_loader.load_missing_mods()
+        asyncio.get_event_loop().run_until_complete(shared.mod_loader.load_missing_mods())
 
         shared.mod_loader.check_for_updates()
         shared.mod_loader.write_mod_info()

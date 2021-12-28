@@ -124,7 +124,7 @@ class ModContainer:
             return
 
         for loader in ModLoader.KNOWN_MOD_LOADERS:
-            if loader.match_container_loader(self):
+            if await loader.match_container_loader(self):
                 self.assigned_mod_loader = loader(self)
                 break
         else:
@@ -135,16 +135,16 @@ class ModContainer:
 
         await self.assigned_mod_loader.on_select()
 
-    def load_meta_files(self):
+    async def load_meta_files(self):
         """
         Looks out for some meta files
         """
         # this file allows some special stuff to happen before real loading stuff
-        if self.resource_access.is_in_path("provider.json"):
+        if await self.resource_access.is_in_path("provider.json"):
             parse_provider_json(
                 self,
                 json.loads(
-                    self.resource_access.read_raw("provider.json").decode("utf-8")
+                    (await self.resource_access.read_raw("provider.json")).decode("utf-8")
                 ),
             )
 
@@ -154,7 +154,7 @@ class ModContainer:
 
 class AbstractModLoaderInstance(ABC):
     @classmethod
-    def match_container_loader(cls, container: ModContainer) -> bool:
+    async def match_container_loader(cls, container: ModContainer) -> bool:
         return False
 
     def __init__(self, container: ModContainer):
@@ -177,12 +177,12 @@ class PyFileModLoader(AbstractModLoaderInstance):
 
 class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
     @classmethod
-    def match_container_loader(cls, container: ModContainer) -> bool:
-        return container.resource_access.is_in_path("mods.json")
+    async def match_container_loader(cls, container: ModContainer) -> bool:
+        return await container.resource_access.is_in_path("mods.json")
 
     async def on_select(self):
         data = json.loads(
-            self.container.resource_access.read_raw("mods.json").decode("utf-8")
+            (await self.container.resource_access.read_raw("mods.json")).decode("utf-8")
         )
 
         self.raw_data = data
@@ -270,16 +270,16 @@ class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
 
 class TomlModLoader(DefaultModJsonBasedLoader):
     @classmethod
-    def match_container_loader(cls, container: ModContainer) -> bool:
-        return container.resource_access.is_in_path(
+    async def match_container_loader(cls, container: ModContainer) -> bool:
+        return await container.resource_access.is_in_path(
             "mods.toml"
-        ) or container.resource_access.is_in_path("META-INF/mods.toml")
+        ) or await container.resource_access.is_in_path("META-INF/mods.toml")
 
     async def on_select(self):
-        if self.container.resource_access.is_in_path("mods.toml"):
-            data = self.container.resource_access.read_raw("mods.toml")
+        if await self.container.resource_access.is_in_path("mods.toml"):
+            data = await self.container.resource_access.read_raw("mods.toml")
         else:
-            data = self.container.resource_access.read_raw("META-INF/mods.toml")
+            data = await self.container.resource_access.read_raw("META-INF/mods.toml")
 
         try:
             data = toml.loads(data.decode("utf-8"))
@@ -508,14 +508,14 @@ class ModLoader:
 
         self.found_mod_files |= files
 
-    def parse_mod_files(self):
+    async def parse_mod_files(self):
         containers = [ModContainer(path) for path in self.found_mod_files]
         self.mod_containers += containers
 
         for container in containers[:]:
             self.current_container = container
             try:
-                container.try_identify_mod_loader()
+                await container.try_identify_mod_loader()
             except:
                 logger.print_exception(container)
                 containers.remove(container)
@@ -523,7 +523,7 @@ class ModLoader:
         for container in containers[:]:
             try:
                 self.current_container = container
-                container.load_meta_files()
+                await container.load_meta_files()
             except:
                 logger.print_exception(container)
                 containers.remove(container)
@@ -533,14 +533,14 @@ class ModLoader:
             self.error_builder.finish()
             raise RuntimeError()
 
-    def load_missing_mods(self):
+    async def load_missing_mods(self):
         for container in self.mod_containers[:]:
             if container.assigned_mod_loader is None:
                 self.current_container = container
-                container.try_identify_mod_loader()
+                await container.try_identify_mod_loader()
 
                 if container.assigned_mod_loader is not None:
-                    container.load_meta_files()
+                    await container.load_meta_files()
                 else:
                     self.mod_containers.remove(container)
 
@@ -600,11 +600,6 @@ class ModLoader:
         Use only when really needed. The system is designed for being data-driven, and things might go wrong
             when manually doing this
         """
-        if not shared.event_handler.call_cancelable(
-            "modloader:mod_registered", instance
-        ):
-            return
-
         self.mods[instance.name] = instance
         self.located_mods.append(instance)
 
