@@ -56,16 +56,20 @@ class ICandleGroup(AbstractBlock.AbstractBlock):
         hit_position: tuple,
         itemstack,
     ):
-        if itemstack.get_item_name() != self.NAME:
-            return False
-        if self.count == 4:
-            return False
         if button != mouse.RIGHT:
             return False
+
         if modifiers & key.MOD_SHIFT:
             return False
 
-        # Don't add candles when the player is in gamemode 1
+        # todo: allow custom checks here
+        if itemstack.get_item_name() != self.NAME:
+            return False
+
+        if self.count >= 4:
+            return False
+
+        # Don't add candles when the player is in gamemode 2
         if player.gamemode == 3:
             return False
 
@@ -113,9 +117,9 @@ class ICandleCake(FlowerLikeBlock):
             return False
         if modifiers & key.MOD_SHIFT:
             return False
+
         if player.gamemode == 3:
             return False
-
         if player.gamemode == 1:
             self.consum_bite()
             return True
