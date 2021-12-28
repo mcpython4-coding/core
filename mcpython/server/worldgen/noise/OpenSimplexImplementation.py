@@ -42,7 +42,7 @@ class OpenSimplexImplementation(INoiseImplementation):
             self,
             position,
             *[
-                lambda p: noise.noise4(*p, *(0,) * (4 - len(p))) * 0.5 + 0.5
+                lambda p: noise.noise4d(*p, *(0,) * (4 - len(p))) * 0.5 + 0.5
                 for noise in self.noises
             ]
         )
