@@ -49,7 +49,7 @@ class AbstractAxeItem(AbstractToolItem):
             new = await shared.world.get_active_dimension().add_block(
                 block.position, self.AXE_TRANSFORMS[block.NAME]
             )
-            new.set_model_state(state)
+            await new.set_model_state(state)
 
             if shared.IS_CLIENT:
                 new.face_info.update()

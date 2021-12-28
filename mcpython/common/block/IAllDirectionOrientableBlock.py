@@ -55,6 +55,6 @@ class IAllDirectionOrientableBlock(mcpython.common.block.AbstractBlock.AbstractB
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if self.MODEL_FACE_NAME in state:
             self.face = mcpython.util.enums.EnumSide[state["facing"].upper()]

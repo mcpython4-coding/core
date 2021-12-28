@@ -166,7 +166,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
                 (0, 0, 0), self.tasks[0], block_update=False
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
-                instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
+                await instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
             instance.face_info.update(redraw_complete=True)
         except:  # if the block is not working, use the next
             self.block_index = 0
@@ -291,7 +291,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
                 )
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
-                instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
+                asyncio.get_event_loop().run_until_complete(instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE))
             instance.face_info.update(redraw_complete=True)
         except:
             logger.print_exception(

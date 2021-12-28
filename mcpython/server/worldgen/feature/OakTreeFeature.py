@@ -47,7 +47,7 @@ class OakTreeNormalFeature(IFeature.IFeature):
                         )
 
     @classmethod
-    def place_array(cls, array, x: int, y: int, z: int, config):
+    async def place_array(cls, array, x: int, y: int, z: int, config):
         height_range = config.setdefault("height_range", (3, 6))
         height = random.randint(*height_range)
 

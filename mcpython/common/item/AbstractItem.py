@@ -143,7 +143,7 @@ class AbstractItem(
 
     async def on_set_from_item(self, block):
         if self.stored_block_state is not None and self.NAME == block.NAME:
-            block.set_item_saved_state(self.stored_block_state)
+            await block.set_item_saved_state(self.stored_block_state)
 
     # functions used by data serializers
 

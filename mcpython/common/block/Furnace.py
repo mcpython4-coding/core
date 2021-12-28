@@ -67,7 +67,7 @@ class Furnace(IHorizontalOrientableBlock):
     def get_model_state(self) -> dict:
         return {"facing": self.face.normal_name, "lit": str(self.active).lower()}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         super().set_model_state(state)
         if "lit" in state:
             self.active = state["lit"] == "true"

@@ -78,7 +78,7 @@ class IStairs(mcpython.common.block.AbstractBlock.AbstractBlock):
             "shape": self.shape.name.lower(),
         }
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "facing" in state:
             self.face = EnumSide[state["facing"].upper()]
 

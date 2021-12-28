@@ -94,7 +94,7 @@ def create_shulker_box(name):
             if hasattr(item_instance, "inventory"):
                 block.inventory = item_instance.inventory.copy()
 
-        def on_request_item_for_block(self, itemstack):
+        async def on_request_item_for_block(self, itemstack):
             itemstack.item.inventory = self.inventory.copy()
 
 

@@ -166,7 +166,7 @@ class Chest(
         if hasattr(instance, "inventory"):
             block.inventory = instance.inventory.copy()
 
-    def on_request_item_for_block(self, itemstack):
+    async def on_request_item_for_block(self, itemstack):
         if (
             shared.window.keys[pyglet.window.key.LCTRL]
             and shared.world.get_active_player().gamemode == 1

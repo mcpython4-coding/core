@@ -52,7 +52,7 @@ class TestBarrel(TestCase):
 
         self.assertFalse(FakeInventoryHandler.SHOWN)
 
-    def test_model_state_serialization(self):
+    async def test_model_state_serialization(self):
         shared.crafting_handler = FakeCraftingHandler()
 
         import mcpython.common.block.Barrel
@@ -61,9 +61,9 @@ class TestBarrel(TestCase):
 
         instance = mcpython.common.block.Barrel.Barrel()
         state = instance.get_model_state()
-        instance.set_model_state({"facing": "north", "open": "true"})
+        await instance.set_model_state({"facing": "north", "open": "true"})
         self.assertNotEqual(state, instance.get_model_state())
-        instance.set_model_state(state)
+        await instance.set_model_state(state)
         self.assertEqual(state, instance.get_model_state())
 
     async def test_serializer(self):

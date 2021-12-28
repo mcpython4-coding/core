@@ -103,7 +103,7 @@ class AbstractWall(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
         await self.schedule_network_update()
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         for key in state:
             if key in self.connections:
                 self.connections[key] = state[key] in ("low", "true")

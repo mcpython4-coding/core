@@ -386,7 +386,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             block.dimension = self.dimension.get_name()
 
             if lazy_setup is not None:
-                lazy_setup(block)
+                result = lazy_setup(block)
+                if isinstance(result, typing.Awaitable):
+                    await result
 
             if shared.IS_CLIENT:
                 block.face_info.update()
@@ -402,7 +404,10 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             block.position = position
             block.dimension = self.dimension.get_name()
             if lazy_setup is not None:
-                lazy_setup(block)
+                result = lazy_setup(block)
+
+                if isinstance(result, typing.Awaitable):
+                    await result
 
         # store the block instance in the local world
         self._world[position] = block
@@ -410,7 +415,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         await block.on_block_added()
 
         if block_state is not None:
-            block.set_model_state(block_state)
+            await block.set_model_state(block_state)
 
         self.mark_dirty()
         self.mark_position_dirty(position)

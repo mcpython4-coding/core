@@ -68,7 +68,7 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
         else:
             return False
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "side" in state:
             face = state["side"]
 

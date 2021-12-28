@@ -61,10 +61,10 @@ class StructureNBTHelper:
             block = await dimension.add_block((x + dx, y + dy, z + dz), name)
 
             if block is not None:
-                block.set_model_state(state)
+                await block.set_model_state(state)
                 block.face_info.update(True)
 
-    def place_array(
+    async def place_array(
         self,
         array: mcpython.server.worldgen.WorldGenerationTaskArrays.IWorldGenerationTaskHandlerReference,
         x: int,
@@ -73,8 +73,8 @@ class StructureNBTHelper:
         config,
     ):
         def callback(s):
-            def setup(block):
-                block.set_model_state(s)
+            async def setup(block):
+                await block.set_model_state(s)
                 block.face_info.update(True)
 
             return setup

@@ -61,7 +61,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
     def get_model_state(self) -> dict:
         return {key.normal_name: state for key, state in self.state.items()}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         self.state.update({EnumSide[e.upper()]: v for e, v in state.items()})
 
     async def on_block_update(self):

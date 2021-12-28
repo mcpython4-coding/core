@@ -38,7 +38,7 @@ class TestAbstractBlock(TestCase):
             def get_model_state(self) -> dict:
                 return {"test": "test", "tets": "tete23"}
 
-            def set_model_state(s, state: dict):
+            async def set_model_state(s, state: dict):
                 self.assertEqual(state, s.get_model_state())
                 TestBlock.model_state_set = True
 
@@ -58,7 +58,7 @@ class TestAbstractBlock(TestCase):
         for face in EnumSide.iterate():
             self.assertTrue(block.is_face_solid(face), face)
 
-    def test_get_rotated_variant(self):
+    async def test_get_rotated_variant(self):
         import mcpython.common.block.AbstractBlock
 
         class Block(mcpython.common.block.AbstractBlock.AbstractBlock):
@@ -69,12 +69,12 @@ class TestAbstractBlock(TestCase):
             def get_model_state(self):
                 return {"a": "b", "c": "d"}
 
-            def set_model_state(self_, state: dict):
+            async def set_model_state(self_, state: dict):
                 self.assertEqual(state, self_.get_model_state())
                 self_.invoked = True
 
         b = Block()
-        b2 = b.get_rotated_variant(BlockRotationType.ROTATE_X_90)
+        b2 = await b.get_rotated_variant(BlockRotationType.ROTATE_X_90)
         self.assertIsInstance(b2, Block)
         self.assertTrue(b2.invoked)
 

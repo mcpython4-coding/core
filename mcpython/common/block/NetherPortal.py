@@ -41,7 +41,7 @@ class NetherPortalBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
     def get_model_state(self) -> dict:
         return {"axis": self.axis}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         self.axis = state.setdefault("axis", "x")
 
     DEBUG_WORLD_BLOCK_STATES = [{"axis": "x"}, {"axis": "z"}]

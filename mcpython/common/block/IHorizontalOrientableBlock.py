@@ -53,7 +53,7 @@ class IHorizontalOrientableBlock(mcpython.common.block.AbstractBlock.AbstractBlo
     def get_model_state(self) -> dict:
         return {self.MODEL_FACE_NAME: self.face.normal_name}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if self.MODEL_FACE_NAME in state:
             self.face = EnumSide[state[self.MODEL_FACE_NAME].upper()]
 

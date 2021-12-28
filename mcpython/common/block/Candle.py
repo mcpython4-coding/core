@@ -41,7 +41,7 @@ class ICandleGroup(AbstractBlock.AbstractBlock):
     def get_model_state(self):
         return {"candles": str(self.count), "lit": str(self.lit).lower()}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "candles" in state:
             self.count = int(state["candles"])
 
@@ -101,7 +101,7 @@ class ICandleCake(FlowerLikeBlock):
     def get_model_state(self):
         return {"lit": str(self.lit).lower()}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "lit" in state:
             self.lit = state["lit"] == "true"
 

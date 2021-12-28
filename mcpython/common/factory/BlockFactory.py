@@ -311,15 +311,15 @@ def build_class_default_state(
             for function in configs["on_instance_creation"]:
                 function(self)
 
-        def set_creation_properties(self, *args, **kwargs):
+        async def set_creation_properties(self, *args, **kwargs):
             if not is_super_base:
-                super().set_creation_properties(*args, **kwargs)
+                await super().set_creation_properties(*args, **kwargs)
 
             for base in bases:
-                base.set_creation_properties(self, *args, **kwargs)
+                await base.set_creation_properties(self, *args, **kwargs)
 
             for function in configs["on_properties_set"]:
-                function(self)
+                await function(self)
 
         async def on_block_added(self, *args, **kwargs):
             if not is_super_base:
@@ -398,23 +398,23 @@ def build_class_default_state(
             for function in configs["on_no_collision_collide"]:
                 await function(self, *args, **kwargs)
 
-        def get_item_saved_state(self):
+        async def get_item_saved_state(self):
             if len(configs["get_item_save_data"]) > 0:
-                return configs["get_item_save_data"][-1](self)
+                return await configs["get_item_save_data"][-1](self)
 
             if not is_super_base:
-                return super().get_item_saved_state()
+                return await super().get_item_saved_state()
             if len(bases) > 0:
-                return bases[-1].get_item_saved_state(self)
+                return await bases[-1].get_item_saved_state(self)
 
-        def set_item_saved_state(self, state):
+        async def set_item_saved_state(self, state):
             if len(configs["set_item_saved_data"]) > 0:
-                return configs["set_item_saved_data"][-1](self, state)
+                return await configs["set_item_saved_data"][-1](self, state)
 
             if not is_super_base:
-                return super().set_item_saved_state(state)
+                return await super().set_item_saved_state(state)
             if len(bases) > 0:
-                return bases[-1].set_item_saved_state(self, state)
+                return await bases[-1].set_item_saved_state(self, state)
 
         def get_inventories(self):
             inventories = []
@@ -452,15 +452,15 @@ def build_class_default_state(
             state.update(configs["default_model_state"])
             return state
 
-        def set_model_state(self, state: dict):
+        async def set_model_state(self, state: dict):
             if not is_super_base:
-                super().set_model_state(state)
+                await super().set_model_state(state)
 
             for base in bases:
-                base.set_model_state(self, state)
+                await base.set_model_state(self, state)
 
             for function in configs["set_model_state"]:
-                function(self, state)
+                await function(self, state)
 
         def get_view_bbox(self):
             if len(configs["get_view_bbox"]) > 0:
@@ -484,17 +484,17 @@ def build_class_default_state(
 
             return self.get_view_bbox()
 
-        def on_request_item_for_block(
+        async def on_request_item_for_block(
             self, itemstack: mcpython.common.container.ResourceStack.ItemStack
         ):
             if not is_super_base:
-                super().on_request_item_for_block(itemstack)
+                await super().on_request_item_for_block(itemstack)
 
             for base in bases:
-                base.on_request_item_for_block(self, itemstack)
+                await base.on_request_item_for_block(self, itemstack)
 
             for function in configs["on_request_item_for_block"]:
-                function(self, itemstack)
+                await function(self, itemstack)
 
         def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
             self.injected_redstone_power[side.index] = level

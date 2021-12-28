@@ -44,7 +44,7 @@ class ILog(mcpython.common.block.AbstractBlock.AbstractBlock):
     def get_model_state(self):
         return {"axis": self.axis.name.lower()}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "axis" in state:
             axis: str = state["axis"]
 

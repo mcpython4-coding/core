@@ -27,5 +27,5 @@ class JungleTreeFeature(IFeature.IFeature):
         pass
 
     @classmethod
-    def place_array(cls, array, x: int, y: int, z: int, config):
+    async def place_array(cls, array, x: int, y: int, z: int, config):
         pass

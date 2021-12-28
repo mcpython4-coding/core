@@ -86,7 +86,7 @@ class IButton(IAllDirectionOrientableBlock):
 
         return d
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "face" in state:
             if state["face"] == "ceiling":
                 self.face = EnumSide.UP

@@ -60,7 +60,7 @@ class IFeature(mcpython.common.event.api.IRegistryContent):
         pass
 
     @classmethod
-    def place_array(
+    async def place_array(
         cls,
         array: mcpython.server.worldgen.WorldGenerationTaskArrays.IWorldGenerationTaskHandlerReference,
         x: int,

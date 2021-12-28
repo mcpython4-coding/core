@@ -257,7 +257,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                                 block, player=player
                             )
                             [
-                                block.on_request_item_for_block(itemstack)
+                                await block.on_request_item_for_block(itemstack)
                                 for itemstack in items
                             ]
 
@@ -327,14 +327,17 @@ class GameView(AbstractStatePart.AbstractStatePart):
                             self.mouse_press_time = 0
                             return
 
-                        instance = await chunk.add_block(
-                            previous,
-                            slot.get_itemstack().item.get_block(),
-                            lazy_setup=lambda block: block.set_creation_properties(
+                        async def set_block_stuff(block):
+                            await block.set_creation_properties(
                                 set_to=block_position,
                                 real_hit=hit_position,
                                 player=player,
-                            ),
+                            )
+
+                        instance = await chunk.add_block(
+                            previous,
+                            slot.get_itemstack().item.get_block(),
+                            lazy_setup=set_block_stuff,
                         )
 
                         await active_itemstack.item.on_set_from_item(instance)
@@ -367,7 +370,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                 )
                 block = chunk.get_block(block_position)
                 if block:
-                    block.on_request_item_for_block(itemstack)
+                    await block.on_request_item_for_block(itemstack)
                 selected_slot = player.get_active_inventory_slot()
 
                 for inventory, reverse in player.inventory_order:

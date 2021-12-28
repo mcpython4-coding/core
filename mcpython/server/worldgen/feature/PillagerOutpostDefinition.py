@@ -49,6 +49,6 @@ class PillagerOutpostDefinition(mcpython.server.worldgen.feature.IFeature.IFeatu
         structure.place(dimension, x, y, z, config)
 
     @classmethod
-    def place_array(cls, array, x: int, y: int, z: int, config):
+    async def place_array(cls, array, x: int, y: int, z: int, config):
         structure = random.choice(STRUCTURES)
-        structure.place_array(array, x, y, z, config)
+        await structure.place_array(array, x, y, z, config)

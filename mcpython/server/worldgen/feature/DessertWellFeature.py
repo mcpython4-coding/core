@@ -33,7 +33,7 @@ class DessertWellFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
     WATER = "minecraft:water"
 
     @classmethod
-    def place_array(
+    async def place_array(
         cls,
         array: mcpython.server.worldgen.WorldGenerationTaskArrays.IWorldGenerationTaskHandlerReference,
         x: int,

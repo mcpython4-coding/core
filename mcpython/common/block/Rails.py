@@ -52,7 +52,7 @@ class IStraightRail(IRail, ABC):
     def get_model_state(self) -> dict:
         return {"shape": self.shape}
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "shape" in state:
             self.shape = state["shape"]
 
@@ -118,7 +118,7 @@ class ActivatorRail(IStraightRail):
             ).lower(),
         }
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         super().set_model_state(state)
 
         if "powered" in state:

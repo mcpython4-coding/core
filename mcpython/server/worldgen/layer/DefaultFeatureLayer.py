@@ -11,7 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-
+import asyncio
+import itertools
 import random
 
 import mcpython.common.world.Chunk
@@ -26,25 +27,25 @@ class DefaultFeatureLayer(ILayer):
 
     NAME = "minecraft:feature_default"
 
-    @staticmethod
-    async def add_generate_functions_to_chunk(config: LayerConfig, reference):
+    @classmethod
+    async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
         chunk = reference.chunk
         cx, cz = chunk.position
         cx *= 16
         cz *= 16
 
-        for x in range(16):
-            for z in range(16):
-                reference.schedule_invoke(
-                    DefaultFeatureLayer.generate_position,
-                    cx + x,
-                    cz + z,
-                    reference,
-                    config,
-                )
+        await asyncio.gather(*(
+            cls.generate_position(
+                cx + x,
+                cz + z,
+                reference,
+                config,
+            )
+            for (x, z) in itertools.combinations(range(16), 2)
+        ))
 
     @staticmethod
-    def generate_position(x, z, reference, config):
+    async def generate_position(x, z, reference, config):
         chunk = reference.chunk
 
         # todo: rename to structure blocking info or something similar
@@ -83,7 +84,7 @@ class DefaultFeatureLayer(ILayer):
                 ]
 
                 feature = feature_def.feature
-                feature.place_array(
+                await feature.place_array(
                     reference,
                     x,
                     feature_def.spawn_point.select(x, z, height, biome),

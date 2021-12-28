@@ -119,7 +119,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
     def get_provided_slot_lists(self, side):
         return self.inventory.slots, self.inventory.slots
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "facing" in state:
             face = state["facing"]
 
@@ -140,7 +140,7 @@ class AbstractAnvil(IFallingBlock.IFallingBlock):
         if hasattr(item, "inventory"):
             block.inventory = item.inventory.copy()
 
-    def on_request_item_for_block(self, itemstack):
+    async def on_request_item_for_block(self, itemstack):
         if (
             shared.window.keys[key.LCTRL]
             and shared.world.get_active_player().gamemode == 1

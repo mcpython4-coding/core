@@ -102,7 +102,7 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
 
         await self.schedule_network_update()
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         for key in state:
             self.connections[key] = state[key] == "true"
 
@@ -150,7 +150,7 @@ class AbstractFenceGate(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
             "open": str(self.open).lower(),
         }
 
-    def set_model_state(self, state: dict):
+    async def set_model_state(self, state: dict):
         if "facing" in state:
             try:
                 self.facing = EnumSide[state["facing"].upper()]
