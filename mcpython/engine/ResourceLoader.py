@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import io
 
 import aiofiles
+import asyncio
+from aiofiles import os as aio_os, ospath as async_path
 import itertools
 import json
 import os
@@ -207,13 +209,13 @@ class ResourceDirectory(IResourceLoader):
         return self.path
 
     async def is_in_path(self, filename: str) -> bool:
-        return os.path.isfile(os.path.join(self.path, filename))
+        return await async_path.isfile(os.path.join(self.path, filename))
 
     async def read_raw(self, path: str) -> bytes:
         if not os.path.exists(path):
             path = self.path + ("" if path.startswith("/") else "/") + path
-        with open(path, mode="rb") as f:
-            data: bytes = f.read()
+        async with aiofiles.open(path, mode="rb") as f:
+            data: bytes = await f.read()
         return data
 
     async def read_image(self, path: str) -> PIL_Image.Image:

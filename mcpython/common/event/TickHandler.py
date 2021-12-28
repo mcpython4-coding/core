@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
+import gc
 import random
 import sys
 import typing
@@ -59,6 +60,7 @@ class TickHandler:
         """
         self.active_tick += 1
         self.lost_time += dt
+
         # execute functions
         while self.lost_time > 1 / 20:
             self.lost_time -= 1 / 20
