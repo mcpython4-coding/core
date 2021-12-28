@@ -22,6 +22,8 @@ async def create_full_slab_wall_set(
     await instance.create_slab_block(suffix=lambda n: n.removesuffix("s") + "_slab")
     await instance.create_wall(suffix=lambda n: n.removesuffix("s") + "_wall")
     if and_button:
-        await instance.create_button_block(suffix=lambda n: n.removesuffix("s") + "_button")
+        await instance.create_button_block(
+            suffix=lambda n: n.removesuffix("s") + "_button"
+        )
 
     return instance

@@ -80,15 +80,19 @@ class EntityRenderer:
             else:
                 if await mcpython.engine.ResourceLoader.exists(texture):
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        (await mcpython.engine.ResourceLoader.read_pyglet_image(
-                            texture
-                        )).get_texture()
+                        (
+                            await mcpython.engine.ResourceLoader.read_pyglet_image(
+                                texture
+                            )
+                        ).get_texture()
                     )
                 else:
                     group = TEXTURES[texture] = pyglet.graphics.TextureGroup(
-                        (await mcpython.engine.ResourceLoader.read_pyglet_image(
-                            "assets/missing_texture.png"
-                        )).get_texture()
+                        (
+                            await mcpython.engine.ResourceLoader.read_pyglet_image(
+                                "assets/missing_texture.png"
+                            )
+                        ).get_texture()
                     )
                 reloaded.append(texture)
             if "invert_indexes" not in box or not box["invert_indexes"]:

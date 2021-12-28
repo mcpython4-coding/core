@@ -39,13 +39,15 @@ from . import AbstractState
 from .ui import UIPartButton, UIPartScrollBar
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
-    asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")).resize(
-        (50, 50), PIL.Image.NEAREST
+    asyncio.get_event_loop()
+    .run_until_complete(
+        mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
     )
+    .resize((50, 50), PIL.Image.NEAREST)
 )
-WORLD_SELECTION = asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_image(
-    "minecraft:gui/world_selection"
-))
+WORLD_SELECTION = asyncio.get_event_loop().run_until_complete(
+    mcpython.engine.ResourceLoader.read_image("minecraft:gui/world_selection")
+)
 WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
     WORLD_SELECTION.crop((0, 0, 32, 32))
 )

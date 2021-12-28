@@ -23,9 +23,11 @@ from pyglet.window import mouse
 
 from .AbstractUIPart import AbstractUIPart
 
-IMAGE = asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_image(
-    "assets/minecraft/textures/gui/container/creative_inventory/tabs.png"
-))
+IMAGE = asyncio.get_event_loop().run_until_complete(
+    mcpython.engine.ResourceLoader.read_image(
+        "assets/minecraft/textures/gui/container/creative_inventory/tabs.png"
+    )
+)
 scroll_active = mcpython.util.texture.to_pyglet_image(
     IMAGE.crop((233, 0, 243, 14)).resize((20, 28), PIL.Image.NEAREST)
 )

@@ -267,7 +267,9 @@ class LaunchWrapper:
 
         import mcpython.common.data.Language
 
-        asyncio.get_event_loop().run_until_complete(mcpython.common.data.Language.load())
+        asyncio.get_event_loop().run_until_complete(
+            mcpython.common.data.Language.load()
+        )
 
         return self
 
@@ -321,9 +323,11 @@ class LaunchWrapper:
 
         if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:
-                asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_image(
-                    "assets/minecraft/textures/entity/steve.png"
-                )).save(shared.build + "/skin.png")
+                asyncio.get_event_loop().run_until_complete(
+                    mcpython.engine.ResourceLoader.read_image(
+                        "assets/minecraft/textures/entity/steve.png"
+                    )
+                ).save(shared.build + "/skin.png")
             except:
                 logger.print_exception("[FATAL] failed to load default skin")
                 sys.exit(-1)
@@ -356,8 +360,16 @@ class LaunchWrapper:
 
                 # todo: sometimes, this does not work correctly
                 shared.window.set_icon(
-                    asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_pyglet_image("icon_16x16.png")),
-                    asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_pyglet_image("icon_32x32.png")),
+                    asyncio.get_event_loop().run_until_complete(
+                        mcpython.engine.ResourceLoader.read_pyglet_image(
+                            "icon_16x16.png"
+                        )
+                    ),
+                    asyncio.get_event_loop().run_until_complete(
+                        mcpython.engine.ResourceLoader.read_pyglet_image(
+                            "icon_32x32.png"
+                        )
+                    ),
                 )
             except:
                 logger.print_exception("[FATAL] failed to load window images")

@@ -11,11 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import itertools
 import os
 import typing
-
-import asyncio
 
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
@@ -28,9 +27,13 @@ from mcpython.util.annotation import onlyInClient
 
 # We need the missing texture image only on the client, the server will never need this
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
-    MISSING_TEXTURE = asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_image(
-        "assets/missing_texture.png"
-    )).resize((16, 16), PIL.Image.NEAREST)
+    MISSING_TEXTURE = (
+        asyncio.get_event_loop()
+        .run_until_complete(
+            mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
+        )
+        .resize((16, 16), PIL.Image.NEAREST)
+    )
 else:
     MISSING_TEXTURE = PIL.Image.new("RGBA", (16, 16))
 

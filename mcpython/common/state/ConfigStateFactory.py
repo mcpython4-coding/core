@@ -257,7 +257,9 @@ class StateConfigFile:
         if self.data is None:
             if retry:
                 shared.tick_handler.schedule_once(self.reload())
-                shared.tick_handler.schedule_once(lambda: self.inject(state_instance, retry=False))
+                shared.tick_handler.schedule_once(
+                    lambda: self.inject(state_instance, retry=False)
+                )
             return
 
         self.injected_objects.add(state_instance)

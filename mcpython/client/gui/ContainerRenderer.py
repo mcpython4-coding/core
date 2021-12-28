@@ -263,7 +263,9 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
         if "image_location" in self.config:
             try:
-                if await mcpython.engine.ResourceLoader.exists(self.config["image_location"]):
+                if await mcpython.engine.ResourceLoader.exists(
+                    self.config["image_location"]
+                ):
                     self.bg_sprite = pyglet.sprite.Sprite(
                         await mcpython.engine.ResourceLoader.read_pyglet_image(
                             self.config["image_location"]

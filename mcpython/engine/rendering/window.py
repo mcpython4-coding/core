@@ -176,7 +176,8 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self.push_handlers(self.keys)
 
         self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
-            asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_image("gui/icons"))
+            asyncio.get_event_loop()
+            .run_until_complete(mcpython.engine.ResourceLoader.read_image("gui/icons"))
             .crop((0, 0, 15, 15))
             .resize((30, 30), PIL.Image.NEAREST)
         )

@@ -254,7 +254,9 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
     @deprecation.deprecated()
     def join_dimension(self, dim_id: int):
-        return asyncio.get_event_loop().run_until_complete(self.join_dimension_async(dim_id))
+        return asyncio.get_event_loop().run_until_complete(
+            self.join_dimension_async(dim_id)
+        )
 
     async def join_dimension_async(self, dim_id: int):
         """

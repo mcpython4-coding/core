@@ -11,10 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import math
 import typing
-
-import asyncio
 
 import mcpython.engine
 import mcpython.engine.event.EventBus
@@ -35,6 +34,7 @@ async def reload():
     TAB_TEXTURE = await mcpython.engine.ResourceLoader.read_pyglet_image(
         "minecraft:gui/container/creative_inventory/tabs"
     )
+
 
 if not shared.IS_TEST_ENV:
     shared.tick_handler.schedule_once(reload())

@@ -11,11 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import io
-
-import aiofiles
 import asyncio
-from aiofiles import os as aio_os, ospath as async_path
+import io
 import itertools
 import json
 import os
@@ -24,6 +21,10 @@ import typing
 import zipfile
 from abc import ABC
 
+import aiofiles
+from aiofiles import os as aio_os
+from aiofiles import ospath as async_path
+
 # servers don't need textures, so pillow is not required
 # WARNING: this  M A Y  break other stuff
 try:
@@ -31,6 +32,7 @@ try:
 except ImportError:
 
     if not typing.TYPE_CHECKING:
+
         class PIL_Image:
             class Image:
                 pass
@@ -38,9 +40,9 @@ except ImportError:
             @classmethod
             def open(cls, file: str | io.BytesIO):
                 raise IOError()
+
     else:
         import PIL.Image as PIL_Image
-
 
 import mcpython.common.config
 import mcpython.util.texture

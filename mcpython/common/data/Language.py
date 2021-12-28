@@ -147,7 +147,9 @@ async def from_directory(directory: str, modname: str):
     """
     if modname not in shared.mod_loader.mods:
         modname = "minecraft"
-    files = list(await mcpython.engine.ResourceLoader.get_all_entries_special(directory))
+    files = list(
+        await mcpython.engine.ResourceLoader.get_all_entries_special(directory)
+    )
     m = len(files)
     for i, f in enumerate(files):
         if f.endswith(".json"):  # new language format

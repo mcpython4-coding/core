@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import importlib
 import json
 import os
@@ -19,8 +20,6 @@ import time
 import typing
 import zipfile
 from abc import ABC
-
-import asyncio
 
 import mcpython.common.config
 import mcpython.common.mod.ExtensionPoint
@@ -100,7 +99,9 @@ class ModContainer:
                 mcpython.engine.ResourceLoader.SimulatedResourceLoader()
             )
             self.assigned_mod_loader = PyFileModLoader(self)
-            asyncio.get_event_loop().run_until_complete(self.assigned_mod_loader.on_select())
+            asyncio.get_event_loop().run_until_complete(
+                self.assigned_mod_loader.on_select()
+            )
 
         else:
             raise RuntimeError(f"Invalid mod source file: {path}")

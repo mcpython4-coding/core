@@ -11,11 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+
 # todo: split container part & rendering part
 import typing
 from abc import ABC
-
-import asyncio
 
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemManager
@@ -30,9 +30,11 @@ SLOT_WIDTH = 32
 
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
     PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
-        asyncio.get_event_loop().run_until_complete(mcpython.engine.ResourceLoader.read_pyglet_image(
-            "assets/minecraft/textures/gui/hotbar_selected.png"
-        ))
+        asyncio.get_event_loop().run_until_complete(
+            mcpython.engine.ResourceLoader.read_pyglet_image(
+                "assets/minecraft/textures/gui/hotbar_selected.png"
+            )
+        )
     )
 else:
     PYGLET_IMAGE_HOVERING = None

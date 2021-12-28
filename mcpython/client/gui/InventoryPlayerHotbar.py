@@ -47,7 +47,9 @@ async def reload():
     import mcpython.engine.ResourceLoader as ResourceLoader
 
     try:
-        base: pyglet.image.AbstractImage = await ResourceLoader.read_pyglet_image("gui/icons")
+        base: pyglet.image.AbstractImage = await ResourceLoader.read_pyglet_image(
+            "gui/icons"
+        )
     except:
         logger.print_exception("[FATAL] failed to load hotbar image")
         import mcpython.common.state.LoadingExceptionViewState as StateLoadingException

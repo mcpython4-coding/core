@@ -97,7 +97,9 @@ class CombinedFactoryInstance:
             self.color_texture_consumer(self, texture, color).save(file)
         return file
 
-    async def create_full_block(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_full_block(
+        self, suffix=None, texture=None, color=None, **consumers
+    ):
         """
         Creates a full block using the "minecraft:block/cube_all"-model
         :param suffix: suffix for the name, when None, the name itself is used, when not None, a _ is inserted in
@@ -274,7 +276,9 @@ class CombinedFactoryInstance:
         )
         return self
 
-    async def create_button_block(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_button_block(
+        self, suffix=None, texture=None, color=None, **consumers
+    ):
         if texture is None:
             texture = self.default_texture
         name = (
@@ -331,7 +335,9 @@ class CombinedFactoryInstance:
 
         return self
 
-    async def create_slab_block(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_slab_block(
+        self, suffix=None, texture=None, color=None, **consumers
+    ):
         if texture is None:
             texture = self.default_texture
         name = (

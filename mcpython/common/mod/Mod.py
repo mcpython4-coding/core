@@ -13,9 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.engine.event.SingleInvokeAsyncEventBus
 import mcpython.engine.event.EventBus
 import mcpython.engine.event.EventHandler
+import mcpython.engine.event.SingleInvokeAsyncEventBus
 from mcpython import shared
 
 

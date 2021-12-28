@@ -51,9 +51,11 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     player_name
                 )
             )
-            (await mcpython.engine.ResourceLoader.read_image(
-                "assets/minecraft/textures/entity/steve.png"
-            )).save(shared.build + "/skin.png")
+            (
+                await mcpython.engine.ResourceLoader.read_image(
+                    "assets/minecraft/textures/entity/steve.png"
+                )
+            ).save(shared.build + "/skin.png")
 
         try:
             await mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()

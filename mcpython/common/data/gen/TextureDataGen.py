@@ -51,7 +51,9 @@ class TextureConstructor(IDataGenerator):
                     0,
                     location_or_image
                     if type(location_or_image) == PIL.Image.Image
-                    else asyncio.get_event_loop().run_until_complete(ResourceLoader.read_image(location_or_image)),
+                    else asyncio.get_event_loop().run_until_complete(
+                        ResourceLoader.read_image(location_or_image)
+                    ),
                     position,
                     rescale,
                 )
@@ -76,7 +78,9 @@ class TextureConstructor(IDataGenerator):
         """
         try:
             if type(location_or_image) != PIL.Image.Image:
-                location_or_image = asyncio.get_event_loop().run_until_complete(ResourceLoader.read_image(location_or_image))
+                location_or_image = asyncio.get_event_loop().run_until_complete(
+                    ResourceLoader.read_image(location_or_image)
+                )
             self.actions.append(
                 (
                     1,
@@ -109,7 +113,9 @@ class TextureConstructor(IDataGenerator):
                     2,
                     location_or_image
                     if type(location_or_image) == PIL.Image.Image
-                    else asyncio.get_event_loop().run_until_complete(ResourceLoader.read_image(location_or_image)),
+                    else asyncio.get_event_loop().run_until_complete(
+                        ResourceLoader.read_image(location_or_image)
+                    ),
                     position,
                 )
             )

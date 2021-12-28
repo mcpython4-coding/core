@@ -331,7 +331,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
             return
 
-        image: PIL.Image.Image = asyncio.get_event_loop().run_until_complete(read_image(file))
+        image: PIL.Image.Image = asyncio.get_event_loop().run_until_complete(
+            read_image(file)
+        )
 
         image = image.crop(
             (240, 129, 558, 447)

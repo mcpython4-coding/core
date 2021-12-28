@@ -11,9 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
-
 import asyncio
+import typing
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader

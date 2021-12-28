@@ -11,11 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import itertools
 import typing
 from functools import reduce
 
-import asyncio
 import deprecation
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
@@ -679,10 +679,15 @@ class RawBoxModel(AbstractBoxModel):
         self.recalculate_cache()
 
     async def load(self):
-        if self.texture_source is None: return
+        if self.texture_source is None:
+            return
 
         self.texture = pyglet.graphics.TextureGroup(
-            (await mcpython.engine.ResourceLoader.read_pyglet_image(self.texture_source)).get_texture()
+            (
+                await mcpython.engine.ResourceLoader.read_pyglet_image(
+                    self.texture_source
+                )
+            ).get_texture()
         )
 
     def auto_value_region(

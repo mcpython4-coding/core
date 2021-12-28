@@ -157,9 +157,9 @@ class AnimationManager:
             )
             return -1
 
-        meta: dict = (await mcpython.engine.ResourceLoader.read_json(t_location + ".mcmeta"))[
-            "animation"
-        ]
+        meta: dict = (
+            await mcpython.engine.ResourceLoader.read_json(t_location + ".mcmeta")
+        )["animation"]
 
         if "frames" not in meta:
             meta["frames"] = list(range(texture.height // texture.width))

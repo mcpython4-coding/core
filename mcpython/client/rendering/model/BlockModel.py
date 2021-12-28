@@ -87,7 +87,9 @@ class Model:
         for name in self.used_textures:
             to_add.append((name, self.used_textures[name]))
 
-        add = await TextureAtlas.handler.add_image_files([x[1] for x in to_add], self.modname)
+        add = await TextureAtlas.handler.add_image_files(
+            [x[1] for x in to_add], self.modname
+        )
         for i, (name, _) in enumerate(to_add):
             if name not in self.animated_textures:
                 self.texture_addresses[name] = add[i][0]

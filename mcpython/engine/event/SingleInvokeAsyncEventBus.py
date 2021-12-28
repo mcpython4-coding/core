@@ -69,7 +69,9 @@ class SingleInvokeAsyncEventBus:
         :param function: the awaitable object to run
         :param info: an info to give for the caller
         """
-        assert isinstance(function, typing.Awaitable), f"This event bus only accepts coroutines, got {type(function)}"
+        assert isinstance(
+            function, typing.Awaitable
+        ), f"This event bus only accepts coroutines, got {type(function)}"
 
         self.event_subscriptions.setdefault(event_name, []).append((function, info))
         return self
