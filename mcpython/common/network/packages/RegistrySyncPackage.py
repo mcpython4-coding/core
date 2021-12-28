@@ -142,7 +142,7 @@ class RegistrySyncPackage(AbstractPackage):
             )
 
             await self.answer(RegistrySyncResultPackage().setup(self.name, False))
-            if not shared.event_handler.call_cancelable(
+            if not await shared.event_handler.call_cancelable_async(
                 "minecraft:network:registry_sync:fail",
                 self,
                 entries_here,

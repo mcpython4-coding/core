@@ -202,5 +202,6 @@ class TrappedChest(Chest):
     # todo: add redstone control
 
 
-shared.tick_handler.schedule_once(Chest.reload())
-shared.tick_handler.schedule_once(TrappedChest.reload())
+if shared.IS_CLIENT:
+    shared.tick_handler.schedule_once(Chest.reload())
+    shared.tick_handler.schedule_once(TrappedChest.reload())

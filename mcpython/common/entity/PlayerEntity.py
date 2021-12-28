@@ -502,7 +502,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 self.inventory_main.slots[45].get_itemstack().get_item_name()
                 == "minecraft:totem_of_undying"
             )
-            if (a or b) and not shared.event_handler.call_cancelable(
+            if (a or b) and not await shared.event_handler.call_cancelable_async(
                 "player:totem_used", self
             ):
                 if a:

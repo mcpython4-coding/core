@@ -281,6 +281,7 @@ class TestContainerSerializer(unittest.TestCase):
 
         read = ReadBuffer(buffer.get_data())
         obj: Simple = await read.read_nullable_container()
+        self.assertIsNotNone(obj)
         self.assertTrue(obj.valid)
 
     async def test_basic_null(self):

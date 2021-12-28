@@ -69,6 +69,10 @@ class TickHandler:
                     self.active_tick
                 ]:
                     result = function(*args, **kwargs)
+
+                    if isinstance(result, typing.Awaitable):
+                        result = await result
+
                     if ticket_id:
                         self.results[ticket_id] = result
                         ticket_update(self, ticket_id, function, args, kwargs)

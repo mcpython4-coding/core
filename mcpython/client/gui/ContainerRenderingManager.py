@@ -109,7 +109,11 @@ class OpenedInventoryStatePart(
 
         for inventory in shared.inventory_handler.open_containers:
             shared.rendering_helper.enableAlpha()  # make sure that it is enabled
-            inventory.draw(hovering_slot=hovering_slot)
+            try:
+                inventory.draw(hovering_slot=hovering_slot)
+            except:
+                logger.print_exception(f"during drawing inventory {inventory}")
+                shared.tick_handler.schedule_once(shared.inventory_handler.hide_inventory(inventory))
 
         if not shared.inventory_handler.moving_slot.get_itemstack().is_empty():
             shared.inventory_handler.moving_slot.position = shared.window.mouse_position

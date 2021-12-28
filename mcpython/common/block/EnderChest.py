@@ -90,4 +90,5 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
             )
 
 
-shared.tick_handler.schedule_once(EnderChest.reload())
+if shared.IS_CLIENT:
+    shared.tick_handler.schedule_once(EnderChest.reload())
