@@ -11,6 +11,20 @@ The other events are called on the event handler, shared.eventhandler. You may u
 created for the event handler or use the public one, located under
 mcpython/common/event/EventHandler.py/PUBLIC_EVENT_BUS
 
+The EventHandler API supports async event subscriptions, the mod loader 
+takes awaitable stuff, the default EventBus accepts coroutine returning functions 
+
+Calling events should use the async variant whenever possible, 
+invoking the non-async variant from an async context will crash,
+as it is only a wrapper with asyncio.get_event_loop().run_until_complete(...)
+around the async variant, and asyncio.get_event_loop() will crash in async contexts
+
+You may schedule coroutines for later execution via shared.tick_handler.schedule_once(coroutine).
+This will execute the target in the next arrival tick() call, not immediately.
+
+WARNING: currently, the tick-handler executes the scheduled methods linearly, 
+  the API will change somewhere in the future to parrallel execution
+
 ---
 
 # The following events are part of the gameloop phase
