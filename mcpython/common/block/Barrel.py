@@ -80,7 +80,7 @@ class Barrel(IAllDirectionOrientableBlock):
         return self.inventory.slots, self.inventory.slots
 
     async def set_model_state(self, state: dict):
-        super().set_model_state(state)
+        await super().set_model_state(state)
 
         if "open" in state:
             self.opened = str(state["open"]).lower() == "true"

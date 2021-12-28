@@ -93,7 +93,7 @@ class IButton(IAllDirectionOrientableBlock):
             elif state["face"] == "floor":
                 self.face = EnumSide.DOWN
             else:
-                super().set_model_state(state)
+                await super().set_model_state(state)
 
         if "powered" in state:
             self.powered = state["powered"] == "true"
