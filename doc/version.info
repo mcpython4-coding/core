@@ -1969,3 +1969,5 @@ fI  [uuk]: resource access is now also async
 f   [uuk]: exceptions are now no longer fancy-printed if they get too large
 G   [github]: released snapshot 21w52a
 
+G   [github]: started development cycle for snapshot <22w02a>
+

@@ -32,6 +32,12 @@ python -m unittest discover -s ./tests -t . in .
 ----
 
 
+
+# Changelog of snapshot <22w02a>
+Scheduled to be released on <12.01.2021>
+targeting <1.18.1>
+
+
 # Changelog of snapshot 21w52a
 Released on 29.12.2021
 targeting 1.18.1
