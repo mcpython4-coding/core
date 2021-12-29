@@ -37,6 +37,10 @@ python -m unittest discover -s ./tests -t . in .
 Scheduled to be released on <12.01.2021>
 targeting <1.18.1>
 
+Saves will not work across versions due to a fundamental 
+change how some stuff is stored, we currently do not plan to 
+provide a migration route
+
 
 # Changelog of snapshot 21w52a
 Released on 29.12.2021

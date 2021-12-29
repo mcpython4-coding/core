@@ -67,12 +67,14 @@ History of save versions:
     - improved block palette
     - improved entity storage
     - removed some sanity checks for backwards compatibility
-- 11: introduced: 26.10.2021, outdated since: -, not loadable since: -
+- 11: introduced: 26.10.2021, outdated since: 29.12.2021, not loadable since: 29.12.2021
     - chunk block data is now serialized via the network API, not the old storage API
+- 12: introduced: 29.12.2021, outdated since: -, not loadable since: -
+    - containers & data maps contain now their version
 """
 
 # the latest version, used for upgrading
-shared.STORAGE_VERSION = LATEST_VERSION = 11
+shared.STORAGE_VERSION = LATEST_VERSION = 12
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (

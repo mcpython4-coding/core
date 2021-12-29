@@ -94,11 +94,7 @@ class Chunk(IDataSerializer.IDataSerializer):
         for data_map in chunk_instance.get_all_data_maps():
             if data_map.NAME in data["maps"]:
                 data_map_data = data["maps"][data_map.NAME]
-
-                if isinstance(data_map_data, bytes):
-                    await data_map.read_from_network_buffer(ReadBuffer(data_map_data))
-                else:
-                    data_map.load_from_saves(data_map_data)
+                await data_map.read_from_network_buffer(ReadBuffer(data_map_data))
 
         for entity in data["entities"]:
             # todo: add dynamic system for skipping by attribute

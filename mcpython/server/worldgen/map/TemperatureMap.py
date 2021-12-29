@@ -21,7 +21,6 @@ from mcpython.engine.network.util import ReadBuffer
 from mcpython.engine.network.util import WriteBuffer
 
 
-@shared.world_generation_handler
 class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     NAME = "minecraft:temperature_map"
 
@@ -36,7 +35,7 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
         cx *= 16
         cz *= 16
 
-        for x, z in itertools.combinations(range(16), 2):
+        for x, z in itertools.product(range(16), range(16)):
             buffer.write_float(self.get_at_xz(cx+x, cz+z))
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
@@ -46,16 +45,8 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
         cx *= 16
         cz *= 16
 
-        for x, z in itertools.combinations(range(16), 2):
+        for x, z in itertools.product(range(16), range(16)):
             self.set_at_xz(x+cx, z+cz, buffer.read_float())
-
-    def load_from_saves(self, data):
-        cx, cz = self.chunk.get_position()
-        cx *= 16
-        cz *= 16
-
-        for x, z in itertools.combinations(range(16), 2):
-            self.set_at_xz(cx + x, cz + z, data.pop(0))
 
     def get_at_xz(self, x: int, z: int) -> float:
         return self.temperature_map[x, z] if (x, z) in self.temperature_map else 0
@@ -65,6 +56,10 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
 
     def dump_debug_info(self, file: str):
         image = PIL.Image.new("RGBA", (16, 16))
-        for (x, z), temp in self.biome_map.items():
+        for (x, z), temp in self.temperature_map.items():
             image.putpixel((x % 16, z % 16), temp * 255 % 256)
         image.save(file)
+
+
+if not shared.IS_TEST_ENV:
+    shared.world_generation_handler.register_chunk_map(TemperatureMap)

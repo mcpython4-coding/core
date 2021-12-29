@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
+import io
 import random
 import typing
 import uuid
@@ -24,6 +25,7 @@ import pyglet
 from mcpython import shared
 from mcpython.client.gui.Slot import ISlot
 from mcpython.common.container.AbstractContainer import AbstractContainer
+from mcpython.common.world.datafixers.NetworkFixers import ContainerDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.util.annotation import onlyInClient
@@ -100,6 +102,9 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
     Client-only code
     """
 
+    VERSION = 0
+    DATA_FIXERS: typing.Dict[int, ContainerDataFixer] = {}
+
     @staticmethod
     def get_config_file() -> typing.Optional[str]:
         """
@@ -142,6 +147,8 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.slots = await self.create_slot_renderers()
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_uint(self.VERSION)
+
         buffer.write_bool(self.active)
         buffer.write_string(self.custom_name if self.custom_name is not None else "")
 
@@ -149,7 +156,21 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
             self.slots, lambda slot: slot.write_to_network_buffer(buffer)
         )
 
-    async def read_from_network_buffer(self, buffer: ReadBuffer):
+    async def read_from_network_buffer(self, buffer: ReadBuffer) -> bool:
+        version = buffer.read_uint()
+
+        if version != self.VERSION:
+            while version in self.DATA_FIXERS and version != self.VERSION:
+                fixer = self.DATA_FIXERS[version]
+
+                target = WriteBuffer()
+                if fixer.apply2stream(self, buffer, target) is True:
+                    buffer.stream = io.BytesIO(target.get_data())
+                    break
+
+                buffer.stream = io.BytesIO(target.get_data())
+                version = fixer.AFTER_VERSION
+
         self.active = buffer.read_bool()
 
         self.custom_name = buffer.read_string()
@@ -161,10 +182,19 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         size = buffer.read_int()
 
         if size != len(self.slots):
-            raise RuntimeError(f"invalid slot count received for container {self}!")
+            logger.println(f"invalid slot count received for container {self}, skipping further deserialization")
+            return False
 
         for slot in self.slots:
             await slot.read_from_network_buffer(buffer)
+
+        return True
+
+    async def post_load(self, data):
+        """
+        Deserializes stuff after the slot data is loaded
+        :param data: the data stored
+        """
 
     def on_mouse_button_press(
         self,
@@ -409,27 +439,6 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         for i in range(3 * 9):
             obj.slots[i].set_itemstack(self.slots[i].get_itemstack().copy())
         return obj
-
-    def load(self, data) -> bool:
-        """
-        Deserializes the data into the inventory
-        :param data: the data saved
-        :return: if load is valid or not
-        """
-        return True
-
-    def post_load(self, data):
-        """
-        Deserializes stuff after the the slot data is loaded
-        :param data: the data stored
-        """
-
-    def save(self):
-        """
-        Serializes the inventory into an pickle-able data stream
-        :return: the data
-        """
-        return "no:data"
 
     def insert_items(
         self, items: list, random_check_order=False, insert_when_same_item=True

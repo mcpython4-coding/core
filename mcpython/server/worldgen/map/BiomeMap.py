@@ -22,7 +22,6 @@ from mcpython.engine.network.util import ReadBuffer
 from mcpython.engine.network.util import WriteBuffer
 
 
-@shared.world_generation_handler
 class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     NAME = "minecraft:biome_map"
 
@@ -67,23 +66,6 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
         await buffer.write_list(table, lambda e: buffer.write_string(e, size_size=1))
 
-    def load_from_saves(self, data):
-        x, z = self.chunk.get_position()
-        sx, sz = x * 16, z * 16
-
-        steps = 4 if len(data[0]) == 256 else 1
-
-        for dx in range(0, 16, steps):
-            for dz in range(0, 16, steps):
-                previous_column = None
-
-                for y in range(0, 256, 4):
-                    index = data[0].pop(0)
-                    if index != -1:
-                        previous_column = data[1][index]
-
-                    self.set_at_xyz(sx + x, y, sz + z, previous_column)
-
     def get_at_xz(self, x: int, z: int) -> str:
         return self.biome_map.setdefault((x, 0, z), None)
 
@@ -111,3 +93,7 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
                 )
             image.putpixel((x % 16, z % 16), biome2color[biome])
         image.save(file)
+
+
+if not shared.IS_TEST_ENV:
+    shared.world_generation_handler.register_chunk_map(BiomeMap)

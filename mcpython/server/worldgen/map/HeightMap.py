@@ -21,7 +21,6 @@ from mcpython.engine.network.util import ReadBuffer
 from mcpython.engine.network.util import WriteBuffer
 
 
-@shared.world_generation_handler
 class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     """
     Representation of a heightmap in-code
@@ -52,10 +51,10 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
                 lambda e: buffer.write_int(e[0]).write_int(e[1]),
             )
 
-        await buffer.write_list((
+        await buffer.write_list([
             self.get_at_xz(x+cx, z+cz)
-            for x, z in itertools.combinations(range(16), 2)
-        ), write_part)
+            for x, z in itertools.product(range(16), range(16))
+        ], write_part)
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
@@ -68,17 +67,8 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         cx *= 16
         cz *= 16
 
-        for x, z in itertools.combinations(range(16), 2):
+        for x, z in itertools.product(range(16), range(16)):
             self.set_at_xz(x+cx, z+cz, data.pop(0))
-
-    def load_from_saves(self, data):
-        cx, cz = self.chunk.get_position()
-        cx *= 16
-        cz *= 16
-
-        for dx in range(16):
-            for dz in range(16):
-                self.set_at_xz(cx + dx, cz + dz, data.pop(0))
 
     def get_at_xz(self, x: int, z: int) -> typing.List[typing.Tuple[int, int]]:
         return self.height_map[x, z] if (x, z) in self else [(0, 0)]
@@ -88,3 +78,7 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
     def __contains__(self, item):
         return item in self.height_map
+
+
+if not shared.IS_TEST_ENV:
+    shared.world_generation_handler.register_chunk_map(HeightMap)

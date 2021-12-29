@@ -18,6 +18,7 @@ from abc import ABC
 import deprecation
 
 from mcpython.common.world.datafixers.NetworkFixers import ChunkInfoMapFixer
+from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble
 from mcpython.engine.network.util import ReadBuffer
 from mcpython.engine.network.util import WriteBuffer
@@ -47,6 +48,8 @@ class AbstractMap(IBufferSerializeAble, ABC):
         version = buffer.read_uint()
 
         if version != self.VERSION:
+            logger.println("applying data fixer from version {} to version {}")
+
             while version in self.DATA_FIXERS and version != self.VERSION:
                 fixer = self.DATA_FIXERS[version]
 
@@ -57,10 +60,7 @@ class AbstractMap(IBufferSerializeAble, ABC):
                     break
 
                 buffer.stream = io.BytesIO(target.get_data())
+                version = fixer.AFTER_VERSION
 
     def dump_debug_info(self, file: str):
-        pass
-
-    @deprecation.deprecated()
-    def load_from_saves(self, data):
         pass

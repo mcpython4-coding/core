@@ -71,6 +71,12 @@ class AbstractContainer(IBufferSerializeAble, ABC):
         for slot in self.slots:
             await slot.read_from_network_buffer(buffer)
 
+    async def post_load(self, data):
+        """
+        serializes stuff after the slot data is loaded
+        :param data: the data stored
+        """
+
     def create_renderer(self) -> typing.Any:
         """
         Called when loading a client to create the renderer; this is the only part which should interact
@@ -107,27 +113,6 @@ class AbstractContainer(IBufferSerializeAble, ABC):
         for i in range(3 * 9):
             obj.slots[i].set_itemstack(self.slots[i].get_itemstack().copy())
         return obj
-
-    def load(self, data) -> bool:
-        """
-        serializes the data into the inventory
-        :param data: the data saved
-        :return: if load is valid or not
-        """
-        return True
-
-    def post_load(self, data):
-        """
-        serializes stuff after the the slot data is loaded
-        :param data: the data stored
-        """
-
-    def save(self):
-        """
-        serializes the inventory into an pickle-able data stream
-        :return: the data
-        """
-        return "no:data"
 
     def insert_items(
         self, items: list, random_check_order=False, insert_when_same_item=True

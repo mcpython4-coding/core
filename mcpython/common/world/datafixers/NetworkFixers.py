@@ -87,3 +87,10 @@ class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
 
         elif cls.MAP_NAME is not None:
             logger.println(f"[DFU][WARN] tried to register a data fixer for a non-existent DataMap named {cls.MAP_NAME}")
+
+
+class ContainerDataFixer(AbstractNetworkFixer, ABC):
+    @classmethod
+    def bind(cls, inventory):
+        inventory.DATA_FIXERS[cls.BEFORE_VERSION] = cls
+

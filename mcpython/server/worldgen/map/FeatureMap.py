@@ -19,7 +19,6 @@ from mcpython.engine.network.util import ReadBuffer
 from mcpython.engine.network.util import WriteBuffer
 
 
-@shared.world_generation_handler
 class FeatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     NAME = "minecraft:feature_map"
 
@@ -38,3 +37,7 @@ class FeatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
     def set_at_xz(self, x: int, z: int, group: str):
         self.map_map[(group, x, z)] = True
+
+
+if not shared.IS_TEST_ENV:
+    shared.world_generation_handler.register_chunk_map(FeatureMap)

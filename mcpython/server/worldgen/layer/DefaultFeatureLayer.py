@@ -42,7 +42,7 @@ class DefaultFeatureLayer(ILayer):
                     reference,
                     config,
                 )
-                for (x, z) in itertools.combinations(range(16), 2)
+                for (x, z) in itertools.product(range(16), range(16))
             )
         )
 

@@ -15,6 +15,8 @@ import uuid
 
 import mcpython.client.gui.ContainerRenderer
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 """
 improvements for the future:
@@ -56,14 +58,11 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
 
         data = data[path]
         inventory.uuid = uuid.UUID(int=data["uuid"])
-        status = inventory.load(data["custom data"])
-        if not status:
-            return
-        [
-            inventory.slots[i].load(e) if i < len(inventory.slots) else None
-            for i, e in enumerate(data["slots"])
-        ]
-        inventory.post_load(data["custom data"])
+
+        buffer = ReadBuffer(data["custom data"])
+        await inventory.read_from_network_buffer(buffer)
+
+        await inventory.post_load(data["custom data"])
 
     @classmethod
     async def save(
@@ -81,10 +80,12 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
         if data is None:
             data = {}
 
-        idata = {
+        buffer = WriteBuffer()
+        await inventory.write_to_network_buffer(buffer)
+
+        inventory_data = {
             "uuid": inventory.uuid.int,
-            "custom data": inventory.save(),
-            "slots": [slot.save() for slot in inventory.slots],
+            "custom data": buffer.get_data(),
         }
-        data[path] = idata
+        data[path] = inventory_data
         await save_file.dump_file_pickle_async(file, data)
