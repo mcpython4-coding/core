@@ -15,6 +15,7 @@ import typing
 from abc import ABC
 
 from mcpython import shared
+from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
 
@@ -67,6 +68,9 @@ class BlockDataFixer(AbstractNetworkFixer, ABC):
                         name
                     ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
 
+        elif cls.BLOCK_NAME is not None:
+            logger.println(f"[DFU][WARN] tried to register a data fixer for none-existing block {cls.BLOCK_NAME}")
+
 
 class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
     """
@@ -80,3 +84,6 @@ class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
             target = shared.world_generation_handler.chunk_maps[cls.MAP_NAME]
 
             target.DATA_FIXERS[cls.BEFORE_VERSION] = cls
+
+        elif cls.MAP_NAME is not None:
+            logger.println(f"[DFU][WARN] tried to register a data fixer for a non-existent DataMap named {cls.MAP_NAME}")
