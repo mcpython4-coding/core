@@ -201,9 +201,9 @@ class DataPack:
                 if os.path.isdir(self.directory)
                 else mcpython.engine.ResourceLoader.ResourceZipFile(self.directory)
             )
-            info = json.loads((await self.access.read_raw("pack.mcmeta")).decode("utf-8"))[
-                "pack"
-            ]
+            info = json.loads(
+                (await self.access.read_raw("pack.mcmeta")).decode("utf-8")
+            )["pack"]
             if info["pack_format"] not in (1, 2, 3):
                 self.status = DataPackStatus.ERROR
                 logger.println(
@@ -221,7 +221,9 @@ class DataPack:
                     name = "{}:{}".format(split[1], "/".join(split[3:]).split(".")[0])
                     self.function_table[
                         name
-                    ] = mcpython.server.command.McFunctionFile.FunctionFile.from_file(file)
+                    ] = mcpython.server.command.McFunctionFile.FunctionFile.from_file(
+                        file
+                    )
 
         except:
             self.status = DataPackStatus.SYSTEM_ERROR

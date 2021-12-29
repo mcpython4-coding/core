@@ -95,7 +95,9 @@ class LaunchWrapper:
 
         shared.mod_loader.check_errors()
 
-        asyncio.get_event_loop().run_until_complete(shared.mod_loader.load_missing_mods())
+        asyncio.get_event_loop().run_until_complete(
+            shared.mod_loader.load_missing_mods()
+        )
 
         shared.mod_loader.check_for_updates()
         shared.mod_loader.write_mod_info()

@@ -43,8 +43,9 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         await shared.world.cleanup()
         shared.world.setup_by_filename(name)
         save_file = shared.world.save_file
+
         if not os.path.exists(save_file.directory):
-            shared.state_handler.states["minecraft:world_generation"].generate_world()
+            await shared.state_handler.states["minecraft:world_generation"].generate_world()
         else:
             await shared.state_handler.change_state("minecraft:world_loading")
 

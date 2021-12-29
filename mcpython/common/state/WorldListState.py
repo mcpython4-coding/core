@@ -149,10 +149,10 @@ class WorldList(AbstractState.AbstractState):
 
         self.selected_world = None
 
-    def on_scroll(self, x, y, dx, dy, button, mod, status):
+    async def on_scroll(self, x, y, dx, dy, button, mod, status):
         self.recalculate_sprite_position()
 
-    def on_mouse_scroll(self, x, y, dx, dy):
+    async def on_mouse_scroll(self, x, y, dx, dy):
         self.parts[-1].move(dy * 4)
 
     def recalculate_sprite_position(self):
@@ -262,7 +262,7 @@ class WorldList(AbstractState.AbstractState):
     async def on_new_world_press(self, *_):
         await shared.state_handler.change_state("minecraft:world_generation_config")
 
-    def on_delete_press(self, *_):
+    async def on_delete_press(self, *_):
         if self.selected_world is None:
             return
 

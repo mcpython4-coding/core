@@ -144,7 +144,9 @@ class ModContainer:
             parse_provider_json(
                 self,
                 json.loads(
-                    (await self.resource_access.read_raw("provider.json")).decode("utf-8")
+                    (await self.resource_access.read_raw("provider.json")).decode(
+                        "utf-8"
+                    )
                 ),
             )
 

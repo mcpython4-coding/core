@@ -33,7 +33,7 @@ python -m unittest discover -s ./tests -t . in .
 
 
 # Changelog of snapshot 21w52a
-To be released on 29.12.2021
+Released on 29.12.2021
 targeting 1.18.1
 
 Mostly API-Backwards-incompatible:

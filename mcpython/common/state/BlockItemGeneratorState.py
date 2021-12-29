@@ -291,7 +291,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
                 )
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
-                asyncio.get_event_loop().run_until_complete(instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE))
+                asyncio.get_event_loop().run_until_complete(
+                    instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
+                )
             instance.face_info.update(redraw_complete=True)
         except:
             logger.print_exception(

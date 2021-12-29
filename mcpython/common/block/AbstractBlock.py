@@ -300,7 +300,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
         return self
 
-    async def get_rotated_variant(self, rotation_type: BlockRotationType) -> "AbstractBlock":
+    async def get_rotated_variant(
+        self, rotation_type: BlockRotationType
+    ) -> "AbstractBlock":
         """
         Returns a variant of the given block rotated by the given rotation
         """

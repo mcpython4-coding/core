@@ -34,15 +34,17 @@ class DefaultFeatureLayer(ILayer):
         cx *= 16
         cz *= 16
 
-        await asyncio.gather(*(
-            cls.generate_position(
-                cx + x,
-                cz + z,
-                reference,
-                config,
+        await asyncio.gather(
+            *(
+                cls.generate_position(
+                    cx + x,
+                    cz + z,
+                    reference,
+                    config,
+                )
+                for (x, z) in itertools.combinations(range(16), 2)
             )
-            for (x, z) in itertools.combinations(range(16), 2)
-        ))
+        )
 
     @staticmethod
     async def generate_position(x, z, reference, config):
