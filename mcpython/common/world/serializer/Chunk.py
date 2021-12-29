@@ -94,7 +94,11 @@ class Chunk(IDataSerializer.IDataSerializer):
         for data_map in chunk_instance.get_all_data_maps():
             if data_map.NAME in data["maps"]:
                 data_map_data = data["maps"][data_map.NAME]
-                data_map.load_from_saves(data_map_data)
+
+                if isinstance(data_map_data, bytes):
+                    await data_map.read_from_network_buffer(ReadBuffer(data_map_data))
+                else:
+                    data_map.load_from_saves(data_map_data)
 
         for entity in data["entities"]:
             # todo: add dynamic system for skipping by attribute
@@ -274,7 +278,15 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         if override:  # we want to re-dump all data maps
             for data_map in chunk_instance.get_all_data_maps():
-                cdata["maps"][data_map.NAME] = data_map.dump_for_saves()
+                buffer = WriteBuffer()
+
+                try:
+                    await data_map.write_to_network_buffer(buffer)
+                except:
+                    logger.print_exception(f"during dumping data map {data_map}")
+                    continue
+
+                cdata["maps"][data_map.NAME] = buffer.get_data()
 
         data[chunk] = cdata  # dump the chunk into the region
         await write_region_data(

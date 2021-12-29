@@ -11,11 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 @shared.world_generation_handler
@@ -36,6 +39,38 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
             typing.Tuple[int, int], typing.List[typing.Tuple[int, int]]
         ] = {}
 
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+
+        cx, cz = self.chunk.get_position()
+        cx *= 16
+        cz *= 16
+
+        async def write_part(data):
+            await buffer.write_list(
+                data,
+                lambda e: buffer.write_int(e[0]).write_int(e[1]),
+            )
+
+        await buffer.write_list((
+            self.get_at_xz(x+cx, z+cz)
+            for x, z in itertools.combinations(range(16), 2)
+        ), write_part)
+
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
+
+        async def read_part():
+            return buffer.read_list(lambda: (buffer.read_int(), buffer.read_int()))
+
+        data = await buffer.collect_list(read_part)
+        cx, cz = self.chunk.get_position()
+        cx *= 16
+        cz *= 16
+
+        for x, z in itertools.combinations(range(16), 2):
+            self.set_at_xz(x+cx, z+cz, data.pop(0))
+
     def load_from_saves(self, data):
         cx, cz = self.chunk.get_position()
         cx *= 16
@@ -45,19 +80,7 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
             for dz in range(16):
                 self.set_at_xz(cx + dx, cz + dz, data.pop(0))
 
-    def dump_for_saves(self):
-        cx, cz = self.chunk.get_position()
-        cx *= 16
-        cz *= 16
-        data = []
-
-        for dx in range(16):
-            for dz in range(16):
-                data.append(self.get_at_xz(cx + dx, cz + dz))
-
-        return data
-
-    def get_at_xz(self, x: int, z: int):
+    def get_at_xz(self, x: int, z: int) -> typing.List[typing.Tuple[int, int]]:
         return self.height_map[x, z] if (x, z) in self else [(0, 0)]
 
     def set_at_xz(self, x: int, z: int, height):

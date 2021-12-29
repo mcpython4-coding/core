@@ -66,3 +66,17 @@ class BlockDataFixer(AbstractNetworkFixer, ABC):
                     shared.registry.get_by_name("minecraft:block")[
                         name
                     ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
+
+
+class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
+    """
+    Handler for fixing chunk data maps
+    """
+    MAP_NAME: str = None
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        if cls.MAP_NAME in shared.world_generation_handler.chunk_maps:
+            target = shared.world_generation_handler.chunk_maps[cls.MAP_NAME]
+
+            target.DATA_FIXERS[cls.BEFORE_VERSION] = cls

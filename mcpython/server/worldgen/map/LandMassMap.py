@@ -11,11 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 @shared.world_generation_handler
@@ -25,6 +28,42 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
     def __init__(self, chunk):
         super().__init__(chunk)
         self.land_mass_map: typing.Dict[typing.Tuple[int, int], str] = {}
+
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+
+        cx, cz = self.chunk.get_position()
+        cx *= 16
+        cz *= 16
+        table = []
+
+        for x, z in itertools.combinations(range(16), 2):
+            mass = self.get_at_xz(x+cx, z+cz)
+
+            if mass is None:
+                buffer.write_uint(0)
+            else:
+                if mass not in table:
+                    table.append(mass)
+                    buffer.write_byte(len(table))
+                else:
+                    buffer.write_byte(table.index(mass)+1)
+
+        await buffer.write_list(table, lambda e: buffer.write_string(e, size_size=2))
+
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
+
+        cx, cz = self.chunk.get_position()
+        cx *= 16
+        cz *= 16
+
+        data = iter([buffer.read_byte() for _ in range(16*16)])
+        table = await buffer.collect_list(lambda: buffer.read_string(size_size=2))
+
+        for x, z in itertools.combinations(range(16), 2):
+            index = next(data)
+            self.set_at_xz(x+cx, z+cz, table[index-1] if index != 0 else None)
 
     def load_from_saves(self, data):
         cx, cz = self.chunk.get_position()
@@ -40,26 +79,6 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
                     previous_mass = data[1][index]
 
                 self.set_at_xz(cx + dx, cz + dz, previous_mass)
-
-    def dump_for_saves(self):
-        cx, cz = self.chunk.get_position()
-        cx *= 16
-        cz *= 16
-        data = [], []
-
-        previous_mass = None
-        for dx in range(16):
-            for dz in range(16):
-                mass = self.get_at_xz(cx + dx, cz + dz)
-                if previous_mass == mass:
-                    data[0].append(-1)
-                elif mass in data[1]:
-                    data[0].append(data[1].index(mass))
-                else:
-                    data[1].append(mass)
-                    data[0].append(len(data[1]) - 1)
-
-        return data
 
     def get_at_xz(self, x: int, z: int) -> str:
         return self.land_mass_map[x, z] if (x, z) in self.land_mass_map else "void"

@@ -1970,4 +1970,6 @@ f   [uuk]: exceptions are now no longer fancy-printed if they get too large
 G   [github]: released snapshot 21w52a
 
 G   [github]: started development cycle for snapshot <22w02a>
+A*  [uuk]: data maps (biome map, height map, ...) are now serialized via the network serialization API
+L   [uuk]: dumped opensimplex version to 0.4
 

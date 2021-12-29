@@ -11,11 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 @shared.world_generation_handler
@@ -26,26 +29,33 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
         super().__init__(chunk)
         self.temperature_map: typing.Dict[typing.Tuple[int, int], float] = {}
 
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+
+        cx, cz = self.chunk.get_position()
+        cx *= 16
+        cz *= 16
+
+        for x, z in itertools.combinations(range(16), 2):
+            buffer.write_float(self.get_at_xz(cx+x, cz+z))
+
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
+
+        cx, cz = self.chunk.get_position()
+        cx *= 16
+        cz *= 16
+
+        for x, z in itertools.combinations(range(16), 2):
+            self.set_at_xz(x+cx, z+cz, buffer.read_float())
+
     def load_from_saves(self, data):
         cx, cz = self.chunk.get_position()
         cx *= 16
         cz *= 16
 
-        for dx in range(16):
-            for dz in range(16):
-                self.set_at_xz(cx + dx, cz + dz, data.pop(0))
-
-    def dump_for_saves(self):
-        cx, cz = self.chunk.get_position()
-        cx *= 16
-        cz *= 16
-        data = []
-
-        for dx in range(16):
-            for dz in range(16):
-                data.append(self.get_at_xz(cx + dx, cz + dz))
-
-        return data
+        for x, z in itertools.combinations(range(16), 2):
+            self.set_at_xz(cx + x, cz + z, data.pop(0))
 
     def get_at_xz(self, x: int, z: int) -> float:
         return self.temperature_map[x, z] if (x, z) in self.temperature_map else 0

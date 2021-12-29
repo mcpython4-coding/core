@@ -37,12 +37,13 @@ class OpenSimplexImplementation(INoiseImplementation):
 
     def calculate_position(self, position) -> float:
         assert len(position) == self.dimensions, "dimensions must match"
+
         position = tuple([e / self.scale for e in position])
         return self.merger.pre_merge(
             self,
             position,
             *[
-                lambda p: noise.noise4d(*p, *(0,) * (4 - len(p))) * 0.5 + 0.5
+                lambda p: noise.noise4(*p, *(0,) * (4 - len(p))) * 0.5 + 0.5
                 for noise in self.noises
             ]
         )

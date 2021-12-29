@@ -11,12 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import random
 import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 @shared.world_generation_handler
@@ -28,6 +31,41 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         self.biome_map: typing.Dict[
             typing.Tuple[int, int, int], typing.Optional[str]
         ] = {}
+
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
+
+        x, z = self.chunk.get_position()
+        sx, sz = x * 16, z * 16
+
+        data = iter([buffer.read_uint() for _ in range(16*16*256)])
+
+        biomes = await buffer.collect_list(lambda: buffer.read_string(size_size=0))
+
+        for x, y, z in itertools.product(range(16), range(256), range(16)):
+            index = next(data)
+            self.set_at_xyz(x+sx, y, z+sz, biomes[index-1] if index != 0 else None)
+
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
+
+        x, z = self.chunk.get_position()
+        sx, sz = x * 16, z * 16
+        table = []
+
+        for x, y, z in itertools.product(range(16), range(256), range(16)):
+            biome = self.get_at_xyz(+sx, y, z+sz)
+
+            if biome is None:
+                buffer.write_uint(0)
+            else:
+                if biome not in table:
+                    table.append(biome)
+                    buffer.write_uint(len(table))
+                else:
+                    buffer.write_uint(table.index(biome)+1)
+
+        await buffer.write_list(table, lambda e: buffer.write_string(e, size_size=1))
 
     def load_from_saves(self, data):
         x, z = self.chunk.get_position()
@@ -45,28 +83,6 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
                         previous_column = data[1][index]
 
                     self.set_at_xyz(sx + x, y, sz + z, previous_column)
-
-    def dump_for_saves(self):
-        x, z = self.chunk.get_position()
-        sx, sz = x * 16, z * 16
-        data = ([], [])
-
-        for dx in range(0, 16):
-            for dz in range(0, 16):
-                previous_column = None
-                for y in range(0, 256, 4):
-                    biome = self.get_at_xyz(sx + dx, y, sz + dz)
-                    if biome != previous_column:
-                        previous_column = biome
-                        if biome in data[1]:
-                            data[0].append(data[1].index(biome))
-                        else:
-                            data[1].append(biome)
-                            data[0].append(len(data[1]) - 1)
-                    else:
-                        data[0].append(-1)
-
-        return data
 
     def get_at_xz(self, x: int, z: int) -> str:
         return self.biome_map.setdefault((x, 0, z), None)

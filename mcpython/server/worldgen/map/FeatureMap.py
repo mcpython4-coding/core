@@ -15,6 +15,8 @@ import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 @shared.world_generation_handler
@@ -25,11 +27,11 @@ class FeatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         super().__init__(chunk)
         self.map_map: typing.Dict[typing.Tuple[str, int, int], bool] = {}
 
-    def load_from_saves(self, data):
-        pass
+    async def read_from_network_buffer(self, buffer: ReadBuffer):
+        await super().read_from_network_buffer(buffer)
 
-    def dump_for_saves(self):
-        pass
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        await super().write_to_network_buffer(buffer)
 
     def get_at_xz(self, x: int, z: int, group: str) -> bool:
         return self.map_map.setdefault((group, x, z), False)

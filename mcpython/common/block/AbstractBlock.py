@@ -247,7 +247,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
                 try:
                     if await fixer.apply2stream(self, buffer, write) is True:
-                        return
+                        break
                 except:
                     logger.print_exception(
                         "during applying data fixer; discarding data"

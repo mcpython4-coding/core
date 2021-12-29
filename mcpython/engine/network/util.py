@@ -20,6 +20,7 @@ import uuid
 from abc import ABC
 
 INT = struct.Struct("!i")
+UINT = struct.Struct("!I")
 LONG = struct.Struct("!q")
 FLOAT = struct.Struct("!d")
 BYTE = struct.Struct("!B")
@@ -54,6 +55,9 @@ class ReadBuffer:
     def read_int(self):
         return self.read_struct(INT)[0]
 
+    def read_uint(self):
+        return self.read_struct(UINT)[0]
+
     def read_long(self):
         return self.read_struct(LONG)[0]
 
@@ -64,8 +68,14 @@ class ReadBuffer:
     def read_float(self):
         return self.read_struct(FLOAT)[0]
 
-    def read_string(self, size_size=2, encoding="utf-8"):
+    def read_string(self, size_size=2, encoding="utf-8") -> str:
         size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
+        return self.stream.read(size).decode(encoding)
+
+    def read_nullable_string(self, size_size=2, encoding="utf-8") -> str | None:
+        size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
+        if size.bit_count() == 8 * size_size:
+            return None
         return self.stream.read(size).decode(encoding)
 
     async def read_list(self, handling: typing.Callable[[], typing.Any]):
@@ -145,6 +155,8 @@ class ReadBuffer:
                 return self.read_uuid()
             case 9:
                 return self.read_bytes()
+            case 10:
+                return None
 
         raise RuntimeError(tag)
 
@@ -179,7 +191,12 @@ class WriteBuffer:
         return self.write_struct(BYTE, value)
 
     def write_int(self, value: int):
+        assert isinstance(value, int), f"Value must be int, but is {type(value)} ({value})"
+
         return self.write_struct(INT, value)
+
+    def write_uint(self, value: int):
+        return self.write_struct(UINT, value)
 
     def write_long(self, value: int):
         return self.write_struct(LONG, value)
@@ -199,6 +216,16 @@ class WriteBuffer:
         data = value.encode(encoding)
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
         self.data.append(data)
+        return self
+
+    def write_nullable_string(self, value: str, size_size=2, encoding="utf-8"):
+        if value is None:
+            self.data.append(b"\xFF"*size_size)
+        else:
+            data = value.encode(encoding)
+            self.data.append(len(data).to_bytes(size_size, "big", signed=False))
+            self.data.append(data)
+
         return self
 
     async def write_list(
@@ -285,6 +312,8 @@ class WriteBuffer:
         elif isinstance(data, (bytes, bytearray)):
             self.write_byte(9)
             self.write_bytes(data)
+        elif data is None:
+            self.write_byte(10)
         else:
             raise ValueError(data)
 
