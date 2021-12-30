@@ -47,7 +47,7 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
         async def write_part(data):
             await buffer.write_list(
-                data,
+                [e async for e in data] if not isinstance(data, list) else data,
                 lambda e: buffer.write_int(e[0]).write_int(e[1]),
             )
 
@@ -60,7 +60,7 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         await super().read_from_network_buffer(buffer)
 
         async def read_part():
-            return buffer.read_list(lambda: (buffer.read_int(), buffer.read_int()))
+            return buffer.collect_list(lambda: (buffer.read_int(), buffer.read_int()))
 
         data = await buffer.collect_list(read_part)
         cx, cz = self.chunk.get_position()
