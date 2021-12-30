@@ -17,6 +17,7 @@ from abc import ABC
 import mcpython.common.event.api
 import mcpython.common.event.Registry
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
+from mcpython.common.world.datafixers.NetworkFixers import ItemDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 
@@ -27,6 +28,9 @@ class AbstractItem(
     IBufferSerializeAble,
     ABC,
 ):
+    VERSION = 0
+    NETWORK_BUFFER_DATA_FIXERS: typing.Dict[int, ItemDataFixer] = {}
+
     TYPE = "minecraft:item"
     CAPABILITY_CONTAINER_NAME = "minecraft:item"
 
@@ -63,6 +67,37 @@ class AbstractItem(
         pass
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
+        version = buffer.read_uint()
+
+        if version != self.VERSION:
+            while version in self.NETWORK_BUFFER_DATA_FIXERS and version != self.VERSION:
+                fixer = self.NETWORK_BUFFER_DATA_FIXERS[version]
+
+                write = WriteBuffer()
+
+                try:
+                    if await fixer.apply2stream(self, buffer, write) is True:
+                        break
+                except:
+                    logger.print_exception(
+                        f"during applying data fixer to item {self.NAME}; discarding data"
+                    )
+                    return
+
+                buffer = ReadBuffer(write.get_data())
+                version = fixer.AFTER_VERSION
+
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        can_destroy_flag = buffer.read_bool()
+        can_be_set_on_flag = buffer.read_bool()
+
+        if can_destroy_flag:
+            self.can_destroy = [e async for e in buffer.read_list(buffer.read_string)]
+
+        if can_be_set_on_flag:
+            self.can_be_set_on = [e async for e in buffer.read_list(buffer.read_string)]
+
+    async def read_internal_for_migration(self, buffer: ReadBuffer):
         await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         can_destroy_flag = buffer.read_bool()
         can_be_set_on_flag = buffer.read_bool()
@@ -74,6 +109,24 @@ class AbstractItem(
             self.can_be_set_on = [e async for e in buffer.read_list(buffer.read_string)]
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_uint(self.VERSION)
+
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        can_destroy_flag = self.can_destroy is not None
+        can_be_set_on_flag = self.can_be_set_on is not None
+
+        buffer.write_bool(can_destroy_flag)
+        buffer.write_bool(can_be_set_on_flag)
+
+        if can_destroy_flag:
+            await buffer.write_list(self.can_destroy, lambda e: buffer.write_string(e))
+
+        if can_be_set_on_flag:
+            await buffer.write_list(
+                self.can_be_set_on, lambda e: buffer.write_string(e)
+            )
+
+    async def write_internal_for_migration(self, buffer: WriteBuffer):
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         can_destroy_flag = self.can_destroy is not None
         can_be_set_on_flag = self.can_be_set_on is not None
@@ -102,7 +155,7 @@ class AbstractItem(
     def __eq__(self, other):
         if not issubclass(type(other), AbstractItem):
             return False
-        return other.NAME == self.NAME and other.get_data() == self.get_data()
+        return other.NAME == self.NAME
 
     def on_clean(self, itemstack):
         pass
@@ -144,25 +197,6 @@ class AbstractItem(
     async def on_set_from_item(self, block):
         if self.stored_block_state is not None and self.NAME == block.NAME:
             await block.set_item_saved_state(self.stored_block_state)
-
-    # functions used by data serializers
-
-    def get_data(self):
-        return (
-            self.stored_block_state,
-            self.can_destroy,
-            self.can_be_set_on,
-            self.serialize_container(),
-        )
-
-    def set_data(self, data):
-        if data == "no:data":
-            return
-
-        self.stored_block_state, self.can_destroy, self.can_be_set_on, *extra = data
-
-        if len(extra) == 1:
-            self.deserialize_container(extra[0])
 
     def get_tooltip_provider(self):
         import mcpython.client.gui.HoveringItemBox

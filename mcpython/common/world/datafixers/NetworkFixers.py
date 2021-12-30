@@ -72,6 +72,37 @@ class BlockDataFixer(AbstractNetworkFixer, ABC):
             logger.println(f"[DFU][WARN] tried to register a data fixer for none-existing block {cls.BLOCK_NAME}")
 
 
+class ItemDataFixer(AbstractNetworkFixer, ABC):
+    """
+    Handler for fixing item data using network buffers for items
+    When subclassing and setting ITEM_NAME to a good item name (a item name found in registry),
+    the fixer will be automatically bound to the block class
+
+    Use the Block.NETWORK_BUFFER_DATA_FIXERS for manual registration
+
+    WARNING: returning True from apply2stream() will intercept any further buffer loading, so also the stuff
+             you don't need to do yourself, but instead you use await super().read_from_network_buffer(...)
+    """
+
+    ITEM_NAME: str | typing.List[str] = None
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        if cls.ITEM_NAME is not None:
+            if isinstance(cls.ITEM_NAME, str):
+                shared.registry.get_by_name("minecraft:item")[
+                    cls.ITEM_NAME
+                ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
+            else:
+                for name in cls.ITEM_NAME:
+                    shared.registry.get_by_name("minecraft:item")[
+                        name
+                    ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
+
+        elif cls.ITEM_NAME is not None:
+            logger.println(f"[DFU][WARN] tried to register a data fixer for none-existing item {cls.ITEM_NAME}")
+
+
 class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
     """
     Handler for fixing chunk data maps

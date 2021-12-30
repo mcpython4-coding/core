@@ -60,7 +60,7 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         await super().read_from_network_buffer(buffer)
 
         async def read_part():
-            return buffer.collect_list(lambda: (buffer.read_int(), buffer.read_int()))
+            return await buffer.collect_list(lambda: (buffer.read_int(), buffer.read_int()))
 
         data = await buffer.collect_list(read_part)
         cx, cz = self.chunk.get_position()

@@ -213,8 +213,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
                 await buffer.write_dict(state, buffer.write_string, buffer.write_string)
 
     async def write_internal_for_migration(self, buffer: WriteBuffer):
-        # buffer.write_int(version)
-
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
 
@@ -250,7 +248,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
                         break
                 except:
                     logger.print_exception(
-                        "during applying data fixer; discarding data"
+                        f"during applying data fixer to block {self.NAME}; discarding data"
                     )
                     return
 

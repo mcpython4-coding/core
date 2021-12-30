@@ -98,12 +98,6 @@ class ISlot(IBufferSerializeAble, ABC):
     ) -> bool:
         raise NotImplementedError()
 
-    def save(self):
-        pass
-
-    def load(self, data):
-        pass
-
     def getParent(self) -> "ISlot":
         raise NotImplementedError()
 
@@ -402,28 +396,6 @@ class Slot(ISlot):
             or check_allowed_func
         )
 
-    def save(self):
-        d = {
-            "itemname": self.itemstack.get_item_name(),
-            "amount": self.itemstack.amount,
-            "data": None,
-        }
-
-        if not self.itemstack.is_empty():
-            d["data"] = self.itemstack.item.get_data()
-
-        return {"itemstack": d}
-
-    def load(self, data):
-        self.set_itemstack(
-            mcpython.common.container.ResourceStack.ItemStack(
-                data["itemstack"]["itemname"], data["itemstack"]["amount"]
-            )
-        )
-
-        if not self.itemstack.is_empty():
-            self.itemstack.item.set_data(data["itemstack"]["data"])
-
     def __str__(self):
         return "Slot(position=({},{}),itemstack={},memory={})".format(
             *self.position, self.itemstack, hex(id(self))
@@ -541,12 +513,6 @@ class SlotCopy(ISlot):
 
     def is_item_allowed(self, itemstack) -> bool:
         return self.master.is_item_allowed(itemstack)
-
-    def save(self):
-        return self.master.save()
-
-    def load(self, data):
-        self.master.load(data)
 
     def __str__(self):
         return "SlotCopy(position=({},{}),of={},memory={})".format(
