@@ -26,6 +26,10 @@ FLOAT = struct.Struct("!d")
 BYTE = struct.Struct("!B")
 
 
+async def _no_work(buf):
+    pass
+
+
 class TableIndexedOffsetTable:
     def __init__(self, data: typing.Dict[str, bytes] = None, handling: typing.Callable = lambda b: None):
         self.data = data if data is not None else dict()
@@ -68,6 +72,8 @@ class TableIndexedOffsetTable:
 
 class ReadBuffer:
     def __init__(self, stream: typing.Union[typing.BinaryIO, bytes]):
+        assert stream is not None, "data must be non-null"
+
         self.stream = (
             stream
             if isinstance(stream, (typing.BinaryIO, io.BytesIO))
@@ -200,13 +206,13 @@ class ReadBuffer:
 
         raise RuntimeError(tag)
 
-    async def read_named_offset_table(self, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]) -> TableIndexedOffsetTable:
+    async def read_named_offset_table(self, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine] = _no_work) -> TableIndexedOffsetTable:
         head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
         entries = [self.read_const_bytes(e[2]) for e in head]
 
         return TableIndexedOffsetTable({e[0]: d for e, d in zip(head, entries)}, entry_handling)
 
-    async def read_named_offset_table_entry(self, key: str, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]):
+    async def read_named_offset_table_entry(self, key: str, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine], ignore_rest=False):
         head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
 
         for e in head:
@@ -218,7 +224,9 @@ class ReadBuffer:
 
         self.read_const_bytes(info[1])
         data = self.read_const_bytes(info[2])
-        self.read_const_bytes(e[1]+e[2]-info[1]-info[2])
+
+        if not ignore_rest:
+            self.read_const_bytes(e[1]+e[2]-info[1]-info[2])
 
         result = entry_handling(ReadBuffer(data))
         if isinstance(result, typing.Awaitable):
@@ -226,7 +234,7 @@ class ReadBuffer:
 
         return result
 
-    async def read_named_offset_table_multi_entry(self, keys: typing.Iterable[str], entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]):
+    async def read_named_offset_table_multi_entry(self, keys: typing.Iterable[str], entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine], ignore_rest=False):
         head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
         keys = set(keys)
 
@@ -241,6 +249,9 @@ class ReadBuffer:
                     yield await result
                 else:
                     yield result
+
+                if ignore_rest and not keys:
+                    return
             else:
                 self.read_const_bytes(e[2])
 

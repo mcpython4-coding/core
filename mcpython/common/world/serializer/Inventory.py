@@ -15,12 +15,11 @@ import uuid
 
 import mcpython.client.gui.ContainerRenderer
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
 
 """
 improvements for the future:
-- add option to store under an special directory the data and output the binary data
+- make the whole serializer an network buffer and store at head an offset table
 """
 
 
@@ -49,20 +48,16 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
         """
         if file is None:
             file = "inventories.dat"
-        data = await save_file.access_file_pickle_async(file)
+        data: ReadBuffer = await save_file.access_via_network_buffer(file)
 
         if data is None:
             return
-        if path not in data:
-            return
 
-        data = data[path]
-        inventory.uuid = uuid.UUID(int=data["uuid"])
+        # Read that inventory from the data, and ignore the rest
+        data: bytes = await data.read_named_offset_table_entry(path, lambda buf: buf.stream.read(), ignore_rest=True)
 
-        buffer = ReadBuffer(data["custom data"])
+        buffer = ReadBuffer(data)
         await inventory.read_from_network_buffer(buffer)
-
-        await inventory.post_load(data["custom data"])
 
     @classmethod
     async def save(
@@ -76,16 +71,22 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
     ):
         if file is None:
             file = "inventories.dat"
-        data = await save_file.access_file_pickle_async(file) if not override else None
+        data: ReadBuffer = await save_file.access_via_network_buffer(file) if not override else None
+
         if data is None:
-            data = {}
+            table = TableIndexedOffsetTable()
+        else:
+            table = await data.read_named_offset_table()
 
         buffer = WriteBuffer()
         await inventory.write_to_network_buffer(buffer)
 
-        inventory_data = {
-            "uuid": inventory.uuid.int,
-            "custom data": buffer.get_data(),
-        }
-        data[path] = inventory_data
-        await save_file.dump_file_pickle_async(file, data)
+        table.writeData(path, buffer.get_data())
+
+        async def write_to(buf: WriteBuffer, d):
+            buf.write_const_bytes(d)
+
+        write = WriteBuffer()
+        await write.write_named_offset_table(table, write_to)
+
+        await save_file.dump_via_network_buffer(file, write)

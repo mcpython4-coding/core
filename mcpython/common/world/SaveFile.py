@@ -25,6 +25,8 @@ import mcpython.util.picklemagic
 import simplejson as json
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 """
 How to decide when an new version is needed?
@@ -590,6 +592,10 @@ class SaveFile:
         async with aiofiles.open(file, mode="rb") as f:
             return await f.read()
 
+    async def access_via_network_buffer(self, file: str):
+        data = await self.access_raw_async(file)
+        return ReadBuffer(data) if data is not None else None
+
     async def dump_file_json_async(self, file: str, data):
         """
         saves stuff with json into the system
@@ -640,6 +646,9 @@ class SaveFile:
             os.makedirs(d)
         async with aiofiles.open(file, mode="wb") as f:
             await f.write(data)
+
+    async def dump_via_network_buffer(self, file: str, buffer: WriteBuffer):
+        await self.dump_raw_async(file, buffer.get_data())
 
     @deprecation.deprecated()
     def load_world(self):

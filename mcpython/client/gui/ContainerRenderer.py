@@ -151,6 +151,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
         buffer.write_bool(self.active)
         buffer.write_string(self.custom_name if self.custom_name is not None else "")
+        buffer.write_uuid(self.uuid)
 
         await buffer.write_list(
             self.slots, lambda slot: slot.write_to_network_buffer(buffer)
@@ -179,6 +180,8 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         else:
             self.custom_name_label.text = self.custom_name
 
+        self.uuid = buffer.read_uuid()
+
         size = buffer.read_int()
 
         if size != len(self.slots):
@@ -189,12 +192,6 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
             await slot.read_from_network_buffer(buffer)
 
         return True
-
-    async def post_load(self, data):
-        """
-        Deserializes stuff after the slot data is loaded
-        :param data: the data stored
-        """
 
     def on_mouse_button_press(
         self,
