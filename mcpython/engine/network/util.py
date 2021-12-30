@@ -26,6 +26,46 @@ FLOAT = struct.Struct("!d")
 BYTE = struct.Struct("!B")
 
 
+class TableIndexedOffsetTable:
+    def __init__(self, data: typing.Dict[str, bytes] = None, handling: typing.Callable = lambda b: None):
+        self.data = data if data is not None else dict()
+        self.handling = handling
+        self.override_data = {key: None for key in self.data.keys()}
+
+    async def getByName(self, name: str):
+        buffer = ReadBuffer(self.data[name])
+        return await self.handling(buffer)
+
+    def writeData(self, name: str, data: typing.Any):
+        self.override_data[name] = data
+        return self
+
+    async def assemble(self, buffer: "WriteBuffer", dump_handler: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine]):
+        order = list(set(self.data.keys()) | set(self.override_data.keys()))
+
+        async def dump(d):
+            b = WriteBuffer()
+            r = dump_handler(b, d)
+
+            if isinstance(r, typing.Awaitable):
+                await r
+
+            return b.get_data()
+
+        data = [self.data[key] if self.override_data[key] is None else await dump(self.override_data[key]) for key in order]
+
+        head = [[key, 0, len(d)] for key, d in zip(order, data)]
+
+        c = 0
+        for i, e in enumerate(head):
+            e[1] = c
+            c += e[2]
+
+        await buffer.write_list(head, lambda e: buffer.write_string(e[0]).write_uint(e[1]).write_uint(e[2]))
+        for e in data:
+            buffer.write_const_bytes(e)
+
+
 class ReadBuffer:
     def __init__(self, stream: typing.Union[typing.BinaryIO, bytes]):
         self.stream = (
@@ -159,6 +199,56 @@ class ReadBuffer:
                 return None
 
         raise RuntimeError(tag)
+
+    async def read_named_offset_table(self, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]) -> TableIndexedOffsetTable:
+        head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
+        entries = [self.read_const_bytes(e[2]) for e in head]
+
+        return TableIndexedOffsetTable({e[0]: d for e, d in zip(head, entries)}, entry_handling)
+
+    async def read_named_offset_table_entry(self, key: str, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]):
+        head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
+
+        for e in head:
+            if e[0] == key:
+                info = e
+                break
+        else:
+            raise KeyError(f"Key '{key}' not found in data")
+
+        self.read_const_bytes(info[1])
+        data = self.read_const_bytes(info[2])
+        self.read_const_bytes(e[1]+e[2]-info[1]-info[2])
+
+        result = entry_handling(ReadBuffer(data))
+        if isinstance(result, typing.Awaitable):
+            return await result
+
+        return result
+
+    async def read_named_offset_table_multi_entry(self, keys: typing.Iterable[str], entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]):
+        head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
+        keys = set(keys)
+
+        for e in head:
+            if e[0] in keys:
+                data = self.read_const_bytes(e[2])
+                keys.remove(e[0])
+
+                result = entry_handling(ReadBuffer(data))
+
+                if isinstance(result, typing.Awaitable):
+                    yield await result
+                else:
+                    yield result
+            else:
+                self.read_const_bytes(e[2])
+
+        if keys:
+            raise KeyError(f"The following key(s) where not found: {', '.join(keys)}")
+
+    async def collect_read_named_offset_table_multi_entry(self, keys: typing.Iterable[str], entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]) -> set:
+        return set([e async for e in self.read_named_offset_table_multi_entry(keys, entry_handling)])
 
 
 class WriteBuffer:
@@ -316,6 +406,10 @@ class WriteBuffer:
             self.write_byte(10)
         else:
             raise ValueError(data)
+
+    async def write_named_offset_table(self, handler: TableIndexedOffsetTable, dump_handler: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine]):
+        await handler.assemble(self, dump_handler)
+        return self
 
 
 class IBufferSerializeAble(ABC):
