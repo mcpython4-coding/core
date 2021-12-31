@@ -1973,4 +1973,5 @@ G   [github]: started development cycle for snapshot <22w02a>
 A*  [uuk]: data maps (biome map, height map, ...) are now serialized via the network serialization API
 L   [uuk]: dumped opensimplex version to 0.4
 I   [uuk]: dumped internal storage version, as we are now incompatible again with previous versions
+A-  [uuk]: removed block data part fixer
 

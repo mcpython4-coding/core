@@ -18,57 +18,6 @@ from mcpython.common.world.serializer.util import access_region_data, write_regi
 from .IDataFixer import IPartFixer
 
 
-class BlockPartFixer(IPartFixer):
-    """
-    Fixer for fixing special block data
-    Applied only ONES per block-palette entry, not ones per block. Will change all blocks of the same kind
-    in that chunk
-    """
-
-    TARGET_SERIALIZER_NAME = "minecraft:chunk"
-
-    TARGET_BLOCK_NAME = None  # on which block(s) to apply
-
-    @classmethod
-    async def fix(
-        cls,
-        save_file,
-        dimension: int,
-        region,
-        chunk: typing.Tuple[int, int],
-        data,
-    ) -> dict:
-        """
-        called to apply the fix
-        :param save_file: the save-file-instance to use
-        :param dimension: the dim in
-        :param region: the region in
-        :param chunk: the chunk in
-        :param data: the block data
-        :return: the transformed data
-        """
-
-    @classmethod
-    async def apply(cls, save_file, *args, **kwargs):
-        blocks = (
-            cls.TARGET_BLOCK_NAME
-            if type(cls.TARGET_BLOCK_NAME) in (list, tuple, set)
-            else (cls.TARGET_BLOCK_NAME,)
-        )
-        for dim, region in save_file.region_iterator():
-            data = await access_region_data(save_file, dim, region)
-            if data is None:
-                continue
-            for chunk in data:
-                if chunk == "version":
-                    continue
-                palette = data[chunk]["block_palette"]
-                for i, entry in enumerate(palette):
-                    if entry["name"] in blocks:
-                        palette[i] = await cls.fix(save_file, dim, region, chunk, entry)
-            await write_region_data(save_file, dim, region, data)
-
-
 class ChunkDataFixer(IPartFixer):
     """
     Fixer targeting an whole chunk-data dict
@@ -101,12 +50,15 @@ class ChunkDataFixer(IPartFixer):
             data = await access_region_data(save_file, dim, region)
             if data is None:
                 continue
+
             for chunk in data:
                 if chunk == "version":
                     continue
+
                 data[chunk] = await cls.fix(
                     save_file, dim, region, chunk, data["chunk"]
                 )
+
             await write_region_data(save_file, dim, region, data)
 
 

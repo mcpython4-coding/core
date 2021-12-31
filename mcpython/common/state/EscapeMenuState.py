@@ -112,7 +112,7 @@ class EscapeMenu(AbstractState.AbstractState):
         await super().activate()
 
         if not shared.IS_NETWORKING:
-            pyglet.clock.schedule_once(shared.world.save_file.save_world, 0.1)
+            shared.tick_handler.schedule_once(shared.world.save_file.save_world_async)
 
 
 escape = None

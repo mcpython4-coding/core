@@ -539,7 +539,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 )
             else:
                 # make sure that file size is as small as possible
-                shared.world.save_file.save_world(override=True)
+                asyncio.get_event_loop().run_until_complete(shared.world.save_file.save_world_async(override=True))
 
         self.set_fullscreen(False)
         self.close()
