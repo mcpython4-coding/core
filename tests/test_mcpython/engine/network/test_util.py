@@ -392,6 +392,26 @@ class TestBuffer(TestCase):
 
         await self.assertRaisesAsync(KeyError, read.collect_read_named_offset_table_multi_entry(["test2", "invalid"], read_entry))
 
+    async def test_named_offset_table_write(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        table = TableIndexedOffsetTable()
+        table.writeData("test", (0, 8, 4.5))
+        table.writeData("test2", (-8, 12, 4.5))
+        table.writeData("test3", (0, 9, 4.5))
+        buffer = WriteBuffer()
+        await buffer.write_named_offset_table(table,
+                                              lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+
+        data = buffer.get_data()
+        read = ReadBuffer(data)
+
+        async def read_entry(buf):
+            return buf.read_int(), buf.read_uint(), buf.read_float()
+
+        table: TableIndexedOffsetTable = await read.read_named_offset_table(read_entry)
+        table.writeData("test", (0, 2, -6.8))
+        self.assertEqual(await table.getByName("test"), (0, 2, -6.8))
+
 
 class Simple(IBufferSerializeAble):
     def __init__(self):

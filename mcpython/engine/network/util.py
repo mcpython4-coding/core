@@ -26,17 +26,24 @@ FLOAT = struct.Struct("!d")
 BYTE = struct.Struct("!B")
 
 
-async def _no_work(buf):
-    pass
+async def _to_bin(buf: "ReadBuffer"):
+    return buf.stream.read()
+
+
+async def _write_bin(buf: "WriteBuffer", data: bytes):
+    buf.write_const_bytes(data)
 
 
 class TableIndexedOffsetTable:
-    def __init__(self, data: typing.Dict[str, bytes] = None, handling: typing.Callable = lambda b: None):
+    def __init__(self, data: typing.Dict[str, bytes] = None, handling: typing.Callable = _to_bin):
         self.data = data if data is not None else dict()
         self.handling = handling
         self.override_data = {key: None for key in self.data.keys()}
 
     async def getByName(self, name: str):
+        if name in self.override_data and self.override_data[name] is not None:
+            return self.override_data[name]
+
         buffer = ReadBuffer(self.data[name])
         return await self.handling(buffer)
 
@@ -206,7 +213,7 @@ class ReadBuffer:
 
         raise RuntimeError(tag)
 
-    async def read_named_offset_table(self, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine] = _no_work) -> TableIndexedOffsetTable:
+    async def read_named_offset_table(self, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine] = _to_bin) -> TableIndexedOffsetTable:
         head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
         entries = [self.read_const_bytes(e[2]) for e in head]
 
@@ -418,7 +425,7 @@ class WriteBuffer:
         else:
             raise ValueError(data)
 
-    async def write_named_offset_table(self, handler: TableIndexedOffsetTable, dump_handler: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine]):
+    async def write_named_offset_table(self, handler: TableIndexedOffsetTable, dump_handler: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine] = _write_bin):
         await handler.assemble(self, dump_handler)
         return self
 

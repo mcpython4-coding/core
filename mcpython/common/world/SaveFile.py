@@ -15,6 +15,7 @@ import asyncio
 import os
 import pickle
 import sys
+import typing
 
 import aiofiles
 import deprecation
@@ -25,8 +26,7 @@ import mcpython.util.picklemagic
 import simplejson as json
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
 
 """
 How to decide when an new version is needed?
@@ -106,6 +106,29 @@ def register_mod_fixer(
     return fixer
 
 
+class RegionFileAccess:
+    def __init__(self, save_file: "SaveFile", file: str, data: bytes):
+        self.data = data
+        self.file = file
+        self.save_file = save_file
+        self.table: TableIndexedOffsetTable | None = None
+
+    async def decode(self):
+        buffer = ReadBuffer(self.data)
+        self.table: TableIndexedOffsetTable = await buffer.read_named_offset_table()
+
+    async def get_chunk_data(self, cx: int, cz: int) -> ReadBuffer:
+        try:
+            return ReadBuffer(await self.table.getByName(f"{cx}::{cz}"))
+        except KeyError:
+            pass
+
+    async def write_chunk_data(self, cx: int, cz: int, data: WriteBuffer | bytes):
+        if isinstance(data, bytes):
+            data = WriteBuffer().write_const_bytes(data)
+        await self.table.writeData(f"{cx}::{cz}", data)
+
+
 class SaveFile:
     """
     Interface to a stored file on the disk
@@ -152,6 +175,7 @@ class SaveFile:
         self.directory = os.path.join(SAVE_DIRECTORY, directory_name)
         self.version = LATEST_VERSION
         self.save_in_progress = False
+        self.region_accesses = {}
 
     def region_iterator(self):
         """
@@ -649,6 +673,23 @@ class SaveFile:
 
     async def dump_via_network_buffer(self, file: str, buffer: WriteBuffer):
         await self.dump_raw_async(file, buffer.get_data())
+
+    async def get_region_access(self, dimension: str, region: typing.Tuple[int, int]) -> RegionFileAccess:
+        file = "dim/{}/{}_{}.region".format(dimension, *region)
+
+        if file in self.region_accesses:
+            return self.region_accesses[file]
+
+        d = await self.access_raw_async(file)
+        if d is None:
+            d = WriteBuffer().write_int(0).get_data()
+
+        obj = RegionFileAccess(self, file, d)
+        await obj.decode()
+
+        self.region_accesses[file] = obj
+
+        return obj
 
 
 @shared.mod_loader("minecraft", "stage:datafixer:general")
