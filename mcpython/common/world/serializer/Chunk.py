@@ -11,10 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import typing
 import uuid
 
 import mcpython.common.world.Chunk
+from mcpython.engine.world.AbstractInterface import IChunk
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer as IDataSerializer
 import mcpython.engine.world.AbstractInterface
@@ -43,6 +45,8 @@ class Chunk(IDataSerializer.IDataSerializer):
         except NotImplementedError:
             return
 
+        dcx, dcz = (e * 16 for e in chunk)
+
         chunk_instance: mcpython.engine.world.AbstractInterface.IChunk = (
             shared.world.dimensions[dimension].get_chunk(
                 int(chunk[0]), int(chunk[1]), generate=False
@@ -63,33 +67,24 @@ class Chunk(IDataSerializer.IDataSerializer):
         data = data[chunk]
         chunk_instance.generated = data["generated"]
 
-        # This file stores the inventory data
-        inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
+        # todo: remove stuff which is not in the registries!
 
-        # Prepare the block palette for later usage
-        for i, d in enumerate(data["block_palette"]):
-            if d[0] not in shared.registry.get_by_name("minecraft:block").entries:
-                # todo: add missing texture block -> insert here
-                logger.println(
-                    "[WARN] could not add block '{}' in chunk {} in dimension '{}'. Failed to look up block, but found in palette".format(
-                        d[0], chunk, dimension
-                    )
+        buffer = ReadBuffer(data["blocks"])
+        height = buffer.read_uint()
+        for x, y, z in itertools.product(range(16), range(height), range(16)):
+            index = buffer.read_uint()
+            position = (x+dcx, y, z+dcz)
+
+            if index == 0:
+                await chunk_instance.remove_block(position)
+            else:
+                block_buffer = ReadBuffer(data["block_palette"][index-1])
+                name = block_buffer.read_string()
+                visible = block_buffer.read_bool()
+
+                await cls.add_block_to_world(
+                    chunk_instance, block_buffer, immediate, position, name, visible
                 )
-                data["block_palette"][i] = ("minecraft:air", {}, False, tuple())
-
-        # So, this are all blocks in the map...
-        # todo: make sector based and DON'T use a dict! (Ints can be stored a lot better than this map)
-        for rel_position in data["blocks"].keys():
-            position = (
-                rel_position[0] + chunk_instance.get_position()[0] * 16,
-                rel_position[1],
-                rel_position[2] + chunk_instance.get_position()[1] * 16,
-            )
-            d = data["block_palette"][data["blocks"][rel_position]]
-
-            await cls.add_block_to_world(
-                chunk_instance, d, immediate, position, save_file, inv_file
-            )
 
         entity_buffer = ReadBuffer(data["entities"])
 
@@ -103,13 +98,11 @@ class Chunk(IDataSerializer.IDataSerializer):
         await entity_buffer.collect_list(read_entity)
 
         map_buffer = ReadBuffer(data["maps"])
-
         current_type_name = None
 
         async def read_map_key():
             nonlocal current_type_name
             current_type_name = map_buffer.read_string()
-            print(current_type_name)
 
         async def read_map_value():
             if current_type_name not in chunk_instance.data_maps:
@@ -129,42 +122,33 @@ class Chunk(IDataSerializer.IDataSerializer):
 
     @classmethod
     async def add_block_to_world(
-        cls, chunk_instance, d, immediate, position, save_file, inv_file
+        cls, chunk_instance, block_buffer: ReadBuffer, immediate, position, name, visible
     ):
         # helper for setting up the block
         async def add(instance):
             if instance is None:
                 return
 
-            if isinstance(d[1], bytes):
-                buffer = ReadBuffer(d[1])
-                await instance.read_from_network_buffer(buffer)
-            else:
-                logger.println(
-                    "[WARN][DISCARD] discarding block data for block", instance
-                )
-                logger.println(repr(d[1])[:300])
+            await instance.read_from_network_buffer(block_buffer)
 
-        flag = d[2]
         if immediate:
-            await add(chunk_instance.add_block(position, d[0], immediate=flag))
+            await add(chunk_instance.add_block(position, name, immediate=visible))
         else:
             shared.world_generation_handler.task_handler.schedule_block_add(
-                chunk_instance, position, d[0], on_add=add, immediate=flag
+                chunk_instance, position, name, on_add=add, immediate=visible
             )
 
     @classmethod
     async def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):
-        if dimension not in shared.world.dimensions:
-            return
-
-        if chunk not in shared.world.dimensions[dimension].chunks:
+        if dimension not in shared.world.dimensions or chunk not in shared.world.dimensions[dimension].chunks:
             return
 
         region = chunk2region(*chunk)
-        chunk_instance: mcpython.engine.world.AbstractInterface.IChunk = (
-            shared.world.dimensions[dimension].chunks[chunk]
-        )
+        dcx, dcz = (e * 16 for e in chunk)
+        chunk_instance: IChunk = shared.world.get_dimension(dimension).get_chunk(chunk)
+
+        # region = await save_file.get_region_access(dimension, region)
+        # target_buffer = WriteBuffer()
 
         data = await save_file.access_file_pickle_async(
             "dim/{}/{}_{}.region".format(dimension, *region)
@@ -197,56 +181,34 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         # Load the block palette
         # list of {"custom": <some stuff>, "name": <name>, "shown": <shown>, ...}
-        palette = cdata["block_palette"]
 
-        # where to dump inventory stuff
-        inv_file = "dim/{}/{}_{}.inv".format(dimension, *region)
-        overridden = not override
+        block_buffer = WriteBuffer()
+        palette = []
 
-        for position in (
-            chunk_instance.get_positions_updated_since_last_save()
-            if not override
-            else (e[0] for e in chunk_instance)
-        ):
-            # the relative position to the chunk
-            rel_position = (
-                position[0] - chunk_instance.get_position()[0] * 16,
-                position[1],
-                position[2] - chunk_instance.get_position()[1] * 16,
-            )
+        block_buffer.write_uint(256)
+        for x, y, z in itertools.product(range(16), range(256), range(16)):
+            block = chunk_instance.get_block((x+dcx, y, z+dcz), none_if_str=True)
 
-            block = chunk_instance.get_block(position, none_if_str=True)
-
-            if block is None and not override:
-                if rel_position in cdata["blocks"]:
-                    del cdata["blocks"][rel_position]  # ok, old data MUST be removed
-
-                continue
-
-            if isinstance(block, str):
-                if rel_position in cdata["blocks"]:
-                    del cdata["blocks"][
-                        rel_position
-                    ]  # ok, invalid data MUST be removed
-
-                continue
-
-            buffer = WriteBuffer()
-            await block.write_to_network_buffer(buffer)
-
-            block_data = (
-                block.NAME,
-                buffer.get_data(),
-                # todo: abstract tbis away
-                bool(block.face_info.faces) if block.face_info is not None else False,
-            )
-
-            # Dump into the palette table
-            if block_data in palette:
-                cdata["blocks"][rel_position] = palette.index(block_data)
+            if block is None:
+                block_buffer.write_uint(0)
             else:
-                cdata["blocks"][rel_position] = len(palette)
-                palette.append(block_data)
+                block_instance_buffer = WriteBuffer()
+                block_instance_buffer.write_string(block.NAME)
+                block_instance_buffer.write_bool(bool(block.face_info.faces) if block.face_info is not None else False)
+                await block.write_to_network_buffer(block_instance_buffer)
+
+                block_data = block_instance_buffer.get_data()
+                if block_data in palette:
+                    block_buffer.write_uint(palette.index(block_data)+1)
+                else:
+                    palette.append(block_data)
+                    block_buffer.write_uint(len(palette))
+
+        cdata["block_palette"] = palette
+        # target_buffer.write_list(palette, lambda e: target_buffer.write_const_bytes(e))
+
+        cdata["blocks"] = block_buffer.get_data()
+        # target_buffer.write_sub_buffer(block_buffer)
 
         chunk_instance.clear_positions_updated_since_last_save()
 
@@ -266,16 +228,22 @@ class Chunk(IDataSerializer.IDataSerializer):
                 await data_map.write_to_network_buffer(map_buffer)
 
             async def write_key(name):
-                print(name)
                 map_buffer.write_string(name)
 
             await map_buffer.write_dict(chunk_instance.data_maps, write_key, write_map)
             cdata["maps"] = map_buffer.get_data()
+            # target_buffer.write_sub_buffer(map_buffer)
+        else:
+            pass
+            # todo: remove if-else check and write anyway
 
-        data[chunk] = cdata  # dump the chunk into the region
+        # dump the chunk into the region
+        data[chunk] = cdata
 
         # and dump the region to the file
         await write_region_data(save_file, dimension, region, data)
+
+        # region.write_chunk_data(*chunk, target_buffer)
 
         # re-enable world gen as we are finished
         shared.world_generation_handler.enable_generation = True

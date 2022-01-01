@@ -81,6 +81,7 @@ class TableIndexedOffsetTable:
 class ReadBuffer:
     def __init__(self, stream: typing.Union[typing.BinaryIO, bytes]):
         assert stream is not None, "data must be non-null"
+        assert isinstance(stream, (io.BytesIO, bytes, bytearray)), f"ReadBuffer requires byte stream or bytes, got {type(stream)} ({stream})"
 
         self.stream = (
             stream
@@ -283,10 +284,10 @@ class ReadBuffer:
 
 class WriteBuffer:
     def __init__(self):
-        self.data: typing.List[bytes] = []
+        self.data: typing.List[bytes | typing.Callable[[], bytes]] = []
 
-    def get_data(self):
-        return b"".join(self.data)
+    def get_data(self) -> bytes:
+        return b"".join(e if not callable(e) else e() for e in self.data)
 
     def write_bool(self, state: bool):
         # todo: add a way to compress together with following single-bool fields
@@ -453,6 +454,9 @@ class WriteBuffer:
         await handler.assemble(self, dump_handler)
         return self
 
+    def write_sub_buffer(self, buffer: "WriteBuffer"):
+        self.write_const_bytes(buffer.get_data())
+        return self
 
 class IBufferSerializeAble(ABC):
     @classmethod

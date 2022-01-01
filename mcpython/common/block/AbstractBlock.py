@@ -204,7 +204,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         else:
             state = {
                 key: value
-                for key, value in state.items()
+                for key, value in sorted(state.items(), key=lambda e: e[0])
                 if isinstance(key, str) and isinstance(value, str)
             }
             if not state:
@@ -221,7 +221,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         else:
             state = {
                 key: value
-                for key, value in state.items()
+                for key, value in sorted(state.items(), key=lambda e: e[0])
                 if isinstance(key, str) and isinstance(value, str)
             }
             if not state:
