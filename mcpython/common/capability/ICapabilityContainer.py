@@ -44,7 +44,7 @@ class ICapabilityContainer(IBufferSerializeAble):
 
         self.capability_data = {
             e[0]: e[1]
-            async for e in buffer.read_list(
+            for e in await buffer.collect_list(
                 lambda: (
                     buffer.read_string(),
                     mcpython.util.picklemagic.safe_loads(buffer.read_bytes()),

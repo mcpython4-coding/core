@@ -36,12 +36,9 @@ class PlayerInfoPackage(AbstractPackage):
     async def read_from_buffer(self, buffer: ReadBuffer):
         from mcpython.common.entity.PlayerEntity import PlayerEntity
 
-        self.players = [
-            e
-            async for e in buffer.read_list(
-                lambda: PlayerEntity().read_from_network_buffer(buffer)
-            )
-        ]
+        self.players = await buffer.collect_list(
+            lambda: PlayerEntity().read_from_network_buffer(buffer)
+        )
 
     async def handle_inner(self):
         for player in self.players:

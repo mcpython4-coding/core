@@ -145,7 +145,7 @@ class InventoryFurnaceRenderer(mcpython.client.gui.ContainerRenderer.ContainerRe
         self.xp_stored = buffer.read_float()
         self.smelt_start = buffer.read_float() + time.time()
         self.progress = buffer.read_float()
-        self.types = [e async for e in buffer.read_list(buffer.read_string)]
+        self.types = await buffer.collect_list(buffer.read_string)
 
     # todo: this should be at the container
     def reset(self):

@@ -133,12 +133,7 @@ class Server2ClientHandshake(AbstractPackage):
             self.deny_reason = buffer.read_string()
             return
 
-        self.mod_list = [
-            e
-            async for e in buffer.read_list(
-                lambda: (buffer.read_string(), buffer.read_string())
-            )
-        ]
+        self.mod_list = await buffer.collect_list(lambda: (buffer.read_string(), buffer.read_string()))
 
     async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_bool(self.accept_connection)

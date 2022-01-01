@@ -55,7 +55,7 @@ class Furnace0_1Fixer(BlockDataFixer):
         target_buffer.write_float(source_buffer.read_int())
 
         await target_buffer.write_list(
-            [e async for e in source_buffer.read_list(source_buffer.read_string)],
+            await source_buffer.collect_list(source_buffer.read_string),
             target_buffer.write_string,
         )
 

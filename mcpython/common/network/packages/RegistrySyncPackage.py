@@ -43,7 +43,7 @@ class RegistrySyncInitPackage(AbstractPackage):
         return self
 
     async def read_from_buffer(self, buffer: ReadBuffer):
-        self.registries = [e async for e in buffer.read_list(buffer.read_string)]
+        self.registries = await buffer.collect_list(buffer.read_string)
 
     async def write_to_buffer(self, buffer: WriteBuffer):
         await buffer.write_list(self.registries, buffer.write_string)
@@ -101,12 +101,9 @@ class RegistrySyncPackage(AbstractPackage):
 
     async def read_from_buffer(self, buffer: ReadBuffer):
         self.name = buffer.read_string()
-        self.content = [
-            e
-            async for e in buffer.read_list(
-                lambda: (buffer.read_string(), buffer.read_string())
-            )
-        ]
+        self.content = await buffer.collect_list(
+            lambda: (buffer.read_string(), buffer.read_string())
+        )
 
     async def write_to_buffer(self, buffer: WriteBuffer):
         buffer.write_string(self.name)
