@@ -15,6 +15,7 @@ import uuid
 
 import mcpython.client.gui.ContainerRenderer
 from mcpython import shared
+from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
 
 """
@@ -54,7 +55,11 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
             return
 
         # Read that inventory from the data, and ignore the rest
-        data: bytes = await data.read_named_offset_table_entry(path, lambda buf: buf.stream.read(), ignore_rest=True)
+        try:
+            data: bytes = await data.read_named_offset_table_entry(path, lambda buf: buf.stream.read(), ignore_rest=True)
+        except KeyError:
+            logger.println(f"skipping inventory deserialization of {inventory} as path '{path}' in file '{file}' is not valid!")
+            return
 
         buffer = ReadBuffer(data)
         await inventory.read_from_network_buffer(buffer)

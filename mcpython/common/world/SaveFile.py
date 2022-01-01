@@ -26,7 +26,7 @@ import mcpython.util.picklemagic
 import simplejson as json
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable, _write_bin
 
 """
 How to decide when an new version is needed?
@@ -127,6 +127,12 @@ class RegionFileAccess:
         if isinstance(data, bytes):
             data = WriteBuffer().write_const_bytes(data)
         await self.table.writeData(f"{cx}::{cz}", data)
+
+    async def dump(self):
+        buffer = WriteBuffer()
+        await self.table.assemble(buffer, _write_bin)
+
+        await self.save_file.dump_via_network_buffer(self.file, buffer)
 
 
 class SaveFile:

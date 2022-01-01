@@ -22,6 +22,7 @@ from abc import ABC
 INT = struct.Struct("!i")
 UINT = struct.Struct("!I")
 LONG = struct.Struct("!q")
+ULONG = struct.Struct("!Q")
 FLOAT = struct.Struct("!d")
 BYTE = struct.Struct("!B")
 
@@ -114,6 +115,9 @@ class ReadBuffer:
     def read_long(self):
         return self.read_struct(LONG)[0]
 
+    def read_ulong(self):
+        return self.read_struct(ULONG)[0]
+
     def read_big_long(self, size_size=2):
         size = int.from_bytes(self.stream.read(size_size), "big", signed=False)
         return int.from_bytes(self.stream.read(size), "big", signed=True)
@@ -132,7 +136,7 @@ class ReadBuffer:
         return self.stream.read(size).decode(encoding)
 
     async def read_list(self, handling: typing.Callable[[], typing.Any]):
-        size = self.read_int()
+        size = self.read_uint()
 
         for _ in range(size):
             result = handling()
@@ -149,11 +153,15 @@ class ReadBuffer:
         key: typing.Callable[[], typing.Awaitable | typing.Hashable],
         value: typing.Callable[[], typing.Awaitable | typing.Any],
     ):
-        size = self.read_int()
+        async def maybe_async(r):
+            if isinstance(r, typing.Awaitable):
+                return await r
+
+            return r
+
+        size = self.read_uint()
         return {
-            (await key() if isinstance(key, typing.Awaitable) else key()): (
-                await value() if isinstance(key, typing.Awaitable) else value()
-            )
+            await maybe_async(key()): await maybe_async(value())
             for _ in range(size)
         }
 
@@ -210,6 +218,10 @@ class ReadBuffer:
                 return self.read_bytes()
             case 10:
                 return None
+            case 11:
+                return await self.read_nullable_container()
+            case 12:
+                return complex(self.read_float(), self.read_float())
 
         raise RuntimeError(tag)
 
@@ -309,6 +321,9 @@ class WriteBuffer:
     def write_long(self, value: int):
         return self.write_struct(LONG, value)
 
+    def write_ulong(self, value: int):
+        return self.write_struct(ULONG, value)
+
     def write_big_long(self, value: int, size_size=2):
         # todo: can we optimize this calculation (one byte more is a lot bigger than we need!)?
         length = max(math.ceil(math.log(abs(value), 2 ** 8)), 0) + 1
@@ -340,7 +355,7 @@ class WriteBuffer:
         self, data: typing.Iterable, handling: typing.Callable[[typing.Any], typing.Any]
     ):
         data = tuple(data)
-        self.write_int(len(data))
+        self.write_uint(len(data))
         for e in data:
             result = handling(e)
             if isinstance(result, typing.Awaitable):
@@ -351,7 +366,9 @@ class WriteBuffer:
     async def write_dict(
         self, data: typing.Dict, key: typing.Callable, value: typing.Callable
     ):
-        self.write_int(len(data))
+        assert isinstance(data, dict), f"data must be a dict, not {type(data)}"
+
+        self.write_uint(len(data))
         for k, v in data.items():
             k = key(k)
 
@@ -422,6 +439,13 @@ class WriteBuffer:
             self.write_bytes(data)
         elif data is None:
             self.write_byte(10)
+        elif isinstance(data, IBufferSerializeAble):
+            self.write_byte(11)
+            await self.write_nullable_container(data)
+        elif isinstance(data, complex):
+            self.write_byte(12)
+            self.write_float(data.real)
+            self.write_float(data.imag)
         else:
             raise ValueError(data)
 

@@ -68,7 +68,7 @@ class EntityManager:
                 )
                 return
 
-            entity = entity_cls.create_new(
+            entity = entity_cls.create_new_entity(
                 position, *args, dimension=dimension, **kwargs
             )
 

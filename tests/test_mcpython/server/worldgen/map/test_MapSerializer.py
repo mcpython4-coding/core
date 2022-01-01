@@ -19,7 +19,7 @@ class FakeChunk:
 
 
 class TestBiomeMap(TestCase):
-    async def test_serialize(self):
+    async def test_serialize_1(self):
         buffer = WriteBuffer()
         obj = BiomeMap(FakeChunk())
 
@@ -29,6 +29,20 @@ class TestBiomeMap(TestCase):
         obj2 = BiomeMap(FakeChunk())
 
         await obj2.read_from_network_buffer(read_buffer)
+
+    async def test_serialize_2(self):
+        buffer = WriteBuffer()
+        obj = BiomeMap(FakeChunk())
+        obj.set_at_xz(0, 0, "minecraft:dessert")
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = BiomeMap(FakeChunk())
+
+        await obj2.read_from_network_buffer(read_buffer)
+        self.assertEqual(obj2.get_at_xz(0, 0), "minecraft:dessert")
+        self.assertIsNone(obj2.get_at_xz(0, 1))
 
 
 class TestLandMassMap(TestCase):
@@ -42,4 +56,27 @@ class TestLandMassMap(TestCase):
         obj2 = LandMassMap(FakeChunk())
 
         await obj2.read_from_network_buffer(read_buffer)
-        # self.assertEqual(obj.land_mass_map, obj2.land_mass_map)
+
+
+class TestHeightMap(TestCase):
+    async def test_serialize(self):
+        buffer = WriteBuffer()
+        obj = HeightMap(FakeChunk())
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = HeightMap(FakeChunk())
+        await obj2.read_from_network_buffer(read_buffer)
+
+
+class TestTemperatureMap(TestCase):
+    async def test_serialize(self):
+        buffer = WriteBuffer()
+        obj = TemperatureMap(FakeChunk())
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = TemperatureMap(FakeChunk())
+        await obj2.read_from_network_buffer(read_buffer)

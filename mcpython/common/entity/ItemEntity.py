@@ -109,11 +109,11 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super().write_to_network_buffer(buffer)
         await self.item_stack.write_to_network_buffer(buffer)
-        buffer.write_int(self.pickup_delay)
+        buffer.write_float(self.pickup_delay)
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
         if self.item_stack is None:
             self.item_stack = ItemStack()
         await self.item_stack.read_from_network_buffer(buffer)
-        self.pickup_delay = buffer.read_int()
+        self.pickup_delay = buffer.read_float()

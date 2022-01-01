@@ -239,7 +239,7 @@ class TestBuffer(TestCase):
             read = ReadBuffer(write.get_data())
 
             for i, e in enumerate(entries):
-                self.assertTrue(e[2](read, data[i]))
+                self.assertTrue(e[2](read, data[i]), e)
 
     async def test_multi_any(self):
         # tests out chains of data

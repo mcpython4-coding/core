@@ -62,7 +62,7 @@ class AbstractEntity(
     SUMMON_ABLE = True
 
     @classmethod
-    def create_new(cls, position, *args, dimension=None, **kwargs):
+    def create_new_entity(cls, position, *args, dimension=None, **kwargs):
         """
         Creates a new entity and set up it correctly for later use
         :param position: the position to create at
@@ -79,6 +79,12 @@ class AbstractEntity(
         return entity
 
     @classmethod
+    async def create_from_buffer(cls, buffer: ReadBuffer):
+        instance = cls()
+        await instance.read_from_network_buffer(buffer)
+        return instance
+
+    @classmethod
     def init_renderers(cls):
         """
         Use this to create your entity renderers
@@ -90,7 +96,7 @@ class AbstractEntity(
         Creates a new entity for the world
         for moder: you SHOULD implement a custom constructor which set the bellow values to "good" values
 
-        For creating entities, use create_new() - it is far more saver and does some internal stuff
+        For creating entities, use create_new_entity() - it is far more saver and does some internal stuff
         """
         super().__init__()
 

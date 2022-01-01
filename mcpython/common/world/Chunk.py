@@ -700,7 +700,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         position: typing.Tuple[float, float, float],
         pickup_delay=0,
     ):
-        entity = ItemEntity.create_new(
+        entity = ItemEntity.create_new_entity(
             position,
             dimension=self.dimension,
             representing_item_stack=itemstack,

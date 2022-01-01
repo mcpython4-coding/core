@@ -426,7 +426,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
         if itemstack.is_empty():
             return
 
-        entity = ItemEntity.create_new(
+        entity = ItemEntity.create_new_entity(
             position,
             dimension=self,
             representing_item_stack=itemstack,

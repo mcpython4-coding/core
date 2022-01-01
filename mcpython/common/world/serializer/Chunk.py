@@ -91,41 +91,34 @@ class Chunk(IDataSerializer.IDataSerializer):
                 chunk_instance, d, immediate, position, save_file, inv_file
             )
 
-        for data_map in chunk_instance.get_all_data_maps():
-            if data_map.NAME in data["maps"]:
-                data_map_data = data["maps"][data_map.NAME]
-                await data_map.read_from_network_buffer(ReadBuffer(data_map_data))
+        entity_buffer = ReadBuffer(data["entities"])
 
-        for entity in data["entities"]:
-            # todo: add dynamic system for skipping by attribute
-            if entity[0] == "minecraft:player":
-                continue
+        async def read_entity():
+            type_name = entity_buffer.read_string()
+            if type_name == "minecraft:player": return
 
-            try:
-                entity_instance = shared.entity_manager.spawn_entity(
-                    entity[0],
-                    entity[1],
-                    uuid=uuid.UUID(entity[4]),
-                    dimension=shared.world.dimensions[dimension],
-                )
-            except ValueError:
-                continue
-            except:
-                logger.print_exception(
-                    "error during loading entity data {} in chunk {} in dimension '{}'".format(
-                        entity, chunk, dimension
-                    )
-                )
-                continue
+            await shared.entity_manager.registry[type_name].create_from_buffer(entity_buffer)
+            # todo: do we need to do anything else?
 
-            entity_instance.rotation = entity[2]
-            entity_instance.hearts = entity[3]
-            if "nbt" in entity:
-                entity_instance.nbt_data.update(entity[6])
-            entity_instance.load(entity[5])
+        await entity_buffer.collect_list(read_entity)
 
-            if len(entity) == 8:
-                entity_instance.deserialize_container(entity[7])
+        map_buffer = ReadBuffer(data["maps"])
+
+        current_type_name = None
+
+        async def read_map_key():
+            nonlocal current_type_name
+            current_type_name = map_buffer.read_string()
+            print(current_type_name)
+
+        async def read_map_value():
+            if current_type_name not in chunk_instance.data_maps:
+                logger.println(f"[DATA MAP][WARN] skipping deserialization of map {current_type_name}")
+                return
+
+            await chunk_instance.data_maps[current_type_name].read_from_network_buffer(map_buffer)
+
+        await map_buffer.read_dict(read_map_key, read_map_value)
 
         chunk_instance.loaded = True
         chunk_instance.is_ready = True
@@ -193,8 +186,8 @@ class Chunk(IDataSerializer.IDataSerializer):
                 "blocks": {},
                 "block_palette": [],
                 "generated": chunk_instance.is_generated(),
-                "entities": [],
-                "maps": {},
+                "entities": bytes(),
+                "maps": bytes(),
             }
             # And mark that all data should be written
             override = True
@@ -257,39 +250,34 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         chunk_instance.clear_positions_updated_since_last_save()
 
-        # this is about entity stuff...
-        # todo: move completely to Entity-API
-        for entity in chunk_instance.get_entities():
-            entity_data = (
-                entity.NAME,
-                entity.position,
-                entity.rotation,
-                entity.hearts,
-                str(entity.uuid),
-                entity.dump(),
-                entity.nbt_data,
-                entity.serialize_container(),
-            )
-            cdata["entities"].append(entity_data)
+        entity_buffer = WriteBuffer()
+
+        async def write_entity(entity):
+            entity_buffer.write_string(entity.NAME)
+            await entity.write_to_network_buffer(entity_buffer)
+
+        await entity_buffer.write_list(chunk_instance.get_entities(), write_entity)
+        cdata["entities"] = entity_buffer.get_data()
 
         if override:  # we want to re-dump all data maps
-            for data_map in chunk_instance.get_all_data_maps():
-                buffer = WriteBuffer()
+            map_buffer = WriteBuffer()
 
-                try:
-                    await data_map.write_to_network_buffer(buffer)
-                except:
-                    logger.print_exception(f"during dumping data map {data_map}")
-                    continue
+            async def write_map(data_map):
+                await data_map.write_to_network_buffer(map_buffer)
 
-                cdata["maps"][data_map.NAME] = buffer.get_data()
+            async def write_key(name):
+                print(name)
+                map_buffer.write_string(name)
+
+            await map_buffer.write_dict(chunk_instance.data_maps, write_key, write_map)
+            cdata["maps"] = map_buffer.get_data()
 
         data[chunk] = cdata  # dump the chunk into the region
-        await write_region_data(
-            save_file, dimension, region, data
-        )  # and dump the region to the file
 
-        shared.world_generation_handler.enable_generation = (
-            True  # re-enable world gen as we are finished
-        )
+        # and dump the region to the file
+        await write_region_data(save_file, dimension, region, data)
+
+        # re-enable world gen as we are finished
+        shared.world_generation_handler.enable_generation = True
+
         # todo: make sure that this is always set back to True, also on error

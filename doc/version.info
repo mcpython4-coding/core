@@ -1974,4 +1974,5 @@ A*  [uuk]: data maps (biome map, height map, ...) are now serialized via the net
 L   [uuk]: dumped opensimplex version to 0.4
 I   [uuk]: dumped internal storage version, as we are now incompatible again with previous versions
 A-  [uuk]: removed block data part fixer
+B   [uuk]: fixed crash when trying to save item entities for the network
 
