@@ -63,7 +63,7 @@ class GameRuleRemovalFixer(IPartFixer):
 
 class WorldConfigFixer(IPartFixer):
     """
-    Class representing an fix for the config-entry
+    Class representing a fix for the config-entry
     """
 
     TARGET_SERIALIZER_NAME = "minecraft:general_config"
@@ -81,7 +81,7 @@ class WorldConfigFixer(IPartFixer):
 
 class WorldGeneralFixer(IPartFixer):
     """
-    Class representing an fix for the config-entry
+    Class representing a fix for the config-entry
     """
 
     TARGET_SERIALIZER_NAME = "minecraft:general"
@@ -99,7 +99,7 @@ class WorldGeneralFixer(IPartFixer):
 
 class PlayerDataFixer(IPartFixer):
     """
-    fixer for fixing player data
+    Fixer for fixing player data
     """
 
     TARGET_SERIALIZER_NAME = "minecraft:player_data"

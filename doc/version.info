@@ -1978,8 +1978,8 @@ B   [uuk]: fixed crash when trying to save item entities for the network
 fO  [uuk]: chunk serializer system is now based of network buffers, with some better handling when accessing
            chunks from region files (not the whole file needs parsing, only the header)
 b   [uuk]: fixed crash when trying to place cactus feature
+A-  [uuk]: removed the old chunk part fixers
 
-todo: remove / update chunk part fixers
 todo: transfer the registry serialization also to network buffers & store only hashes for names
 todo: migrate most of the read_list() to collect_list() calls
 todo: add a set of blocks to Chunk-serializer so these blocks are auto-removed when encountered in saves
