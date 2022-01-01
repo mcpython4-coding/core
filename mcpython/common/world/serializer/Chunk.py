@@ -14,20 +14,11 @@ This project is not official by mojang and does not relate to it.
 import gzip
 import itertools
 import typing
-import uuid
 
-import mcpython.common.world.Chunk
 from mcpython.engine.world.AbstractInterface import IChunk
-import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer as IDataSerializer
-import mcpython.engine.world.AbstractInterface
-import mcpython.util.enums
 from mcpython import shared
-from mcpython.common.world.serializer.util import (
-    access_region_data,
-    chunk2region,
-    write_region_data,
-)
+from mcpython.common.world.serializer.util import chunk2region
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
@@ -35,6 +26,9 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 @shared.registry
 class Chunk(IDataSerializer.IDataSerializer):
     PART = NAME = "minecraft:chunk"
+
+    IGNORED_BLOCKS: typing.Set[str] = set()
+    IGNORED_ENTITIES: typing.Set[str] = {"minecraft:player"}
 
     @classmethod
     async def load(
@@ -77,12 +71,16 @@ class Chunk(IDataSerializer.IDataSerializer):
                 name = block_buffer.read_string()
                 visible = block_buffer.read_bool()
 
+                if name in cls.IGNORED_BLOCKS: continue
+
                 await cls.add_block_to_world(
                     chunk_instance, block_buffer, immediate, position, name, visible
                 )
 
         async def read_entity():
             type_name = read_buffer.read_string()
+
+            if type_name in cls.IGNORED_ENTITIES: return
 
             await shared.entity_manager.registry[type_name].create_from_buffer(read_buffer)
             # todo: do we need to do anything else?
@@ -156,7 +154,7 @@ class Chunk(IDataSerializer.IDataSerializer):
         for x, y, z in itertools.product(range(16), range(256), range(16)):
             block = chunk_instance.get_block((x+dcx, y, z+dcz), none_if_str=True)
 
-            if block is None:
+            if block is None or block.NAME in cls.IGNORED_BLOCKS:
                 block_buffer.write_uint(0)
             else:
                 block_instance_buffer = WriteBuffer()
@@ -182,8 +180,7 @@ class Chunk(IDataSerializer.IDataSerializer):
             entity_buffer.write_string(entity.NAME)
             await entity.write_to_network_buffer(entity_buffer)
 
-        # todo: add property at entity for not including it here
-        await entity_buffer.write_list((e for e in chunk_instance.get_entities() if e.NAME != "minecraft:player"), write_entity)
+        await entity_buffer.write_list((e for e in chunk_instance.get_entities() if e.NAME not in cls.IGNORED_ENTITIES), write_entity)
         target_buffer.write_sub_buffer(entity_buffer)
 
         map_buffer = WriteBuffer()

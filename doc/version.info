@@ -1979,6 +1979,6 @@ fO  [uuk]: chunk serializer system is now based of network buffers, with some be
            chunks from region files (not the whole file needs parsing, only the header)
 b   [uuk]: fixed crash when trying to place cactus feature
 A-  [uuk]: removed the old chunk part fixers
-
-todo: add a set of blocks to Chunk-serializer so these blocks are auto-removed when encountered in saves
+f   [uuk]: Chunk serializer contains now two sets for ignored blocks and entities
+           (neither serialized nor deserialized)
 
