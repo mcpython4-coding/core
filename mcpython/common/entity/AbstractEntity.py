@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import io
 import traceback
 import typing
 import uuid
@@ -24,6 +25,7 @@ import mcpython.common.event.Registry
 import mcpython.util.math
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
+from mcpython.common.world.datafixers.NetworkFixers import EntityDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.engine.physics.AxisAlignedBoundingBox import EMPTY_BOUNDING_BOX
@@ -57,6 +59,9 @@ class AbstractEntity(
     # -------------------
     # Internal Region END
     # -------------------
+
+    VERSION = 0
+    DATA_FIXERS: typing.Dict[int, EntityDataFixer] = {}
 
     # If the entity can be used in /summon-command
     SUMMON_ABLE = True
@@ -134,6 +139,30 @@ class AbstractEntity(
         return EMPTY_BOUNDING_BOX
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
+        version = buffer.read_uint()
+
+        if version != self.VERSION:
+            while (
+                version in self.DATA_FIXERS
+                and version != self.VERSION
+            ):
+                fixer = self.DATA_FIXERS[version]
+                write = WriteBuffer()
+
+                try:
+                    if await fixer.apply2stream(self, buffer, write) is True:
+                        break
+                except:
+                    logger.print_exception(
+                        f"during applying data fixer to block {self.NAME}; discarding data"
+                    )
+                    return
+
+                buffer.stream = io.BytesIO(write.get_data())
+                version = fixer.AFTER_VERSION
+
+            # Our fixed stream belongs now here...
+
         await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         dim_name = buffer.read_string()
         self.dimension = shared.world.get_dimension_by_name(
@@ -155,6 +184,8 @@ class AbstractEntity(
         self.nbt_data["invulnerable"] = buffer.read_bool()
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
+        buffer.write_uint(self.VERSION)
+
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         buffer.write_string(
             self.dimension.get_name() if self.dimension is not None else ""

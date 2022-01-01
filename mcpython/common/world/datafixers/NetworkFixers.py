@@ -103,6 +103,12 @@ class ItemDataFixer(AbstractNetworkFixer, ABC):
             logger.println(f"[DFU][WARN] tried to register a data fixer for none-existing item {cls.ITEM_NAME}")
 
 
+class EntityDataFixer(AbstractNetworkFixer, ABC):
+    @classmethod
+    def bind(cls, entity_cls):
+        entity_cls.DATA_FIXERS[cls.BEFORE_VERSION] = cls
+
+
 class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
     """
     Handler for fixing chunk data maps

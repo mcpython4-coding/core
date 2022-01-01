@@ -193,7 +193,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         return bool(self.face_solid & face.bitflag)
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
-        buffer.write_int(self.NETWORK_BUFFER_SERIALIZER_VERSION)
+        buffer.write_uint(self.NETWORK_BUFFER_SERIALIZER_VERSION)
 
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
@@ -230,7 +230,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
                 await buffer.write_dict(state, buffer.write_string, buffer.write_string)
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
-        version = buffer.read_int()
+        version = buffer.read_uint()
         await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
         original_buffer = buffer
 

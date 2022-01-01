@@ -1979,7 +1979,6 @@ fO  [uuk]: chunk serializer system is now based of network buffers, with some be
            chunks from region files (not the whole file needs parsing, only the header)
 b   [uuk]: fixed crash when trying to place cactus feature
 
-todo: add version attribute to entity network serializer API -> data fixer
 todo: remove / update chunk part fixers
 todo: transfer the registry serialization also to network buffers & store only hashes for names
 todo: migrate most of the read_list() to collect_list() calls
