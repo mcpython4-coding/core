@@ -49,13 +49,17 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.pickup_delay = pickup_delay
 
         # todo: fetch real item model here
-        self.test_block = shared.registry.get_by_name("minecraft:block")[
-            "minecraft:oak_fence"
-            if self.item_stack is None
-            or self.item_stack.is_empty()
-            or not self.item_stack.item.HAS_BLOCK
-            else self.item_stack.get_item_name()
-        ]()
+        try:
+            self.test_block = shared.registry.get_by_name("minecraft:block")[
+                "minecraft:oak_fence"
+                if self.item_stack is None
+                or self.item_stack.is_empty()
+                or not self.item_stack.item.HAS_BLOCK
+                else self.item_stack.get_item_name()
+            ]()
+        except KeyError:
+            self.test_block = shared.registry.get_by_name("minecraft:block")["minecraft:oak_fence"]()
+
         # Set the block dimension so the block can do cool stuff with rendering if it wants to
         self.test_block.dimension = self.dimension.get_name()
 

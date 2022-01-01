@@ -53,7 +53,7 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         table = []
 
         for x, z in itertools.product(range(16), range(16)):
-            biome = self.get_at_xz(+sx, z+sz)
+            biome = self.get_at_xz(x+sx, z+sz)
 
             if biome is None:
                 buffer.write_uint(0)
@@ -73,7 +73,7 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         return self.biome_map.setdefault((x, y, z), None)
 
     def set_at_xz(self, x: int, z: int, biome: str | None):
-        for y in range(0, 256, 4):
+        for y in range(0, 256):
             self.biome_map[x, y, z] = biome
 
     def set_at_xyz(self, x: int, y: int, z: int, biome: str | None):

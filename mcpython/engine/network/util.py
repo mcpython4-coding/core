@@ -287,7 +287,7 @@ class WriteBuffer:
         self.data: typing.List[bytes | typing.Callable[[], bytes]] = []
 
     def get_data(self) -> bytes:
-        return b"".join(e if not callable(e) else e() for e in self.data)
+        return b"".join((e if not callable(e) else e()) if not isinstance(e, WriteBuffer) else e.get_data() for e in self.data)
 
     def write_bool(self, state: bool):
         # todo: add a way to compress together with following single-bool fields

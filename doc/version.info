@@ -1969,11 +1969,19 @@ fI  [uuk]: resource access is now also async
 f   [uuk]: exceptions are now no longer fancy-printed if they get too large
 G   [github]: released snapshot 21w52a
 
-G   [github]: started development cycle for snapshot <22w02a>
+G   [github]: started development cycle for snapshot <22w03a>
 A*  [uuk]: data maps (biome map, height map, ...) are now serialized via the network serialization API
 L   [uuk]: dumped opensimplex version to 0.4
 I   [uuk]: dumped internal storage version, as we are now incompatible again with previous versions
 A-  [uuk]: removed block data part fixer
 B   [uuk]: fixed crash when trying to save item entities for the network
-fO  [uuk]: chunk serializer system is now mostly network buffers
+fO  [uuk]: chunk serializer system is now based of network buffers, with some better handling when accessing
+           chunks from region files (not the whole file needs parsing, only the header)
+b   [uuk]: fixed crash when trying to place cactus feature
+
+todo: add version attribute to entity network serializer API -> data fixer
+todo: remove / update chunk part fixers
+todo: transfer the registry serialization also to network buffers & store only hashes for names
+todo: migrate most of the read_list() to collect_list() calls
+todo: add a set of blocks to Chunk-serializer so these blocks are auto-removed when encountered in saves
 

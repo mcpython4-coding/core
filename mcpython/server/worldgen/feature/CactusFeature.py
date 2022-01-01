@@ -29,4 +29,4 @@ class CactusFeature(mcpython.server.worldgen.feature.IFeature.IFeature):
     @classmethod
     async def place_array(cls, array, x: int, y: int, z: int, config):
         for dy in range(0, random.randint(1, 3)):
-            await array.schedule_block_add((x, y + dy, z), "minecraft:cactus")
+            array.schedule_block_add((x, y + dy, z), "minecraft:cactus")

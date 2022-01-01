@@ -126,7 +126,7 @@ class RegionFileAccess:
     async def write_chunk_data(self, cx: int, cz: int, data: WriteBuffer | bytes):
         if isinstance(data, bytes):
             data = WriteBuffer().write_const_bytes(data)
-        await self.table.writeData(f"{cx}::{cz}", data)
+        self.table.writeData(f"{cx}::{cz}", data)
 
     async def dump(self):
         buffer = WriteBuffer()

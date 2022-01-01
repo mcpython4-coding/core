@@ -33,13 +33,24 @@ python -m unittest discover -s ./tests -t . in .
 
 
 
-# Changelog of snapshot <22w02a>
-Scheduled to be released on <12.01.2021>
+# Changelog of snapshot <22w03a>
+Scheduled to be released on <19.01.2021>
 targeting <1.18.1>
 
 Saves will not work across versions due to a fundamental 
 change how some stuff is stored, we currently do not plan to 
 provide a migration route
+
+Some NetworkBuffer stuff is stored in another
+other way, so custom data stored via network buffers 
+may not work anymore 
+
+    Storage System
+        - rewritten Chunk storage to network buffer only
+        - this dramatically reduces load times (and save times)
+
+    Fixed issues:
+        - crash when a cactus tried to generate
 
 
 # Changelog of snapshot 21w52a
