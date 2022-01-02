@@ -11,9 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common
-from mcpython import shared
-
 from .IDataFixer import IPartFixer
 
 
@@ -60,34 +57,3 @@ class GameRuleRemovalFixer(IPartFixer):
                 del data[name]
         await save_file.dump_file_json_async("gamerules.json", data)
 
-
-class PlayerDataFixer(IPartFixer):
-    """
-    Fixer for fixing player data
-    """
-
-    TARGET_SERIALIZER_NAME = "minecraft:player_data"
-
-    @classmethod
-    async def fix(cls, savefile, player, data) -> dict:
-        """
-        will apply the fix
-        :param savefile: the savefile to use
-        :param player: the player used or None if not provided
-        :param data: the data used
-        :return: the fixed data
-        """
-
-    @classmethod
-    async def apply(cls, save_file, *args):
-        data = await save_file.access_file_json_async("players.json")
-
-        for name in data:
-            player_data = data[name]
-            player = (
-                shared.world.players[name] if name not in shared.world.players else None
-            )
-            player_data = await cls.fix(save_file, player, player_data)
-            data[name] = player_data
-
-        await save_file.dump_file_json_async("players.json", data)
