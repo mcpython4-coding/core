@@ -31,20 +31,116 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
     @classmethod
     async def load(cls, save_file):
-        data = await save_file.access_file_pickle_async("level.dat")
-        if data is None:
+        read_buffer: ReadBuffer = await save_file.access_via_network_buffer("level.dat")
+        if read_buffer is None:
             raise mcpython.common.world.serializer.IDataSerializer.MissingSaveException(
                 "level.json not found!"
             )
 
-        save_file.version = data["storage version"]
+        save_file.version = read_buffer.read_ulong()
 
         # when it is another version, loading MAY fail
         if save_file.version != mcpython.common.world.SaveFile.LATEST_VERSION:
             return
 
-        player_name = data["player name"]
+        version_id = read_buffer.read_ulong()
+        player_name = read_buffer.read_string()
 
+        mods = await read_buffer.read_dict(read_buffer.read_string, read_buffer.read_any)
+        chunks_to_generate = await read_buffer.collect_list(lambda: (read_buffer.read_int(), read_buffer.read_long(), read_buffer.read_long()))
+
+        await cls.prepare_player(player_name)
+
+        shared.world.config = await read_buffer.read_any()
+        await shared.event_handler.call_async("seed:set")
+
+        dimensions = await read_buffer.read_dict(read_buffer.read_int, read_buffer.read_string)
+        current_dimension = read_buffer.read_int()
+
+        await cls.prepare_mods(mods, save_file)
+
+        # the chunks scheduled for generation
+        await cls.prepare_generating_chunks(chunks_to_generate)
+
+        await cls.prepare_dimensions(dimensions)
+
+        if shared.IS_CLIENT:
+            await shared.world.join_dimension_async(current_dimension)
+
+        default_noise_implementation = read_buffer.read_string()
+        await shared.world_generation_handler.deserialize_chunk_generator_info(read_buffer)
+        await mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(read_buffer)
+        mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
+
+    @classmethod
+    async def prepare_mods(cls, mods, save_file):
+        for modname in mods:
+            if modname not in shared.mod_loader.mods:
+                logger.println(
+                    "[WARNING] mod '{}' is missing. This may break your world!".format(
+                        modname
+                    )
+                )
+            elif shared.mod_loader.mods[modname].version != tuple(
+                    mods[modname]
+            ):
+                try:
+                    await save_file.apply_mod_fixer_async(
+                        modname, tuple(mods[modname])
+                    )
+                except mcpython.common.world.SaveFile.DataFixerNotFoundException:
+                    if modname != "minecraft":
+                        logger.println(
+                            "[WARN] mod {} did not provide data-fixers for mod version change "
+                            "which occur between the sessions (from {} to {})".format(
+                                modname,
+                                tuple(mods[modname]),
+                                shared.mod_loader.mods[modname].version,
+                            )
+                        )
+        # apply data fixers for creating mod data
+        for modname in shared.mod_loader.mods:
+            if modname not in mods:
+                try:
+                    await save_file.apply_mod_fixer_async(modname, None)
+                except mcpython.common.world.SaveFile.DataFixerNotFoundException:
+                    pass
+
+    @classmethod
+    async def prepare_generating_chunks(cls, chunks_to_generate):
+        [
+            shared.world_generation_handler.add_chunk_to_generation_list(
+                e[0], dimension=e[1]
+            )
+            for e in chunks_to_generate
+        ]
+
+    @classmethod
+    async def prepare_dimensions(cls, dimensions):
+        for dimension in shared.world.dimensions.values():
+            if dimension.id in dimensions:
+                if dimensions[dimension.id] != dimension.name:
+                    logger.println(
+                        "[WARN] dimension name changed for dim {} from '{}' to '{}'".format(
+                            dimension.id,
+                            dimensions[dimension.id],
+                            dimension.name,
+                        )
+                    )
+                del dimensions[dimension.id]
+            else:
+                logger.println(
+                    "[WARN] dimension {} not arrival in save".format(dimension.id)
+                )
+        for dim in dimensions:
+            logger.println(
+                "[WARN] dimension {} named '{}' is arrival in save but not registered in game".format(
+                    dim, dimensions[dim]
+                )
+            )
+
+    @classmethod
+    async def prepare_player(cls, player_name: str):
         try:
             mcpython.util.getskin.download_skin(player_name, shared.build + "/skin.png")
         except ValueError:
@@ -58,123 +154,28 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                     "assets/minecraft/textures/entity/steve.png"
                 )
             ).save(shared.build + "/skin.png")
-
         try:
             await mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
         except AttributeError:
             pass
 
-        shared.world.config = data["config"]
-        await shared.event_handler.call_async("seed:set")
-
-        if type(data["game version"]) != int:
-            logger.println("Old version name format found!")
-            logger.println("it was last loaded in '{}'".format(data["game version"]))
-            data["game version"] = -1
-
-        for modname in data["mods"]:
-            if modname not in shared.mod_loader.mods:
-                logger.println(
-                    "[WARNING] mod '{}' is missing. This may break your world!".format(
-                        modname
-                    )
-                )
-            elif shared.mod_loader.mods[modname].version != tuple(
-                data["mods"][modname]
-            ):
-                try:
-                    await save_file.apply_mod_fixer_async(
-                        modname, tuple(data["mods"][modname])
-                    )
-                except mcpython.common.world.SaveFile.DataFixerNotFoundException:
-                    if modname != "minecraft":
-                        logger.println(
-                            "[WARN] mod {} did not provide data-fixers for mod version change "
-                            "which occur between the sessions (from {} to {})".format(
-                                modname,
-                                tuple(data["mods"][modname]),
-                                shared.mod_loader.mods[modname].version,
-                            )
-                        )
-
-        # apply data fixers for creating mod data
-        for modname in shared.mod_loader.mods:
-            if modname not in data["mods"]:
-                try:
-                    await save_file.apply_mod_fixer_async(modname, None)
-                except mcpython.common.world.SaveFile.DataFixerNotFoundException:
-                    pass
-
-        # the chunks scheduled for generation
-        [
-            shared.world_generation_handler.add_chunk_to_generation_list(
-                e[0], dimension=e[1]
-            )
-            for e in data["chunks_to_generate"]
-        ]
-
-        for dimension in shared.world.dimensions.values():
-            if str(dimension.id) in data["dimensions"]:
-                if data["dimensions"][str(dimension.id)] != dimension.name:
-                    logger.println(
-                        "[WARN] dimension name changed for dim {} from '{}' to '{}'".format(
-                            dimension.id,
-                            data["dimensions"][str(dimension.id)],
-                            dimension.name,
-                        )
-                    )
-                del data["dimensions"][str(dimension.id)]
-            else:
-                logger.println(
-                    "[WARN] dimension {} not arrival in save".format(dimension.id)
-                )
-        for dim in data["dimensions"]:
-            logger.println(
-                "[WARN] dimension {} named '{}' is arrival in save but not registered in game".format(
-                    dim, data["dimensions"][dim]
-                )
-            )
-
-        if "active_dimension" in data and shared.IS_CLIENT:
-            await shared.world.join_dimension_async(data["active_dimension"])
-
-        wd = data["world_gen_info"]
-        shared.world_generation_handler.deserialize_chunk_generator_info(
-            wd["chunk_generators"]
-        )
-        await mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(
-            ReadBuffer(wd["seeds"])
-        )
-        mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
-
     @classmethod
     async def save(cls, data, save_file):
-        seed_buffer = WriteBuffer()
-        await mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(seed_buffer)
+        target_buffer = WriteBuffer()
 
-        data = {
-            "storage version": save_file.version,  # the storage version stored in
-            "player name": shared.world.get_active_player().name
-            if shared.IS_CLIENT
-            else None,  # the name of the player the world played in
-            "config": shared.world.config,  # the world config
-            "game version": mcpython.common.config.VERSION_ID,
-            "mods": {mod.name: mod.version for mod in shared.mod_loader.mods.values()},
-            "chunks_to_generate": [
-                (chunk.get_position(), chunk.get_dimension().get_dimension_id())
-                for chunk in shared.world_generation_handler.task_handler.chunks
-            ],
-            "dimensions": {
-                dimension.get_dimension_id(): dimension.get_name()
-                for dimension in shared.world.dimensions.values()
-            },
-            "active_dimension": shared.world.get_active_player().dimension.get_dimension_id()
-            if shared.IS_CLIENT
-            else 0,
-            "world_gen_info": {
-                "noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation,
-                "chunk_generators": shared.world_generation_handler.serialize_chunk_generator_info(),
-                "seeds": seed_buffer.get_data(),
-            },
-        }
-        await save_file.dump_file_pickle_async("level.dat", data)
+        target_buffer.write_ulong(save_file.version)
+        target_buffer.write_ulong(mcpython.common.config.VERSION_ID)
+        target_buffer.write_string(shared.world.get_active_player().name if shared.IS_CLIENT else "")
+
+        await target_buffer.write_dict(shared.mod_loader.mods, target_buffer.write_string, lambda e: target_buffer.write_any(e.version))
+        await target_buffer.write_list(shared.world_generation_handler.task_handler.chunks, lambda chunk: target_buffer.write_int(chunk.get_dimension().get_dimension_id()).write_long(chunk.get_position()[0]).write_long(chunk.get_position()[1]))
+
+        await target_buffer.write_any(shared.world.config)
+        await target_buffer.write_dict(shared.world.dimensions, target_buffer.write_int, lambda e: target_buffer.write_string(e.get_name()))
+        target_buffer.write_int(shared.world.get_active_player().dimension.get_dimension_id() if shared.IS_CLIENT else 0)
+
+        target_buffer.write_string(mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation)
+        await shared.world_generation_handler.serialize_chunk_generator_info(target_buffer)
+        await mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(target_buffer)
+
+        await save_file.dump_via_network_buffer("level.dat", target_buffer)

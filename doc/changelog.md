@@ -39,7 +39,8 @@ targeting <1.18.1>
 
 Saves will not work across versions due to a fundamental 
 change how some stuff is stored, we currently do not plan to 
-provide a migration route
+provide a migration route. 
+The system is not able to display old saves for this reason.
 
 Some NetworkBuffer stuff is stored in another
 other way, so custom data stored via network buffers 

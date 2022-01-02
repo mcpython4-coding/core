@@ -37,6 +37,7 @@ from pyglet.window import key, mouse
 
 from . import AbstractState
 from .ui import UIPartButton, UIPartScrollBar
+from ...engine.network.util import ReadBuffer
 from ...util import picklemagic
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
@@ -183,7 +184,7 @@ class WorldList(AbstractState.AbstractState):
         if symbol == key.ESCAPE:
             await self.on_back_press(0, 0)
         elif symbol == key.R:  # "R" will reload the world list
-            self.reload_world_icons()
+            await self.reload_world_icons()
         elif (
             symbol == key.ENTER and self.selected_world is not None
         ):  # selecting world & pressing enter will launch it
@@ -206,10 +207,10 @@ class WorldList(AbstractState.AbstractState):
     async def activate(self):
         await super().activate()
 
-        self.reload_world_icons()
+        await self.reload_world_icons()
         self.parts[-1].set_status(1)
 
-    def reload_world_icons(self):
+    async def reload_world_icons(self):
         if not os.path.exists(mcpython.common.world.SaveFile.SAVE_DIRECTORY):
             os.makedirs(mcpython.common.world.SaveFile.SAVE_DIRECTORY)
         wx, wy = shared.window.get_size()
@@ -232,18 +233,24 @@ class WorldList(AbstractState.AbstractState):
                 edit = "last edited: "+modification_time
 
                 with open(path+"/level.dat", mode="rb") as f:
-                    data = picklemagic.load(f)
+                    data = f.read()
+
+                read_buffer = ReadBuffer(data)
+                save_version = read_buffer.read_ulong()
+                version_id = read_buffer.read_ulong()
+                player_name = read_buffer.read_string()
+                mods = await read_buffer.read_dict(read_buffer.read_string, read_buffer.read_any)
 
                 labels = [
                     pyglet.text.Label(directory),
                     pyglet.text.Label(
                         "last played in version '{}' {}".format(
-                            data["game version"], edit
+                            version_id, edit
                         )
                     ),
                     pyglet.text.Label(
                         "last loaded with {} mod{}".format(
-                            len(data["mods"]), "" if len(data["mods"]) <= 1 else "s"
+                            len(mods), "" if len(mods) <= 1 else "s"
                         )
                     ),
                 ]
@@ -264,7 +271,7 @@ class WorldList(AbstractState.AbstractState):
             return
 
         shutil.rmtree(self.world_data[self.selected_world][3])
-        self.reload_world_icons()
+        await self.reload_world_icons()
 
     async def on_world_load_press(self, *_):
         if self.selected_world is None:

@@ -25,6 +25,8 @@ import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 class WorldGenerationHandler:
@@ -32,6 +34,8 @@ class WorldGenerationHandler:
     Main handler instance for world generation
     Stored data for world generation and handles requests for generating chunks
     """
+
+    CHUNK_GENERATOR_VERSION = 0
 
     def __init__(self):
         # registry table for layers
@@ -78,21 +82,37 @@ class WorldGenerationHandler:
         self.chunk_maps[chunk_map.NAME] = chunk_map
         return self
 
-    def serialize_chunk_generator_info(self) -> dict:
-        data = {}
-        for dimension in shared.world.dimensions.values():
-            data[dimension.get_name()] = dimension.get_world_generation_config_entry(
-                "configname"
-            )
-        return data
+    async def serialize_chunk_generator_info(self, buffer: WriteBuffer):
+        buffer.write_uint(self.CHUNK_GENERATOR_VERSION)
 
-    def deserialize_chunk_generator_info(self, data: dict):
-        for dimension in data:
+        async def pack_dimension(dimension):
+            buffer.write_string(dimension.get_name())
+            await buffer.write_any(dimension.get_world_generation_config_entry(
+                "configname"
+            ))
+
+        await buffer.write_list(shared.world.dimensions.values(), pack_dimension)
+
+    async def deserialize_chunk_generator_info(self, buffer: ReadBuffer):
+        version = buffer.read_uint()
+
+        if version != self.CHUNK_GENERATOR_VERSION:
+            raise RuntimeError(f"Versions do not match: {version} != {self.CHUNK_GENERATOR_VERSION}")
+
+        async def unpack_dimension():
+            name = buffer.read_string()
+            dim_data = await buffer.read_any()
+            print(name, dim_data)
+            return name, dim_data
+
+        data = await buffer.collect_list(unpack_dimension)
+
+        for dimension, d in data:
             if dimension not in shared.world.dimensions:
                 continue
 
             shared.world.dimensions[dimension].set_world_generation_config_entry(
-                "configname", data[dimension]
+                "configname", d
             )
 
     def add_chunk_to_generation_list(
