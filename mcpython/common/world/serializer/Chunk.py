@@ -101,9 +101,10 @@ class Chunk(IDataSerializer.IDataSerializer):
         async def read_map_value():
             if current_type_name not in chunk_instance.data_maps:
                 logger.println(f"[DATA MAP][WARN] skipping deserialization of map {current_type_name}")
+                read_buffer.read_bytes()
                 return
 
-            await chunk_instance.data_maps[current_type_name].read_from_network_buffer(read_buffer)
+            await chunk_instance.data_maps[current_type_name].read_from_network_buffer(read_buffer.read_sub_buffer_dynamic_size())
 
         await read_buffer.read_dict(read_map_key, read_map_value)
 
@@ -194,7 +195,9 @@ class Chunk(IDataSerializer.IDataSerializer):
         map_buffer = WriteBuffer()
 
         async def write_map(data_map):
-            await data_map.write_to_network_buffer(map_buffer)
+            buf = WriteBuffer()
+            await data_map.write_to_network_buffer(buf)
+            map_buffer.write_sub_buffer_dynamic_size(buf)
 
         async def write_key(name):
             map_buffer.write_string(name)
