@@ -284,6 +284,34 @@ class ReadBuffer:
     def read_sub_buffer_dynamic_size(self, size_size=2) -> "ReadBuffer":
         return ReadBuffer(self.read_bytes(size_size=size_size))
 
+    class SkipableIterator:
+        def __init__(self, handler: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any], parts: typing.List[bytes]):
+            self.handler = handler
+            self.parts = parts
+            self.pointer = 0
+
+        async def next(self):
+            if self.pointer >= len(self.parts) - 1:
+                raise StopAsyncIteration
+
+            data = self.parts[self.pointer]
+            self.pointer += 1
+            r = self.handler(ReadBuffer(data))
+            if isinstance(r, typing.Awaitable):
+                return await r
+            return r
+
+        async def __anext__(self):
+            return await self.next()
+
+        def skip(self, count: int = 1):
+            self.pointer += count
+            return self
+
+    async def read_skipable_list(self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]):
+        data = await self.collect_list(lambda: self.read_bytes())
+        return self.SkipableIterator(decoder, data)
+
 
 class WriteBuffer:
     def __init__(self):
@@ -465,6 +493,17 @@ class WriteBuffer:
 
     def write_sub_buffer_dynamic_size(self, buffer: "WriteBuffer", size_size=2):
         self.write_bytes(buffer.get_data(), size_size=size_size)
+        return self
+
+    async def write_skipable_list(self, data: typing.Iterable, handling: typing.Callable[[typing.Any], typing.Coroutine | typing.Any]):
+        async def maybe_async(obj):
+            if isinstance(obj, typing.Awaitable):
+                return await obj
+            return obj
+
+        encoded = [await maybe_async(handling(e)) for e in data]
+
+        await self.write_list(encoded, lambda e: self.write_bytes(e))
         return self
 
 
