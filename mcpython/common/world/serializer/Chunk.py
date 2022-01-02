@@ -79,10 +79,15 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         async def read_entity():
             type_name = read_buffer.read_string()
+            buf = ReadBuffer(read_buffer.read_bytes())
 
             if type_name in cls.IGNORED_ENTITIES: return
 
-            await shared.entity_manager.registry[type_name].create_from_buffer(read_buffer)
+            try:
+                await shared.entity_manager.registry[type_name].create_from_buffer(buf)
+            except:
+                logger.print_exception(f"cannot deserialize entity {type_name} in chunk {chunk} (dimension: {dimension})")
+
             # todo: do we need to do anything else?
 
         await read_buffer.collect_list(read_entity)
@@ -178,7 +183,10 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         async def write_entity(entity):
             entity_buffer.write_string(entity.NAME)
-            await entity.write_to_network_buffer(entity_buffer)
+
+            buf = WriteBuffer()
+            await entity.write_to_network_buffer(buf)
+            entity_buffer.write_bytes(buf.get_data())
 
         await entity_buffer.write_list((e for e in chunk_instance.get_entities() if e.NAME not in cls.IGNORED_ENTITIES), write_entity)
         target_buffer.write_sub_buffer(entity_buffer)

@@ -281,6 +281,9 @@ class ReadBuffer:
     async def collect_read_named_offset_table_multi_entry(self, keys: typing.Iterable[str], entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]) -> set:
         return set([e async for e in self.read_named_offset_table_multi_entry(keys, entry_handling)])
 
+    def read_sub_buffer_dynamic_size(self, size_size=2) -> "ReadBuffer":
+        return ReadBuffer(self.read_bytes(size_size=size_size))
+
 
 class WriteBuffer:
     def __init__(self):
@@ -381,6 +384,8 @@ class WriteBuffer:
                 await v
 
     def write_bytes(self, data: bytes, size_size=2):
+        assert len(data) < 256 ** size_size, "data must be in bounds"
+
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
         self.data.append(data)
         return self
@@ -457,6 +462,11 @@ class WriteBuffer:
     def write_sub_buffer(self, buffer: "WriteBuffer"):
         self.write_const_bytes(buffer.get_data())
         return self
+
+    def write_sub_buffer_dynamic_size(self, buffer: "WriteBuffer", size_size=2):
+        self.write_bytes(buffer.get_data(), size_size=size_size)
+        return self
+
 
 class IBufferSerializeAble(ABC):
     @classmethod
