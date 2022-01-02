@@ -26,7 +26,12 @@ import mcpython.util.picklemagic
 import simplejson as json
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable, _write_bin
+from mcpython.engine.network.util import (
+    ReadBuffer,
+    TableIndexedOffsetTable,
+    WriteBuffer,
+    _write_bin,
+)
 
 """
 How to decide when an new version is needed?
@@ -680,7 +685,9 @@ class SaveFile:
     async def dump_via_network_buffer(self, file: str, buffer: WriteBuffer):
         await self.dump_raw_async(file, buffer.get_data())
 
-    async def get_region_access(self, dimension: str, region: typing.Tuple[int, int]) -> RegionFileAccess:
+    async def get_region_access(
+        self, dimension: str, region: typing.Tuple[int, int]
+    ) -> RegionFileAccess:
         file = "dim/{}/{}_{}.region".format(dimension, *region)
 
         if file in self.region_accesses:

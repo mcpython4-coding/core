@@ -70,7 +70,9 @@ class AbstractItem(
         version = buffer.read_uint()
 
         if version != self.VERSION:
-            while version in self.NETWORK_BUFFER_DATA_FIXERS and version != self.VERSION:
+            while (
+                version in self.NETWORK_BUFFER_DATA_FIXERS and version != self.VERSION
+            ):
                 fixer = self.NETWORK_BUFFER_DATA_FIXERS[version]
 
                 write = WriteBuffer()

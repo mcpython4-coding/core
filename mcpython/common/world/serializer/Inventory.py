@@ -16,7 +16,11 @@ import uuid
 import mcpython.client.gui.ContainerRenderer
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+from mcpython.engine.network.util import (
+    ReadBuffer,
+    TableIndexedOffsetTable,
+    WriteBuffer,
+)
 
 """
 improvements for the future:
@@ -56,9 +60,13 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
 
         # Read that inventory from the data, and ignore the rest
         try:
-            data: bytes = await data.read_named_offset_table_entry(path, lambda buf: buf.stream.read(), ignore_rest=True)
+            data: bytes = await data.read_named_offset_table_entry(
+                path, lambda buf: buf.stream.read(), ignore_rest=True
+            )
         except KeyError:
-            logger.println(f"skipping inventory deserialization of {inventory} as path '{path}' in file '{file}' is not valid!")
+            logger.println(
+                f"skipping inventory deserialization of {inventory} as path '{path}' in file '{file}' is not valid!"
+            )
             return
 
         buffer = ReadBuffer(data)
@@ -76,7 +84,9 @@ class Inventory(mcpython.common.world.serializer.IDataSerializer.IDataSerializer
     ):
         if file is None:
             file = "inventories.dat"
-        data: ReadBuffer = await save_file.access_via_network_buffer(file) if not override else None
+        data: ReadBuffer = (
+            await save_file.access_via_network_buffer(file) if not override else None
+        )
 
         if data is None:
             table = TableIndexedOffsetTable()

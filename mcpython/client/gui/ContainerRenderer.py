@@ -185,7 +185,9 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         size = buffer.read_int()
 
         if size != len(self.slots):
-            logger.println(f"invalid slot count received for container {self}, skipping further deserialization")
+            logger.println(
+                f"invalid slot count received for container {self}, skipping further deserialization"
+            )
             return False
 
         for slot in self.slots:

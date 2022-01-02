@@ -15,8 +15,7 @@ import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class FeatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):

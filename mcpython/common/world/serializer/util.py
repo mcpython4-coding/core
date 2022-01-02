@@ -16,4 +16,3 @@ This project is not official by mojang and does not relate to it.
 def chunk2region(cx, cz):
     # todo: move to util/math
     return round(cx) >> 5, round(cz) >> 5
-

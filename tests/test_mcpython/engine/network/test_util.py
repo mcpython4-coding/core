@@ -261,12 +261,19 @@ class TestBuffer(TestCase):
                 self.assertEqual(data[i], await read.read_any())
 
     async def test_named_offset_table_1(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (0, 8, 4.9))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         read = ReadBuffer(buffer.get_data())
 
@@ -279,12 +286,19 @@ class TestBuffer(TestCase):
         self.assertEqual(await table2.getByName("test2"), (0, 8, 4.9))
 
     async def test_named_offset_table_2(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (0, 8, 4.9))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         read = ReadBuffer(buffer.get_data())
 
@@ -295,7 +309,10 @@ class TestBuffer(TestCase):
         table2.writeData("test3", (90, 0, -7.9))
 
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table2, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table2,
+            lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]),
+        )
 
         read = ReadBuffer(buffer.get_data())
         table2 = await read.read_named_offset_table(read_entry)
@@ -305,51 +322,78 @@ class TestBuffer(TestCase):
         self.assertEqual(await table2.getByName("test3"), (90, 0, -7.9))
 
     async def test_named_offset_table_offset_1(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (0, 8, 4.5))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         read = ReadBuffer(buffer.get_data())
 
         async def read_entry(buf):
             return buf.read_int(), buf.read_uint(), buf.read_float()
 
-        self.assertEqual(await read.read_named_offset_table_entry("test", read_entry), (0, 8, 4.5))
+        self.assertEqual(
+            await read.read_named_offset_table_entry("test", read_entry), (0, 8, 4.5)
+        )
 
     async def test_named_offset_table_offset_2(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (-8, 12, 4.5))
         table.writeData("test3", (0, 9, 4.5))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         read = ReadBuffer(buffer.get_data())
 
         async def read_entry(buf):
             return buf.read_int(), buf.read_uint(), buf.read_float()
 
-        self.assertEqual(await read.read_named_offset_table_entry("test2", read_entry), (-8, 12, 4.5))
+        self.assertEqual(
+            await read.read_named_offset_table_entry("test2", read_entry), (-8, 12, 4.5)
+        )
 
     async def test_named_offset_table_offset_3(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (-8, 12, 4.5))
         table.writeData("test3", (0, 9, 4.5))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         read = ReadBuffer(buffer.get_data())
 
         async def read_entry(buf):
             return buf.read_int(), buf.read_uint(), buf.read_float()
 
-        await self.assertRaisesAsync(KeyError, read.read_named_offset_table_entry("invalid", read_entry))
+        await self.assertRaisesAsync(
+            KeyError, read.read_named_offset_table_entry("invalid", read_entry)
+        )
 
     async def assertRaisesAsync(self, expected_exception, coroutine):
         try:
@@ -359,13 +403,20 @@ class TestBuffer(TestCase):
         self.assertTrue(False)
 
     async def test_named_offset_multi_table_offset_1(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (-8, 12, 4.5))
         table.writeData("test3", (0, 9, 4.5))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         data = buffer.get_data()
         read = ReadBuffer(data)
@@ -373,16 +424,28 @@ class TestBuffer(TestCase):
         async def read_entry(buf):
             return buf.read_int(), buf.read_uint(), buf.read_float()
 
-        self.assertEqual(await read.collect_read_named_offset_table_multi_entry(["test2", "test"], read_entry), {(-8, 12, 4.5), (0, 8, 4.5)})
+        self.assertEqual(
+            await read.collect_read_named_offset_table_multi_entry(
+                ["test2", "test"], read_entry
+            ),
+            {(-8, 12, 4.5), (0, 8, 4.5)},
+        )
 
     async def test_named_offset_multi_table_offset_2(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (-8, 12, 4.5))
         table.writeData("test3", (0, 9, 4.5))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         data = buffer.get_data()
         read = ReadBuffer(data)
@@ -390,17 +453,28 @@ class TestBuffer(TestCase):
         async def read_entry(buf):
             return buf.read_int(), buf.read_uint(), buf.read_float()
 
-        await self.assertRaisesAsync(KeyError, read.collect_read_named_offset_table_multi_entry(["test2", "invalid"], read_entry))
+        await self.assertRaisesAsync(
+            KeyError,
+            read.collect_read_named_offset_table_multi_entry(
+                ["test2", "invalid"], read_entry
+            ),
+        )
 
     async def test_named_offset_table_write(self):
-        from mcpython.engine.network.util import ReadBuffer, WriteBuffer, TableIndexedOffsetTable
+        from mcpython.engine.network.util import (
+            ReadBuffer,
+            TableIndexedOffsetTable,
+            WriteBuffer,
+        )
+
         table = TableIndexedOffsetTable()
         table.writeData("test", (0, 8, 4.5))
         table.writeData("test2", (-8, 12, 4.5))
         table.writeData("test3", (0, 9, 4.5))
         buffer = WriteBuffer()
-        await buffer.write_named_offset_table(table,
-                                              lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2]))
+        await buffer.write_named_offset_table(
+            table, lambda buf, e: buf.write_int(e[0]).write_uint(e[1]).write_float(e[2])
+        )
 
         data = buffer.get_data()
         read = ReadBuffer(data)

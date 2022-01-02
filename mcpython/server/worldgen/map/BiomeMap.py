@@ -18,8 +18,7 @@ import typing
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
@@ -37,13 +36,13 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         x, z = self.chunk.get_position()
         sx, sz = x * 16, z * 16
 
-        data = iter([buffer.read_uint() for _ in range(16*16)])
+        data = iter([buffer.read_uint() for _ in range(16 * 16)])
 
         biomes = await buffer.collect_list(lambda: buffer.read_string(size_size=1))
 
         for x, z in itertools.product(range(16), range(16)):
             index = next(data)
-            self.set_at_xz(x+sx, z+sz, biomes[index-1] if index != 0 else None)
+            self.set_at_xz(x + sx, z + sz, biomes[index - 1] if index != 0 else None)
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super().write_to_network_buffer(buffer)
@@ -53,7 +52,7 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         table = []
 
         for x, z in itertools.product(range(16), range(16)):
-            biome = self.get_at_xz(x+sx, z+sz)
+            biome = self.get_at_xz(x + sx, z + sz)
 
             if biome is None:
                 buffer.write_uint(0)
@@ -62,7 +61,7 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
                     table.append(biome)
                     buffer.write_uint(len(table))
                 else:
-                    buffer.write_uint(table.index(biome)+1)
+                    buffer.write_uint(table.index(biome) + 1)
 
         await buffer.write_list(table, lambda e: buffer.write_string(e, size_size=1))
 

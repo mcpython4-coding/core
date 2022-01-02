@@ -17,8 +17,7 @@ import typing
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
@@ -36,7 +35,7 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
         cz *= 16
 
         for x, z in itertools.product(range(16), range(16)):
-            buffer.write_float(self.get_at_xz(cx+x, cz+z))
+            buffer.write_float(self.get_at_xz(cx + x, cz + z))
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
@@ -46,7 +45,7 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
         cz *= 16
 
         for x, z in itertools.product(range(16), range(16)):
-            self.set_at_xz(x+cx, z+cz, buffer.read_float())
+            self.set_at_xz(x + cx, z + cz, buffer.read_float())
 
     def get_at_xz(self, x: int, z: int) -> float:
         return self.temperature_map[x, z] if (x, z) in self.temperature_map else 0

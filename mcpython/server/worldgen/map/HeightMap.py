@@ -17,8 +17,7 @@ import typing
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
@@ -51,16 +50,21 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
                 lambda e: buffer.write_int(e[0]).write_int(e[1]),
             )
 
-        await buffer.write_list([
-            self.get_at_xz(x+cx, z+cz)
-            for x, z in itertools.product(range(16), range(16))
-        ], write_part)
+        await buffer.write_list(
+            [
+                self.get_at_xz(x + cx, z + cz)
+                for x, z in itertools.product(range(16), range(16))
+            ],
+            write_part,
+        )
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
 
         async def read_part():
-            return await buffer.collect_list(lambda: (buffer.read_int(), buffer.read_int()))
+            return await buffer.collect_list(
+                lambda: (buffer.read_int(), buffer.read_int())
+            )
 
         data = await buffer.collect_list(read_part)
         cx, cz = self.chunk.get_position()
@@ -68,7 +72,7 @@ class HeightMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         cz *= 16
 
         for x, z in itertools.product(range(16), range(16)):
-            self.set_at_xz(x+cx, z+cz, data.pop(0))
+            self.set_at_xz(x + cx, z + cz, data.pop(0))
 
     def get_at_xz(self, x: int, z: int) -> typing.List[typing.Tuple[int, int]]:
         return self.height_map[x, z] if (x, z) in self else [(0, 0)]

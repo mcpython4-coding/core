@@ -15,12 +15,12 @@ import gzip
 import itertools
 import typing
 
-from mcpython.engine.world.AbstractInterface import IChunk
 import mcpython.common.world.serializer.IDataSerializer as IDataSerializer
 from mcpython import shared
 from mcpython.common.world.serializer.util import chunk2region
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.engine.world.AbstractInterface import IChunk
 
 
 @shared.registry
@@ -62,16 +62,17 @@ class Chunk(IDataSerializer.IDataSerializer):
         height = block_data_buffer.read_uint()
         for x, y, z in itertools.product(range(16), range(height), range(16)):
             index = block_data_buffer.read_uint()
-            position = (x+dcx, y, z+dcz)
+            position = (x + dcx, y, z + dcz)
 
             if index == 0:
                 await chunk_instance.remove_block(position)
             else:
-                block_buffer = ReadBuffer(palette[index-1])
+                block_buffer = ReadBuffer(palette[index - 1])
                 name = block_buffer.read_string()
                 visible = block_buffer.read_bool()
 
-                if name in cls.IGNORED_BLOCKS: continue
+                if name in cls.IGNORED_BLOCKS:
+                    continue
 
                 await cls.add_block_to_world(
                     chunk_instance, block_buffer, immediate, position, name, visible
@@ -81,12 +82,15 @@ class Chunk(IDataSerializer.IDataSerializer):
             type_name = read_buffer.read_string()
             buf = ReadBuffer(read_buffer.read_bytes())
 
-            if type_name in cls.IGNORED_ENTITIES: return
+            if type_name in cls.IGNORED_ENTITIES:
+                return
 
             try:
                 await shared.entity_manager.registry[type_name].create_from_buffer(buf)
             except:
-                logger.print_exception(f"cannot deserialize entity {type_name} in chunk {chunk} (dimension: {dimension})")
+                logger.print_exception(
+                    f"cannot deserialize entity {type_name} in chunk {chunk} (dimension: {dimension})"
+                )
 
             # todo: do we need to do anything else?
 
@@ -100,11 +104,15 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         async def read_map_value():
             if current_type_name not in chunk_instance.data_maps:
-                logger.println(f"[DATA MAP][WARN] skipping deserialization of map {current_type_name}")
+                logger.println(
+                    f"[DATA MAP][WARN] skipping deserialization of map {current_type_name}"
+                )
                 read_buffer.read_bytes()
                 return
 
-            await chunk_instance.data_maps[current_type_name].read_from_network_buffer(read_buffer.read_sub_buffer_dynamic_size())
+            await chunk_instance.data_maps[current_type_name].read_from_network_buffer(
+                read_buffer.read_sub_buffer_dynamic_size()
+            )
 
         await read_buffer.read_dict(read_map_key, read_map_value)
 
@@ -117,7 +125,13 @@ class Chunk(IDataSerializer.IDataSerializer):
 
     @classmethod
     async def add_block_to_world(
-        cls, chunk_instance, block_buffer: ReadBuffer, immediate, position, name, visible
+        cls,
+        chunk_instance,
+        block_buffer: ReadBuffer,
+        immediate,
+        position,
+        name,
+        visible,
     ):
         # helper for setting up the block
         async def add(instance):
@@ -135,7 +149,10 @@ class Chunk(IDataSerializer.IDataSerializer):
 
     @classmethod
     async def save(cls, data, save_file, dimension: int, chunk: tuple, override=False):
-        if dimension not in shared.world.dimensions or chunk not in shared.world.dimensions[dimension].chunks:
+        if (
+            dimension not in shared.world.dimensions
+            or chunk not in shared.world.dimensions[dimension].chunks
+        ):
             return
 
         region = chunk2region(*chunk)
@@ -158,19 +175,23 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         block_buffer.write_uint(256)
         for x, y, z in itertools.product(range(16), range(256), range(16)):
-            block = chunk_instance.get_block((x+dcx, y, z+dcz), none_if_str=True)
+            block = chunk_instance.get_block((x + dcx, y, z + dcz), none_if_str=True)
 
             if block is None or block.NAME in cls.IGNORED_BLOCKS:
                 block_buffer.write_uint(0)
             else:
                 block_instance_buffer = WriteBuffer()
                 block_instance_buffer.write_string(block.NAME)
-                block_instance_buffer.write_bool(bool(block.face_info.faces) if block.face_info is not None else False)
+                block_instance_buffer.write_bool(
+                    bool(block.face_info.faces)
+                    if block.face_info is not None
+                    else False
+                )
                 await block.write_to_network_buffer(block_instance_buffer)
 
                 block_data = block_instance_buffer.get_data()
                 if block_data in palette:
-                    block_buffer.write_uint(palette.index(block_data)+1)
+                    block_buffer.write_uint(palette.index(block_data) + 1)
                 else:
                     palette.append(block_data)
                     block_buffer.write_uint(len(palette))
@@ -189,7 +210,14 @@ class Chunk(IDataSerializer.IDataSerializer):
             await entity.write_to_network_buffer(buf)
             entity_buffer.write_bytes(buf.get_data())
 
-        await entity_buffer.write_list((e for e in chunk_instance.get_entities() if e.NAME not in cls.IGNORED_ENTITIES), write_entity)
+        await entity_buffer.write_list(
+            (
+                e
+                for e in chunk_instance.get_entities()
+                if e.NAME not in cls.IGNORED_ENTITIES
+            ),
+            write_entity,
+        )
         target_buffer.write_sub_buffer(entity_buffer)
 
         map_buffer = WriteBuffer()

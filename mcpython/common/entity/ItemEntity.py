@@ -58,7 +58,9 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 else self.item_stack.get_item_name()
             ]()
         except KeyError:
-            self.test_block = shared.registry.get_by_name("minecraft:block")["minecraft:oak_fence"]()
+            self.test_block = shared.registry.get_by_name("minecraft:block")[
+                "minecraft:oak_fence"
+            ]()
 
         # Set the block dimension so the block can do cool stuff with rendering if it wants to
         self.test_block.dimension = self.dimension.get_name()

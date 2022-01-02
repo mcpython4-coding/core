@@ -69,7 +69,9 @@ class BlockDataFixer(AbstractNetworkFixer, ABC):
                     ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
 
         elif cls.BLOCK_NAME is not None:
-            logger.println(f"[DFU][WARN] tried to register a data fixer for none-existing block {cls.BLOCK_NAME}")
+            logger.println(
+                f"[DFU][WARN] tried to register a data fixer for none-existing block {cls.BLOCK_NAME}"
+            )
 
 
 class ItemDataFixer(AbstractNetworkFixer, ABC):
@@ -100,7 +102,9 @@ class ItemDataFixer(AbstractNetworkFixer, ABC):
                     ].NETWORK_BUFFER_DATA_FIXERS[cls.BEFORE_VERSION] = cls
 
         elif cls.ITEM_NAME is not None:
-            logger.println(f"[DFU][WARN] tried to register a data fixer for none-existing item {cls.ITEM_NAME}")
+            logger.println(
+                f"[DFU][WARN] tried to register a data fixer for none-existing item {cls.ITEM_NAME}"
+            )
 
 
 class EntityDataFixer(AbstractNetworkFixer, ABC):
@@ -113,6 +117,7 @@ class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
     """
     Handler for fixing chunk data maps
     """
+
     MAP_NAME: str = None
 
     @classmethod
@@ -123,11 +128,12 @@ class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
             target.DATA_FIXERS[cls.BEFORE_VERSION] = cls
 
         elif cls.MAP_NAME is not None:
-            logger.println(f"[DFU][WARN] tried to register a data fixer for a non-existent DataMap named {cls.MAP_NAME}")
+            logger.println(
+                f"[DFU][WARN] tried to register a data fixer for a non-existent DataMap named {cls.MAP_NAME}"
+            )
 
 
 class ContainerDataFixer(AbstractNetworkFixer, ABC):
     @classmethod
     def bind(cls, inventory):
         inventory.DATA_FIXERS[cls.BEFORE_VERSION] = cls
-

@@ -142,10 +142,7 @@ class AbstractEntity(
         version = buffer.read_uint()
 
         if version != self.VERSION:
-            while (
-                version in self.DATA_FIXERS
-                and version != self.VERSION
-            ):
+            while version in self.DATA_FIXERS and version != self.VERSION:
                 fixer = self.DATA_FIXERS[version]
                 write = WriteBuffer()
 
