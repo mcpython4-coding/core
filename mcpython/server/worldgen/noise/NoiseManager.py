@@ -15,6 +15,8 @@ import importlib
 import typing
 
 from mcpython.engine import logger
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 from mcpython.server.worldgen.noise.INoiseImplementation import (
     EQUAL_MERGER,
     INoiseImplementation,
@@ -105,26 +107,24 @@ class NoiseManager:
     def calculate_part_seed(self, part: str):
         return hash((hash(part), self.seed))
 
-    def serialize_seed_map(self) -> dict:
-        return {name: noise.seed for (noise, name) in self.noise_instances}
+    async def serialize_seed_map(self, buffer: WriteBuffer):
+        await buffer.write_list(self.noise_instances, lambda e: buffer.write_string(e[1]).write_long(e[0].seed))
+        buffer.write_string(self.default_implementation)
 
-    def deserialize_seed_map(self, data: dict):
-        if data is None:
-            logger.println(
-                "[WARN] seed map is empty, skipping deserialization; This indicates a fatal error"
-            )
-            return
+    async def deserialize_seed_map(self, buffer: ReadBuffer):
+        d = await buffer.collect_list(lambda: (buffer.read_string(), buffer.read_long()))
+        mapped = {e[0]: e[1] for e in d}
 
         for noise, name in self.noise_instances:
-            if name in data:
-                noise.set_seed(data[name])
-                del data[name]
+            if name in mapped:
+                noise.set_seed(mapped[name])
+                del mapped[name]
 
-        if "minecraft:noise_implementation" in data:
-            self.set_noise_implementation(data["minecraft:noise_implementation"])
+        self.default_implementation = buffer.read_string()
+        self.set_noise_implementation(self.default_implementation)
 
-        if len(data) > 0:
-            logger.println("found to many seed entries: ", data)
+        if len(mapped) > 0:
+            logger.println("found to many seed entries: ", mapped)
 
 
 manager = NoiseManager()

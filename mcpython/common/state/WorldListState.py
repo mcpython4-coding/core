@@ -13,9 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import asyncio
 import datetime
-import json
 import os
 import shutil
+import time
 import typing
 
 import mcpython.common.data.DataPacks
@@ -37,6 +37,7 @@ from pyglet.window import key, mouse
 
 from . import AbstractState
 from .ui import UIPartButton, UIPartScrollBar
+from ...util import picklemagic
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
     asyncio.get_event_loop()
@@ -218,24 +219,20 @@ class WorldList(AbstractState.AbstractState):
             path = os.path.join(
                 mcpython.common.world.SaveFile.SAVE_DIRECTORY, directory
             ).replace("\\", "/")
-            if os.path.isdir(path) and os.path.isfile(path + "/level.json"):
+            if os.path.isdir(path) and os.path.isfile(path + "/level.dat"):
                 if os.path.isfile(path + "/icon.png"):
                     icon = pyglet.image.load(path + "/icon.png")
                 else:
                     icon = MISSING_TEXTURE
 
                 sprite = pyglet.sprite.Sprite(icon)
-                with open(path + "/level.json") as f:
-                    data = json.load(f)
+                delta = os.path.getmtime(path+"/level.dat")
+                date = time.localtime(delta)
+                modification_time = time.strftime('%d/%m/%Y', date)
+                edit = "last edited: "+modification_time
 
-                edit_date = datetime.datetime.fromtimestamp(
-                    os.path.getmtime(path + "/level.json")
-                )
-                diff = datetime.datetime.now() - edit_date
-                if diff.days < 5:
-                    edit = "{} days ago".format(diff.days)
-                else:
-                    edit = "on {}".format(edit_date.isoformat())
+                with open(path+"/level.dat", mode="rb") as f:
+                    data = picklemagic.load(f)
 
                 labels = [
                     pyglet.text.Label(directory),
@@ -250,9 +247,9 @@ class WorldList(AbstractState.AbstractState):
                         )
                     ),
                 ]
-                self.world_data.append((edit_date, sprite, labels, path))
+                self.world_data.append((delta, sprite, labels, path))
 
-        self.world_data.sort(key=lambda d: -d[0].timestamp())
+        self.world_data.sort(key=lambda d: -d[0])
         self.recalculate_sprite_position()
         self.parts[-1].active = (wy - 140) / 60 < len(self.world_data)
 

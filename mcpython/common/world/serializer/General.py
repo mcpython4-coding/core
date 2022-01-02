@@ -21,6 +21,8 @@ import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.getskin
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 @shared.registry
@@ -29,7 +31,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
     @classmethod
     async def load(cls, save_file):
-        data = await save_file.access_file_json_async("level.json")
+        data = await save_file.access_file_pickle_async("level.dat")
         if data is None:
             raise mcpython.common.world.serializer.IDataSerializer.MissingSaveException(
                 "level.json not found!"
@@ -137,19 +139,19 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             await shared.world.join_dimension_async(data["active_dimension"])
 
         wd = data["world_gen_info"]
-        mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation = wd[
-            "noise_implementation"
-        ]
         shared.world_generation_handler.deserialize_chunk_generator_info(
             wd["chunk_generators"]
         )
-        mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(
-            wd["seeds"]
+        await mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(
+            ReadBuffer(wd["seeds"])
         )
         mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
 
     @classmethod
     async def save(cls, data, save_file):
+        seed_buffer = WriteBuffer()
+        await mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(seed_buffer)
+
         data = {
             "storage version": save_file.version,  # the storage version stored in
             "player name": shared.world.get_active_player().name
@@ -172,11 +174,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             "world_gen_info": {
                 "noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation,
                 "chunk_generators": shared.world_generation_handler.serialize_chunk_generator_info(),
-                "seeds": mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map().update(
-                    {
-                        "minecraft:noise_implementation": mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation
-                    }
-                ),
+                "seeds": seed_buffer.get_data(),
             },
         }
-        await save_file.dump_file_json_async("level.json", data)
+        await save_file.dump_file_pickle_async("level.dat", data)
