@@ -134,6 +134,7 @@ class RegionFileAccess:
         self.table.writeData(f"{cx}::{cz}", data)
 
     async def dump(self):
+        # todo: add scheduler for dumping region files to storage for later
         buffer = WriteBuffer()
         await self.table.assemble(buffer, _write_bin)
 

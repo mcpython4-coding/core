@@ -17,6 +17,7 @@ from abc import ABC
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
+from mcpython.engine.network.util import IBufferSerializeAble
 
 
 class ChunkLoadTicketType(enum.Enum):
@@ -85,7 +86,7 @@ class ISupportWorldInterface(ABC):
         raise NotImplementedError
 
 
-class IChunk(ISupportWorldInterface, ABC):
+class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
     """
     Abstract class for chunks
     Belows follows an API description

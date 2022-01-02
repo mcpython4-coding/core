@@ -61,42 +61,6 @@ class GameRuleRemovalFixer(IPartFixer):
         await save_file.dump_file_json_async("gamerules.json", data)
 
 
-class WorldConfigFixer(IPartFixer):
-    """
-    Class representing a fix for the config-entry
-    """
-
-    TARGET_SERIALIZER_NAME = "minecraft:general_config"
-
-    @classmethod
-    async def fix(cls, save_file, data: dict) -> dict:
-        raise NotImplementedError()
-
-    @classmethod
-    async def apply(cls, save_file, *args):
-        data = await save_file.access_file_json_async("level.json")
-        data["config"] = await cls.fix(save_file, data["config"])
-        save_file.write_file_json("level.json", data)
-
-
-class WorldGeneralFixer(IPartFixer):
-    """
-    Class representing a fix for the config-entry
-    """
-
-    TARGET_SERIALIZER_NAME = "minecraft:general"
-
-    @classmethod
-    async def fix(cls, save_file, data: dict) -> dict:
-        raise NotImplementedError()
-
-    @classmethod
-    async def apply(cls, save_file, *args):
-        data = await save_file.access_file_json_async("level.json")
-        data = await cls.fix(save_file, data)
-        save_file.write_file_json("level.json", data)
-
-
 class PlayerDataFixer(IPartFixer):
     """
     Fixer for fixing player data

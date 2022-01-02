@@ -137,3 +137,10 @@ class ContainerDataFixer(AbstractNetworkFixer, ABC):
     @classmethod
     def bind(cls, inventory):
         inventory.DATA_FIXERS[cls.BEFORE_VERSION] = cls
+
+
+class ChunkDataFixer(AbstractNetworkFixer, ABC):
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        from mcpython.common.world.serializer.Chunk import Chunk
+        Chunk.DATA_FIXERS[cls.BEFORE_VERSION] = cls

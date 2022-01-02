@@ -12,11 +12,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import gzip
+import io
 import itertools
 import typing
 
 import mcpython.common.world.serializer.IDataSerializer as IDataSerializer
 from mcpython import shared
+from mcpython.common.world.datafixers.NetworkFixers import ChunkDataFixer
 from mcpython.common.world.serializer.util import chunk2region
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
@@ -29,6 +31,9 @@ class Chunk(IDataSerializer.IDataSerializer):
 
     IGNORED_BLOCKS: typing.Set[str] = set()
     IGNORED_ENTITIES: typing.Set[str] = {"minecraft:player"}
+
+    CHUNK_DATA_VERSION = 0
+    DATA_FIXERS: typing.Dict[int, ChunkDataFixer] = {}
 
     @classmethod
     async def load(
@@ -49,6 +54,27 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         if read_buffer is None:
             return
+
+        version = read_buffer.read_uint()
+
+        if version != cls.CHUNK_DATA_VERSION:
+            while version in cls.DATA_FIXERS and version != cls.CHUNK_DATA_VERSION:
+                fixer = cls.DATA_FIXERS[version]
+
+                target = WriteBuffer()
+                result = await fixer.apply2stream(chunk_instance, read_buffer, target)
+
+                if result:
+                    return
+
+                read_buffer.stream = io.BytesIO(target.get_data())
+
+            data = read_buffer.stream.read()
+
+            await region.write_chunk_data(*chunk, data)
+            await region.dump()
+
+            read_buffer.stream = io.BytesIO(data)
 
         # Don't generate stuff while we are saving stuff
 
@@ -162,13 +188,12 @@ class Chunk(IDataSerializer.IDataSerializer):
         region = await save_file.get_region_access(dimension, region)
         target_buffer = WriteBuffer()
 
+        target_buffer.write_int(cls.CHUNK_DATA_VERSION)
+
         target_buffer.write_bool(chunk_instance.is_generated())
 
         # When doing stuff, please make sure that nothing fancy happens with chunks
         shared.world_generation_handler.enable_generation = False
-
-        # Load the block palette
-        # list of {"custom": <some stuff>, "name": <name>, "shown": <shown>, ...}
 
         block_buffer = WriteBuffer()
         palette = []
