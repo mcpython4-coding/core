@@ -75,7 +75,7 @@ class Barrel(IAllDirectionOrientableBlock, SimpleInventoryWrappingContainer):
             return False
 
     async def get_all_inventories(self) -> tuple:
-        return self.inventory,
+        return (self.inventory,)
 
     async def set_model_state(self, state: dict):
         await super().set_model_state(state)

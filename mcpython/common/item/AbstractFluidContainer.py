@@ -18,7 +18,9 @@ import mcpython.common.item.AbstractItem
 from mcpython.common.fluid.FluidContainer import FluidContainer
 
 
-class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, FluidContainer, ABC):
+class AbstractFluidContainer(
+    mcpython.common.item.AbstractItem.AbstractItem, FluidContainer, ABC
+):
     """
     Common base class for container-like items holding fluids
     """

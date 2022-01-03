@@ -78,7 +78,7 @@ def create_shulker_box(name):
             await shared.inventory_handler.hide(self.inventory)
 
         async def get_all_inventories(self) -> tuple:
-            return self.inventory,
+            return (self.inventory,)
 
         @classmethod
         def modify_block_item(

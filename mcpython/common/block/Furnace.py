@@ -16,7 +16,9 @@ import typing
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
 from mcpython.client.gui.InventoryFurnaceRenderer import InventoryFurnaceRenderer
-from mcpython.common.block.IBlockContainerExposer import SimpleInventoryWrappingContainer
+from mcpython.common.block.IBlockContainerExposer import (
+    SimpleInventoryWrappingContainer,
+)
 from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide
@@ -88,15 +90,15 @@ class Furnace(IHorizontalOrientableBlock, SimpleInventoryWrappingContainer):
             return False
 
     async def get_all_inventories(self) -> tuple:
-        return self.inventory,
+        return (self.inventory,)
 
     async def get_slots_for_side(self, side: EnumSide) -> typing.Iterable:
         if side == EnumSide.TOP:
-            return self.inventory.slots[36],
+            return (self.inventory.slots[36],)
         elif side == EnumSide.DOWN:
-            return self.inventory.slots[38],
+            return (self.inventory.slots[38],)
         else:
-            return self.inventory.slots[37],
+            return (self.inventory.slots[37],)
 
     async def on_block_remove(self, reason):
         # todo: add special flag for not dropping

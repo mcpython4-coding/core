@@ -155,7 +155,7 @@ class Chest(
             return False
 
     async def get_all_inventories(self) -> tuple:
-        return self.inventory,
+        return (self.inventory,)
 
     def get_view_bbox(self):
         return BBOX

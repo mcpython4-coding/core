@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -31,7 +31,12 @@ class IBlockContainerExposer:
         return await self.get_all_inventories()
 
     async def get_slots_for_side(self, side: EnumSide) -> typing.Iterable:
-        return itertools.chain(*(inventory.get_interaction_slots() for inventory in await self.get_inventories_for_side(side)))
+        return itertools.chain(
+            *(
+                inventory.get_interaction_slots()
+                for inventory in await self.get_inventories_for_side(side)
+            )
+        )
 
     async def get_underlying_item_stacks(
         self, side: EnumSide
@@ -90,9 +95,9 @@ class SimpleInventoryWrappingContainer(IBlockContainerExposer, ABC):
     async def get_underlying_item_stacks(
         self, side: EnumSide
     ) -> typing.Iterable[ItemStack]:
-        return itertools.chain(*(
-            slot.get_itemstack() for slot in await self.get_slots_for_side(side)
-        ))
+        return itertools.chain(
+            *(slot.get_itemstack() for slot in await self.get_slots_for_side(side))
+        )
 
     async def could_accept_item(
         self,
@@ -101,8 +106,14 @@ class SimpleInventoryWrappingContainer(IBlockContainerExposer, ABC):
     ) -> bool:
         working_stack = item.copy()
         for slot in await self.get_slots_for_side(side):
-            if slot.is_item_allowed(working_stack) and (slot.get_itemstack().is_empty() or slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE):
-                delta = min(slot.get_itemstack().item.STACK_SIZE - slot.get_itemstack().amount, working_stack.amount)
+            if slot.is_item_allowed(working_stack) and (
+                slot.get_itemstack().is_empty()
+                or slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE
+            ):
+                delta = min(
+                    slot.get_itemstack().item.STACK_SIZE - slot.get_itemstack().amount,
+                    working_stack.amount,
+                )
                 working_stack.add_amount(-delta)
                 if working_stack.amount <= 0:
                     return True
@@ -117,9 +128,14 @@ class SimpleInventoryWrappingContainer(IBlockContainerExposer, ABC):
     ) -> bool:
         working_stack = item.copy()
         for slot in await self.get_slots_for_side(side):
-            if slot.is_item_allowed(working_stack) and (slot.get_itemstack().is_empty() or slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE):
-                delta = min(slot.get_itemstack().item.STACK_SIZE - slot.get_itemstack().amount,
-                            working_stack.amount)
+            if slot.is_item_allowed(working_stack) and (
+                slot.get_itemstack().is_empty()
+                or slot.get_itemstack().amount < slot.get_itemstack().item.STACK_SIZE
+            ):
+                delta = min(
+                    slot.get_itemstack().item.STACK_SIZE - slot.get_itemstack().amount,
+                    working_stack.amount,
+                )
                 working_stack.add_amount(-delta)
                 slot.get_itemstack().add_amount(delta)
                 await slot.call_update_async()
