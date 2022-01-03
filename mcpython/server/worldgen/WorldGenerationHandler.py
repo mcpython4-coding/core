@@ -25,8 +25,7 @@ import mcpython.server.worldgen.mode
 import mcpython.server.worldgen.WorldGenerationTaskArrays
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class WorldGenerationHandler:
@@ -87,9 +86,9 @@ class WorldGenerationHandler:
 
         async def pack_dimension(dimension):
             buffer.write_string(dimension.get_name())
-            await buffer.write_any(dimension.get_world_generation_config_entry(
-                "configname"
-            ))
+            await buffer.write_any(
+                dimension.get_world_generation_config_entry("configname")
+            )
 
         await buffer.write_list(shared.world.dimensions.values(), pack_dimension)
 
@@ -97,7 +96,9 @@ class WorldGenerationHandler:
         version = buffer.read_uint()
 
         if version != self.CHUNK_GENERATOR_VERSION:
-            raise RuntimeError(f"Versions do not match: {version} != {self.CHUNK_GENERATOR_VERSION}")
+            raise RuntimeError(
+                f"Versions do not match: {version} != {self.CHUNK_GENERATOR_VERSION}"
+            )
 
         async def unpack_dimension():
             name = buffer.read_string()
@@ -229,7 +230,7 @@ class WorldGenerationHandler:
                             layer_name, default={}
                         )
                     ),
-                    **layer_config
+                    **layer_config,
                 )
                 layer_config.dimension = dimension.get_dimension_id()
             else:

@@ -35,10 +35,10 @@ from mcpython import shared
 from mcpython.util.annotation import onlyInClient
 from pyglet.window import key, mouse
 
-from . import AbstractState
-from .ui import UIPartButton, UIPartScrollBar
 from ...engine.network.util import ReadBuffer
 from ...util import picklemagic
+from . import AbstractState
+from .ui import UIPartButton, UIPartScrollBar
 
 MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
     asyncio.get_event_loop()
@@ -227,26 +227,26 @@ class WorldList(AbstractState.AbstractState):
                     icon = MISSING_TEXTURE
 
                 sprite = pyglet.sprite.Sprite(icon)
-                delta = os.path.getmtime(path+"/level.dat")
+                delta = os.path.getmtime(path + "/level.dat")
                 date = time.localtime(delta)
-                modification_time = time.strftime('%d/%m/%Y', date)
-                edit = "last edited: "+modification_time
+                modification_time = time.strftime("%d/%m/%Y", date)
+                edit = "last edited: " + modification_time
 
-                with open(path+"/level.dat", mode="rb") as f:
+                with open(path + "/level.dat", mode="rb") as f:
                     data = f.read()
 
                 read_buffer = ReadBuffer(data)
                 save_version = read_buffer.read_ulong()
                 version_id = read_buffer.read_ulong()
                 player_name = read_buffer.read_string()
-                mods = await read_buffer.read_dict(read_buffer.read_string, read_buffer.read_any)
+                mods = await read_buffer.read_dict(
+                    read_buffer.read_string, read_buffer.read_any
+                )
 
                 labels = [
                     pyglet.text.Label(directory),
                     pyglet.text.Label(
-                        "last played in version '{}' {}".format(
-                            version_id, edit
-                        )
+                        "last played in version '{}' {}".format(version_id, edit)
                     ),
                     pyglet.text.Label(
                         "last loaded with {} mod{}".format(

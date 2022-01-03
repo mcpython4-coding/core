@@ -12,13 +12,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
-
 import typing
 
 import mcpython.common.world.datafixers.IDataFixer
 from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 @shared.registry
@@ -45,7 +43,9 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
 
         players = await buffer.collect_list(lambda: buffer.read_bytes())
 
-        current_player = shared.world.get_active_player().name if shared.IS_CLIENT else None
+        current_player = (
+            shared.world.get_active_player().name if shared.IS_CLIENT else None
+        )
 
         async def load_player(player_data: bytes):
             player_buffer = ReadBuffer(player_data)
@@ -84,7 +84,9 @@ class PlayerData(mcpython.common.world.serializer.IDataSerializer.IDataSerialize
             else:
                 return -1, data
 
-        additional = await asyncio.gather(*(assemble_player_data(p) for p in shared.world.players.values()))
+        additional = await asyncio.gather(
+            *(assemble_player_data(p) for p in shared.world.players.values())
+        )
 
         for index, data in additional:
             if index == -1:

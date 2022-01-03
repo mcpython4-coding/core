@@ -21,8 +21,7 @@ import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.getskin
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 @shared.registry
@@ -46,15 +45,25 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         version_id = read_buffer.read_ulong()
         player_name = read_buffer.read_string()
 
-        mods = await read_buffer.read_dict(read_buffer.read_string, read_buffer.read_any)
-        chunks_to_generate = await read_buffer.collect_list(lambda: (read_buffer.read_int(), read_buffer.read_long(), read_buffer.read_long()))
+        mods = await read_buffer.read_dict(
+            read_buffer.read_string, read_buffer.read_any
+        )
+        chunks_to_generate = await read_buffer.collect_list(
+            lambda: (
+                read_buffer.read_int(),
+                read_buffer.read_long(),
+                read_buffer.read_long(),
+            )
+        )
 
         await cls.prepare_player(player_name)
 
         shared.world.config = await read_buffer.read_any()
         await shared.event_handler.call_async("seed:set")
 
-        dimensions = await read_buffer.read_dict(read_buffer.read_int, read_buffer.read_string)
+        dimensions = await read_buffer.read_dict(
+            read_buffer.read_int, read_buffer.read_string
+        )
         current_dimension = read_buffer.read_int()
 
         await cls.prepare_mods(mods, save_file)
@@ -68,8 +77,12 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
             await shared.world.join_dimension_async(current_dimension)
 
         default_noise_implementation = read_buffer.read_string()
-        await shared.world_generation_handler.deserialize_chunk_generator_info(read_buffer)
-        await mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(read_buffer)
+        await shared.world_generation_handler.deserialize_chunk_generator_info(
+            read_buffer
+        )
+        await mcpython.server.worldgen.noise.NoiseManager.manager.deserialize_seed_map(
+            read_buffer
+        )
         mcpython.server.worldgen.noise.NoiseManager.manager.set_noise_implementation()
 
     @classmethod
@@ -81,13 +94,9 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
                         modname
                     )
                 )
-            elif shared.mod_loader.mods[modname].version != tuple(
-                    mods[modname]
-            ):
+            elif shared.mod_loader.mods[modname].version != tuple(mods[modname]):
                 try:
-                    await save_file.apply_mod_fixer_async(
-                        modname, tuple(mods[modname])
-                    )
+                    await save_file.apply_mod_fixer_async(modname, tuple(mods[modname]))
                 except mcpython.common.world.SaveFile.DataFixerNotFoundException:
                     if modname != "minecraft":
                         logger.println(
@@ -165,17 +174,44 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
 
         target_buffer.write_ulong(save_file.version)
         target_buffer.write_ulong(mcpython.common.config.VERSION_ID)
-        target_buffer.write_string(shared.world.get_active_player().name if shared.IS_CLIENT else "")
+        target_buffer.write_string(
+            shared.world.get_active_player().name if shared.IS_CLIENT else ""
+        )
 
-        await target_buffer.write_dict(shared.mod_loader.mods, target_buffer.write_string, lambda e: target_buffer.write_any(e.version))
-        await target_buffer.write_list(shared.world_generation_handler.task_handler.chunks, lambda chunk: target_buffer.write_int(chunk.get_dimension().get_dimension_id()).write_long(chunk.get_position()[0]).write_long(chunk.get_position()[1]))
+        await target_buffer.write_dict(
+            shared.mod_loader.mods,
+            target_buffer.write_string,
+            lambda e: target_buffer.write_any(e.version),
+        )
+        await target_buffer.write_list(
+            shared.world_generation_handler.task_handler.chunks,
+            lambda chunk: target_buffer.write_int(
+                chunk.get_dimension().get_dimension_id()
+            )
+            .write_long(chunk.get_position()[0])
+            .write_long(chunk.get_position()[1]),
+        )
 
         await target_buffer.write_any(shared.world.config)
-        await target_buffer.write_dict(shared.world.dimensions, target_buffer.write_int, lambda e: target_buffer.write_string(e.get_name()))
-        target_buffer.write_int(shared.world.get_active_player().dimension.get_dimension_id() if shared.IS_CLIENT else 0)
+        await target_buffer.write_dict(
+            shared.world.dimensions,
+            target_buffer.write_int,
+            lambda e: target_buffer.write_string(e.get_name()),
+        )
+        target_buffer.write_int(
+            shared.world.get_active_player().dimension.get_dimension_id()
+            if shared.IS_CLIENT
+            else 0
+        )
 
-        target_buffer.write_string(mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation)
-        await shared.world_generation_handler.serialize_chunk_generator_info(target_buffer)
-        await mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(target_buffer)
+        target_buffer.write_string(
+            mcpython.server.worldgen.noise.NoiseManager.manager.default_implementation
+        )
+        await shared.world_generation_handler.serialize_chunk_generator_info(
+            target_buffer
+        )
+        await mcpython.server.worldgen.noise.NoiseManager.manager.serialize_seed_map(
+            target_buffer
+        )
 
         await save_file.dump_via_network_buffer("level.dat", target_buffer)

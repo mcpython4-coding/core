@@ -56,4 +56,3 @@ class GameRuleRemovalFixer(IPartFixer):
             if name in cls.TARGET_GAMERULE_NAME:
                 del data[name]
         await save_file.dump_file_json_async("gamerules.json", data)
-

@@ -542,7 +542,9 @@ class TestBuffer(TestCase):
         buffer.write_int(1025)
 
         read_buffer = ReadBuffer(buffer.get_data())
-        data = await read_buffer.read_single_element_from_equal_spaced_list(3, ReadBuffer.read_int)
+        data = await read_buffer.read_single_element_from_equal_spaced_list(
+            3, ReadBuffer.read_int
+        )
 
         self.assertEqual(data, 3)
 
@@ -554,7 +556,9 @@ class TestBuffer(TestCase):
         buffer.write_int(1025)
 
         read_buffer = ReadBuffer(buffer.get_data())
-        data = await read_buffer.read_multi_element_from_equal_spaced_list([3, 7, 5], ReadBuffer.read_int)
+        data = await read_buffer.read_multi_element_from_equal_spaced_list(
+            [3, 7, 5], ReadBuffer.read_int
+        )
 
         self.assertEqual(data, [3, 7, 5])
 

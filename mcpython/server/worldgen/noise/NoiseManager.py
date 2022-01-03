@@ -15,8 +15,7 @@ import importlib
 import typing
 
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.server.worldgen.noise.INoiseImplementation import (
     EQUAL_MERGER,
     INoiseImplementation,
@@ -108,11 +107,16 @@ class NoiseManager:
         return hash((hash(part), self.seed))
 
     async def serialize_seed_map(self, buffer: WriteBuffer):
-        await buffer.write_list(self.noise_instances, lambda e: buffer.write_string(e[1]).write_long(e[0].seed))
+        await buffer.write_list(
+            self.noise_instances,
+            lambda e: buffer.write_string(e[1]).write_long(e[0].seed),
+        )
         buffer.write_string(self.default_implementation)
 
     async def deserialize_seed_map(self, buffer: ReadBuffer):
-        d = await buffer.collect_list(lambda: (buffer.read_string(), buffer.read_long()))
+        d = await buffer.collect_list(
+            lambda: (buffer.read_string(), buffer.read_long())
+        )
         mapped = {e[0]: e[1] for e in d}
 
         for noise, name in self.noise_instances:
