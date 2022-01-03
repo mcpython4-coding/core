@@ -486,6 +486,78 @@ class TestBuffer(TestCase):
         table.writeData("test", (0, 2, -6.8))
         self.assertEqual(await table.getByName("test"), (0, 2, -6.8))
 
+    async def test_skipable_list_1(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        await buffer.write_skipable_list(list(range(20)), WriteBuffer.write_int)
+        read_buffer = ReadBuffer(buffer.get_data())
+        data = await read_buffer.read_skipable_list(lambda b: b.read_int())
+
+        self.assertEqual(await data.to_list(), list(range(20)))
+
+    async def test_skipable_list_2(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        await buffer.write_skipable_list(list(range(20)), WriteBuffer.write_int)
+        read_buffer = ReadBuffer(buffer.get_data())
+        data = await read_buffer.read_skipable_list(lambda b: b.read_int())
+
+        self.assertEqual(await data.to_partial_list(10), list(range(10)))
+        data.skip()
+        self.assertEqual(await data.to_list(), list(range(11, 20)))
+
+    async def test_skipable_list_3(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        await buffer.write_skipable_list(list(range(20)), WriteBuffer.write_int)
+        read_buffer = ReadBuffer(buffer.get_data())
+        data = await read_buffer.read_skipable_list(ReadBuffer.read_int)
+
+        self.assertEqual(await data.to_partial_list(10), list(range(10)))
+        data.skip(4)
+        self.assertEqual(await data.to_list(), list(range(14, 20)))
+
+    async def test_equal_list_1(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        await buffer.write_equal_spaced_list(list(range(20)), WriteBuffer.write_int)
+        buffer.write_int(1025)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        data = await read_buffer.read_equal_spaced_list(ReadBuffer.read_int)
+
+        self.assertEqual(await data.to_partial_list(10), list(range(10)))
+        data.skip(4)
+        self.assertEqual(await data.to_list(), list(range(14, 20)))
+
+    async def test_equal_list_2(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        await buffer.write_equal_spaced_list(list(range(20)), WriteBuffer.write_int)
+        buffer.write_int(1025)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        data = await read_buffer.read_single_element_from_equal_spaced_list(3, ReadBuffer.read_int)
+
+        self.assertEqual(data, 3)
+
+    async def test_equal_list_3(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        buffer = WriteBuffer()
+        await buffer.write_equal_spaced_list(list(range(20)), WriteBuffer.write_int)
+        buffer.write_int(1025)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        data = await read_buffer.read_multi_element_from_equal_spaced_list([3, 7, 5], ReadBuffer.read_int)
+
+        self.assertEqual(data, [3, 7, 5])
+
 
 class Simple(IBufferSerializeAble):
     def __init__(self):

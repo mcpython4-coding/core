@@ -79,6 +79,8 @@ class TableIndexedOffsetTable:
 
 
 class ReadBuffer:
+    __slots__ = ("stream",)
+
     def __init__(self, stream: typing.Union[typing.BinaryIO, bytes]):
         assert stream is not None, "data must be non-null"
         assert isinstance(stream, (io.BytesIO, bytes, bytearray)), f"ReadBuffer requires byte stream or bytes, got {type(stream)} ({stream})"
@@ -290,16 +292,19 @@ class ReadBuffer:
             self.parts = parts
             self.pointer = 0
 
+        async def get_element(self, index: int):
+            r = self.handler(ReadBuffer(self.parts[index]))
+            if isinstance(r, typing.Awaitable):
+                return await r
+            return r
+
         async def next(self):
             if self.pointer >= len(self.parts) - 1:
                 raise StopAsyncIteration
 
-            data = self.parts[self.pointer]
+            data = await self.get_element(self.pointer)
             self.pointer += 1
-            r = self.handler(ReadBuffer(data))
-            if isinstance(r, typing.Awaitable):
-                return await r
-            return r
+            return data
 
         async def __anext__(self):
             return await self.next()
@@ -308,12 +313,76 @@ class ReadBuffer:
             self.pointer += count
             return self
 
-    async def read_skipable_list(self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]):
-        data = await self.collect_list(lambda: self.read_bytes())
+        async def __aiter__(self):
+            for i in range(self.pointer, len(self.parts)):
+                yield await self.get_element(i)
+                self.pointer += 1
+
+        async def to_list(self):
+            return [e async for e in self]
+
+        async def iter_partial(self, count: int):
+            for i in range(self.pointer, self.pointer + count):
+                yield await self.get_element(i)
+                self.pointer += 1
+
+        async def to_partial_list(self, count: int):
+            return [e async for e in self.iter_partial(count)]
+
+        def __getitem__(self, item: int) -> typing.Coroutine:
+            return self.get_element(item)
+
+    async def read_skipable_list(self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]) -> SkipableIterator:
+        data = await self.collect_list(self.read_bytes)
         return self.SkipableIterator(decoder, data)
+
+    class CachedLookupList(SkipableIterator):
+        pass
+
+    async def read_equal_spaced_list(self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]) -> CachedLookupList:
+        entry_size = self.read_uint()
+        data = await self.collect_list(lambda: self.read_const_bytes(entry_size))
+        return self.CachedLookupList(decoder, data)
+
+    async def read_single_element_from_equal_spaced_list(self, index: int, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]):
+        entry_size = self.read_uint()
+        size = self.read_uint()
+        self.read_const_bytes(entry_size * index)
+        data = self.read_const_bytes(entry_size)
+        self.read_const_bytes(entry_size * (size - index - 1))
+
+        r = decoder(ReadBuffer(data))
+        if isinstance(r, typing.Awaitable):
+            return await r
+        return r
+
+    async def read_multi_element_from_equal_spaced_list(self, indices: typing.List[int], decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]):
+        entry_size = self.read_uint()
+        size = self.read_uint()
+
+        data = []
+
+        for i in range(size):
+            d = self.read_const_bytes(entry_size)
+
+            if i in indices:
+                r = decoder(ReadBuffer(d))
+                if isinstance(r, typing.Awaitable):
+                    data.append(await r)
+                else:
+                    data.append(r)
+
+        sort = list(sorted(indices))
+
+        return [
+            data[sort.index(e)]
+            for e in indices
+        ]
 
 
 class WriteBuffer:
+    __slots__ = ("data",)
+
     def __init__(self):
         self.data: typing.List[bytes | typing.Callable[[], bytes]] = []
 
@@ -495,15 +564,49 @@ class WriteBuffer:
         self.write_bytes(buffer.get_data(), size_size=size_size)
         return self
 
-    async def write_skipable_list(self, data: typing.Iterable, handling: typing.Callable[[typing.Any], typing.Coroutine | typing.Any]):
-        async def maybe_async(obj):
-            if isinstance(obj, typing.Awaitable):
-                return await obj
-            return obj
+    async def write_skipable_list(self, data: typing.Iterable, handling: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine | typing.Any]):
+        """
+        Writes a container structure allowing to skip elements
+        Internally creates a header for the table with indices
+        """
+        async def encode_obj(e):
+            buffer = WriteBuffer()
+            r = handling(buffer, e)
+            if isinstance(r, typing.Awaitable):
+                await r
+            return buffer.get_data()
 
-        encoded = [await maybe_async(handling(e)) for e in data]
+        encoded = [await encode_obj(e) for e in data]
 
         await self.write_list(encoded, lambda e: self.write_bytes(e))
+        return self
+
+    async def write_equal_spaced_list(self, data: typing.Iterable, handling: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine | typing.Any], entry_size: int = None):
+        """
+        Writes a list of arbitrary data of similar size (with padding)
+        Optimal when storing multiple items of the same size, fast access times,
+        lazy decoding and skip-able container when reading
+        """
+        async def encode_obj(e):
+            buffer = WriteBuffer()
+            r = handling(buffer, e)
+            if isinstance(r, typing.Awaitable):
+                await r
+            return buffer.get_data()
+
+        encoded = [await encode_obj(e) for e in data]
+
+        if entry_size is None:
+            entry_size = len(max(encoded, key=len))
+            self.write_uint(entry_size)
+        else:
+            if entry_size < len(max(encoded, key=len)):
+                raise ValueError("encoded size of at least one element is bigger than specified entry size")
+            self.write_uint(entry_size)
+
+        encoded = [e + b"\x00" * (entry_size - len(e)) for e in encoded]
+
+        await self.write_list(encoded, lambda e: self.write_const_bytes(e))
         return self
 
 
