@@ -25,9 +25,10 @@ from pyglet.window import key, mouse
 from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
+# the bounding box of the chest
 BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
-)  # the bounding box of the chest
+)
 
 
 class Chest(
@@ -39,10 +40,13 @@ class Chest(
     The Chest block class
     """
 
-    now: datetime = datetime.now()  # now
+    # now, for deciding to render the Christmas variant or not
+    now: datetime = datetime.now()
 
-    # if Christmas is today
-    is_christmas: bool = 24 <= now.day <= 26 and now.month == 12
+    # If Christmas is today, or not
+    IS_CHRISTMAS: bool = 24 <= now.day <= 26 and now.month == 12
+
+    del now
 
     NAME: str = "minecraft:chest"
     MODEL_FACE_NAME = "side"
@@ -71,7 +75,7 @@ class Chest(
             )
 
         # As this can be statically decided, we use this trick for some performance gain
-        if is_christmas:
+        if IS_CHRISTMAS:
 
             async def on_block_added(self):
                 self.face_info.custom_renderer = self.CHEST_BLOCK_RENDERER_CHRISTMAS
@@ -156,7 +160,7 @@ class Chest(
             return False
 
     async def get_all_inventories(self) -> tuple:
-        return (self.inventory,)
+        return self.inventory,
 
     def get_view_bbox(self):
         return BBOX
