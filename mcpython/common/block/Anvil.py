@@ -20,9 +20,10 @@ from mcpython.util.enums import EnumSide, ToolType
 from pyglet.window import key, mouse
 
 from . import AbstractBlock, IFallingBlock
+from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 
 
-class AbstractAnvil(IFallingBlock.IFallingBlock):
+class AbstractAnvil(IFallingBlock.IFallingBlock, SimpleInventoryWrappingContainer):
     """
     Base class for all anvils
     Mods are allowed to implement this for their own anvils

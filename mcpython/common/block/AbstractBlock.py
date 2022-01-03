@@ -387,29 +387,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     # block status functions
 
-    def get_inventories(self):
-        """
-        Called to get an list of inventories
-        FOR MODDERS: use get_provided_slot_lists() where possible as it is the more "save" way to interact with the block
-        todo: move to capabilities
-        """
-        return []
-
-    def get_provided_slot_lists(
-        self, side: mcpython.util.enums.EnumSide
-    ) -> typing.Tuple[typing.Iterable, typing.Iterable]:
-        """
-        Similar to get_inventories, but specifies only slots & the side on which the interaction can happen.
-        Useful for e.g. furnaces which can get fuel from the side, but from top the item to smelt.
-        gets slots for various reasons for an given side
-        :param side: the side asked for
-        :return: an tuple of lists of input slots and output slots
-        Slots may be in inputs AND output.
-        todo: make default return None, None
-        todo: move to capabilities
-        """
-        return [], []
-
     def get_model_state(self) -> dict:
         """
         The active model state

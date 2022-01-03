@@ -22,6 +22,7 @@ from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from pyglet.window import key, mouse
 
+from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
 BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
@@ -32,6 +33,7 @@ BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
 class Chest(
     IHorizontalOrientableBlock,
     mcpython.client.rendering.blocks.ChestRenderer.IChestRendererSupport,
+    SimpleInventoryWrappingContainer,
 ):
     """
     The Chest block class
@@ -152,11 +154,8 @@ class Chest(
         else:
             return False
 
-    def get_inventories(self):
-        return [self.inventory]
-
-    def get_provided_slot_lists(self, side):
-        return self.inventory.slots, self.inventory.slots
+    async def get_all_inventories(self) -> tuple:
+        return self.inventory,
 
     def get_view_bbox(self):
         return BBOX

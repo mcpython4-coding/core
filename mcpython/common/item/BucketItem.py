@@ -30,7 +30,7 @@ class BucketItem(AbstractFluidContainer):
     STACK_SIZE = 16
 
     @classmethod
-    async def could_accept(
+    async def could_accept_fluid(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -42,7 +42,7 @@ class BucketItem(AbstractFluidContainer):
         )
 
     @classmethod
-    async def accept(
+    async def accept_fluid(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -94,7 +94,7 @@ class FilledBucketItem(AbstractFluidContainer, ABC):
         return (FluidStack(cls.ASSIGNED_FLUID, amount=1000),)
 
     @classmethod
-    async def can_provide(
+    async def can_provide_fluid(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,
@@ -102,7 +102,7 @@ class FilledBucketItem(AbstractFluidContainer, ABC):
         return fluidstack.fluid == cls.ASSIGNED_FLUID and fluidstack.amount >= 1000
 
     @classmethod
-    async def provide(
+    async def provide_fluid(
         cls,
         itemstack: ItemStack,
         fluidstack: FluidStack,

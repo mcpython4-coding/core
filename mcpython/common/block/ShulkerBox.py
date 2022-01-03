@@ -19,11 +19,12 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from pyglet.window import key, mouse
 
 from . import AbstractBlock
+from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 
 
 def create_shulker_box(name):
     @shared.registry
-    class ShulkerBox(AbstractBlock.AbstractBlock):
+    class ShulkerBox(AbstractBlock.AbstractBlock, SimpleInventoryWrappingContainer):
         NAME = "minecraft:{}".format(name)
 
         DEFAULT_FACE_SOLID = 0
@@ -76,11 +77,8 @@ def create_shulker_box(name):
         async def on_block_remove(self, reason):
             await shared.inventory_handler.hide(self.inventory)
 
-        def get_inventories(self):
-            return (self.inventory,)
-
-        def get_provided_slot_lists(self, side):
-            return self.inventory.slots, self.inventory.slots
+        async def get_all_inventories(self) -> tuple:
+            return self.inventory,
 
         @classmethod
         def modify_block_item(

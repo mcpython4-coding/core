@@ -20,9 +20,10 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from pyglet.window import key, mouse
 
 from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
+from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 
 
-class Barrel(IAllDirectionOrientableBlock):
+class Barrel(IAllDirectionOrientableBlock, SimpleInventoryWrappingContainer):
     """
     Class for the Barrel-Block
     Barrels are container blocks, with one front face
@@ -73,11 +74,8 @@ class Barrel(IAllDirectionOrientableBlock):
         else:
             return False
 
-    def get_inventories(self):
-        return [self.inventory]
-
-    def get_provided_slot_lists(self, side):
-        return self.inventory.slots, self.inventory.slots
+    async def get_all_inventories(self) -> tuple:
+        return self.inventory,
 
     async def set_model_state(self, state: dict):
         await super().set_model_state(state)

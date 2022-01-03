@@ -14,69 +14,11 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractItem
-from mcpython.common.container.ResourceStack import FluidStack, ItemStack
+from mcpython.common.fluid.FluidContainer import FluidContainer
 
 
-class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, ABC):
+class AbstractFluidContainer(mcpython.common.item.AbstractItem.AbstractItem, FluidContainer, ABC):
     """
     Common base class for container-like items holding fluids
     """
-
-    @classmethod
-    async def get_underlying_fluid_stacks(
-        cls, itemstack: ItemStack
-    ) -> typing.Iterable[FluidStack]:
-        """
-        Informal method for getting the fluids in the container [All of them]
-        """
-        return tuple()
-
-    @classmethod
-    async def could_accept(
-        cls,
-        itemstack: ItemStack,
-        fluidstack: FluidStack,
-    ) -> bool:
-        """
-        Checks if the container could in theory accept the fluid given.
-        When returning False, accept is never called
-        """
-        return False
-
-    @classmethod
-    async def accept(
-        cls,
-        itemstack: ItemStack,
-        fluidstack: FluidStack,
-        insert_parts=True,
-    ) -> bool:
-        """
-        Inserts a certain amount of fluid
-        The fluidstack may contain remaining liquid if not everything could be accepted if insert_parts is True
-        """
-        return False
-
-    @classmethod
-    async def can_provide(
-        cls,
-        itemstack: ItemStack,
-        fluidstack: FluidStack,
-    ) -> bool:
-        """
-        Checks if the given fluid container can provide the given fluid with the given amount
-        """
-        return False
-
-    @classmethod
-    async def provide(
-        cls,
-        itemstack: ItemStack,
-        fluidstack: FluidStack,
-        extract_parts=True,
-    ) -> bool:
-        """
-        Removes a certain amount of fluid from the container
-        Is allowed to modify the fluidstack when not everything is provided when extract_parts is True
-        """
