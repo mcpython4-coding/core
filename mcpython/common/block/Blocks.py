@@ -43,6 +43,12 @@ from mcpython.util.enums import ToolType
 # moving piston, mushroom stem
 # powder_snow
 # piston, piston head, player head, player wall head
+# bubble column, chain command block, redstone torch, wall torch
+# red mushroom block, repeater, repeating command block, scaffolding
+# skeleton skull, soul torch, spawner, sticky piston
+# structure block, structure void, torch, tripwire, tripwire hook
+# turtle egg, twisted vines, vine, void air, weeping vines
+# wither skeleton skull, zombie head
 
 DEFERRED_PIPE: DeferredRegistry = shared.registry.get_by_name(
     "minecraft:block"
@@ -214,6 +220,7 @@ async def stone_like(
     strength: typing.Union[float, typing.Tuple[float, float]] = 2,
     tool=ToolType.PICKAXE,
     fname=None,
+    deferred=DEFERRED_PIPE,
 ):
     consumer = (
         lambda _, inst: tool
@@ -238,14 +245,14 @@ async def stone_like(
     if existing_full:
         obj = BlockFactory().set_name(f"{modname}:{name}")
         consumer(None, obj)
-        DEFERRED_PIPE.create_later(obj)
+        deferred.create_later(obj)
     else:
         await instance.create_full_block(block_factory_consumer=consumer)
 
     if existing_slab:
         obj = BlockFactory().set_name(f"{modname}:{fname}_slab").set_slab()
         consumer(None, obj)
-        DEFERRED_PIPE.create_later(obj)
+        deferred.create_later(obj)
     else:
         await instance.create_slab_block(
             f"{modname}:{fname}_slab", block_factory_consumer=consumer
@@ -265,7 +272,7 @@ async def stone_like(
     if existing_wall:
         obj = BlockFactory().set_name(f"{modname}:{fname}_wall").set_wall()
         consumer(None, obj)
-        DEFERRED_PIPE.create_later(obj)
+        deferred.create_later(obj)
     else:
         await instance.create_wall(
             f"{modname}:{fname}_wall", block_factory_consumer=consumer
@@ -299,14 +306,14 @@ async def stone_like(
             .set_all_side_solid(False)
         )
         consumer(None, obj)
-        DEFERRED_PIPE.create_later(obj)
+        deferred.create_later(obj)
     else:
         pass  # todo: implement
 
     if existing_fence:
         obj = BlockFactory().set_name(f"{modname}:{fname}_fence").set_fence()
         consumer(None, obj)
-        DEFERRED_PIPE.create_later(obj)
+        deferred.create_later(obj)
     else:
         await instance.create_fence(
             f"{modname}:{fname}_fence", block_factory_consumer=consumer
@@ -318,7 +325,7 @@ async def stone_like(
         )
 
     if existing_button:
-        DEFERRED_PIPE.create_later(
+        deferred.create_later(
             BlockFactory()
             .set_name(f"{modname}:{fname}_button")
             .set_button()
@@ -617,7 +624,6 @@ async def load_blocks():
         .set_strength(0.2)
         .set_assigned_tools(ToolType.AXE)
     )
-    # todo: bubble column
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name("minecraft:budding_amethyst")
@@ -697,7 +703,6 @@ async def load_blocks():
         .set_assigned_tools(ToolType.PICKAXE)
         .set_minimum_tool_level(1)
     )
-    # todo: chain command block
     await stone_like(
         "chiseled_deepslate",
         existing_slab=False,
@@ -1661,10 +1666,8 @@ async def load_blocks():
         .set_default_model_state("lit=false")
     )
     DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:redstone_ore"))
-    # todo: redstone torch & wall torch
     await colored("red")
     DEFERRED_PIPE.create_later(plant("minecraft:red_mushroom"))
-    # todo: red mushroom_block
     await stone_like(
         "red_nether_bricks",
         existing_slab=True,
@@ -1678,7 +1681,6 @@ async def load_blocks():
         "red_sandstone", existing_slab=True, existing_stairs=True, existing_wall=True
     )
     DEFERRED_PIPE.create_later(plant("minecraft:red_tulip"))
-    # todo: repeater, repeating_command_block
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name("minecraft:respawn_anchor")
@@ -1692,7 +1694,6 @@ async def load_blocks():
     await stone_like(
         "sandstone", existing_slab=True, existing_stairs=True, existing_wall=True
     )
-    # todo: scaffolding
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name("minecraft:sculk_sensor")
@@ -1712,7 +1713,6 @@ async def load_blocks():
     await stone_like(
         "shroomlight", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    # todo: skeleton skull
     DEFERRED_PIPE.create_later(
         BlockFactory()
         .set_name("minecraft:slime_block")
@@ -1794,7 +1794,6 @@ async def load_blocks():
     await stone_like(
         "soul_soil", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    # todo: soul torch, spawner
     DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:sponge"))
     DEFERRED_PIPE.create_later(
         BlockFactory()
@@ -1803,7 +1802,6 @@ async def load_blocks():
         .set_all_side_solid(False)
     )
     await wood("spruce")
-    # todo: sticky piston
     await stone_like(
         "stone",
         existing_slab=True,
@@ -1815,7 +1813,6 @@ async def load_blocks():
     await stone_like(
         "stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
     )
-    # todo: structure block, structure void
     DEFERRED_PIPE.create_later(plant("minecraft:sugar_cane"))
     DEFERRED_PIPE.create_later(large_plant("minecraft:sunflower"))
     DEFERRED_PIPE.create_later(
@@ -1837,7 +1834,6 @@ async def load_blocks():
         consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
     )
     DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:tnt"))
-    # todo: torch, tripwire, tripwire hook
     await stone_like(
         "tuff",
         existing_slab=False,
@@ -1845,7 +1841,6 @@ async def load_blocks():
         existing_wall=False,
         consumer=lambda _, factory: factory.set_hardness(1.5, 6),
     )
-    # todo: turtle egg, twisted vines, vine, void air
     await wood("warped", normal=False)
     DEFERRED_PIPE.create_later(plant("minecraft:warped_fungus"))
     DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:warped_nylium"))
@@ -1931,7 +1926,6 @@ async def load_blocks():
         existing_stairs=True,
         existing_wall=False,
     )
-    # todo: weeping vines
     DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:wet_sponge"))
     DEFERRED_PIPE.create_later(
         plant("minecraft:wheat").set_default_model_state("age=3")
@@ -1939,6 +1933,4 @@ async def load_blocks():
     await colored("white")
     DEFERRED_PIPE.create_later(plant("minecraft:white_tulip"))
     DEFERRED_PIPE.create_later(plant("minecraft:wither_rose"))
-    # todo: wither skeleton skull
     await colored("yellow")
-    # todo: zombie head
