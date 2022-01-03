@@ -1982,4 +1982,5 @@ A-  [uuk]: removed the old chunk part fixers
 f   [uuk]: Chunk serializer contains now two sets for ignored blocks and entities
            (neither serialized nor deserialized)
 f   [uuk]: changed how player data is stored
+L   [uuk]: dumped Pillow version to 9.0.0
 
