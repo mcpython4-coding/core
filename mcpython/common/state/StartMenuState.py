@@ -36,6 +36,9 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
         shared.world.world_loaded = False
         shared.ENABLE_ANIMATED_TEXTURES = True
 
+        if shared.IS_CLIENT:
+            shared.window.set_exclusive_mouse(False)
+
     @staticmethod
     async def on_new_game_press(x, y):
         await shared.state_handler.change_state(
@@ -43,7 +46,7 @@ class StartMenu(mcpython.common.state.AbstractState.AbstractState):
         )
 
     @staticmethod
-    def on_quit_game_press(x, y):
+    async def on_quit_game_press(x, y):
         shared.window.close()
 
     @staticmethod

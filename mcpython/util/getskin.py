@@ -44,17 +44,17 @@ def find_texture_info(properties):
     return None
 
 
-def store_missing_texture(path: str):
+async def store_missing_texture(path: str):
     import mcpython.engine.ResourceLoader
 
-    missing_texture = mcpython.engine.ResourceLoader.read_image(
+    missing_texture = await mcpython.engine.ResourceLoader.read_image(
         "assets/missing_texture.png"
     )
 
     missing_texture.save(path)
 
 
-def download_skin(username: str, store: str):
+async def download_skin(username: str, store: str):
     """
     Will download skin data for a username
     :param username: the user to download for
@@ -74,11 +74,11 @@ def download_skin(username: str, store: str):
     try:
         r = get_url(userid_url.format(username=username))
     except requests.exceptions.ConnectionError:
-        store_missing_texture(store)
+        await store_missing_texture(store)
         return
 
     if r.status_code != 200:
-        store_missing_texture(store)
+        await store_missing_texture(store)
         return
 
     userid = r.json()["id"]
@@ -90,7 +90,7 @@ def download_skin(username: str, store: str):
         logger.println(
             "[MOJANG/SERVER] {}: {}".format(userinfo["error"], userinfo["errorMessage"])
         )
-        store_missing_texture(store)
+        await store_missing_texture(store)
         return
 
     try:
@@ -100,14 +100,14 @@ def download_skin(username: str, store: str):
         raise
 
     if texture_info is None:
-        store_missing_texture(store)
+        await store_missing_texture(store)
         return
 
     skin_url = texture_info["textures"]["SKIN"]["url"]
     r = get_url(skin_url, stream=True)
 
     if r.status_code != 200:
-        store_missing_texture(store)
+        await store_missing_texture(store)
         return
 
     with open(store, "wb") as f:

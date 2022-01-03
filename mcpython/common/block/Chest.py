@@ -119,6 +119,7 @@ class Chest(
         Checks if the inventory can be opened
         :return: if the block can be opened
         """
+        if self.position is None or self.dimension is None: return True
 
         x, y, z = self.position
         instance = shared.world.get_dimension_by_name(self.dimension).get_block(

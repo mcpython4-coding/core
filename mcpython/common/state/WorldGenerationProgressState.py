@@ -188,7 +188,7 @@ class WorldGenerationProgress(AbstractState.AbstractState):
 
         # setup skin
         try:
-            mcpython.util.getskin.download_skin(player_name, shared.build + "/skin.png")
+            await mcpython.util.getskin.download_skin(player_name, shared.build + "/skin.png")
         except ValueError:
             logger.print_exception(
                 "[ERROR] failed to receive skin for '{}'. Falling back to default".format(
