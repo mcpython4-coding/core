@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import mcpython.common.block.AbstractBlock
 import mcpython.common.event.TickHandler
 from mcpython import shared
+from mcpython.common.container.ResourceStack import ItemStack
 
 
 class FlowerLikeBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
@@ -37,3 +38,6 @@ class FlowerLikeBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             and self.SUPPORT_BLOCK_TAG is not None
         ):
             await dimension.remove_block(self, block_update_self=False)
+            dimension.spawn_itemstack_in_world(
+                ItemStack(self.NAME, 1), self.position, pickup_delay=4
+            )

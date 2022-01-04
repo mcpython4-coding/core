@@ -12,12 +12,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import enum
+import itertools
 import typing
 from abc import ABC
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
 from mcpython.engine.network.util import IBufferSerializeAble
+from mcpython.engine.network.util import ReadBuffer
 
 
 class ChunkLoadTicketType(enum.Enum):
@@ -126,6 +128,20 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
             str, mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap
         ] = {}
 
+    def position_iterator(self) -> typing.Iterator[typing.Tuple[int, int, int]]:
+        dx, dz = self.get_position()[0] * 16, self.get_position()[1] * 16
+        y = self.get_dimension().get_world_height_range()
+        return itertools.product(range(dx, dx+16), range(*y), range(dz, dz+16))
+
+    def block_iterator(self) -> typing.Iterator[typing.Tuple[typing.Tuple[int, int, int], typing.Any]]:
+        return ((pos, self.get_block(pos, none_if_str=True)) for pos in self.position_iterator())
+
+    def entity_iterator(self) -> typing.Iterable:
+        raise NotImplementedError
+
+    async def read_from_network_buffer(self, buffer: ReadBuffer, immediate=False):
+        pass
+
     def clear(self):
         import mcpython.common.entity.PlayerEntity
         import mcpython.shared
@@ -154,7 +170,7 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
     def get_positions_updated_since_last_save(self):
         return self._positions_updated_since_last_save
 
-    def mark_position_dirty(self, position):
+    def mark_position_dirty(self, position: typing.Tuple[int, int, int]):
         self._positions_updated_since_last_save.add(position)
         self.mark_dirty()
 
@@ -407,6 +423,9 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
     def save(self):
         pass
 
+    def dump_debug_maps(self, file_formatter: str):
+        pass
+
     def __getitem__(self, item):
         return self.get_block(item)
 
@@ -431,12 +450,6 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
 
     def __hash__(self):
         return hash((self.get_dimension().get_name(), self.get_position()))
-
-    def entity_iterator(self) -> typing.Iterable:
-        raise NotImplementedError
-
-    def dump_debug_maps(self, file_formatter: str):
-        pass
 
 
 class IDimension(ISupportWorldInterface, ABC):

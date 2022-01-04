@@ -25,6 +25,8 @@ from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.common.entity.ItemEntity import ItemEntity
 from mcpython.engine import logger
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
 
 
 class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
@@ -79,6 +81,16 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         self.add_chunk_load_ticket(
             mcpython.engine.world.AbstractInterface.ChunkLoadTicketType.SPAWN_CHUNKS
         )
+
+    async def write_to_network_buffer(self, buffer: WriteBuffer):
+        from mcpython.common.world.serializer.Chunk import Chunk as ChunkSerializer
+
+        await ChunkSerializer.save_to_buffer(buffer, self)
+
+    async def read_from_network_buffer(self, buffer: ReadBuffer, immediate=False):
+        from mcpython.common.world.serializer.Chunk import Chunk as ChunkSerializer
+
+        await ChunkSerializer.read_from_buffer(buffer, self, immediate=immediate)
 
     def entity_iterator(self) -> typing.Iterable:
         return tuple(self.entities)

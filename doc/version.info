@@ -1984,4 +1984,7 @@ f   [uuk]: Chunk serializer contains now two sets for ignored blocks and entitie
 f   [uuk]: changed how player data is stored
 L   [uuk]: dumped Pillow version to 9.0.0
 A*  [uuk]: refactored the interaction API for fluids and items
+f   [uuk]: made chunk serialization more fail safe
+f   [uuk]: chunks have now partial control over chunk serialization, so custom sub-classes can
+           change behaviour here
 

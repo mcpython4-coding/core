@@ -40,7 +40,6 @@ class Chunk(IDataSerializer.IDataSerializer):
         cls, save_file, dimension: int, chunk: typing.Tuple[int, int], immediate=False
     ):
         region = chunk2region(*chunk)
-        dcx, dcz = (e * 16 for e in chunk)
         chunk_instance: IChunk = shared.world.get_dimension(dimension).get_chunk(chunk)
 
         if chunk_instance.loaded:
@@ -55,7 +54,14 @@ class Chunk(IDataSerializer.IDataSerializer):
         if read_buffer is None:
             return
 
+        await chunk_instance.read_from_network_buffer(read_buffer, immediate=immediate)
+
+    @classmethod
+    async def read_from_buffer(cls, read_buffer: ReadBuffer, chunk_instance, immediate=False):
         version = read_buffer.read_uint()
+        chunk = chunk_instance.get_position()
+
+        dcx, dcz = (e * 16 for e in chunk)
 
         if version != cls.CHUNK_DATA_VERSION:
             while version in cls.DATA_FIXERS and version != cls.CHUNK_DATA_VERSION:
@@ -70,9 +76,6 @@ class Chunk(IDataSerializer.IDataSerializer):
                 read_buffer.stream = io.BytesIO(target.get_data())
 
             data = read_buffer.stream.read()
-
-            await region.write_chunk_data(*chunk, data)
-            await region.dump()
 
             read_buffer.stream = io.BytesIO(data)
 
@@ -115,7 +118,7 @@ class Chunk(IDataSerializer.IDataSerializer):
                 await shared.entity_manager.registry[type_name].create_from_buffer(buf)
             except:
                 logger.print_exception(
-                    f"cannot deserialize entity {type_name} in chunk {chunk} (dimension: {dimension})"
+                    f"cannot deserialize entity {type_name} in chunk {chunk} (dimension: {chunk_instance.get_dimension().get_name()})"
                 )
 
             # todo: do we need to do anything else?
@@ -182,11 +185,26 @@ class Chunk(IDataSerializer.IDataSerializer):
             return
 
         region = chunk2region(*chunk)
-        dcx, dcz = (e * 16 for e in chunk)
-        chunk_instance: IChunk = shared.world.get_dimension(dimension).get_chunk(chunk)
 
-        region = await save_file.get_region_access(dimension, region)
-        target_buffer = WriteBuffer()
+        try:
+            chunk_instance: IChunk = shared.world.get_dimension(dimension).get_chunk(chunk)
+
+            region = await save_file.get_region_access(dimension, region)
+            target_buffer = WriteBuffer()
+
+            await chunk_instance.write_to_network_buffer(target_buffer)
+
+            await region.write_chunk_data(*chunk, target_buffer)
+            await region.dump()
+
+        finally:
+            # re-enable world gen when we are finished or we encountered an error
+            shared.world_generation_handler.enable_generation = True
+
+    @classmethod
+    async def save_to_buffer(cls, target_buffer: WriteBuffer, chunk_instance):
+        chunk = chunk_instance.get_position()
+        dcx, dcz = (e * 16 for e in chunk)
 
         target_buffer.write_int(cls.CHUNK_DATA_VERSION)
 
@@ -258,10 +276,3 @@ class Chunk(IDataSerializer.IDataSerializer):
         await map_buffer.write_dict(chunk_instance.data_maps, write_key, write_map)
         target_buffer.write_sub_buffer(map_buffer)
 
-        await region.write_chunk_data(*chunk, target_buffer)
-        await region.dump()
-
-        # re-enable world gen as we are finished
-        shared.world_generation_handler.enable_generation = True
-
-        # todo: make sure that this is always set back to True, also on error
