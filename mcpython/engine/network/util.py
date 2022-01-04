@@ -390,11 +390,15 @@ class WriteBuffer:
         return b"".join((e if not callable(e) else e()) if not isinstance(e, WriteBuffer) else e.get_data() for e in self.data)
 
     def write_bool(self, state: bool):
+        assert isinstance(state, bool)
+
         # todo: add a way to compress together with following single-bool fields
         self.data.append(b"\xFF" if state else b"\x00")
         return self
 
     def write_bool_group(self, bools: typing.List[bool]):
+        assert isinstance(bools, (list, tuple)) and all(isinstance(e, bool) for e in bools), "data must be bool-array"
+
         for i in range(math.ceil(len(bools) / 8)):
             bits = bools[i * 8 : i * 8 + 8]
             bits += [False] * (8 - len(bits))
@@ -409,6 +413,7 @@ class WriteBuffer:
         return self
 
     def write_byte(self, value: int):
+        assert isinstance(value, int), "value must be int"
         return self.write_struct(BYTE, value)
 
     def write_int(self, value: int):
@@ -417,15 +422,21 @@ class WriteBuffer:
         return self.write_struct(INT, value)
 
     def write_uint(self, value: int):
+        assert isinstance(value, int), "value must be int"
         return self.write_struct(UINT, value)
 
     def write_long(self, value: int):
+        assert isinstance(value, int), "value must be int"
         return self.write_struct(LONG, value)
 
     def write_ulong(self, value: int):
+        assert isinstance(value, int), "value must be int"
         return self.write_struct(ULONG, value)
 
     def write_big_long(self, value: int, size_size=2):
+        assert isinstance(value, int), "value must be int"
+        assert isinstance(size_size, int) and size_size > 0, "size size must be positive int"
+
         # todo: can we optimize this calculation (one byte more is a lot bigger than we need!)?
         length = max(math.ceil(math.log(abs(value), 2 ** 8)), 0) + 1
         data = value.to_bytes(length, "big", signed=True)
@@ -434,6 +445,8 @@ class WriteBuffer:
         return self
 
     def write_float(self, value: float):
+        assert isinstance(value, (float, int)), "value must be float-like"
+
         return self.write_struct(FLOAT, value)
 
     def write_string(self, value: str, size_size=2, encoding="utf-8"):
@@ -443,6 +456,9 @@ class WriteBuffer:
         return self
 
     def write_nullable_string(self, value: str, size_size=2, encoding="utf-8"):
+        assert isinstance(value, str), "value must be str"
+        assert isinstance(size_size, int) and size_size > 0, "size size must be positive int"
+
         if value is None:
             self.data.append(b"\xFF"*size_size)
         else:
@@ -482,6 +498,7 @@ class WriteBuffer:
 
     def write_bytes(self, data: bytes, size_size=2):
         assert len(data) < 256 ** size_size, "data must be in bounds"
+        assert isinstance(size_size, int) and size_size > 0, "size size must be positive int"
 
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
         self.data.append(data)
