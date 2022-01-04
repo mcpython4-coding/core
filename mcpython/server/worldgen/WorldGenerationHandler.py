@@ -103,7 +103,6 @@ class WorldGenerationHandler:
         async def unpack_dimension():
             name = buffer.read_string()
             dim_data = await buffer.read_any()
-            print(name, dim_data)
             return name, dim_data
 
         data = await buffer.collect_list(unpack_dimension)
