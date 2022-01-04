@@ -29,7 +29,7 @@ class PackageIDSync(AbstractPackage):
         self.data = []
 
     def setup(self):
-        self.data = shared.NETWORK_MANAGER.get_dynamic_id_info()
+        self.data = list(shared.NETWORK_MANAGER.get_dynamic_id_info())
         return self
 
     async def write_to_buffer(self, buffer: WriteBuffer):

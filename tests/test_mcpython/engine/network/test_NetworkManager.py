@@ -40,7 +40,7 @@ class TestNetworkManager(TestCase):
 
         await load_packages()
 
-        data = shared.NETWORK_MANAGER.get_dynamic_id_info()
+        data = list(shared.NETWORK_MANAGER.get_dynamic_id_info())
 
         await shared.NETWORK_MANAGER.set_dynamic_id_info(data)
 

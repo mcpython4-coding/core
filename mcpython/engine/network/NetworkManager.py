@@ -20,6 +20,7 @@ import mcpython.engine.network.AbstractPackage
 import mcpython.engine.network.Backend
 from mcpython import shared
 from mcpython.engine.world.AbstractInterface import IChunk
+from . import AbstractPackage
 
 from .. import logger
 from .util import ReadBuffer, WriteBuffer
@@ -68,6 +69,12 @@ class NetworkManager:
         self.playername2connectionID = {}
 
     async def request_chunk(self, chunk: IChunk):
+        """
+        Creates a chunk request package to be sent to the server
+
+        :param chunk: the chunk to get data for
+        """
+
         if not shared.IS_CLIENT or not shared.IS_NETWORKING:
             raise RuntimeError
 
@@ -82,6 +89,15 @@ class NetworkManager:
         )
 
     async def send_to_player_chat(self, player: typing.Union[str, int], msg: str):
+        """
+        Helper function for displaying a message in a player chat
+
+        :param player: the player name or the client id
+        :param msg: the message itself
+        :raises AssertionError: if the message is not a string
+        """
+        assert isinstance(msg, str), "message must be string"
+
         from mcpython.common.network.packages.PlayerChatPackage import (
             PlayerMessageShowPackage,
         )
@@ -95,20 +111,31 @@ class NetworkManager:
         await self.send_package(PlayerMessageShowPackage().setup(msg), player)
 
     def reset_package_registry(self):
+        """
+        Resets the internal package registry system to being empty
+        Used only in unit tests to make sure that we are in a known state
+        """
         self.next_package_type_id = 1
         self.package_types.clear()
         self.name2package_type.clear()
 
-    def get_dynamic_id_info(self) -> typing.List[typing.Tuple[str, int]]:
-        d = []
-
+    def get_dynamic_id_info(self) -> typing.Iterator[typing.Tuple[str, int]]:
+        """
+        Creates the dynamic id info data, storing the package ids set by the NetworkManager at runtime,
+        so multiple sources are safe to register packages, without conflicts
+        """
         for package_id, package_type in self.package_types.items():
             if package_type.DYNAMIC_PACKAGE_ID:
-                d.append((package_type.PACKAGE_NAME, package_id))
-
-        return d
+                yield package_type.PACKAGE_NAME, package_id
 
     async def set_dynamic_id_info(self, data: typing.List[typing.Tuple[str, int]]):
+        """
+        Helper function for writing the dynamic id info data created by get_dynamic_id_info()
+        Will set the package ids as needed
+
+        :param data: the data
+        """
+
         logger.println("[NETWORK][SYNC] starting package ID sync...")
 
         for name, package_id in data:
@@ -145,6 +172,11 @@ class NetworkManager:
         logger.println("[NETWORK][SYNC] package ID sync was successful!")
 
     async def disconnect(self, target=-1):
+        """
+        Disconnection helper, does send the disconnection package
+
+        :param target: which one to disconnect, -1 to all directly connected (server: all, client: server)
+        """
         logger.println(
             f"disconnecting connection to {target if target != -1 else ('all' if not shared.IS_CLIENT else 'server')}"
         )
@@ -158,7 +190,20 @@ class NetworkManager:
             else:
                 shared.SERVER_NETWORK_HANDLER.disconnect_client(target)
 
-    async def send_package_to_all(self, package, not_including=-1):
+    async def send_package_to_all(self, package: AbstractPackage.AbstractPackage, not_including=-1):
+        """
+        Sends a package to all clients in the network, excluding the given client id
+
+        :param package: the package to send
+        :param not_including: which client id to not include, or -1 if no one should be skipped
+        :raises RuntimeError: if the package has no package ID, so no static id nor registered to a NetworkManager
+            instance
+        """
+        if package.PACKAGE_TYPE_ID == -1:
+            raise RuntimeError(
+                f"{package}: Package type must be registered for sending it"
+            )
+
         await asyncio.gather(
             *(
                 self.send_package(package, client_id)
@@ -172,6 +217,15 @@ class NetworkManager:
         package: mcpython.engine.network.AbstractPackage.AbstractPackage,
         destination: int = 0,
     ):
+        """
+        Sends the given package over the network to the target PC
+
+        :param package: the package to send
+        :param destination: the destination to send to, 0 is server, and clients are starting at 1
+        :raises RuntimeError: if the package has no package ID, so no static id nor registered to a NetworkManager
+            instance
+        :raises ValueError: if the destination is 0, and we are on the server
+        """
         data = await self.encode_package(destination, package)
 
         if shared.IS_CLIENT:
@@ -193,11 +247,21 @@ class NetworkManager:
 
             await shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
 
-    async def encode_package(self, destination, package) -> bytes:
+    async def encode_package(self, destination: int, package: AbstractPackage.AbstractPackage) -> bytes:
+        """
+        Encodes the given package to bytes
+
+        :param destination: where to send to
+        :param package: the package to encode
+        :return: the bytes representing the package
+        :raises RuntimeError: if the package has no package ID, so no static id nor registered to a NetworkManager
+            instance
+        """
         if package.PACKAGE_TYPE_ID == -1:
             raise RuntimeError(
                 f"{package}: Package type must be registered for sending it"
             )
+
         package.target_id = destination
         bit_map = (
             (package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0)
@@ -246,6 +310,12 @@ class NetworkManager:
             [mcpython.engine.network.AbstractPackage.AbstractPackage], None
         ],
     ):
+        """
+        Registers a handler to be invoked when a certain package is received
+
+        :param package_type: the package type to look for
+        :param handler: the handler
+        """
         self.general_package_handlers.setdefault(
             package_type.PACKAGE_TYPE_ID, []
         ).append(handler)
@@ -258,6 +328,12 @@ class NetworkManager:
             [mcpython.engine.network.AbstractPackage.AbstractPackage, int], None
         ],
     ):
+        """
+        Registers a handler for when an answer is received for a given package
+
+        :param previous_package: the package to wait for
+        :param handler: the handler method
+        """
         self.custom_package_handlers.setdefault(previous_package.package_id, []).append(
             handler
         )
@@ -265,23 +341,28 @@ class NetworkManager:
 
     def register_package_type(
         self,
-        t: typing.Type[mcpython.engine.network.AbstractPackage.AbstractPackage],
+        package_class: typing.Type[mcpython.engine.network.AbstractPackage.AbstractPackage],
     ):
-        if t.PACKAGE_NAME is None:
-            raise ValueError(t)
+        """
+        Registers a certain package class to this network manager
 
-        if t.PACKAGE_TYPE_ID == -1:
-            t.DYNAMIC_PACKAGE_ID = True
+        :param package_class: the class to register
+        """
+        if package_class.PACKAGE_NAME is None:
+            raise ValueError(package_class)
+
+        if package_class.PACKAGE_TYPE_ID == -1:
+            package_class.DYNAMIC_PACKAGE_ID = True
             while self.next_package_type_id in self.package_types:
                 self.next_package_type_id += 1
-            t.PACKAGE_TYPE_ID = self.next_package_type_id
+            package_class.PACKAGE_TYPE_ID = self.next_package_type_id
 
-        elif t.PACKAGE_TYPE_ID in self.package_types:
-            other = self.package_types[t.PACKAGE_TYPE_ID]
+        elif package_class.PACKAGE_TYPE_ID in self.package_types:
+            other = self.package_types[package_class.PACKAGE_TYPE_ID]
 
             if not other.DYNAMIC_PACKAGE_ID:
                 raise RuntimeError(
-                    f"package id conflict between {t} and {other}, both forcing {t.PACKAGE_TYPE_ID}"
+                    f"package id conflict between {package_class} and {other}, both forcing {package_class.PACKAGE_TYPE_ID}"
                 )
 
             # We need for the other a new package id
@@ -290,16 +371,23 @@ class NetworkManager:
 
             self.package_types[self.next_package_type_id] = other
 
-        self.package_types[t.PACKAGE_TYPE_ID] = t
+        self.package_types[package_class.PACKAGE_TYPE_ID] = package_class
 
-        self.name2package_type[t.PACKAGE_NAME] = t
+        self.name2package_type[package_class.PACKAGE_NAME] = package_class
         return self
 
     def clean_network_graph(self):
+        """
+        Cleans some internal stuff
+        """
         self.valid_package_ids.clear()
         self.custom_package_handlers.clear()
 
     async def fetch_as_client(self):
+        """
+        Util method invoked on the client to fetch data from the socket and handle it
+        """
+
         if not shared.CLIENT_NETWORK_HANDLER.connected:
             return
 
@@ -344,6 +432,10 @@ class NetworkManager:
                 self.custom_package_handlers[package.package_id].clear()
 
     async def fetch_as_server(self):
+        """
+        Util method invoked on the server to fetch data from the socket and handle it
+        """
+
         for client_id, buffer in shared.SERVER_NETWORK_HANDLER.get_package_streams():
             while buffer:
                 try:
@@ -385,7 +477,14 @@ class NetworkManager:
                             await result
                     self.custom_package_handlers[package.package_id].clear()
 
-    async def fetch_package_from_buffer(self, buffer):
+    async def fetch_package_from_buffer(self, buffer: ReadBuffer) -> AbstractPackage.AbstractPackage | None:
+        """
+        Reads a package from the network buffer instance
+
+        :param buffer: the buffer to read from
+        :return: the package instance, or None if an error occurred
+        """
+
         try:
             head = int.from_bytes(buffer[:4], "big", signed=False)
 

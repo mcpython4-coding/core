@@ -80,7 +80,7 @@ class TestPackageIDSync(TestCase):
         buffer = WriteBuffer()
         await package.write_to_buffer(buffer)
 
-        previous_data = shared.NETWORK_MANAGER.get_dynamic_id_info()
+        previous_data = list(shared.NETWORK_MANAGER.get_dynamic_id_info())
 
         await package.handle_inner()
 
