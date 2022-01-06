@@ -400,7 +400,7 @@ class WriteBuffer:
         assert isinstance(bools, (list, tuple)) and all(isinstance(e, bool) for e in bools), "data must be bool-array"
 
         for i in range(math.ceil(len(bools) / 8)):
-            bits = bools[i * 8 : i * 8 + 8]
+            bits = list(bools[i * 8 : i * 8 + 8])
             bits += [False] * (8 - len(bits))
             self.data.append(
                 int("".join("0" if not e else "1" for e in bits), base=2).to_bytes(

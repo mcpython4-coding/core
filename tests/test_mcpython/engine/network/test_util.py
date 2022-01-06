@@ -119,7 +119,7 @@ class TestBuffer(TestCase):
 
             self.assertEqual(list(read.read_bool_group(len(group))), group)
 
-    def test_bytes(self):
+    def test_byte(self):
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
         for _ in range(20):
@@ -132,6 +132,35 @@ class TestBuffer(TestCase):
             read = ReadBuffer(write.get_data())
 
             self.assertEqual(read.read_byte(), v)
+
+    def test_bytes_1(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        for _ in range(20):
+            v = bytes([random.randint(0, 255) for _ in range(random.randint(10, 50))])
+
+            write = WriteBuffer()
+
+            write.write_bytes(v)
+
+            read = ReadBuffer(write.get_data())
+
+            self.assertEqual(read.read_bytes(), v)
+
+    def test_bytes_2(self):
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        for _ in range(20):
+            v = bytes([random.randint(0, 255) for _ in range(random.randint(10, 200))])
+            size_size = random.randint(1, 5)
+
+            write = WriteBuffer()
+
+            write.write_bytes(v, size_size=size_size)
+
+            read = ReadBuffer(write.get_data())
+
+            self.assertEqual(read.read_bytes(size_size=size_size), v)
 
     def test_int(self):
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer

@@ -42,11 +42,11 @@ class Client2ServerHandshake(AbstractPackage):
         return self
 
     async def read_from_buffer(self, buffer: ReadBuffer):
-        self.game_version = buffer.read_int()
+        self.game_version = buffer.read_ulong()
         self.player_name = buffer.read_string()
 
     async def write_to_buffer(self, buffer: WriteBuffer):
-        buffer.write_int(self.game_version).write_string(self.player_name)
+        buffer.write_ulong(self.game_version).write_string(self.player_name)
 
     async def handle_inner(self):
         logger.println(

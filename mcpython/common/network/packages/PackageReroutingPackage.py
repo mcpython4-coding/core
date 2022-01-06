@@ -20,6 +20,7 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 class PackageReroute(AbstractPackage):
     PACKAGE_NAME = "minecraft:package_routing"
+    PACKAGE_TYPE_ID = 6
 
     def __init__(self):
         super().__init__()
@@ -34,7 +35,7 @@ class PackageReroute(AbstractPackage):
     async def read_from_buffer(self, buffer: ReadBuffer):
         self.route_target = buffer.read_int()
         self.inner_package = await shared.NETWORK_MANAGER.fetch_package_from_buffer(
-            bytearray(buffer.read_bytes(size_size=4))
+            ReadBuffer(buffer.read_bytes(size_size=4))
         )
 
     async def write_to_buffer(self, buffer: WriteBuffer):

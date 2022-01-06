@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import asyncio
 import gzip
 import io
+import struct
 import typing
 
 import mcpython.engine.network.AbstractPackage
@@ -138,8 +139,12 @@ class NetworkManager:
 
         logger.println("[NETWORK][SYNC] starting package ID sync...")
 
+        reassign = set()
+        assigned = set()
+
         for name, package_id in data:
             if name not in self.name2package_type:
+                logger.println(f"[NETWORK][SYNC][WARN] server knows about package '{name}' with id {package_id}, but we don't, this can cause issues!")
                 continue
 
             package_type: typing.Type[
@@ -147,7 +152,11 @@ class NetworkManager:
             ] = self.name2package_type[name]
             package_id_here = package_type.PACKAGE_TYPE_ID
 
-            logger.println(f"[NETWORK][SYNC] considering package {name}")
+            if package_type in reassign:
+                reassign.remove(package_type)
+            assigned.add(package_type)
+
+            logger.println(f"[NETWORK][SYNC] considering package '{name}' (client id {package_id_here}, expected from server: {package_id})")
 
             if package_id_here == package_id:
                 continue
@@ -159,6 +168,9 @@ class NetworkManager:
             self.package_types[package_id] = package_type
 
             if package_id_here in self.package_types:
+                if self.package_types[package_id_here] not in assigned:
+                    reassign.add(self.package_types[package_id_here])
+
                 del self.package_types[package_id_here]
 
             if package_id_here in self.general_package_handlers:
@@ -166,6 +178,17 @@ class NetworkManager:
                     package_id
                 ] = self.general_package_handlers[package_id_here]
                 del self.general_package_handlers[package_id_here]
+
+        for package_class in reassign:
+            previous = package_class.PACKAGE_TYPE_ID
+            while self.next_package_type_id in self.package_types:
+                self.next_package_type_id += 1
+
+            package_class.PACKAGE_TYPE_ID = self.next_package_type_id
+            self.package_types[package_class.PACKAGE_TYPE_ID] = package_class
+            logger.println(f"[NETWORK][SYNC][WARN] client knows about package '{package_class.PACKAGE_NAME}', "
+                           f"but the server wants another package at it's id, so we need to reassign it's id to "
+                           f"{package_class.PACKAGE_TYPE_ID} (previous: {previous})")
 
         await shared.event_handler.call_async("minecraft:package_rearrangement")
 
@@ -247,60 +270,6 @@ class NetworkManager:
 
             await shared.SERVER_NETWORK_HANDLER.send_package(data, destination)
 
-    async def encode_package(self, destination: int, package: AbstractPackage.AbstractPackage) -> bytes:
-        """
-        Encodes the given package to bytes
-
-        :param destination: where to send to
-        :param package: the package to encode
-        :return: the bytes representing the package
-        :raises RuntimeError: if the package has no package ID, so no static id nor registered to a NetworkManager
-            instance
-        """
-        if package.PACKAGE_TYPE_ID == -1:
-            raise RuntimeError(
-                f"{package}: Package type must be registered for sending it"
-            )
-
-        package.target_id = destination
-        bit_map = (
-            (package.PACKAGE_TYPE_ID << 2) + (2 if package.CAN_GET_ANSWER else 0)
-        ) + (1 if package.previous_packages else 0)
-        encoded_head = bit_map.to_bytes(4, "big", signed=False)
-        if package.CAN_GET_ANSWER and package.package_id == -1:
-            package.package_id = self.next_package_id
-            self.next_package_id += 1
-        package_id_data = (
-            b""
-            if not package.CAN_GET_ANSWER
-            else package.package_id.to_bytes(4, "big", signed=False)
-        )
-        previous_package_id_data = (
-            b""
-            if not package.previous_packages
-            else package.previous_packages[-1].to_bytes(4, "big", signed=False)
-        )
-        buffer = WriteBuffer()
-        await package.write_to_buffer(buffer)
-        package_data = buffer.get_data()
-
-        compress_data = len(package_data) > 200 and package.ALLOW_PACKAGE_COMPRESSION
-
-        if compress_data:
-            package_data = gzip.compress(package_data)
-
-        package_size_data = len(package_data).to_bytes(3, "big", signed=False)
-
-        data = (
-            encoded_head
-            + package_id_data
-            + previous_package_id_data
-            + (b"\x00" if not compress_data else b"\xFF")
-            + package_size_data
-            + package_data
-        )
-        return data
-
     def register_package_handler(
         self,
         package_type: typing.Type[
@@ -357,7 +326,7 @@ class NetworkManager:
                 self.next_package_type_id += 1
             package_class.PACKAGE_TYPE_ID = self.next_package_type_id
 
-        elif package_class.PACKAGE_TYPE_ID in self.package_types:
+        if package_class.PACKAGE_TYPE_ID in self.package_types:
             other = self.package_types[package_class.PACKAGE_TYPE_ID]
 
             if not other.DYNAMIC_PACKAGE_ID:
@@ -374,14 +343,8 @@ class NetworkManager:
         self.package_types[package_class.PACKAGE_TYPE_ID] = package_class
 
         self.name2package_type[package_class.PACKAGE_NAME] = package_class
-        return self
 
-    def clean_network_graph(self):
-        """
-        Cleans some internal stuff
-        """
-        self.valid_package_ids.clear()
-        self.custom_package_handlers.clear()
+        return self
 
     async def fetch_as_client(self):
         """
@@ -392,7 +355,8 @@ class NetworkManager:
             return
 
         shared.CLIENT_NETWORK_HANDLER.work()
-        buffer = shared.CLIENT_NETWORK_HANDLER.data_stream
+        buffer = ReadBuffer(shared.CLIENT_NETWORK_HANDLER.data_stream)
+        shared.CLIENT_NETWORK_HANDLER.data_stream.clear()
 
         while buffer:
             try:
@@ -405,7 +369,7 @@ class NetworkManager:
                 return
 
             if package is None:
-                return
+                break
 
             package.sender_id = 0
 
@@ -437,6 +401,8 @@ class NetworkManager:
         """
 
         for client_id, buffer in shared.SERVER_NETWORK_HANDLER.get_package_streams():
+            buffer = ReadBuffer(buffer)
+
             while buffer:
                 try:
                     package = await self.fetch_package_from_buffer(buffer)
@@ -475,67 +441,110 @@ class NetworkManager:
                         result = func(package, 0)
                         if isinstance(result, typing.Awaitable):
                             await result
+
                     self.custom_package_handlers[package.package_id].clear()
 
-    async def fetch_package_from_buffer(self, buffer: ReadBuffer) -> AbstractPackage.AbstractPackage | None:
+    def clean_network_graph(self):
+        """
+        Cleans some internal stuff
+        """
+        self.valid_package_ids.clear()
+        self.custom_package_handlers.clear()
+        self.next_package_type_id = 1
+
+    async def encode_package(self, destination: int, package: AbstractPackage.AbstractPackage) -> bytes:
+        """
+        Encodes the given package to bytes
+
+        :param destination: where to send to
+        :param package: the package to encode
+        :return: the bytes representing the package
+        :raises RuntimeError: if the package has no package ID, so no static id nor registered to a NetworkManager
+            instance
+        """
+        if package.PACKAGE_TYPE_ID == -1:
+            raise RuntimeError(
+                f"{package}: Package type must be registered for sending it"
+            )
+
+        buffer = WriteBuffer()
+
+        package.target_id = destination
+
+        buffer.write_uint(package.PACKAGE_TYPE_ID)
+        buffer.write_bool_group((package.CAN_GET_ANSWER, bool(package.previous_packages)))
+
+        if package.CAN_GET_ANSWER and package.package_id == -1:
+            package.package_id = self.next_package_id
+            self.next_package_id += 1
+
+        if package.CAN_GET_ANSWER:
+            buffer.write_uint(package.package_id)
+
+        if package.previous_packages:
+            await buffer.write_list(package.previous_packages, lambda e: buffer.write_uint(e))
+
+        pbuf = WriteBuffer()
+        await package.write_to_buffer(pbuf)
+        package_data = pbuf.get_data()
+
+        compress_data = len(package_data) > 200 and package.ALLOW_PACKAGE_COMPRESSION
+
+        if compress_data:
+            package_data = gzip.compress(package_data)
+
+        buffer.write_bool(compress_data)
+
+        buffer.write_bytes(package_data, size_size=3)
+
+        return buffer.get_data()
+
+    async def fetch_package_from_buffer(self, buffer: ReadBuffer, log_package_error=True) -> AbstractPackage.AbstractPackage | None:
         """
         Reads a package from the network buffer instance
 
         :param buffer: the buffer to read from
+        :param log_package_error: if to log errors with the package, or to silently ignore them
         :return: the package instance, or None if an error occurred
         """
 
-        try:
-            head = int.from_bytes(buffer[:4], "big", signed=False)
+        assert isinstance(buffer, ReadBuffer), f"buffer must be a network buffer, not {type(buffer)} ({repr(buffer)[:100]})"
 
-            package_type = head >> 2
+        try:
+            try:
+                package_type = buffer.read_uint()
+            except struct.error:
+                return
 
             if not self.package_types:
                 await load_packages()
 
             if package_type not in self.package_types:
-                logger.println(
-                    f"[NETWORK][ERROR] received unknown package type of ID {package_type}"
-                )
-                print(list(self.package_types.keys()))
-                print(buffer[:4])
-                print(head)
+                if log_package_error:
+                    logger.println(
+                        f"[NETWORK][ERROR] received unknown package type of ID {package_type}"
+                    )
+                    logger.println(list(self.package_types.keys()))
                 return
 
-            has_package_id = head & 2
-            has_previous_package_id = head & 1
+            has_package_id, has_previous_package_id = buffer.read_bool_group(2)
 
-            index = 4
             if has_package_id:
-                package_id = int.from_bytes(
-                    buffer[index : index + 4], "big", signed=False
-                )
-                index += 4
+                package_id = buffer.read_uint()
             else:
                 package_id = -1
 
             if has_previous_package_id:
-                previous_id = int.from_bytes(
-                    buffer[index : index + 4], "big", signed=False
-                )
-                index += 4
+                previous_ids = await buffer.collect_list(lambda: buffer.read_uint())
             else:
-                previous_id = None
+                previous_ids = []
 
-            package_compressed = buffer[index] == 255
-            index += 1
+            package_compressed = buffer.read_bool()
 
-            package_size = int.from_bytes(
-                buffer[index : index + 3], "big", signed=False
-            )
-            index += 3
-
-            package_data = buffer[index : index + package_size]
+            package_data = buffer.read_bytes(size_size=3)
 
             if package_compressed:
                 package_data = gzip.decompress(package_data)
-
-            del buffer[: index + package_size]
 
         except IndexError:
             return
@@ -546,8 +555,7 @@ class NetworkManager:
         await package.read_from_buffer(buffer)
 
         package.package_id = package_id
-        if previous_id:
-            package.previous_packages.append(previous_id)
+        package.previous_packages = previous_ids
 
         return package
 

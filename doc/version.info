@@ -1987,4 +1987,5 @@ A*  [uuk]: refactored the interaction API for fluids and items
 f   [uuk]: made chunk serialization more fail safe
 f   [uuk]: chunks have now partial control over chunk serialization, so custom sub-classes can
            change behaviour here
+I   [uuk]: NetworkManager uses now also for the header a NetworkBuffer instead of doing it "by hand"
 
