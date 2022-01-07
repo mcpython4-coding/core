@@ -11,12 +11,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import dis
 import importlib
 import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
 from .MixinMethodWrapper import MixinPatchHelper
+from .util import PyOpcodes
 
 from ..engine import logger
 from .MixinMethodWrapper import mixin_return
@@ -90,6 +92,32 @@ class MixinConstantReplacer(AbstractMixinProcessor):
             return
 
         helper.replaceConstant(self.before, self.after)
+        helper.store()
+
+
+class MixinGlobal2ConstReplace(AbstractMixinProcessor):
+    def __init__(self, global_name: str, after):
+        self.global_name = global_name
+        self.after = after
+
+    def apply(
+        self,
+        handler: "MixinHandler",
+        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        for index, instruction in helper.getLoadGlobalsLoading(self.global_name):
+            helper.instruction_listing[index] = dis.Instruction(
+                "LOAD_CONST",
+                PyOpcodes.LOAD_CONST,
+                target.ensureConstant(self.after),
+                self.after,
+                repr(self.after),
+                instruction.offset,
+                instruction.starts_line,
+                instruction.is_jump_target,
+            )
+
         helper.store()
 
 
@@ -196,6 +224,20 @@ class MixinHandler:
         """
         self.bound_mixin_processors.setdefault(access_str, []).append((
             MixinConstantReplacer(constant_value, new_value, fail_on_not_found=fail_on_not_found), priority, optional
+        ))
+        return self
+
+    def replace_global_with_constant(self, access_str: str, global_name: str, new_value, priority=0, optional=True):
+        """
+        Replaces all LOAD_GLOBAL <global name> instructions with a LOAD_CONST(new value) instructions
+        :param access_str: the access str of the method
+        :param global_name: the global name
+        :param new_value: the new value
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        """
+        self.bound_mixin_processors.setdefault(access_str, []).append((
+            MixinGlobal2ConstReplace(global_name, new_value), priority, optional
         ))
         return self
 

@@ -206,6 +206,11 @@ class MixinPatchHelper:
                         instruction.is_jump_target,
                     )
 
+    def getLoadGlobalsLoading(self, global_name: str) -> typing.Iterable[typing.Tuple[int, dis.Instruction]]:
+        for index, instruction in enumerate(self.instruction_listing):
+            if instruction.opname == "LOAD_GLOBAL" and instruction.argval == global_name:
+                yield index, instruction
+
     def insertMethodAt(self, start: int, method: FunctionPatcher, force_inline=True):
         """
         Inserts a method body at the given position
