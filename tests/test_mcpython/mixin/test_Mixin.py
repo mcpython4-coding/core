@@ -26,14 +26,23 @@ def test_global():
     test()
 
 
+def test_global2():
+    test()
+    test_global()
+
+
 def reset_test_methods():
-    global test, test_global
+    global test, test_global, test_global2
 
     def test():
         return 0
 
     def test_global():
         test()
+
+    def test_global2():
+        test()
+        test_global()
 
 
 class TestMixinHandler(TestCase):
@@ -299,11 +308,29 @@ class TestMixinHandler(TestCase):
 
         handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global", "test", callback)
 
-        dis.dis(test_global)
         handler.applyMixins()
         test_global()
 
         self.assertTrue(invoked)
+        reset_test_methods()
+
+    def test_global_to_const_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:global2const_2")
+
+        invoked = 0
+
+        def callback():
+            nonlocal invoked
+            invoked += 1
+
+        handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global2", "test", callback)
+
+        handler.applyMixins()
+        test_global2()
+
+        self.assertEqual(invoked, 1)
         reset_test_methods()
 
     def test_mixin_static_method_call(self):

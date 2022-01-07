@@ -24,6 +24,91 @@ from ..engine import logger
 from .MixinMethodWrapper import mixin_return
 
 
+class AbstractInstructionMatcher:
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        raise NotImplementedError
+
+
+class AnyByInstructionNameMatcher(AbstractInstructionMatcher):
+    def __init__(self, opname: str):
+        self.opname = opname
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        return function.instruction_listing[index].opname == self.opname
+
+
+class IndexBasedMatcher(AbstractInstructionMatcher):
+    def __init__(self, start: int, end: int = None, sub_matcher: AbstractInstructionMatcher = None):
+        self.start = start
+        self.end = end
+        self.sub_matcher = sub_matcher
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        if index < self.start: return False
+        if self.end is not None and index > self.end: return False
+        if self.sub_matcher:
+            return self.sub_matcher.matches(function, index, match_count)
+
+        return True
+
+
+class SurroundingBasedMatcher(AbstractInstructionMatcher):
+    def __init__(self, this_matcher: AbstractInstructionMatcher = None):
+        self.this_matcher = this_matcher
+        self.size = 0, 0
+        self.matchers: typing.Tuple[typing.List[AbstractInstructionMatcher], typing.List[AbstractInstructionMatcher]] = [], []
+
+    def set_offset_matcher(self, offset: int, matcher: AbstractInstructionMatcher):
+        if offset < 0:
+            self.size = min(offset, self.size[0]), self.size[1]
+            if len(self.matchers[0]) < abs(offset):
+                self.matchers[0] += [None] * (abs(offset) - len(self.matchers[0]))
+            self.matchers[0][offset] = matcher
+        else:
+            self.size = self.size[0], max(offset, self.size[1])
+            if len(self.matchers[1]) < offset:
+                self.matchers[0] += [None] * (offset - len(self.matchers[0]))
+            self.matchers[1][offset-1] = matcher
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        if index + self.size[0] < 0 or index + self.size[1] >= len(function.patcher.code.co_code) // 2:
+            return False
+
+        for i in range(len(self.matchers[0])):
+            dx = -(len(self.matchers[0]) - i)
+            if not self.matchers[0][i].matches(function, index+dx, match_count):
+                return False
+
+        for i in range(len(self.matchers[1])):
+            if not self.matchers[0][i].matches(function, index+i+1, match_count):
+                return False
+
+        if self.this_matcher is not None:
+            return self.this_matcher.matches(function, index, match_count)
+
+        return True
+
+
+class LoadConstantValueMatcher(AbstractInstructionMatcher):
+    def __init__(self, value):
+        self.value = value
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        instr = function.instruction_listing[index]
+        return instr.opname == "LOAD_CONST" and instr.argval == self.value
+
+
+class LoadGlobalMatcher(AbstractInstructionMatcher):
+    def __init__(self, global_name: str):
+        self.global_name = global_name
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        instr = function.instruction_listing[index]
+        return instr.opname == "LOAD_GLOBAL" and instr.argval == self.global_name
+
+
+# todo: implement more matchers
+
 class AbstractMixinProcessor:
     """
     Mixin processor class
@@ -75,10 +160,11 @@ class MixinReplacementProcessor(AbstractMixinProcessor):
 
 
 class MixinConstantReplacer(AbstractMixinProcessor):
-    def __init__(self, before, after, fail_on_not_found=False):
+    def __init__(self, before, after, fail_on_not_found=False, matcher: AbstractInstructionMatcher = None):
         self.before = before
         self.after = after
         self.fail_on_not_found = fail_on_not_found
+        self.matcher = matcher
 
     def apply(
         self,
@@ -91,14 +177,15 @@ class MixinConstantReplacer(AbstractMixinProcessor):
                 raise RuntimeError(f"constant {self.before} not found in target {target} (to be replaced with {self.after})")
             return
 
-        helper.replaceConstant(self.before, self.after)
+        helper.replaceConstant(self.before, self.after, matcher=self.matcher.matches if self.matcher is not None else None)
         helper.store()
 
 
 class MixinGlobal2ConstReplace(AbstractMixinProcessor):
-    def __init__(self, global_name: str, after):
+    def __init__(self, global_name: str, after, matcher: AbstractInstructionMatcher = None):
         self.global_name = global_name
         self.after = after
+        self.matcher = matcher
 
     def apply(
         self,
@@ -106,7 +193,13 @@ class MixinGlobal2ConstReplace(AbstractMixinProcessor):
         target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
         helper: MixinPatchHelper,
     ):
+        match = -1
         for index, instruction in helper.getLoadGlobalsLoading(self.global_name):
+            match += 1
+
+            if self.matcher is not None and not self.matcher.matches(helper, index, match):
+                continue
+
             helper.instruction_listing[index] = dis.Instruction(
                 "LOAD_CONST",
                 PyOpcodes.LOAD_CONST,
@@ -212,7 +305,7 @@ class MixinHandler:
 
         return module
 
-    def replace_method_constant(self, access_str: str, constant_value, new_value, priority=0, optional=True, fail_on_not_found=True):
+    def replace_method_constant(self, access_str: str, constant_value, new_value, priority=0, optional=True, fail_on_not_found=True, matcher: AbstractInstructionMatcher = None):
         """
         Replaces a given constant globally in the method
         :param access_str: the access_str for the target
@@ -221,13 +314,14 @@ class MixinHandler:
         :param priority: the mixin priority
         :param optional: optional mixin?
         :param fail_on_not_found: if mixin applying failed if the constant was not found
+        :param matcher: a custom instruction matcher, optional, when None, matches all instructions using that constant
         """
         self.bound_mixin_processors.setdefault(access_str, []).append((
-            MixinConstantReplacer(constant_value, new_value, fail_on_not_found=fail_on_not_found), priority, optional
+            MixinConstantReplacer(constant_value, new_value, fail_on_not_found=fail_on_not_found, matcher=matcher), priority, optional
         ))
         return self
 
-    def replace_global_with_constant(self, access_str: str, global_name: str, new_value, priority=0, optional=True):
+    def replace_global_with_constant(self, access_str: str, global_name: str, new_value, priority=0, optional=True, matcher: AbstractInstructionMatcher = None):
         """
         Replaces all LOAD_GLOBAL <global name> instructions with a LOAD_CONST(new value) instructions
         :param access_str: the access str of the method
@@ -235,9 +329,10 @@ class MixinHandler:
         :param new_value: the new value
         :param priority: the mixin priority
         :param optional: optional mixin?
+        :param matcher: the instruction matcher object
         """
         self.bound_mixin_processors.setdefault(access_str, []).append((
-            MixinGlobal2ConstReplace(global_name, new_value), priority, optional
+            MixinGlobal2ConstReplace(global_name, new_value, matcher=matcher), priority, optional
         ))
         return self
 
