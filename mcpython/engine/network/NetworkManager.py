@@ -40,6 +40,8 @@ class NetworkManager:
         [1B package compression enable]
         [3B package size]
         [package data, encoded by the package]
+
+    todo: move the mcpython specific methods to another util module
     """
 
     def __init__(self):
@@ -97,6 +99,7 @@ class NetworkManager:
         :param msg: the message itself
         :raises AssertionError: if the message is not a string
         """
+        # todo: use here a text component
         assert isinstance(msg, str), "message must be string"
 
         from mcpython.common.network.packages.PlayerChatPackage import (

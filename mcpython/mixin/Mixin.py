@@ -47,6 +47,9 @@ class AbstractMixinProcessor:
     ):
         pass
 
+    def is_breaking(self) -> bool:
+        return False
+
 
 class MixinReplacementProcessor(AbstractMixinProcessor):
     def __init__(self, replacement: types.FunctionType):
@@ -66,6 +69,9 @@ class MixinReplacementProcessor(AbstractMixinProcessor):
             mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(self.replacement)
         )
 
+    def is_breaking(self) -> bool:
+        return True
+
 
 class MixinHandler:
     """
@@ -84,13 +90,17 @@ class MixinHandler:
     By default, control flow with "return"'s is only arrival in the specified section.
     Use mixin_return() followed by a normal return to exit the method injected into
     """
+    LOCKED = False
 
     def __init__(self, processor_name: str, skip_on_fail=False, priority=0):
+        if MixinHandler.LOCKED:
+            raise RuntimeError()
+
         self.processor_name = processor_name
         self.skip_on_fail = skip_on_fail
         self.priority = priority
         self.bound_mixin_processors: typing.Dict[
-            str, typing.List[AbstractMixinProcessor]
+            str, typing.List[typing.Tuple[AbstractMixinProcessor, float, bool]]
         ] = {}
 
     def applyMixins(self):
@@ -103,9 +113,30 @@ class MixinHandler:
                 self.lookup_method(target)
             )
 
-            for mixin in mixins:
-                logger.println("[MIXIN][WARN] applying mixin " + str(mixin))
+            order = sorted(sorted(mixins, key=lambda e: 0 if e[2] else 1), key=lambda e: e[1])
 
+            non_optionals = set()
+            optionals = set()
+            to_delete = []
+            for i, (mixin, priority, optional) in enumerate(order):
+                if non_optionals and mixin.is_breaking():
+                    logger.println("[MIXIN][FATAL] conflicting mixin: found an non-optional mixin before, breaking with this mixin!")
+                    raise RuntimeError
+                elif optionals and mixin.is_breaking():
+                    to_delete = [e[1] for e in sorted(list(optionals), key=lambda e: -e[1])] + to_delete
+
+                if not optional:
+                    non_optionals.add(mixin)
+                else:
+                    optionals.add((mixin, i))
+
+            for i in to_delete:
+                mixin, priority, optional = order[i]
+                logger.println(f"[MIXIN][WARN] skipping mixin {mixin} with priority {priority} (optional: {optional})")
+                del order[i]
+
+            for mixin, priority, optional in order:
+                logger.println(f"[MIXIN][WARN] applying mixin {mixin} with priority {priority} (optional: {optional})")
                 mixin.apply(self, patcher)
 
             patcher.applyPatches()
@@ -121,11 +152,11 @@ class MixinHandler:
         return module
 
     def replace_function_body(
-        self, access_str: str
+        self, access_str: str, priority=0, optional=True
     ) -> typing.Callable[[types.FunctionType], types.FunctionType]:
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
-                MixinReplacementProcessor(function)
+                (MixinReplacementProcessor(function), priority, optional)
             )
             return function
 
@@ -176,3 +207,7 @@ class MixinHandler:
         :param inline: when True, will inline this annotated method into the target
         """
         return lambda e: e
+
+
+mixin_handler = MixinHandler("global")
+MixinHandler.LOCKED = True

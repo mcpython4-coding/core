@@ -456,7 +456,7 @@ class WriteBuffer:
         return self
 
     def write_nullable_string(self, value: str, size_size=2, encoding="utf-8"):
-        assert isinstance(value, str), "value must be str"
+        assert isinstance(value, str) or value is None, "value must be str"
         assert isinstance(size_size, int) and size_size > 0, "size size must be positive int"
 
         if value is None:

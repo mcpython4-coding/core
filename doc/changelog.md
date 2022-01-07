@@ -50,6 +50,10 @@ may not work anymore
         - rewritten Chunk storage to network buffer only
         - this dramatically reduces load times (and save times)
 
+    Mixins:
+        - added priority and optional flags 
+        - MixinHandler should be shared now, and will crash when trying to create another instance
+
     Fixed issues:
         - crash when a cactus tried to generate
 

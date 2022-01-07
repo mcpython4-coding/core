@@ -220,6 +220,19 @@ class MixinPatchHelper:
         self.is_async = True
         return self
 
+    def makeMethodSync(self):
+        """
+        Simply makes this method sync, like it was declared without "async def"
+        """
+        if not self.is_async:
+            return
+
+        assert self.instruction_listing[0].opname == "GEN_START"
+
+        self.deleteRegion(0, 1)
+        self.is_async = False
+        return self
+
     def insertStaticMethodCallAt(self, offset: int, method: str, *args):
         """
         Injects a static method call into another method

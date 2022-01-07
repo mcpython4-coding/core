@@ -58,6 +58,13 @@ MULTI_TEST_POOL: typing.List[
         lambda buffer, v: buffer.read_string() == v,
     ),
     (
+        lambda: "".join(
+            random.choice(string.printable) for _ in range(random.randint(10, 1000))
+        ) if random.random() > .5 else None,
+        lambda buffer, v: buffer.write_nullable_string(v),
+        lambda buffer, v: buffer.read_nullable_string() == v,
+    ),
+    (
         lambda: uuid.uuid4(),
         lambda buffer, v: buffer.write_uuid(v),
         lambda buffer, v: buffer.read_uuid() == v,
