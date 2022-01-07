@@ -308,6 +308,46 @@ class MixinGlobal2ConstReplace(AbstractMixinProcessor):
         helper.store()
 
 
+class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
+    def __init__(
+        self,
+        previous_global: str,
+        new_global: str,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        self.previous_global = previous_global
+        self.new_global = new_global
+        self.matcher = matcher
+
+    def apply(
+        self,
+        handler: "MixinHandler",
+        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        match = -1
+        for index, instruction in helper.getLoadGlobalsLoading(self.previous_global):
+            match += 1
+
+            if self.matcher is not None and not self.matcher.matches(
+                helper, index, match
+            ):
+                continue
+
+            helper.instruction_listing[index] = dis.Instruction(
+                "LOAD_GLOBAL",
+                PyOpcodes.LOAD_GLOBAL,
+                target.ensureName(self.new_global),
+                self.new_global,
+                None,
+                instruction.offset,
+                instruction.starts_line,
+                instruction.is_jump_target,
+            )
+
+        helper.store()
+
+
 class MixinHandler:
     """
     Handler for mixing into some functions
@@ -440,6 +480,33 @@ class MixinHandler:
                     fail_on_not_found=fail_on_not_found,
                     matcher=matcher,
                 ),
+                priority,
+                optional,
+            )
+        )
+        return self
+
+    def replace_global_ref(
+        self,
+        access_str: str,
+        previous_name: str,
+        new_name: str,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Replaces all LOAD_GLOBAL <global name> instructions with a LOAD GLOBAL <new name> instructions
+        :param access_str: the access str of the method
+        :param previous_name: the global name
+        :param new_name: the new global name
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: the instruction matcher object
+        """
+        self.bound_mixin_processors.setdefault(access_str, []).append(
+            (
+                MixinGlobalReTargetProcessor(previous_name, new_name, matcher=matcher),
                 priority,
                 optional,
             )

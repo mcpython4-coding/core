@@ -19,6 +19,14 @@ import test_mcpython.mixin.test_space
 from mcpython.mixin.Mixin import CounterMatcher
 
 
+INVOKER_COUNTER = 0
+
+
+def increase_counter():
+    global INVOKER_COUNTER
+    INVOKER_COUNTER += 1
+
+
 def test():
     return 0
 
@@ -346,6 +354,26 @@ class TestMixinHandler(TestCase):
 
         self.assertEqual(test(), 0)
         self.assertRaises(RuntimeError, handler.applyMixins)
+
+    def test_global_to_global_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:global2global_1")
+
+        handler.replace_global_ref(
+            "tests.test_mcpython.mixin.test_Mixin:test_global", "test", "increase_counter"
+        )
+
+        global INVOKER_COUNTER
+        INVOKER_COUNTER = 0
+
+        handler.applyMixins()
+        test_global()
+
+        self.assertEqual(INVOKER_COUNTER, 1)
+        INVOKER_COUNTER = 0
+
+        reset_test_methods()
 
     def test_global_to_const_1(self):
         from mcpython.mixin.Mixin import MixinHandler
