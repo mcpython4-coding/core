@@ -513,6 +513,122 @@ class TestMixinHandler(TestCase):
         self.assertEqual(invoked, 1)
         reset_test_methods()
 
+    def test_mixin_inject_at_head_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler(
+            "unittest:mixin:test_mixin_inject_at_head_1"
+        )
+        invoked = 0
+
+        @handler.inject_at_head("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
+        def inject(c):
+            nonlocal invoked
+            invoked += c
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 3)
+        reset_test_methods()
+
+    def test_mixin_inject_at_head_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler(
+            "unittest:mixin:test_mixin_inject_at_head_1"
+        )
+        invoked = 0
+
+        @handler.inject_at_head("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
+        def inject(c):
+            nonlocal invoked
+            invoked += c
+
+        @handler.inject_at_head("tests.test_mcpython.mixin.test_Mixin:test", args=(5,))
+        def inject2(c):
+            nonlocal invoked
+            invoked += c
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 8)
+        reset_test_methods()
+
+    def test_mixin_given_method_call_inject_1(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
+
+        INVOKED = 0
+
+        def localtest():
+            return 0
+
+        def inject(c: int):
+            nonlocal INVOKED
+            INVOKED += c
+
+        helper = MixinPatchHelper(localtest)
+        helper.insertGivenMethodCallAt(0, inject, 1)
+        helper.store()
+        helper.patcher.applyPatches()
+
+        localtest()
+        self.assertEqual(INVOKED, 1)
+
+    def test_mixin_given_method_call_inject_2(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
+
+        INVOKED = 0
+
+        def localtest():
+            return 0
+
+        def inject(c: int):
+            nonlocal INVOKED
+            INVOKED += c
+
+        helper = MixinPatchHelper(localtest)
+        helper.insertGivenMethodCallAt(0, inject, 4)
+        helper.store()
+        helper.patcher.applyPatches()
+
+        localtest()
+        self.assertEqual(INVOKED, 4)
+
+    def test_mixin_given_method_call_inject_3(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
+
+        INVOKED = 0
+
+        def localtest():
+            return 0
+
+        def inject(c: int):
+            nonlocal INVOKED
+            INVOKED += c
+
+        helper = MixinPatchHelper(localtest)
+        helper.insertGivenMethodCallAt(0, inject, 1)
+        helper.insertGivenMethodCallAt(0, inject, 1)
+        helper.store()
+        helper.patcher.applyPatches()
+
+        localtest()
+        self.assertEqual(INVOKED, 2)
+
     def test_mixin_static_method_call(self):
         from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
 

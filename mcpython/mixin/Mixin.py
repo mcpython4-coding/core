@@ -348,6 +348,22 @@ class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
         helper.store()
 
 
+class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
+    def __init__(self, target_func: typing.Callable, *args):
+        self.target_func = target_func
+        self.args = args
+
+    def apply(
+        self,
+        handler: "MixinHandler",
+        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        index = 0 if helper.instruction_listing[0].opname != "GEN_START" else 1
+        helper.insertGivenMethodCallAt(index, self.target_func, *self.args)
+        helper.store()
+
+
 class MixinHandler:
     """
     Handler for mixing into some functions
@@ -566,12 +582,19 @@ class MixinHandler:
         """
         return lambda e: e
 
-    def inject_at_head(self, access_str: str, priority=0, optional=True):
+    def inject_at_head(self, access_str: str, priority=0, optional=True, args=tuple()):
         """
         Injects some code at the function head
         Can be used for e.g. parameter manipulation
         """
-        return lambda e: e
+
+        def annotate(function):
+            self.bound_mixin_processors.setdefault(access_str, []).append(
+                (InjectFunctionCallAtHeadProcessor(function, *args), priority, optional)
+            )
+            return function
+
+        return annotate
 
     def inject_at_return(
         self,

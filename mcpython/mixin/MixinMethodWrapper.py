@@ -288,6 +288,23 @@ class MixinPatchHelper:
         self.is_async = False
         return self
 
+    def insertGivenMethodCallAt(self, offset: int, method: typing.Callable, *args):
+        """
+        Injects the given method as a constant call into the bytecode of that function
+        :param offset: the offset to inject at
+        :param method: the method to inject
+        """
+        self.insertRegion(offset, [
+            dis.Instruction("LOAD_CONST", PyOpcodes.LOAD_CONST, self.patcher.ensureConstant(method), method, repr(method), False, 0, 0),
+        ] + [
+            dis.Instruction("LOAD_CONST", PyOpcodes.LOAD_CONST, self.patcher.ensureConstant(e), e, repr(e), False, 0, 0)
+            for e in args
+        ] + [
+            dis.Instruction("CALL_FUNCTION", PyOpcodes.CALL_FUNCTION, len(args), None, None, False, 0, 0),
+            dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0),
+        ])
+        return self
+
     def insertStaticMethodCallAt(self, offset: int, method: str, *args):
         """
         Injects a static method call into another method
@@ -602,34 +619,6 @@ class MixinPatchHelper:
             instructions,
         )
         return self
-
-    def identify_call_instruction(
-        self, target_method_name: str
-    ) -> typing.Iterable[int]:
-        def identify(info):
-            return info.function_name == target_method_name
-
-        yield from self.identify_call_instruction_custom(identify)
-
-    def identify_call_instruction_custom(
-        self, comparator: typing.Callable[[typing.Any], bool]
-    ) -> typing.Iterable[int]:
-        from mcpython.mixin.StackAnalyser import StackAnalyser
-
-        stack_analyser = StackAnalyser(self)
-        stack_analyser.prepareSimpleStack()
-
-        for i, instruction in enumerate(self.instruction_listing):
-            if instruction.opcode in (
-                PyOpcodes.CALL_FUNCTION,
-                PyOpcodes.CALL_FUNCTION_KW,
-                PyOpcodes.CALL_FUNCTION_EX,
-                PyOpcodes.CALL_METHOD,
-            ):
-                context = stack_analyser.identifyMethodInvocationContext(i)
-
-                if comparator(context):
-                    yield i
 
     @staticmethod
     def prepare_method_for_insert(method: FunctionPatcher) -> FunctionPatcher:
