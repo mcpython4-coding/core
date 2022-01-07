@@ -21,9 +21,9 @@ import mcpython.engine.network.AbstractPackage
 import mcpython.engine.network.Backend
 from mcpython import shared
 from mcpython.engine.world.AbstractInterface import IChunk
-from . import AbstractPackage
 
 from .. import logger
+from . import AbstractPackage
 from .util import ReadBuffer, WriteBuffer
 
 
@@ -147,7 +147,9 @@ class NetworkManager:
 
         for name, package_id in data:
             if name not in self.name2package_type:
-                logger.println(f"[NETWORK][SYNC][WARN] server knows about package '{name}' with id {package_id}, but we don't, this can cause issues!")
+                logger.println(
+                    f"[NETWORK][SYNC][WARN] server knows about package '{name}' with id {package_id}, but we don't, this can cause issues!"
+                )
                 continue
 
             package_type: typing.Type[
@@ -159,7 +161,9 @@ class NetworkManager:
                 reassign.remove(package_type)
             assigned.add(package_type)
 
-            logger.println(f"[NETWORK][SYNC] considering package '{name}' (client id {package_id_here}, expected from server: {package_id})")
+            logger.println(
+                f"[NETWORK][SYNC] considering package '{name}' (client id {package_id_here}, expected from server: {package_id})"
+            )
 
             if package_id_here == package_id:
                 continue
@@ -189,9 +193,11 @@ class NetworkManager:
 
             package_class.PACKAGE_TYPE_ID = self.next_package_type_id
             self.package_types[package_class.PACKAGE_TYPE_ID] = package_class
-            logger.println(f"[NETWORK][SYNC][WARN] client knows about package '{package_class.PACKAGE_NAME}', "
-                           f"but the server wants another package at it's id, so we need to reassign it's id to "
-                           f"{package_class.PACKAGE_TYPE_ID} (previous: {previous})")
+            logger.println(
+                f"[NETWORK][SYNC][WARN] client knows about package '{package_class.PACKAGE_NAME}', "
+                f"but the server wants another package at it's id, so we need to reassign it's id to "
+                f"{package_class.PACKAGE_TYPE_ID} (previous: {previous})"
+            )
 
         await shared.event_handler.call_async("minecraft:package_rearrangement")
 
@@ -216,7 +222,9 @@ class NetworkManager:
             else:
                 shared.SERVER_NETWORK_HANDLER.disconnect_client(target)
 
-    async def send_package_to_all(self, package: AbstractPackage.AbstractPackage, not_including=-1):
+    async def send_package_to_all(
+        self, package: AbstractPackage.AbstractPackage, not_including=-1
+    ):
         """
         Sends a package to all clients in the network, excluding the given client id
 
@@ -313,7 +321,9 @@ class NetworkManager:
 
     def register_package_type(
         self,
-        package_class: typing.Type[mcpython.engine.network.AbstractPackage.AbstractPackage],
+        package_class: typing.Type[
+            mcpython.engine.network.AbstractPackage.AbstractPackage
+        ],
     ):
         """
         Registers a certain package class to this network manager
@@ -455,7 +465,9 @@ class NetworkManager:
         self.custom_package_handlers.clear()
         self.next_package_type_id = 1
 
-    async def encode_package(self, destination: int, package: AbstractPackage.AbstractPackage) -> bytes:
+    async def encode_package(
+        self, destination: int, package: AbstractPackage.AbstractPackage
+    ) -> bytes:
         """
         Encodes the given package to bytes
 
@@ -475,7 +487,9 @@ class NetworkManager:
         package.target_id = destination
 
         buffer.write_uint(package.PACKAGE_TYPE_ID)
-        buffer.write_bool_group((package.CAN_GET_ANSWER, bool(package.previous_packages)))
+        buffer.write_bool_group(
+            (package.CAN_GET_ANSWER, bool(package.previous_packages))
+        )
 
         if package.CAN_GET_ANSWER and package.package_id == -1:
             package.package_id = self.next_package_id
@@ -485,7 +499,9 @@ class NetworkManager:
             buffer.write_uint(package.package_id)
 
         if package.previous_packages:
-            await buffer.write_list(package.previous_packages, lambda e: buffer.write_uint(e))
+            await buffer.write_list(
+                package.previous_packages, lambda e: buffer.write_uint(e)
+            )
 
         pbuf = WriteBuffer()
         await package.write_to_buffer(pbuf)
@@ -502,7 +518,9 @@ class NetworkManager:
 
         return buffer.get_data()
 
-    async def fetch_package_from_buffer(self, buffer: ReadBuffer, log_package_error=True) -> AbstractPackage.AbstractPackage | None:
+    async def fetch_package_from_buffer(
+        self, buffer: ReadBuffer, log_package_error=True
+    ) -> AbstractPackage.AbstractPackage | None:
         """
         Reads a package from the network buffer instance
 
@@ -511,7 +529,9 @@ class NetworkManager:
         :return: the package instance, or None if an error occurred
         """
 
-        assert isinstance(buffer, ReadBuffer), f"buffer must be a network buffer, not {type(buffer)} ({repr(buffer)[:100]})"
+        assert isinstance(
+            buffer, ReadBuffer
+        ), f"buffer must be a network buffer, not {type(buffer)} ({repr(buffer)[:100]})"
 
         try:
             try:

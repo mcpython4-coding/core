@@ -25,8 +25,7 @@ from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.common.entity.ItemEntity import ItemEntity
 from mcpython.engine import logger
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class Chunk(mcpython.engine.world.AbstractInterface.IChunk):

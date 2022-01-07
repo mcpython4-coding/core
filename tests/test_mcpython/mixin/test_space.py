@@ -11,8 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import string
 import itertools
+import string
+
 INVOKED = 0
 
 
@@ -30,7 +31,7 @@ def create_big_function():
     chars = "abcdefghijklmnopqrstuvwxyz"
 
     names = itertools.product(chars, chars)
-    func_code = '\n    '.join(f"{''.join(name)}_ = 0" for name in names)
+    func_code = "\n    ".join(f"{''.join(name)}_ = 0" for name in names)
 
     code = f"""
 def test():

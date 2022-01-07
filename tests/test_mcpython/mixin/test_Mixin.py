@@ -58,10 +58,12 @@ def reset_test_methods():
 class TestMixinHandler(TestCase):
     def setUp(self):
         from mcpython.mixin.Mixin import MixinHandler
+
         MixinHandler.LOCKED = False
 
     def test_lock(self):
         from mcpython.mixin.Mixin import MixinHandler
+
         MixinHandler.LOCKED = True
         self.assertRaises(RuntimeError, lambda: MixinHandler("test"))
         MixinHandler.LOCKED = False
@@ -162,7 +164,9 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_with_priority")
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", priority=2)
+        @handler.replace_function_body(
+            "tests.test_mcpython.mixin.test_Mixin:test", priority=2
+        )
         def override():
             return 1
 
@@ -178,13 +182,17 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_with_negative_priority(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_with_negative_priority")
+        handler = MixinHandler(
+            "unittest:mixin:test_mixin_by_name_twice_with_negative_priority"
+        )
 
         @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
             return 1
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", priority=-1)
+        @handler.replace_function_body(
+            "tests.test_mcpython.mixin.test_Mixin:test", priority=-1
+        )
         def override2():
             return 2
 
@@ -198,11 +206,15 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_conflicting")
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", priority=2)
+        @handler.replace_function_body(
+            "tests.test_mcpython.mixin.test_Mixin:test", priority=2
+        )
         def override():
             return 1
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", optional=False)
+        @handler.replace_function_body(
+            "tests.test_mcpython.mixin.test_Mixin:test", optional=False
+        )
         def override2():
             return 2
 
@@ -217,9 +229,13 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_non_conflicting_order(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_non_conflicting_order")
+        handler = MixinHandler(
+            "unittest:mixin:test_mixin_by_name_twice_non_conflicting_order"
+        )
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", optional=False)
+        @handler.replace_function_body(
+            "tests.test_mcpython.mixin.test_Mixin:test", optional=False
+        )
         def override():
             return 1
 
@@ -238,13 +254,19 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_conflicting_order(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_non_conflicting_order")
+        handler = MixinHandler(
+            "unittest:mixin:test_mixin_by_name_twice_non_conflicting_order"
+        )
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", optional=False)
+        @handler.replace_function_body(
+            "tests.test_mcpython.mixin.test_Mixin:test", optional=False
+        )
         def override():
             return 1
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", optional=False)
+        @handler.replace_function_body(
+            "tests.test_mcpython.mixin.test_Mixin:test", optional=False
+        )
         def override2():
             return 2
 
@@ -260,7 +282,9 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler("unittest:processor:replace_constant_1")
 
-        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True)
+        handler.replace_method_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True
+        )
 
         self.assertEqual(test(), 0)
 
@@ -274,8 +298,16 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler("unittest:processor:replace_constant_1")
 
-        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True)
-        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 1, 2, fail_on_not_found=True, priority=1)
+        handler.replace_method_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True
+        )
+        handler.replace_method_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test",
+            1,
+            2,
+            fail_on_not_found=True,
+            priority=1,
+        )
 
         self.assertEqual(test(), 0)
 
@@ -289,7 +321,9 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler("unittest:processor:replace_constant_fail_1")
 
-        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 2, 1, fail_on_not_found=True)
+        handler.replace_method_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test", 2, 1, fail_on_not_found=True
+        )
 
         self.assertEqual(test(), 0)
         self.assertRaises(RuntimeError, handler.applyMixins)
@@ -299,8 +333,16 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler("unittest:processor:replace_constant_fail_2")
 
-        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True)
-        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 1, 2, fail_on_not_found=True, priority=-1)
+        handler.replace_method_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True
+        )
+        handler.replace_method_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test",
+            1,
+            2,
+            fail_on_not_found=True,
+            priority=-1,
+        )
 
         self.assertEqual(test(), 0)
         self.assertRaises(RuntimeError, handler.applyMixins)
@@ -316,7 +358,9 @@ class TestMixinHandler(TestCase):
             nonlocal invoked
             invoked = True
 
-        handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global", "test", callback)
+        handler.replace_global_with_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test_global", "test", callback
+        )
 
         handler.applyMixins()
         test_global()
@@ -335,7 +379,9 @@ class TestMixinHandler(TestCase):
             nonlocal invoked
             invoked += 1
 
-        handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global2", "test", callback)
+        handler.replace_global_with_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test_global2", "test", callback
+        )
 
         handler.applyMixins()
         test_global2()
@@ -354,8 +400,12 @@ class TestMixinHandler(TestCase):
             nonlocal invoked
             invoked += 1
 
-        handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global3", "test", callback,
-                                             matcher=CounterMatcher(1))
+        handler.replace_global_with_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test_global3",
+            "test",
+            callback,
+            matcher=CounterMatcher(1),
+        )
 
         handler.applyMixins()
         test_global3()
@@ -374,8 +424,12 @@ class TestMixinHandler(TestCase):
             nonlocal invoked
             invoked += 1
 
-        handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global3", "test", callback,
-                                             matcher=CounterMatcher(1) & CounterMatcher(1))
+        handler.replace_global_with_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test_global3",
+            "test",
+            callback,
+            matcher=CounterMatcher(1) & CounterMatcher(1),
+        )
 
         handler.applyMixins()
         test_global3()

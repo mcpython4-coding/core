@@ -240,16 +240,20 @@ class FunctionPatcher:
                     data = instr.arg.to_bytes(2, "big", signed=False)
 
                 for e in data[:-1]:
-                    new_instructions.append((dis.Instruction(
-                        "EXTENDED_ARG",
-                        144,
-                        e,
-                        e,
-                        "",
-                        0,
-                        None,
-                        False,
-                    )))
+                    new_instructions.append(
+                        (
+                            dis.Instruction(
+                                "EXTENDED_ARG",
+                                144,
+                                e,
+                                e,
+                                "",
+                                0,
+                                None,
+                                False,
+                            )
+                        )
+                    )
 
                 if len(data) != skipped + 1:
                     # todo: implement instruction offset remap

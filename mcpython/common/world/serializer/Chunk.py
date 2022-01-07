@@ -57,7 +57,9 @@ class Chunk(IDataSerializer.IDataSerializer):
         await chunk_instance.read_from_network_buffer(read_buffer, immediate=immediate)
 
     @classmethod
-    async def read_from_buffer(cls, read_buffer: ReadBuffer, chunk_instance, immediate=False):
+    async def read_from_buffer(
+        cls, read_buffer: ReadBuffer, chunk_instance, immediate=False
+    ):
         version = read_buffer.read_uint()
         chunk = chunk_instance.get_position()
 
@@ -187,7 +189,9 @@ class Chunk(IDataSerializer.IDataSerializer):
         region = chunk2region(*chunk)
 
         try:
-            chunk_instance: IChunk = shared.world.get_dimension(dimension).get_chunk(chunk)
+            chunk_instance: IChunk = shared.world.get_dimension(dimension).get_chunk(
+                chunk
+            )
 
             region = await save_file.get_region_access(dimension, region)
             target_buffer = WriteBuffer()
@@ -275,4 +279,3 @@ class Chunk(IDataSerializer.IDataSerializer):
 
         await map_buffer.write_dict(chunk_instance.data_maps, write_key, write_map)
         target_buffer.write_sub_buffer(map_buffer)
-

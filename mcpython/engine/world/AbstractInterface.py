@@ -18,8 +18,7 @@ from abc import ABC
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
-from mcpython.engine.network.util import IBufferSerializeAble
-from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer
 
 
 class ChunkLoadTicketType(enum.Enum):
@@ -131,10 +130,15 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
     def position_iterator(self) -> typing.Iterator[typing.Tuple[int, int, int]]:
         dx, dz = self.get_position()[0] * 16, self.get_position()[1] * 16
         y = self.get_dimension().get_world_height_range()
-        return itertools.product(range(dx, dx+16), range(*y), range(dz, dz+16))
+        return itertools.product(range(dx, dx + 16), range(*y), range(dz, dz + 16))
 
-    def block_iterator(self) -> typing.Iterator[typing.Tuple[typing.Tuple[int, int, int], typing.Any]]:
-        return ((pos, self.get_block(pos, none_if_str=True)) for pos in self.position_iterator())
+    def block_iterator(
+        self,
+    ) -> typing.Iterator[typing.Tuple[typing.Tuple[int, int, int], typing.Any]]:
+        return (
+            (pos, self.get_block(pos, none_if_str=True))
+            for pos in self.position_iterator()
+        )
 
     def entity_iterator(self) -> typing.Iterable:
         raise NotImplementedError

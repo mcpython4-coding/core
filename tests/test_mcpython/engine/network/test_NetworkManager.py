@@ -55,8 +55,8 @@ class TestNetworkManager(TestCase):
 
         shared.IS_TEST_ENV = True
 
-        from mcpython.engine.network.NetworkManager import load_packages
         from mcpython.engine.network.AbstractPackage import AbstractPackage
+        from mcpython.engine.network.NetworkManager import load_packages
 
         class TestPackage(AbstractPackage):
             PACKAGE_NAME = "minecraft:test_package"
@@ -104,7 +104,7 @@ class TestNetworkManager(TestCase):
     async def test_serialize_package_2(self):
         from mcpython import shared
         from mcpython.common.network.packages.HandShakePackage import (
-            Client2ServerHandshake
+            Client2ServerHandshake,
         )
         from mcpython.engine.network.NetworkManager import load_packages
         from mcpython.engine.network.util import ReadBuffer
@@ -184,7 +184,7 @@ class TestNetworkManager(TestCase):
         self.assertNotEqual(len(data), 0)
 
         class stream:
-            data_stream = bytearray(data*2)
+            data_stream = bytearray(data * 2)
             connected = True
 
             @classmethod

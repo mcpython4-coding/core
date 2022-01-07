@@ -65,7 +65,11 @@ class MixinPatchHelper:
     """
 
     def __init__(self, patcher: FunctionPatcher | types.FunctionType):
-        self.patcher = patcher if isinstance(patcher, FunctionPatcher) else FunctionPatcher(patcher)
+        self.patcher = (
+            patcher
+            if isinstance(patcher, FunctionPatcher)
+            else FunctionPatcher(patcher)
+        )
         self.instruction_listing = list(self.patcher.get_instruction_list())
         self.is_async = self.instruction_listing[0].opname == "GEN_START"
 
@@ -182,7 +186,12 @@ class MixinPatchHelper:
             + self.instruction_listing[start - 1 :]
         )
 
-    def replaceConstant(self, previous, new, matcher: typing.Callable[["MixinPatchHelper", int, int], bool] = None):
+    def replaceConstant(
+        self,
+        previous,
+        new,
+        matcher: typing.Callable[["MixinPatchHelper", int, int], bool] = None,
+    ):
         """
         Replaces a constant with another one
         :param previous: the old constant
@@ -202,7 +211,9 @@ class MixinPatchHelper:
         for index, instruction in enumerate(self.instruction_listing):
             if instruction.opcode in dis.hasconst:
                 match += 1
-                if instruction.arg == const_index and (matcher is None or matcher(self, index, match)):
+                if instruction.arg == const_index and (
+                    matcher is None or matcher(self, index, match)
+                ):
                     self.instruction_listing[index] = dis.Instruction(
                         instruction.opname,
                         instruction.opcode,
@@ -214,9 +225,14 @@ class MixinPatchHelper:
                         instruction.is_jump_target,
                     )
 
-    def getLoadGlobalsLoading(self, global_name: str) -> typing.Iterable[typing.Tuple[int, dis.Instruction]]:
+    def getLoadGlobalsLoading(
+        self, global_name: str
+    ) -> typing.Iterable[typing.Tuple[int, dis.Instruction]]:
         for index, instruction in enumerate(self.instruction_listing):
-            if instruction.opname == "LOAD_GLOBAL" and instruction.argval == global_name:
+            if (
+                instruction.opname == "LOAD_GLOBAL"
+                and instruction.argval == global_name
+            ):
                 yield index, instruction
 
     def insertMethodAt(self, start: int, method: FunctionPatcher, force_inline=True):
