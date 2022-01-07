@@ -364,6 +364,31 @@ class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
         helper.store()
 
 
+class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
+    def __init__(self, target_func: typing.Callable, *args, matcher: AbstractInstructionMatcher = None):
+        self.target_func = target_func
+        self.args = args
+        self.matcher = matcher
+
+    def apply(
+        self,
+        handler: "MixinHandler",
+        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        matches = -1
+        for index, instr in enumerate(helper.instruction_listing):
+            if instr.opname == "RETURN_VALUE":
+                matches += 1
+
+                if self.matcher is not None and not self.matcher.matches(helper, index, matches):
+                    continue
+
+                helper.insertGivenMethodCallAt(index-1, self.target_func, *self.args)
+
+        helper.store()
+
+
 class MixinHandler:
     """
     Handler for mixing into some functions
@@ -567,21 +592,6 @@ class MixinHandler:
 
         return annotate
 
-    def inline_method_calls(
-        self, access_str: str, method_call_target: str, priority=0, optional=True
-    ):
-        """
-        Inlines all method calls to a defined function
-        Does not work like the normal inline-keyword, as we cannot find all method calls
-
-        WARNING: method must be looked up for it to work
-        WARNING: when someone mixes into the method to inline AFTER this mixin applies,
-            the change will not be affecting this method
-
-        This is not a real mixin, but a self-modifier
-        """
-        return lambda e: e
-
     def inject_at_head(self, access_str: str, priority=0, optional=True, args=tuple()):
         """
         Injects some code at the function head
@@ -596,23 +606,84 @@ class MixinHandler:
 
         return annotate
 
+    def inject_at_head_replacing_args(self, access_str: str, arg_names: typing.Iterable[str], priority=0, optional=True, args=tuple()):
+        """
+        Injects a method call at function head, for transforming argument values before the method start
+        invoking.
+
+        It will be invoked with args followed by the argument from the outer function in the order given
+        in arg names.
+        It expects a tuple of the same size as arg_names as a return value, the values are written back
+        into the local variables in the order specified in arg_names.
+        """
+        raise NotImplementedError
+
     def inject_at_return(
         self,
-        access: str,
-        return_sampler=lambda *_: True,
+        access_str: str,
         include_previous_mixed_ins=False,
         priority=0,
         optional=True,
+        args=tuple(),
+        matcher: AbstractInstructionMatcher = None,
     ):
         """
         Injects code at specific return statements
-        :param access: the method
-        :param return_sampler: a method checking a return statement, signature not defined by now
-        :param include_previous_mixed_ins: if return statements from other mixins should be included in the search
+
+        :param access_str: the method
+        :param include_previous_mixed_ins: if return statements from other mixins should be included in the search (not implemented)
         :param priority: the mixin priority
         :param optional: optional mixin?
+        :param args: the args to give to the method
+        :param matcher: optional a return statement matcher
         """
-        return lambda e: e
+
+        def annotate(function):
+            self.bound_mixin_processors.setdefault(access_str, []).append(
+                (InjectFunctionCallAtReturnProcessor(function, *args, matcher=matcher), priority, optional)
+            )
+            return function
+
+        return annotate
+
+    def inject_at_return_replacing_return_value(
+        self,
+        access_str: str,
+        include_previous_mixed_ins=False,
+        priority=0,
+        optional=True,
+        args=tuple(),
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Injects the given method at selected return statements, passing all args, and as last argument
+        the previous return value, and returning the result of the injected method
+
+        Arguments as above
+        """
+        raise NotImplementedError
+
+    def inject_local_variable_modifier_at(
+        self,
+        access_str: str,
+        matcher: AbstractInstructionMatcher,
+        local_variables: typing.List[str],
+        priority=0,
+        optional=True,
+        args=tuple(),
+    ):
+        """
+        Injects a local variable modifying method into the target using specified matcher
+        to find places to inject into.
+        The function will be invoked with args, followed by the local variable values
+        in the order specified in local_variables.
+        It is expected to return a tuple of the size of local_variables, to be written back
+        into the local variable table.
+
+        WARNING: normally, you want a single-match matcher object,
+        as you want only one target in the method!
+        """
+        raise NotImplementedError
 
     def inject_replace_method_invoke(
         self,

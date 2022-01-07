@@ -303,6 +303,7 @@ class MixinPatchHelper:
             dis.Instruction("CALL_FUNCTION", PyOpcodes.CALL_FUNCTION, len(args), None, None, False, 0, 0),
             dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0),
         ])
+        self.patcher.max_stack_size += 1
         return self
 
     def insertStaticMethodCallAt(self, offset: int, method: str, *args):

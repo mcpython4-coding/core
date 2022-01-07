@@ -544,7 +544,7 @@ class TestMixinHandler(TestCase):
         reset_test_methods()
 
         handler = MixinHandler(
-            "unittest:mixin:test_mixin_inject_at_head_1"
+            "unittest:mixin:test_mixin_inject_at_head_2"
         )
         invoked = 0
 
@@ -566,6 +566,61 @@ class TestMixinHandler(TestCase):
 
         self.assertEqual(test(), 0)
         self.assertEqual(invoked, 8)
+        reset_test_methods()
+
+    def test_mixin_inject_at_return_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler(
+            "unittest:mixin:test_mixin_inject_at_return_1"
+        )
+        invoked = 0
+
+        @handler.inject_at_return("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
+        def inject(c):
+            nonlocal invoked
+            invoked += c
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 3)
+        reset_test_methods()
+
+    def test_mixin_inject_at_return_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler(
+            "unittest:mixin:test_mixin_inject_at_return_2"
+        )
+        invoked = 0
+
+        @handler.inject_at_return("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
+        def inject(c):
+            nonlocal invoked
+            invoked += c
+
+        @handler.inject_at_return("tests.test_mcpython.mixin.test_Mixin:test", args=(8,))
+        def inject2(c):
+            nonlocal invoked
+            invoked += c
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(test(), 0)
+        self.assertEqual(invoked, 11)
         reset_test_methods()
 
     def test_mixin_given_method_call_inject_1(self):
