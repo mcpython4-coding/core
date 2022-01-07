@@ -180,6 +180,32 @@ class MixinPatchHelper:
             + self.instruction_listing[start - 1 :]
         )
 
+    def replaceConstant(self, previous, new):
+        """
+        Replaces a constant with another one
+        :param previous: the old constant
+        :param new: the new constant
+        """
+        if previous not in self.patcher.constants:
+            raise ValueError(previous)
+
+        const_index = self.patcher.constants.index(previous)
+        self.patcher.constants[const_index] = new
+
+        for index, instruction in enumerate(self.instruction_listing):
+            if instruction.opcode in dis.hasconst:
+                if instruction.arg == const_index:
+                    self.instruction_listing[index] = dis.Instruction(
+                        instruction.opname,
+                        instruction.opcode,
+                        const_index,
+                        new,
+                        repr(new),
+                        instruction.offset,
+                        instruction.starts_line,
+                        instruction.is_jump_target,
+                    )
+
     def insertMethodAt(self, start: int, method: FunctionPatcher, force_inline=True):
         """
         Inserts a method body at the given position

@@ -56,10 +56,11 @@ class TestMixinHandler(TestCase):
         self.assertEqual(test(), 0)
 
         patcher = FunctionPatcher(test)
-        handler.bound_mixin_processors["test"][0][0].apply(handler, patcher)
+        handler.bound_mixin_processors["test"][0][0].apply(handler, patcher, None)
         patcher.applyPatches()
 
         self.assertEqual(test(), 1)
+        reset_test_methods()
 
     async def test_replace_function_body_async(self):
         from mcpython.mixin.Mixin import MixinHandler
@@ -80,7 +81,7 @@ class TestMixinHandler(TestCase):
         self.assertEqual(await coro, 0)
 
         patcher = FunctionPatcher(test)
-        handler.bound_mixin_processors["test"][0][0].apply(handler, patcher)
+        handler.bound_mixin_processors["test"][0][0].apply(handler, patcher, None)
         patcher.applyPatches()
 
         coro = test()
@@ -88,6 +89,7 @@ class TestMixinHandler(TestCase):
         self.assertIsInstance(coro, typing.Coroutine)
         self.assertEqual(await coro, 1)
         self.assertEqual(test.__code__.co_code, override.__code__.co_code)
+        reset_test_methods()
 
     def test_function_lookup(self):
         from mcpython.mixin.Mixin import MixinHandler
@@ -139,6 +141,24 @@ class TestMixinHandler(TestCase):
             return 1
 
         @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        def override2():
+            return 2
+
+        self.assertEqual(test(), 0)
+        handler.applyMixins()
+        self.assertEqual(test(), 1)
+        reset_test_methods()
+
+    def test_mixin_by_name_twice_with_negative_priority(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_with_negative_priority")
+
+        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        def override():
+            return 1
+
+        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test", priority=-1)
         def override2():
             return 2
 
@@ -208,6 +228,56 @@ class TestMixinHandler(TestCase):
         self.assertRaises(RuntimeError, handler.applyMixins)
 
         reset_test_methods()
+
+    def test_constant_replacement_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:replace_constant_1")
+
+        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True)
+
+        self.assertEqual(test(), 0)
+
+        handler.applyMixins()
+
+        self.assertEqual(test(), 1)
+        reset_test_methods()
+
+    def test_constant_replacement_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:replace_constant_1")
+
+        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True)
+        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 1, 2, fail_on_not_found=True, priority=1)
+
+        self.assertEqual(test(), 0)
+
+        handler.applyMixins()
+
+        self.assertEqual(test(), 2)
+        reset_test_methods()
+
+    def test_constant_replacement_fail_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:replace_constant_fail_1")
+
+        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 2, 1, fail_on_not_found=True)
+
+        self.assertEqual(test(), 0)
+        self.assertRaises(RuntimeError, handler.applyMixins)
+
+    def test_constant_replacement_fail_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:replace_constant_fail_2")
+
+        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True)
+        handler.replace_method_constant("tests.test_mcpython.mixin.test_Mixin:test", 1, 2, fail_on_not_found=True, priority=-1)
+
+        self.assertEqual(test(), 0)
+        self.assertRaises(RuntimeError, handler.applyMixins)
 
     def test_mixin_static_method_call(self):
         from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper

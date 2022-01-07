@@ -16,6 +16,7 @@ import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
+from .MixinMethodWrapper import MixinPatchHelper
 
 from ..engine import logger
 from .MixinMethodWrapper import mixin_return
@@ -30,13 +31,8 @@ class AbstractMixinProcessor:
     def canBeAppliedOnModified(
         self,
         handler: "MixinHandler",
-        function: types.FunctionType,
+        function: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
         modifier_list: typing.List["AbstractMixinProcessor"],
-    ) -> bool:
-        return True
-
-    def canBeFurtherModified(
-        self, handler: "MixinHandler", function: types.FunctionType
     ) -> bool:
         return True
 
@@ -44,7 +40,14 @@ class AbstractMixinProcessor:
         self,
         handler: "MixinHandler",
         target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
     ):
+        """
+        Applies the mixin processor to the target
+        :param handler: the handler instance
+        :param target: the target FunctionPatcher instance
+        :param helper: the helper instance, the method is responsible for invoking store() on it
+        """
         pass
 
     def is_breaking(self) -> bool:
@@ -55,15 +58,11 @@ class MixinReplacementProcessor(AbstractMixinProcessor):
     def __init__(self, replacement: types.FunctionType):
         self.replacement = replacement
 
-    def canBeFurtherModified(
-        self, handler: "MixinHandler", function: types.FunctionType
-    ) -> bool:
-        return False
-
     def apply(
         self,
         handler: "MixinHandler",
         target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
     ):
         target.overrideFrom(
             mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(self.replacement)
@@ -71,6 +70,27 @@ class MixinReplacementProcessor(AbstractMixinProcessor):
 
     def is_breaking(self) -> bool:
         return True
+
+
+class MixinConstantReplacer(AbstractMixinProcessor):
+    def __init__(self, before, after, fail_on_not_found=False):
+        self.before = before
+        self.after = after
+        self.fail_on_not_found = fail_on_not_found
+
+    def apply(
+        self,
+        handler: "MixinHandler",
+        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        if self.before not in target.constants:
+            if self.fail_on_not_found:
+                raise RuntimeError(f"constant {self.before} not found in target {target} (to be replaced with {self.after})")
+            return
+
+        helper.replaceConstant(self.before, self.after)
+        helper.store()
 
 
 class MixinHandler:
@@ -109,9 +129,11 @@ class MixinHandler:
                 f"[MIXIN][WARN] applying mixins of '{self.processor_name}' onto '{target}'"
             )
 
+            method_target = self.lookup_method(target)
             patcher = mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(
-                self.lookup_method(target)
+                method_target
             )
+            helper = MixinPatchHelper(patcher)
 
             order = sorted(sorted(mixins, key=lambda e: 0 if e[2] else 1), key=lambda e: e[1])
 
@@ -122,22 +144,33 @@ class MixinHandler:
                 if non_optionals and mixin.is_breaking():
                     logger.println("[MIXIN][FATAL] conflicting mixin: found an non-optional mixin before, breaking with this mixin!")
                     raise RuntimeError
+
                 elif optionals and mixin.is_breaking():
-                    to_delete = [e[1] for e in sorted(list(optionals), key=lambda e: -e[1])] + to_delete
+                    to_delete += [e[1] for e in optionals]
+                    optionals.clear()
+
+                previous = [e[0] for x, e in enumerate(order[:i]) if x not in to_delete]
+                if previous and not mixin.canBeAppliedOnModified(self, patcher, previous):
+                    if optional:
+                        to_delete.append(i)
+                    else:
+                        if non_optionals and mixin.is_breaking():
+                            logger.println("[MIXIN][FATAL] conflicting mixin: found an non-optional mixin before, breaking with this mixin!")
+                            raise RuntimeError
 
                 if not optional:
                     non_optionals.add(mixin)
                 else:
                     optionals.add((mixin, i))
 
-            for i in to_delete:
+            for i in sorted(to_delete, reverse=True):
                 mixin, priority, optional = order[i]
                 logger.println(f"[MIXIN][WARN] skipping mixin {mixin} with priority {priority} (optional: {optional})")
                 del order[i]
 
             for mixin, priority, optional in order:
                 logger.println(f"[MIXIN][WARN] applying mixin {mixin} with priority {priority} (optional: {optional})")
-                mixin.apply(self, patcher)
+                mixin.apply(self, patcher, helper)
 
             patcher.applyPatches()
 
@@ -151,6 +184,21 @@ class MixinHandler:
 
         return module
 
+    def replace_method_constant(self, access_str: str, constant_value, new_value, priority=0, optional=True, fail_on_not_found=True):
+        """
+        Replaces a given constant globally in the method
+        :param access_str: the access_str for the target
+        :param constant_value: the original value
+        :param new_value: the new value
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param fail_on_not_found: if mixin applying failed if the constant was not found
+        """
+        self.bound_mixin_processors.setdefault(access_str, []).append((
+            MixinConstantReplacer(constant_value, new_value, fail_on_not_found=fail_on_not_found), priority, optional
+        ))
+        return self
+
     def replace_function_body(
         self, access_str: str, priority=0, optional=True
     ) -> typing.Callable[[types.FunctionType], types.FunctionType]:
@@ -162,7 +210,7 @@ class MixinHandler:
 
         return annotate
 
-    def inline_method_calls(self, access_str: str, method_call_target: str):
+    def inline_method_calls(self, access_str: str, method_call_target: str, priority=0, optional=True):
         """
         Inlines all method calls to a defined function
         Does not work like the normal inline-keyword, as we cannot find all method calls
@@ -175,7 +223,7 @@ class MixinHandler:
         """
         return lambda e: e
 
-    def inject_at_head(self, access_str: str):
+    def inject_at_head(self, access_str: str, priority=0, optional=True):
         """
         Injects some code at the function head
         Can be used for e.g. parameter manipulation
@@ -187,17 +235,21 @@ class MixinHandler:
         access: str,
         return_sampler=lambda *_: True,
         include_previous_mixed_ins=False,
+        priority=0,
+        optional=True
     ):
         """
         Injects code at specific return statements
         :param access: the method
         :param return_sampler: a method checking a return statement, signature not defined by now
         :param include_previous_mixed_ins: if return statements from other mixins should be included in the search
+        :param priority: the mixin priority
+        :param optional: optional mixin?
         """
         return lambda e: e
 
     def inject_replace_method_invoke(
-        self, access: str, target_method: str, sampler=lambda *_: True, inline=True
+        self, access: str, target_method: str, sampler=lambda *_: True, inline=True, priority=0, optional=True
     ):
         """
         Modifies method calls to call another method
@@ -205,6 +257,8 @@ class MixinHandler:
         :param target_method: the method to replace
         :param sampler: optionally, some checker for invoke call
         :param inline: when True, will inline this annotated method into the target
+        :param priority: the mixin priority
+        :param optional: optional mixin?
         """
         return lambda e: e
 

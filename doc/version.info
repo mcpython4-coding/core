@@ -1991,4 +1991,5 @@ I   [uuk]: NetworkManager uses now also for the header a NetworkBuffer instead o
 f   [uuk]: mixins can now be optional, and have a priority
 f   [uuk]: mixin handler is now shared across all instances, it will raise an RuntimeError if trying to use
            it when not intended
+f   [uuk]: mixins can now replace constants in methods
 
