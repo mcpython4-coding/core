@@ -28,6 +28,55 @@ class AbstractInstructionMatcher:
     def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
         raise NotImplementedError
 
+    def __and__(self, other):
+        if isinstance(other, AndMatcher):
+            return AndMatcher(self, *other.matchers)
+
+        return AndMatcher(self, other)
+
+    def __or__(self, other):
+        if isinstance(other, OrMatcher):
+            return OrMatcher(self, *other.matchers)
+
+        return OrMatcher(self, other)
+
+    def __invert__(self):
+        return NotMatcher(self)
+
+
+class AndMatcher(AbstractInstructionMatcher):
+    def __init__(self, *matchers: AbstractInstructionMatcher):
+        self.matchers = matchers
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        return all(matcher.matches(function, index, match_count) for matcher in self.matchers)
+
+    def __and__(self, other):
+        if isinstance(other, AndMatcher):
+            return AndMatcher(*self.matchers, *other.matchers)
+        return AndMatcher(*self.matchers, other)
+
+
+class OrMatcher(AbstractInstructionMatcher):
+    def __init__(self, *matchers: AbstractInstructionMatcher):
+        self.matchers = matchers
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        return any(matcher.matches(function, index, match_count) for matcher in self.matchers)
+
+    def __or__(self, other):
+        if isinstance(other, OrMatcher):
+            return OrMatcher(*self.matchers, *other.matchers)
+        return OrMatcher(*self.matchers, other)
+
+
+class NotMatcher(AbstractInstructionMatcher):
+    def __init__(self, matcher: AbstractInstructionMatcher):
+        self.matcher = matcher
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        return not self.matcher.matches(function, index, match_count)
+
 
 class AnyByInstructionNameMatcher(AbstractInstructionMatcher):
     def __init__(self, opname: str):
@@ -105,6 +154,15 @@ class LoadGlobalMatcher(AbstractInstructionMatcher):
     def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
         instr = function.instruction_listing[index]
         return instr.opname == "LOAD_GLOBAL" and instr.argval == self.global_name
+
+
+class CounterMatcher(AbstractInstructionMatcher):
+    def __init__(self, count_start: int, count_end: int = None):
+        self.count_start = count_start
+        self.count_end = count_end or count_start
+
+    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
+        return self.count_start <= match_count <= self.count_end
 
 
 # todo: implement more matchers

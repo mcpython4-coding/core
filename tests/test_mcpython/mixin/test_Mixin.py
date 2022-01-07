@@ -16,6 +16,7 @@ import typing
 from unittest import TestCase
 
 import test_mcpython.mixin.test_space
+from mcpython.mixin.Mixin import CounterMatcher
 
 
 def test():
@@ -31,8 +32,13 @@ def test_global2():
     test_global()
 
 
+def test_global3():
+    test()
+    test()
+
+
 def reset_test_methods():
-    global test, test_global, test_global2
+    global test, test_global, test_global2, test_global3
 
     def test():
         return 0
@@ -43,6 +49,10 @@ def reset_test_methods():
     def test_global2():
         test()
         test_global()
+
+    def test_global3():
+        test()
+        test()
 
 
 class TestMixinHandler(TestCase):
@@ -329,6 +339,46 @@ class TestMixinHandler(TestCase):
 
         handler.applyMixins()
         test_global2()
+
+        self.assertEqual(invoked, 1)
+        reset_test_methods()
+
+    def test_global_to_const_3(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:global2const_3")
+
+        invoked = 0
+
+        def callback():
+            nonlocal invoked
+            invoked += 1
+
+        handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global3", "test", callback,
+                                             matcher=CounterMatcher(1))
+
+        handler.applyMixins()
+        test_global3()
+
+        self.assertEqual(invoked, 1)
+        reset_test_methods()
+
+    def test_global_to_const_4(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:global2const_4")
+
+        invoked = 0
+
+        def callback():
+            nonlocal invoked
+            invoked += 1
+
+        handler.replace_global_with_constant("tests.test_mcpython.mixin.test_Mixin:test_global3", "test", callback,
+                                             matcher=CounterMatcher(1) & CounterMatcher(1))
+
+        handler.applyMixins()
+        test_global3()
 
         self.assertEqual(invoked, 1)
         reset_test_methods()
