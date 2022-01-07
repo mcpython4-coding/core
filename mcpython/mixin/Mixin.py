@@ -80,6 +80,9 @@ class NotMatcher(AbstractInstructionMatcher):
     def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
         return not self.matcher.matches(function, index, match_count)
 
+    def __invert__(self):
+        return self.matcher
+
 
 class AnyByInstructionNameMatcher(AbstractInstructionMatcher):
     def __init__(self, opname: str):

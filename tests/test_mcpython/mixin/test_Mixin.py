@@ -437,6 +437,54 @@ class TestMixinHandler(TestCase):
         self.assertEqual(invoked, 1)
         reset_test_methods()
 
+    def test_global_to_const_5(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:global2const_5")
+
+        invoked = 0
+
+        def callback():
+            nonlocal invoked
+            invoked += 1
+
+        handler.replace_global_with_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test_global3",
+            "test",
+            callback,
+            matcher=CounterMatcher(1) | CounterMatcher(1),
+        )
+
+        handler.applyMixins()
+        test_global3()
+
+        self.assertEqual(invoked, 1)
+        reset_test_methods()
+
+    def test_global_to_const_6(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler("unittest:processor:global2const_6")
+
+        invoked = 0
+
+        def callback():
+            nonlocal invoked
+            invoked += 1
+
+        handler.replace_global_with_constant(
+            "tests.test_mcpython.mixin.test_Mixin:test_global3",
+            "test",
+            callback,
+            matcher=~CounterMatcher(1),
+        )
+
+        handler.applyMixins()
+        test_global3()
+
+        self.assertEqual(invoked, 1)
+        reset_test_methods()
+
     def test_mixin_static_method_call(self):
         from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
 
