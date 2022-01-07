@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import dis
+import types
 import typing
 
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
@@ -63,8 +64,8 @@ class MixinPatchHelper:
     Contains helper methods for working with bytecode outside the basic wrapper
     """
 
-    def __init__(self, patcher: FunctionPatcher):
-        self.patcher = patcher
+    def __init__(self, patcher: FunctionPatcher | types.FunctionType):
+        self.patcher = patcher if isinstance(patcher, FunctionPatcher) else FunctionPatcher(patcher)
         self.instruction_listing = list(self.patcher.get_instruction_list())
         self.is_async = self.instruction_listing[0].opname == "GEN_START"
 
@@ -73,6 +74,7 @@ class MixinPatchHelper:
 
     def store(self):
         self.patcher.instructionList2Code(self.instruction_listing)
+        self.instruction_listing[:] = list(self.patcher.get_instruction_list())
 
     def re_eval_instructions(self):
         self.store()

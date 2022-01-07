@@ -221,12 +221,51 @@ class FunctionPatcher:
     def instructionList2Code(self, instruction_list: typing.List[dis.Instruction]):
         self.code_string.clear()
 
-        for instr in instruction_list:
+        new_instructions = []
+
+        skipped = 0
+
+        for index, instr in enumerate(instruction_list):
+            if instr.opname == "EXTENDED_ARG":
+                skipped += 1
+                continue
+
+            if instr.arg is not None and instr.arg >= 256:
+                if instr.arg >= 256 * 256:
+                    if instr.arg >= 256 * 256 * 256:
+                        data = instr.arg.to_bytes(4, "big", signed=False)
+                    else:
+                        data = instr.arg.to_bytes(3, "big", signed=False)
+                else:
+                    data = instr.arg.to_bytes(2, "big", signed=False)
+
+                for e in data[:-1]:
+                    new_instructions.append((dis.Instruction(
+                        "EXTENDED_ARG",
+                        144,
+                        e,
+                        e,
+                        "",
+                        0,
+                        None,
+                        False,
+                    )))
+
+                if len(data) != skipped + 1:
+                    # todo: implement instruction offset remap
+                    raise NotImplementedError(data, skipped)
+
+            if skipped:
+                skipped = 0
+
+            new_instructions.append(instr)
+
+        for instr in new_instructions:
             try:
                 self.code_string.append(instr.opcode)
 
                 if instr.arg is not None:
-                    self.code_string.append(instr.arg)
+                    self.code_string.append(instr.arg % 256)
                 else:
                     self.code_string.append(0)
 
