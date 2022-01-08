@@ -288,11 +288,12 @@ class MixinPatchHelper:
         self.is_async = False
         return self
 
-    def insertGivenMethodCallAt(self, offset: int, method: typing.Callable, *args, collected_locals=tuple()):
+    def insertGivenMethodCallAt(self, offset: int, method: typing.Callable, *args, collected_locals=tuple(), pop_result=True):
         """
         Injects the given method as a constant call into the bytecode of that function
         :param offset: the offset to inject at
         :param method: the method to inject
+        :param collected_locals: what locals to send to the method call
         """
         self.insertRegion(
             offset,
@@ -345,12 +346,13 @@ class MixinPatchHelper:
                     0,
                     0,
                 ),
+            ] + ([
                 dis.Instruction(
                     "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
                 ),
-            ],
+            ] if pop_result else []),
         )
-        self.patcher.max_stack_size += 1
+        self.patcher.max_stack_size += 1 + len(args) + len(collected_locals)
         return self
 
     def insertStaticMethodCallAt(self, offset: int, method: str, *args):

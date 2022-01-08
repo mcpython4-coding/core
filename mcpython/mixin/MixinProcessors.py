@@ -231,6 +231,43 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
         helper.store()
 
 
+class InjectFunctionCallAtReturnReplaceValueProcessor(AbstractMixinProcessor):
+    def __init__(
+        self,
+        target_func: typing.Callable,
+        *args,
+        matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
+    ):
+        self.target_func = target_func
+        self.args = args
+        self.matcher = matcher
+        self.collected_locals = collected_locals
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        matches = -1
+        for index, instr in enumerate(helper.instruction_listing):
+            if instr.opname == "RETURN_VALUE":
+                matches += 1
+
+                if self.matcher is not None and not self.matcher.matches(
+                    helper, index, matches
+                ):
+                    continue
+
+                helper.insertRegion(index, [dis.Instruction(
+                    "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
+                )])
+                helper.insertGivenMethodCallAt(index, self.target_func, *self.args, collected_locals=self.collected_locals, pop_result=False)
+
+        helper.store()
+
+
 class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
     def __init__(
         self,
@@ -265,6 +302,50 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
                     self.target_func,
                     *(instr.opname == "YIELD_FROM",) + self.args,
                     collected_locals=self.collected_locals,
+                )
+
+        helper.store()
+
+
+class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
+    def __init__(
+        self,
+        target_func: typing.Callable,
+        *args,
+        matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
+    ):
+        self.target_func = target_func
+        self.args = args
+        self.matcher = matcher
+        self.collected_locals = collected_locals
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        matches = -1
+        for index, instr in enumerate(helper.instruction_listing):
+            if instr.opname == "YIELD_VALUE" or instr.opname == "YIELD_FROM":
+                matches += 1
+
+                if self.matcher is not None and not self.matcher.matches(
+                    helper, index, matches
+                ):
+                    continue
+
+                helper.insertRegion(index - 4, [dis.Instruction(
+                    "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
+                )])
+
+                helper.insertGivenMethodCallAt(
+                    index - 4,
+                    self.target_func,
+                    *(instr.opname == "YIELD_FROM",) + self.args,
+                    collected_locals=self.collected_locals,
+                    pop_result=False,
                 )
 
         helper.store()

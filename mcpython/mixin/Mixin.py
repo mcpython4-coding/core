@@ -31,6 +31,8 @@ from .MixinProcessors import (
     MixinGlobal2ConstReplace,
     MixinGlobalReTargetProcessor,
     MixinReplacementProcessor,
+    InjectFunctionCallAtReturnReplaceValueProcessor,
+    InjectFunctionCallAtYieldReplaceValueProcessor,
 )
 
 
@@ -339,7 +341,20 @@ class MixinHandler:
 
         Arguments as above
         """
-        raise NotImplementedError
+
+        def annotate(function):
+            self.bound_mixin_processors.setdefault(access_str, []).append(
+                (
+                    InjectFunctionCallAtReturnReplaceValueProcessor(
+                        function, *args, matcher=matcher, collected_locals=collected_locals
+                    ),
+                    priority,
+                    optional,
+                )
+            )
+            return function
+
+        return annotate
 
     def inject_at_yield(
         self,
@@ -396,7 +411,20 @@ class MixinHandler:
 
         Arguments as above
         """
-        raise NotImplementedError
+
+        def annotate(function):
+            self.bound_mixin_processors.setdefault(access_str, []).append(
+                (
+                    InjectFunctionCallAtYieldReplaceValueProcessor(
+                        function, *args, matcher=matcher, collected_locals=collected_locals,
+                    ),
+                    priority,
+                    optional,
+                )
+            )
+            return function
+
+        return annotate
 
     def inject_local_variable_modifier_at(
         self,
