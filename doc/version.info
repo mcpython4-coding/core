@@ -1992,4 +1992,7 @@ f   [uuk]: mixins can now be optional, and have a priority
 f   [uuk]: mixin handler is now shared across all instances, it will raise an RuntimeError if trying to use
            it when not intended
 f   [uuk]: mixins can now replace constants in methods
+f   [uuk]: mixins can now inject method calls at HEAD, RETURN and YIELD, including
+           mixin-prepare time args and invoke-args from outer scope
+f   [uuk]: added two loading stages for mixin work
 

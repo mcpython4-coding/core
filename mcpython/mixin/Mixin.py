@@ -17,6 +17,7 @@ import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
+from .. import shared
 
 from ..engine import logger
 from .InstructionMatchers import AbstractInstructionMatcher
@@ -149,6 +150,7 @@ class MixinHandler:
     ):
         """
         Replaces a given constant globally in the method
+
         :param access_str: the access_str for the target
         :param constant_value: the original value
         :param new_value: the new value
@@ -182,6 +184,7 @@ class MixinHandler:
     ):
         """
         Replaces all LOAD_GLOBAL <global name> instructions with a LOAD GLOBAL <new name> instructions
+
         :param access_str: the access str of the method
         :param previous_name: the global name
         :param new_name: the new global name
@@ -209,6 +212,7 @@ class MixinHandler:
     ):
         """
         Replaces all LOAD_GLOBAL <global name> instructions with a LOAD_CONST(new value) instructions
+
         :param access_str: the access str of the method
         :param global_name: the global name
         :param new_value: the new value
@@ -402,6 +406,7 @@ class MixinHandler:
         priority=0,
         optional=True,
         args=tuple(),
+        collected_locals=tuple(),
     ):
         """
         Injects a local variable modifying method into the target using specified matcher
@@ -413,6 +418,14 @@ class MixinHandler:
 
         WARNING: normally, you want a single-match matcher object,
         as you want only one target in the method!
+
+        :param access_str: the method to inject into
+        :param matcher: the instruction matcher where to inject your change function
+        :param local_variables: which locals to modify
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param args: args to give the function
+        :param collected_locals: what locals to also add, but not write back
         """
         raise NotImplementedError
 
@@ -427,6 +440,7 @@ class MixinHandler:
     ):
         """
         Modifies method calls to call another method, loaded via LOAD_GLOBAL
+
         :param access_str: the method
         :param target_method: the method to replace
         :param inline: when True, will inline this annotated method into the target
@@ -446,7 +460,8 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
     ):
         """
-        Modifies method calls to call another method, loaded via GET_ATTR
+        Modifies method calls to call another method, loaded via LOAD_ATTR
+
         :param access_str: the method
         :param target_method: the method to replace
         :param inline: when True, will inline this annotated method into the target
@@ -503,6 +518,8 @@ class MixinHandler:
         access_str: str,
         target_module: str,
         new_module: str,
+        priority=0,
+        optional=True,
         matcher: AbstractInstructionMatcher = None,
     ):
         """
@@ -511,6 +528,8 @@ class MixinHandler:
         :param access_str: the method to mixin into
         :param target_module: the module to target
         :param new_module: the new module
+        :param priority: the mixin priority
+        :param optional: optional mixin?
         :param matcher: optional, an import instruction matcher (only useful when multiple imports
             to the same module exist)
         """
@@ -522,6 +541,8 @@ class MixinHandler:
         exception_type: Exception,
         start: int = 0,
         end: int = -1,
+        priority=0,
+        optional=True,
         include_handler: bool = True,
     ):
         """
@@ -533,10 +554,44 @@ class MixinHandler:
         :param exception_type: the exception type
         :param start: where to start it
         :param end: where to end it
+        :param priority: the mixin priority
+        :param optional: optional mixin?
         :param include_handler: when False, this is not an annotation, and the exception will be simply ignored
+        """
+        raise NotImplementedError
+
+    def replace_explicit_raise(
+        self,
+        access_str: str,
+        exception_matcher: AbstractInstructionMatcher = None,
+        priority=0,
+        optional=True,
+        remaining_mode="return_result",
+        args=tuple(),
+        collected_locals=tuple(),
+    ):
+        """
+        Replaces an explicit 'raise' with custom code.
+        The custom code decides what should happen next.
+        The method gets a nullable exception as the first parameter (depending on re-raise or not)
+
+        :param access_str: the method access str
+        :param exception_matcher: the raise instruction matcher, or None
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param remaining_mode: what to do with the raise instruction, can be
+            "return" for returning None in any case, "return_result" for returning the result of the function,
+            "yield_result" for yielding the result of the function, "yield_from_result" for yielding from
+            the function result and "raise" for raising the original exception
+        :param args: the args to give to the method
+        :param collected_locals: which locals to add as args
         """
         raise NotImplementedError
 
 
 mixin_handler = MixinHandler("global")
 MixinHandler.LOCKED = True
+
+
+if not shared.IS_TEST_ENV:
+    shared.mod_loader("minecraft", "stage:mixin:apply")(mixin_handler.applyMixins)
