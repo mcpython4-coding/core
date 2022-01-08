@@ -425,6 +425,7 @@ class MixinHandler:
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_return_value=False,
     ):
         """
         Injects code at specific return statements
@@ -436,6 +437,7 @@ class MixinHandler:
         :param args: the args to give to the method
         :param matcher: optional a return statement matcher
         :param collected_locals: what locals to add to the method call
+        :param add_return_value: if to add as last parameter the value the function tries to return or not
         """
 
         def annotate(function):
@@ -446,6 +448,7 @@ class MixinHandler:
                         *args,
                         matcher=matcher,
                         collected_locals=collected_locals,
+                        add_return_value=add_return_value,
                     ),
                     priority,
                     optional,
@@ -464,6 +467,7 @@ class MixinHandler:
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_return_value=False,
     ):
         """
         Injects the given method at selected return statements, passing all args, and as last argument
@@ -480,6 +484,7 @@ class MixinHandler:
                         *args,
                         matcher=matcher,
                         collected_locals=collected_locals,
+                        add_return_value=add_return_value,
                     ),
                     priority,
                     optional,
@@ -498,6 +503,7 @@ class MixinHandler:
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_yield_value=False,
     ):
         """
         Injects code at specific yield statements
@@ -511,6 +517,7 @@ class MixinHandler:
         :param args: the args to give to the method
         :param matcher: optional a yield statement matcher
         :param collected_locals: which locals to add as args
+        :param add_yield_value: if to add the value yielded as last value
         """
 
         def annotate(function):
@@ -521,6 +528,7 @@ class MixinHandler:
                         *args,
                         matcher=matcher,
                         collected_locals=collected_locals,
+                        add_yield_value=add_yield_value,
                     ),
                     priority,
                     optional,
@@ -539,6 +547,8 @@ class MixinHandler:
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_yield_value=False,
+        is_yield_from=None,
     ):
         """
         Injects the given method at selected yield statements, passing a bool flag indicating if it is a YIELD_VALUE or
@@ -546,6 +556,7 @@ class MixinHandler:
         injected method.
 
         Arguments as above
+        is_yield_from can change the yield instruction type if needed, set to None (default) for not changing
         """
 
         def annotate(function):
@@ -556,6 +567,8 @@ class MixinHandler:
                         *args,
                         matcher=matcher,
                         collected_locals=collected_locals,
+                        add_yield_value=add_yield_value,
+                        is_yield_from=is_yield_from,
                     ),
                     priority,
                     optional,

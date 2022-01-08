@@ -17,6 +17,7 @@ import typing
 
 from mcpython.mixin.InstructionMatchers import AbstractInstructionMatcher
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
+from mcpython.mixin.MixinMethodWrapper import reconstruct_instruction
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
 from mcpython.mixin.util import PyOpcodes
 
@@ -248,11 +249,13 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
         *args,
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_return_value=False,
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
         self.collected_locals = collected_locals
+        self.add_return_value = add_return_value
 
     def apply(
         self,
@@ -271,10 +274,11 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
                     continue
 
                 helper.insertGivenMethodCallAt(
-                    index - 1,
+                    index - 1 if not self.add_return_value else index,
                     self.target_func,
                     *self.args,
                     collected_locals=self.collected_locals,
+                    include_stack_top_copy=self.add_return_value,
                 )
 
         helper.store()
@@ -287,11 +291,13 @@ class InjectFunctionCallAtReturnReplaceValueProcessor(AbstractMixinProcessor):
         *args,
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_return_value=False,
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
         self.collected_locals = collected_locals
+        self.add_return_value = add_return_value
 
     def apply(
         self,
@@ -323,6 +329,7 @@ class InjectFunctionCallAtReturnReplaceValueProcessor(AbstractMixinProcessor):
                     *self.args,
                     collected_locals=self.collected_locals,
                     pop_result=False,
+                    include_stack_top_copy=self.add_return_value,
                 )
 
         helper.store()
@@ -335,11 +342,13 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
         *args,
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_yield_value=False,
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
         self.collected_locals = collected_locals
+        self.add_yield_value = add_yield_value
 
     def apply(
         self,
@@ -358,10 +367,11 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
                     continue
 
                 helper.insertGivenMethodCallAt(
-                    index - 5,
+                    index - 5 if not self.add_yield_value else index - 4,
                     self.target_func,
                     *(instr.opname == "YIELD_FROM",) + self.args,
                     collected_locals=self.collected_locals,
+                    include_stack_top_copy=self.add_yield_value,
                 )
 
         helper.store()
@@ -374,11 +384,15 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
         *args,
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
+        add_yield_value=False,
+        is_yield_from=False,
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
         self.collected_locals = collected_locals
+        self.add_yield_value = add_yield_value
+        self.is_yield_from = is_yield_from
 
     def apply(
         self,
@@ -390,6 +404,31 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
         for index, instr in enumerate(helper.instruction_listing):
             if instr.opname == "YIELD_VALUE" or instr.opname == "YIELD_FROM":
                 matches += 1
+
+                # Do we need to change the instruction type?
+                if self.is_yield_from is not None and (self.is_yield_from != instr.opname == "YIELD_FROM"):
+                    if self.is_yield_from:
+                        helper.instruction_listing[index] = dis.Instruction(
+                            "YIELD_FROM",
+                            PyOpcodes.YIELD_FROM,
+                            0,
+                            None,
+                            "",
+                            0,
+                            0,
+                            False,
+                        )
+                    else:
+                        helper.instruction_listing[index] = dis.Instruction(
+                            "YIELD_VALUE",
+                            PyOpcodes.YIELD_VALUE,
+                            0,
+                            None,
+                            "",
+                            0,
+                            0,
+                            False,
+                        )
 
                 if self.matcher is not None and not self.matcher.matches(
                     helper, index, matches
@@ -411,6 +450,7 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
                     *(instr.opname == "YIELD_FROM",) + self.args,
                     collected_locals=self.collected_locals,
                     pop_result=False,
+                    include_stack_top_copy=self.add_yield_value,
                 )
 
         helper.store()
