@@ -29,6 +29,7 @@ from .MixinProcessors import (
     InjectFunctionCallAtReturnReplaceValueProcessor,
     InjectFunctionCallAtYieldProcessor,
     InjectFunctionCallAtYieldReplaceValueProcessor,
+    InjectFunctionLocalVariableModifier,
     MixinConstantReplacer,
     MixinGlobal2ConstReplace,
     MixinGlobalReTargetProcessor,
@@ -607,7 +608,24 @@ class MixinHandler:
         :param args: args to give the function
         :param collected_locals: what locals to also add, but not write back
         """
-        raise NotImplementedError
+
+        def annotate(function):
+            self.bound_mixin_processors.setdefault(access_str, []).append(
+                (
+                    InjectFunctionLocalVariableModifier(
+                        function,
+                        local_variables,
+                        matcher,
+                        *args,
+                        collected_locals=collected_locals,
+                    ),
+                    priority,
+                    optional,
+                )
+            )
+            return function
+
+        return annotate
 
     def inject_replace_global_method_invoke(
         self,

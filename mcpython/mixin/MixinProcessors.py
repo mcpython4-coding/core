@@ -16,8 +16,7 @@ import types
 import typing
 
 from mcpython.mixin.InstructionMatchers import AbstractInstructionMatcher
-from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
-from mcpython.mixin.MixinMethodWrapper import reconstruct_instruction
+from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper, reconstruct_instruction
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
 from mcpython.mixin.util import PyOpcodes
 
@@ -406,7 +405,9 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
                 matches += 1
 
                 # Do we need to change the instruction type?
-                if self.is_yield_from is not None and (self.is_yield_from != instr.opname == "YIELD_FROM"):
+                if self.is_yield_from is not None and (
+                    self.is_yield_from != instr.opname == "YIELD_FROM"
+                ):
                     if self.is_yield_from:
                         helper.instruction_listing[index] = dis.Instruction(
                             "YIELD_FROM",
@@ -453,4 +454,77 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
                     include_stack_top_copy=self.add_yield_value,
                 )
 
+        helper.store()
+
+
+class InjectFunctionLocalVariableModifier(AbstractMixinProcessor):
+    def __init__(
+        self,
+        function: typing.Callable,
+        local_variables: typing.List[str],
+        matcher: AbstractInstructionMatcher,
+        *args,
+        collected_locals=tuple(),
+    ):
+        self.function = function
+        self.local_variables = local_variables
+        self.args = args
+        self.matcher = matcher
+        self.collected_locals = collected_locals
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        collected_locals = [
+            dis.Instruction(
+                "LOAD_FAST",
+                PyOpcodes.LOAD_FAST,
+                helper.patcher.ensureVarName(e),
+                e,
+                e,
+                0,
+                0,
+                False,
+            )
+            for e in reversed(self.local_variables)
+        ]
+        store_locals = [
+            dis.Instruction(
+                "UNPACK_SEQUENCE",
+                PyOpcodes.UNPACK_SEQUENCE,
+                len(self.local_variables),
+                0,
+                "",
+                0,
+                0,
+                False,
+            )
+        ] + [
+            dis.Instruction(
+                "STORE_FAST",
+                PyOpcodes.STORE_FAST,
+                helper.patcher.ensureVarName(e),
+                e,
+                e,
+                0,
+                0,
+                False,
+            )
+            for e in reversed(self.local_variables)
+        ]
+
+        for index, instruction in enumerate(helper.instruction_listing):
+            if self.matcher.matches(helper, index, index):
+                helper.insertGivenMethodCallAt(
+                    index,
+                    self.function,
+                    *self.args,
+                    collected_locals=self.collected_locals,
+                    special_args_collectors=collected_locals,
+                    pop_result=False,
+                    insert_after=store_locals,
+                )
         helper.store()

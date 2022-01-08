@@ -983,8 +983,6 @@ class TestMixinHandler(TestCase):
         # Will apply the later mixin first, as it is optional, and as such can break when overriding it
         handler.applyMixins()
 
-        dis.dis(target)
-
         self.assertEqual(next(target()), 3)
         self.assertEqual(invoked, 3)
 
@@ -1008,8 +1006,6 @@ class TestMixinHandler(TestCase):
 
         # Will apply the later mixin first, as it is optional, and as such can break when overriding it
         handler.applyMixins()
-
-        dis.dis(target)
 
         self.assertEqual(next(target(20)), 20)
         self.assertEqual(invoked, 5)
@@ -1151,6 +1147,70 @@ class TestMixinHandler(TestCase):
         self.assertEqual(func(2), 2)
         handler.applyMixins()
         self.assertEqual(func(2), 0)
+
+    def test_local_var_modifier_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_local_var_modifier_1")
+
+        def func(c):
+            return c
+
+        handler.makeFunctionArrival("test", func)
+
+        @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
+        def inject(c):
+            return c + 2,
+
+        self.assertEqual(func(2), 2)
+        handler.applyMixins()
+
+        self.assertEqual(func(2), 4)
+
+    def test_local_var_modifier_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_local_var_modifier_2")
+
+        def func(c):
+            return c
+
+        handler.makeFunctionArrival("test", func)
+
+        @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
+        def inject(c):
+            return "test",
+
+        self.assertEqual(func(2), 2)
+        handler.applyMixins()
+
+        self.assertEqual(func(2), "test")
+
+    def test_local_var_modifier_3(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_local_var_modifier_3")
+
+        def func(c):
+            d = 10
+            return c
+
+        handler.makeFunctionArrival("test", func)
+
+        @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c", "d"])
+        def inject(c, d):
+            return d, c
+
+        self.assertEqual(func(4), 4)
+        handler.applyMixins()
+
+        self.assertEqual(func(2), 10)
 
     def test_mixin_static_method_call(self):
         from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper

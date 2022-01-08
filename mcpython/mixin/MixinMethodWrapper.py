@@ -298,6 +298,8 @@ class MixinPatchHelper:
         collected_locals=tuple(),
         pop_result=True,
         include_stack_top_copy=False,
+        special_args_collectors: typing.Iterable[dis.Instruction] = tuple(),
+        insert_after=tuple(),
     ):
         """
         Injects the given method as a constant call into the bytecode of that function
@@ -306,22 +308,28 @@ class MixinPatchHelper:
         :param collected_locals: what locals to send to the method call
         :param pop_result: if to pop the result
         :param include_stack_top_copy: if to add the stack top as the last parameter
+        :param special_args_collectors: args collecting instructions for some stuff,
+            the entry count represents the arg count added here
+        :param insert_after: an iterable of instructions to insert after the method call
         """
         self.insertRegion(
             offset,
-
-            ([
-                dis.Instruction(
-                    "DUP_TOP",
-                    PyOpcodes.DUP_TOP,
-                    0,
-                    None,
-                    "",
-                    False,
-                    0,
-                    False,
-                ),
-            ] if include_stack_top_copy else [])
+            (
+                [
+                    dis.Instruction(
+                        "DUP_TOP",
+                        PyOpcodes.DUP_TOP,
+                        0,
+                        None,
+                        "",
+                        False,
+                        0,
+                        False,
+                    ),
+                ]
+                if include_stack_top_copy
+                else []
+            )
             + [
                 dis.Instruction(
                     "LOAD_CONST",
@@ -336,18 +344,19 @@ class MixinPatchHelper:
             ]
             + (
                 [
-                   dis.Instruction(
-                       "ROT_TWO",
-                       PyOpcodes.ROT_TWO,
-                       0,
-                       None,
-                       "",
-                       False,
-                       0,
-                       False,
-                   )
+                    dis.Instruction(
+                        "ROT_TWO",
+                        PyOpcodes.ROT_TWO,
+                        0,
+                        None,
+                        "",
+                        False,
+                        0,
+                        False,
+                    )
                 ]
-                if include_stack_top_copy else []
+                if include_stack_top_copy
+                else []
             )
             + [
                 dis.Instruction(
@@ -375,11 +384,12 @@ class MixinPatchHelper:
                 )
                 for e in reversed(collected_locals)
             ]
+            + list(special_args_collectors)
             + [
                 dis.Instruction(
                     "CALL_FUNCTION",
                     PyOpcodes.CALL_FUNCTION,
-                    len(args) + len(collected_locals) + int(include_stack_top_copy),
+                    len(args) + len(collected_locals) + int(include_stack_top_copy) + len(special_args_collectors),
                     None,
                     None,
                     False,
@@ -395,9 +405,11 @@ class MixinPatchHelper:
                 ]
                 if pop_result
                 else []
-            ),
+            ) + list(insert_after),
         )
-        self.patcher.max_stack_size += 1 + len(args) + len(collected_locals)  + int(include_stack_top_copy)
+        self.patcher.max_stack_size += (
+            1 + len(args) + len(collected_locals) + int(include_stack_top_copy) + len(special_args_collectors)
+        )
         return self
 
     def insertStaticMethodCallAt(self, offset: int, method: str, *args):
