@@ -18,9 +18,13 @@ import test_mcpython.mixin.test_space
 from mcpython.mixin import PyBytecodeManipulator
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 from mcpython.mixin.util import create_instruction
+from mcpython.mixin.Mixin import MixinHandler
 
 
 class TestMixinAlignment(TestCase):
+    def setUp(self):
+        MixinHandler.LOCKED = False
+
     def test_simple_remove(self):
         test = False
 
@@ -30,12 +34,10 @@ class TestMixinAlignment(TestCase):
 
         patcher = PyBytecodeManipulator.FunctionPatcher(a)
         helper = MixinPatchHelper(patcher)
-        # helper.print_stats()
 
         a()
         self.assertTrue(test)
         test = False
-        self.assertFalse(test)
 
         helper.deleteRegion(0, 2)
         helper.store()
@@ -51,7 +53,6 @@ class TestMixinAlignment(TestCase):
 
         patcher = PyBytecodeManipulator.FunctionPatcher(a)
         helper = MixinPatchHelper(patcher)
-        # helper.print_stats()
 
         a()
         self.assertFalse(test)
@@ -107,25 +108,3 @@ class TestMixinAlignment(TestCase):
         self.assertFalse(test1)
         self.assertFalse(test2)
 
-    # def test_loop_reassign(self):
-    #     outer = 0
-    #
-    #     def a():
-    #         for x in range(10):
-    #             for y in range(20):
-    #                 nonlocal outer
-    #                 outer += x * y
-    #
-    #     patcher = PyBytecodeManipulator.FunctionPatcher(a)
-    #     helper = MixinPatchHelper(patcher)
-    #     helper.print_stats()
-    #     self.assertRaises(RuntimeError, lambda: helper.deleteRegion(6, 11))
-    #     helper.deleteRegion(6, 11, safety=False)
-    #     helper.deleteRegion(18, 19)
-    #     helper.insertRegion(8, [create_instruction("LOAD_CONST", patcher.ensureConstant(1))])
-    #     helper.print_stats()
-    #     helper.store()
-    #     patcher.applyPatches()
-    #
-    #     outer = 0
-    #     a()

@@ -140,6 +140,46 @@ class MixinGlobal2ConstReplace(AbstractMixinProcessor):
         helper.store()
 
 
+class MixinLocal2ConstReplace(AbstractMixinProcessor):
+    def __init__(
+        self, local_name: str, after, matcher: AbstractInstructionMatcher = None
+    ):
+        self.local_name = local_name
+        self.after = after
+        self.matcher = matcher
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        match = -1
+        for index, instruction in enumerate(helper.instruction_listing):
+            if instruction.opname != "LOAD_FAST": continue
+            if helper.patcher.variable_names[instruction.arg] != self.local_name: continue
+
+            match += 1
+
+            if self.matcher is not None and not self.matcher.matches(
+                helper, index, match
+            ):
+                continue
+
+            helper.instruction_listing[index] = dis.Instruction(
+                "LOAD_CONST",
+                PyOpcodes.LOAD_CONST,
+                target.ensureConstant(self.after),
+                self.after,
+                repr(self.after),
+                instruction.offset,
+                instruction.starts_line,
+                instruction.is_jump_target,
+            )
+
+        helper.store()
+
+
 class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
     def __init__(
         self,

@@ -150,7 +150,7 @@ class TestMixinHandler(TestCase):
     def test_function_lookup(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        method = MixinHandler.lookup_method(
+        method = MixinHandler("test").lookup_method(
             "tests.test_mcpython.mixin.test_Mixin:TestMixinHandler.test_function_lookup"
         )
         self.assertEqual(method, TestMixinHandler.test_function_lookup)
@@ -956,8 +956,6 @@ class TestMixinHandler(TestCase):
         # Will apply the later mixin first, as it is optional, and as such can break when overriding it
         handler.applyMixins()
 
-        dis.dis(test2)
-
         self.assertEqual(next(test2()), 2)
         self.assertEqual(invoked, 3)
         reset_test_methods()
@@ -1056,6 +1054,23 @@ class TestMixinHandler(TestCase):
 
         localtest()
         self.assertEqual(INVOKED, 2)
+
+    def test_local2constant_transformer_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_mixin_local2constant_transformer_1")
+
+        def func(c):
+            return c
+
+        handler.makeFunctionArrival("test", func)
+        handler.replace_local_var_with_const("test", "c", 0)
+
+        self.assertEqual(func(2), 2)
+        handler.applyMixins()
+        self.assertEqual(func(2), 0)
 
     def test_mixin_static_method_call(self):
         from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper

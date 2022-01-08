@@ -33,6 +33,7 @@ from .MixinProcessors import (
     MixinReplacementProcessor,
     InjectFunctionCallAtReturnReplaceValueProcessor,
     InjectFunctionCallAtYieldReplaceValueProcessor,
+    MixinLocal2ConstReplace,
 )
 
 
@@ -66,6 +67,11 @@ class MixinHandler:
         self.bound_mixin_processors: typing.Dict[
             str, typing.List[typing.Tuple[AbstractMixinProcessor, float, bool]]
         ] = {}
+        self.special_functions = {}
+
+    def makeFunctionArrival(self, name: str, func):
+        self.special_functions[name] = func
+        return self
 
     def applyMixins(self):
         for target, mixins in self.bound_mixin_processors.items():
@@ -130,8 +136,10 @@ class MixinHandler:
 
             patcher.applyPatches()
 
-    @staticmethod
-    def lookup_method(method: str):
+    def lookup_method(self, method: str):
+        if method in self.special_functions:
+            return self.special_functions[method]
+
         module, path = method.split(":")
         module = importlib.import_module(module)
 
@@ -281,6 +289,34 @@ class MixinHandler:
         :param collected_locals: what locals to add as args
         """
         raise NotImplementedError
+
+    def replace_local_var_with_const(
+        self,
+        access_str: str,
+        local_name: str,
+        constant_value,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Replaces a local variable lookup (LOAD_FAST) with an constant value
+
+        :param access_str: the method access string
+        :param local_name: the local variable name
+        :param constant_value: the constant value to replace with
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: the instruction matcher object
+        """
+        self.bound_mixin_processors.setdefault(access_str, []).append(
+            (
+                MixinLocal2ConstReplace(local_name, constant_value, matcher=matcher),
+                priority,
+                optional,
+            )
+        )
+        return self
 
     def replace_function_call_with_constant(
         self,
