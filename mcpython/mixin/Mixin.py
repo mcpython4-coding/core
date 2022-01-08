@@ -54,6 +54,20 @@ class MixinHandler:
 
     By default, control flow with "return"'s is only arrival in the specified section.
     Use mixin_return() followed by a normal return to exit the method injected into
+
+    Consuming no locals needs no performance at runtime, the instructions fetching the locals are not added to
+    the bytecode!
+
+    WARNING:
+    - capturing locals costs performance, use it only when needed
+    - use optional=False only when needed, mods can declare compatible code
+    - override a method only when really needed, it breaks anything touching the code, and
+        is applied with low priority
+    - use local variable changer not much, at it costs performance every time to pack / unpack them
+        (and capture only what you need)
+    - mixins into big functions are costly at "compile time", and may fail also at compile time,
+        use with guard
+        (due to some internal changes when certain limits are exceeded)
     """
 
     LOCKED = False
@@ -160,14 +174,14 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
     ):
         """
-        Replaces a given constant globally in the method
+        Replaces a given constant (globally) in the method based on instructions matched by the matcher
 
         :param access_str: the access_str for the target
         :param constant_value: the original value
         :param new_value: the new value
         :param priority: the mixin priority
         :param optional: optional mixin?
-        :param fail_on_not_found: if mixin applying failed if the constant was not found
+        :param fail_on_not_found: if mixin applying failed if the constant was not found in the constant table
         :param matcher: a custom instruction matcher, optional, when None, matches all instructions using that constant
         """
         self.bound_mixin_processors.setdefault(access_str, []).append(
@@ -195,6 +209,7 @@ class MixinHandler:
     ):
         """
         Replaces all LOAD_GLOBAL <global name> instructions with a LOAD GLOBAL <new name> instructions
+        (all matched by the matcher instance)
 
         :param access_str: the access str of the method
         :param previous_name: the global name
@@ -223,6 +238,7 @@ class MixinHandler:
     ):
         """
         Replaces all LOAD_GLOBAL <global name> instructions with a LOAD_CONST(new value) instructions
+        (matching the matcher)
 
         :param access_str: the access str of the method
         :param global_name: the global name
@@ -252,7 +268,7 @@ class MixinHandler:
     ):
         """
         Replaces an attribute access to an object with a constant value
-        (LOAD_CONST) instruction
+        (LOAD_CONST) instruction (matching the matcher)
 
         :param access_str: the method to mix into
         :param attr_name: the attr name
@@ -301,7 +317,9 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
     ):
         """
-        Replaces a local variable lookup (LOAD_FAST) with an constant value
+        Replaces a local variable lookup (LOAD_FAST) with a constant value
+        All LOAD_FAST instructions accessing the given attribute matching the matcher
+        will be replaced
 
         :param access_str: the method access string
         :param local_name: the local variable name
@@ -332,6 +350,7 @@ class MixinHandler:
     ):
         """
         Replaces a function invocation with a constant value
+        Should internal do some cleanup in the bytecode
 
         :param access_str: the method to mix into
         :param func_name: the function name
@@ -349,6 +368,10 @@ class MixinHandler:
     def replace_function_body(
         self, access_str: str, priority=0, optional=True
     ) -> typing.Callable[[types.FunctionType], types.FunctionType]:
+        """
+        Replaces a function with another one.
+        Signatures should match (or the new one should be a super set)
+        """
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (MixinReplacementProcessor(function), priority, optional)
@@ -389,33 +412,6 @@ class MixinHandler:
             return function
 
         return annotate
-
-    def inject_at_head_replacing_args(
-        self,
-        access_str: str,
-        arg_names: typing.Iterable[str],
-        priority=0,
-        optional=True,
-        args=tuple(),
-        collected_locals=tuple(),
-    ):
-        """
-        Injects a method call at function head, for transforming argument values before the method start
-        invoking.
-
-        It will be invoked with args followed by the argument from the outer function in the order given
-        in arg names.
-        It expects a tuple of the same size as arg_names as a return value, the values are written back
-        into the local variables in the order specified in arg_names.
-
-        :param access_str: the method name
-        :param arg_names: what args to override
-        :param priority: the mixin priority
-        :param optional: optional mixin?
-        :param args: args to add to the function
-        :param collected_locals: which locals to give to the function additionally
-        """
-        raise NotImplementedError
 
     def inject_at_return(
         self,
@@ -783,6 +779,80 @@ class MixinHandler:
             the function result and "raise" for raising the original exception
         :param args: the args to give to the method
         :param collected_locals: which locals to add as args
+        """
+        raise NotImplementedError
+
+    def remove_flow_branch(
+        self,
+        access_str: str,
+        matcher: AbstractInstructionMatcher,
+        priority=0,
+        optional=True,
+        target_jumped_branch=True,
+    ):
+        """
+        Removes a branch introduced by a conditional or non-conditional jump instruction.
+        Can optimise the code following that branch away.
+        When target_jumped_branch is False, the branch followed by the instruction is removed
+        (for conditional branches only), and the conditional will be replaced by a non-conditional jump.
+
+        :param access_str: the method access str
+        :param matcher: the matcher object, for the conditional branch instructions
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param target_jumped_branch: see above
+        """
+        raise NotImplementedError
+
+    def add_flow_branch(
+        self,
+        access_str: str,
+        matcher: AbstractInstructionMatcher,
+        condition_handler: typing.Callable[[...], bool] = None,
+        capture_local_variables_for_condition: typing.Iterable[str] = tuple(),
+        capture_local_variables_for_branch: typing.Iterable[str] = tuple(),
+        priority=0,
+        optional=True,
+        continue_at: typing.Callable[[MixinPatchHelper, int, int], int] | int = 0,
+    ):
+        """
+        Adds a (conditional) branch into the code.
+        Returns an annotation for the branch code.
+        For conditional branches, use the condition_handler and give it a method for decision.
+        Use continue_at when you want to continue somewhere else after execution.
+        Use the local captures when you need local variable access.
+
+        :param access_str: the function access str
+        :param matcher: the matcher object, to decide where the branch is injected
+        :param condition_handler: the function returning True / False for the condition, or None
+            for a non-conditional branch
+        :param capture_local_variables_for_condition: local variable names to send to the condition handler
+        :param capture_local_variables_for_branch: local variable names to send to the branch handler
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param continue_at: where to continue execution at, either int (offset) or callable with the helper, the branch index,
+            and the instruction index
+        """
+        raise NotImplementedError
+
+    def change_iterator(
+        self,
+        access_str: str,
+        matcher: AbstractInstructionMatcher = None,
+        priority=0,
+        optional=True,
+        capture_locals: typing.Iterable[str] = tuple(),
+    ):
+        """
+        Exchanges the used iterator for a for loop
+        The attached expression should return the new iterator.
+        It gets the previous iterator as an argument
+
+        :param access_str: the function access str
+        :param matcher: the matcher object, to decide which iterator instruction to use
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param capture_locals: the local variables to capture for the iterator getter
         """
         raise NotImplementedError
 

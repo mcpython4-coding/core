@@ -85,6 +85,9 @@ def reset_test_methods():
 
 class TestMixinHandler(TestCase):
     def setUp(self):
+        from mcpython import shared
+        shared.IS_TEST_ENV = True
+
         from mcpython.mixin.Mixin import MixinHandler
 
         MixinHandler.LOCKED = False
@@ -104,6 +107,8 @@ class TestMixinHandler(TestCase):
 
         def test():
             return 0
+
+        handler.makeFunctionArrival("test", test)
 
         @handler.replace_function_body("test")
         def override():
@@ -126,6 +131,8 @@ class TestMixinHandler(TestCase):
 
         async def test():
             return 0
+
+        handler.makeFunctionArrival("test", test)
 
         @handler.replace_function_body("test")
         async def override():
@@ -155,10 +162,10 @@ class TestMixinHandler(TestCase):
         )
         self.assertEqual(method, TestMixinHandler.test_function_lookup)
 
-    def test_mixin_by_name(self):
+    def test_mixin_override(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:by_name")
+        handler = MixinHandler("unittest:mixin:override_1")
 
         @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
@@ -169,10 +176,10 @@ class TestMixinHandler(TestCase):
         self.assertEqual(test(), 1)
         reset_test_methods()
 
-    def test_mixin_by_name_twice(self):
+    def test_mixin_override_twice(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:by_name_twice")
+        handler = MixinHandler("unittest:mixin:override_twice")
 
         @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
         def override():

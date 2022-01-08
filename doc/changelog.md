@@ -54,6 +54,8 @@ may not work anymore
         - added priority and optional flags 
         - MixinHandler should be shared now, and will crash when trying to create another instance
         - added mixin processor for replacing constants
+        - added mixins around return and yield instructions 
+        - added mixin for modifiyng local variables
 
     Fixed issues:
         - crash when a cactus tried to generate
