@@ -389,6 +389,31 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
         helper.store()
 
 
+class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
+    def __init__(self, target_func: typing.Callable, *args, matcher: AbstractInstructionMatcher = None):
+        self.target_func = target_func
+        self.args = args
+        self.matcher = matcher
+
+    def apply(
+        self,
+        handler: "MixinHandler",
+        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        matches = -1
+        for index, instr in enumerate(helper.instruction_listing):
+            if instr.opname == "YIELD_VALUE" or instr.opname == "YIELD_FROM":
+                matches += 1
+
+                if self.matcher is not None and not self.matcher.matches(helper, index, matches):
+                    continue
+
+                helper.insertGivenMethodCallAt(index-4, self.target_func, *(instr.opname == "YIELD_FROM",)+self.args)
+
+        helper.store()
+
+
 class MixinHandler:
     """
     Handler for mixing into some functions
@@ -663,6 +688,54 @@ class MixinHandler:
         """
         raise NotImplementedError
 
+    def inject_at_yield(
+        self,
+        access_str: str,
+        include_previous_mixed_ins=False,
+        priority=0,
+        optional=True,
+        args=tuple(),
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Injects code at specific yield statements
+        The function will be invoked with a bool flag indicating if it is a YIELD_VALUE or YIELD_FROM
+        instruction, followed by 'args'.
+
+        :param access_str: the method
+        :param include_previous_mixed_ins: if yield statements from other mixins should be included in the search (not implemented)
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param args: the args to give to the method
+        :param matcher: optional a yield statement matcher
+        """
+
+        def annotate(function):
+            self.bound_mixin_processors.setdefault(access_str, []).append(
+                (InjectFunctionCallAtYieldProcessor(function, *args, matcher=matcher), priority, optional)
+            )
+            return function
+
+        return annotate
+
+    def inject_at_yield_replacing_yield_value(
+        self,
+        access_str: str,
+        include_previous_mixed_ins=False,
+        priority=0,
+        optional=True,
+        args=tuple(),
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Injects the given method at selected yield statements, passing a bool flag indicating if it is a YIELD_VALUE or
+        YIELD_FROM, followed by all args, and as last argument the previous yield value, and yielding the result of the
+        injected method.
+
+        Arguments as above
+        """
+        raise NotImplementedError
+
     def inject_local_variable_modifier_at(
         self,
         access_str: str,
@@ -685,25 +758,113 @@ class MixinHandler:
         """
         raise NotImplementedError
 
-    def inject_replace_method_invoke(
+    def inject_replace_global_method_invoke(
         self,
-        access: str,
+        access_str: str,
         target_method: str,
-        sampler=lambda *_: True,
         inline=True,
         priority=0,
         optional=True,
+        matcher: AbstractInstructionMatcher = None,
     ):
         """
-        Modifies method calls to call another method
-        :param access: the method
+        Modifies method calls to call another method, loaded via LOAD_GLOBAL
+        :param access_str: the method
         :param target_method: the method to replace
-        :param sampler: optionally, some checker for invoke call
         :param inline: when True, will inline this annotated method into the target
         :param priority: the mixin priority
         :param optional: optional mixin?
+        :param matcher: optional, a matcher object for the "invoke" instruction
         """
-        return lambda e: e
+        raise NotImplementedError
+
+    def inject_replace_object_method_invoke(
+        self,
+        access_str: str,
+        target_method: str,
+        inline=True,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Modifies method calls to call another method, loaded via GET_ATTR
+        :param access_str: the method
+        :param target_method: the method to replace
+        :param inline: when True, will inline this annotated method into the target
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: optional, a matcher object for the "invoke" instruction
+        """
+        raise NotImplementedError
+
+    def inject_replace_builtin_method_invoke(
+        self,
+        access_str: str,
+        target_method: str,
+        inline=True,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Modifies method calls to call another method, loaded via the builtin system
+        :param access_str: the method
+        :param target_method: the method to replace
+        :param inline: when True, will inline this annotated method into the target
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: optional, a matcher object for the "invoke" instruction
+        """
+        raise NotImplementedError
+
+    def inject_replace_local_space_method_invoke(
+        self,
+        access_str: str,
+        target_method: str,
+        inline=True,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Modifies method calls to call another method, stored in the local variable table
+        For parameter function and imported functions in the method body
+        
+        :param access_str: the method
+        :param target_method: the method to replace
+        :param inline: when True, will inline this annotated method into the target
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: optional, a matcher object for the "invoke" instruction
+        """
+        raise NotImplementedError
+
+    def redirect_module_import(self, access_str: str, target_module: str, new_module: str, matcher: AbstractInstructionMatcher = None):
+        """
+        Redirects a module import in an function to another module
+
+        :param access_str: the method to mixin into
+        :param target_module: the module to target
+        :param new_module: the new module
+        :param matcher: optional, an import instruction matcher (only useful when multiple imports
+            to the same module exist)
+        """
+        raise NotImplementedError
+
+    def cover_with_try_except_block(self, access_str: str, exception_type: Exception, start: int = 0, end: int = -1, include_handler: bool = True):
+        """
+        Covers the function body with a try-except block of the given exception type.
+        Use as an annotation on the handler function
+        todo: maybe we want matchers for start/end
+
+        :param access_str: the method to cover
+        :param exception_type: the exception type
+        :param start: where to start it
+        :param end: where to end it
+        :param include_handler: when False, this is not an annotation, and the exception will be simply ignored
+        """
+        raise NotImplementedError
 
 
 mixin_handler = MixinHandler("global")
