@@ -47,15 +47,8 @@ def mixin_return(value=None):
     """
 
 
-OFFSET_JUMPS = ("JUMP_FORWARD", "FOR_ITER", "SETUP_FINALLY")
-REAL_JUMPS = (
-    "POP_JUMP_IF_TRUE",
-    "POP_JUMP_IF_FALSE",
-    "JUMP_IF_NOT_EXC_MATCH",
-    "JUMP_IF_TRUE_OR_POP",
-    "JUMP_IF_FALSE_OR_POP",
-    "JUMP_ABSOLUTE",
-)
+OFFSET_JUMPS = dis.hasjrel
+REAL_JUMPS = dis.hasjabs
 
 
 class MixinPatchHelper:
@@ -125,13 +118,13 @@ class MixinPatchHelper:
                 continue
 
             # Check control flow
-            if instr.opname in OFFSET_JUMPS:
+            if instr.opcode in OFFSET_JUMPS:
                 offset = instr.arg
                 self.instruction_listing[i] = reconstruct_instruction(
                     instr, arg=rebind_offset(offset)
                 )
 
-            elif instr.opname in REAL_JUMPS:
+            elif instr.opcode in REAL_JUMPS:
                 self.instruction_listing[i] = reconstruct_instruction(
                     instr, arg=rebind_real(instr.arg)
                 )
@@ -169,13 +162,13 @@ class MixinPatchHelper:
 
         for i, instr in self.walk():
             # Check control flow
-            if instr.opname in OFFSET_JUMPS:
+            if instr.opcode in OFFSET_JUMPS:
                 offset = instr.arg
                 self.instruction_listing[i] = reconstruct_instruction(
                     instr, arg=rebind_offset(offset)
                 )
 
-            elif instr.opname in REAL_JUMPS:
+            elif instr.opcode in REAL_JUMPS:
                 self.instruction_listing[i] = reconstruct_instruction(
                     instr, arg=rebind_real(instr.arg)
                 )

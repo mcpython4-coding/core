@@ -231,6 +231,84 @@ class MixinHandler:
         )
         return self
 
+    def replace_attribute_with_constant(
+        self,
+        access_str: str,
+        attr_name: str,
+        new_value,
+        load_from_local_hint: str = None,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Replaces an attribute access to an object with a constant value
+        (LOAD_CONST) instruction
+
+        :param access_str: the method to mix into
+        :param attr_name: the attr name
+        :param new_value: the constant value to replace with
+        :param load_from_local_hint: optional, a local name which is accessed before it
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: the instruction matcher object
+        """
+        raise NotImplementedError
+
+    def replace_attribute_with_function_call(
+        self,
+        access_str: str,
+        attr_name: str,
+        load_from_local_hint: str = None,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+        args=tuple(),
+        collected_locals=tuple(),
+    ):
+        """
+        Replaces an attribute access with a method call to a constant method
+        given by annotation.
+        Passes the object the attribute is accessed on as last argument
+
+        :param access_str: the access string for the method to mix into
+        :param attr_name: the attribute name access to look for
+        :param load_from_local_hint: optional, a local name which is accessed before it
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: the instruction matcher object
+        :param args: args to add to the function
+        :param collected_locals: what locals to add as args
+        """
+        raise NotImplementedError
+
+    def replace_function_call_with_constant(
+        self,
+        access_str: str,
+        func_name: str,
+        constant_value,
+        is_object_bound=False,
+        object_source_hint: str = None,
+        priority=0,
+        optional=True,
+        matcher: AbstractInstructionMatcher = None,
+    ):
+        """
+        Replaces a function invocation with a constant value
+
+        :param access_str: the method to mix into
+        :param func_name: the function name
+        :param constant_value: the value to replace with
+        :param is_object_bound: if it is a method of an object (look for GET_ATTR instruction)
+            or a global function (look for LOAD_GLOBAL or similar)
+        :param object_source_hint: when object bound, a local variable name where the object is stored,
+            or None for any source
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param matcher: the instruction matcher object
+        """
+        raise NotImplementedError
+
     def replace_function_body(
         self, access_str: str, priority=0, optional=True
     ) -> typing.Callable[[types.FunctionType], types.FunctionType]:
