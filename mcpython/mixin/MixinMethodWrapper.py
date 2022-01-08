@@ -44,6 +44,11 @@ def mixin_return(value=None):
     """
     Invoke before a normal return in a mixin injected to return the method injected into
     This method call and the return will be combined into a regular return statement
+
+    Use from <...>.MixinMethodWrapper import mixin_return outside the method in a global scope when possible,
+    it makes it easier to detect inside the bytecode
+
+    todo: use this for real!
     """
 
 
@@ -54,7 +59,11 @@ REAL_JUMPS = dis.hasjabs
 class MixinPatchHelper:
     """
     See https://docs.python.org/3/library/dis.html#python-bytecode-instructions for a detailed instruction listing
-    Contains helper methods for working with bytecode outside the basic wrapper
+    Contains helper methods for working with bytecode outside the basic wrapper container
+
+    Can save-ly exchange code regions with others, and redirect jump instructions correctly.
+
+    Also contains code to inline whole methods into the code
     """
 
     def __init__(self, patcher: FunctionPatcher | types.FunctionType):
