@@ -16,8 +16,7 @@ import typing
 from unittest import TestCase
 
 import test_mcpython.mixin.test_space
-from mcpython.mixin.Mixin import CounterMatcher
-
+from mcpython.mixin.InstructionMatchers import CounterMatcher
 
 INVOKER_COUNTER = 0
 
@@ -368,7 +367,9 @@ class TestMixinHandler(TestCase):
         handler = MixinHandler("unittest:processor:global2global_1")
 
         handler.replace_global_ref(
-            "tests.test_mcpython.mixin.test_Mixin:test_global", "test", "increase_counter"
+            "tests.test_mcpython.mixin.test_Mixin:test_global",
+            "test",
+            "increase_counter",
         )
 
         global INVOKER_COUNTER
@@ -525,9 +526,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_inject_at_head_1"
-        )
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_head_1")
         invoked = 0
 
         @handler.inject_at_head("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
@@ -550,9 +549,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_inject_at_head_2"
-        )
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_head_2")
         invoked = 0
 
         @handler.inject_at_head("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
@@ -580,12 +577,12 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_inject_at_return_1"
-        )
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_1")
         invoked = 0
 
-        @handler.inject_at_return("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
+        @handler.inject_at_return(
+            "tests.test_mcpython.mixin.test_Mixin:test", args=(3,)
+        )
         def inject(c):
             nonlocal invoked
             invoked += c
@@ -605,17 +602,19 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_inject_at_return_2"
-        )
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_2")
         invoked = 0
 
-        @handler.inject_at_return("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
+        @handler.inject_at_return(
+            "tests.test_mcpython.mixin.test_Mixin:test", args=(3,)
+        )
         def inject(c):
             nonlocal invoked
             invoked += c
 
-        @handler.inject_at_return("tests.test_mcpython.mixin.test_Mixin:test", args=(8,))
+        @handler.inject_at_return(
+            "tests.test_mcpython.mixin.test_Mixin:test", args=(8,)
+        )
         def inject2(c):
             nonlocal invoked
             invoked += c
@@ -635,12 +634,12 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_inject_at_yield_1"
-        )
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_1")
         invoked = 0
 
-        @handler.inject_at_yield("tests.test_mcpython.mixin.test_Mixin:test2", args=(3,))
+        @handler.inject_at_yield(
+            "tests.test_mcpython.mixin.test_Mixin:test2", args=(3,)
+        )
         def inject(_, c):
             nonlocal invoked
             invoked += c
@@ -660,17 +659,19 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_inject_at_yield_2"
-        )
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_2")
         invoked = 0
 
-        @handler.inject_at_yield("tests.test_mcpython.mixin.test_Mixin:test2", args=(3,))
+        @handler.inject_at_yield(
+            "tests.test_mcpython.mixin.test_Mixin:test2", args=(3,)
+        )
         def inject(_, c):
             nonlocal invoked
             invoked += c
 
-        @handler.inject_at_yield("tests.test_mcpython.mixin.test_Mixin:test2", args=(8,))
+        @handler.inject_at_yield(
+            "tests.test_mcpython.mixin.test_Mixin:test2", args=(8,)
+        )
         def inject2(_, c):
             nonlocal invoked
             invoked += c

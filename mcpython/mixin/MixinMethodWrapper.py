@@ -294,15 +294,49 @@ class MixinPatchHelper:
         :param offset: the offset to inject at
         :param method: the method to inject
         """
-        self.insertRegion(offset, [
-            dis.Instruction("LOAD_CONST", PyOpcodes.LOAD_CONST, self.patcher.ensureConstant(method), method, repr(method), False, 0, 0),
-        ] + [
-            dis.Instruction("LOAD_CONST", PyOpcodes.LOAD_CONST, self.patcher.ensureConstant(e), e, repr(e), False, 0, 0)
-            for e in args
-        ] + [
-            dis.Instruction("CALL_FUNCTION", PyOpcodes.CALL_FUNCTION, len(args), None, None, False, 0, 0),
-            dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0),
-        ])
+        self.insertRegion(
+            offset,
+            [
+                dis.Instruction(
+                    "LOAD_CONST",
+                    PyOpcodes.LOAD_CONST,
+                    self.patcher.ensureConstant(method),
+                    method,
+                    repr(method),
+                    False,
+                    0,
+                    0,
+                ),
+            ]
+            + [
+                dis.Instruction(
+                    "LOAD_CONST",
+                    PyOpcodes.LOAD_CONST,
+                    self.patcher.ensureConstant(e),
+                    e,
+                    repr(e),
+                    False,
+                    0,
+                    0,
+                )
+                for e in args
+            ]
+            + [
+                dis.Instruction(
+                    "CALL_FUNCTION",
+                    PyOpcodes.CALL_FUNCTION,
+                    len(args),
+                    None,
+                    None,
+                    False,
+                    0,
+                    0,
+                ),
+                dis.Instruction(
+                    "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
+                ),
+            ],
+        )
         self.patcher.max_stack_size += 1
         return self
 

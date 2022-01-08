@@ -19,399 +19,18 @@ import typing
 import mcpython.mixin.PyBytecodeManipulator
 
 from ..engine import logger
-from .MixinMethodWrapper import MixinPatchHelper, mixin_return
-from .util import PyOpcodes
-
-
-class AbstractInstructionMatcher:
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        raise NotImplementedError
-
-    def __and__(self, other):
-        if isinstance(other, AndMatcher):
-            return AndMatcher(self, *other.matchers)
-
-        return AndMatcher(self, other)
-
-    def __or__(self, other):
-        if isinstance(other, OrMatcher):
-            return OrMatcher(self, *other.matchers)
-
-        return OrMatcher(self, other)
-
-    def __invert__(self):
-        return NotMatcher(self)
-
-
-class AndMatcher(AbstractInstructionMatcher):
-    def __init__(self, *matchers: AbstractInstructionMatcher):
-        self.matchers = matchers
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        return all(
-            matcher.matches(function, index, match_count) for matcher in self.matchers
-        )
-
-    def __and__(self, other):
-        if isinstance(other, AndMatcher):
-            return AndMatcher(*self.matchers, *other.matchers)
-        return AndMatcher(*self.matchers, other)
-
-
-class OrMatcher(AbstractInstructionMatcher):
-    def __init__(self, *matchers: AbstractInstructionMatcher):
-        self.matchers = matchers
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        return any(
-            matcher.matches(function, index, match_count) for matcher in self.matchers
-        )
-
-    def __or__(self, other):
-        if isinstance(other, OrMatcher):
-            return OrMatcher(*self.matchers, *other.matchers)
-        return OrMatcher(*self.matchers, other)
-
-
-class NotMatcher(AbstractInstructionMatcher):
-    def __init__(self, matcher: AbstractInstructionMatcher):
-        self.matcher = matcher
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        return not self.matcher.matches(function, index, match_count)
-
-    def __invert__(self):
-        return self.matcher
-
-
-class AnyByInstructionNameMatcher(AbstractInstructionMatcher):
-    def __init__(self, opname: str):
-        self.opname = opname
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        return function.instruction_listing[index].opname == self.opname
-
-
-class IndexBasedMatcher(AbstractInstructionMatcher):
-    def __init__(
-        self,
-        start: int,
-        end: int = None,
-        sub_matcher: AbstractInstructionMatcher = None,
-    ):
-        self.start = start
-        self.end = end
-        self.sub_matcher = sub_matcher
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        if index < self.start:
-            return False
-        if self.end is not None and index > self.end:
-            return False
-        if self.sub_matcher:
-            return self.sub_matcher.matches(function, index, match_count)
-
-        return True
-
-
-class SurroundingBasedMatcher(AbstractInstructionMatcher):
-    def __init__(self, this_matcher: AbstractInstructionMatcher = None):
-        self.this_matcher = this_matcher
-        self.size = 0, 0
-        self.matchers: typing.Tuple[
-            typing.List[AbstractInstructionMatcher],
-            typing.List[AbstractInstructionMatcher],
-        ] = ([], [])
-
-    def set_offset_matcher(self, offset: int, matcher: AbstractInstructionMatcher):
-        if offset < 0:
-            self.size = min(offset, self.size[0]), self.size[1]
-            if len(self.matchers[0]) < abs(offset):
-                self.matchers[0] += [None] * (abs(offset) - len(self.matchers[0]))
-            self.matchers[0][offset] = matcher
-        else:
-            self.size = self.size[0], max(offset, self.size[1])
-            if len(self.matchers[1]) < offset:
-                self.matchers[0] += [None] * (offset - len(self.matchers[0]))
-            self.matchers[1][offset - 1] = matcher
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        if (
-            index + self.size[0] < 0
-            or index + self.size[1] >= len(function.patcher.code.co_code) // 2
-        ):
-            return False
-
-        for i in range(len(self.matchers[0])):
-            dx = -(len(self.matchers[0]) - i)
-            if not self.matchers[0][i].matches(function, index + dx, match_count):
-                return False
-
-        for i in range(len(self.matchers[1])):
-            if not self.matchers[0][i].matches(function, index + i + 1, match_count):
-                return False
-
-        if self.this_matcher is not None:
-            return self.this_matcher.matches(function, index, match_count)
-
-        return True
-
-
-class LoadConstantValueMatcher(AbstractInstructionMatcher):
-    def __init__(self, value):
-        self.value = value
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        instr = function.instruction_listing[index]
-        return instr.opname == "LOAD_CONST" and instr.argval == self.value
-
-
-class LoadGlobalMatcher(AbstractInstructionMatcher):
-    def __init__(self, global_name: str):
-        self.global_name = global_name
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        instr = function.instruction_listing[index]
-        return instr.opname == "LOAD_GLOBAL" and instr.argval == self.global_name
-
-
-class CounterMatcher(AbstractInstructionMatcher):
-    def __init__(self, count_start: int, count_end: int = None):
-        self.count_start = count_start
-        self.count_end = count_end or count_start
-
-    def matches(self, function: MixinPatchHelper, index: int, match_count: int) -> bool:
-        return self.count_start <= match_count <= self.count_end
-
-
-# todo: implement more matchers
-
-
-class AbstractMixinProcessor:
-    """
-    Mixin processor class
-    Stuff that works on methods on a high level
-    """
-
-    def canBeAppliedOnModified(
-        self,
-        handler: "MixinHandler",
-        function: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        modifier_list: typing.List["AbstractMixinProcessor"],
-    ) -> bool:
-        return True
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        """
-        Applies the mixin processor to the target
-        :param handler: the handler instance
-        :param target: the target FunctionPatcher instance
-        :param helper: the helper instance, the method is responsible for invoking store() on it
-        """
-        pass
-
-    def is_breaking(self) -> bool:
-        return False
-
-
-class MixinReplacementProcessor(AbstractMixinProcessor):
-    def __init__(self, replacement: types.FunctionType):
-        self.replacement = replacement
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        target.overrideFrom(
-            mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(self.replacement)
-        )
-
-    def is_breaking(self) -> bool:
-        return True
-
-
-class MixinConstantReplacer(AbstractMixinProcessor):
-    def __init__(
-        self,
-        before,
-        after,
-        fail_on_not_found=False,
-        matcher: AbstractInstructionMatcher = None,
-    ):
-        self.before = before
-        self.after = after
-        self.fail_on_not_found = fail_on_not_found
-        self.matcher = matcher
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        if self.before not in target.constants:
-            if self.fail_on_not_found:
-                raise RuntimeError(
-                    f"constant {self.before} not found in target {target} (to be replaced with {self.after})"
-                )
-            return
-
-        helper.replaceConstant(
-            self.before,
-            self.after,
-            matcher=self.matcher.matches if self.matcher is not None else None,
-        )
-        helper.store()
-
-
-class MixinGlobal2ConstReplace(AbstractMixinProcessor):
-    def __init__(
-        self, global_name: str, after, matcher: AbstractInstructionMatcher = None
-    ):
-        self.global_name = global_name
-        self.after = after
-        self.matcher = matcher
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        match = -1
-        for index, instruction in helper.getLoadGlobalsLoading(self.global_name):
-            match += 1
-
-            if self.matcher is not None and not self.matcher.matches(
-                helper, index, match
-            ):
-                continue
-
-            helper.instruction_listing[index] = dis.Instruction(
-                "LOAD_CONST",
-                PyOpcodes.LOAD_CONST,
-                target.ensureConstant(self.after),
-                self.after,
-                repr(self.after),
-                instruction.offset,
-                instruction.starts_line,
-                instruction.is_jump_target,
-            )
-
-        helper.store()
-
-
-class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
-    def __init__(
-        self,
-        previous_global: str,
-        new_global: str,
-        matcher: AbstractInstructionMatcher = None,
-    ):
-        self.previous_global = previous_global
-        self.new_global = new_global
-        self.matcher = matcher
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        match = -1
-        for index, instruction in helper.getLoadGlobalsLoading(self.previous_global):
-            match += 1
-
-            if self.matcher is not None and not self.matcher.matches(
-                helper, index, match
-            ):
-                continue
-
-            helper.instruction_listing[index] = dis.Instruction(
-                "LOAD_GLOBAL",
-                PyOpcodes.LOAD_GLOBAL,
-                target.ensureName(self.new_global),
-                self.new_global,
-                None,
-                instruction.offset,
-                instruction.starts_line,
-                instruction.is_jump_target,
-            )
-
-        helper.store()
-
-
-class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
-    def __init__(self, target_func: typing.Callable, *args):
-        self.target_func = target_func
-        self.args = args
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        index = 0 if helper.instruction_listing[0].opname != "GEN_START" else 1
-        helper.insertGivenMethodCallAt(index, self.target_func, *self.args)
-        helper.store()
-
-
-class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
-    def __init__(self, target_func: typing.Callable, *args, matcher: AbstractInstructionMatcher = None):
-        self.target_func = target_func
-        self.args = args
-        self.matcher = matcher
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        matches = -1
-        for index, instr in enumerate(helper.instruction_listing):
-            if instr.opname == "RETURN_VALUE":
-                matches += 1
-
-                if self.matcher is not None and not self.matcher.matches(helper, index, matches):
-                    continue
-
-                helper.insertGivenMethodCallAt(index-1, self.target_func, *self.args)
-
-        helper.store()
-
-
-class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
-    def __init__(self, target_func: typing.Callable, *args, matcher: AbstractInstructionMatcher = None):
-        self.target_func = target_func
-        self.args = args
-        self.matcher = matcher
-
-    def apply(
-        self,
-        handler: "MixinHandler",
-        target: mcpython.mixin.PyBytecodeManipulator.FunctionPatcher,
-        helper: MixinPatchHelper,
-    ):
-        matches = -1
-        for index, instr in enumerate(helper.instruction_listing):
-            if instr.opname == "YIELD_VALUE" or instr.opname == "YIELD_FROM":
-                matches += 1
-
-                if self.matcher is not None and not self.matcher.matches(helper, index, matches):
-                    continue
-
-                helper.insertGivenMethodCallAt(index-4, self.target_func, *(instr.opname == "YIELD_FROM",)+self.args)
-
-        helper.store()
+from .InstructionMatchers import AbstractInstructionMatcher
+from .MixinMethodWrapper import MixinPatchHelper
+from .MixinProcessors import (
+    AbstractMixinProcessor,
+    InjectFunctionCallAtHeadProcessor,
+    InjectFunctionCallAtReturnProcessor,
+    InjectFunctionCallAtYieldProcessor,
+    MixinConstantReplacer,
+    MixinGlobal2ConstReplace,
+    MixinGlobalReTargetProcessor,
+    MixinReplacementProcessor,
+)
 
 
 class MixinHandler:
@@ -631,7 +250,14 @@ class MixinHandler:
 
         return annotate
 
-    def inject_at_head_replacing_args(self, access_str: str, arg_names: typing.Iterable[str], priority=0, optional=True, args=tuple()):
+    def inject_at_head_replacing_args(
+        self,
+        access_str: str,
+        arg_names: typing.Iterable[str],
+        priority=0,
+        optional=True,
+        args=tuple(),
+    ):
         """
         Injects a method call at function head, for transforming argument values before the method start
         invoking.
@@ -665,7 +291,13 @@ class MixinHandler:
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
-                (InjectFunctionCallAtReturnProcessor(function, *args, matcher=matcher), priority, optional)
+                (
+                    InjectFunctionCallAtReturnProcessor(
+                        function, *args, matcher=matcher
+                    ),
+                    priority,
+                    optional,
+                )
             )
             return function
 
@@ -712,7 +344,13 @@ class MixinHandler:
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
-                (InjectFunctionCallAtYieldProcessor(function, *args, matcher=matcher), priority, optional)
+                (
+                    InjectFunctionCallAtYieldProcessor(
+                        function, *args, matcher=matcher
+                    ),
+                    priority,
+                    optional,
+                )
             )
             return function
 
@@ -830,7 +468,7 @@ class MixinHandler:
         """
         Modifies method calls to call another method, stored in the local variable table
         For parameter function and imported functions in the method body
-        
+
         :param access_str: the method
         :param target_method: the method to replace
         :param inline: when True, will inline this annotated method into the target
@@ -840,7 +478,13 @@ class MixinHandler:
         """
         raise NotImplementedError
 
-    def redirect_module_import(self, access_str: str, target_module: str, new_module: str, matcher: AbstractInstructionMatcher = None):
+    def redirect_module_import(
+        self,
+        access_str: str,
+        target_module: str,
+        new_module: str,
+        matcher: AbstractInstructionMatcher = None,
+    ):
         """
         Redirects a module import in an function to another module
 
@@ -852,7 +496,14 @@ class MixinHandler:
         """
         raise NotImplementedError
 
-    def cover_with_try_except_block(self, access_str: str, exception_type: Exception, start: int = 0, end: int = -1, include_handler: bool = True):
+    def cover_with_try_except_block(
+        self,
+        access_str: str,
+        exception_type: Exception,
+        start: int = 0,
+        end: int = -1,
+        include_handler: bool = True,
+    ):
         """
         Covers the function body with a try-except block of the given exception type.
         Use as an annotation on the handler function
