@@ -236,15 +236,21 @@ class MixinHandler:
 
         return annotate
 
-    def inject_at_head(self, access_str: str, priority=0, optional=True, args=tuple()):
+    def inject_at_head(self, access_str: str, priority=0, optional=True, args=tuple(), collected_locals=tuple()):
         """
         Injects some code at the function head
         Can be used for e.g. parameter manipulation
+
+        :param access_str: the access str for the method
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param args: args to add to the function
+        :param collected_locals: what locals to add as args
         """
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
-                (InjectFunctionCallAtHeadProcessor(function, *args), priority, optional)
+                (InjectFunctionCallAtHeadProcessor(function, *args, collected_locals=collected_locals), priority, optional)
             )
             return function
 
@@ -257,6 +263,7 @@ class MixinHandler:
         priority=0,
         optional=True,
         args=tuple(),
+        collected_locals=tuple(),
     ):
         """
         Injects a method call at function head, for transforming argument values before the method start
@@ -266,6 +273,13 @@ class MixinHandler:
         in arg names.
         It expects a tuple of the same size as arg_names as a return value, the values are written back
         into the local variables in the order specified in arg_names.
+
+        :param access_str: the method name
+        :param arg_names: what args to override
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param args: args to add to the function
+        :param collected_locals: which locals to give to the function additionally
         """
         raise NotImplementedError
 
@@ -277,6 +291,7 @@ class MixinHandler:
         optional=True,
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
     ):
         """
         Injects code at specific return statements
@@ -287,13 +302,14 @@ class MixinHandler:
         :param optional: optional mixin?
         :param args: the args to give to the method
         :param matcher: optional a return statement matcher
+        :param collected_locals: what locals to add to the method call
         """
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtReturnProcessor(
-                        function, *args, matcher=matcher
+                        function, *args, matcher=matcher, collected_locals=collected_locals
                     ),
                     priority,
                     optional,
@@ -311,6 +327,7 @@ class MixinHandler:
         optional=True,
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
     ):
         """
         Injects the given method at selected return statements, passing all args, and as last argument
@@ -328,6 +345,7 @@ class MixinHandler:
         optional=True,
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
     ):
         """
         Injects code at specific yield statements
@@ -340,13 +358,14 @@ class MixinHandler:
         :param optional: optional mixin?
         :param args: the args to give to the method
         :param matcher: optional a yield statement matcher
+        :param collected_locals: which locals to add as args
         """
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtYieldProcessor(
-                        function, *args, matcher=matcher
+                        function, *args, matcher=matcher, collected_locals=collected_locals,
                     ),
                     priority,
                     optional,
@@ -364,6 +383,7 @@ class MixinHandler:
         optional=True,
         args=tuple(),
         matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
     ):
         """
         Injects the given method at selected yield statements, passing a bool flag indicating if it is a YIELD_VALUE or

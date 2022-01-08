@@ -34,6 +34,14 @@ def test2():
     yield 0
 
 
+def test3(a):
+    return a
+
+
+def test4(a):
+    yield a
+
+
 def test_global():
     test()
 
@@ -49,13 +57,19 @@ def test_global3():
 
 
 def reset_test_methods():
-    global test, test2, test_global, test_global2, test_global3
+    global test, test2, test3, te4, test_global, test_global2, test_global3
 
     def test():
         return 0
 
     def test2():
         yield 0
+
+    def test3(a):
+        return a
+
+    def test4(a):
+        yield a
 
     def test_global():
         test()
@@ -629,6 +643,63 @@ class TestMixinHandler(TestCase):
         self.assertEqual(invoked, 11)
         reset_test_methods()
 
+    def test_mixin_inject_at_return_3(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_3")
+        invoked = 0
+
+        @handler.inject_at_return(
+            "tests.test_mcpython.mixin.test_Mixin:test3", collected_locals=("a",)
+        )
+        def inject(c):
+            nonlocal invoked
+            invoked += c * 2
+
+        self.assertEqual(test3(2), 2)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(test3(3), 3)
+        self.assertEqual(invoked, 6)
+        reset_test_methods()
+
+    def test_mixin_inject_at_return_4(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_4")
+        invoked = 0
+
+        @handler.inject_at_return(
+            "tests.test_mcpython.mixin.test_Mixin:test3", collected_locals=("a",)
+        )
+        def inject(c):
+            nonlocal invoked
+            invoked += c
+
+        @handler.inject_at_return(
+            "tests.test_mcpython.mixin.test_Mixin:test3", collected_locals=("a",)
+        )
+        def inject2(c):
+            nonlocal invoked
+            invoked += c
+
+        self.assertEqual(test3(4), 4)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(test3(4), 4)
+        self.assertEqual(invoked, 8)
+        reset_test_methods()
+
     def test_mixin_inject_at_yield_1(self):
         from mcpython.mixin.Mixin import MixinHandler
 
@@ -686,8 +757,66 @@ class TestMixinHandler(TestCase):
         self.assertEqual(invoked, 11)
         reset_test_methods()
 
+    def test_mixin_inject_at_yield_3(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_3")
+        invoked = 0
+
+        @handler.inject_at_yield(
+            "tests.test_mcpython.mixin.test_Mixin:test4", collected_locals=("a",)
+        )
+        def inject(_, c):
+            print(c)
+            nonlocal invoked
+            invoked += c * 8
+
+        self.assertEqual(next(test4(2)), 2)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(next(test4(4)), 4)
+        self.assertEqual(invoked, 32)
+        reset_test_methods()
+
+    def test_mixin_inject_at_yield_4(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_4")
+        invoked = 0
+
+        @handler.inject_at_yield(
+            "tests.test_mcpython.mixin.test_Mixin:test4", collected_locals=("a",)
+        )
+        def inject(_, c):
+            nonlocal invoked
+            invoked += c
+
+        @handler.inject_at_yield(
+            "tests.test_mcpython.mixin.test_Mixin:test4", collected_locals=("a",)
+        )
+        def inject2(_, c):
+            nonlocal invoked
+            invoked += c
+
+        self.assertEqual(next(test4(4)), 4)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(next(test4(4)), 4)
+        self.assertEqual(invoked, 8)
+        reset_test_methods()
+
     def test_mixin_given_method_call_inject_1(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
+        from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 
         INVOKED = 0
 
@@ -707,7 +836,7 @@ class TestMixinHandler(TestCase):
         self.assertEqual(INVOKED, 1)
 
     def test_mixin_given_method_call_inject_2(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
+        from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 
         INVOKED = 0
 
@@ -727,7 +856,7 @@ class TestMixinHandler(TestCase):
         self.assertEqual(INVOKED, 4)
 
     def test_mixin_given_method_call_inject_3(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
+        from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 
         INVOKED = 0
 

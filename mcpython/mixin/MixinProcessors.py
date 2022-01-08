@@ -181,9 +181,10 @@ class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
 
 
 class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
-    def __init__(self, target_func: typing.Callable, *args):
+    def __init__(self, target_func: typing.Callable, *args, collected_locals=tuple()):
         self.target_func = target_func
         self.args = args
+        self.collected_locals = collected_locals
 
     def apply(
         self,
@@ -192,7 +193,7 @@ class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
         helper: MixinPatchHelper,
     ):
         index = 0 if helper.instruction_listing[0].opname != "GEN_START" else 1
-        helper.insertGivenMethodCallAt(index, self.target_func, *self.args)
+        helper.insertGivenMethodCallAt(index, self.target_func, *self.args, collected_locals=self.collected_locals)
         helper.store()
 
 
@@ -202,10 +203,12 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
         target_func: typing.Callable,
         *args,
         matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
+        self.collected_locals = collected_locals
 
     def apply(
         self,
@@ -223,7 +226,7 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
                 ):
                     continue
 
-                helper.insertGivenMethodCallAt(index - 1, self.target_func, *self.args)
+                helper.insertGivenMethodCallAt(index - 1, self.target_func, *self.args, collected_locals=self.collected_locals)
 
         helper.store()
 
@@ -234,10 +237,12 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
         target_func: typing.Callable,
         *args,
         matcher: AbstractInstructionMatcher = None,
+        collected_locals=tuple(),
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
+        self.collected_locals = collected_locals
 
     def apply(
         self,
@@ -256,9 +261,10 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
                     continue
 
                 helper.insertGivenMethodCallAt(
-                    index - 4,
+                    index - 5,
                     self.target_func,
                     *(instr.opname == "YIELD_FROM",) + self.args,
+                    collected_locals=self.collected_locals,
                 )
 
         helper.store()

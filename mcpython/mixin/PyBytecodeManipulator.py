@@ -284,6 +284,13 @@ class FunctionPatcher:
         self.names.append(name)
         return len(self.names) - 1
 
+    def ensureVarName(self, name):
+        if name in self.variable_names:
+            return self.variable_names.index(name)
+
+        self.variable_names.append(name)
+        return len(self.variable_names) - 1
+
     def ensureFreeVar(self, name: str):
         if name in self.free_vars:
             return self.free_vars.index(name)

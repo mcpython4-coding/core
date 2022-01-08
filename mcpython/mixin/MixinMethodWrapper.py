@@ -288,7 +288,7 @@ class MixinPatchHelper:
         self.is_async = False
         return self
 
-    def insertGivenMethodCallAt(self, offset: int, method: typing.Callable, *args):
+    def insertGivenMethodCallAt(self, offset: int, method: typing.Callable, *args, collected_locals=tuple()):
         """
         Injects the given method as a constant call into the bytecode of that function
         :param offset: the offset to inject at
@@ -323,9 +323,22 @@ class MixinPatchHelper:
             ]
             + [
                 dis.Instruction(
+                    "LOAD_FAST",
+                    PyOpcodes.LOAD_FAST,
+                    self.patcher.ensureVarName(e),
+                    e,
+                    e,
+                    False,
+                    0,
+                    0,
+                )
+                for e in collected_locals
+            ]
+            + [
+                dis.Instruction(
                     "CALL_FUNCTION",
                     PyOpcodes.CALL_FUNCTION,
-                    len(args),
+                    len(args) + len(collected_locals),
                     None,
                     None,
                     False,
