@@ -17,8 +17,8 @@ import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
-from .. import shared
 
+from .. import shared
 from ..engine import logger
 from .InstructionMatchers import AbstractInstructionMatcher
 from .MixinMethodWrapper import MixinPatchHelper
@@ -26,14 +26,14 @@ from .MixinProcessors import (
     AbstractMixinProcessor,
     InjectFunctionCallAtHeadProcessor,
     InjectFunctionCallAtReturnProcessor,
+    InjectFunctionCallAtReturnReplaceValueProcessor,
     InjectFunctionCallAtYieldProcessor,
+    InjectFunctionCallAtYieldReplaceValueProcessor,
     MixinConstantReplacer,
     MixinGlobal2ConstReplace,
     MixinGlobalReTargetProcessor,
-    MixinReplacementProcessor,
-    InjectFunctionCallAtReturnReplaceValueProcessor,
-    InjectFunctionCallAtYieldReplaceValueProcessor,
     MixinLocal2ConstReplace,
+    MixinReplacementProcessor,
 )
 
 
@@ -356,7 +356,14 @@ class MixinHandler:
 
         return annotate
 
-    def inject_at_head(self, access_str: str, priority=0, optional=True, args=tuple(), collected_locals=tuple()):
+    def inject_at_head(
+        self,
+        access_str: str,
+        priority=0,
+        optional=True,
+        args=tuple(),
+        collected_locals=tuple(),
+    ):
         """
         Injects some code at the function head
         Can be used for e.g. parameter manipulation
@@ -370,7 +377,13 @@ class MixinHandler:
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
-                (InjectFunctionCallAtHeadProcessor(function, *args, collected_locals=collected_locals), priority, optional)
+                (
+                    InjectFunctionCallAtHeadProcessor(
+                        function, *args, collected_locals=collected_locals
+                    ),
+                    priority,
+                    optional,
+                )
             )
             return function
 
@@ -429,7 +442,10 @@ class MixinHandler:
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtReturnProcessor(
-                        function, *args, matcher=matcher, collected_locals=collected_locals
+                        function,
+                        *args,
+                        matcher=matcher,
+                        collected_locals=collected_locals,
                     ),
                     priority,
                     optional,
@@ -460,7 +476,10 @@ class MixinHandler:
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtReturnReplaceValueProcessor(
-                        function, *args, matcher=matcher, collected_locals=collected_locals
+                        function,
+                        *args,
+                        matcher=matcher,
+                        collected_locals=collected_locals,
                     ),
                     priority,
                     optional,
@@ -498,7 +517,10 @@ class MixinHandler:
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtYieldProcessor(
-                        function, *args, matcher=matcher, collected_locals=collected_locals,
+                        function,
+                        *args,
+                        matcher=matcher,
+                        collected_locals=collected_locals,
                     ),
                     priority,
                     optional,
@@ -530,7 +552,10 @@ class MixinHandler:
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtYieldReplaceValueProcessor(
-                        function, *args, matcher=matcher, collected_locals=collected_locals,
+                        function,
+                        *args,
+                        matcher=matcher,
+                        collected_locals=collected_locals,
                     ),
                     priority,
                     optional,

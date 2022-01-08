@@ -268,7 +268,9 @@ manager.add_stage(
     LoadingStage("minecraft:loading_preparation", "preparation of loading")
     .add_event_stage("stage:pre")
     .add_event_stage("stage:mixin:prepare", "stage:pre")  # Define your mixins here...
-    .add_event_stage("stage:mixin:apply", "stage:mixin:prepare")  # ... and here we apply them
+    .add_event_stage(
+        "stage:mixin:apply", "stage:mixin:prepare"
+    )  # ... and here we apply them
     .add_event_stage("stage:mod:init", "stage:pre", "stage:mixin:apply")
 )
 

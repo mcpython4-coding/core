@@ -16,9 +16,9 @@ from unittest import TestCase
 
 import test_mcpython.mixin.test_space
 from mcpython.mixin import PyBytecodeManipulator
+from mcpython.mixin.Mixin import MixinHandler
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 from mcpython.mixin.util import create_instruction
-from mcpython.mixin.Mixin import MixinHandler
 
 
 class TestMixinAlignment(TestCase):
@@ -107,4 +107,3 @@ class TestMixinAlignment(TestCase):
         a(True)
         self.assertFalse(test1)
         self.assertFalse(test2)
-

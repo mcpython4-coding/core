@@ -156,8 +156,10 @@ class MixinLocal2ConstReplace(AbstractMixinProcessor):
     ):
         match = -1
         for index, instruction in enumerate(helper.instruction_listing):
-            if instruction.opname != "LOAD_FAST": continue
-            if helper.patcher.variable_names[instruction.arg] != self.local_name: continue
+            if instruction.opname != "LOAD_FAST":
+                continue
+            if helper.patcher.variable_names[instruction.arg] != self.local_name:
+                continue
 
             match += 1
 
@@ -233,7 +235,9 @@ class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
         helper: MixinPatchHelper,
     ):
         index = 0 if helper.instruction_listing[0].opname != "GEN_START" else 1
-        helper.insertGivenMethodCallAt(index, self.target_func, *self.args, collected_locals=self.collected_locals)
+        helper.insertGivenMethodCallAt(
+            index, self.target_func, *self.args, collected_locals=self.collected_locals
+        )
         helper.store()
 
 
@@ -266,7 +270,12 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
                 ):
                     continue
 
-                helper.insertGivenMethodCallAt(index - 1, self.target_func, *self.args, collected_locals=self.collected_locals)
+                helper.insertGivenMethodCallAt(
+                    index - 1,
+                    self.target_func,
+                    *self.args,
+                    collected_locals=self.collected_locals,
+                )
 
         helper.store()
 
@@ -300,10 +309,21 @@ class InjectFunctionCallAtReturnReplaceValueProcessor(AbstractMixinProcessor):
                 ):
                     continue
 
-                helper.insertRegion(index, [dis.Instruction(
-                    "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
-                )])
-                helper.insertGivenMethodCallAt(index, self.target_func, *self.args, collected_locals=self.collected_locals, pop_result=False)
+                helper.insertRegion(
+                    index,
+                    [
+                        dis.Instruction(
+                            "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
+                        )
+                    ],
+                )
+                helper.insertGivenMethodCallAt(
+                    index,
+                    self.target_func,
+                    *self.args,
+                    collected_locals=self.collected_locals,
+                    pop_result=False,
+                )
 
         helper.store()
 
@@ -376,9 +396,14 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
                 ):
                     continue
 
-                helper.insertRegion(index - 4, [dis.Instruction(
-                    "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
-                )])
+                helper.insertRegion(
+                    index - 4,
+                    [
+                        dis.Instruction(
+                            "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
+                        )
+                    ],
+                )
 
                 helper.insertGivenMethodCallAt(
                     index - 4,
