@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import dis
 import typing
-from unittest import TestCase
+from tests.util import TestCase
 
 import test_mcpython.mixin.test_space
 from mcpython.mixin.InstructionMatchers import CounterMatcher

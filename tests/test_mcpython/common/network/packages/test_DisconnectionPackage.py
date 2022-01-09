@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import io
-from unittest import TestCase
+from tests.util import TestCase
 
 
 class TestDisconnectionInitPackage(TestCase):

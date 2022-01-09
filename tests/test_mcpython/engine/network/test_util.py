@@ -17,7 +17,7 @@ import string
 import typing
 import unittest
 import uuid
-from unittest import TestCase
+from tests.util import TestCase
 
 # These is a list of tests that we can execute on buffers, used for the multi test
 from mcpython.engine.network.util import IBufferSerializeAble

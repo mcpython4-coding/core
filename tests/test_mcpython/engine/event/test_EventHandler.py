@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from unittest import TestCase
+from tests.util import TestCase
 
 
 class TestEventHandler(TestCase):
