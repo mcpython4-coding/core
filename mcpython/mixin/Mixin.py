@@ -35,6 +35,7 @@ from .MixinProcessors import (
     MixinGlobalReTargetProcessor,
     MixinLocal2ConstReplace,
     MixinReplacementProcessor,
+    InjectFunctionCallAtTailProcessor,
 )
 
 
@@ -577,6 +578,43 @@ class MixinHandler:
                         collected_locals=collected_locals,
                         add_yield_value=add_yield_value,
                         is_yield_from=is_yield_from,
+                    ),
+                    priority,
+                    optional,
+                )
+            )
+            return function
+
+        return annotate
+
+    def inject_at_tail(
+        self,
+        access_str: str,
+        priority=0,
+        optional=True,
+        args=tuple(),
+        collected_locals=tuple(),
+        add_return_value=False,
+    ):
+        """
+        Injects code before the final return statement
+
+        :param access_str: the method
+        :param priority: the mixin priority
+        :param optional: optional mixin?
+        :param args: the args to give to the method
+        :param collected_locals: which locals to add as args
+        :param add_return_value: if to add the return value at the tail as an argument or not
+        """
+
+        def annotate(function):
+            self.bound_mixin_processors.setdefault(access_str, []).append(
+                (
+                    InjectFunctionCallAtTailProcessor(
+                        function,
+                        *args,
+                        collected_locals=collected_locals,
+                        add_return_value=add_return_value,
                     ),
                     priority,
                     optional,

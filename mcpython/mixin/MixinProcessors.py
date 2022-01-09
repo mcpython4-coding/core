@@ -457,6 +457,37 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
         helper.store()
 
 
+class InjectFunctionCallAtTailProcessor(AbstractMixinProcessor):
+    def __init__(
+        self,
+        target_func: typing.Callable,
+        *args,
+        collected_locals=tuple(),
+        add_return_value=False,
+    ):
+        self.target_func = target_func
+        self.args = args
+        self.collected_locals = collected_locals
+        self.add_return_value = add_return_value
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        assert helper.instruction_listing[-1].opname == "RETURN_VALUE", "integrity of function failed!"
+
+        helper.insertGivenMethodCallAt(
+            len(helper.instruction_listing)+1,
+            self.target_func,
+            *self.args,
+            collected_locals=self.collected_locals,
+            include_stack_top_copy=self.add_return_value,
+        )
+        helper.store()
+
+
 class InjectFunctionLocalVariableModifier(AbstractMixinProcessor):
     def __init__(
         self,

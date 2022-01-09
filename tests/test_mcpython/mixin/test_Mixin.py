@@ -1077,6 +1077,40 @@ class TestMixinHandler(TestCase):
         self.assertEqual(invoked, 11)
         reset_test_methods()
 
+    def test_mixin_inject_at_tail_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        def target(flag):
+            if flag:
+                return 0
+            return 1
+
+        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_1")
+        handler.makeFunctionArrival("test", target)
+
+        invoked = 0
+
+        @handler.inject_at_tail("test", add_return_value=True)
+        def inject(c):
+            nonlocal invoked
+            invoked = c
+
+        self.assertEqual(target(False), 1)
+        self.assertEqual(invoked, 0)
+        self.assertEqual(target(True), 0)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        print(list(target.__code__.co_code))
+        dis.dis(target)
+
+        self.assertEqual(target(True), 0)
+        self.assertEqual(invoked, 0)
+        self.assertEqual(target(False), 1)
+        self.assertEqual(invoked, 1)
+
     def test_mixin_given_method_call_inject_1(self):
         from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 
