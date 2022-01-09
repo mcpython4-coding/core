@@ -53,9 +53,12 @@ class TickHandler:
     def schedule_tick(self, dt: float):
         asyncio.get_event_loop().run_until_complete(self.tick(dt))
 
-    async def tick(self, dt):
+    async def tick(self, dt: float):
         """
         Execute ticks
+
+        Internally applies a small mixin for the IS_CLIENT checks (see OptimiserMixins.py)
+
         :param dt: the time that came after the last event
         """
         self.active_tick += 1

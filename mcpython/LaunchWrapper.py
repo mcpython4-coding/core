@@ -90,6 +90,8 @@ class LaunchWrapper:
 
         import mcpython.common.mod.ModMcpython
 
+        # import mcpython.mixin.OptimiserMixins
+
         shared.mod_loader.look_for_mod_files()
         asyncio.get_event_loop().run_until_complete(shared.mod_loader.parse_mod_files())
 

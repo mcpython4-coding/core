@@ -428,7 +428,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         else:
             x, y, z = x + dx, y + dy, z + dz
 
-        if shared.IS_CLIENT and shared.window.dy < 0 and player.fallen_since_y is None:
+        if shared.IS_CLIENT and shared.window.dy < 0 and (player.fallen_since_y is None or player.fallen_since_y < 0):
             player.fallen_since_y = player.position[1]
 
         player.position = (x, y, z)

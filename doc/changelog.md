@@ -57,6 +57,10 @@ may not work anymore
         - added mixins around return and yield instructions 
         - added mixin for modifiyng local variables
 
+    Internal:
+        - using now a bytecode optimisation library behind the scenes to optimise some stuff around
+            (used after mixins are applied, as it is not as-optimised as possible)
+
     Fixed issues:
         - crash when a cactus tried to generate
 

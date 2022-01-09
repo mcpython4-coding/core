@@ -9,3 +9,4 @@ deprecation==2.1.0
 simplejson==3.17.6
 Python-NBT==1.2.0
 aiofiles==0.8.0
+bytecode_optimizer==0.1.1

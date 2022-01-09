@@ -173,7 +173,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         buffer.write_float(self.armor_level)
         buffer.write_float(self.armor_toughness)
         buffer.write_bool(self.flying)
-        buffer.write_float(self.fallen_since_y)
+        buffer.write_float(self.fallen_since_y if self.fallen_since_y is not None else -1)
         buffer.write_int(self.active_inventory_slot)
 
         await self.create_inventories()
@@ -602,7 +602,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             ]
         )
         if self.gamemode in [0, 2] or not check_gamemode:
-            self.hearts -= hearts
+            self.hearts -= round(hearts)
             if self.hearts <= 0:
                 shared.tick_handler.schedule_once(self.kill())
 

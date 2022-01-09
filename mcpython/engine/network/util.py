@@ -445,7 +445,7 @@ class WriteBuffer:
         return self
 
     def write_float(self, value: float):
-        assert isinstance(value, (float, int)), "value must be float-like"
+        assert isinstance(value, (float, int)), f"value must be float-like, got {value}"
 
         return self.write_struct(FLOAT, value)
 
