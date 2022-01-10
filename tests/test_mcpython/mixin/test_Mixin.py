@@ -1103,9 +1103,6 @@ class TestMixinHandler(TestCase):
         # Will apply the later mixin first, as it is optional, and as such can break when overriding it
         handler.applyMixins()
 
-        print(list(target.__code__.co_code))
-        dis.dis(target)
-
         self.assertEqual(target(True), 0)
         self.assertEqual(invoked, 0)
         self.assertEqual(target(False), 1)

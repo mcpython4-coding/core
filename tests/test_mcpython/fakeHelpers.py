@@ -32,6 +32,8 @@ class FakeCraftingHandler:
 
 class FakeWorld:
     entities = set()
+    dimension = None
+    position = (0, 0)
 
     @classmethod
     def get_dimension_by_name(cls, name: str):
@@ -60,3 +62,18 @@ class FakeWorld:
     @classmethod
     def get_active_dimension(cls):
         return cls
+
+    @classmethod
+    def get_name(cls):
+        return "overworld"
+
+    @classmethod
+    def get_dimension(cls):
+        return cls
+
+    @classmethod
+    def get_dimension_id(cls):
+        return 0
+
+
+FakeWorld.dimension = FakeWorld

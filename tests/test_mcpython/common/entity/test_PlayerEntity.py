@@ -11,6 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython.engine.network.util import ReadBuffer
+from mcpython.engine.network.util import WriteBuffer
+from test_mcpython.fakeHelpers import FakeWorld
 from tests.util import TestCase
 
 from mcpython import shared
@@ -48,6 +51,15 @@ ItemFactory().set_name("fake:item").finish()
 
 
 class TestPlayerEntity(TestCase):
+    def setUp(self) -> None:
+        from mcpython import shared
+        shared.world = FakeWorld()
+
+
+    def tearDown(self) -> None:
+        from mcpython import shared
+        shared.world = None
+
     def test_module_import(self):
         import mcpython.common.entity.PlayerEntity
 
@@ -143,3 +155,31 @@ class TestPlayerEntity(TestCase):
                     count += slot.get_itemstack().amount
 
         self.assertEqual(count, 32)
+
+    async def test_serializer(self):
+        import mcpython.common.container.crafting.CraftingManager
+        import mcpython.common.entity.PlayerEntity
+
+        shared.IS_CLIENT = False
+
+        shared.mod_loader = FakeModloader()
+
+        instance = mcpython.common.entity.PlayerEntity.PlayerEntity(name="test_player")
+        instance.set_gamemode(0)
+        await instance.create_inventories()
+
+        # This simulates fall damage
+        instance.damage(2.3)
+
+        buffer = WriteBuffer()
+        await instance.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        new_instance = mcpython.common.entity.PlayerEntity.PlayerEntity()
+        await new_instance.read_from_network_buffer(read_buffer)
+
+        self.assertEqual(instance.name, new_instance.name)
+        self.assertEqual(instance.dimension, new_instance.dimension)
+        self.assertEqual(instance.hearts, new_instance.hearts)
+        self.assertNotEqual(instance.hearts, 20)
+        self.assertEqual(new_instance.gamemode, 0)

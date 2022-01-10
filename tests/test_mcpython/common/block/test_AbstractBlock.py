@@ -58,6 +58,11 @@ class TestAbstractBlock(TestCase):
         for face in EnumSide.iterate():
             self.assertTrue(block.is_face_solid(face), face)
 
+        block = mcpython.common.block.AbstractBlock.AbstractBlock()
+        block.face_solid = 0
+        for face in EnumSide.iterate():
+            self.assertFalse(block.is_face_solid(face), face)
+
     async def test_get_rotated_variant(self):
         import mcpython.common.block.AbstractBlock
 
