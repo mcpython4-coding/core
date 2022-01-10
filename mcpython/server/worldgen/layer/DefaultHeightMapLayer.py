@@ -29,7 +29,7 @@ class DefaultHeightMapLayer(ILayer):
 
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
         NAME,
-        scale=10 ** 2,
+        scale=10 ** 2 * .5,
         dimensions=2,
         octaves=3,
         merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
