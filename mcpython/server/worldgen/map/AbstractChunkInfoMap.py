@@ -44,7 +44,7 @@ class AbstractMap(IBufferSerializeAble, ABC):
         version = buffer.read_uint()
 
         if version != self.VERSION:
-            logger.println("applying data fixer from version {} to version {}")
+            logger.println(f"Applying data fixer from version {version} to version {self.VERSION} onto data map {self.NAME} at chunk {self.chunk}")
 
             while version in self.DATA_FIXERS and version != self.VERSION:
                 fixer = self.DATA_FIXERS[version]

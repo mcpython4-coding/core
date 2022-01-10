@@ -53,7 +53,7 @@ class TestBiomeMap(TestCase):
 
         await obj2.read_from_network_buffer(read_buffer)
         self.assertEqual(obj2.get_at_xz(0, 0), "minecraft:dessert")
-        self.assertIsNone(obj2.get_at_xz(0, 1))
+        self.assertIsNone(obj2.get_at_xz(0, 4))
 
 
 class TestLandMassMap(TestCase):

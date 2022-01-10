@@ -53,8 +53,8 @@ class DefaultBiomeMapLayer(ILayer):
 
         # Now iterate over all positions
         # todo: use a map calculation
-        for x in range(cx * 16, cx * 16 + 16):
-            for z in range(cz * 16, cz * 16 + 16):
+        for x in range(cx * 16, cx * 16 + 16, 4):
+            for z in range(cz * 16, cz * 16 + 16, 4):
                 biome_map.set_at_xz(
                     x,
                     z,

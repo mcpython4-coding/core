@@ -19,6 +19,8 @@ import mcpython.common.world.Chunk
 import mcpython.server.worldgen.feature.IFeature
 from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
+import mcpython.server.worldgen.noise.NoiseManager
+import mcpython.server.worldgen.noise.INoiseImplementation
 
 
 @shared.world_generation_handler
@@ -26,6 +28,16 @@ class DefaultFeatureLayer(ILayer):
     DEPENDS_ON = ["minecraft:biome_map_default", "minecraft:heightmap_default"]
 
     NAME = "minecraft:feature_default"
+
+    placement_noise = (
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME,
+            scale=1,
+            dimensions=3,
+            octaves=3,
+            merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+        )
+    )
 
     @classmethod
     async def add_generate_functions_to_chunk(cls, config: LayerConfig, reference):
@@ -37,17 +49,18 @@ class DefaultFeatureLayer(ILayer):
         await asyncio.gather(
             *(
                 cls.generate_position(
-                    cx + x,
-                    cz + z,
+                    cx + 4 * x,
+                    cz + 4 * z,
                     reference,
                     config,
+                    i,
                 )
-                for (x, z) in itertools.product(range(16), range(16))
+                for i, (x, z) in enumerate(itertools.product(range(0, 4), range(0, 4)))
             )
         )
 
-    @staticmethod
-    async def generate_position(x, z, reference, config):
+    @classmethod
+    async def generate_position(cls, x, z, reference, config, index: int):
         chunk = reference.chunk
 
         # todo: rename to structure blocking info or something similar
@@ -71,12 +84,17 @@ class DefaultFeatureLayer(ILayer):
             if treemap.get_at_xz(x, z, group):
                 return  # is a tree nearby?
 
-            for _ in range(count):
+            for c in range(count):
                 # should we use this position?
                 # todo: make position in chunk noise based, like a noise of size, and _ as index in y direction,
                 #   and x, z the chunk position, deciding the x and z coordinates in that chunk
-                if random.randint(1, 256) != 1:
+
+                sector = cls.placement_noise.calculate_position((x // 16, z // 16, c))
+
+                if round(sector * 16) != index:
                     continue
+
+                offset = random.randint(0, 3), random.randint(0, 3)
 
                 # Use one random feature todo: make noise based
                 feature_def: mcpython.server.worldgen.feature.IFeature.FeatureDefinition = random.choices(
@@ -88,9 +106,9 @@ class DefaultFeatureLayer(ILayer):
                 feature = feature_def.feature
                 await feature.place_array(
                     reference,
-                    x,
+                    x + offset[0],
                     feature_def.spawn_point.select(x, z, height, biome),
-                    z,
+                    z + offset[1],
                     feature_def.config,
                 )
 

@@ -1997,4 +1997,6 @@ f   [uuk]: mixins can now inject method calls at HEAD, RETURN, YIELD and TAIL, i
 f   [uuk]: added two loading stages for mixin work
 b   [uuk]: fixed player entity serialization issues
 f   [uuk]: stone layer supports now internally multi-layer stone generation
+fI  [uuk]: biome map stores now only one biome in each 4x4 section
+f   [uuk]: the biome map is now in charge to determin the biome color
 

@@ -24,6 +24,8 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     NAME = "minecraft:biome_map"
 
+    VERSION = 1
+
     def __init__(self, chunk):
         super().__init__(chunk)
         self.biome_map: typing.Dict[
@@ -36,11 +38,11 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         x, z = self.chunk.get_position()
         sx, sz = x * 16, z * 16
 
-        data = iter([buffer.read_uint() for _ in range(16 * 16)])
+        data = iter([buffer.read_uint() for _ in range(4 * 4)])
 
         biomes = await buffer.collect_list(lambda: buffer.read_string(size_size=1))
 
-        for x, z in itertools.product(range(16), range(16)):
+        for x, z in itertools.product(range(0, 16, 4), range(0, 16, 4)):
             index = next(data)
             self.set_at_xz(x + sx, z + sz, biomes[index - 1] if index != 0 else None)
 
@@ -51,7 +53,7 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         sx, sz = x * 16, z * 16
         table = []
 
-        for x, z in itertools.product(range(16), range(16)):
+        for x, z in itertools.product(range(0, 16, 4), range(0, 16, 4)):
             biome = self.get_at_xz(x + sx, z + sz)
 
             if biome is None:
@@ -66,22 +68,25 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         await buffer.write_list(table, lambda e: buffer.write_string(e, size_size=1))
 
     def get_at_xz(self, x: int, z: int) -> str | None:
-        return self.biome_map.setdefault((x, 0, z), None)
+        return self.biome_map.setdefault((x // 4, 0, z // 4), None)
 
     def get_at_xyz(self, x: int, y: int, z: int) -> str | None:
-        return self.biome_map.setdefault((x, y, z), None)
+        return self.biome_map.setdefault((x // 4, y, z // 4), None)
 
     def set_at_xz(self, x: int, z: int, biome: str | None):
         for y in range(0, 256):
-            self.biome_map[x, y, z] = biome
+            self.biome_map[x // 4, y, z // 4] = biome
 
     def set_at_xyz(self, x: int, y: int, z: int, biome: str | None):
-        self.biome_map[x, y, z] = biome
+        self.biome_map[x // 4, y, z // 4] = biome
 
     def dump_debug_info(self, file: str):
         biome2color = {}
         image = PIL.Image.new("RGBA", (16, 16))
-        for (x, y, z), biome in self.biome_map.items():
+        cx, cz = self.chunk
+        for x, z in itertools.product(range(cx*16, cx*16+16, 4), range(cz*16, cz*16+16, 4)):
+            biome = self.get_at_xz(x, z)
+
             if biome not in biome2color:
                 seed = hash(biome)
                 biome2color[biome] = (
@@ -90,8 +95,15 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
                     seed % (256 ** 3) // (256 ** 2),
                     255,
                 )
+
             image.putpixel((x % 16, z % 16), biome2color[biome])
+
         image.save(file)
+
+    def get_biome_color_at(self, x: int, z: int) -> typing.Tuple[float, float, float]:
+        # todo: implement blending
+        biome = self.get_at_xz(x, z)
+        return tuple(e / 256 for e in shared.biome_handler.biomes[biome].GRASS_COLOR) if biome is not None else (91 / 255, 201 / 255, 59 / 255)
 
 
 if not shared.IS_TEST_ENV:
