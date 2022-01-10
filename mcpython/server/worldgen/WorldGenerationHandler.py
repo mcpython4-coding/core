@@ -38,7 +38,7 @@ class WorldGenerationHandler:
 
     def __init__(self):
         # registry table for layers
-        self.layers: typing.Dict[str, mcpython.server.worldgen.layer.ILayer.ILayer] = {}
+        self.layers: typing.Dict[str, typing.Type[mcpython.server.worldgen.layer.ILayer.ILayer]] = {}
 
         # a config table: dimension name -> config list
         self.configs = {}
@@ -136,7 +136,7 @@ class WorldGenerationHandler:
         if not self.enable_auto_gen and not force_generate:
             return
 
-        # If it's not an chunk instance, make it one
+        # If it's not a chunk instance, make it one
         if type(chunk) == tuple:
             if dimension is None:
                 # todo: is there something better than this / remove this
@@ -248,13 +248,11 @@ class WorldGenerationHandler:
         dimension: typing.Union[
             mcpython.engine.world.AbstractInterface.IDimension, int, str, None
         ] = None,
-        check_chunk=True,
     ):
         """
         Generates the chunk in-place
         :param chunk: the chunk, as an instance, or a tuple
         :param dimension: if tuple, specifies the dimension. When still None, the active dimension is used
-        :param check_chunk: if the chunk should be checked if its generated or not
         todo: add flag to override any data, not only add additional if the chunk exists
         """
         if isinstance(chunk, tuple):
@@ -283,6 +281,7 @@ class WorldGenerationHandler:
         :param config: the config name
         """
         dimension.set_world_generation_config_entry("configname", config)
+        return self
 
     async def mark_finished(
         self, chunk: mcpython.engine.world.AbstractInterface.IChunk
@@ -318,12 +317,15 @@ class WorldGenerationHandler:
         todo: make more fancy
         """
         self.layers[layer.NAME] = layer
+        return self
 
     def register_world_gen_config(self, instance):
         self.configs.setdefault(instance.DIMENSION, {})[instance.NAME] = instance
+        return self
 
     def unregister_world_gen_config(self, instance):
         del self.configs[instance.DIMENSION][instance.NAME]
+        return self
 
     def get_world_gen_config(self, dimension: str, name: str):
         return self.configs[dimension][name]
@@ -334,12 +336,15 @@ class WorldGenerationHandler:
     ):
         if issubclass(data, mcpython.server.worldgen.layer.ILayer.ILayer):
             self.register_layer(data)
+
         elif issubclass(
             data, mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap
         ):
             self.register_chunk_map(data)
+
         else:
             raise TypeError("unknown data type", type(data))
+
         return data
 
 
