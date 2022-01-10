@@ -1995,6 +1995,5 @@ f   [uuk]: mixins can now replace constants in methods
 f   [uuk]: mixins can now inject method calls at HEAD, RETURN, YIELD and TAIL, including
            mixin-prepare time args and invoke-args from outer scope, and replacing the RETURN or YIELD value
 f   [uuk]: added two loading stages for mixin work
-L   [uuk]: including now bytecode_optimizer for optimization with mixins
 b   [uuk]: fixed player entity serialization issues
 

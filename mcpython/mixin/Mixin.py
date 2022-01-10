@@ -84,7 +84,6 @@ class MixinHandler:
             str, typing.List[typing.Tuple[AbstractMixinProcessor, float, bool]]
         ] = {}
         self.special_functions = {}
-        self.affected = set()
 
     def makeFunctionArrival(self, name: str, func):
         self.special_functions[name] = func
@@ -153,14 +152,6 @@ class MixinHandler:
 
             patcher.applyPatches()
 
-        # if not shared.IS_TEST_ENV:
-        #     await self.optimise_affected()
-
-    async def optimise_affected(self):
-        for m in self.affected:
-            from bytecode_optimizer._optimizer import optimize_code
-            m.__code__ = optimize_code(m.__code__)
-
     def lookup_method(self, method: str):
         if method in self.special_functions:
             return self.special_functions[method]
@@ -170,8 +161,6 @@ class MixinHandler:
 
         for e in path.split("."):
             module = getattr(module, e)
-
-        self.affected.add(module)
 
         return module
 
