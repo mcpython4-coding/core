@@ -43,11 +43,11 @@ class DefaultTopLayerLayer(ILayer):
         biome_map = chunk.get_map("minecraft:biome_map")
 
         for (x, z), v in noise_map:
-            world_height = height_map.get_at_xz(x, z)[0][1]
-            biome = shared.biome_handler.biomes[biome_map.get_at_xz(x, z)]
-            reference.schedule_invoke(
-                cls.generate_xz, reference, x, z, config, v, world_height, biome
-            )
+            for start, end in height_map.get_at_xz(x, z):
+                biome = shared.biome_handler.biomes[biome_map.get_at_xz(x, z)]
+                reference.schedule_invoke(
+                    cls.generate_xz, reference, x, z, config, v, end, biome
+                )
 
     @staticmethod
     def generate_xz(reference, x, z, config, noise_value, world_height, biome):

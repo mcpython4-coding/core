@@ -1996,4 +1996,5 @@ f   [uuk]: mixins can now inject method calls at HEAD, RETURN, YIELD and TAIL, i
            mixin-prepare time args and invoke-args from outer scope, and replacing the RETURN or YIELD value
 f   [uuk]: added two loading stages for mixin work
 b   [uuk]: fixed player entity serialization issues
+f   [uuk]: stone layer supports now internally multi-layer stone generation
 

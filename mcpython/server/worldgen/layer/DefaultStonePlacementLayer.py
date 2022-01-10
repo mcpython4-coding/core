@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 
 from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
@@ -31,17 +32,25 @@ class DefaultStonePlacementLayer(ILayer):
         chunk = reference.chunk
         heightmap = reference.chunk.get_map("minecraft:height_map")
 
-        for x in range(chunk.position[0] * 16, chunk.position[0] * 16 + 16):
-            for z in range(chunk.position[1] * 16, chunk.position[1] * 16 + 16):
+        await asyncio.gather(
+            *(
+                cls.generate_xz_section(reference, x, z, *r)
+                for x, z, r in cls.get_parts(chunk.get_position(), heightmap)
+            )
+        )
 
-                height = heightmap.get_at_xz(x, z)[0][1]
-                reference.schedule_invoke(
-                    cls.generate_xz, reference, x, z, config, height
+    @classmethod
+    def get_parts(cls, position, heightmap):
+        for x in range(position[0] * 16, position[0] * 16 + 16):
+            for z in range(position[1] * 16, position[1] * 16 + 16):
+                yield from (
+                    (x, z, r)
+                    for r in heightmap.get_at_xz(x, z)
                 )
 
     @staticmethod
-    def generate_xz(reference, x, z, config, height):
-        for y in range(1, height + 1):
+    async def generate_xz_section(reference, x, z, start, end):
+        for y in range(start, end + 1):
             if not reference.chunk.is_position_blocked((x, y, z)):
                 reference.schedule_block_add(
                     (x, y, z), "minecraft:stone", immediate=False

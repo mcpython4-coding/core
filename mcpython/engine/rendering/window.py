@@ -539,9 +539,12 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 )
             else:
                 # make sure that file size is as small as possible
-                asyncio.get_event_loop().run_until_complete(
-                    shared.world.save_file.save_world_async(override=True)
-                )
+                try:
+                    asyncio.get_event_loop().run_until_complete(
+                        shared.world.save_file.save_world_async(override=True)
+                    )
+                except KeyboardInterrupt:
+                    logger.println("[FATAL] interrupted during saving the world; world is likely corrupted!")
 
         self.set_fullscreen(False)
         self.close()

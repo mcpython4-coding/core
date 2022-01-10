@@ -27,14 +27,29 @@ class DefaultHeightMapLayer(ILayer):
     NAME = "minecraft:heightmap_default"
     DEPENDS_ON = []
 
-    noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+    base_noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
         NAME,
         scale=10 ** 2 * .5,
         dimensions=2,
         octaves=3,
         merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
     )
-    noise.merger_config = [3, 2, 1]
+    base_noise.merger_config = [3, 2, 1]
+
+    inter_noise_1 = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+        NAME + "_inter_1",
+        scale=10,
+        dimensions=2,
+        octaves=4,
+        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+    )
+    inter_noise_2 = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+        NAME + "_inter_2",
+        scale=10,
+        dimensions=2,
+        octaves=4,
+        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+    )
 
     @staticmethod
     def normalize_config(config: LayerConfig):
@@ -48,20 +63,37 @@ class DefaultHeightMapLayer(ILayer):
         height_map = chunk.get_map("minecraft:height_map")
 
         # todo: can we optimize this preparation by sending prepared noise values directly to the async part
-        noise_map = cls.noise.calculate_area((x, z), (x + 16, z + 16))
+        base_noise_map = cls.base_noise.calculate_area((x, z), (x + 16, z + 16))
+        inter_noise_map_1 = cls.inter_noise_1.calculate_area((x, z), (x + 16, z + 16))
+        inter_noise_map_2 = cls.inter_noise_1.calculate_area((x, z), (x + 16, z + 16))
+
         await asyncio.gather(
             *(
-                cls.get_height_at(height_map, config, chunk, x, z, v)
-                for (x, z), v in noise_map
+                cls.get_height_at(height_map, config, chunk, x, z, v1, v2, v3)
+                for ((x, z), v1), (_, v2), (_, v3) in zip(base_noise_map, inter_noise_map_1, inter_noise_map_2)
             )
         )
 
     @classmethod
-    async def get_height_at(cls, height_map, config, chunk, x, z, v):
+    async def get_height_at(cls, height_map, config, chunk, x, z, height, v2, v3):
         # todo: make configurable by world generator, decide biome based on height
         start, end = 20, 40
         end *= config.max_height_factor
-        v *= end - start
-        v += start
-        info = [(1, round(v))]  # todo: do some more special stuff here!
+        height *= end - start
+        height += start
+        height = round(height)
+
+        # todo: do some more special stuff here!
+        if v2 > .9:
+            total_height = height + round(20 * v3)
+
+            if v2 > .98:
+                info = [(1, total_height)]
+            else:
+                inter = round((total_height - height) * (v2 - .9) * 10)
+                info = [(1, height), (height+inter, total_height)]
+
+        else:
+            info = [(1, height)]
+
         height_map.set_at_xz(x, z, info)
