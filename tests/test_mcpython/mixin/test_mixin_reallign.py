@@ -12,13 +12,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from dis import Instruction
-from tests.util import TestCase
 
 import test_mcpython.mixin.test_space
 from mcpython.mixin import PyBytecodeManipulator
 from mcpython.mixin.Mixin import MixinHandler
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 from mcpython.mixin.util import create_instruction
+from tests.util import TestCase
 
 
 class TestMixinAlignment(TestCase):

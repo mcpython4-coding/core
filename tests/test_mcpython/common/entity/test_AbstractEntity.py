@@ -11,9 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from tests.util import TestCase
-
 from mcpython import shared
+from tests.util import TestCase
 
 shared.IS_TEST_ENV = True
 

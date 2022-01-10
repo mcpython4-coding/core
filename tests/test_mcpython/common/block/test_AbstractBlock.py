@@ -11,10 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from tests.util import TestCase
-
 from mcpython.util.enums import BlockRotationType, EnumSide
 from pyglet.window import mouse
+from tests.util import TestCase
 
 
 class TestAbstractBlock(TestCase):

@@ -27,28 +27,34 @@ class DefaultHeightMapLayer(ILayer):
     NAME = "minecraft:heightmap_default"
     DEPENDS_ON = []
 
-    base_noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME,
-        scale=10 ** 2 * .5,
-        dimensions=2,
-        octaves=3,
-        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+    base_noise = (
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME,
+            scale=10 ** 2 * 0.5,
+            dimensions=2,
+            octaves=3,
+            merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+        )
     )
     base_noise.merger_config = [3, 2, 1]
 
-    inter_noise_1 = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME + "_inter_1",
-        scale=10,
-        dimensions=2,
-        octaves=4,
-        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+    inter_noise_1 = (
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_inter_1",
+            scale=10,
+            dimensions=2,
+            octaves=4,
+            merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+        )
     )
-    inter_noise_2 = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-        NAME + "_inter_2",
-        scale=10,
-        dimensions=2,
-        octaves=4,
-        merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+    inter_noise_2 = (
+        mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
+            NAME + "_inter_2",
+            scale=10,
+            dimensions=2,
+            octaves=4,
+            merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
+        )
     )
 
     @staticmethod
@@ -70,7 +76,9 @@ class DefaultHeightMapLayer(ILayer):
         await asyncio.gather(
             *(
                 cls.get_height_at(height_map, config, chunk, x, z, v1, v2, v3)
-                for ((x, z), v1), (_, v2), (_, v3) in zip(base_noise_map, inter_noise_map_1, inter_noise_map_2)
+                for ((x, z), v1), (_, v2), (_, v3) in zip(
+                    base_noise_map, inter_noise_map_1, inter_noise_map_2
+                )
             )
         )
 
@@ -84,14 +92,14 @@ class DefaultHeightMapLayer(ILayer):
         height = round(height)
 
         # todo: do some more special stuff here!
-        if v2 > .9:
+        if v2 > 0.9:
             total_height = height + round(20 * v3)
 
-            if v2 > .98:
+            if v2 > 0.98:
                 info = [(1, total_height)]
             else:
-                inter = round((total_height - height) * (v2 - .9) * 10)
-                info = [(1, height), (height+inter, total_height)]
+                inter = round((total_height - height) * (v2 - 0.9) * 10)
+                info = [(1, height), (height + inter, total_height)]
 
         else:
             info = [(1, height)]

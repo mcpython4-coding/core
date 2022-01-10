@@ -11,8 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from tests.util import TestCase
-
 from mcpython import shared
 from pyglet.window import key, mouse
 from test_mcpython.fakeHelpers import (
@@ -20,6 +18,7 @@ from test_mcpython.fakeHelpers import (
     FakeInventoryHandler,
     FakeWorld,
 )
+from tests.util import TestCase
 
 
 class TestChest(TestCase):

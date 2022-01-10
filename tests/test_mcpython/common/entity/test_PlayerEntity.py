@@ -11,12 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.engine.network.util import ReadBuffer
-from mcpython.engine.network.util import WriteBuffer
+from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from test_mcpython.fakeHelpers import FakeWorld
 from tests.util import TestCase
-
-from mcpython import shared
 
 shared.IS_TEST_ENV = True
 
@@ -53,11 +51,12 @@ ItemFactory().set_name("fake:item").finish()
 class TestPlayerEntity(TestCase):
     def setUp(self) -> None:
         from mcpython import shared
-        shared.world = FakeWorld()
 
+        shared.world = FakeWorld()
 
     def tearDown(self) -> None:
         from mcpython import shared
+
         shared.world = None
 
     def test_module_import(self):

@@ -27,6 +27,7 @@ from .MixinProcessors import (
     InjectFunctionCallAtHeadProcessor,
     InjectFunctionCallAtReturnProcessor,
     InjectFunctionCallAtReturnReplaceValueProcessor,
+    InjectFunctionCallAtTailProcessor,
     InjectFunctionCallAtYieldProcessor,
     InjectFunctionCallAtYieldReplaceValueProcessor,
     InjectFunctionLocalVariableModifier,
@@ -35,7 +36,6 @@ from .MixinProcessors import (
     MixinGlobalReTargetProcessor,
     MixinLocal2ConstReplace,
     MixinReplacementProcessor,
-    InjectFunctionCallAtTailProcessor,
 )
 
 
@@ -373,6 +373,7 @@ class MixinHandler:
         Replaces a function with another one.
         Signatures should match (or the new one should be a super set)
         """
+
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (MixinReplacementProcessor(function), priority, optional)

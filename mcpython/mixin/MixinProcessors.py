@@ -476,10 +476,12 @@ class InjectFunctionCallAtTailProcessor(AbstractMixinProcessor):
         target: FunctionPatcher,
         helper: MixinPatchHelper,
     ):
-        assert helper.instruction_listing[-1].opname == "RETURN_VALUE", "integrity of function failed!"
+        assert (
+            helper.instruction_listing[-1].opname == "RETURN_VALUE"
+        ), "integrity of function failed!"
 
         helper.insertGivenMethodCallAt(
-            len(helper.instruction_listing)+1,
+            len(helper.instruction_listing) + 1,
             self.target_func,
             *self.args,
             collected_locals=self.collected_locals,

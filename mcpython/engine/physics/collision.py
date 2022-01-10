@@ -89,7 +89,11 @@ async def collide(position: tuple, height: int, previous=None):
                     player.flying = False
 
                     # todo: spawn particles when fallen down
-                    if player.gamemode in (0, 2) and player.fallen_since_y is not None and player.fallen_since_y >= 0:
+                    if (
+                        player.gamemode in (0, 2)
+                        and player.fallen_since_y is not None
+                        and player.fallen_since_y >= 0
+                    ):
                         dy = player.fallen_since_y - player.position[1] - 3
 
                         if (

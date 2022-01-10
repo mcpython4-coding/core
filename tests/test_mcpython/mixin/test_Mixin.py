@@ -13,10 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 import dis
 import typing
-from tests.util import TestCase
 
 import test_mcpython.mixin.test_space
 from mcpython.mixin.InstructionMatchers import CounterMatcher
+from tests.util import TestCase
 
 INVOKER_COUNTER = 0
 
@@ -86,6 +86,7 @@ def reset_test_methods():
 class TestMixinHandler(TestCase):
     def setUp(self):
         from mcpython import shared
+
         shared.IS_TEST_ENV = True
 
         from mcpython.mixin.Mixin import MixinHandler
@@ -1200,7 +1201,7 @@ class TestMixinHandler(TestCase):
 
         @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
         def inject(c):
-            return c + 2,
+            return (c + 2,)
 
         self.assertEqual(func(2), 2)
         handler.applyMixins()
@@ -1221,7 +1222,7 @@ class TestMixinHandler(TestCase):
 
         @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
         def inject(c):
-            return "test",
+            return ("test",)
 
         self.assertEqual(func(2), 2)
         handler.applyMixins()
@@ -1241,7 +1242,9 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", func)
 
-        @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c", "d"])
+        @handler.inject_local_variable_modifier_at(
+            "test", CounterMatcher(0), ["c", "d"]
+        )
         def inject(c, d):
             return d, c
 

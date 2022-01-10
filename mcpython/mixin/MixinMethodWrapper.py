@@ -389,7 +389,10 @@ class MixinPatchHelper:
                 dis.Instruction(
                     "CALL_FUNCTION",
                     PyOpcodes.CALL_FUNCTION,
-                    len(args) + len(collected_locals) + int(include_stack_top_copy) + len(special_args_collectors),
+                    len(args)
+                    + len(collected_locals)
+                    + int(include_stack_top_copy)
+                    + len(special_args_collectors),
                     None,
                     None,
                     False,
@@ -405,10 +408,15 @@ class MixinPatchHelper:
                 ]
                 if pop_result
                 else []
-            ) + list(insert_after),
+            )
+            + list(insert_after),
         )
         self.patcher.max_stack_size += (
-            1 + len(args) + len(collected_locals) + int(include_stack_top_copy) + len(special_args_collectors)
+            1
+            + len(args)
+            + len(collected_locals)
+            + int(include_stack_top_copy)
+            + len(special_args_collectors)
         )
         return self
 

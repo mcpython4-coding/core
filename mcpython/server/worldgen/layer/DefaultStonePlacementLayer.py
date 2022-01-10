@@ -43,10 +43,7 @@ class DefaultStonePlacementLayer(ILayer):
     def get_parts(cls, position, heightmap):
         for x in range(position[0] * 16, position[0] * 16 + 16):
             for z in range(position[1] * 16, position[1] * 16 + 16):
-                yield from (
-                    (x, z, r)
-                    for r in heightmap.get_at_xz(x, z)
-                )
+                yield from ((x, z, r) for r in heightmap.get_at_xz(x, z))
 
     @staticmethod
     async def generate_xz_section(reference, x, z, start, end):

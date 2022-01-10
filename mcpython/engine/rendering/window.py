@@ -544,7 +544,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                         shared.world.save_file.save_world_async(override=True)
                     )
                 except KeyboardInterrupt:
-                    logger.println("[FATAL] interrupted during saving the world; world is likely corrupted!")
+                    logger.println(
+                        "[FATAL] interrupted during saving the world; world is likely corrupted!"
+                    )
 
         self.set_fullscreen(False)
         self.close()

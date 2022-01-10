@@ -38,7 +38,9 @@ class WorldGenerationHandler:
 
     def __init__(self):
         # registry table for layers
-        self.layers: typing.Dict[str, typing.Type[mcpython.server.worldgen.layer.ILayer.ILayer]] = {}
+        self.layers: typing.Dict[
+            str, typing.Type[mcpython.server.worldgen.layer.ILayer.ILayer]
+        ] = {}
 
         # a config table: dimension name -> config list
         self.configs = {}

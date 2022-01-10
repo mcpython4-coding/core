@@ -173,7 +173,9 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         buffer.write_float(self.armor_level)
         buffer.write_float(self.armor_toughness)
         buffer.write_bool(self.flying)
-        buffer.write_float(self.fallen_since_y if self.fallen_since_y is not None else -1)
+        buffer.write_float(
+            self.fallen_since_y if self.fallen_since_y is not None else -1
+        )
         buffer.write_int(self.active_inventory_slot)
 
         await self.create_inventories()
