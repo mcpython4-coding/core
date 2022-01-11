@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import itertools
+import struct
 
 from mcpython.server.worldgen.map.AbstractChunkInfoMap import AbstractMap
 from mcpython.common.block.Furnace import Smoker
@@ -31,9 +32,13 @@ class BiomeMap_0_1Fixer(ChunkInfoMapFixer):
         x, z = target.chunk.get_position()
         sx, sz = x * 16, z * 16
 
-        data = iter([source_buffer.read_uint() for _ in range(16 * 16)])
+        try:
+            data = iter([source_buffer.read_uint() for _ in range(16 * 16)])
+            biome_list = await source_buffer.collect_list(lambda: source_buffer.read_string(size_size=1))
 
-        biome_list = await source_buffer.collect_list(lambda: source_buffer.read_string(size_size=1))
+        except struct.error:
+            data = (0 for _ in range(16 * 16))
+            biome_list = []
 
         biomes = {}
 
