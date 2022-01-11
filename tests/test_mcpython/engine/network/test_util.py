@@ -15,7 +15,6 @@ import asyncio
 import random
 import string
 import typing
-import unittest
 import uuid
 
 # These is a list of tests that we can execute on buffers, used for the multi test
@@ -612,7 +611,7 @@ class Simple(IBufferSerializeAble):
         buffer.write_int(42)
 
 
-class TestContainerSerializer(unittest.TestCase):
+class TestContainerSerializer(TestCase):
     async def test_basic(self):
         from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 

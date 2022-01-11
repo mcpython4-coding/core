@@ -120,3 +120,59 @@ class TestTemperatureMap(TestCase):
         read_buffer = ReadBuffer(buffer.get_data())
         obj2 = TemperatureMap(FakeChunk())
         await obj2.read_from_network_buffer(read_buffer)
+
+
+class TestFeatureMap(TestCase):
+    async def test_serialize_1(self):
+        buffer = WriteBuffer()
+        obj = FeatureMap(FakeChunk())
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = FeatureMap(FakeChunk())
+        await obj2.read_from_network_buffer(read_buffer)
+
+    async def test_serialize_2(self):
+        buffer = WriteBuffer()
+        obj = FeatureMap(FakeChunk())
+        obj.reserve_region((0, 0, 0), (15, 20, 15), "test")
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = FeatureMap(FakeChunk())
+        await obj2.read_from_network_buffer(read_buffer)
+
+        self.assertTrue(obj2.overlaps_with_region((1, 1, 1), (2, 2, 2)))
+
+    async def test_serialize_3(self):
+        buffer = WriteBuffer()
+        obj = FeatureMap(FakeChunk())
+        obj.reserve_region((0, 0, 0), (15, 20, 15), "test")
+        obj.reserve_region((0, 0, 0), (15, 20, 15), "test3")
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = FeatureMap(FakeChunk())
+        await obj2.read_from_network_buffer(read_buffer)
+
+        self.assertTrue(obj2.overlaps_with_region((1, 1, 1), (2, 2, 2)))
+        self.assertEqual(obj2.feature_map[0], 2)
+
+    async def test_serialize_4(self):
+        buffer = WriteBuffer()
+        obj = FeatureMap(FakeChunk())
+        obj.reserve_region((0, 0, 0), (15, 20, 15), "test")
+        obj.reserve_region((0, 0, 0), (15, 20, 15), "test3")
+        obj.reserve_region((0, 0, 2), (15, 20, 15), "test3")
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = FeatureMap(FakeChunk())
+        await obj2.read_from_network_buffer(read_buffer)
+
+        self.assertTrue(obj2.overlaps_with_region((1, 1, 1), (2, 2, 2)))
+        self.assertEqual(obj2.feature_map[0], 2)

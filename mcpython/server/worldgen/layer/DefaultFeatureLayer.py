@@ -81,9 +81,6 @@ class DefaultFeatureLayer(ILayer):
             if count <= 0 or len(features) == 0:
                 continue
 
-            if treemap.get_at_xz(x, z, group):
-                return  # is a tree nearby?
-
             for c in range(count):
                 # should we use this position?
                 # todo: make position in chunk noise based, like a noise of size, and _ as index in y direction,
@@ -103,13 +100,19 @@ class DefaultFeatureLayer(ILayer):
                     0
                 ]
 
+                px, py, pz = x + offset[0], feature_def.spawn_point.select(x, z, height, biome), z + offset[1]
+
+                if treemap.overlaps_with_region((px, py, pz), (px, py, pz)):
+                    return  # is a tree nearby?
+
                 feature = feature_def.feature
                 await feature.place_array(
                     reference,
-                    x + offset[0],
-                    feature_def.spawn_point.select(x, z, height, biome),
-                    z + offset[1],
+                    px,
+                    py,
+                    pz,
                     feature_def.config,
                 )
 
-                treemap.set_at_xz(x, z, group)
+                # todo: add a getter to the feature for the size
+                treemap.reserve_region((px, py, pz), (px, py, pz), feature.NAME)
