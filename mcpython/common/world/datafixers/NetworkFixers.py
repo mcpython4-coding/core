@@ -122,6 +122,9 @@ class ChunkInfoMapFixer(AbstractNetworkFixer, ABC):
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
+        if shared.IS_TEST_ENV and shared.world_generation_handler is None:
+            return
+
         if cls.MAP_NAME in shared.world_generation_handler.chunk_maps:
             target = shared.world_generation_handler.chunk_maps[cls.MAP_NAME]
 

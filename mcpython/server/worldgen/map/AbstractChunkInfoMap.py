@@ -49,6 +49,8 @@ class AbstractMap(IBufferSerializeAble, ABC):
             while version in self.DATA_FIXERS and version != self.VERSION:
                 fixer = self.DATA_FIXERS[version]
 
+                logger.println(f"[INTERNAL] Applying data transformer from {version} to {fixer.AFTER_VERSION}: {fixer}")
+
                 target = WriteBuffer()
 
                 if await fixer.apply2stream(self, buffer, target) is True:
@@ -57,6 +59,9 @@ class AbstractMap(IBufferSerializeAble, ABC):
 
                 buffer.stream = io.BytesIO(target.get_data())
                 version = fixer.AFTER_VERSION
+
+        if version != self.VERSION:
+            logger.println("[FATAL] failed to data fix the full data structure; no full migration path found!")
 
     def dump_debug_info(self, file: str):
         pass

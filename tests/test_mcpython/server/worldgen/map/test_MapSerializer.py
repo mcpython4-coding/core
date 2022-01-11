@@ -11,6 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import random
+
+import typing
+
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from tests.util import TestCase
@@ -25,8 +29,14 @@ from mcpython.server.worldgen.map.TemperatureMap import TemperatureMap
 
 
 class FakeChunk:
+    def __init__(self, position: typing.Tuple[int, int] = (0, 0)):
+        self.position = position
+
     def get_position(self):
-        return 0, 0
+        return self.position
+
+    def __repr__(self):
+        return f"FakeChunk@{self.position}"
 
 
 class TestBiomeMap(TestCase):
@@ -54,6 +64,25 @@ class TestBiomeMap(TestCase):
         await obj2.read_from_network_buffer(read_buffer)
         self.assertEqual(obj2.get_at_xz(0, 0), "minecraft:dessert")
         self.assertIsNone(obj2.get_at_xz(0, 4))
+
+    async def test_migrate_v0_1(self):
+        from mcpython.common.world.datafixers.versions.data_maps import BiomeMap_0_1Fixer
+
+        BiomeMap.DATA_FIXERS[0] = BiomeMap_0_1Fixer
+
+        buffer = WriteBuffer()
+        buffer.write_uint(0)
+
+        for i in range(16*16):
+            buffer.write_uint(i % 4 + 1)
+
+        await buffer.write_list(["a", "b", "c", "d"], lambda e: buffer.write_string(e, size_size=1))
+
+        instance = BiomeMap(FakeChunk())
+        await instance.read_from_network_buffer(ReadBuffer(buffer.get_data()))
+
+        # This migrates all entries to the 4x4 sub-structures, so all should now be equal to "a" itself
+        self.assertTrue(all(e == "a" for e in instance.biome_map.values()))
 
 
 class TestLandMassMap(TestCase):
