@@ -17,10 +17,10 @@ import random
 
 import mcpython.common.world.Chunk
 import mcpython.server.worldgen.feature.IFeature
+import mcpython.server.worldgen.noise.INoiseImplementation
+import mcpython.server.worldgen.noise.NoiseManager
 from mcpython import shared
 from mcpython.server.worldgen.layer.ILayer import ILayer, LayerConfig
-import mcpython.server.worldgen.noise.NoiseManager
-import mcpython.server.worldgen.noise.INoiseImplementation
 
 
 @shared.world_generation_handler
@@ -100,7 +100,11 @@ class DefaultFeatureLayer(ILayer):
                     0
                 ]
 
-                px, py, pz = x + offset[0], feature_def.spawn_point.select(x, z, height, biome), z + offset[1]
+                px, py, pz = (
+                    x + offset[0],
+                    feature_def.spawn_point.select(x, z, height, biome),
+                    z + offset[1],
+                )
 
                 if treemap.overlaps_with_region((px, py, pz), (px, py, pz)):
                     return  # is a tree nearby?

@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import random
-
 import typing
 
 from mcpython import shared
@@ -66,7 +65,10 @@ class TestBiomeMap(TestCase):
         self.assertIsNone(obj2.get_at_xyz(0, 0, 4))
 
     async def test_migrate_v0(self):
-        from mcpython.common.world.datafixers.versions.data_maps import BiomeMap_0_1Fixer, BiomeMap_1_2Fixer
+        from mcpython.common.world.datafixers.versions.data_maps import (
+            BiomeMap_0_1Fixer,
+            BiomeMap_1_2Fixer,
+        )
 
         BiomeMap.DATA_FIXERS[0] = BiomeMap_0_1Fixer
         BiomeMap.DATA_FIXERS[1] = BiomeMap_1_2Fixer
@@ -74,10 +76,12 @@ class TestBiomeMap(TestCase):
         buffer = WriteBuffer()
         buffer.write_uint(0)
 
-        for i in range(16*16):
+        for i in range(16 * 16):
             buffer.write_uint(i % 4 + 1)
 
-        await buffer.write_list(["a", "b", "c", "d"], lambda e: buffer.write_string(e, size_size=1))
+        await buffer.write_list(
+            ["a", "b", "c", "d"], lambda e: buffer.write_string(e, size_size=1)
+        )
 
         instance = BiomeMap(FakeChunk())
         await instance.read_from_network_buffer(ReadBuffer(buffer.get_data()))

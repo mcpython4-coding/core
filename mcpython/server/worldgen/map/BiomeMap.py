@@ -47,10 +47,14 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         for p in self.biome_data:
             buffer.write_uint(p)
 
-        await buffer.write_list(self.reference_table[1:], lambda e: buffer.write_string(e, size_size=1))
+        await buffer.write_list(
+            self.reference_table[1:], lambda e: buffer.write_string(e, size_size=1)
+        )
 
     def get_at_xyz(self, x: int, y: int, z: int) -> str | None:
-        return self.reference_table[self.biome_data[x // 4 % 4 + z // 4 % 4 * 4 + y // 4 % 4 * 16]]
+        return self.reference_table[
+            self.biome_data[x // 4 % 4 + z // 4 % 4 * 4 + y // 4 % 4 * 16]
+        ]
 
     def set_at_xyz(self, x: int, y: int, z: int, biome: str | None):
         if biome in self.reference_table:
@@ -65,7 +69,9 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
         biome2color = {}
         image = PIL.Image.new("RGBA", (16, 16))
         cx, cz = self.chunk
-        for x, z in itertools.product(range(cx*16, cx*16+16, 4), range(cz*16, cz*16+16, 4)):
+        for x, z in itertools.product(
+            range(cx * 16, cx * 16 + 16, 4), range(cz * 16, cz * 16 + 16, 4)
+        ):
             biome = self.get_at_xz(x, z)
 
             if biome not in biome2color:
@@ -81,10 +87,16 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
         image.save(file)
 
-    def get_biome_color_at(self, x: int, y: int, z: int) -> typing.Tuple[float, float, float]:
+    def get_biome_color_at(
+        self, x: int, y: int, z: int
+    ) -> typing.Tuple[float, float, float]:
         # todo: implement biome color blending
         biome = self.get_at_xyz(x, y, z)
-        return tuple(e / 256 for e in shared.biome_handler.biomes[biome].GRASS_COLOR) if biome is not None else (91 / 255, 201 / 255, 59 / 255)
+        return (
+            tuple(e / 256 for e in shared.biome_handler.biomes[biome].GRASS_COLOR)
+            if biome is not None
+            else (91 / 255, 201 / 255, 59 / 255)
+        )
 
 
 if not shared.IS_TEST_ENV:
