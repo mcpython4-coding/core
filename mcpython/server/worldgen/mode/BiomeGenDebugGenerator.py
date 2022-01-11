@@ -66,7 +66,7 @@ class DebugBiomeWorldGenerator(
         for dx in range(16):
             for dz in range(16):
                 x, z = cx * 16 + dx, cz * 16 + dz
-                biome = biome_map.get_at_xz(x, z)
+                biome = biome_map.get_at_xyz(x, 0, z)
                 block = cls.BIOME_TO_BLOCK[biome]
                 await chunk.add_block(
                     (x, 0, z), block, block_update=False, block_update_self=False

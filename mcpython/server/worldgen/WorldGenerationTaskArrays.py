@@ -541,7 +541,7 @@ class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
         )
 
     def get_biome_at(self, x, z) -> str:
-        return self.chunk.get_value("minecraft:biome_map")[x, z]
+        return self.chunk.get_value("minecraft:biome_map").get_biome_at_xyz(x, 0, z)
 
 
 class OffProcessTaskHelper:

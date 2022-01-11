@@ -44,7 +44,7 @@ class DefaultTopLayerLayer(ILayer):
 
         for (x, z), v in noise_map:
             for start, end in height_map.get_at_xz(x, z):
-                biome = shared.biome_handler.biomes[biome_map.get_at_xz(x, z)]
+                biome = shared.biome_handler.biomes[biome_map.get_at_xyz(x, 0, z)]
                 reference.schedule_invoke(
                     cls.generate_xz, reference, x, z, config, v, end, biome
                 )

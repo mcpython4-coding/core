@@ -68,7 +68,7 @@ class DefaultFeatureLayer(ILayer):
 
         # the various maps
         biome = shared.biome_handler.biomes[
-            chunk.get_map("minecraft:biome_map").get_at_xz(x, z)
+            chunk.get_map("minecraft:biome_map").get_at_xyz(x, 0, z)
         ]
         height = chunk.get_map("minecraft:height_map").get_at_xz(x, z)[0][1]
 

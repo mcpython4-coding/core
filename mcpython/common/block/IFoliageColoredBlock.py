@@ -32,4 +32,4 @@ class IFoliageColoredBlock(mcpython.common.block.AbstractBlock.AbstractBlock):
             .get_chunk_for_position(self.position)
             .get_map("minecraft:biome_map")
         )
-        return biome_map.get_biome_color_at(x, z) + (1,)
+        return biome_map.get_biome_color_at(x, y, z) + (1,)

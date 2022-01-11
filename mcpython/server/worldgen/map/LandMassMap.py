@@ -18,12 +18,18 @@ import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.engine.world.AbstractInterface import IChunk
 
 
 class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
+    """
+    Class storing which land mass we are in
+    todo: migrate to biome map
+    """
+
     NAME = "minecraft:landmass_map"
 
-    def __init__(self, chunk):
+    def __init__(self, chunk: IChunk):
         super().__init__(chunk)
         self.land_mass_map: typing.Dict[typing.Tuple[int, int], str] = {}
 
@@ -72,7 +78,7 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
     def dump_debug_info(self, file: str):
         mass2color = {}
         image = PIL.Image.new("RGBA", (16, 16))
-        for (x, z), mass in self.biome_map.items():
+        for (x, z), mass in self.land_mass_map.items():
             if mass not in mass2color:
                 seed = hash(mass)
                 mass2color[mass] = (

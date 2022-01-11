@@ -465,7 +465,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         if chunk:
             biomemap = chunk.get_map("minecraft:biome_map")
-            biome = biomemap.get_at_xz(nx, nz)
+            biome = biomemap.get_at_xyz(nx, 0, nz)
             if biome is not None:
                 self.label.text += ", biome: " + str(biome)
         self.label.draw()

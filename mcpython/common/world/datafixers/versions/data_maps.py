@@ -21,12 +21,6 @@ from mcpython.server.worldgen.map.BiomeMap import BiomeMap
 
 
 class BiomeMap_0_1Fixer(ChunkInfoMapFixer):
-    """
-    Fixes the migration of the "progress" attribute and others of the Furnace block from int to float
-    Below are the two classes for the blast furnace and smoker blocks, as they are delivered from the
-    furnace block
-    """
-
     MAP_NAME = "minecraft:biome_map"
 
     BEFORE_VERSION: int = 0
@@ -62,3 +56,20 @@ class BiomeMap_0_1Fixer(ChunkInfoMapFixer):
                     target_buffer.write_uint(table.index(biome) + 1)
 
         await target_buffer.write_list(table, lambda e: target_buffer.write_string(e, size_size=1))
+
+
+class BiomeMap_1_2Fixer(ChunkInfoMapFixer):
+    MAP_NAME = "minecraft:biome_map"
+
+    BEFORE_VERSION: int = 1
+    AFTER_VERSION: int = 2
+
+    @classmethod
+    async def apply2stream(cls, target: BiomeMap, source_buffer: ReadBuffer, target_buffer: WriteBuffer):
+        data = source_buffer.read_const_bytes(4 * 4 * 4)
+        biomes = await source_buffer.collect_list(lambda: source_buffer.read_string(size_size=1))
+
+        for _ in range(16):
+            target_buffer.write_const_bytes(data)
+
+        await target_buffer.write_list(biomes, lambda e: target_buffer.write_string(e, size_size=1))

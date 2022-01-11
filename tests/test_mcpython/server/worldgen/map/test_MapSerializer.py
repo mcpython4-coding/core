@@ -54,7 +54,7 @@ class TestBiomeMap(TestCase):
     async def test_serialize_2(self):
         buffer = WriteBuffer()
         obj = BiomeMap(FakeChunk())
-        obj.set_at_xz(0, 0, "minecraft:dessert")
+        obj.set_at_xyz(0, 0, 0, "minecraft:dessert")
 
         await obj.write_to_network_buffer(buffer)
 
@@ -62,13 +62,14 @@ class TestBiomeMap(TestCase):
         obj2 = BiomeMap(FakeChunk())
 
         await obj2.read_from_network_buffer(read_buffer)
-        self.assertEqual(obj2.get_at_xz(0, 0), "minecraft:dessert")
-        self.assertIsNone(obj2.get_at_xz(0, 4))
+        self.assertEqual(obj2.get_at_xyz(0, 0, 0), "minecraft:dessert")
+        self.assertIsNone(obj2.get_at_xyz(0, 0, 4))
 
-    async def test_migrate_v0_1(self):
-        from mcpython.common.world.datafixers.versions.data_maps import BiomeMap_0_1Fixer
+    async def test_migrate_v0(self):
+        from mcpython.common.world.datafixers.versions.data_maps import BiomeMap_0_1Fixer, BiomeMap_1_2Fixer
 
         BiomeMap.DATA_FIXERS[0] = BiomeMap_0_1Fixer
+        BiomeMap.DATA_FIXERS[1] = BiomeMap_1_2Fixer
 
         buffer = WriteBuffer()
         buffer.write_uint(0)
@@ -82,7 +83,8 @@ class TestBiomeMap(TestCase):
         await instance.read_from_network_buffer(ReadBuffer(buffer.get_data()))
 
         # This migrates all entries to the 4x4 sub-structures, so all should now be equal to "a" itself
-        self.assertTrue(all(e == "a" for e in instance.biome_map.values()))
+        index = instance.reference_table.index("a")
+        self.assertTrue(all(e == index for e in instance.biome_data))
 
 
 class TestLandMassMap(TestCase):

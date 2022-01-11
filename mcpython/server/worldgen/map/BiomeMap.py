@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import array
 import itertools
-import random
 import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
@@ -24,61 +24,42 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
     NAME = "minecraft:biome_map"
 
-    VERSION = 1
+    VERSION = 2
 
     def __init__(self, chunk):
         super().__init__(chunk)
-        # Localized position -> biome name
-        # todo: maybe use biome instance?
-        self.biome_map: typing.Dict[
-            typing.Tuple[int, int, int], typing.Optional[str]
-        ] = {}
+
+        self.biome_data = array.ArrayType("b", (0,) * (4 * 4 * 16))
+        self.reference_table = [None]
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
 
-        x, z = self.chunk.get_position()
-
-        data = iter([buffer.read_uint() for _ in range(4 * 4)])
+        data = [buffer.read_uint() for _ in range(4 * 4 * 16)]
+        self.biome_data[:] = array.ArrayType("b", data)
 
         biomes = await buffer.collect_list(lambda: buffer.read_string(size_size=1))
-
-        for x, z in itertools.product(range(0, 16, 4), range(0, 16, 4)):
-            index = next(data)
-            self.set_at_xz(x, z, biomes[index - 1] if index != 0 else None)
+        self.reference_table = [None] + biomes
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super().write_to_network_buffer(buffer)
 
-        x, z = self.chunk.get_position()
-        table = []
+        for p in self.biome_data:
+            buffer.write_uint(p)
 
-        for x, z in itertools.product(range(0, 16, 4), range(0, 16, 4)):
-            biome = self.get_at_xz(x, z)
-
-            if biome is None:
-                buffer.write_uint(0)
-            else:
-                if biome not in table:
-                    table.append(biome)
-                    buffer.write_uint(len(table))
-                else:
-                    buffer.write_uint(table.index(biome) + 1)
-
-        await buffer.write_list(table, lambda e: buffer.write_string(e, size_size=1))
-
-    def get_at_xz(self, x: int, z: int) -> str | None:
-        return self.biome_map.setdefault((x // 4 % 4, 0, z // 4 % 4), None)
+        await buffer.write_list(self.reference_table[1:], lambda e: buffer.write_string(e, size_size=1))
 
     def get_at_xyz(self, x: int, y: int, z: int) -> str | None:
-        return self.biome_map.setdefault((x // 4 % 4, y, z // 4 % 4), None)
-
-    def set_at_xz(self, x: int, z: int, biome: str | None):
-        for y in range(0, 256):
-            self.biome_map[x // 4 % 4, y // 4, z // 4 % 4] = biome
+        return self.reference_table[self.biome_data[x // 4 % 4 + z // 4 % 4 * 4 + y // 4 % 4 * 16]]
 
     def set_at_xyz(self, x: int, y: int, z: int, biome: str | None):
-        self.biome_map[x // 4 % 4, y // 4, z // 4 % 4] = biome
+        if biome in self.reference_table:
+            index = self.reference_table.index(biome)
+        else:
+            index = len(self.reference_table)
+            self.reference_table.append(biome)
+
+        self.biome_data[x // 4 % 4 + z // 4 % 4 * 4 + y * 16] = index
 
     def dump_debug_info(self, file: str):
         biome2color = {}
@@ -100,9 +81,9 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
 
         image.save(file)
 
-    def get_biome_color_at(self, x: int, z: int) -> typing.Tuple[float, float, float]:
+    def get_biome_color_at(self, x: int, y: int, z: int) -> typing.Tuple[float, float, float]:
         # todo: implement biome color blending
-        biome = self.get_at_xz(x, z)
+        biome = self.get_at_xyz(x, y, z)
         return tuple(e / 256 for e in shared.biome_handler.biomes[biome].GRASS_COLOR) if biome is not None else (91 / 255, 201 / 255, 59 / 255)
 
 
