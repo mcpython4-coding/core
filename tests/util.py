@@ -16,9 +16,13 @@ import typing
 import unittest
 from unittest.util import safe_repr
 
+from mcpython import shared
+
 
 class TestCase(unittest.TestCase):
     def _callTestMethod(self, method):
+        shared.CURRENT_EVENT_SUB = method.__name__
+
         result = method()
 
         if isinstance(result, typing.Awaitable):

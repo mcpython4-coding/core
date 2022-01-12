@@ -97,14 +97,14 @@ class TestMixinHandler(TestCase):
         from mcpython.mixin.Mixin import MixinHandler
 
         MixinHandler.LOCKED = True
-        self.assertRaises(RuntimeError, lambda: MixinHandler("test"))
+        self.assertRaises(RuntimeError, lambda: MixinHandler())
         MixinHandler.LOCKED = False
 
     def test_replace_function_body(self):
         from mcpython.mixin.Mixin import MixinHandler
         from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
 
-        handler = MixinHandler("unittest:processor:replace_function_body")
+        handler = MixinHandler()
 
         def test():
             return 0
@@ -128,7 +128,7 @@ class TestMixinHandler(TestCase):
         from mcpython.mixin.Mixin import MixinHandler
         from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
 
-        handler = MixinHandler("unittest:processor:replace_function_body_async")
+        handler = MixinHandler()
 
         async def test():
             return 0
@@ -158,7 +158,7 @@ class TestMixinHandler(TestCase):
     def test_function_lookup(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        method = MixinHandler("test").lookup_method(
+        method = MixinHandler().lookup_method(
             "tests.test_mcpython.mixin.test_Mixin:TestMixinHandler.test_function_lookup"
         )
         self.assertEqual(method, TestMixinHandler.test_function_lookup)
@@ -166,7 +166,7 @@ class TestMixinHandler(TestCase):
     def test_mixin_override(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:override_1")
+        handler = MixinHandler()
 
         @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
@@ -180,7 +180,7 @@ class TestMixinHandler(TestCase):
     def test_mixin_override_twice(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:override_twice")
+        handler = MixinHandler()
 
         @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
@@ -198,7 +198,7 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_with_priority(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_with_priority")
+        handler = MixinHandler()
 
         @handler.replace_function_body(
             "tests.test_mcpython.mixin.test_Mixin:test", priority=2
@@ -218,9 +218,7 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_with_negative_priority(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_by_name_twice_with_negative_priority"
-        )
+        handler = MixinHandler()
 
         @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
@@ -240,7 +238,7 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_conflicting(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:mixin:test_mixin_by_name_twice_conflicting")
+        handler = MixinHandler()
 
         @handler.replace_function_body(
             "tests.test_mcpython.mixin.test_Mixin:test", priority=2
@@ -265,9 +263,7 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_non_conflicting_order(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_by_name_twice_non_conflicting_order"
-        )
+        handler = MixinHandler()
 
         @handler.replace_function_body(
             "tests.test_mcpython.mixin.test_Mixin:test", optional=False
@@ -290,9 +286,7 @@ class TestMixinHandler(TestCase):
     def test_mixin_by_name_twice_conflicting_order(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler(
-            "unittest:mixin:test_mixin_by_name_twice_non_conflicting_order"
-        )
+        handler = MixinHandler()
 
         @handler.replace_function_body(
             "tests.test_mcpython.mixin.test_Mixin:test", optional=False
@@ -316,7 +310,7 @@ class TestMixinHandler(TestCase):
     def test_constant_replacement_1(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:replace_constant_1")
+        handler = MixinHandler()
 
         handler.replace_method_constant(
             "tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True
@@ -332,7 +326,7 @@ class TestMixinHandler(TestCase):
     def test_constant_replacement_2(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:replace_constant_1")
+        handler = MixinHandler()
 
         handler.replace_method_constant(
             "tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True
@@ -355,7 +349,7 @@ class TestMixinHandler(TestCase):
     def test_constant_replacement_fail_1(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:replace_constant_fail_1")
+        handler = MixinHandler()
 
         handler.replace_method_constant(
             "tests.test_mcpython.mixin.test_Mixin:test", 2, 1, fail_on_not_found=True
@@ -367,7 +361,7 @@ class TestMixinHandler(TestCase):
     def test_constant_replacement_fail_2(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:replace_constant_fail_2")
+        handler = MixinHandler()
 
         handler.replace_method_constant(
             "tests.test_mcpython.mixin.test_Mixin:test", 0, 1, fail_on_not_found=True
@@ -386,7 +380,7 @@ class TestMixinHandler(TestCase):
     def test_global_to_global_1(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:global2global_1")
+        handler = MixinHandler()
 
         handler.replace_global_ref(
             "tests.test_mcpython.mixin.test_Mixin:test_global",
@@ -408,7 +402,7 @@ class TestMixinHandler(TestCase):
     def test_global_to_const_1(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:global2const_1")
+        handler = MixinHandler()
 
         invoked = False
 
@@ -429,7 +423,7 @@ class TestMixinHandler(TestCase):
     def test_global_to_const_2(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:global2const_2")
+        handler = MixinHandler()
 
         invoked = 0
 
@@ -450,7 +444,7 @@ class TestMixinHandler(TestCase):
     def test_global_to_const_3(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:global2const_3")
+        handler = MixinHandler()
 
         invoked = 0
 
@@ -474,7 +468,7 @@ class TestMixinHandler(TestCase):
     def test_global_to_const_4(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:global2const_4")
+        handler = MixinHandler()
 
         invoked = 0
 
@@ -498,7 +492,7 @@ class TestMixinHandler(TestCase):
     def test_global_to_const_5(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:global2const_5")
+        handler = MixinHandler()
 
         invoked = 0
 
@@ -522,7 +516,7 @@ class TestMixinHandler(TestCase):
     def test_global_to_const_6(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-        handler = MixinHandler("unittest:processor:global2const_6")
+        handler = MixinHandler()
 
         invoked = 0
 
@@ -548,7 +542,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_head_1")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_head("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
@@ -571,7 +565,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_head_2")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_head("tests.test_mcpython.mixin.test_Mixin:test", args=(3,))
@@ -599,7 +593,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_1")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return(
@@ -624,7 +618,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_2")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return(
@@ -656,7 +650,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_3")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return(
@@ -681,7 +675,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_4")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return(
@@ -716,7 +710,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_5")
+        handler = MixinHandler()
         handler.makeFunctionArrival("test", target)
 
         invoked = 0
@@ -741,7 +735,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_value_1")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return_replacing_return_value(
@@ -767,7 +761,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_value_2")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return_replacing_return_value(
@@ -801,7 +795,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_value_3")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return_replacing_return_value(
@@ -827,7 +821,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_value_4")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_return_replacing_return_value(
@@ -861,7 +855,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_1")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_yield(
@@ -886,7 +880,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_2")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_yield(
@@ -918,7 +912,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_3")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_yield(
@@ -943,7 +937,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_4")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_yield(
@@ -976,7 +970,7 @@ class TestMixinHandler(TestCase):
         def target():
             yield 3
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_5")
+        handler = MixinHandler()
         handler.makeFunctionArrival("test", target)
         invoked = 0
 
@@ -1000,7 +994,7 @@ class TestMixinHandler(TestCase):
         def target(c):
             yield c
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_6")
+        handler = MixinHandler()
         handler.makeFunctionArrival("test", target)
         invoked = 0
 
@@ -1023,7 +1017,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_value_1")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_yield_replacing_yield_value(
@@ -1049,7 +1043,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_yield_value_2")
+        handler = MixinHandler()
         invoked = 0
 
         @handler.inject_at_yield_replacing_yield_value(
@@ -1086,7 +1080,7 @@ class TestMixinHandler(TestCase):
                 return 0
             return 1
 
-        handler = MixinHandler("unittest:mixin:test_mixin_inject_at_return_1")
+        handler = MixinHandler()
         handler.makeFunctionArrival("test", target)
 
         invoked = 0
@@ -1175,7 +1169,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_mixin_local2constant_transformer_1")
+        handler = MixinHandler()
 
         def func(c):
             return c
@@ -1192,7 +1186,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_local_var_modifier_1")
+        handler = MixinHandler()
 
         def func(c):
             return c
@@ -1201,7 +1195,7 @@ class TestMixinHandler(TestCase):
 
         @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
         def inject(c):
-            return (c + 2,)
+            return c + 2,
 
         self.assertEqual(func(2), 2)
         handler.applyMixins()
@@ -1213,7 +1207,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_local_var_modifier_2")
+        handler = MixinHandler()
 
         def func(c):
             return c
@@ -1222,7 +1216,7 @@ class TestMixinHandler(TestCase):
 
         @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
         def inject(c):
-            return ("test",)
+            return "test",
 
         self.assertEqual(func(2), 2)
         handler.applyMixins()
@@ -1234,7 +1228,7 @@ class TestMixinHandler(TestCase):
 
         reset_test_methods()
 
-        handler = MixinHandler("unittest:mixin:test_local_var_modifier_3")
+        handler = MixinHandler()
 
         def func(c):
             d = 10

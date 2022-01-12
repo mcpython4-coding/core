@@ -73,15 +73,12 @@ class MixinHandler:
 
     LOCKED = False
 
-    def __init__(self, processor_name: str, skip_on_fail=False, priority=0):
+    def __init__(self):
         if MixinHandler.LOCKED:
             raise RuntimeError()
 
-        self.processor_name = processor_name
-        self.skip_on_fail = skip_on_fail
-        self.priority = priority
         self.bound_mixin_processors: typing.Dict[
-            str, typing.List[typing.Tuple[AbstractMixinProcessor, float, bool]]
+            str, typing.List[typing.Tuple[AbstractMixinProcessor, float, bool, str]]
         ] = {}
         self.special_functions = {}
 
@@ -92,7 +89,7 @@ class MixinHandler:
     def applyMixins(self):
         for target, mixins in self.bound_mixin_processors.items():
             logger.println(
-                f"[MIXIN][WARN] applying mixins of '{self.processor_name}' onto '{target}'"
+                f"[MIXIN][WARN] applying mixins onto '{target}'"
             )
 
             method_target = self.lookup_method(target)
@@ -108,7 +105,7 @@ class MixinHandler:
             non_optionals = set()
             optionals = set()
             to_delete = []
-            for i, (mixin, priority, optional) in enumerate(order):
+            for i, (mixin, priority, optional, name) in enumerate(order):
                 if non_optionals and mixin.is_breaking():
                     logger.println(
                         "[MIXIN][FATAL] conflicting mixin: found an non-optional mixin before, breaking with this mixin!"
@@ -138,15 +135,15 @@ class MixinHandler:
                     optionals.add((mixin, i))
 
             for i in sorted(to_delete, reverse=True):
-                mixin, priority, optional = order[i]
+                mixin, priority, optional, name = order[i]
                 logger.println(
                     f"[MIXIN][WARN] skipping mixin {mixin} with priority {priority} (optional: {optional})"
                 )
                 del order[i]
 
-            for mixin, priority, optional in order:
+            for mixin, priority, optional, name in order:
                 logger.println(
-                    f"[MIXIN][WARN] applying mixin {mixin} with priority {priority} (optional: {optional})"
+                    f"[MIXIN][WARN] applying mixin {mixin} with priority {priority} (optional: {optional}) from mod '{name}'"
                 )
                 mixin.apply(self, patcher, helper)
 
@@ -195,6 +192,7 @@ class MixinHandler:
                 ),
                 priority,
                 optional,
+                shared.CURRENT_EVENT_SUB,
             )
         )
         return self
@@ -224,6 +222,7 @@ class MixinHandler:
                 MixinGlobalReTargetProcessor(previous_name, new_name, matcher=matcher),
                 priority,
                 optional,
+                shared.CURRENT_EVENT_SUB,
             )
         )
         return self
@@ -253,6 +252,7 @@ class MixinHandler:
                 MixinGlobal2ConstReplace(global_name, new_value, matcher=matcher),
                 priority,
                 optional,
+                shared.CURRENT_EVENT_SUB,
             )
         )
         return self
@@ -334,6 +334,7 @@ class MixinHandler:
                 MixinLocal2ConstReplace(local_name, constant_value, matcher=matcher),
                 priority,
                 optional,
+                shared.CURRENT_EVENT_SUB,
             )
         )
         return self
@@ -376,7 +377,7 @@ class MixinHandler:
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
-                (MixinReplacementProcessor(function), priority, optional)
+                (MixinReplacementProcessor(function), priority, optional, shared.CURRENT_EVENT_SUB)
             )
             return function
 
@@ -409,6 +410,7 @@ class MixinHandler:
                     ),
                     priority,
                     optional,
+                    shared.CURRENT_EVENT_SUB,
                 )
             )
             return function
@@ -451,6 +453,7 @@ class MixinHandler:
                     ),
                     priority,
                     optional,
+                    shared.CURRENT_EVENT_SUB,
                 )
             )
             return function
@@ -487,6 +490,7 @@ class MixinHandler:
                     ),
                     priority,
                     optional,
+                    shared.CURRENT_EVENT_SUB,
                 )
             )
             return function
@@ -531,6 +535,7 @@ class MixinHandler:
                     ),
                     priority,
                     optional,
+                    shared.CURRENT_EVENT_SUB,
                 )
             )
             return function
@@ -571,6 +576,7 @@ class MixinHandler:
                     ),
                     priority,
                     optional,
+                    shared.CURRENT_EVENT_SUB,
                 )
             )
             return function
@@ -608,6 +614,7 @@ class MixinHandler:
                     ),
                     priority,
                     optional,
+                    shared.CURRENT_EVENT_SUB,
                 )
             )
             return function
@@ -656,6 +663,7 @@ class MixinHandler:
                     ),
                     priority,
                     optional,
+                    shared.CURRENT_EVENT_SUB,
                 )
             )
             return function
@@ -896,7 +904,7 @@ class MixinHandler:
         raise NotImplementedError
 
 
-mixin_handler = MixinHandler("global")
+mixin_handler = MixinHandler()
 MixinHandler.LOCKED = True
 
 
