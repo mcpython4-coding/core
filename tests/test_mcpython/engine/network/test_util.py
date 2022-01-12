@@ -257,7 +257,69 @@ class TestBuffer(TestCase):
 
             self.assertEqual(read.read_uuid(), d)
 
-    # todo: add a list test and bytes tests
+    # todo: add bytes test(s)
+
+    async def test_list(self):
+        # tests out chains of data
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        for _ in range(20):
+            count = random.randint(4, 20)
+            entries = [random.choice(MULTI_TEST_POOL) for _ in range(count)]
+            data = [e[0]() for e in entries]
+
+            index = 0
+
+            def write_element(e):
+                nonlocal index
+                entries[index][1](write, e)
+                index += 1
+
+            write = WriteBuffer()
+            await write.write_list(data, write_element)
+
+            index = 0
+
+            def read_element():
+                nonlocal index
+                e = entries[index][2](read, data[index])
+                index += 1
+                return e
+
+            read = ReadBuffer(write.get_data())
+
+            self.assertTrue(all(await read.collect_list(read_element)))
+
+    async def test_fixed_list(self):
+        # tests out chains of data
+        from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+
+        for _ in range(20):
+            count = random.randint(4, 20)
+            entries = [random.choice(MULTI_TEST_POOL) for _ in range(count)]
+            data = [e[0]() for e in entries]
+
+            index = 0
+
+            def write_element(e):
+                nonlocal index
+                entries[index][1](write, e)
+                index += 1
+
+            write = WriteBuffer()
+            await write.write_fixed_list(data, write_element)
+
+            index = 0
+
+            def read_element():
+                nonlocal index
+                e = entries[index][2](read, data[index])
+                index += 1
+                return e
+
+            read = ReadBuffer(write.get_data())
+
+            self.assertTrue(all(await read.collect_fixed_list(len(data), read_element)))
 
     def test_multi(self):
         # tests out chains of data

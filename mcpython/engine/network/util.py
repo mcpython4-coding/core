@@ -151,6 +151,17 @@ class ReadBuffer:
     async def collect_list(self, handling: typing.Callable[[], typing.Any]):
         return [e async for e in self.read_list(handling)]
 
+    async def read_fixed_list(self, size: int, handling: typing.Callable[[], typing.Any]):
+        for _ in range(size):
+            result = handling()
+            if isinstance(result, typing.Awaitable):
+                yield await result
+            else:
+                yield result
+
+    async def collect_fixed_list(self, size: int, handling: typing.Callable[[], typing.Any]):
+        return [e async for e in self.read_fixed_list(size, handling)]
+
     async def read_dict(
         self,
         key: typing.Callable[[], typing.Awaitable | typing.Hashable],
@@ -473,6 +484,16 @@ class WriteBuffer:
     ):
         data = tuple(data)
         self.write_uint(len(data))
+        for e in data:
+            result = handling(e)
+            if isinstance(result, typing.Awaitable):
+                await result
+
+        return self
+
+    async def write_fixed_list(
+        self, data: typing.Iterable, handling: typing.Callable[[typing.Any], typing.Any]
+    ):
         for e in data:
             result = handling(e)
             if isinstance(result, typing.Awaitable):
