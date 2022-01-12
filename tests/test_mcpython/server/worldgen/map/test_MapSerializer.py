@@ -102,6 +102,23 @@ class TestLandMassMap(TestCase):
         obj2 = LandMassMap(FakeChunk())
 
         await obj2.read_from_network_buffer(read_buffer)
+        self.assertTrue(not any(obj2.land_mass_table))
+
+    async def test_serialize_2(self):
+        buffer = WriteBuffer()
+        obj = LandMassMap(FakeChunk())
+        obj.set_at_xz(0, 0, "test")
+
+        await obj.write_to_network_buffer(buffer)
+
+        read_buffer = ReadBuffer(buffer.get_data())
+        obj2 = LandMassMap(FakeChunk())
+
+        await obj2.read_from_network_buffer(read_buffer)
+
+        self.assertTrue(any(obj2.land_mass_table))
+        self.assertEqual(obj2.get_at_xz(0, 0), "test")
+        self.assertEqual(obj2.get_at_xz(16, 32), "test")
 
 
 class TestHeightMap(TestCase):
