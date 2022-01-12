@@ -40,6 +40,8 @@ class LaunchWrapper:
 
     @staticmethod
     def check_py_version():
+        if "-disable-version-check" in sys.argv: return
+
         # everything lower than python 3.10 is not supported, we are using python 3.10 features!
         if sys.version_info.major < 3 or sys.version_info.minor < 10:
             print(
