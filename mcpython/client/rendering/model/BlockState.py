@@ -54,6 +54,8 @@ class MultiPartDecoder(IBlockStateDecoder):
     todo: fix alias system
     """
 
+    __slots__ = IBlockStateDecoder.__slots__ + ("parent", "model_alias")
+
     NAME = "minecraft:multipart_blockstate_loader"
 
     @classmethod
@@ -460,8 +462,13 @@ class DefaultDecoder(IBlockStateDecoder):
     Decoder for mc block state files.
     WARNING: the following decoder has some extended features:
     entry parent: An parent DefaultDecoded blockstate from which states and model aliases should be copied
-    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model. Alias names MUST start with alias:
+    entry alias: An dict of original -> aliased model to transform any model name of this kind in the system with the given model.
+    Alias names MUST start with "alias:"
+
+    todo: add better lookup system for variants
     """
+
+    __slots__ = IBlockStateDecoder.__slots__ + ("parent", "model_alias", "states")
 
     NAME = "minecraft:default_blockstate_loader"
 
@@ -760,10 +767,12 @@ class BlockStateContainer:
 
         file = "assets/{}/blockstates/{}.json".format(*name.split(":"))
         if not await mcpython.engine.ResourceLoader.exists(file):
-            raise FileNotFoundError("for blockstate '{}'".format(name))
+            raise FileNotFoundError("for blockstate file named '{}'".format(name))
 
         data = await mcpython.engine.ResourceLoader.read_json(file)
         return await cls.unsafe_from_data(name, data, immediate=True, force=True)
+
+    __slots__ = ("name", "loader", "baked")
 
     def __init__(self, name: str, immediate=False, force=False):
         assert isinstance(name, str), "name must be str"
@@ -797,10 +806,13 @@ class BlockStateContainer:
         for loader in blockstate_decoder_registry.entries.values():
             if loader.is_valid(data):
                 self.loader: IBlockStateDecoder = loader(self)
-                self.loader.parse_data(data)
+                try:
+                    self.loader.parse_data(data)
+                except:
+                    logger.print_exception(f"block state loader {loader.NAME} failed to load block state {self.name}; continuing further search")
                 break
         else:
-            logger.println("can't find matching loader for model {}".format(self.name))
+            logger.println("can't find matching loader for block state {}".format(self.name))
 
         return self
 
@@ -859,6 +871,12 @@ class BlockStateContainer:
 
 
 class BlockState:
+    """
+    Container holding a single block state link
+    todo: don't store the raw data
+    """
+    __slots__ = ("data", "models")
+
     def __init__(self):
         self.data = None
         self.models = []  # (model, config, weight)
@@ -870,6 +888,7 @@ class BlockState:
             if "model" in data:
                 self.models.append(decode_entry(data))
                 shared.model_handler.used_models.add(data["model"])
+
         elif type(data) == list:
             models = [decode_entry(x) for x in data]
             self.models += models

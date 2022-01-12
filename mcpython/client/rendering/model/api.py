@@ -73,6 +73,8 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
 
     TYPE = "minecraft:blockstate"
 
+    __slots__ = ("data", "block_state")
+
     @classmethod
     def is_valid(cls, data: dict) -> bool:
         """

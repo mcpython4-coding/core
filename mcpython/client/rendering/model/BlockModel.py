@@ -33,10 +33,12 @@ class Model:
     Class representing a (block) model from the file system
     Contains the needed API functions to render the model
     """
+    __slots__ = ("name", "modname", "parent", "used_textures", "animated_textures", "texture_addresses", "texture_names",
+                 "drawable", "texture_atlas", "box_models")
 
-    def __init__(self, name: str, modname: str):
+    def __init__(self, name: str, modname: str = None):
         self.name = name
-        self.modname = modname
+        self.modname = modname or name.split(":")[-1]
         self.parent = None
         self.used_textures = {}
         self.animated_textures = {}
