@@ -19,6 +19,7 @@ from mcpython.mixin.InstructionMatchers import CounterMatcher
 from tests.util import TestCase
 
 INVOKER_COUNTER = 0
+INVOKED = False
 
 
 def increase_counter():
@@ -1370,40 +1371,97 @@ class TestMixinHandler(TestCase):
         self.assertEqual(test_mcpython.mixin.test_space.INVOKED, count + 2)
         test_mcpython.mixin.test_space.INVOKED = 0
 
-    async def makeMethodAsync(self):
+    def test_insert_method_1(self):
         from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
 
-        def sync():
+        def target():
             return 0
 
-        self.assertEqual(sync(), 0)
+        def test():
+            global INVOKED
+            INVOKED = True
 
-        patcher = FunctionPatcher(sync)
-        helper = MixinPatchHelper(patcher)
-        helper.makeMethodAsync()
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(0, FunctionPatcher(test))
         helper.store()
-        patcher.applyPatches()
+        helper.patcher.applyPatches()
 
-        coro = sync()
-        self.assertNotEqual(coro, 0)
-        self.assertIsInstance(coro, typing.Awaitable)
-        self.assertEqual(await coro, 0)
+        global INVOKED
+        INVOKED = False
+        target()
+        self.assertTrue(INVOKED)
+        INVOKED = False
 
-    async def makeMethodSync(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper
+    def test_insert_method_local_capture_1(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
 
-        async def sync():
+        def target():
+            a = 1
             return 0
 
-        coro = sync()
-        self.assertIsInstance(coro, typing.Awaitable)
-        self.assertEqual(await coro, 0)
+        def test():
+            x = capture_local("a")
+            global INVOKED
+            INVOKED = x
 
-        patcher = FunctionPatcher(sync)
-        helper = MixinPatchHelper(patcher)
-        helper.makeMethodSync()
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(-1, FunctionPatcher(test))
         helper.store()
-        patcher.applyPatches()
+        helper.patcher.applyPatches()
 
-        coro = sync()
-        self.assertEqual(coro, 0)
+        global INVOKED
+        INVOKED = False
+        target()
+        self.assertEqual(INVOKED, 1)
+        INVOKED = False
+
+    def test_insert_method_local_capture_2(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+
+        def target():
+            a = 1
+            return a
+
+        def test():
+            a = capture_local("a")
+            global INVOKED
+            INVOKED = a
+            a = 2
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(1, FunctionPatcher(test))
+        helper.store()
+        helper.patcher.applyPatches()
+
+        global INVOKED
+        INVOKED = False
+        self.assertEqual(target(), 1)
+        self.assertEqual(INVOKED, 1)
+        INVOKED = False
+
+    def test_insert_method_local_capture_3(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+
+        def target():
+            a = 1
+            b = 2
+            return a
+
+        def test():
+            a = capture_local("a")
+            b = capture_local("b")
+            global INVOKED
+            INVOKED = a + b
+            a = 2
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(1, FunctionPatcher(test))
+        helper.store()
+        helper.patcher.applyPatches()
+
+        global INVOKED
+        INVOKED = False
+        self.assertEqual(target(), 1)
+        self.assertEqual(INVOKED, 3)
+        INVOKED = False
+

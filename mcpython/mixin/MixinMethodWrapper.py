@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import dis
+import traceback
 import types
 import typing
 
@@ -50,6 +51,10 @@ def mixin_return(value=None):
 
     todo: use this for real!
     """
+
+
+def capture_local(name: str):
+    pass
 
 
 OFFSET_JUMPS = dis.hasjrel
@@ -237,15 +242,197 @@ class MixinPatchHelper:
             ):
                 yield index, instruction
 
-    def insertMethodAt(self, start: int, method: FunctionPatcher, force_inline=True):
+    def insertMethodAt(self, start: int, method: FunctionPatcher | types.MethodType, force_inline=True):
         """
         Inserts a method body at the given position
         Does some magic for linking the code
-        Use mixin_return or capture_local for advance control flow
+        Use mixin_return() or capture_local() for advance control flow
 
         Will not modify the passed method. Will copy that object
+
+        All locals not capture()-ed get a new prefix of the method name
+
+        WARNING: mixin_return() with arg the arg must be from local variable storage, as it is otherwise
+            hard to detect where the method came from (LOAD_GLOBAL somewhere in instruction list...)
+        todo: add a better way to trace function calls
+
+        :param start: where the method head should be inserted
+        :param method: the method object ot inject
+        :param force_inline: forced a inline, currently always inlining code
         """
-        raise RuntimeError
+
+        if not isinstance(method, FunctionPatcher):
+            method = FunctionPatcher(method)
+
+        target = method.copy()
+        helper = MixinPatchHelper(target)
+
+        captured = {}
+        captured_indices = set()
+
+        # Walk across the code and look out of captures
+
+        index = -1
+        while index != len(helper.instruction_listing) - 1:
+            index += 1
+            for index, instr in list(helper.walk())[index:]:
+                if instr.opname == "CALL_FUNCTION" and index > 1:
+                    possible_load = helper.instruction_listing[index-2]
+                    if possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF") and possible_load.argval == "capture_local":
+                        assert helper.instruction_listing[index-1].opname == "LOAD_CONST", "captured must be local var"
+                        assert helper.instruction_listing[index+1].opname == "STORE_FAST", "target must be local variable"
+                        local = helper.instruction_listing[index-1].argval
+                        capture_target = helper.instruction_listing[index+1].argval
+
+                        captured[capture_target] = local, self.patcher.ensureVarName(local)
+                        captured_indices.add(index)
+
+                        helper.deleteRegion(index-2, index+1)
+                        break
+            else:
+                break
+
+        # Rebind the captured locals
+        for index, instr in helper.walk():
+            if instr.opcode in dis.haslocal:
+                if instr.argval in captured and index not in captured_indices:
+                    name, index = captured[instr.argval]
+                    helper.instruction_listing[index] = dis.Instruction(
+                        instr.opname,
+                        instr.opcode,
+                        index,
+                        name,
+                        name,
+                        0,
+                        0,
+                        False,
+                    )
+
+        # Return becomes jump instruction, the function TAIL is currently not known,
+        # so we need to trick it a little by setting its value to -1
+        for index, instr in helper.walk():
+            if instr.opname == "RETURN_VALUE":
+                # todo: check if we return a constant -> can remove the LOAD_CONST opcode and the POP_TOP
+                # todo: set target correctly!
+                helper.deleteRegion(index, index+1)
+                helper.insertRegion(index+2, [
+                    dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
+                    dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
+                ])
+
+        # The last return statement does not need a jump_absolute wrapper, as it continues into
+        # normal code
+        size = len(helper.instruction_listing)
+        assert helper.instruction_listing[size-1].opname == "JUMP_ABSOLUTE"
+        helper.deleteRegion(size-1, size)
+
+        index = -1
+        while index < len(helper.instruction_listing) - 1:
+            index += 1
+            for index, instr in list(helper.walk()):
+                if instr.opname == "CALL_FUNCTION" and index > 1:
+                    if instr.arg == 1:
+                        possible_load = helper.instruction_listing[index-2]
+
+                        if possible_load.opname == "LOAD_GLOBAL" and possible_load.argval == "mixin_return":
+                            # Delete the LOAD_GLOBAL instruction
+                            helper.instruction_listing[index] = dis.Instruction(
+                                "RETURN_VALUE",
+                                PyOpcodes.RETURN_VALUE,
+                                None,
+                                None,
+                                "",
+                                0,
+                                0,
+                                False,
+                            )
+                            helper.deleteRegion(index-2, index-1)
+                            break
+
+                    elif instr.arg == 0:
+                        possible_load = helper.instruction_listing[index - 1]
+
+                        if possible_load.opname == "LOAD_GLOBAL" and possible_load.argval == "mixin_return":
+                            helper.instruction_listing[index - 1] = dis.Instruction(
+                                "LOAD_CONST",
+                                PyOpcodes.LOAD_CONST,
+                                helper.patcher.ensureConstant(None),
+                                None,
+                                "None",
+                                0,
+                                0,
+                                False,
+                            )
+                            helper.instruction_listing[index] = dis.Instruction(
+                                "RETURN_VALUE",
+                                PyOpcodes.RETURN_VALUE,
+                                None,
+                                None,
+                                "",
+                                0,
+                                0,
+                                False,
+                            )
+                            helper.deleteRegion(index - 2, index - 1)
+                            break
+            else:
+                break
+
+        # Now rebind all
+        for index, instr in helper.walk():
+            if instr.opcode in dis.hasconst:
+                helper.instruction_listing[index] = reconstruct_instruction(
+                    instr,
+                    self.patcher.ensureConstant(instr.argval),
+                )
+
+            elif instr.opcode in dis.haslocal:
+                name = method.target.__name__.replace("__", "")+"__"+instr.argval
+                helper.instruction_listing[index] = reconstruct_instruction(
+                    instr,
+                    self.patcher.ensureVarName(name),
+                    name,
+                )
+
+            elif instr.opcode in dis.hasname:
+                helper.instruction_listing[index] = reconstruct_instruction(
+                    instr,
+                    self.patcher.ensureName(instr.argval),
+                )
+
+        # And now insert the code into our code
+        # todo: check for HEAD generator instruction
+
+        self.insertRegion(start, helper.instruction_listing + [
+            dis.Instruction("LOAD_CONST", PyOpcodes.LOAD_CONST, self.patcher.ensureConstant("mixin:internal"), None, "", 0, 0, False),
+            dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
+        ])
+        self.patcher.max_stack_size += target.max_stack_size
+
+        try:
+            self.store()
+        except:
+            self.print_stats()
+            raise
+
+        # Find out where the old instruction ended
+        for index, instr in self.walk():
+            if instr.opname == "LOAD_CONST" and instr.argval == "mixin:internal":
+                following = self.instruction_listing[index+1]
+                assert following.opname == "POP_TOP"
+                self.deleteRegion(index, index+2)
+                tail_index = index
+                break
+        else:
+            self.print_stats()
+            raise RuntimeError("Tail not found after insertion!")
+
+        for index, instr in self.walk():
+            if instr.opname == "JUMP_ABSOLUTE" and instr.argval == 0:
+                self.instruction_listing[index] = reconstruct_instruction(
+                    instr,
+                    tail_index,
+                )
 
     def insertMethodMultipleTimesAt(
         self,
@@ -256,10 +443,13 @@ class MixinPatchHelper:
         """
         Similar to insertMethodAt(), but is able to do some more optimisations in how to inject the method.
         Works best when used with multiple injection targets
+
         :param start: the start to inject at
         :param method: the method to inject
         :param force_multiple_inlines: if we should force multiple inlines for each method call, or if we can
             optimise stuff
+
+        todo: how can we remember the old instruction offset?
         """
         raise RuntimeError
 
@@ -303,6 +493,7 @@ class MixinPatchHelper:
     ):
         """
         Injects the given method as a constant call into the bytecode of that function
+
         :param offset: the offset to inject at
         :param method: the method to inject
         :param collected_locals: what locals to send to the method call
@@ -754,7 +945,14 @@ class MixinPatchHelper:
         return method
 
     def print_stats(self):
-        self.store()
+        try:
+            self.store()
+        except:
+            traceback.print_exc()
+            for i, instr in enumerate(self.instruction_listing):
+                print(i * 2, instr)
+            return
+
         print(f"MixinMethodWrapper stats around {self.patcher.target}")
 
         for i, instr in enumerate(self.instruction_listing):
