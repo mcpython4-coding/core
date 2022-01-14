@@ -82,6 +82,9 @@ def reset_test_methods():
         test()
         test()
 
+    global INVOKED
+    INVOKED = 0
+
 
 class TestMixinHandler(TestCase):
     def setUp(self):
@@ -1069,6 +1072,30 @@ class TestMixinHandler(TestCase):
 
         self.assertEqual(next(target(20)), 20)
         self.assertEqual(invoked, 5)
+
+    def test_mixin_inject_at_yield_inline_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        reset_test_methods()
+
+        handler = MixinHandler()
+
+        @handler.inject_at_yield(
+            "tests.test_mcpython.mixin.test_Mixin:test2", inline=True
+        )
+        def inject(_):
+            global INVOKED
+            INVOKED = 4
+
+        self.assertEqual(next(test2()), 0)
+        self.assertEqual(INVOKED, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(next(test2()), 0)
+        self.assertEqual(INVOKED, 4)
+        reset_test_methods()
 
     def test_mixin_inject_at_yield_value_1(self):
         from mcpython.mixin.Mixin import MixinHandler

@@ -364,12 +364,17 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
         add_yield_value=False,
+        inline=False,
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
         self.collected_locals = collected_locals
         self.add_yield_value = add_yield_value
+        self.inline = inline
+
+        if inline:
+            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
 
     def apply(
         self,
@@ -387,13 +392,19 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
                 ):
                     continue
 
-                helper.insertGivenMethodCallAt(
-                    index - 5 if not self.add_yield_value else index - 4,
-                    self.target_func,
-                    *(instr.opname == "YIELD_FROM",) + self.args,
-                    collected_locals=self.collected_locals,
-                    include_stack_top_copy=self.add_yield_value,
-                )
+                if not self.inline:
+                    helper.insertGivenMethodCallAt(
+                        index - 5 if not self.add_yield_value else index - 4,
+                        self.target_func,
+                        *(instr.opname == "YIELD_FROM",) + self.args,
+                        collected_locals=self.collected_locals,
+                        include_stack_top_copy=self.add_yield_value,
+                    )
+                else:
+                    helper.insertMethodAt(
+                        index - 5 if not self.add_yield_value else index - 4,
+                        self.target_func,
+                    )
 
         helper.store()
 

@@ -490,6 +490,8 @@ class MixinHandler:
         the previous return value, and returning the result of the injected method
 
         Arguments as above
+
+        todo: make inline-able
         """
 
         def annotate(function):
@@ -521,6 +523,7 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
         add_yield_value=False,
+        inline=False,
     ):
         """
         Injects code at specific yield statements
@@ -535,6 +538,8 @@ class MixinHandler:
         :param matcher: optional a yield statement matcher
         :param collected_locals: which locals to add as args
         :param add_yield_value: if to add the value yielded as last value
+        :param inline: if to inline the target method; requires collected_locals to be empty
+            use the capture_local() in that case; add_yield_value has no effect
         """
 
         def annotate(function):
@@ -546,6 +551,7 @@ class MixinHandler:
                         matcher=matcher,
                         collected_locals=collected_locals,
                         add_yield_value=add_yield_value,
+                        inline=inline,
                     ),
                     priority,
                     optional,
