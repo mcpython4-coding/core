@@ -67,6 +67,11 @@ def capture_local(name: str):
     """
 
 
+# todo: add a way to capture free variables
+# todo: add a way to capture global variables
+# todo: add a way to capture cell variables
+
+
 OFFSET_JUMPS = dis.hasjrel
 REAL_JUMPS = dis.hasjabs
 
