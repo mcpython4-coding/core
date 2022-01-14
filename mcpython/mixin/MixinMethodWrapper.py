@@ -512,7 +512,7 @@ class MixinPatchHelper:
             self.print_stats()
             raise RuntimeError("Tail not found after insertion!")
 
-        for index, instr in self.walk():
+        for index, instr in list(self.walk())[start:tail_index]:
             if instr.opname == "JUMP_ABSOLUTE" and instr.argval == 0:
                 self.instruction_listing[index] = reconstruct_instruction(
                     instr,
