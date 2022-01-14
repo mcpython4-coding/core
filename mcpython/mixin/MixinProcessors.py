@@ -260,12 +260,17 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
         add_return_value=False,
+        inline=False,
     ):
         self.target_func = target_func
         self.args = args
         self.matcher = matcher
         self.collected_locals = collected_locals
         self.add_return_value = add_return_value
+        self.inline = inline
+
+        if inline:
+            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
 
     def apply(
         self,
@@ -283,13 +288,19 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
                 ):
                     continue
 
-                helper.insertGivenMethodCallAt(
-                    index - 1 if not self.add_return_value else index,
-                    self.target_func,
-                    *self.args,
-                    collected_locals=self.collected_locals,
-                    include_stack_top_copy=self.add_return_value,
-                )
+                if not self.inline:
+                    helper.insertGivenMethodCallAt(
+                        index - 1 if not self.add_return_value else index,
+                        self.target_func,
+                        *self.args,
+                        collected_locals=self.collected_locals,
+                        include_stack_top_copy=self.add_return_value,
+                    )
+                else:
+                    helper.insertMethodAt(
+                        index - 1 if not self.add_return_value else index,
+                        self.target_func,
+                    )
 
         helper.store()
 

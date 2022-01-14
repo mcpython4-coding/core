@@ -69,6 +69,11 @@ class MixinHandler:
     - mixins into big functions are costly at "compile time", and may fail also at compile time,
         use with guard
         (due to some internal changes when certain limits are exceeded)
+
+    You can "inline" certain functions when applying mixins, they support less fancy stuff,
+    but your bytecode will be faster as the JIT can make use of more optimisation code
+    WARNING: inline() will delete a lot of meta-information (including line numbers), so when debugging,
+        it will be harder to do what you want
     """
 
     LOCKED = False
@@ -430,6 +435,7 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
         collected_locals=tuple(),
         add_return_value=False,
+        inline=False,
     ):
         """
         Injects code at specific return statements
@@ -442,6 +448,10 @@ class MixinHandler:
         :param matcher: optional a return statement matcher
         :param collected_locals: what locals to add to the method call
         :param add_return_value: if to add as last parameter the value the function tries to return or not
+        :param inline: if to inline the target method; requires collected_locals to be empty
+            use the capture_local() in that case; add_return_value has no effect
+
+        todo: add support for add_return_value (copy and store into locals)
         """
 
         def annotate(function):
@@ -453,6 +463,7 @@ class MixinHandler:
                         matcher=matcher,
                         collected_locals=collected_locals,
                         add_return_value=add_return_value,
+                        inline=inline,
                     ),
                     priority,
                     optional,
