@@ -1999,4 +1999,5 @@ b   [uuk]: fixed player entity serialization issues
 f   [uuk]: stone layer supports now internally multi-layer stone generation
 fI  [uuk]: biome map stores now only one biome in each 4x4 section
 f   [uuk]: the biome map is now in charge to determin the biome color
+f   [uuk]: mixins can now capture_local()s and mixin_return() using insertMethodAt()
 

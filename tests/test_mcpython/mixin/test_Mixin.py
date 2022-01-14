@@ -1467,6 +1467,28 @@ class TestMixinHandler(TestCase):
         self.assertEqual(INVOKED, 3)
         INVOKED = False
 
+    def test_insert_method_local_capture_4(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+
+        def target():
+            a = 1
+            return a
+
+        def test():
+            global INVOKED
+            INVOKED = capture_local("a")
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(1, FunctionPatcher(test))
+        helper.store()
+        helper.patcher.applyPatches()
+
+        global INVOKED
+        INVOKED = False
+        self.assertEqual(target(), 1)
+        self.assertEqual(INVOKED, 1)
+        INVOKED = False
+
     def test_mixin_early_exit_1(self):
         from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, mixin_return
 

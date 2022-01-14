@@ -269,6 +269,8 @@ class MixinPatchHelper:
             hard to detect where the method came from (LOAD_GLOBAL somewhere in instruction list...)
         todo: add a better way to trace function calls
 
+        WARNING: highly experimental, it may break at any time!
+
         :param start: where the method head should be inserted
         :param method: the method object ot inject
         :param force_inline: forced a inline, currently always inlining code
@@ -296,22 +298,48 @@ class MixinPatchHelper:
                     possible_load = helper.instruction_listing[index-2]
                     if possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF") and possible_load.argval == "capture_local":
                         assert helper.instruction_listing[index-1].opname == "LOAD_CONST", "captured must be local var"
-                        assert helper.instruction_listing[index+1].opname == "STORE_FAST", "target must be local variable"
-                        local = helper.instruction_listing[index-1].argval
-                        capture_target = helper.instruction_listing[index+1].argval
 
-                        captured[capture_target] = local, self.patcher.ensureVarName(local)
-                        captured_indices.add(index)
-                        captured_names.add(local)
+                        local = helper.instruction_listing[index - 1].argval
 
-                        # LOAD_<method> "capture_local"  {index-2}
-                        # LOAD_CONST <local name>        {index-1}
-                        # CALL_FUNCTION 1                {index+0}
-                        # STORE_FAST <new local name>    {index+1}
-                        helper.deleteRegion(index-2, index+2)
+                        if helper.instruction_listing[index+1].opname == "STORE_FAST":
+                            capture_target = helper.instruction_listing[index + 1].argval
 
-                        print(f"found local variable access onto '{local}' from '{capture_target}' (var index: {self.patcher.ensureVarName(local)}) at {index} ({instr})")
-                        index -= 1
+                            captured[capture_target] = local, self.patcher.ensureVarName(local)
+                            captured_indices.add(index)
+                            captured_names.add(local)
+
+                            # LOAD_<method> "capture_local"  {index-2}
+                            # LOAD_CONST <local name>        {index-1}
+                            # CALL_FUNCTION 1                {index+0}
+                            # STORE_FAST <new local name>    {index+1}
+                            helper.deleteRegion(index-2, index+2)
+
+                            print(f"found local variable access onto '{local}' from '{capture_target}' (var index: {self.patcher.ensureVarName(local)}) at {index} ({instr})")
+                            index -= 1
+
+                        # We don't really know what is done to the local,
+                        # so we need to store it as
+                        else:
+                            captured_names.add(local)
+
+                            # LOAD_<method> "capture_local"  {index-2}
+                            # LOAD_CONST <local name>        {index-1}
+                            # CALL_FUNCTION 1                {index+0}
+                            helper.deleteRegion(index - 2, index + 1)
+                            helper.insertRegion(index - 2, [
+                                dis.Instruction(
+                                    "LOAD_FAST", PyOpcodes.LOAD_FAST,
+                                    self.patcher.ensureVarName(local),
+                                    local,
+                                    local,
+                                    0,
+                                    0,
+                                    False,
+                                )
+                            ])
+
+                            print(f"found local variable read-only access onto '{local}'; replacing with link to real local at index {self.patcher.ensureVarName(local)}")
+
                         break
             else:
                 break
