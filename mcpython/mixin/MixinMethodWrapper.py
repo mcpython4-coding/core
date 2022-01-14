@@ -54,7 +54,20 @@ def mixin_return(value=None):
 
 
 def capture_local(name: str):
-    pass
+    """
+    Captures the value from an outer local variable into this function body.
+    Use only in mixin injected (real injection) code!
+
+    WARNING: when storing the result in a local variable, the name of the variable is captured
+    in the whole function, meaning any read/write to this name will be redirected to the real local
+    variable; This can result in unwanted side effects
+
+    WARNING: when capturing a variable name from outer scope and storing it locally, the variable name in the outer
+    function is reserved and the system WILL CRASH when trying to work with it (disparity of pointer index)
+
+    :param name: the name of the local
+    :return: the local value
+    """
 
 
 OFFSET_JUMPS = dis.hasjrel
@@ -269,6 +282,9 @@ class MixinPatchHelper:
 
         captured = {}
         captured_indices = set()
+        captured_names = set()
+
+        protect = set()
 
         # Walk across the code and look out of captures
 
@@ -286,55 +302,75 @@ class MixinPatchHelper:
 
                         captured[capture_target] = local, self.patcher.ensureVarName(local)
                         captured_indices.add(index)
+                        captured_names.add(local)
 
-                        helper.deleteRegion(index-2, index+1)
+                        # LOAD_<method> "capture_local"  {index-2}
+                        # LOAD_CONST <local name>        {index-1}
+                        # CALL_FUNCTION 1                {index+0}
+                        # STORE_FAST <new local name>    {index+1}
+                        helper.deleteRegion(index-2, index+2)
+
+                        print(f"found local variable access onto '{local}' from '{capture_target}' (var index: {self.patcher.ensureVarName(local)}) at {index} ({instr})")
+                        index -= 1
                         break
             else:
                 break
 
+        print("protected", ("'"+"', '".join(captured_names)+"'") if captured_names else "null")
+
         # Rebind the captured locals
-        for index, instr in helper.walk():
+        for index, instr in list(helper.walk()):
             if instr.opcode in dis.haslocal:
                 if instr.argval in captured and index not in captured_indices:
-                    name, index = captured[instr.argval]
+                    name, i = captured[instr.argval]
                     helper.instruction_listing[index] = dis.Instruction(
                         instr.opname,
                         instr.opcode,
-                        index,
+                        i,
                         name,
                         name,
                         0,
                         0,
                         False,
                     )
+                    protect.add(index)
+                    print(f"transforming local access at {index}: '{instr.argval}' to '{name}' (old index: {instr.arg}, new: {i}) ({instr})")
 
         # Return becomes jump instruction, the function TAIL is currently not known,
         # so we need to trick it a little by setting its value to -1
-        for index, instr in helper.walk():
-            if instr.opname == "RETURN_VALUE":
-                # todo: check if we return a constant -> can remove the LOAD_CONST opcode and the POP_TOP
-                # todo: set target correctly!
-                helper.deleteRegion(index, index+1)
-                helper.insertRegion(index+2, [
-                    dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
-                    dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
-                ])
+
+        index = -1
+        while index < len(helper.instruction_listing) - 1:
+            index += 1
+
+            for index, instr in list(helper.walk())[index:]:
+                if instr.opname == "RETURN_VALUE":
+                    # todo: check if we return a constant -> can remove the LOAD_CONST opcode and the POP_TOP
+                    # todo: set target correctly!
+                    helper.deleteRegion(index, index+1)
+                    helper.insertRegion(index+2, [
+                        dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
+                        dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
+                    ])
+                    break
+            else:
+                break
 
         # The last return statement does not need a jump_absolute wrapper, as it continues into
         # normal code
         size = len(helper.instruction_listing)
-        assert helper.instruction_listing[size-1].opname == "JUMP_ABSOLUTE"
+        assert helper.instruction_listing[size-1].opname == "JUMP_ABSOLUTE", "something went horribly wrong!"
         helper.deleteRegion(size-1, size)
 
         index = -1
         while index < len(helper.instruction_listing) - 1:
             index += 1
-            for index, instr in list(helper.walk()):
+            for index, instr in list(helper.walk())[index:]:
                 if instr.opname == "CALL_FUNCTION" and index > 1:
                     if instr.arg == 1:
                         possible_load = helper.instruction_listing[index-2]
 
-                        if possible_load.opname == "LOAD_GLOBAL" and possible_load.argval == "mixin_return":
+                        if possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF") and possible_load.argval == "mixin_return":
                             # Delete the LOAD_GLOBAL instruction
                             helper.instruction_listing[index] = dis.Instruction(
                                 "RETURN_VALUE",
@@ -347,6 +383,8 @@ class MixinPatchHelper:
                                 False,
                             )
                             helper.deleteRegion(index-2, index-1)
+                            index -= 3
+                            protect.add(index)
                             break
 
                     elif instr.arg == 0:
@@ -374,20 +412,25 @@ class MixinPatchHelper:
                                 False,
                             )
                             helper.deleteRegion(index - 2, index - 1)
+                            index -= 3
+                            protect.add(index - 1)
                             break
             else:
                 break
 
         # Now rebind all
-        for index, instr in helper.walk():
+        for index, instr in list(helper.walk()):
+            if index in protect: continue
+
             if instr.opcode in dis.hasconst:
                 helper.instruction_listing[index] = reconstruct_instruction(
                     instr,
                     self.patcher.ensureConstant(instr.argval),
                 )
 
-            elif instr.opcode in dis.haslocal:
+            elif instr.opcode in dis.haslocal and instr.argval not in captured_names:
                 name = method.target.__name__.replace("__", "")+"__"+instr.argval
+                print(f"rebinding real local '{instr.argval}' to '{name}'")
                 helper.instruction_listing[index] = reconstruct_instruction(
                     instr,
                     self.patcher.ensureVarName(name),
@@ -955,7 +998,7 @@ class MixinPatchHelper:
 
         print(f"MixinMethodWrapper stats around {self.patcher.target}")
 
-        for i, instr in enumerate(self.instruction_listing):
+        for i, instr in self.walk():
             print(i * 2, instr)
 
         print("Raw code:", self.patcher.code_string)

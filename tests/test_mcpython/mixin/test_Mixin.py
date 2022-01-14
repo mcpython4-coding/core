@@ -1405,7 +1405,7 @@ class TestMixinHandler(TestCase):
             INVOKED = x
 
         helper = MixinPatchHelper(target)
-        helper.insertMethodAt(-1, FunctionPatcher(test))
+        helper.insertMethodAt(0, FunctionPatcher(test))
         helper.store()
         helper.patcher.applyPatches()
 
@@ -1423,10 +1423,10 @@ class TestMixinHandler(TestCase):
             return a
 
         def test():
-            a = capture_local("a")
+            x = capture_local("a")
             global INVOKED
-            INVOKED = a
-            a = 2
+            INVOKED = x
+            x = 2
 
         helper = MixinPatchHelper(target)
         helper.insertMethodAt(1, FunctionPatcher(test))
@@ -1448,20 +1448,80 @@ class TestMixinHandler(TestCase):
             return a
 
         def test():
-            a = capture_local("a")
-            b = capture_local("b")
+            x = capture_local("a")
+            y = capture_local("b")
             global INVOKED
-            INVOKED = a + b
-            a = 2
+            INVOKED = x + y
+            x = 2
+
+        self.assertEqual(target(), 1)
 
         helper = MixinPatchHelper(target)
-        helper.insertMethodAt(1, FunctionPatcher(test))
+        helper.insertMethodAt(0, FunctionPatcher(test))
         helper.store()
         helper.patcher.applyPatches()
 
         global INVOKED
         INVOKED = False
-        self.assertEqual(target(), 1)
+        self.assertEqual(target(), 2, "local rebind not fully functional; write back failed!")
         self.assertEqual(INVOKED, 3)
         INVOKED = False
+
+    def test_mixin_early_exit_1(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, mixin_return
+
+        def target():
+            return 1
+
+        def test():
+            mixin_return(0)
+            return -1
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(0, test)
+        helper.store()
+        helper.patcher.applyPatches()
+
+        self.assertEqual(target(), 0)
+
+    def test_mixin_early_exit_2(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, mixin_return, capture_local
+
+        def target(c: bool):
+            return 1
+
+        def test():
+            a = capture_local("c")
+            if a:
+                mixin_return(0)
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(0, test)
+        helper.store()
+        helper.patcher.applyPatches()
+
+        self.assertEqual(target(True), 0)
+        self.assertEqual(target(False), 1)
+
+    def test_mixin_early_exit_3(self):
+        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, mixin_return, capture_local
+
+        def target(c: bool):
+            return c
+
+        def test():
+            a = capture_local("c")
+            if a:
+                mixin_return(0)
+            a = 2
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(0, test)
+        helper.store()
+        helper.patcher.applyPatches()
+
+        dis.dis(target)
+
+        self.assertEqual(target(True), 0)
+        self.assertEqual(target(False), 2)
 
