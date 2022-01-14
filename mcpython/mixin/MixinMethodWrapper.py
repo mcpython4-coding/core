@@ -336,7 +336,7 @@ class MixinPatchHelper:
                             # LOAD_CONST <local name>        {index-1}
                             # CALL_FUNCTION 1                {index+0}
                             helper.deleteRegion(index - 2, index + 1)
-                            helper.insertRegion(index - 2, [
+                            helper.insertRegion(index, [
                                 dis.Instruction(
                                     "LOAD_FAST", PyOpcodes.LOAD_FAST,
                                     self.patcher.ensureVarName(local),

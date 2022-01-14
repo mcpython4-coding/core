@@ -223,10 +223,14 @@ class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
 
 
 class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
-    def __init__(self, target_func: typing.Callable, *args, collected_locals=tuple()):
+    def __init__(self, target_func: typing.Callable, *args, collected_locals=tuple(), inline=False):
         self.target_func = target_func
         self.args = args
         self.collected_locals = collected_locals
+        self.inline = inline
+
+        if inline:
+            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
 
     def apply(
         self,
@@ -235,9 +239,16 @@ class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
         helper: MixinPatchHelper,
     ):
         index = 0 if helper.instruction_listing[0].opname != "GEN_START" else 1
-        helper.insertGivenMethodCallAt(
-            index, self.target_func, *self.args, collected_locals=self.collected_locals
-        )
+        if not self.inline:
+            helper.insertGivenMethodCallAt(
+                index, self.target_func, *self.args, collected_locals=self.collected_locals
+            )
+        else:
+            # todo: can we inline somehow the arg values?
+            helper.insertMethodAt(
+                index,
+                self.target_func,
+            )
         helper.store()
 
 

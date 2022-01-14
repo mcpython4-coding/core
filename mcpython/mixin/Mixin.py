@@ -21,7 +21,7 @@ import mcpython.mixin.PyBytecodeManipulator
 from .. import shared
 from ..engine import logger
 from .InstructionMatchers import AbstractInstructionMatcher
-from .MixinMethodWrapper import MixinPatchHelper
+from .MixinMethodWrapper import MixinPatchHelper, mixin_return, capture_local
 from .MixinProcessors import (
     AbstractMixinProcessor,
     InjectFunctionCallAtHeadProcessor,
@@ -390,6 +390,7 @@ class MixinHandler:
         optional=True,
         args=tuple(),
         collected_locals=tuple(),
+        inline=False,
     ):
         """
         Injects some code at the function head
@@ -400,13 +401,15 @@ class MixinHandler:
         :param optional: optional mixin?
         :param args: args to add to the function
         :param collected_locals: what locals to add as args
+        :param inline: if to inline the target method; requires collected_locals to be empty
+            use the capture_local() in that case!
         """
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtHeadProcessor(
-                        function, *args, collected_locals=collected_locals
+                        function, *args, collected_locals=collected_locals, inline=inline,
                     ),
                     priority,
                     optional,
