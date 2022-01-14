@@ -62,9 +62,6 @@ def capture_local(name: str):
     in the whole function, meaning any read/write to this name will be redirected to the real local
     variable; This can result in unwanted side effects
 
-    WARNING: when capturing a variable name from outer scope and storing it locally, the variable name in the outer
-    function is reserved and the system WILL CRASH when trying to work with it (disparity of pointer index)
-
     :param name: the name of the local
     :return: the local value
     """
@@ -280,6 +277,14 @@ class MixinPatchHelper:
             method = FunctionPatcher(method)
 
         target = method.copy()
+
+        # Rebind all inner local variables to something we cannot possibly enter,
+        # so we cannot get conflicts (in the normal case)
+        target.variable_names = [
+            method.target.__name__+"::"+e
+            for e in target.variable_names
+        ]
+
         helper = MixinPatchHelper(target)
 
         captured = {}
@@ -461,7 +466,7 @@ class MixinPatchHelper:
                 )
 
             elif instr.opcode in dis.haslocal and instr.argval not in captured_names:
-                name = method.target.__name__.replace("__", "")+"__"+instr.argval
+                name = instr.argval
                 print(f"rebinding real local '{instr.argval}' to '{name}'")
                 helper.instruction_listing[index] = reconstruct_instruction(
                     instr,
