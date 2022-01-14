@@ -497,11 +497,16 @@ class InjectFunctionCallAtTailProcessor(AbstractMixinProcessor):
         *args,
         collected_locals=tuple(),
         add_return_value=False,
+        inline=False,
     ):
         self.target_func = target_func
         self.args = args
         self.collected_locals = collected_locals
         self.add_return_value = add_return_value
+        self.inline = inline
+
+        if inline:
+            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
 
     def apply(
         self,
@@ -513,13 +518,20 @@ class InjectFunctionCallAtTailProcessor(AbstractMixinProcessor):
             helper.instruction_listing[-1].opname == "RETURN_VALUE"
         ), "integrity of function failed!"
 
-        helper.insertGivenMethodCallAt(
-            len(helper.instruction_listing) + 1,
-            self.target_func,
-            *self.args,
-            collected_locals=self.collected_locals,
-            include_stack_top_copy=self.add_return_value,
-        )
+        if not self.inline:
+            helper.insertGivenMethodCallAt(
+                len(helper.instruction_listing) + 1,
+                self.target_func,
+                *self.args,
+                collected_locals=self.collected_locals,
+                include_stack_top_copy=self.add_return_value,
+            )
+        else:
+            helper.insertMethodAt(
+                len(helper.instruction_listing) + 1,
+                self.target_func,
+            )
+
         helper.store()
 
 

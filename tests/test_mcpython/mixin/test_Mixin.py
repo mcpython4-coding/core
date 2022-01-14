@@ -1188,6 +1188,38 @@ class TestMixinHandler(TestCase):
         self.assertEqual(target(False), 1)
         self.assertEqual(invoked, 1)
 
+    def test_mixin_inject_at_tail_inline_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        invoked = 0
+
+        def target(flag):
+            invoked  # only here to make cell var integrity happy
+            if flag:
+                return 0
+            return 1
+
+        handler = MixinHandler()
+        handler.makeFunctionArrival("test", target)
+
+        @handler.inject_at_tail("test", inline=True)
+        def inject():
+            nonlocal invoked
+            invoked = 4
+
+        self.assertEqual(target(False), 1)
+        self.assertEqual(invoked, 0)
+        self.assertEqual(target(True), 0)
+        self.assertEqual(invoked, 0)
+
+        # Will apply the later mixin first, as it is optional, and as such can break when overriding it
+        handler.applyMixins()
+
+        self.assertEqual(target(True), 0)
+        self.assertEqual(invoked, 0)
+        self.assertEqual(target(False), 1)
+        self.assertEqual(invoked, 4)
+
     def test_mixin_given_method_call_inject_1(self):
         from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 

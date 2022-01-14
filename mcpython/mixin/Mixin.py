@@ -581,6 +581,8 @@ class MixinHandler:
 
         Arguments as above
         is_yield_from can change the yield instruction type if needed, set to None (default) for not changing
+
+        todo: add ability to inline this
         """
 
         def annotate(function):
@@ -611,6 +613,7 @@ class MixinHandler:
         args=tuple(),
         collected_locals=tuple(),
         add_return_value=False,
+        inline=False,
     ):
         """
         Injects code before the final return statement
@@ -621,6 +624,10 @@ class MixinHandler:
         :param args: the args to give to the method
         :param collected_locals: which locals to add as args
         :param add_return_value: if to add the return value at the tail as an argument or not
+        :param inline: if to inline the target method; requires collected_locals to be empty
+            use the capture_local() in that case; add_return_value has no effect
+
+        todo: add support for add_return_value (copy and store into locals)
         """
 
         def annotate(function):
@@ -631,6 +638,7 @@ class MixinHandler:
                         *args,
                         collected_locals=collected_locals,
                         add_return_value=add_return_value,
+                        inline=inline,
                     ),
                     priority,
                     optional,
@@ -661,6 +669,9 @@ class MixinHandler:
 
         WARNING: normally, you want a single-match matcher object,
         as you want only one target in the method!
+
+        This method is not for inlining, as inlined functions can simply
+        capture_local() the names they need and than work with them
 
         :param access_str: the method to inject into
         :param matcher: the instruction matcher where to inject your change function
@@ -804,7 +815,8 @@ class MixinHandler:
         end: int = -1,
         priority=0,
         optional=True,
-        include_handler: bool = True,
+        include_handler=True,
+        inline_handler=False,
     ):
         """
         Covers the function body with a try-except block of the given exception type.
@@ -818,6 +830,7 @@ class MixinHandler:
         :param priority: the mixin priority
         :param optional: optional mixin?
         :param include_handler: when False, this is not an annotation, and the exception will be simply ignored
+        :param inline_handler: when True, will inline the target method
         """
         raise NotImplementedError
 
@@ -830,6 +843,7 @@ class MixinHandler:
         remaining_mode="return_result",
         args=tuple(),
         collected_locals=tuple(),
+        inline=False,
     ):
         """
         Replaces an explicit 'raise' with custom code.
@@ -846,6 +860,7 @@ class MixinHandler:
             the function result and "raise" for raising the original exception
         :param args: the args to give to the method
         :param collected_locals: which locals to add as args
+        :param inline: when True, will inline the target method; the remaining_mode argument will be ignored
         """
         raise NotImplementedError
 
@@ -881,6 +896,8 @@ class MixinHandler:
         priority=0,
         optional=True,
         continue_at: typing.Callable[[MixinPatchHelper, int, int], int] | int = 0,
+        inline=False,
+        inline_condition=False,
     ):
         """
         Adds a (conditional) branch into the code.
@@ -899,6 +916,8 @@ class MixinHandler:
         :param optional: optional mixin?
         :param continue_at: where to continue execution at, either int (offset) or callable with the helper, the branch index,
             and the instruction index
+        :param inline: when True, will inline the target method
+        :param inline_condition: when True, will inline the condition method
         """
         raise NotImplementedError
 
@@ -909,9 +928,10 @@ class MixinHandler:
         priority=0,
         optional=True,
         capture_locals: typing.Iterable[str] = tuple(),
+        inline=False,
     ):
         """
-        Exchanges the used iterator for a for loop
+        Exchanges the used iterator for e.g. for loop
         The attached expression should return the new iterator.
         It gets the previous iterator as an argument
 
@@ -920,6 +940,7 @@ class MixinHandler:
         :param priority: the mixin priority
         :param optional: optional mixin?
         :param capture_locals: the local variables to capture for the iterator getter
+        :param inline: when True, will inline the target method
         """
         raise NotImplementedError
 
