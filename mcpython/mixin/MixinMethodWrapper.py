@@ -373,13 +373,17 @@ class MixinPatchHelper:
 
             for index, instr in list(helper.walk())[index:]:
                 if instr.opname == "RETURN_VALUE":
-                    # todo: check if we return a constant -> can remove the LOAD_CONST opcode and the POP_TOP
-                    # todo: set target correctly!
-                    helper.deleteRegion(index, index+1)
-                    helper.insertRegion(index+2, [
-                        dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
-                        dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
-                    ])
+                    if index > 0 and helper.instruction_listing[index-1].opname == "LOAD_CONST":
+                        helper.deleteRegion(index - 1, index + 1)
+                        helper.insertRegion(index + 2, [
+                            dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
+                        ])
+                    else:
+                        helper.deleteRegion(index, index+1)
+                        helper.insertRegion(index+2, [
+                            dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
+                            dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
+                        ])
                     break
             else:
                 break
