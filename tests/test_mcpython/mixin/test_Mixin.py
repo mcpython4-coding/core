@@ -102,6 +102,7 @@ class TestMixinHandler(TestCase):
         MixinHandler.LOCKED = True
         self.assertRaises(RuntimeError, lambda: MixinHandler())
         MixinHandler.LOCKED = False
+        MixinHandler()
 
     def test_replace_function_body(self):
         from mcpython.mixin.Mixin import MixinHandler
@@ -613,8 +614,6 @@ class TestMixinHandler(TestCase):
 
         # Will apply the later mixin first, as it is optional, and as such can break when overriding it
         handler.applyMixins()
-
-        dis.dis(target)
 
         INVOKED = 0
         self.assertEqual(target(), 3)

@@ -1,3 +1,5 @@
+import typing
+
 import test_mcpython.mixin
 from util import TestCase
 

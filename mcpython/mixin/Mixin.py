@@ -17,6 +17,7 @@ import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
+from .CodeOptimiser import optimise_code
 
 from .. import shared
 from ..engine import logger
@@ -78,7 +79,9 @@ class MixinHandler:
 
     LOCKED = False
 
-    def __init__(self):
+    def __init__(self, do_code_optimisation=True):
+        self.do_code_optimisation = do_code_optimisation
+
         if MixinHandler.LOCKED:
             raise RuntimeError()
 
@@ -86,6 +89,8 @@ class MixinHandler:
             str, typing.List[typing.Tuple[AbstractMixinProcessor, float, bool, str]]
         ] = {}
         self.special_functions = {}
+
+        self.affected: typing.Set[typing.Tuple[typing.Callable, MixinPatchHelper]] = set()
 
     def makeFunctionArrival(self, name: str, func):
         self.special_functions[name] = func
@@ -98,10 +103,13 @@ class MixinHandler:
             )
 
             method_target = self.lookup_method(target)
+
             patcher = mcpython.mixin.PyBytecodeManipulator.FunctionPatcher(
                 method_target
             )
             helper = MixinPatchHelper(patcher)
+
+            self.affected.add((method_target, helper))
 
             order = sorted(
                 sorted(mixins, key=lambda e: 0 if e[2] else 1), key=lambda e: e[1]
@@ -153,6 +161,15 @@ class MixinHandler:
                 mixin.apply(self, patcher, helper)
 
             patcher.applyPatches()
+
+        if not shared.IS_TEST_ENV and self.do_code_optimisation:
+            for method, helper in self.affected:
+                try:
+                    optimise_code(helper)
+                    helper.store()
+                    helper.patcher.applyPatches()
+                except:
+                    logger.print_exception(f"during optimising method {method} after mixin applied")
 
     def lookup_method(self, method: str):
         if method in self.special_functions:

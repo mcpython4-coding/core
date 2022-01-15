@@ -292,6 +292,14 @@ class MixinPatchHelper:
 
         helper = MixinPatchHelper(target)
 
+        # Rewire JUMP_ABSOLUTE instructions to the new offset
+        for index, instr in helper.walk():
+            if instr.opname == "JUMP_ABSOLUTE":
+                helper.instruction_listing[index] = reconstruct_instruction(
+                    instr,
+                    instr.arg + start
+                )
+
         captured = {}
         captured_indices = set()
         captured_names = set()
@@ -547,7 +555,7 @@ class MixinPatchHelper:
             return
 
         self.insertRegion(
-            -1, [dis.Instruction("GEN_START", 129, 0, None, None, False, 0, 0)]
+            -1, [dis.Instruction("GEN_START", 129, 2, None, None, False, 0, 0)]
         )
         self.is_async = True
         return self

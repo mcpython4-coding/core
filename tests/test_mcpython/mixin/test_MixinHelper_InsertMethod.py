@@ -203,7 +203,5 @@ class TestInsertMethod(TestCase):
         helper.store()
         helper.patcher.applyPatches()
 
-        dis.dis(target)
-
         self.assertEqual(target(True), 0)
         self.assertEqual(target(False), 2)
