@@ -44,7 +44,9 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
         for index in self.land_mass_table:
             buffer.write_byte(index)
 
-        await buffer.write_list(self.reference_table[1:], lambda e: buffer.write_string(e, size_size=2))
+        await buffer.write_list(
+            self.reference_table[1:], lambda e: buffer.write_string(e, size_size=2)
+        )
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
@@ -53,14 +55,16 @@ class LandMassMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap)
         cx *= 16
         cz *= 16
 
-        self.land_mass_table[:] = array.ArrayType("b", [buffer.read_byte() for _ in range(16 * 16)])
+        self.land_mass_table[:] = array.ArrayType(
+            "b", [buffer.read_byte() for _ in range(16 * 16)]
+        )
 
-        self.reference_table[:] = ["void"] + await buffer.collect_list(lambda: buffer.read_string(size_size=2))
+        self.reference_table[:] = ["void"] + await buffer.collect_list(
+            lambda: buffer.read_string(size_size=2)
+        )
 
     def get_at_xz(self, x: int, z: int) -> str:
-        return self.reference_table[
-            self.land_mass_table[x % 16 + z % 16 * 16]
-        ]
+        return self.reference_table[self.land_mass_table[x % 16 + z % 16 * 16]]
 
     def set_at_xz(self, x: int, z: int, mass: str):
         if mass in self.reference_table:

@@ -809,10 +809,14 @@ class BlockStateContainer:
                 try:
                     self.loader.parse_data(data)
                 except:
-                    logger.print_exception(f"block state loader {loader.NAME} failed to load block state {self.name}; continuing further search")
+                    logger.print_exception(
+                        f"block state loader {loader.NAME} failed to load block state {self.name}; continuing further search"
+                    )
                 break
         else:
-            logger.println("can't find matching loader for block state {}".format(self.name))
+            logger.println(
+                "can't find matching loader for block state {}".format(self.name)
+            )
 
         return self
 
@@ -875,6 +879,7 @@ class BlockState:
     Container holding a single block state link
     todo: don't store the raw data
     """
+
     __slots__ = ("data", "models")
 
     def __init__(self):

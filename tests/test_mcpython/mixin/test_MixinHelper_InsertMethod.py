@@ -1,3 +1,16 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import dis
 
 from util import TestCase
@@ -26,7 +39,11 @@ class TestInsertMethod(TestCase):
         INVOKED = False
 
     def test_insert_method_local_capture_5(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+        )
 
         def target():
             a = 1
@@ -54,7 +71,11 @@ class TestInsertMethod(TestCase):
         INVOKED = False
 
     def test_insert_method_local_capture_1(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+        )
 
         def target():
             a = 1
@@ -77,7 +98,11 @@ class TestInsertMethod(TestCase):
         INVOKED = False
 
     def test_insert_method_local_capture_2(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+        )
 
         def target():
             a = 1
@@ -101,7 +126,11 @@ class TestInsertMethod(TestCase):
         INVOKED = False
 
     def test_insert_method_local_capture_3(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+        )
 
         def target():
             a = 1
@@ -124,12 +153,18 @@ class TestInsertMethod(TestCase):
 
         global INVOKED
         INVOKED = False
-        self.assertEqual(target(), 2, "local rebind not fully functional; write back failed!")
+        self.assertEqual(
+            target(), 2, "local rebind not fully functional; write back failed!"
+        )
         self.assertEqual(INVOKED, 3)
         INVOKED = False
 
     def test_insert_method_local_capture_4(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, capture_local
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+        )
 
         def target():
             a = 1
@@ -151,7 +186,11 @@ class TestInsertMethod(TestCase):
         INVOKED = False
 
     def test_mixin_early_exit_1(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, mixin_return
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            mixin_return,
+        )
 
         def target():
             return 1
@@ -168,7 +207,12 @@ class TestInsertMethod(TestCase):
         self.assertEqual(target(), 0)
 
     def test_mixin_early_exit_2(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, mixin_return, capture_local
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+            mixin_return,
+        )
 
         def target(c: bool):
             return 1
@@ -187,7 +231,12 @@ class TestInsertMethod(TestCase):
         self.assertEqual(target(False), 1)
 
     def test_mixin_early_exit_3(self):
-        from mcpython.mixin.MixinMethodWrapper import FunctionPatcher, MixinPatchHelper, mixin_return, capture_local
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+            mixin_return,
+        )
 
         def target(c: bool):
             return c

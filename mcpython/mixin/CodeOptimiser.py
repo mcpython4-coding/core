@@ -1,9 +1,22 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 import dis
 
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 from mcpython.mixin.util import PyOpcodes
 
-SIDE_EFFECT_FREE = {
+SIDE_EFFECT_FREE_VALUE_LOAD = {
     PyOpcodes.LOAD_FAST,
     PyOpcodes.LOAD_GLOBAL,
     PyOpcodes.LOAD_CONST,
@@ -64,9 +77,15 @@ def remove_store_delete_pairs(helper: MixinPatchHelper):
     while index < len(helper.instruction_listing) - 1:
         index += 1
         for index, instr in list(helper.walk())[index:]:
-            if instr.opcode in PAIR_STORE_DELETE and index < len(helper.instruction_listing) - 2:
+            if (
+                instr.opcode in PAIR_STORE_DELETE
+                and index < len(helper.instruction_listing) - 2
+            ):
                 next_instr = helper.instruction_listing[index + 1]
-                if next_instr.opcode == PAIR_STORE_DELETE[instr.opcode] and instr.arg == next_instr.arg:
+                if (
+                    next_instr.opcode == PAIR_STORE_DELETE[instr.opcode]
+                    and instr.arg == next_instr.arg
+                ):
                     # Delete the load instruction and the store instruction
                     helper.instruction_listing[index] = dis.Instruction(
                         "POP_TOP",
@@ -98,7 +117,7 @@ def remove_delete_fast_without_assign(helper: MixinPatchHelper):
             if instr.opcode == PyOpcodes.STORE_FAST:
                 written_to.add(instr.arg)
             elif instr.opcode == PyOpcodes.DELETE_FAST and instr.arg not in written_to:
-                helper.deleteRegion(index, index+1)
+                helper.deleteRegion(index, index + 1)
                 index -= 1
                 break
         else:
@@ -115,10 +134,10 @@ def remove_load_pop(helper: MixinPatchHelper):
         index += 1
         for index, instr in list(helper.walk())[index:]:
             if instr.opcode == PyOpcodes.POP_TOP and index > 0:
-                previous = helper.instruction_listing[index-1]
-                if previous.opcode in SIDE_EFFECT_FREE:
+                previous = helper.instruction_listing[index - 1]
+                if previous.opcode in SIDE_EFFECT_FREE_VALUE_LOAD:
                     # Delete the side effect free result and the POP_TOP instruction
-                    helper.deleteRegion(index-1, index+1)
+                    helper.deleteRegion(index - 1, index + 1)
                     index -= 2
                     break
         else:
@@ -134,9 +153,15 @@ def remove_load_store_pairs(helper: MixinPatchHelper):
     while index < len(helper.instruction_listing) - 1:
         index += 1
         for index, instr in list(helper.walk())[index:]:
-            if instr.opcode in PAIR_LOAD_STORE and index < len(helper.instruction_listing) - 2:
+            if (
+                instr.opcode in PAIR_LOAD_STORE
+                and index < len(helper.instruction_listing) - 2
+            ):
                 next_instr = helper.instruction_listing[index + 1]
-                if next_instr.opcode == PAIR_LOAD_STORE[instr.opcode] and instr.arg == next_instr.arg:
+                if (
+                    next_instr.opcode == PAIR_LOAD_STORE[instr.opcode]
+                    and instr.arg == next_instr.arg
+                ):
                     # Delete the load instruction and the store instruction
                     helper.deleteRegion(index, index + 2)
                     index -= 1
@@ -155,7 +180,7 @@ def remove_nop(helper: MixinPatchHelper):
         index += 1
         for index, instr in list(helper.walk())[index:]:
             if instr.opcode == PyOpcodes.NOP:
-                helper.deleteRegion(index, index+1)
+                helper.deleteRegion(index, index + 1)
                 index -= 1
                 break
         else:

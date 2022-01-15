@@ -35,7 +35,9 @@ class TemperatureMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractM
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
 
-        self.temperature_data[:] = array.ArrayType("f", [buffer.read_float() for _ in range(256)])
+        self.temperature_data[:] = array.ArrayType(
+            "f", [buffer.read_float() for _ in range(256)]
+        )
 
     def get_at_xz(self, x: int, z: int) -> float:
         return self.temperature_data[x % 16 + z % 16 * 16]

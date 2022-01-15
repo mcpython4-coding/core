@@ -223,14 +223,22 @@ class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
 
 
 class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
-    def __init__(self, target_func: typing.Callable, *args, collected_locals=tuple(), inline=False):
+    def __init__(
+        self,
+        target_func: typing.Callable,
+        *args,
+        collected_locals=tuple(),
+        inline=False,
+    ):
         self.target_func = target_func
         self.args = args
         self.collected_locals = collected_locals
         self.inline = inline
 
         if inline:
-            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
+            assert (
+                len(collected_locals) == 0
+            ), "cannot inline when collecting local variables"
 
     def apply(
         self,
@@ -241,7 +249,10 @@ class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
         index = 0 if helper.instruction_listing[0].opname != "GEN_START" else 1
         if not self.inline:
             helper.insertGivenMethodCallAt(
-                index, self.target_func, *self.args, collected_locals=self.collected_locals
+                index,
+                self.target_func,
+                *self.args,
+                collected_locals=self.collected_locals,
             )
         else:
             # todo: can we inline somehow the arg values?
@@ -270,7 +281,9 @@ class InjectFunctionCallAtReturnProcessor(AbstractMixinProcessor):
         self.inline = inline
 
         if inline:
-            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
+            assert (
+                len(collected_locals) == 0
+            ), "cannot inline when collecting local variables"
 
     def apply(
         self,
@@ -374,7 +387,9 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
         self.inline = inline
 
         if inline:
-            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
+            assert (
+                len(collected_locals) == 0
+            ), "cannot inline when collecting local variables"
 
     def apply(
         self,
@@ -506,7 +521,9 @@ class InjectFunctionCallAtTailProcessor(AbstractMixinProcessor):
         self.inline = inline
 
         if inline:
-            assert len(collected_locals) == 0, "cannot inline when collecting local variables"
+            assert (
+                len(collected_locals) == 0
+            ), "cannot inline when collecting local variables"
 
     def apply(
         self,

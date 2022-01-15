@@ -17,12 +17,12 @@ import types
 import typing
 
 import mcpython.mixin.PyBytecodeManipulator
-from .CodeOptimiser import optimise_code
 
 from .. import shared
 from ..engine import logger
+from .CodeOptimiser import optimise_code
 from .InstructionMatchers import AbstractInstructionMatcher
-from .MixinMethodWrapper import MixinPatchHelper, mixin_return, capture_local
+from .MixinMethodWrapper import MixinPatchHelper, capture_local, mixin_return
 from .MixinProcessors import (
     AbstractMixinProcessor,
     InjectFunctionCallAtHeadProcessor,
@@ -90,7 +90,9 @@ class MixinHandler:
         ] = {}
         self.special_functions = {}
 
-        self.affected: typing.Set[typing.Tuple[typing.Callable, MixinPatchHelper]] = set()
+        self.affected: typing.Set[
+            typing.Tuple[typing.Callable, MixinPatchHelper]
+        ] = set()
 
     def makeFunctionArrival(self, name: str, func):
         self.special_functions[name] = func
@@ -98,9 +100,7 @@ class MixinHandler:
 
     def applyMixins(self):
         for target, mixins in self.bound_mixin_processors.items():
-            logger.println(
-                f"[MIXIN][WARN] applying mixins onto '{target}'"
-            )
+            logger.println(f"[MIXIN][WARN] applying mixins onto '{target}'")
 
             method_target = self.lookup_method(target)
 
@@ -169,7 +169,9 @@ class MixinHandler:
                     helper.store()
                     helper.patcher.applyPatches()
                 except:
-                    logger.print_exception(f"during optimising method {method} after mixin applied")
+                    logger.print_exception(
+                        f"during optimising method {method} after mixin applied"
+                    )
 
     def lookup_method(self, method: str):
         if method in self.special_functions:
@@ -399,7 +401,12 @@ class MixinHandler:
 
         def annotate(function):
             self.bound_mixin_processors.setdefault(access_str, []).append(
-                (MixinReplacementProcessor(function), priority, optional, shared.CURRENT_EVENT_SUB)
+                (
+                    MixinReplacementProcessor(function),
+                    priority,
+                    optional,
+                    shared.CURRENT_EVENT_SUB,
+                )
             )
             return function
 
@@ -431,7 +438,10 @@ class MixinHandler:
             self.bound_mixin_processors.setdefault(access_str, []).append(
                 (
                     InjectFunctionCallAtHeadProcessor(
-                        function, *args, collected_locals=collected_locals, inline=inline,
+                        function,
+                        *args,
+                        collected_locals=collected_locals,
+                        inline=inline,
                     ),
                     priority,
                     optional,

@@ -789,7 +789,6 @@ class TestMixinHandler(TestCase):
         self.assertEqual(INVOKED, 3)
         reset_test_methods()
 
-
     def test_mixin_inject_at_return_value_1(self):
         from mcpython.mixin.Mixin import MixinHandler
 
@@ -1311,7 +1310,7 @@ class TestMixinHandler(TestCase):
 
         @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
         def inject(c):
-            return c + 2,
+            return (c + 2,)
 
         self.assertEqual(func(2), 2)
         handler.applyMixins()
@@ -1332,7 +1331,7 @@ class TestMixinHandler(TestCase):
 
         @handler.inject_local_variable_modifier_at("test", CounterMatcher(0), ["c"])
         def inject(c):
-            return "test",
+            return ("test",)
 
         self.assertEqual(func(2), 2)
         handler.applyMixins()
@@ -1362,4 +1361,3 @@ class TestMixinHandler(TestCase):
         handler.applyMixins()
 
         self.assertEqual(func(2), 10)
-

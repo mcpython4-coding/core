@@ -257,7 +257,9 @@ class MixinPatchHelper:
             ):
                 yield index, instruction
 
-    def insertMethodAt(self, start: int, method: FunctionPatcher | types.MethodType, force_inline=True):
+    def insertMethodAt(
+        self, start: int, method: FunctionPatcher | types.MethodType, force_inline=True
+    ):
         """
         Inserts a method body at the given position
         Does some magic for linking the code
@@ -286,8 +288,7 @@ class MixinPatchHelper:
         # Rebind all inner local variables to something we cannot possibly enter,
         # so we cannot get conflicts (in the normal case)
         target.variable_names = [
-            method.target.__name__+"::"+e
-            for e in target.variable_names
+            method.target.__name__ + "::" + e for e in target.variable_names
         ]
 
         helper = MixinPatchHelper(target)
@@ -296,8 +297,7 @@ class MixinPatchHelper:
         for index, instr in helper.walk():
             if instr.opname == "JUMP_ABSOLUTE":
                 helper.instruction_listing[index] = reconstruct_instruction(
-                    instr,
-                    instr.arg + start
+                    instr, instr.arg + start
                 )
 
         captured = {}
@@ -313,16 +313,25 @@ class MixinPatchHelper:
             index += 1
             for index, instr in list(helper.walk())[index:]:
                 if instr.opname == "CALL_FUNCTION" and index > 1:
-                    possible_load = helper.instruction_listing[index-2]
-                    if possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF") and possible_load.argval == "capture_local":
-                        assert helper.instruction_listing[index-1].opname == "LOAD_CONST", "captured must be local var"
+                    possible_load = helper.instruction_listing[index - 2]
+                    if (
+                        possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF")
+                        and possible_load.argval == "capture_local"
+                    ):
+                        assert (
+                            helper.instruction_listing[index - 1].opname == "LOAD_CONST"
+                        ), "captured must be local var"
 
                         local = helper.instruction_listing[index - 1].argval
 
-                        if helper.instruction_listing[index+1].opname == "STORE_FAST":
-                            capture_target = helper.instruction_listing[index + 1].argval
+                        if helper.instruction_listing[index + 1].opname == "STORE_FAST":
+                            capture_target = helper.instruction_listing[
+                                index + 1
+                            ].argval
 
-                            captured[capture_target] = local, self.patcher.ensureVarName(local)
+                            captured[
+                                capture_target
+                            ] = local, self.patcher.ensureVarName(local)
                             captured_indices.add(index)
                             captured_names.add(local)
 
@@ -330,9 +339,11 @@ class MixinPatchHelper:
                             # LOAD_CONST <local name>        {index-1}
                             # CALL_FUNCTION 1                {index+0}
                             # STORE_FAST <new local name>    {index+1}
-                            helper.deleteRegion(index-2, index+2)
+                            helper.deleteRegion(index - 2, index + 2)
 
-                            print(f"found local variable access onto '{local}' from '{capture_target}' (var index: {self.patcher.ensureVarName(local)}) at {index} ({instr})")
+                            print(
+                                f"found local variable access onto '{local}' from '{capture_target}' (var index: {self.patcher.ensureVarName(local)}) at {index} ({instr})"
+                            )
                             index -= 1
 
                         # We don't really know what is done to the local,
@@ -344,25 +355,34 @@ class MixinPatchHelper:
                             # LOAD_CONST <local name>        {index-1}
                             # CALL_FUNCTION 1                {index+0}
                             helper.deleteRegion(index - 2, index + 1)
-                            helper.insertRegion(index, [
-                                dis.Instruction(
-                                    "LOAD_FAST", PyOpcodes.LOAD_FAST,
-                                    self.patcher.ensureVarName(local),
-                                    local,
-                                    local,
-                                    0,
-                                    0,
-                                    False,
-                                )
-                            ])
+                            helper.insertRegion(
+                                index,
+                                [
+                                    dis.Instruction(
+                                        "LOAD_FAST",
+                                        PyOpcodes.LOAD_FAST,
+                                        self.patcher.ensureVarName(local),
+                                        local,
+                                        local,
+                                        0,
+                                        0,
+                                        False,
+                                    )
+                                ],
+                            )
 
-                            print(f"found local variable read-only access onto '{local}'; replacing with link to real local at index {self.patcher.ensureVarName(local)}")
+                            print(
+                                f"found local variable read-only access onto '{local}'; replacing with link to real local at index {self.patcher.ensureVarName(local)}"
+                            )
 
                         break
             else:
                 break
 
-        print("protected", ("'"+"', '".join(captured_names)+"'") if captured_names else "null")
+        print(
+            "protected",
+            ("'" + "', '".join(captured_names) + "'") if captured_names else "null",
+        )
 
         # Rebind the captured locals
         for index, instr in list(helper.walk()):
@@ -380,7 +400,9 @@ class MixinPatchHelper:
                         False,
                     )
                     protect.add(index)
-                    print(f"transforming local access at {index}: '{instr.argval}' to '{name}' (old index: {instr.arg}, new: {i}) ({instr})")
+                    print(
+                        f"transforming local access at {index}: '{instr.argval}' to '{name}' (old index: {instr.arg}, new: {i}) ({instr})"
+                    )
 
         # Return becomes jump instruction, the function TAIL is currently not known,
         # so we need to trick it a little by setting its value to -1
@@ -391,17 +413,46 @@ class MixinPatchHelper:
 
             for index, instr in list(helper.walk())[index:]:
                 if instr.opname == "RETURN_VALUE":
-                    if index > 0 and helper.instruction_listing[index-1].opname == "LOAD_CONST":
+                    if (
+                        index > 0
+                        and helper.instruction_listing[index - 1].opname == "LOAD_CONST"
+                    ):
                         helper.deleteRegion(index - 1, index + 1)
-                        helper.insertRegion(index + 2, [
-                            dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
-                        ])
+                        helper.insertRegion(
+                            index + 2,
+                            [
+                                dis.Instruction(
+                                    "JUMP_ABSOLUTE",
+                                    PyOpcodes.JUMP_ABSOLUTE,
+                                    0,
+                                    0,
+                                    "",
+                                    0,
+                                    0,
+                                    False,
+                                )
+                            ],
+                        )
                     else:
-                        helper.deleteRegion(index, index+1)
-                        helper.insertRegion(index+2, [
-                            dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
-                            dis.Instruction("JUMP_ABSOLUTE", PyOpcodes.JUMP_ABSOLUTE, 0, 0, "", 0, 0, False)
-                        ])
+                        helper.deleteRegion(index, index + 1)
+                        helper.insertRegion(
+                            index + 2,
+                            [
+                                dis.Instruction(
+                                    "POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False
+                                ),
+                                dis.Instruction(
+                                    "JUMP_ABSOLUTE",
+                                    PyOpcodes.JUMP_ABSOLUTE,
+                                    0,
+                                    0,
+                                    "",
+                                    0,
+                                    0,
+                                    False,
+                                ),
+                            ],
+                        )
                     break
             else:
                 break
@@ -409,8 +460,10 @@ class MixinPatchHelper:
         # The last return statement does not need a jump_absolute wrapper, as it continues into
         # normal code
         size = len(helper.instruction_listing)
-        assert helper.instruction_listing[size-1].opname == "JUMP_ABSOLUTE", "something went horribly wrong!"
-        helper.deleteRegion(size-1, size)
+        assert (
+            helper.instruction_listing[size - 1].opname == "JUMP_ABSOLUTE"
+        ), "something went horribly wrong!"
+        helper.deleteRegion(size - 1, size)
 
         index = -1
         while index < len(helper.instruction_listing) - 1:
@@ -418,9 +471,12 @@ class MixinPatchHelper:
             for index, instr in list(helper.walk())[index:]:
                 if instr.opname == "CALL_FUNCTION" and index > 1:
                     if instr.arg == 1:
-                        possible_load = helper.instruction_listing[index-2]
+                        possible_load = helper.instruction_listing[index - 2]
 
-                        if possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF") and possible_load.argval == "mixin_return":
+                        if (
+                            possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF")
+                            and possible_load.argval == "mixin_return"
+                        ):
                             # Delete the LOAD_GLOBAL instruction
                             helper.instruction_listing[index] = dis.Instruction(
                                 "RETURN_VALUE",
@@ -432,7 +488,7 @@ class MixinPatchHelper:
                                 0,
                                 False,
                             )
-                            helper.deleteRegion(index-2, index-1)
+                            helper.deleteRegion(index - 2, index - 1)
                             index -= 3
                             protect.add(index)
                             break
@@ -440,7 +496,10 @@ class MixinPatchHelper:
                     elif instr.arg == 0:
                         possible_load = helper.instruction_listing[index - 1]
 
-                        if possible_load.opname == "LOAD_GLOBAL" and possible_load.argval == "mixin_return":
+                        if (
+                            possible_load.opname == "LOAD_GLOBAL"
+                            and possible_load.argval == "mixin_return"
+                        ):
                             helper.instruction_listing[index - 1] = dis.Instruction(
                                 "LOAD_CONST",
                                 PyOpcodes.LOAD_CONST,
@@ -470,7 +529,8 @@ class MixinPatchHelper:
 
         # Now rebind all
         for index, instr in list(helper.walk()):
-            if index in protect: continue
+            if index in protect:
+                continue
 
             if instr.opcode in dis.hasconst:
                 helper.instruction_listing[index] = reconstruct_instruction(
@@ -496,10 +556,23 @@ class MixinPatchHelper:
         # And now insert the code into our code
         # todo: check for HEAD generator instruction
 
-        self.insertRegion(start, helper.instruction_listing + [
-            dis.Instruction("LOAD_CONST", PyOpcodes.LOAD_CONST, self.patcher.ensureConstant("mixin:internal"), None, "", 0, 0, False),
-            dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
-        ])
+        self.insertRegion(
+            start,
+            helper.instruction_listing
+            + [
+                dis.Instruction(
+                    "LOAD_CONST",
+                    PyOpcodes.LOAD_CONST,
+                    self.patcher.ensureConstant("mixin:internal"),
+                    None,
+                    "",
+                    0,
+                    0,
+                    False,
+                ),
+                dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
+            ],
+        )
         self.patcher.max_stack_size += target.max_stack_size
 
         try:
@@ -511,9 +584,9 @@ class MixinPatchHelper:
         # Find out where the old instruction ended
         for index, instr in self.walk():
             if instr.opname == "LOAD_CONST" and instr.argval == "mixin:internal":
-                following = self.instruction_listing[index+1]
+                following = self.instruction_listing[index + 1]
                 assert following.opname == "POP_TOP"
-                self.deleteRegion(index, index+2)
+                self.deleteRegion(index, index + 2)
                 tail_index = index
                 break
         else:

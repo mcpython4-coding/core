@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -88,5 +88,8 @@ class TestPostInjectionOptimiser(TestCase):
         # Check if it is optimised away
         helper = MixinPatchHelper(target)
         self.assertEqual(helper.instruction_listing[0].opname, "LOAD_FAST")
-        self.assertEqual(helper.instruction_listing[0].arg, helper.patcher.ensureVarName("flag"), helper.instruction_listing[0])
-
+        self.assertEqual(
+            helper.instruction_listing[0].arg,
+            helper.patcher.ensureVarName("flag"),
+            helper.instruction_listing[0],
+        )
