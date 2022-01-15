@@ -15,6 +15,7 @@ import dis
 import typing
 
 from mcpython import shared
+from mcpython.mixin.CodeOptimiser import optimise_code
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
 
 shared.IS_TEST_ENV = True
@@ -28,6 +29,21 @@ class TestPostInjectionOptimiser(TestCase):
     def setUp(self):
         MixinHandler.LOCKED = False
         shared.IS_TEST_ENV = False
+
+    def test_optimiser_1(self):
+        def test():
+            a = 0
+            del a
+
+        helper = MixinPatchHelper(test)
+        optimise_code(helper)
+
+        self.assertEqual(helper.instruction_listing[0].opname, "LOAD_CONST")
+        self.assertEqual(helper.instruction_listing[0].argval, None)
+        self.assertEqual(helper.instruction_listing[1].opname, "RETURN_VALUE")
+
+        # Integrity check of the bytecode
+        self.assertEqual(test(), None)
 
     def test_basic(self):
         invoked = 0
