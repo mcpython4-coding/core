@@ -37,6 +37,7 @@ def optimise_code(helper: MixinPatchHelper):
     remove_load_pop(helper)
     remove_load_store_pairs(helper)
     remove_delete_fast_without_assign(helper)
+    remove_nop(helper)
 
 
 # Optimise-able:
@@ -140,5 +141,22 @@ def remove_load_store_pairs(helper: MixinPatchHelper):
                     helper.deleteRegion(index, index + 2)
                     index -= 1
                     break
+        else:
+            break
+
+
+def remove_nop(helper: MixinPatchHelper):
+    """
+    Optimiser method for removing NOP instructions
+    """
+
+    index = -1
+    while index < len(helper.instruction_listing) - 1:
+        index += 1
+        for index, instr in list(helper.walk())[index:]:
+            if instr.opcode == PyOpcodes.NOP:
+                helper.deleteRegion(index, index+1)
+                index -= 1
+                break
         else:
             break
