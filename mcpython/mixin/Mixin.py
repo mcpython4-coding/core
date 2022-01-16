@@ -37,6 +37,7 @@ from .MixinProcessors import (
     MixinGlobalReTargetProcessor,
     MixinLocal2ConstReplace,
     MixinReplacementProcessor,
+    MixinAttribute2ConstReplace,
 )
 
 
@@ -285,7 +286,7 @@ class MixinHandler:
         self,
         access_str: str,
         attr_name: str,
-        new_value,
+        new_value: typing.Any,
         load_from_local_hint: str = None,
         priority=0,
         optional=True,
@@ -303,7 +304,15 @@ class MixinHandler:
         :param optional: optional mixin?
         :param matcher: the instruction matcher object
         """
-        raise NotImplementedError
+        self.bound_mixin_processors.setdefault(access_str, []).append(
+            (
+                MixinAttribute2ConstReplace(attr_name, new_value, load_from_local_hint=load_from_local_hint, matcher=matcher),
+                priority,
+                optional,
+                shared.CURRENT_EVENT_SUB,
+            )
+        )
+        return self
 
     def replace_attribute_with_function_call(
         self,

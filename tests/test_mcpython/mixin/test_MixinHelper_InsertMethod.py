@@ -60,7 +60,7 @@ class TestInsertMethod(TestCase):
         self.assertEqual(target(), 1)
 
         helper = MixinPatchHelper(target)
-        helper.insertMethodAt(0, FunctionPatcher(test))
+        helper.insertMethodAt(4, FunctionPatcher(test))
         helper.store()
         helper.patcher.applyPatches()
 
@@ -87,7 +87,7 @@ class TestInsertMethod(TestCase):
             INVOKED = x
 
         helper = MixinPatchHelper(target)
-        helper.insertMethodAt(0, FunctionPatcher(test))
+        helper.insertMethodAt(2, FunctionPatcher(test))
         helper.store()
         helper.patcher.applyPatches()
 
@@ -115,13 +115,13 @@ class TestInsertMethod(TestCase):
             x = 2
 
         helper = MixinPatchHelper(target)
-        helper.insertMethodAt(1, FunctionPatcher(test))
+        helper.insertMethodAt(2, FunctionPatcher(test))
         helper.store()
         helper.patcher.applyPatches()
 
         global INVOKED
         INVOKED = False
-        self.assertEqual(target(), 1)
+        self.assertEqual(target(), 2)
         self.assertEqual(INVOKED, 1)
         INVOKED = False
 
@@ -147,7 +147,7 @@ class TestInsertMethod(TestCase):
         self.assertEqual(target(), 1)
 
         helper = MixinPatchHelper(target)
-        helper.insertMethodAt(0, FunctionPatcher(test))
+        helper.insertMethodAt(4, FunctionPatcher(test))
         helper.store()
         helper.patcher.applyPatches()
 
@@ -175,7 +175,7 @@ class TestInsertMethod(TestCase):
             INVOKED = capture_local("a")
 
         helper = MixinPatchHelper(target)
-        helper.insertMethodAt(1, FunctionPatcher(test))
+        helper.insertMethodAt(2, FunctionPatcher(test))
         helper.store()
         helper.patcher.applyPatches()
 

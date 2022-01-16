@@ -248,6 +248,7 @@ class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
         helper: MixinPatchHelper,
     ):
         index = 0 if helper.instruction_listing[0].opname != "GEN_START" else 1
+
         if not self.inline:
             helper.insertGivenMethodCallAt(
                 index,
@@ -261,6 +262,7 @@ class InjectFunctionCallAtHeadProcessor(AbstractMixinProcessor):
                 index,
                 self.target_func,
             )
+
         helper.store()
 
 
@@ -359,7 +361,7 @@ class InjectFunctionCallAtReturnReplaceValueProcessor(AbstractMixinProcessor):
                     ],
                 )
                 helper.insertGivenMethodCallAt(
-                    index,
+                    index + 1,
                     self.target_func,
                     *self.args,
                     collected_locals=self.collected_locals,
@@ -410,7 +412,7 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
 
                 if not self.inline:
                     helper.insertGivenMethodCallAt(
-                        index - 5 if not self.add_yield_value else index - 4,
+                        index,
                         self.target_func,
                         *(instr.opname == "YIELD_FROM",) + self.args,
                         collected_locals=self.collected_locals,
@@ -418,7 +420,7 @@ class InjectFunctionCallAtYieldProcessor(AbstractMixinProcessor):
                     )
                 else:
                     helper.insertMethodAt(
-                        index - 5 if not self.add_yield_value else index - 4,
+                        index,
                         self.target_func,
                     )
 
@@ -486,7 +488,7 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
                     continue
 
                 helper.insertRegion(
-                    index - 4,
+                    index,
                     [
                         dis.Instruction(
                             "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
@@ -495,7 +497,7 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
                 )
 
                 helper.insertGivenMethodCallAt(
-                    index - 4,
+                    index + (0 if self.add_yield_value else 1),
                     self.target_func,
                     *(instr.opname == "YIELD_FROM",) + self.args,
                     collected_locals=self.collected_locals,
@@ -538,7 +540,7 @@ class InjectFunctionCallAtTailProcessor(AbstractMixinProcessor):
 
         if not self.inline:
             helper.insertGivenMethodCallAt(
-                len(helper.instruction_listing) + 1,
+                len(helper.instruction_listing) - 1,
                 self.target_func,
                 *self.args,
                 collected_locals=self.collected_locals,
@@ -546,7 +548,7 @@ class InjectFunctionCallAtTailProcessor(AbstractMixinProcessor):
             )
         else:
             helper.insertMethodAt(
-                len(helper.instruction_listing) + 1,
+                len(helper.instruction_listing) - 1,
                 self.target_func,
             )
 

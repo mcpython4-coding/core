@@ -11,9 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import dis
 import typing
 
 import test_mcpython.mixin
+from mcpython.mixin.util import PyOpcodes
 from util import TestCase
 
 
@@ -140,3 +142,21 @@ class TestBasicBytecodeHelpers(TestCase):
         self.assertEqual(await localtest(), 0)
         self.assertEqual(test_mcpython.mixin.test_space.INVOKED, count + 2)
         test_mcpython.mixin.test_space.INVOKED = 0
+
+    def test_insertRegion_offset(self):
+        from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
+
+        def test():
+            a = 0
+            return a
+
+        helper = MixinPatchHelper(test)
+
+        helper.insertRegion(
+            1,
+            [dis.Instruction("YIELD_VALUE", PyOpcodes.YIELD_VALUE, 0, 0, "", 0, 0, False)]
+        )
+
+        self.assertEqual(
+            helper.instruction_listing[1].opname, "YIELD_VALUE"
+        )

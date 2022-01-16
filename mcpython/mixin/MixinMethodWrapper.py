@@ -191,8 +191,10 @@ class MixinPatchHelper:
         Inserts a list of instructions into the opcode list, resolving the jumps in code correctly
 
         WARNING: the user is required to make sure that stack & variable constraints still hold
+
+        :param start: where to start the insertion, the first instruction becomes the start index
+        :param instructions: list of instructions to insert
         """
-        start -= 1
         size = len(instructions)
 
         def rebind_offset(o: int) -> int:
@@ -229,9 +231,9 @@ class MixinPatchHelper:
                 )
 
         self.instruction_listing = (
-            self.instruction_listing[: start - 1]
+            self.instruction_listing[:start]
             + instructions
-            + self.instruction_listing[start - 1 :]
+            + self.instruction_listing[start:]
         )
 
     def deleteInstruction(self, instr: dis.Instruction):
@@ -393,7 +395,7 @@ class MixinPatchHelper:
                             # CALL_FUNCTION 1                {index+0}
                             helper.deleteRegion(index - 2, index + 1)
                             helper.insertRegion(
-                                index,
+                                index - 2,
                                 [
                                     dis.Instruction(
                                         "LOAD_FAST",
@@ -455,7 +457,7 @@ class MixinPatchHelper:
                     # If we want to discard the returned result, we need to add a POP_TOP instruction
                     if discard_return_result:
                         helper.insertRegion(
-                            index + 2,
+                            index,
                             [
                                 dis.Instruction(
                                     "POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False
@@ -474,7 +476,7 @@ class MixinPatchHelper:
                         )
                     else:
                         helper.insertRegion(
-                            index + 2,
+                            index,
                             [
                                 dis.Instruction(
                                     "JUMP_ABSOLUTE",
@@ -678,7 +680,7 @@ class MixinPatchHelper:
             return
 
         self.insertRegion(
-            -1, [dis.Instruction("GEN_START", 129, 2, None, None, False, 0, 0)]
+            0, [dis.Instruction("GEN_START", 129, 2, None, None, False, 0, 0)]
         )
         self.is_async = True
         return self
