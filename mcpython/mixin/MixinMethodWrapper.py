@@ -74,6 +74,32 @@ def capture_local(name: str):
 
 OFFSET_JUMPS = dis.hasjrel
 REAL_JUMPS = dis.hasjabs
+LOAD_SINGLE_VALUE = {
+    PyOpcodes.LOAD_FAST,
+    PyOpcodes.LOAD_CONST,
+    PyOpcodes.LOAD_DEREF,
+    PyOpcodes.LOAD_GLOBAL,
+    PyOpcodes.LOAD_BUILD_CLASS,
+    PyOpcodes.LOAD_NAME,
+    PyOpcodes.LOAD_CLASSDEREF,
+}
+POP_SINGLE_VALUE = {
+    PyOpcodes.STORE_FAST,
+    PyOpcodes.STORE_DEREF,
+    PyOpcodes.STORE_GLOBAL,
+    PyOpcodes.STORE_NAME,
+}
+POP_DOUBLE_VALUE = {
+    PyOpcodes.STORE_ATTR,
+    PyOpcodes.STORE_SUBSCR,
+}
+POP_DOUBLE_AND_PUSH_SINGLE = {
+    PyOpcodes.STORE_SUBSCR,
+    PyOpcodes.STORE_ATTR,
+}
+POP_SINGLE_AND_PUSH_SINGLE = {
+    PyOpcodes.LOAD_METHOD,
+}
 
 
 class MixinPatchHelper:
@@ -208,6 +234,10 @@ class MixinPatchHelper:
             + self.instruction_listing[start - 1 :]
         )
 
+    def deleteInstruction(self, instr: dis.Instruction):
+        self.deleteRegion(instr.offset, instr.offset + 1)
+        return self
+
     def replaceConstant(
         self,
         previous,
@@ -258,7 +288,8 @@ class MixinPatchHelper:
                 yield index, instruction
 
     def insertMethodAt(
-        self, start: int, method: FunctionPatcher | types.MethodType, force_inline=True
+        self, start: int, method: FunctionPatcher | types.MethodType, force_inline=True, added_args=0,
+        discard_return_result=True,
     ):
         """
         Inserts a method body at the given position
@@ -278,6 +309,8 @@ class MixinPatchHelper:
         :param start: where the method head should be inserted
         :param method: the method object ot inject
         :param force_inline: forced a inline, currently always inlining code
+        :param added_args: how many positional args are added to the method call
+        :param discard_return_result: if the return result should be deleted or not
         """
 
         if not isinstance(method, FunctionPatcher):
@@ -413,14 +446,16 @@ class MixinPatchHelper:
 
             for index, instr in list(helper.walk())[index:]:
                 if instr.opname == "RETURN_VALUE":
-                    if (
-                        index > 0
-                        and helper.instruction_listing[index - 1].opname == "LOAD_CONST"
-                    ):
-                        helper.deleteRegion(index - 1, index + 1)
+                    helper.deleteRegion(index, index + 1)
+
+                    # If we want to discard the returned result, we need to add a POP_TOP instruction
+                    if discard_return_result:
                         helper.insertRegion(
                             index + 2,
                             [
+                                dis.Instruction(
+                                    "POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False
+                                ),
                                 dis.Instruction(
                                     "JUMP_ABSOLUTE",
                                     PyOpcodes.JUMP_ABSOLUTE,
@@ -430,17 +465,13 @@ class MixinPatchHelper:
                                     0,
                                     0,
                                     False,
-                                )
+                                ),
                             ],
                         )
                     else:
-                        helper.deleteRegion(index, index + 1)
                         helper.insertRegion(
                             index + 2,
                             [
-                                dis.Instruction(
-                                    "POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False
-                                ),
                                 dis.Instruction(
                                     "JUMP_ABSOLUTE",
                                     PyOpcodes.JUMP_ABSOLUTE,
@@ -462,7 +493,7 @@ class MixinPatchHelper:
         size = len(helper.instruction_listing)
         assert (
             helper.instruction_listing[size - 1].opname == "JUMP_ABSOLUTE"
-        ), "something went horribly wrong!"
+        ), f"something went horribly wrong, got {helper.instruction_listing[size - 1]}!"
         helper.deleteRegion(size - 1, size)
 
         index = -1
@@ -556,8 +587,23 @@ class MixinPatchHelper:
         # And now insert the code into our code
         # todo: check for HEAD generator instruction
 
+        bind_locals = [
+            dis.Instruction(
+                "STORE_FAST",
+                PyOpcodes.STORE_FAST,
+                self.patcher.ensureVarName(e),
+                e,
+                e,
+                0,
+                0,
+                False,
+            )
+            for e in reversed(method.variable_names[:added_args])
+        ]
+
         self.insertRegion(
             start,
+            bind_locals +
             helper.instruction_listing
             + [
                 dis.Instruction(
@@ -1129,3 +1175,57 @@ class MixinPatchHelper:
         print("Constants:", self.patcher.constants)
         print("Free vars:", self.patcher.free_vars)
         print("Cell vars:", self.patcher.cell_vars)
+
+    def findSourceOfStackIndex(self, index: int, offset: int) -> typing.Iterator[dis.Instruction]:
+        """
+        Finds the source instruction of the given stack element.
+        Uses advanced back-tracking in code
+
+        :param index: current instruction index, before which we want to know the layout
+        :param offset: the offset, where 0 is top, and all following numbers (1, 2, 3, ...) give the i+1-th
+            element of the stack
+        """
+
+        for instr in reversed(self.instruction_listing[:index]):
+            if offset < 0:
+                raise RuntimeError
+
+            if offset == 0:  # Currently, at top
+                if instr.opcode in LOAD_SINGLE_VALUE:
+                    yield instr
+                    return
+
+                elif instr.opcode in POP_DOUBLE_AND_PUSH_SINGLE or instr.opcode in POP_SINGLE_AND_PUSH_SINGLE:
+                    yield instr
+                    return
+
+            if instr.opcode in POP_SINGLE_AND_PUSH_SINGLE:
+                continue
+
+            if instr.opcode in LOAD_SINGLE_VALUE:
+                offset -= 1
+
+            elif instr.opcode in POP_SINGLE_VALUE:
+                offset += 1
+
+            elif instr.opcode in POP_DOUBLE_AND_PUSH_SINGLE:
+                offset += 1
+
+            elif instr.opcode in POP_DOUBLE_VALUE:
+                offset += 2
+
+            elif instr.opcode == PyOpcodes.CALL_METHOD:
+                offset += 1
+                offset -= instr.arg
+
+            elif instr.opcode == PyOpcodes.UNPACK_SEQUENCE:
+                offset += instr.arg - 1
+
+            elif instr.opcode == PyOpcodes.FOR_ITER:
+                raise ValueError
+
+            else:
+                raise NotImplementedError(instr)
+
+        if offset < 0:
+            raise RuntimeError

@@ -15,6 +15,7 @@ import dis
 import types
 import typing
 
+from mcpython.engine import logger
 from mcpython.mixin.InstructionMatchers import AbstractInstructionMatcher
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper, reconstruct_instruction
 from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
@@ -623,3 +624,34 @@ class InjectFunctionLocalVariableModifier(AbstractMixinProcessor):
                     insert_after=store_locals,
                 )
         helper.store()
+
+
+class MethodInlineProcessor(AbstractMixinProcessor):
+    def __init__(self, func_name: str, target_accessor: typing.Callable[[], typing.Callable] = None):
+        self.func_name = func_name
+        self.target_accessor = target_accessor
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        for index, instr in helper.walk():
+            if instr.opname == "CALL_METHOD":
+                try:
+                    source = next(helper.findSourceOfStackIndex(index, instr.arg))
+
+                    print(source, self.func_name)
+
+                    if source.opcode == PyOpcodes.LOAD_METHOD:
+                        if self.func_name.startswith("%.") and source.argval == self.func_name.split(".")[-1]:
+                            if self.target_accessor is not None:
+                                helper.deleteInstruction(instr)
+                                helper.insertMethodAt(index, self.target_accessor(), added_args=instr.arg, discard_return_result=False)
+
+                    print("source: ", source)
+                except ValueError:
+                    pass
+                except:
+                    logger.print_exception(f"during tracing source of {instr}")

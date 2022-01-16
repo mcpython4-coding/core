@@ -19,6 +19,7 @@ from mcpython import shared
 from mcpython.client.rendering.model.api import IItemModelLoader
 from mcpython.client.texture import TextureAtlas
 from mcpython.engine import logger
+from mcpython.mixin.optimiser_annotations import try_optimise
 
 from .BoxModel import BoxModel
 
@@ -163,6 +164,7 @@ class ItemModel:
         self.overrides.append((predicate, replacement))
         return self
 
+    @try_optimise()
     async def bake(self, helper: "ItemModelHandler"):
         for i, texture in enumerate(self.layers):
             if texture is None:
@@ -211,6 +213,7 @@ class ItemModelHandler:
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])
             self.models[item] = await ItemModel.from_file(file, item)
 
+    @try_optimise()
     async def bake(self):
         self.atlas.load()
         for model in self.models.values():

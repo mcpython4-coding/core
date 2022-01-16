@@ -24,6 +24,8 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.mixin.optimiser_annotations import access_static
+from mcpython.mixin.optimiser_annotations import constant_arg
 
 if shared.IS_CLIENT:
     from mcpython.client.texture.AnimationManager import animation_manager
@@ -53,6 +55,7 @@ class TickHandler:
     def schedule_tick(self, dt: float):
         asyncio.get_event_loop().run_until_complete(self.tick(dt))
 
+    @access_static("shared.IS_CLIENT")
     async def tick(self, dt: float):
         """
         Execute ticks
@@ -132,7 +135,7 @@ class TickHandler:
                     ),
                 )
 
-    def schedule_once(self, function, *args, **kwargs):
+    def schedule_once(self, function: typing.Callable | typing.Coroutine, *args, **kwargs):
         """
         Will execute the function in near time. Helps when in an event and need to exchange stuff which might be
         affected when calling further down the event stack
@@ -140,30 +143,36 @@ class TickHandler:
         """
         self.execute_array.append((function, args, kwargs))
 
+    @constant_arg("args")
+    @constant_arg("kwargs")
     def bind(
-        self, function, tick, is_delta=True, ticket_function=None, args=[], kwargs={}
+        self, function: typing.Callable | typing.Coroutine, tick: int, is_delta=True, ticket_function=None, args=[], kwargs={}
     ):
         """
         bind an function to an given tick
         :param function: the function to bind
         :param tick: the tick to add
         :param is_delta: if it is delta or not
-        :param ticket_function: function which is called when the function is called with some informations
+        :param ticket_function: function which is called when the function is called with some information
         :param args: the args to give
         :param kwargs: the kwargs to give
         """
         if self.instant_ticks:
             function(*args, **kwargs)
             return
+
         if is_delta:
             tick += self.active_tick
+
         if tick not in self.tick_array:
             self.tick_array[tick] = []
+
         if ticket_function:
             ticket_id = self.next_ticket_id
             self.next_ticket_id += 1
         else:
             ticket_id = None
+
         self.tick_array[tick].append(
             (ticket_id, function, args, kwargs, ticket_function)
         )
@@ -171,6 +180,7 @@ class TickHandler:
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)
 
+    @access_static("shared.IS_CLIENT")
     async def send_random_ticks(self, *args, **kwargs):
         # todo: when networking, only on server & walk over all players!
         if not shared.IS_CLIENT:

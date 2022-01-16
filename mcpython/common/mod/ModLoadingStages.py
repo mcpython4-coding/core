@@ -267,11 +267,11 @@ manager = LoadingStageManager()
 manager.add_stage(
     LoadingStage("minecraft:loading_preparation", "preparation of loading")
     .add_event_stage("stage:pre")
-    .add_event_stage("stage:mixin:prepare", "stage:pre")  # Define your mixins here...
-    .add_event_stage(
-        "stage:mixin:apply", "stage:mixin:prepare"
-    )  # ... and here we apply them
-    .add_event_stage("stage:mod:init", "stage:pre", "stage:mixin:apply")
+    .add_event_stage("stage:mod:init", "stage:pre")
+    .add_event_stage("stage:mixin:prepare", "stage:init")  # Define your mixins here...
+    # ... and here we apply them
+    .add_event_stage("stage:mixin:apply", "stage:mixin:prepare")
+    .add_event_stage("stage:mixin:optimise_code", "stage:mixin:apply")
 )
 
 if shared.IS_CLIENT:

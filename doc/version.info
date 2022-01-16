@@ -2001,4 +2001,6 @@ fI  [uuk]: biome map stores now only one biome in each 4x4 section
 f   [uuk]: the biome map is now in charge to determin the biome color
 f   [uuk]: mixins can now capture_local()s and mixin_return() using insertMethodAt()
 f   [uuk]: added CodeOptimiser.py for some code optimisation after mixins mixed up stuff
+f   [uuk]: added optimiser_annotations.py for annotations optimising code
+           at runtime, allowing hinting certain stuff
 
