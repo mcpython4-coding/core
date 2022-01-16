@@ -16,7 +16,7 @@ import typing
 from mcpython.engine import logger
 from mcpython.mixin import CodeOptimiser
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper
-from mcpython.mixin.MixinProcessors import MethodInlineProcessor, AbstractMixinProcessor
+from mcpython.mixin.MixinProcessors import AbstractMixinProcessor, MethodInlineProcessor
 
 
 class _OptimiserContainer:
@@ -31,7 +31,9 @@ class _OptimiserContainer:
             helper = MixinPatchHelper(self.target)
 
             for processor in self.code_walkers:
-                logger.println(f"[INFO] applying optimiser mixin {processor} onto {self.target}")
+                logger.println(
+                    f"[INFO] applying optimiser mixin {processor} onto {self.target}"
+                )
                 processor.apply(None, helper.patcher, helper)
                 helper.re_eval_instructions()
 
@@ -43,14 +45,18 @@ class _OptimiserContainer:
         self.optimise_target()
 
 
-def _schedule_optimisation(target: typing.Callable | typing.Type) -> _OptimiserContainer:
+def _schedule_optimisation(
+    target: typing.Callable | typing.Type,
+) -> _OptimiserContainer:
     if not hasattr(target, "optimiser_container"):
         target.optimiser_container = _OptimiserContainer(target)
 
         from mcpython import shared
 
         if not shared.IS_TEST_ENV:
-            shared.mod_loader("minecraft", "stage:mixin:optimise_code")(target.optimiser_container.optimize_target_async())
+            shared.mod_loader("minecraft", "stage:mixin:optimise_code")(
+                target.optimiser_container.optimize_target_async()
+            )
 
     return target.optimiser_container
 
@@ -134,7 +140,9 @@ def constant_global():
     return annotation
 
 
-def inline_call(call_target: str, static_target: typing.Callable[[], typing.Callable] = None):
+def inline_call(
+    call_target: str, static_target: typing.Callable[[], typing.Callable] = None
+):
     """
     Marks the calls to the given method to be inlined
     The optimiser has the last word on this and may choose
@@ -144,7 +152,9 @@ def inline_call(call_target: str, static_target: typing.Callable[[], typing.Call
     """
 
     def annotation(target: typing.Callable):
-        _schedule_optimisation(target).code_walkers.append(MethodInlineProcessor(call_target, static_target))
+        _schedule_optimisation(target).code_walkers.append(
+            MethodInlineProcessor(call_target, static_target)
+        )
         return target
 
     return annotation

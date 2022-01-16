@@ -288,7 +288,11 @@ class MixinPatchHelper:
                 yield index, instruction
 
     def insertMethodAt(
-        self, start: int, method: FunctionPatcher | types.MethodType, force_inline=True, added_args=0,
+        self,
+        start: int,
+        method: FunctionPatcher | types.MethodType,
+        force_inline=True,
+        added_args=0,
         discard_return_result=True,
     ):
         """
@@ -603,8 +607,8 @@ class MixinPatchHelper:
 
         self.insertRegion(
             start,
-            bind_locals +
-            helper.instruction_listing
+            bind_locals
+            + helper.instruction_listing
             + [
                 dis.Instruction(
                     "LOAD_CONST",
@@ -1176,7 +1180,9 @@ class MixinPatchHelper:
         print("Free vars:", self.patcher.free_vars)
         print("Cell vars:", self.patcher.cell_vars)
 
-    def findSourceOfStackIndex(self, index: int, offset: int) -> typing.Iterator[dis.Instruction]:
+    def findSourceOfStackIndex(
+        self, index: int, offset: int
+    ) -> typing.Iterator[dis.Instruction]:
         """
         Finds the source instruction of the given stack element.
         Uses advanced back-tracking in code
@@ -1195,7 +1201,10 @@ class MixinPatchHelper:
                     yield instr
                     return
 
-                elif instr.opcode in POP_DOUBLE_AND_PUSH_SINGLE or instr.opcode in POP_SINGLE_AND_PUSH_SINGLE:
+                elif (
+                    instr.opcode in POP_DOUBLE_AND_PUSH_SINGLE
+                    or instr.opcode in POP_SINGLE_AND_PUSH_SINGLE
+                ):
                     yield instr
                     return
 

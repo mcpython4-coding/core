@@ -24,8 +24,7 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.mixin.optimiser_annotations import access_static
-from mcpython.mixin.optimiser_annotations import constant_arg
+from mcpython.mixin.optimiser_annotations import access_static, constant_arg
 
 if shared.IS_CLIENT:
     from mcpython.client.texture.AnimationManager import animation_manager
@@ -135,7 +134,9 @@ class TickHandler:
                     ),
                 )
 
-    def schedule_once(self, function: typing.Callable | typing.Coroutine, *args, **kwargs):
+    def schedule_once(
+        self, function: typing.Callable | typing.Coroutine, *args, **kwargs
+    ):
         """
         Will execute the function in near time. Helps when in an event and need to exchange stuff which might be
         affected when calling further down the event stack
@@ -146,7 +147,13 @@ class TickHandler:
     @constant_arg("args")
     @constant_arg("kwargs")
     def bind(
-        self, function: typing.Callable | typing.Coroutine, tick: int, is_delta=True, ticket_function=None, args=[], kwargs={}
+        self,
+        function: typing.Callable | typing.Coroutine,
+        tick: int,
+        is_delta=True,
+        ticket_function=None,
+        args=[],
+        kwargs={},
     ):
         """
         bind an function to an given tick
