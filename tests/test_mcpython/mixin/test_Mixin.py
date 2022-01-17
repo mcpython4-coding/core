@@ -1400,3 +1400,75 @@ class TestMixinHandler(TestCase):
         handler.applyMixins()
 
         self.assertEqual(func(2), 10)
+
+    def test_replace_attribute_with_constant_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target():
+            a = self.test_replace_attribute_with_constant_1
+            return a
+
+        handler.makeFunctionArrival("test", target)
+
+        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None)
+
+        handler.applyMixins()
+
+        self.assertIsNotNone(self.test_replace_attribute_with_constant_1)
+        self.assertIsNone(target())
+
+    def test_replace_attribute_with_constant_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target(s):
+            a = s.test_replace_attribute_with_constant_1
+            return a
+
+        handler.makeFunctionArrival("test", target)
+
+        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None)
+
+        handler.applyMixins()
+
+        self.assertIsNotNone(self.test_replace_attribute_with_constant_1)
+        self.assertIsNone(target(self))
+
+    def test_replace_attribute_with_constant_3(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target(s):
+            a = s.test_replace_attribute_with_constant_1
+            return a
+
+        handler.makeFunctionArrival("test", target)
+
+        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None, load_from_local_hint="s")
+
+        handler.applyMixins()
+
+        self.assertIsNotNone(self.test_replace_attribute_with_constant_1)
+        self.assertIsNone(target(self))
+
+    def test_replace_attribute_with_constant_4(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target(s):
+            a = s.test_replace_attribute_with_constant_1
+            return a
+
+        handler.makeFunctionArrival("test", target)
+
+        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None, load_from_local_hint="c")
+
+        handler.applyMixins()
+
+        self.assertIsNotNone(self.test_replace_attribute_with_constant_1)
+        self.assertIsNotNone(target(self))

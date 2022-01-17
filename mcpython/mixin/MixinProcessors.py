@@ -141,6 +141,73 @@ class MixinGlobal2ConstReplace(AbstractMixinProcessor):
         helper.store()
 
 
+class MixinAttribute2ConstReplace(AbstractMixinProcessor):
+    def __init__(
+        self, attr_name: str, after, matcher: AbstractInstructionMatcher = None, load_from_local_hint: str = None
+    ):
+        self.attr_name = attr_name
+        self.after = after
+        self.matcher = matcher
+        self.load_from_local_hint = load_from_local_hint
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        match = -1
+        for index, instr in helper.walk():
+            if instr.opcode != PyOpcodes.LOAD_ATTR:
+                continue
+
+            if self.load_from_local_hint is not None:
+                source = next(helper.findSourceOfStackIndex(index, 0))
+                if source.opcode == PyOpcodes.LOAD_FAST:
+                    if source.argval != self.load_from_local_hint:
+                        continue
+
+                else:
+                    continue
+
+            match += 1
+
+            if self.matcher is not None and not self.matcher.matches(
+                helper, index, match
+            ):
+                continue
+
+            # We have a <TOS>.<arg> instruction, and want a POP_TOP followed by a LOAD_CONST
+
+            helper.instruction_listing[index] = dis.Instruction(
+                "POP_TOP",
+                PyOpcodes.POP_TOP,
+                0,
+                0,
+                "",
+                0,
+                0,
+                False,
+            )
+            helper.insertRegion(
+                index + 1,
+                [
+                    dis.Instruction(
+                        "LOAD_CONST",
+                        PyOpcodes.LOAD_CONST,
+                        helper.patcher.ensureConstant(self.after),
+                        self.after,
+                        repr(self.after),
+                        0,
+                        0,
+                        False,
+                    )
+                ]
+            )
+
+        helper.store()
+
+
 class MixinLocal2ConstReplace(AbstractMixinProcessor):
     def __init__(
         self, local_name: str, after, matcher: AbstractInstructionMatcher = None

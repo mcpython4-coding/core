@@ -324,6 +324,7 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
         args=tuple(),
         collected_locals=tuple(),
+        inline=False,
     ):
         """
         Replaces an attribute access with a method call to a constant method
@@ -338,6 +339,7 @@ class MixinHandler:
         :param matcher: the instruction matcher object
         :param args: args to add to the function
         :param collected_locals: what locals to add as args
+        :param inline: if to inline the method call or not
         """
         raise NotImplementedError
 
@@ -747,7 +749,7 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
     ):
         """
-        Modifies method calls to call another method, loaded via LOAD_GLOBAL
+        Modifies method calls, loaded via LOAD_GLOBAL, to call another method annotated with this
 
         :param access_str: the method
         :param target_method: the method to replace
@@ -768,28 +770,8 @@ class MixinHandler:
         matcher: AbstractInstructionMatcher = None,
     ):
         """
-        Modifies method calls to call another method, loaded via LOAD_ATTR
+        Modifies method calls, loaded via LOAD_ATTR, to call another method annotated with this
 
-        :param access_str: the method
-        :param target_method: the method to replace
-        :param inline: when True, will inline this annotated method into the target
-        :param priority: the mixin priority
-        :param optional: optional mixin?
-        :param matcher: optional, a matcher object for the "invoke" instruction
-        """
-        raise NotImplementedError
-
-    def inject_replace_builtin_method_invoke(
-        self,
-        access_str: str,
-        target_method: str,
-        inline=True,
-        priority=0,
-        optional=True,
-        matcher: AbstractInstructionMatcher = None,
-    ):
-        """
-        Modifies method calls to call another method, loaded via the builtin system
         :param access_str: the method
         :param target_method: the method to replace
         :param inline: when True, will inline this annotated method into the target
