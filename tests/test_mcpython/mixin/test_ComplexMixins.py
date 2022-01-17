@@ -93,3 +93,16 @@ class TestPostInjectionOptimiser(TestCase):
             helper.patcher.ensureVarName("flag"),
             helper.instruction_listing[0],
         )
+
+    def test_attribute2constant_cleanup(self):
+        def target(c):
+            return c.test_attribute2constant_cleanup
+
+        handler = MixinHandler()
+        handler.makeFunctionArrival("test", target)
+        handler.replace_attribute_with_constant("test", "%.test_attribute2constant_cleanup", 2)
+        handler.applyMixins()
+
+        helper = MixinPatchHelper(target)
+        self.assertEqual(helper.instruction_listing[0].opname, "LOAD_CONST")
+        self.assertEqual(helper.instruction_listing[0].argval, 2)
