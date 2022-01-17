@@ -132,7 +132,7 @@ class MixinPatchHelper:
         self.store()
         self.instruction_listing[:] = list(self.patcher.get_instruction_list())
 
-    def deleteRegion(self, start: int, end: int, safety=True):
+    def deleteRegion(self, start: int, end: int, safety=True, maps_invalid_to: int = -1):
         """
         Deletes a region from start (including) to end (excluding) of the code, rebinding jumps and similar calls
         outside the region
@@ -140,6 +140,12 @@ class MixinPatchHelper:
         (This is done during code walking for jump resolving)
 
         WARNING: the user is required to make sure that stack & variable constraints still hold
+
+        :param start: the start position (including)
+        :param end: the end position (excluding)
+        :param safety: if to check for instructions jumping INTO the region
+        :param maps_invalid_to: an index in the new version where to re-wire jumps to when they would
+            lead into the deleted region
         """
         i = 0
         size = end - start
@@ -147,7 +153,11 @@ class MixinPatchHelper:
         def rebind_offset(o: int) -> int:
             nonlocal i
 
+            # Is our jump target IN the region?
             if start <= i + o < end and safety:
+                if maps_invalid_to != -1:
+                    return maps_invalid_to - i
+
                 raise RuntimeError("Instruction to jump to is getting deleted")
 
             # If we jump OVER the region
@@ -161,6 +171,9 @@ class MixinPatchHelper:
 
         def rebind_real(o: int) -> int:
             if start <= o < end and safety:
+                if maps_invalid_to != -1:
+                    return maps_invalid_to
+
                 raise RuntimeError("Instruction to jump to is getting deleted")
 
             if o >= end:

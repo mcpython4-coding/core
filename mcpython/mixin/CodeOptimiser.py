@@ -173,6 +173,7 @@ def remove_load_store_pairs(helper: MixinPatchHelper):
 def remove_nop(helper: MixinPatchHelper):
     """
     Optimiser method for removing NOP instructions
+    todo: can we combine-delete multiple instructions?
     """
 
     index = -1
@@ -180,7 +181,7 @@ def remove_nop(helper: MixinPatchHelper):
         index += 1
         for index, instr in list(helper.walk())[index:]:
             if instr.opcode == PyOpcodes.NOP:
-                helper.deleteRegion(index, index + 1)
+                helper.deleteRegion(index, index + 1, maps_invalid_to=index)
                 index -= 1
                 break
         else:
