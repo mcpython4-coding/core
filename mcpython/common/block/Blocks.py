@@ -44,7 +44,7 @@ from mcpython.util.enums import ToolType
 # powder_snow
 # piston, piston head, player head, player wall head
 # bubble column, chain command block, redstone torch, wall torch
-# red mushroom block, repeater, repeating command block, scaffolding
+# red mushroom block, repeating command block, scaffolding
 # skeleton skull, soul torch, spawner, sticky piston
 # structure block, structure void, torch, tripwire, tripwire hook
 # turtle egg, twisted vines, vine, void air, weeping vines

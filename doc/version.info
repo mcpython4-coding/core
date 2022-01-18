@@ -2010,4 +2010,7 @@ G   [github]: started development for snapshot 22w05a
 F   [uuk]: implemented correct behaviour of redstone lamp and block
 b   [uuk]: fixed redstone wire's redstone API implementation not doing
            what it is supposed to do
+F   [uuk]: added functional redstone repeater
+B** [uuk]: fixed TickHandler badly missbehaving when skipping ticks with scheduled functions
+           leading into multiple invocations and a incorrect tick counter
 

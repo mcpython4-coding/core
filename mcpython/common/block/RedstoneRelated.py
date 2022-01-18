@@ -13,11 +13,15 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+from pyglet.window import key
+from pyglet.window import mouse
+
 import mcpython.engine.physics.AxisAlignedBoundingBox
 from mcpython import shared
 from mcpython.util.enums import EnumSide
 
 from . import AbstractBlock
+from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 
 states = "none", "up", "side"
@@ -169,6 +173,99 @@ class RedstoneBlock(AbstractBlock.AbstractBlock):
         return True
 
 
+class RedstoneRepeater(IHorizontalOrientableBlock):
+    """
+    Class representing the repeater block
+
+    todo: implement locking
+    """
+
+    NAME = "minecraft:repeater"
+
+    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby("delay", "2", "3", "4").add_comby_side_horizontal("facing").add_comby_bool("locked").add_comby_bool("powered").build()
+
+    IS_SOLID = False
+    DEFAULT_FACE_SOLID = EnumSide.DOWN.bitflag
+
+    def __init__(self):
+        super().__init__()
+        self.delay = 1
+        self.facing = EnumSide.NORTH
+        self.locked = False
+        self.active = False
+        self.last_scheduled_state = False
+
+    async def on_redstone_update(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        source_block = dimension.get_block(self.facing.invert().relative_offset(self.position), none_if_str=True)
+        source_active = source_block is not None and (source_block.get_redstone_output(self.facing.invert()) > 0)
+
+        if source_active != self.last_scheduled_state:
+            shared.tick_handler.bind_redstone_tick(self.set_active(source_active), self.delay)
+            self.last_scheduled_state = source_active
+
+    async def set_active(self, active: bool):
+        """
+        Internal state setting the state of the repeater
+        Use tick handler's redstone tick bind method for better stuff
+        """
+
+        self.active = active
+
+        if shared.IS_CLIENT:
+            self.face_info.update(True)
+
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        target_block: AbstractBlock.AbstractBlock = dimension.get_block(self.facing.relative_offset(self.position), none_if_str=True)
+
+        if target_block is not None:
+            target_block.inject_redstone_power(self.facing, 15 if active else 0)
+            await target_block.on_redstone_update()
+
+    def get_model_state(self) -> dict:
+        return {
+            "delay": str(self.delay),
+            "facing": self.facing.rotate((0, -90, 0)).normal_name,
+            "locked": str(self.locked).lower(),
+            "powered": str(self.active).lower(),
+        }
+
+    async def set_model_state(self, state: dict):
+        await super().set_model_state(state)
+        self.facing = self.facing.rotate((0, 90, 0))
+
+        if "delay" in state:
+            # Clamp the value in case it is out of range
+            self.delay = max(min(int(state["delay"]), 4), 1)
+
+        if "locked" in state:
+            self.locked = state["locked"] == "true"
+
+        if "powered" in state:
+            self.active = state["powered"] == "true"
+
+    def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
+        return side == self.facing or side == self.facing.invert()
+
+    async def on_player_interaction(
+        self,
+        player,
+        button: int,
+        modifiers: int,
+        hit_position: tuple,
+        itemstack,
+    ):
+        if button == mouse.RIGHT and not modifiers & key.MOD_SHIFT:
+            self.delay = self.delay % 4 + 1
+            self.face_info.update(True)
+            return True
+
+        return False
+
+    def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
+        return 15 if self.active and side == self.facing else 0
+
+
 class RedstoneLamp(AbstractBlock.AbstractBlock):
     DEBUG_WORLD_BLOCK_STATES = [
         {
@@ -207,7 +304,7 @@ class RedstoneLamp(AbstractBlock.AbstractBlock):
 
                 return
 
-        # todo: this should wait some ticks to be disabled
+        # todo: this should wait some ticks to be disabled -> tick handler redstone ticks
 
         self.lit = False
 

@@ -131,6 +131,7 @@ async def load():
     block_registry.register(Fence.AcaciaFence)
     block_registry.register(RedstoneRelated.RedstoneWire)
     block_registry.register(RedstoneRelated.RedstoneBlock)
+    block_registry.register(RedstoneRelated.RedstoneRepeater)
     block_registry.register(RedstoneRelated.RedstoneLamp)
     block_registry.register(Rails.ActivatorRail)
     block_registry.register(Rails.PoweredRail)

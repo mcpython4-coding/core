@@ -43,9 +43,7 @@ class ServerSelectionState(AbstractState):
             (-180, 30),
             anchor_window="MD",
             anchor_button="MD",
-            on_press=lambda *_: asyncio.get_event_loop().run_until_complete(
-                shared.state_handler.change_state("minecraft:start_menu")
-            ),
+            on_press=shared.state_handler.change_state("minecraft:start_menu"),
         )
         self.join_button = UIPartButton(
             (300, 20),

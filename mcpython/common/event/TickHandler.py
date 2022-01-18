@@ -24,7 +24,7 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.mixin.optimiser_annotations import access_static, constant_arg
+from mcpython.mixin.optimiser_annotations import access_static, constant_arg, inline_call
 
 if shared.IS_CLIENT:
     from mcpython.client.texture.AnimationManager import animation_manager
@@ -63,24 +63,30 @@ class TickHandler:
 
         :param dt: the time that came after the last event
         """
-        self.active_tick += 1
         self.lost_time += dt
 
         # execute functions
         while self.lost_time > 1 / 20:
             self.lost_time -= 1 / 20
+            self.active_tick += 1
+
             if self.active_tick in self.tick_array:
                 for ticket_id, function, args, kwargs, ticket_update in self.tick_array[
                     self.active_tick
                 ]:
-                    result = function(*args, **kwargs)
+                    if isinstance(function, typing.Awaitable):
+                        result = await function
+                    else:
+                        result = function(*args, **kwargs)
 
-                    if isinstance(result, typing.Awaitable):
-                        result = await result
+                        if isinstance(result, typing.Awaitable):
+                            result = await result
 
                     if ticket_id:
                         self.results[ticket_id] = result
                         ticket_update(self, ticket_id, function, args, kwargs)
+
+                del self.tick_array[self.active_tick]
 
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
@@ -184,6 +190,7 @@ class TickHandler:
             (ticket_id, function, args, kwargs, ticket_function)
         )
 
+    # @inline_call("%.bind", lambda: TickHandler.bind)
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)
 

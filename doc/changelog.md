@@ -26,8 +26,10 @@ Contains only some information, in ordered form, in a better form for the end us
 
 - You can run our test set via 
 ```shell 
-python -m unittest discover -s ./tests -t . in .
+python ./tools/run_unit_tests.py
 ```
+
+Make sure that you are using python 3.10 or higher!
 
 ----
 
@@ -36,12 +38,20 @@ python -m unittest discover -s ./tests -t . in .
 Scheduled to be released on 02.02.2022
 targeting <1.18.1>
 
+This snapshot fixes a big error in the TickHandler API regarding ticks being executed more than once 
+when the game lags. Mods using that as a feature (Don't know how) will break with this snapshot. 
+Mods previously broken as they are using that API as defined, will now work again.
+
+
     Blocks
         - redstone block & redstone lamp have now their correct behaviour
+        - implemented redstone repeater
         todo: re-add redstone block slab, stair and wall
 
     Fixed issues:
         - redstone wire was not using the API correctly
+        - fixed two MAJOR issues with the tick handler and its interal schedule-in-x ticks 
+          breaking down when executing multiple ticks in one iteration due to a lag spike
 
 
 
