@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import importlib
 import typing
 
 from mcpython.engine import logger
@@ -25,6 +26,8 @@ class _OptimiserContainer:
         self.is_constant = False
         self.constant_args: typing.Set[str] = set()
         self.code_walkers: typing.List[AbstractMixinProcessor] = []
+        self.specified_locals: typing.Dict[str, typing.Type] = {}
+        self.return_type: typing.Type | None = None
 
     def optimise_target(self):
         if isinstance(self.target, typing.Callable):
@@ -84,6 +87,32 @@ def constant_operation():
 
     def annotation(target: typing.Callable):
         _schedule_optimisation(target).is_constant = True
+        return target
+
+    return annotation
+
+
+def constant_global_operation():
+    """
+    Promises the function modifies only the internal state of the object, not anything else,
+    including the class body
+    """
+
+    def annotation(target: typing.Callable):
+        _schedule_optimisation(target)
+        return target
+
+    return annotation
+
+
+def cycle_stable_result():
+    """
+    Similar to constant_global_operation(), but is only constant in one cycle (a tick),
+    meaning most likely it can only be cached in a single method and its sub-parts
+    """
+
+    def annotation(target: typing.Callable):
+        _schedule_optimisation(target)
         return target
 
     return annotation
@@ -227,3 +256,51 @@ def try_optimise():
         return target
 
     return annotation
+
+
+def assign_local_type(name: str, access: str):
+    def annotation(target: typing.Callable):
+        module, path = access.split(":")
+        module = importlib.import_module(module)
+
+        for e in path.split("."):
+            module = getattr(module, e)
+
+        _schedule_optimisation(target).specified_locals[name] = module
+        return target
+
+    return annotation
+
+
+def promise_return_type(access: str):
+    def annotation(target: typing.Callable):
+        module, path = access.split(":")
+        module = importlib.import_module(module)
+
+        for e in path.split("."):
+            module = getattr(module, e)
+
+        _schedule_optimisation(target).return_type = module
+        return target
+
+    return annotation
+
+
+def no_internal_cache():
+    """
+    Marks a class to have no internal cache, meaning if the instance is created and not stored,
+    it will be the same as if it was never created in the first place.
+
+    Can be used together with constant_global_operation / constant_operation on methods to
+    make optimising more instances away easier.
+
+    Allows to inline certain expressions at optimisation time if the underlying object is only used
+    as a calculator
+    """
+
+    def annotation(target: typing.Callable):
+        _schedule_optimisation(target)
+        return target
+
+    return annotation
+

@@ -60,6 +60,9 @@ def optimise_code(helper: MixinPatchHelper):
 # CALL_FUNCTION to a side effect free method followed by a POP_TOP
 # CALL_FUNCTION_KW to a side effect free method followed by a POP_TOP
 # MAKE_FUNCTION directly popped from the stack
+# is_constant() marker for function calls, together with local type hints
+# side effect free popped math operation (Value check / value type hint)
+# unused
 
 # todo: track LOAD_XX better, depending on context, we may have some other instructions in between,
 #   but we can optimise these instructions away
@@ -71,7 +74,8 @@ def remove_store_delete_pairs(helper: MixinPatchHelper):
     DELETE_XX instruction.
     Refactors it into a POP_TOP followed by a DELETE_XX
 
-    The POP_TOP instruction than can be optimised away by the remove_load_pop() optimiser
+    The POP_TOP instruction than can be optimised away by the remove_load_pop() optimiser if possible.
+    The DELETE_XX instruction can be optimised away by the remove_delete_fast_without_assign() optimiser if possible.
     """
     index = -1
     while index < len(helper.instruction_listing) - 1:
@@ -116,6 +120,7 @@ def remove_delete_fast_without_assign(helper: MixinPatchHelper):
         for index, instr in list(helper.walk())[index:]:
             if instr.opcode == PyOpcodes.STORE_FAST:
                 written_to.add(instr.arg)
+
             elif instr.opcode == PyOpcodes.DELETE_FAST and instr.arg not in written_to:
                 helper.deleteRegion(index, index + 1)
                 index -= 1
@@ -147,6 +152,8 @@ def remove_load_pop(helper: MixinPatchHelper):
 def remove_load_store_pairs(helper: MixinPatchHelper):
     """
     Optimiser method for removing side effect free LOAD_XX followed by STORE_XX to the same space
+
+    Removing e.g. a = a in the process
     """
 
     index = -1
