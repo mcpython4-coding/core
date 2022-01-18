@@ -125,6 +125,34 @@ class TestInsertMethod(TestCase):
         self.assertEqual(INVOKED, 1)
         INVOKED = False
 
+    def test_insert_method_local_capture_static_2(self):
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local_static,
+        )
+
+        def target():
+            a = 1
+            return a
+
+        def test():
+            x = capture_local_static("a")
+            global INVOKED
+            INVOKED = x
+            x = 2
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(2, FunctionPatcher(test))
+        helper.store()
+        helper.patcher.applyPatches()
+
+        global INVOKED
+        INVOKED = False
+        self.assertEqual(target(), 1)
+        self.assertEqual(INVOKED, 1)
+        INVOKED = False
+
     def test_insert_method_local_capture_3(self):
         from mcpython.mixin.MixinMethodWrapper import (
             FunctionPatcher,
@@ -156,6 +184,39 @@ class TestInsertMethod(TestCase):
         self.assertEqual(
             target(), 2, "local rebind not fully functional; write back failed!"
         )
+        self.assertEqual(INVOKED, 3)
+        INVOKED = False
+
+    def test_insert_method_local_capture_static_3(self):
+        from mcpython.mixin.MixinMethodWrapper import (
+            FunctionPatcher,
+            MixinPatchHelper,
+            capture_local,
+            capture_local_static,
+        )
+
+        def target():
+            a = 1
+            b = 2
+            return a
+
+        def test():
+            x = capture_local_static("a")
+            y = capture_local("b")
+            global INVOKED
+            INVOKED = x + y
+            x = 2
+
+        self.assertEqual(target(), 1)
+
+        helper = MixinPatchHelper(target)
+        helper.insertMethodAt(4, FunctionPatcher(test))
+        helper.store()
+        helper.patcher.applyPatches()
+
+        global INVOKED
+        INVOKED = False
+        self.assertEqual(target(), 1)
         self.assertEqual(INVOKED, 3)
         INVOKED = False
 

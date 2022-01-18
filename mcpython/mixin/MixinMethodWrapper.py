@@ -67,6 +67,12 @@ def capture_local(name: str):
     """
 
 
+def capture_local_static(name: str):
+    """
+    Similar to capture_local(name), but will capture only the value ones, and do no permanent binding
+    """
+
+
 # todo: add a way to capture free variables
 # todo: add a way to capture global variables
 # todo: add a way to capture cell variables
@@ -308,7 +314,6 @@ class MixinPatchHelper:
         self,
         start: int,
         method: FunctionPatcher | types.MethodType,
-        force_inline=True,
         added_args=0,
         discard_return_result=True,
     ):
@@ -329,7 +334,6 @@ class MixinPatchHelper:
 
         :param start: where the method head should be inserted
         :param method: the method object ot inject
-        :param force_inline: forced a inline, currently always inlining code
         :param added_args: how many positional args are added to the method call
         :param discard_return_result: if the return result should be deleted or not
         """
@@ -370,7 +374,7 @@ class MixinPatchHelper:
                     possible_load = helper.instruction_listing[index - 2]
                     if (
                         possible_load.opname in ("LOAD_GLOBAL", "LOAD_DEREF")
-                        and possible_load.argval == "capture_local"
+                        and possible_load.argval in ("capture_local", "capture_local_static")
                     ):
                         assert (
                             helper.instruction_listing[index - 1].opname == "LOAD_CONST"
@@ -378,7 +382,7 @@ class MixinPatchHelper:
 
                         local = helper.instruction_listing[index - 1].argval
 
-                        if helper.instruction_listing[index + 1].opname == "STORE_FAST":
+                        if helper.instruction_listing[index + 1].opname == "STORE_FAST" and possible_load.argval == "capture_local":
                             capture_target = helper.instruction_listing[
                                 index + 1
                             ].argval
@@ -401,7 +405,9 @@ class MixinPatchHelper:
                             index -= 1
 
                         # We don't really know what is done to the local,
-                        # so we need to store it as
+                        # so we need to store it as it is on the stack
+                        # This branch is also the only branch for capture_local_static() as than
+                        # it is stored wherever it is needed
                         else:
                             captured_names.add(local)
 
