@@ -18,6 +18,7 @@ from mcpython import shared
 from mcpython.util.enums import EnumSide
 
 from . import AbstractBlock
+from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 
 states = "none", "up", "side"
@@ -167,6 +168,47 @@ class RedstoneBlock(AbstractBlock.AbstractBlock):
 
     def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
         return True
+
+
+class RedstoneRepeater(IHorizontalOrientableBlock):
+    NAME = "minecraft:repeater"
+
+    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby("delay", "2", "3", "4").add_comby_side_horizontal("facing").add_comby_bool("locked").add_comby_bool("powered").build()
+
+    def __init__(self):
+        super().__init__()
+        self.delay = 1
+        self.facing = EnumSide.NORTH
+        self.locked = False
+        self.active = False
+
+    async def on_redstone_update(self):
+        pass
+
+    def get_model_state(self) -> dict:
+        return {
+            "delay": str(self.delay),
+            "facing": self.facing.rotate((0, 90, 0)).normal_name,
+            "locked": str(self.locked).lower(),
+            "powered": str(self.active).lower(),
+        }
+
+    async def set_model_state(self, state: dict):
+        await super().set_model_state(state)
+        self.facing = self.facing.rotate((0, -90, 0))
+
+        if "delay" in state:
+            # Clamp the value in case it is out of range
+            self.delay = max(min(int(state["delay"]), 4), 1)
+
+        if "locked" in state:
+            self.locked = state["locked"] == "true"
+
+        if "powered" in state:
+            self.active = state["powered"] == "true"
+
+    def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
+        return side == self.facing or side == self.facing.invert()
 
 
 class RedstoneLamp(AbstractBlock.AbstractBlock):
