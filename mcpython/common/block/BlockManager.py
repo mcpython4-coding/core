@@ -90,7 +90,7 @@ async def load():
             GrassBlock,
             NetherPortal,
             Rails,
-            RedstoneWire,
+            RedstoneRelated,
             ShulkerBox,
             StoneCutter,
             Walls,
@@ -129,7 +129,9 @@ async def load():
     block_registry.register(Fence.NetherBrickFence)
     block_registry.register(Fence.WarpedFence)
     block_registry.register(Fence.AcaciaFence)
-    block_registry.register(RedstoneWire.RedstoneWire)
+    block_registry.register(RedstoneRelated.RedstoneWire)
+    block_registry.register(RedstoneRelated.RedstoneBlock)
+    block_registry.register(RedstoneRelated.RedstoneLamp)
     block_registry.register(Rails.ActivatorRail)
     block_registry.register(Rails.PoweredRail)
     block_registry.register(Rails.DetectorRail)

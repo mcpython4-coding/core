@@ -32,9 +32,18 @@ python -m unittest discover -s ./tests -t . in .
 ----
 
 
+# Changelog of snapshot <21w05a>
+Scheduled to be released on 02.02.2022
+targeting <1.18.1>
+
+    Blocks
+        - redstone block & redstone lamp have now their correct behaviour
+        todo: re-add redstone block slab, stair and wall
+
+
 
 # Changelog of snapshot 22w03a
-Scheduled to be released on 18.01.2021
+Released on 18.01.2021
 targeting 1.18.1
 
 Saves will not work across versions due to a fundamental 

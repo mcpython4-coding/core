@@ -143,3 +143,48 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
 
     def get_view_bbox(self):
         return redstone_wire_bbox
+
+
+class RedstoneBlock(AbstractBlock.AbstractBlock):
+    NAME = "minecraft:redstone_block"
+
+    def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
+        return 15
+
+    def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
+        return 15
+
+
+class RedstoneLamp(AbstractBlock.AbstractBlock):
+    NAME = "minecraft:redstone_lamp"
+
+    def __init__(self):
+        super().__init__()
+        self.lit = False
+
+    def get_model_state(self) -> dict:
+        return {"lit": str(self.lit).lower()}
+
+    def set_model_state(self, state):
+        self.lit = "lit" in state and state["lit"] == "true"
+
+    async def on_redstone_update(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        position = self.position
+
+        for face in EnumSide.iterate():
+            ask = face.relative_offset(position)
+            block = dimension.get_block(ask, none_if_str=True)
+
+            if block is not None and block.get_redstone_output(face.invert()) > 0:
+                self.lit = True
+
+                if shared.IS_CLIENT:
+                    self.face_info.update(True)
+
+                return
+
+        self.lit = False
+
+        if shared.IS_CLIENT:
+            self.face_info.update(True)

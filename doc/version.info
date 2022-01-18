@@ -2006,3 +2006,6 @@ f   [uuk]: added optimiser_annotations.py for annotations optimising code
 b   [uuk]: fixed insertRegion() instruction start parameter
 G   [github]: released snapshot 22w03a
 
+G   [github]: started development for snapshot 22w05a
+F   [uuk]: implemented correct behaviour of redstone lamp and block
+

@@ -1654,17 +1654,17 @@ async def load_blocks():
         existing_stairs=False,
         existing_wall=False,
     )
-    await stone_like(
-        "redstone_block",
-        existing_slab=False,
-        existing_stairs=False,
-        existing_wall=False,
-    )
-    DEFERRED_PIPE.create_later(
-        BlockFactory()
-        .set_name("minecraft:redstone_lamp")
-        .set_default_model_state("lit=false")
-    )
+    # await stone_like(
+    #     "redstone_block",
+    #     existing_slab=False,
+    #     existing_stairs=False,
+    #     existing_wall=False,
+    # )
+    # DEFERRED_PIPE.create_later(
+    #     BlockFactory()
+    #     .set_name("minecraft:redstone_lamp")
+    #     .set_default_model_state("lit=false")
+    # )
     DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:redstone_ore"))
     await colored("red")
     DEFERRED_PIPE.create_later(plant("minecraft:red_mushroom"))
