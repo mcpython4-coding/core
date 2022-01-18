@@ -66,7 +66,7 @@ class TickHandler:
         self.lost_time += dt
 
         # execute functions
-        while self.lost_time > 1 / 20:
+        while self.lost_time >= 1 / 20:
             self.lost_time -= 1 / 20
             self.active_tick += 1
 
@@ -86,11 +86,12 @@ class TickHandler:
                         self.results[ticket_id] = result
                         ticket_update(self, ticket_id, function, args, kwargs)
 
+                # And now do a cleanup
                 del self.tick_array[self.active_tick]
 
                 if not self.enable_tick_skipping:
                     self.lost_time = 0
-                    return
+                    break
 
         await shared.entity_manager.tick(dt)
 
