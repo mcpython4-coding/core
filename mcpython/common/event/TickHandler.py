@@ -24,7 +24,11 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.mixin.optimiser_annotations import access_static, constant_arg, inline_call
+from mcpython.mixin.optimiser_annotations import (
+    access_static,
+    constant_arg,
+    inline_call,
+)
 
 if shared.IS_CLIENT:
     from mcpython.client.texture.AnimationManager import animation_manager

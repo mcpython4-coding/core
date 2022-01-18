@@ -13,12 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-from pyglet.window import key
-from pyglet.window import mouse
-
 import mcpython.engine.physics.AxisAlignedBoundingBox
 from mcpython import shared
 from mcpython.util.enums import EnumSide
+from pyglet.window import key, mouse
 
 from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
@@ -99,7 +97,9 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         if level != self.level:
             self.level = level
 
-            await shared.world.get_dimension_by_name(self.dimension).get_chunk_for_position(self.position).on_block_updated(
+            await shared.world.get_dimension_by_name(
+                self.dimension
+            ).get_chunk_for_position(self.position).on_block_updated(
                 self.position, include_itself=False
             )
 
@@ -182,7 +182,14 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
 
     NAME = "minecraft:repeater"
 
-    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby("delay", "2", "3", "4").add_comby_side_horizontal("facing").add_comby_bool("locked").add_comby_bool("powered").build()
+    DEBUG_WORLD_BLOCK_STATES = (
+        PossibleBlockStateBuilder()
+        .add_comby("delay", "2", "3", "4")
+        .add_comby_side_horizontal("facing")
+        .add_comby_bool("locked")
+        .add_comby_bool("powered")
+        .build()
+    )
 
     IS_SOLID = False
     DEFAULT_FACE_SOLID = EnumSide.DOWN.bitflag
@@ -197,11 +204,17 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
 
     async def on_redstone_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        source_block = dimension.get_block(self.facing.invert().relative_offset(self.position), none_if_str=True)
-        source_active = source_block is not None and (source_block.get_redstone_output(self.facing.invert()) > 0)
+        source_block = dimension.get_block(
+            self.facing.invert().relative_offset(self.position), none_if_str=True
+        )
+        source_active = source_block is not None and (
+            source_block.get_redstone_output(self.facing.invert()) > 0
+        )
 
         if source_active != self.last_scheduled_state:
-            shared.tick_handler.bind_redstone_tick(self.set_active(source_active), self.delay)
+            shared.tick_handler.bind_redstone_tick(
+                self.set_active(source_active), self.delay
+            )
             self.last_scheduled_state = source_active
 
     async def set_active(self, active: bool):
@@ -216,7 +229,9 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
             self.face_info.update(True)
 
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        target_block: AbstractBlock.AbstractBlock = dimension.get_block(self.facing.relative_offset(self.position), none_if_str=True)
+        target_block: AbstractBlock.AbstractBlock = dimension.get_block(
+            self.facing.relative_offset(self.position), none_if_str=True
+        )
 
         if target_block is not None:
             target_block.inject_redstone_power(self.facing, 15 if active else 0)
@@ -268,12 +283,10 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
 
 class RedstoneLamp(AbstractBlock.AbstractBlock):
     DEBUG_WORLD_BLOCK_STATES = [
-        {
-            "lit": "false"
-        },
+        {"lit": "false"},
         {
             "lit": "true",
-        }
+        },
     ]
 
     NAME = "minecraft:redstone_lamp"

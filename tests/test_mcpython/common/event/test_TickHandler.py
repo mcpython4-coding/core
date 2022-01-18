@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from tests.util import TestCase
-from mcpython import shared
 import mcpython.common.event.TickHandler
+from mcpython import shared
+from tests.util import TestCase
 
 
 class Tickable:
@@ -67,9 +67,13 @@ class TestTickHandler(TestCase):
 
         shared.tick_handler.bind(target, 2)
 
-        await shared.tick_handler.tick(1/20)
+        await shared.tick_handler.tick(1 / 20)
         self.assertEqual(invoked, 0)
-        self.assertEqual(shared.tick_handler.active_tick, 1, (shared.tick_handler.active_tick, shared.tick_handler.lost_time))
+        self.assertEqual(
+            shared.tick_handler.active_tick,
+            1,
+            (shared.tick_handler.active_tick, shared.tick_handler.lost_time),
+        )
         await shared.tick_handler.tick(1 / 20)
         self.assertEqual(invoked, 1)
         self.assertEqual(len(shared.tick_handler.tick_array), 0)
@@ -88,10 +92,9 @@ class TestTickHandler(TestCase):
 
         shared.tick_handler.bind(target, 2)
 
-        await shared.tick_handler.tick(4/20)
+        await shared.tick_handler.tick(4 / 20)
         self.assertEqual(invoked, 1)
         self.assertEqual(len(shared.tick_handler.tick_array), 0)
         await shared.tick_handler.tick(1 / 20)
         self.assertEqual(invoked, 1)
         self.assertEqual(len(shared.tick_handler.tick_array), 0)
-
