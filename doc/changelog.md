@@ -40,6 +40,9 @@ targeting <1.18.1>
         - redstone block & redstone lamp have now their correct behaviour
         todo: re-add redstone block slab, stair and wall
 
+    Fixed issues:
+        - redstone wire was not using the API correctly
+
 
 
 # Changelog of snapshot 22w03a

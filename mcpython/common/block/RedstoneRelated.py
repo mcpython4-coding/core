@@ -71,20 +71,31 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         x, y, z = self.position
         dimension = shared.world.get_dimension_by_name(self.dimension)
         block = dimension.get_block((x, y - 1, z), none_if_str=True)
-        if block is None or not block.face_solid & 1:
+        if block is None or not block.face_solid & EnumSide.UP.bitflag:
             await dimension.remove_block(self.position)
             return
 
         elif block.IS_SOLID:
             block.inject_redstone_power(EnumSide.UP, self.level)
+            await block.on_redstone_update()
 
         await self.schedule_network_update()
 
     async def send_level_update(self):
-        level = max(self.injected_redstone_power)
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+
+        level = 0
+        for face in EnumSide.iterate():
+            pos = face.relative_offset(self.position)
+            block = dimension.get_block(pos, none_if_str=True)
+
+            if block is not None:
+                level = max(level, block.get_redstone_output(face.invert()))
+
         if level != self.level:
             self.level = level
-            await shared.world.get_dimension_by_name(self.dimension).on_block_updated(
+
+            await shared.world.get_dimension_by_name(self.dimension).get_chunk_for_position(self.position).on_block_updated(
                 self.position, include_itself=False
             )
 
@@ -133,7 +144,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         return self.level if side != EnumSide.UP else 0
 
     def is_connecting_to_redstone(self, side: EnumSide) -> bool:
-        return side != EnumSide.UP
+        return side != EnumSide.UP and side != EnumSide.DOWN
 
     def get_tint_for_index(
         self, index: int
@@ -154,8 +165,20 @@ class RedstoneBlock(AbstractBlock.AbstractBlock):
     def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
         return 15
 
+    def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
+        return True
+
 
 class RedstoneLamp(AbstractBlock.AbstractBlock):
+    DEBUG_WORLD_BLOCK_STATES = [
+        {
+            "lit": "false"
+        },
+        {
+            "lit": "true",
+        }
+    ]
+
     NAME = "minecraft:redstone_lamp"
 
     def __init__(self):
@@ -165,7 +188,7 @@ class RedstoneLamp(AbstractBlock.AbstractBlock):
     def get_model_state(self) -> dict:
         return {"lit": str(self.lit).lower()}
 
-    def set_model_state(self, state):
+    async def set_model_state(self, state):
         self.lit = "lit" in state and state["lit"] == "true"
 
     async def on_redstone_update(self):
@@ -183,6 +206,8 @@ class RedstoneLamp(AbstractBlock.AbstractBlock):
                     self.face_info.update(True)
 
                 return
+
+        # todo: this should wait some ticks to be disabled
 
         self.lit = False
 
