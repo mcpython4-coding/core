@@ -154,9 +154,11 @@ class TestBasicBytecodeHelpers(TestCase):
 
         helper.insertRegion(
             1,
-            [dis.Instruction("YIELD_VALUE", PyOpcodes.YIELD_VALUE, 0, 0, "", 0, 0, False)]
+            [
+                dis.Instruction(
+                    "YIELD_VALUE", PyOpcodes.YIELD_VALUE, 0, 0, "", 0, 0, False
+                )
+            ],
         )
 
-        self.assertEqual(
-            helper.instruction_listing[1].opname, "YIELD_VALUE"
-        )
+        self.assertEqual(helper.instruction_listing[1].opname, "YIELD_VALUE")

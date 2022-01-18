@@ -803,9 +803,7 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_return_replacing_return_value(
-            "test", args=(3,)
-        )
+        @handler.inject_at_return_replacing_return_value("test", args=(3,))
         def inject(c):
             nonlocal invoked
             invoked += c
@@ -834,17 +832,13 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_return_replacing_return_value(
-            "test", args=(3,)
-        )
+        @handler.inject_at_return_replacing_return_value("test", args=(3,))
         def inject(c):
             nonlocal invoked
             invoked += c
             return c - 3
 
-        @handler.inject_at_return_replacing_return_value(
-            "test", args=(8,)
-        )
+        @handler.inject_at_return_replacing_return_value("test", args=(8,))
         def inject2(c):
             nonlocal invoked
             invoked += c
@@ -941,9 +935,7 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_yield(
-            "test", args=(2,)
-        )
+        @handler.inject_at_yield("test", args=(2,))
         def inject(c, _):
             nonlocal invoked
             invoked += c + 1
@@ -968,16 +960,12 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_yield(
-            "test", args=(3,)
-        )
+        @handler.inject_at_yield("test", args=(3,))
         def inject(c, _):
             nonlocal invoked
             invoked += c
 
-        @handler.inject_at_yield(
-            "test", args=(8,)
-        )
+        @handler.inject_at_yield("test", args=(8,))
         def inject2(c, _):
             nonlocal invoked
             invoked += c
@@ -994,7 +982,6 @@ class TestMixinHandler(TestCase):
     def test_mixin_inject_at_yield_3(self):
         from mcpython.mixin.Mixin import MixinHandler
 
-
         handler = MixinHandler()
         invoked = 0
 
@@ -1003,9 +990,7 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_yield(
-            "test", collected_locals=("a",)
-        )
+        @handler.inject_at_yield("test", collected_locals=("a",))
         def inject(_, c):
             nonlocal invoked
             invoked += c * 8 + 1
@@ -1030,16 +1015,12 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_yield(
-            "test", collected_locals=("a",)
-        )
+        @handler.inject_at_yield("test", collected_locals=("a",))
         def inject(_, c):
             nonlocal invoked
             invoked += c + 1
 
-        @handler.inject_at_yield(
-            "test", collected_locals=("a",)
-        )
+        @handler.inject_at_yield("test", collected_locals=("a",))
         def inject2(_, c):
             nonlocal invoked
             invoked += c + 2
@@ -1138,9 +1119,7 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_yield_replacing_yield_value(
-            "test", args=(3,)
-        )
+        @handler.inject_at_yield_replacing_yield_value("test", args=(3,))
         def inject(c, _):
             nonlocal invoked
             invoked += c
@@ -1168,17 +1147,13 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        @handler.inject_at_yield_replacing_yield_value(
-            "test", args=(3,)
-        )
+        @handler.inject_at_yield_replacing_yield_value("test", args=(3,))
         def inject(c, _):
             nonlocal invoked
             invoked += c
             return c + 2
 
-        @handler.inject_at_yield_replacing_yield_value(
-            "test", args=(8,)
-        )
+        @handler.inject_at_yield_replacing_yield_value("test", args=(8,))
         def inject2(c, _):
             nonlocal invoked
             invoked += c
@@ -1412,7 +1387,9 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None)
+        handler.replace_attribute_with_constant(
+            "test", "%.test_replace_attribute_with_constant", None
+        )
 
         handler.applyMixins()
 
@@ -1430,7 +1407,9 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None)
+        handler.replace_attribute_with_constant(
+            "test", "%.test_replace_attribute_with_constant", None
+        )
 
         handler.applyMixins()
 
@@ -1448,7 +1427,12 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None, load_from_local_hint="s")
+        handler.replace_attribute_with_constant(
+            "test",
+            "%.test_replace_attribute_with_constant",
+            None,
+            load_from_local_hint="s",
+        )
 
         handler.applyMixins()
 
@@ -1466,7 +1450,12 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", target)
 
-        handler.replace_attribute_with_constant("test", "%.test_replace_attribute_with_constant", None, load_from_local_hint="c")
+        handler.replace_attribute_with_constant(
+            "test",
+            "%.test_replace_attribute_with_constant",
+            None,
+            load_from_local_hint="c",
+        )
 
         handler.applyMixins()
 

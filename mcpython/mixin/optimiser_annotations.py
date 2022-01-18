@@ -303,4 +303,3 @@ def no_internal_cache():
         return target
 
     return annotation
-

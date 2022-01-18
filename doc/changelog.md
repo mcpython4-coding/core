@@ -33,9 +33,9 @@ python -m unittest discover -s ./tests -t . in .
 
 
 
-# Changelog of snapshot <22w03a>
-Scheduled to be released on <19.01.2021>
-targeting <1.18.1>
+# Changelog of snapshot 22w03a
+Scheduled to be released on 18.01.2021
+targeting 1.18.1
 
 Saves will not work across versions due to a fundamental 
 change how some stuff is stored, we currently do not plan to 
@@ -49,6 +49,7 @@ may not work anymore
     Storage System
         - rewritten Chunk storage to network buffer only
         - this dramatically reduces load times (and save times)
+        - improved storage of other data containers 
 
     Mixins:
         - added priority and optional flags 
@@ -57,10 +58,10 @@ may not work anymore
         - added mixins around return and yield instructions 
         - added mixin for modifiyng local variables
         - mixins can now also inline certain injected code
+        - mixins are able to early-return and dynamically capture locals 
 
     Internal:
-        - using now a bytecode optimisation library behind the scenes to optimise some stuff around
-            (used after mixins are applied, as it is not as-optimised as possible)
+        - added code optimisation util for cleaning up code after mixins applied
 
     Fixed issues:
         - crash when a cactus tried to generate

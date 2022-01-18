@@ -32,12 +32,12 @@ from .MixinProcessors import (
     InjectFunctionCallAtYieldProcessor,
     InjectFunctionCallAtYieldReplaceValueProcessor,
     InjectFunctionLocalVariableModifier,
+    MixinAttribute2ConstReplace,
     MixinConstantReplacer,
     MixinGlobal2ConstReplace,
     MixinGlobalReTargetProcessor,
     MixinLocal2ConstReplace,
     MixinReplacementProcessor,
-    MixinAttribute2ConstReplace,
 )
 
 
@@ -306,7 +306,12 @@ class MixinHandler:
         """
         self.bound_mixin_processors.setdefault(access_str, []).append(
             (
-                MixinAttribute2ConstReplace(attr_name, new_value, load_from_local_hint=load_from_local_hint, matcher=matcher),
+                MixinAttribute2ConstReplace(
+                    attr_name,
+                    new_value,
+                    load_from_local_hint=load_from_local_hint,
+                    matcher=matcher,
+                ),
                 priority,
                 optional,
                 shared.CURRENT_EVENT_SUB,

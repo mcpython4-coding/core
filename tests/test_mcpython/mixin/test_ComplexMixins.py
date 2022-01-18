@@ -100,7 +100,9 @@ class TestPostInjectionOptimiser(TestCase):
 
         handler = MixinHandler()
         handler.makeFunctionArrival("test", target)
-        handler.replace_attribute_with_constant("test", "%.test_attribute2constant_cleanup", 2)
+        handler.replace_attribute_with_constant(
+            "test", "%.test_attribute2constant_cleanup", 2
+        )
         handler.applyMixins()
 
         helper = MixinPatchHelper(target)

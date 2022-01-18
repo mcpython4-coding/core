@@ -143,7 +143,11 @@ class MixinGlobal2ConstReplace(AbstractMixinProcessor):
 
 class MixinAttribute2ConstReplace(AbstractMixinProcessor):
     def __init__(
-        self, attr_name: str, after, matcher: AbstractInstructionMatcher = None, load_from_local_hint: str = None
+        self,
+        attr_name: str,
+        after,
+        matcher: AbstractInstructionMatcher = None,
+        load_from_local_hint: str = None,
     ):
         self.attr_name = attr_name
         self.after = after
@@ -202,7 +206,7 @@ class MixinAttribute2ConstReplace(AbstractMixinProcessor):
                         0,
                         False,
                     )
-                ]
+                ],
             )
 
         helper.store()
