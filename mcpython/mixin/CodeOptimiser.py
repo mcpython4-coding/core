@@ -62,7 +62,7 @@ def optimise_code(helper: MixinPatchHelper):
 # MAKE_FUNCTION directly popped from the stack
 # is_constant() marker for function calls, together with local type hints
 # side effect free popped math operation (Value check / value type hint)
-# unused
+# Single/more-accessed STORE_XX in a following region which can be served via the stack
 
 # todo: track LOAD_XX better, depending on context, we may have some other instructions in between,
 #   but we can optimise these instructions away

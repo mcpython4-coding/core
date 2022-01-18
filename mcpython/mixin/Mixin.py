@@ -407,7 +407,7 @@ class MixinHandler:
         """
         raise NotImplementedError
 
-    def replace_function_body(
+    def override(
         self, access_str: str, priority=0, optional=True
     ) -> typing.Callable[[types.FunctionType], types.FunctionType]:
         """

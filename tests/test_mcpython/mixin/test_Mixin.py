@@ -115,7 +115,7 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", test)
 
-        @handler.replace_function_body("test")
+        @handler.override("test")
         def override():
             return 1
 
@@ -139,7 +139,7 @@ class TestMixinHandler(TestCase):
 
         handler.makeFunctionArrival("test", test)
 
-        @handler.replace_function_body("test")
+        @handler.override("test")
         async def override():
             return 1
 
@@ -172,7 +172,7 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler()
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        @handler.override("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
             return 1
 
@@ -186,11 +186,11 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler()
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        @handler.override("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
             return 1
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        @handler.override("tests.test_mcpython.mixin.test_Mixin:test")
         def override2():
             return 2
 
@@ -204,13 +204,13 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler()
 
-        @handler.replace_function_body(
+        @handler.override(
             "tests.test_mcpython.mixin.test_Mixin:test", priority=2
         )
         def override():
             return 1
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        @handler.override("tests.test_mcpython.mixin.test_Mixin:test")
         def override2():
             return 2
 
@@ -224,11 +224,11 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler()
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        @handler.override("tests.test_mcpython.mixin.test_Mixin:test")
         def override():
             return 1
 
-        @handler.replace_function_body(
+        @handler.override(
             "tests.test_mcpython.mixin.test_Mixin:test", priority=-1
         )
         def override2():
@@ -244,13 +244,13 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler()
 
-        @handler.replace_function_body(
+        @handler.override(
             "tests.test_mcpython.mixin.test_Mixin:test", priority=2
         )
         def override():
             return 1
 
-        @handler.replace_function_body(
+        @handler.override(
             "tests.test_mcpython.mixin.test_Mixin:test", optional=False
         )
         def override2():
@@ -269,13 +269,13 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler()
 
-        @handler.replace_function_body(
+        @handler.override(
             "tests.test_mcpython.mixin.test_Mixin:test", optional=False
         )
         def override():
             return 1
 
-        @handler.replace_function_body("tests.test_mcpython.mixin.test_Mixin:test")
+        @handler.override("tests.test_mcpython.mixin.test_Mixin:test")
         def override2():
             return 2
 
@@ -292,13 +292,13 @@ class TestMixinHandler(TestCase):
 
         handler = MixinHandler()
 
-        @handler.replace_function_body(
+        @handler.override(
             "tests.test_mcpython.mixin.test_Mixin:test", optional=False
         )
         def override():
             return 1
 
-        @handler.replace_function_body(
+        @handler.override(
             "tests.test_mcpython.mixin.test_Mixin:test", optional=False
         )
         def override2():
