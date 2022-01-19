@@ -79,7 +79,6 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
 
         elif block.IS_SOLID:
             block.inject_redstone_power(EnumSide.UP, self.level)
-            await block.on_redstone_update()
 
         await self.schedule_network_update()
 
@@ -235,7 +234,6 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
 
         if target_block is not None:
             target_block.inject_redstone_power(self.facing, 15 if active else 0)
-            await target_block.on_redstone_update()
 
     def get_model_state(self) -> dict:
         return {

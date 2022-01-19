@@ -437,14 +437,28 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     # Redstone API
 
-    def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
+    def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int, call_update=True):
         """
         Used to inject a redstone value into the system
         :param side: the side from which the redstone value comes
         :param level: the level of redstone, between 0 and 15
+        :param call_update: if to call a redstone update or not
         todo: do we want it to be async?
         """
+        if self.injected_redstone_power[side.index] == level: return
+
         self.injected_redstone_power[side.index] = level
+
+        if call_update:
+            shared.tick_handler.schedule_once(self.on_redstone_update())
+
+            dimension = shared.world.get_dimension_by_name(self.dimension)
+
+            for face in EnumSide.iterate():
+                block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+
+                if block is not None:
+                    shared.tick_handler.schedule_once(block.on_redstone_update())
 
     def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
         """

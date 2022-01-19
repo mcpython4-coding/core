@@ -496,17 +496,17 @@ def build_class_default_state(
             for function in configs["on_request_item_for_block"]:
                 await function(self, itemstack)
 
-        def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int):
+        def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int, call_update=True):
             self.injected_redstone_power[side.index] = level
 
             if not is_super_base:
-                super().inject_redstone_power(side, level)
+                super().inject_redstone_power(side, level, call_update=call_update)
 
             for base in bases:
-                base.inject_redstone_power(self, side, level)
+                base.inject_redstone_power(self, side, level, call_update=call_update)
 
             for function in configs["inject_redstone_power"]:
-                function(self, side, level)
+                function(self, side, level, call_update=call_update)
 
         def get_redstone_output(self, side: mcpython.util.enums.EnumSide) -> int:
             if len(configs["get_redstone_output"]) > 0:
