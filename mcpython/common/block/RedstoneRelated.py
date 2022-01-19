@@ -66,7 +66,7 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
     async def set_model_state(self, state: dict):
         self.state.update({EnumSide[e.upper()]: v for e, v in state.items()})
 
-    async def on_block_update(self):
+    async def on_redstone_update(self):
         self.update_visual()
         await self.send_level_update()
 
@@ -91,7 +91,14 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
             block = dimension.get_block(pos, none_if_str=True)
 
             if block is not None:
-                level = max(level, block.get_redstone_output(face.invert()))
+                # Decrease power level by one if it's a redstone wire
+                # todo: make this a public facing API
+                if isinstance(block, RedstoneWire):
+                    block_level = block.get_redstone_output(face.invert()) - 1
+                else:
+                    block_level = block.get_redstone_output(face.invert())
+
+                level = max(level, block_level)
 
         if level != self.level:
             self.level = level
@@ -113,16 +120,16 @@ class RedstoneWire(AbstractBlock.AbstractBlock):
         for face in EnumSide.iterate()[2:]:
             block = dimension.get_block((x + face.dx, y, z + face.dz), none_if_str=True)
 
-            if isinstance(block, AbstractBlock.AbstractBlock):
+            if block is not None:
                 if block.is_connecting_to_redstone(face.invert()):
                     self.state[face] = "side"
 
                 elif not block.face_solid & 2:
-                    block2 = dimension.get_block(
+                    upper_block = dimension.get_block(
                         (x + face.dx, y - 1, z + face.dz), none_if_str=True
                     )
 
-                    if isinstance(block2, RedstoneWire):
+                    if isinstance(upper_block, RedstoneWire):
                         self.state[face] = "side"
                     else:
                         block.inject_redstone_power(face.invert(), 0)
