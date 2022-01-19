@@ -18,7 +18,7 @@ import typing
 from mcpython.engine import logger
 from mcpython.mixin.InstructionMatchers import AbstractInstructionMatcher
 from mcpython.mixin.MixinMethodWrapper import MixinPatchHelper, reconstruct_instruction
-from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
+from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher, createInstruction
 from mcpython.mixin.util import PyOpcodes
 
 
@@ -127,16 +127,7 @@ class MixinGlobal2ConstReplace(AbstractMixinProcessor):
             ):
                 continue
 
-            helper.instruction_listing[index] = dis.Instruction(
-                "LOAD_CONST",
-                PyOpcodes.LOAD_CONST,
-                target.ensureConstant(self.after),
-                self.after,
-                repr(self.after),
-                instruction.offset,
-                instruction.starts_line,
-                instruction.is_jump_target,
-            )
+            helper.instruction_listing[index] = target.createLoadConst(self.after)
 
         helper.store()
 
@@ -183,30 +174,10 @@ class MixinAttribute2ConstReplace(AbstractMixinProcessor):
 
             # We have a <TOS>.<arg> instruction, and want a POP_TOP followed by a LOAD_CONST
 
-            helper.instruction_listing[index] = dis.Instruction(
-                "POP_TOP",
-                PyOpcodes.POP_TOP,
-                0,
-                0,
-                "",
-                0,
-                0,
-                False,
-            )
+            helper.instruction_listing[index] = createInstruction("POP_TOP")
             helper.insertRegion(
                 index + 1,
-                [
-                    dis.Instruction(
-                        "LOAD_CONST",
-                        PyOpcodes.LOAD_CONST,
-                        helper.patcher.ensureConstant(self.after),
-                        self.after,
-                        repr(self.after),
-                        0,
-                        0,
-                        False,
-                    )
-                ],
+                [helper.patcher.createLoadConst(self.after)],
             )
 
         helper.store()
@@ -240,16 +211,7 @@ class MixinLocal2ConstReplace(AbstractMixinProcessor):
             ):
                 continue
 
-            helper.instruction_listing[index] = dis.Instruction(
-                "LOAD_CONST",
-                PyOpcodes.LOAD_CONST,
-                target.ensureConstant(self.after),
-                self.after,
-                repr(self.after),
-                instruction.offset,
-                instruction.starts_line,
-                instruction.is_jump_target,
-            )
+            helper.instruction_listing[index] = target.createLoadConst(self.after)
 
         helper.store()
 
@@ -280,16 +242,7 @@ class MixinGlobalReTargetProcessor(AbstractMixinProcessor):
             ):
                 continue
 
-            helper.instruction_listing[index] = dis.Instruction(
-                "LOAD_GLOBAL",
-                PyOpcodes.LOAD_GLOBAL,
-                target.ensureName(self.new_global),
-                self.new_global,
-                None,
-                instruction.offset,
-                instruction.starts_line,
-                instruction.is_jump_target,
-            )
+            helper.instruction_listing[index] = target.createLoadGlobal(self.new_global)
 
         helper.store()
 
@@ -425,11 +378,7 @@ class InjectFunctionCallAtReturnReplaceValueProcessor(AbstractMixinProcessor):
 
                 helper.insertRegion(
                     index,
-                    [
-                        dis.Instruction(
-                            "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
-                        )
-                    ],
+                    [createInstruction("POP_TOP")],
                 )
                 helper.insertGivenMethodCallAt(
                     index + 1,
@@ -531,27 +480,9 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
                     self.is_yield_from != instr.opname == "YIELD_FROM"
                 ):
                     if self.is_yield_from:
-                        helper.instruction_listing[index] = dis.Instruction(
-                            "YIELD_FROM",
-                            PyOpcodes.YIELD_FROM,
-                            0,
-                            None,
-                            "",
-                            0,
-                            0,
-                            False,
-                        )
+                        helper.instruction_listing[index] = createInstruction("YIELD_FROM")
                     else:
-                        helper.instruction_listing[index] = dis.Instruction(
-                            "YIELD_VALUE",
-                            PyOpcodes.YIELD_VALUE,
-                            0,
-                            None,
-                            "",
-                            0,
-                            0,
-                            False,
-                        )
+                        helper.instruction_listing[index] = createInstruction("YIELD_VALUE")
 
                 if self.matcher is not None and not self.matcher.matches(
                     helper, index, matches
@@ -560,11 +491,7 @@ class InjectFunctionCallAtYieldReplaceValueProcessor(AbstractMixinProcessor):
 
                 helper.insertRegion(
                     index,
-                    [
-                        dis.Instruction(
-                            "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
-                        )
-                    ],
+                    [createInstruction("POP_TOP")],
                 )
 
                 helper.insertGivenMethodCallAt(
@@ -648,40 +575,11 @@ class InjectFunctionLocalVariableModifier(AbstractMixinProcessor):
         helper: MixinPatchHelper,
     ):
         collected_locals = [
-            dis.Instruction(
-                "LOAD_FAST",
-                PyOpcodes.LOAD_FAST,
-                helper.patcher.ensureVarName(e),
-                e,
-                e,
-                0,
-                0,
-                False,
-            )
+            helper.patcher.createLoadFast(e)
             for e in reversed(self.local_variables)
         ]
-        store_locals = [
-            dis.Instruction(
-                "UNPACK_SEQUENCE",
-                PyOpcodes.UNPACK_SEQUENCE,
-                len(self.local_variables),
-                0,
-                "",
-                0,
-                0,
-                False,
-            )
-        ] + [
-            dis.Instruction(
-                "STORE_FAST",
-                PyOpcodes.STORE_FAST,
-                helper.patcher.ensureVarName(e),
-                e,
-                e,
-                0,
-                0,
-                False,
-            )
+        store_locals = [createInstruction("UNPACK_SEQUENCE", len(self.local_variables))] + [
+            helper.patcher.createStoreFast(e)
             for e in reversed(self.local_variables)
         ]
 
@@ -696,6 +594,7 @@ class InjectFunctionLocalVariableModifier(AbstractMixinProcessor):
                     pop_result=False,
                     insert_after=store_locals,
                 )
+
         helper.store()
 
 

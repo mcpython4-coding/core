@@ -20,9 +20,24 @@ __all__ = ["FunctionPatcher"]
 
 import typing
 
+from mcpython.mixin.util import PyOpcodes
+
 
 def null():
     pass
+
+
+def createInstruction(instruction: str | int, arg=0, argval=None):
+    return dis.Instruction(
+        instruction if isinstance(instruction, str) else dis.opname[instruction],
+        dis.opmap[instruction] if isinstance(instruction, str) else instruction,
+        arg,
+        argval,
+        "" if argval is None else repr(argval),
+        0,
+        0,
+        False
+    )
 
 
 class FunctionPatcher:
@@ -196,19 +211,6 @@ class FunctionPatcher:
         """
         return FunctionPatcher(null).overrideFrom(self)
 
-    def ensureConstant(self, const) -> int:
-        """
-        Makes some constant arrival in the program
-        :param const: the constant
-        :return: the index into the constant table
-        """
-
-        if const in self.constants:
-            return self.constants.index(const)
-
-        self.constants.append(const)
-        return len(self.constants) - 1
-
     def get_instruction_list(self) -> typing.List[dis.Instruction]:
         return dis._get_instructions_bytes(
             self.code_string,
@@ -277,6 +279,31 @@ class FunctionPatcher:
                 print(instr)
                 raise
 
+    def ensureConstant(self, const) -> int:
+        """
+        Makes some constant arrival in the program
+        :param const: the constant
+        :return: the index into the constant table
+        """
+
+        if const in self.constants:
+            return self.constants.index(const)
+
+        self.constants.append(const)
+        return len(self.constants) - 1
+
+    def createLoadConst(self, const):
+        return dis.Instruction(
+            "LOAD_CONST",
+            PyOpcodes.LOAD_CONST,
+            self.ensureConstant(const),
+            const,
+            repr(const),
+            0,
+            0,
+            False,
+        )
+
     def ensureName(self, name: str) -> int:
         if name in self.names:
             return self.names.index(name)
@@ -284,12 +311,84 @@ class FunctionPatcher:
         self.names.append(name)
         return len(self.names) - 1
 
+    def createLoadName(self, name: str):
+        return dis.Instruction(
+            "LOAD_NAME",
+            PyOpcodes.LOAD_NAME,
+            self.ensureName(name),
+            name,
+            name,
+            0,
+            0,
+            False
+        )
+
+    def createStoreName(self, name: str):
+        return dis.Instruction(
+            "STORE_NAME",
+            PyOpcodes.STORE_NAME,
+            self.ensureName(name),
+            name,
+            name,
+            0,
+            0,
+            False
+        )
+
+    def createLoadGlobal(self, name: str):
+        return dis.Instruction(
+            "LOAD_GLOBAL",
+            PyOpcodes.LOAD_GLOBAL,
+            self.ensureName(name),
+            name,
+            name,
+            0,
+            0,
+            False
+        )
+
+    def createStoreGlobal(self, name: str):
+        return dis.Instruction(
+            "STORE_GLOBAL",
+            PyOpcodes.STORE_GLOBAL,
+            self.ensureName(name),
+            name,
+            name,
+            0,
+            0,
+            False
+        )
+
     def ensureVarName(self, name):
         if name in self.variable_names:
             return self.variable_names.index(name)
 
         self.variable_names.append(name)
         return len(self.variable_names) - 1
+
+    def createLoadFast(self, name: str):
+        return dis.Instruction(
+            "LOAD_FAST",
+            PyOpcodes.LOAD_FAST,
+            self.ensureVarName(name),
+            name,
+            name,
+            0,
+            0,
+            False,
+        )
+
+    def createStoreFast(self, name: str):
+        return dis.Instruction(
+            "STORE_FAST",
+            PyOpcodes.STORE_FAST,
+            self.ensureVarName(name),
+            name,
+            name,
+            0,
+            0,
+            False,
+        )
 
     def ensureFreeVar(self, name: str):
         if name in self.free_vars:

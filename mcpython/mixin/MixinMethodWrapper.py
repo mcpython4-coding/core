@@ -16,7 +16,7 @@ import traceback
 import types
 import typing
 
-from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
+from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher, createInstruction
 
 from .util import PyOpcodes
 
@@ -417,18 +417,7 @@ class MixinPatchHelper:
                             helper.deleteRegion(index - 2, index + 1)
                             helper.insertRegion(
                                 index - 2,
-                                [
-                                    dis.Instruction(
-                                        "LOAD_FAST",
-                                        PyOpcodes.LOAD_FAST,
-                                        self.patcher.ensureVarName(local),
-                                        local,
-                                        local,
-                                        0,
-                                        0,
-                                        False,
-                                    )
-                                ],
+                                [self.patcher.createLoadFast(local)],
                             )
 
                             print(
@@ -465,7 +454,8 @@ class MixinPatchHelper:
                     )
 
         # Return becomes jump instruction, the function TAIL is currently not known,
-        # so we need to trick it a little by setting its value to -1
+        # so we need to trick it a little by setting its value to 0, and later waling over it and rebinding that
+        # instructions to the correct offset
 
         index = -1
         while index < len(helper.instruction_listing) - 1:
@@ -480,36 +470,14 @@ class MixinPatchHelper:
                         helper.insertRegion(
                             index,
                             [
-                                dis.Instruction(
-                                    "POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False
-                                ),
-                                dis.Instruction(
-                                    "JUMP_ABSOLUTE",
-                                    PyOpcodes.JUMP_ABSOLUTE,
-                                    0,
-                                    0,
-                                    "",
-                                    0,
-                                    0,
-                                    False,
-                                ),
+                                createInstruction("POP_TOP"),
+                                createInstruction("JUMP_ABSOLUTE", 0, 0),
                             ],
                         )
                     else:
                         helper.insertRegion(
                             index,
-                            [
-                                dis.Instruction(
-                                    "JUMP_ABSOLUTE",
-                                    PyOpcodes.JUMP_ABSOLUTE,
-                                    0,
-                                    0,
-                                    "",
-                                    0,
-                                    0,
-                                    False,
-                                ),
-                            ],
+                            [createInstruction("JUMP_ABSOLUTE", 0, 0)],
                         )
                     break
             else:
@@ -536,16 +504,7 @@ class MixinPatchHelper:
                             and possible_load.argval == "mixin_return"
                         ):
                             # Delete the LOAD_GLOBAL instruction
-                            helper.instruction_listing[index] = dis.Instruction(
-                                "RETURN_VALUE",
-                                PyOpcodes.RETURN_VALUE,
-                                None,
-                                None,
-                                "",
-                                0,
-                                0,
-                                False,
-                            )
+                            helper.instruction_listing[index] = createInstruction("RETURN_VALUE")
                             helper.deleteRegion(index - 2, index - 1)
                             index -= 3
                             protect.add(index)
@@ -558,26 +517,8 @@ class MixinPatchHelper:
                             possible_load.opname == "LOAD_GLOBAL"
                             and possible_load.argval == "mixin_return"
                         ):
-                            helper.instruction_listing[index - 1] = dis.Instruction(
-                                "LOAD_CONST",
-                                PyOpcodes.LOAD_CONST,
-                                helper.patcher.ensureConstant(None),
-                                None,
-                                "None",
-                                0,
-                                0,
-                                False,
-                            )
-                            helper.instruction_listing[index] = dis.Instruction(
-                                "RETURN_VALUE",
-                                PyOpcodes.RETURN_VALUE,
-                                None,
-                                None,
-                                "",
-                                0,
-                                0,
-                                False,
-                            )
+                            helper.instruction_listing[index - 1] = self.patcher.createLoadConst(None)
+                            helper.instruction_listing[index] = createInstruction("RETURN_VALUE")
                             helper.deleteRegion(index - 2, index - 1)
                             index -= 3
                             protect.add(index - 1)
@@ -615,16 +556,7 @@ class MixinPatchHelper:
         # todo: check for HEAD generator instruction
 
         bind_locals = [
-            dis.Instruction(
-                "STORE_FAST",
-                PyOpcodes.STORE_FAST,
-                self.patcher.ensureVarName(e),
-                e,
-                e,
-                0,
-                0,
-                False,
-            )
+            self.patcher.createLoadFast(e)
             for e in reversed(method.variable_names[:added_args])
         ]
 
@@ -633,17 +565,8 @@ class MixinPatchHelper:
             bind_locals
             + helper.instruction_listing
             + [
-                dis.Instruction(
-                    "LOAD_CONST",
-                    PyOpcodes.LOAD_CONST,
-                    self.patcher.ensureConstant("mixin:internal"),
-                    None,
-                    "",
-                    0,
-                    0,
-                    False,
-                ),
-                dis.Instruction("POP_TOP", PyOpcodes.POP_TOP, 0, 0, "", 0, 0, False),
+                self.patcher.createLoadConst("mixin:internal"),
+                createInstruction("POP_TOP"),
             ],
         )
         self.patcher.max_stack_size += target.max_stack_size
@@ -701,7 +624,7 @@ class MixinPatchHelper:
             return
 
         self.insertRegion(
-            0, [dis.Instruction("GEN_START", 129, 2, None, None, False, 0, 0)]
+            0, [createInstruction("GEN_START", 2)]
         )
         self.is_async = True
         return self
@@ -709,6 +632,7 @@ class MixinPatchHelper:
     def makeMethodSync(self):
         """
         Simply makes this method sync, like it was declared without "async def"
+        WARNING: this transform is normally no good idea!
         """
         if not self.is_async:
             return
@@ -732,6 +656,7 @@ class MixinPatchHelper:
     ):
         """
         Injects the given method as a constant call into the bytecode of that function
+        Use insertMethodAt() instead when wanting to inline that call
 
         :param offset: the offset to inject at
         :param method: the method to inject
@@ -745,97 +670,33 @@ class MixinPatchHelper:
         self.insertRegion(
             offset,
             (
-                [
-                    dis.Instruction(
-                        "DUP_TOP",
-                        PyOpcodes.DUP_TOP,
-                        0,
-                        None,
-                        "",
-                        False,
-                        0,
-                        False,
-                    ),
-                ]
+                [createInstruction("DUP_TOP")]
                 if include_stack_top_copy
                 else []
             )
-            + [
-                dis.Instruction(
-                    "LOAD_CONST",
-                    PyOpcodes.LOAD_CONST,
-                    self.patcher.ensureConstant(method),
-                    method,
-                    repr(method),
-                    False,
-                    0,
-                    False,
-                ),
-            ]
+            + [self.patcher.createLoadConst(method)]
             + (
-                [
-                    dis.Instruction(
-                        "ROT_TWO",
-                        PyOpcodes.ROT_TWO,
-                        0,
-                        None,
-                        "",
-                        False,
-                        0,
-                        False,
-                    )
-                ]
+                [createInstruction("ROT_TWO")]
                 if include_stack_top_copy
                 else []
             )
             + [
-                dis.Instruction(
-                    "LOAD_CONST",
-                    PyOpcodes.LOAD_CONST,
-                    self.patcher.ensureConstant(e),
-                    e,
-                    repr(e),
-                    False,
-                    0,
-                    0,
-                )
+                self.patcher.createLoadConst(e)
                 for e in reversed(args)
             ]
             + [
-                dis.Instruction(
-                    "LOAD_FAST",
-                    PyOpcodes.LOAD_FAST,
-                    self.patcher.ensureVarName(e),
-                    e,
-                    e,
-                    False,
-                    0,
-                    0,
-                )
+                self.patcher.createLoadFast(e)
                 for e in reversed(collected_locals)
             ]
             + list(special_args_collectors)
             + [
-                dis.Instruction(
-                    "CALL_FUNCTION",
-                    PyOpcodes.CALL_FUNCTION,
-                    len(args)
+                createInstruction("CALL_FUNCTION", len(args)
                     + len(collected_locals)
                     + int(include_stack_top_copy)
-                    + len(special_args_collectors),
-                    None,
-                    None,
-                    False,
-                    0,
-                    0,
-                ),
+                    + len(special_args_collectors))
             ]
             + (
-                [
-                    dis.Instruction(
-                        "POP_TOP", PyOpcodes.POP_TOP, 0, None, None, False, 0, 0
-                    ),
-                ]
+                [createInstruction("POP_TOP")]
                 if pop_result
                 else []
             )
@@ -871,113 +732,23 @@ class MixinPatchHelper:
             real_module = module
 
         instructions = [
-            dis.Instruction(
-                "LOAD_CONST",
-                100,
-                self.patcher.ensureConstant(0),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "LOAD_CONST",
-                100,
-                self.patcher.ensureConstant((real_name,)),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "IMPORT_NAME",
-                108,
-                self.patcher.ensureName(real_module),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "IMPORT_FROM",
-                109,
-                self.patcher.ensureName(real_name),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "STORE_FAST",
-                125,
-                self.patcher.ensureName(real_module),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "POP_TOP",
-                1,
-                None,
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "LOAD_FAST",
-                124,
-                self.patcher.ensureName(real_module),
-                None,
-                None,
-                False,
-                0,
-                0.0,
-            ),
+            self.patcher.createLoadConst(0),
+            self.patcher.createLoadConst((real_name,)),
+            createInstruction("IMPORT_NAME", self.patcher.ensureName(real_module)),
+            createInstruction("IMPORT_FROM", self.patcher.ensureName(real_name)),
+            self.patcher.createStoreFast(real_module),
+            createInstruction("POP_TOP"),
+            self.patcher.createLoadFast(real_module),
         ]
 
-        for arg in args:
-            instructions.append(
-                dis.Instruction(
-                    "LOAD_CONST",
-                    100,
-                    self.patcher.ensureConstant(arg),
-                    None,
-                    None,
-                    False,
-                    0,
-                    0,
-                )
-            )
+        instructions += [
+            self.patcher.createLoadConst(e)
+            for e in args
+        ]
 
         instructions += [
-            dis.Instruction(
-                "CALL_FUNCTION",
-                131,
-                len(args),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "POP_TOP",
-                1,
-                0,
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
+            createInstruction("CALL_FUNCTION", len(args)),
+            createInstruction("POP_TOP"),
         ]
 
         self.patcher.max_stack_size += max(2, len(args))
@@ -1016,143 +787,26 @@ class MixinPatchHelper:
             real_module = module
 
         instructions = [
-            dis.Instruction(
-                "LOAD_CONST",
-                100,
-                self.patcher.ensureConstant(0),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "LOAD_CONST",
-                100,
-                self.patcher.ensureConstant((real_name,)),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "IMPORT_NAME",
-                108,
-                self.patcher.ensureName(real_module),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "IMPORT_FROM",
-                109,
-                self.patcher.ensureName(real_name),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "STORE_FAST",
-                125,
-                self.patcher.ensureName(real_module),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "POP_TOP",
-                1,
-                None,
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "LOAD_FAST",
-                124,
-                self.patcher.ensureName(real_module),
-                None,
-                None,
-                False,
-                0,
-                0.0,
-            ),
+            self.patcher.createLoadConst(0),
+            self.patcher.createLoadConst((real_name,)),
+            createInstruction("IMPORT_NAME", self.patcher.ensureName(real_module)),
+            createInstruction("IMPORT_FROM", self.patcher.ensureName(real_name)),
+            self.patcher.createStoreFast(real_module),
+            createInstruction("POP_TOP"),
+            self.patcher.createLoadFast(real_module),
         ]
 
-        for arg in args:
-            instructions.append(
-                dis.Instruction(
-                    "LOAD_CONST",
-                    100,
-                    self.patcher.ensureConstant(arg),
-                    None,
-                    None,
-                    False,
-                    0,
-                    0,
-                )
-            )
+        instructions += [
+            self.patcher.createLoadConst(e)
+            for e in args
+        ]
 
         instructions += [
-            dis.Instruction(
-                "CALL_FUNCTION",
-                131,
-                len(args),
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "GET_AWAITABLE",
-                73,
-                0,
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "LOAD_CONST",
-                100,
-                self.patcher.ensureConstant(None),
-                0,
-                0,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "YIELD_FROM",
-                72,
-                0,
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
-            dis.Instruction(
-                "POP_TOP",
-                1,
-                0,
-                None,
-                None,
-                False,
-                0,
-                0,
-            ),
+            createInstruction("CALL_FUNCTION", len(args)),
+            createInstruction("GET_AWAITABLE"),
+            self.patcher.createLoadConst(None),
+            createInstruction("YIELD_FROM"),
+            createInstruction("POP_TOP"),
         ]
 
         self.patcher.max_stack_size += max(2, len(args))
