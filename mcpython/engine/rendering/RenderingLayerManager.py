@@ -85,7 +85,7 @@ class RenderingLayer:
 
     def draw(self):
         if self.event_name is not None:
-            shared.event_handler.call(self.event_name)
+            shared.event_handler.call_ordered(self.event_name)
 
         for sub in self.draw_subscribers:
             sub()

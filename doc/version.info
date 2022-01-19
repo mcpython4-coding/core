@@ -2015,4 +2015,6 @@ B** [uuk]: fixed TickHandler badly misbehaving when skipping ticks with schedule
            leading into multiple invocations and a incorrect tick counter
 f   [uuk]: added capture_local_static() for forcing a stack local value capture instead of
            an dynamic linked local
+fI  [uuk]: EventHandler's call_async() is now calling the events really async
+A   [uuk]: EventHandler contains a variant for still invoking subsribers in-order
 

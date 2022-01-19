@@ -120,12 +120,20 @@ class EventBus:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
     async def call_async(self, event_name: str, *args, **kwargs):
-        from mcpython.common.mod.util import LoadingInterruptException
-
         if event_name not in self.event_subscriptions:
             return
 
-        # todo: run all async stuff parallel
+        await asyncio.gather(*self._yield_awaitable_or_invoke(event_name, *args, **kwargs))
+
+    async def call_async_ordered(self, event_name: str, *args, **kwargs):
+        if event_name not in self.event_subscriptions:
+            return
+
+        for target in self._yield_awaitable_or_invoke(event_name, *args, **kwargs):
+            await target
+
+    def _yield_awaitable_or_invoke(self, event_name: str, *args, **kwargs):
+        from mcpython.common.mod.util import LoadingInterruptException
 
         exception_occ = False
         for function, extra_args, extra_kwargs, info in self.event_subscriptions[
@@ -133,14 +141,14 @@ class EventBus:
         ]:
             try:
                 if asyncio.iscoroutine(function):
-                    await function
+                    yield function
                 else:
                     result = function(
                         *list(args) + list(extra_args),
                         **{**kwargs, **extra_kwargs},
                     )
                     if isinstance(result, typing.Awaitable):
-                        await result
+                        yield result
 
             except (SystemExit, KeyboardInterrupt):
                 raise
