@@ -33,6 +33,16 @@ class CancelAbleEvent:
         self.canceled = True
 
 
+def create_optional_async(target, *args, **kwargs):
+    async def invoke():
+        result = target(*args, **kwargs)
+
+        if isinstance(result, typing.Coroutine):
+            await result
+
+    return invoke()
+
+
 class EventBus:
     """
     An class for bundling event calls to instances of this to make it easy to add/remove big event notations.
@@ -133,65 +143,13 @@ class EventBus:
             await target
 
     def _yield_awaitable_or_invoke(self, event_name: str, *args, **kwargs):
-        from mcpython.common.mod.util import LoadingInterruptException
-
-        exception_occ = False
         for function, extra_args, extra_kwargs, info in self.event_subscriptions[
             event_name
         ]:
-            try:
-                if asyncio.iscoroutine(function):
-                    yield function
-                else:
-                    result = function(
-                        *list(args) + list(extra_args),
-                        **{**kwargs, **extra_kwargs},
-                    )
-                    if isinstance(result, typing.Awaitable):
-                        yield result
-
-            except (SystemExit, KeyboardInterrupt):
-                raise
-
-            except LoadingInterruptException:
-                raise
-
-            except MemoryError:  # Memory error is something fatal
-                shared.window.close()
-                pyglet.app.exit()
-                print("closing due to missing memory")
-                sys.exit(-1)
-
-            except:
-                exception_occ = True
-                logger.print_exception(
-                    "during calling function: {} with arguments: {}, {}".format(
-                        function,
-                        list(args) + list(extra_args),
-                        {**kwargs, **extra_kwargs},
-                        sep="\n",
-                    ),
-                    "function info: '{}'".format(info) if info is not None else "",
-                    "during event:",
-                    event_name,
-                )
-
-        if exception_occ and self.crash_on_error:
-            logger.println("\nout of the above reasons, the game is being closed")
-
-            if self.close_on_error:
-                shared.window.close()
-                pyglet.app.exit()
-                import mcpython.common.state.LoadingExceptionViewState
-                from mcpython.common.mod.util import LoadingInterruptException
-
-                mcpython.common.state.LoadingExceptionViewState.error_occur(
-                    traceback.format_exc()
-                )
-                return
-
+            if asyncio.iscoroutine(function):
+                yield function
             else:
-                raise RuntimeError
+                yield create_optional_async(function, *args, *extra_args, **kwargs, **extra_kwargs)
 
     def call(self, event_name: str, *args, **kwargs):
         asyncio.get_event_loop().run_until_complete(

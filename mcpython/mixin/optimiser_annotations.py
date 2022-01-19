@@ -45,7 +45,11 @@ class _OptimiserContainer:
             CodeOptimiser.optimise_code(helper)
 
     async def optimize_target_async(self):
-        self.optimise_target()
+        try:
+            self.optimise_target()
+        except:
+            print(self.target)
+            raise
 
 
 def _schedule_optimisation(
@@ -177,13 +181,14 @@ def inline_call(
     The optimiser has the last word on this and may choose
     different ways of optimising this
 
-    'static_target' might be a callable returning a method
+    'static_target' might be a callable returning a method that represents the target
+    The static_target function will be invoked with "self" depending if it requires it or not
     """
 
     def annotation(target: typing.Callable):
-        _schedule_optimisation(target).code_walkers.append(
-            MethodInlineProcessor(call_target, static_target)
-        )
+        _schedule_optimisation(target) #.code_walkers.append(
+        #     MethodInlineProcessor(call_target, static_target)
+        # )
         return target
 
     return annotation
