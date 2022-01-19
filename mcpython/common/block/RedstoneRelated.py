@@ -21,6 +21,7 @@ from pyglet.window import key, mouse
 from . import AbstractBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
+from ..container.ResourceStack import ItemStack
 
 states = "none", "up", "side"
 
@@ -178,6 +179,10 @@ class RedstoneBlock(AbstractBlock.AbstractBlock):
     def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
         return True
 
+    # We don't need to implement this, as it will not change the internal state
+    def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int, call_update=True):
+        pass
+
 
 class RedstoneRepeater(IHorizontalOrientableBlock):
     """
@@ -328,3 +333,122 @@ class RedstoneLamp(AbstractBlock.AbstractBlock):
 
         if shared.IS_CLIENT:
             self.face_info.update(True)
+
+
+class RedstoneTorch(AbstractBlock.AbstractBlock):
+    NAME = "minecraft:redstone_torch"
+
+    IS_SOLID = False
+    DEFAULT_FACE_SOLID = 0
+    NO_ENTITY_COLLISION = True
+
+    def __init__(self):
+        super().__init__()
+        self.lit = False
+        self.last_scheduled = False
+
+    async def on_redstone_update(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        block = dimension.get_block(EnumSide.DOWN.relative_offset(self.position), none_if_str=True)
+
+        should_be_active = not bool(max(block.injected_redstone_power))
+
+        if should_be_active != self.last_scheduled:
+            shared.tick_handler.bind_redstone_tick(self.set_lit(should_be_active), 1)
+            self.last_scheduled = should_be_active
+
+    async def set_lit(self, state: bool):
+        self.lit = state
+        self.face_info.update()
+
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        for face in EnumSide.iterate():
+            if face == EnumSide.DOWN: continue
+
+            block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+            if block is not None:
+                shared.tick_handler.schedule_once(block.on_redstone_update())
+
+    async def on_block_added(self):
+        if self.real_hit:
+            sx, sy, sz = self.real_hit
+            px, py, pz = self.position
+            dx, dy, dz = sx - px, sy - py, sz - pz
+
+            if abs(dy) >= .5:
+                return
+
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        block = await dimension.add_block(self.position, "minecraft:redstone_wall_torch", block_update=False)
+        await block.set_creation_properties(set_to=self.set_to, real_hit=self.real_hit)
+        await block.on_block_added()
+
+    async def on_block_update(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        block = dimension.get_block(EnumSide.DOWN.relative_offset(self.position), none_if_str=True)
+
+        if block is None or not block.is_face_solid(EnumSide.UP):
+            await dimension.remove_block(self.position)
+            dimension.spawn_itemstack_in_world(ItemStack(self.NAME), self.position)
+
+    def get_model_state(self) -> dict:
+        return {"lit": str(self.lit).lower()}
+
+    def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
+        return 15 if self.lit and side != EnumSide.DOWN else 0
+
+    def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
+        return side != EnumSide.DOWN
+
+
+class RedstoneWallTorch(IHorizontalOrientableBlock):
+    NAME = "minecraft:redstone_wall_torch"
+
+    IS_SOLID = False
+    DEFAULT_FACE_SOLID = 0
+    NO_ENTITY_COLLISION = True
+
+    def __init__(self):
+        super().__init__()
+        self.lit = False
+        self.last_scheduled = False
+        self.facing = EnumSide.NORTH
+
+    def get_model_state(self) -> dict:
+        return {"lit": str(self.lit).lower()} | super().get_model_state()
+
+    async def on_redstone_update(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        block = dimension.get_block(self.face.relative_offset(self.position), none_if_str=True)
+
+        should_be_active = not bool(max(block.injected_redstone_power))
+
+        if should_be_active != self.last_scheduled:
+            shared.tick_handler.bind_redstone_tick(self.set_lit(should_be_active), 1)
+            self.last_scheduled = should_be_active
+
+    async def set_lit(self, state: bool):
+        self.lit = state
+        self.face_info.update()
+
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        for face in EnumSide.iterate():
+            if face == self.face: continue
+
+            block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+            if block is not None:
+                shared.tick_handler.schedule_once(block.on_redstone_update())
+
+    def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
+        return 15 if self.lit and side != self.face else 0
+
+    def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
+        return side != self.side
+
+    async def on_block_update(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+        block = dimension.get_block(self.face.relative_offset(self.position), none_if_str=True)
+
+        if block is None or not block.is_face_solid(self.face.invert()):
+            await dimension.remove_block(self.position)
+            dimension.spawn_itemstack_in_world(ItemStack(self.NAME), self.position)

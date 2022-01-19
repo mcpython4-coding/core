@@ -203,7 +203,7 @@ class TickHandler:
             (ticket_id, function, args, kwargs, ticket_function)
         )
 
-    # @inline_call("%.bind", lambda: TickHandler.bind)
+    @inline_call("%.bind", lambda: TickHandler.bind)
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)
 

@@ -2019,4 +2019,5 @@ fI  [uuk]: EventHandler's call_async() is now calling the events really async
 A   [uuk]: EventHandler contains a variant for still invoking subsribers in-order
 IA* [uuk]: TickHandler's order of execution changed a little bit, moving the
            scheduled next tick events earlier, and fetching them each tick, and not each tick() invocation
+f   [uuk]: implemented redstone torch
 

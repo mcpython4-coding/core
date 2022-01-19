@@ -34,7 +34,7 @@ Make sure that you are using python 3.10 or higher!
 ----
 
 
-# Changelog of snapshot <21w05a>
+# Changelog of snapshot <22w05a>
 Scheduled to be released on 02.02.2022
 targeting <1.18.1>
 
@@ -45,7 +45,7 @@ Mods previously broken as they are using that API as defined, will now work agai
 
     Blocks
         - redstone block & redstone lamp have now their correct behaviour
-        - implemented redstone repeater
+        - implemented redstone repeater and redstone torch
         todo: re-add redstone block slab, stair and wall
 
     Fixed issues:
