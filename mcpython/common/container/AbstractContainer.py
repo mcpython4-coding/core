@@ -40,6 +40,7 @@ class AbstractContainer(IBufferSerializeAble, ABC):
 
         if not shared.IS_CLIENT:
             self.renderer = None
+
         else:
             self.renderer = self.create_renderer()
             self.renderer.create_slot_rendering_information()
@@ -70,12 +71,6 @@ class AbstractContainer(IBufferSerializeAble, ABC):
 
         for slot in self.slots:
             await slot.read_from_network_buffer(buffer)
-
-    async def post_load(self, data):
-        """
-        serializes stuff after the slot data is loaded
-        :param data: the data stored
-        """
 
     def create_renderer(self) -> typing.Any:
         """

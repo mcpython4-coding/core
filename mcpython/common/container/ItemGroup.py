@@ -19,6 +19,8 @@ from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, Write
 
 
 class ItemGroup(IBufferSerializeAble):
+    __slots__ = ["entries", "has_lazy"]
+
     def __init__(self):
         self.entries: typing.List[ItemStack] = []
         self.has_lazy = False
@@ -83,6 +85,11 @@ class ItemGroup(IBufferSerializeAble):
 
 
 class FilteredItemGroup(ItemGroup):
+    __slots__ = ItemGroup.__slots__ + [
+        "raw_filter",
+        "filter"
+    ]
+
     def __init__(self):
         super().__init__()
         self.raw_filter: str = None
@@ -94,17 +101,17 @@ class FilteredItemGroup(ItemGroup):
 
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         await super().read_from_network_buffer(buffer)
-        self.apply_filter(buffer.read_string())
+        self.apply_raw_filter(buffer.read_string())
 
     def view(self) -> typing.Iterator[ItemStack]:
         return self.filter_for(self.filter)
 
-    def apply_raw_filter(self, filter: str):
-        self.raw_filter = filter
-        self.filter = re.compile(filter)
+    def apply_raw_filter(self, filter_code: str):
+        self.raw_filter = filter_code
+        self.filter = re.compile(filter_code)
         return self
 
-    def apply_filter(self, filter: re.Pattern):
+    def apply_filter(self, filter_pattern: re.Pattern):
         self.raw_filter = None
-        self.filter = filter
+        self.filter = filter_pattern
         return self
