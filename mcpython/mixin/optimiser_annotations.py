@@ -245,6 +245,19 @@ def access_static(name: str):
     return annotation
 
 
+def access_once(name: str):
+    """
+    Accesses a variable which may get accessed multiple times only once's and cache the result.
+    May move the access as early as possible
+    """
+
+    def annotation(target: typing.Callable):
+        _schedule_optimisation(target)
+        return target
+
+    return annotation
+
+
 def try_optimise():
     """
     Tries to optimise the given method

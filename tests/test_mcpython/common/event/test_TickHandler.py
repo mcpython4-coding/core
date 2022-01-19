@@ -43,6 +43,7 @@ class TestTickHandler(TestCase):
         shared.world = Tickable()
         shared.NETWORK_MANAGER = FakeNetwork()
         shared.tag_handler = FakeTagHandler()
+        shared.tick_handler.enable_tick_skipping = True
 
     @classmethod
     def tearDownClass(cls):

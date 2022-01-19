@@ -28,7 +28,9 @@ from mcpython.mixin.optimiser_annotations import (
     access_static,
     constant_arg,
     inline_call,
+    access_once,
 )
+from mcpython.mixin.optimiser_annotations import try_optimise
 
 if shared.IS_CLIENT:
     from mcpython.client.texture.AnimationManager import animation_manager
@@ -59,6 +61,8 @@ class TickHandler:
         asyncio.get_event_loop().run_until_complete(self.tick(dt))
 
     @access_static("shared.IS_CLIENT")
+    @access_once("%.enable_tick_skipping")
+    @inline_call("%._execute_tick", lambda: TickHandler._execute_tick)
     async def tick(self, dt: float):
         """
         Execute ticks
@@ -74,28 +78,11 @@ class TickHandler:
             self.lost_time -= 1 / 20
             self.active_tick += 1
 
-            if self.active_tick in self.tick_array:
-                for ticket_id, function, args, kwargs, ticket_update in self.tick_array[
-                    self.active_tick
-                ]:
-                    if isinstance(function, typing.Awaitable):
-                        result = await function
-                    else:
-                        result = function(*args, **kwargs)
+            await self._execute_tick()
 
-                        if isinstance(result, typing.Awaitable):
-                            result = await result
-
-                    if ticket_id:
-                        self.results[ticket_id] = result
-                        ticket_update(self, ticket_id, function, args, kwargs)
-
-                # And now do a cleanup
-                del self.tick_array[self.active_tick]
-
-                if not self.enable_tick_skipping:
-                    self.lost_time = 0
-                    break
+            if not self.enable_tick_skipping:
+                self.lost_time = 0
+                break
 
         await shared.entity_manager.tick(dt)
 
@@ -119,6 +106,27 @@ class TickHandler:
         )
         if self.enable_random_ticks:
             await self.send_random_ticks(0)
+
+    @try_optimise()
+    async def _execute_tick(self):
+        if self.active_tick in self.tick_array:
+            for ticket_id, function, args, kwargs, ticket_update in self.tick_array[
+                self.active_tick
+            ]:
+                if isinstance(function, typing.Awaitable):
+                    result = await function
+                else:
+                    result = function(*args, **kwargs)
+
+                    if isinstance(result, typing.Awaitable):
+                        result = await result
+
+                if ticket_id:
+                    self.results[ticket_id] = result
+                    ticket_update(self, ticket_id, function, args, kwargs)
+
+            # And now do a cleanup
+            del self.tick_array[self.active_tick]
 
         while len(self.execute_array) > 0:
             func, args, kwargs = tuple(self.execute_array.pop(0))
