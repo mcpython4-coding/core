@@ -135,6 +135,8 @@ async def load():
     block_registry.register(RedstoneRelated.RedstoneTorch)
     block_registry.register(RedstoneRelated.RedstoneWallTorch)
     block_registry.register(RedstoneRelated.RedstoneLamp)
+    block_registry.register(RedstoneRelated.Piston)
+    block_registry.register(RedstoneRelated.StickyPiston)
     block_registry.register(Rails.ActivatorRail)
     block_registry.register(Rails.PoweredRail)
     block_registry.register(Rails.DetectorRail)

@@ -19,6 +19,7 @@ from mcpython.util.enums import EnumSide
 from pyglet.window import key, mouse
 
 from . import AbstractBlock
+from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
 from ..container.ResourceStack import ItemStack
@@ -213,6 +214,28 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
         self.active = False
         self.last_scheduled_state = False
 
+    def get_model_state(self) -> dict:
+        return {
+            "delay": str(self.delay),
+            "facing": self.facing.rotate((0, -90, 0)).normal_name,
+            "locked": str(self.locked).lower(),
+            "powered": str(self.active).lower(),
+        }
+
+    async def set_model_state(self, state: dict):
+        await super().set_model_state(state)
+        self.facing = self.facing.rotate((0, 90, 0))
+
+        if "delay" in state:
+            # Clamp the value in case it is out of range
+            self.delay = max(min(int(state["delay"]), 4), 1)
+
+        if "locked" in state:
+            self.locked = state["locked"] == "true"
+
+        if "powered" in state:
+            self.active = state["powered"] == "true"
+
     async def on_redstone_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
         source_block = dimension.get_block(
@@ -247,28 +270,6 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
         if target_block is not None:
             target_block.inject_redstone_power(self.facing, 15 if active else 0)
 
-    def get_model_state(self) -> dict:
-        return {
-            "delay": str(self.delay),
-            "facing": self.facing.rotate((0, -90, 0)).normal_name,
-            "locked": str(self.locked).lower(),
-            "powered": str(self.active).lower(),
-        }
-
-    async def set_model_state(self, state: dict):
-        await super().set_model_state(state)
-        self.facing = self.facing.rotate((0, 90, 0))
-
-        if "delay" in state:
-            # Clamp the value in case it is out of range
-            self.delay = max(min(int(state["delay"]), 4), 1)
-
-        if "locked" in state:
-            self.locked = state["locked"] == "true"
-
-        if "powered" in state:
-            self.active = state["powered"] == "true"
-
     def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
         return side == self.facing or side == self.facing.invert()
 
@@ -294,9 +295,7 @@ class RedstoneRepeater(IHorizontalOrientableBlock):
 class RedstoneLamp(AbstractBlock.AbstractBlock):
     DEBUG_WORLD_BLOCK_STATES = [
         {"lit": "false"},
-        {
-            "lit": "true",
-        },
+        {"lit": "true"},
     ]
 
     NAME = "minecraft:redstone_lamp"
@@ -342,10 +341,19 @@ class RedstoneTorch(AbstractBlock.AbstractBlock):
     DEFAULT_FACE_SOLID = 0
     NO_ENTITY_COLLISION = True
 
+    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby_bool("lit").build()
+
     def __init__(self):
         super().__init__()
         self.lit = False
         self.last_scheduled = False
+
+    def get_model_state(self) -> dict:
+        return {"lit": str(self.lit).lower()}
+
+    async def set_model_state(self, state: dict):
+        if "lit" in state:
+            self.lit = state["lit"] == "true"
 
     async def on_redstone_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
@@ -391,9 +399,6 @@ class RedstoneTorch(AbstractBlock.AbstractBlock):
             await dimension.remove_block(self.position)
             dimension.spawn_itemstack_in_world(ItemStack(self.NAME), self.position)
 
-    def get_model_state(self) -> dict:
-        return {"lit": str(self.lit).lower()}
-
     def get_redstone_source_power(self, side: mcpython.util.enums.EnumSide) -> int:
         return 15 if self.lit and side != EnumSide.DOWN else 0
 
@@ -408,6 +413,8 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
     DEFAULT_FACE_SOLID = 0
     NO_ENTITY_COLLISION = True
 
+    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby_side_horizontal("facing").add_comby_bool("lit").build()
+
     def __init__(self):
         super().__init__()
         self.lit = False
@@ -416,6 +423,12 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
 
     def get_model_state(self) -> dict:
         return {"lit": str(self.lit).lower()} | super().get_model_state()
+
+    async def set_model_state(self, state: dict):
+        await super().set_model_state(state)
+
+        if "lit" in state:
+            self.lit = state["lit"] == "true"
 
     async def on_redstone_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
@@ -452,3 +465,58 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
         if block is None or not block.is_face_solid(self.face.invert()):
             await dimension.remove_block(self.position)
             dimension.spawn_itemstack_in_world(ItemStack(self.NAME), self.position)
+
+
+class Piston(IAllDirectionOrientableBlock):
+    NAME = "minecraft:piston"
+
+    IS_SOLID = False
+
+    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby_side("facing").add_comby_bool("extended").build()
+
+    def __init__(self):
+        super().__init__()
+        self.extended = False
+        self.target_state = False
+
+    async def on_redstone_update(self):
+        state = self.should_be_extended()
+
+        if state != self.target_state:
+            self.target_state = state
+            if state:
+                shared.tick_handler.schedule_once(self.push())
+            else:
+                shared.tick_handler.schedule_once(self.retract())
+
+    def should_be_extended(self):
+        dimension = shared.world.get_dimension_by_name(self.dimension)
+
+        for face in EnumSide.iterate():
+            block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+
+            if block is not None and block.get_redstone_output(face.invert()):
+                return True
+        return False
+
+    async def push(self):
+        pass
+
+    async def retract(self):
+        pass
+
+    def get_model_state(self) -> dict:
+        return {"extended": str(self.extended).lower()} | super().get_model_state()
+
+    async def set_model_state(self, state: dict):
+        await super().set_model_state(state)
+
+        if "extended" in state:
+            self.extended = state["extended"] == "true"
+
+
+class StickyPiston(Piston):
+    NAME = "minecraft:sticky_piston"
+
+    async def retract(self):
+        pass

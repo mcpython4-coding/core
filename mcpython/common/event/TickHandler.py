@@ -67,7 +67,7 @@ class TickHandler:
         """
         Execute ticks
 
-        Internally applies a small mixin for the IS_CLIENT checks (see OptimiserMixins.py)
+        Internally applies a small mixin for the IS_CLIENT checks
 
         :param dt: the time that came after the last event
         """

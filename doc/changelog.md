@@ -45,7 +45,7 @@ Mods previously broken as they are using that API as defined, will now work agai
 
     Blocks
         - redstone block & redstone lamp have now their correct behaviour
-        - implemented redstone repeater and redstone torch
+        - implemented redstone repeater, redstone torch and pistons
         todo: re-add redstone block slab, stair and wall
 
     Fixed issues:

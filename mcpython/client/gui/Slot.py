@@ -22,9 +22,11 @@ import mcpython.common.item.ItemManager
 import mcpython.engine.ResourceLoader
 import pyglet
 from mcpython import shared
+from mcpython.client.texture.TextureAtlas import MISSING_TEXTURE
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
+from mcpython.util.texture import to_pyglet_image
 
 SLOT_WIDTH = 32
 
@@ -320,10 +322,10 @@ class Slot(ISlot):
             self.itemstack.item.get_default_item_image_location()
             != self.__last_item_file
             or self.sprite is None
-        ):
-            image = mcpython.common.item.ItemManager.items.item_index_table[
-                self.itemstack.get_item_name()
-            ][self.itemstack.item.get_active_image_location()]
+        ) and shared.IS_CLIENT:
+            image = mcpython.common.item.ItemManager.items.item_index_table.setdefault(
+                self.itemstack.get_item_name(), {}
+            ).setdefault(self.itemstack.item.get_active_image_location(), to_pyglet_image(MISSING_TEXTURE.resize((64, 64))))
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
 
         elif self.itemstack.is_empty():

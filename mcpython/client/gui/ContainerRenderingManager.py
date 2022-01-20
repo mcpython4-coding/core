@@ -114,7 +114,7 @@ class OpenedInventoryStatePart(
             except:
                 logger.print_exception(f"during drawing inventory {inventory}")
                 shared.tick_handler.schedule_once(
-                    shared.inventory_handler.hide_inventory(inventory)
+                    shared.inventory_handler.hide(inventory)
                 )
 
         if not shared.inventory_handler.moving_slot.get_itemstack().is_empty():

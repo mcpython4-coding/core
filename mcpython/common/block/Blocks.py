@@ -42,10 +42,10 @@ from mcpython.util.enums import ToolType
 # light_weighted_pressure_plate
 # moving piston, mushroom stem
 # powder_snow
-# piston, piston head, player head, player wall head
+# player head, player wall head
 # bubble column, chain command block, redstone torch, wall torch
 # red mushroom block, repeating command block, scaffolding
-# skeleton skull, soul torch, spawner, sticky piston
+# skeleton skull, soul torch, spawner
 # structure block, structure void, torch, tripwire, tripwire hook
 # turtle egg, twisted vines, vine, void air, weeping vines
 # wither skeleton skull, zombie head
