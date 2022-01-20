@@ -116,6 +116,8 @@ class MixinPatchHelper:
     Can save-ly exchange code regions with others, and redirect jump instructions correctly.
 
     Also contains code to inline whole methods into the code
+
+    See also https://docs.python.org/3.11/library/inspect.html#code-objects-bit-flags
     """
 
     def __init__(self, patcher: FunctionPatcher | types.FunctionType):

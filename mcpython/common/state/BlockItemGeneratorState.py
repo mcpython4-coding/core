@@ -138,6 +138,13 @@ class BlockItemGenerator(AbstractState.AbstractState):
         if not shared.invalidate_cache:
             self.load_previous_data()
 
+        # Remove the blocks we have items for
+        # This is needed for the custom items (like redstone torch) that override this
+        item_registry = shared.registry.get_by_name("minecraft:item")
+        for task in self.tasks[:]:
+            if task in item_registry:
+                self.tasks.remove(task)
+
         # Have we nothing to do -> We can stop here
         if len(self.tasks) == 0:
             await self.close()
