@@ -820,7 +820,8 @@ class MixinHandler:
             the function result and "raise" for raising the original exception
         :param args: the args to give to the method
         :param collected_locals: which locals to add as args
-        :param inline: when True, will inline the target method; the remaining_mode argument will be ignored
+        :param inline: when True, will inline the target method; the remaining_mode, args and collected_locals
+            arguments will be ignored
         """
         raise NotImplementedError
 
@@ -889,29 +890,6 @@ class MixinHandler:
             and the instruction index
         :param inline: when True, will inline the target method
         :param inline_condition: when True, will inline the condition method
-        """
-        raise NotImplementedError
-
-    def change_iterator(
-        self,
-        access_str: str,
-        matcher: AbstractInstructionMatcher = None,
-        priority=0,
-        optional=True,
-        capture_locals: typing.Iterable[str] = tuple(),
-        inline=False,
-    ):
-        """
-        Exchanges the used iterator for e.g. for loop
-        The attached expression should return the new iterator.
-        It gets the previous iterator as an argument
-
-        :param access_str: the function access str
-        :param matcher: the matcher object, to decide which iterator instruction to use
-        :param priority: the mixin priority
-        :param optional: optional mixin?
-        :param capture_locals: the local variables to capture for the iterator getter
-        :param inline: when True, will inline the target method
         """
         raise NotImplementedError
 
