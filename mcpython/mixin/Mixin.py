@@ -38,6 +38,7 @@ from .MixinProcessors import (
     MixinGlobalReTargetProcessor,
     MixinLocal2ConstReplace,
     MixinReplacementProcessor,
+    RemoveFlowBranchProcessor,
 )
 
 
@@ -826,24 +827,35 @@ class MixinHandler:
     def remove_flow_branch(
         self,
         access_str: str,
-        matcher: AbstractInstructionMatcher,
+        matcher: AbstractInstructionMatcher = None,
         priority=0,
         optional=True,
         target_jumped_branch=True,
     ):
         """
-        Removes a branch introduced by a conditional or non-conditional jump instruction.
+        Removes a branch introduced by a conditional jump instruction.
         Can optimise the code following that branch away.
-        When target_jumped_branch is False, the branch followed by the instruction is removed
-        (for conditional branches only), and the conditional will be replaced by a non-conditional jump.
+        When target_jumped_branch is False, the branch followed by the instruction is removed,
+        and the conditional will be replaced by a non-conditional jump.
 
         :param access_str: the method access str
         :param matcher: the matcher object, for the conditional branch instructions
         :param priority: the mixin priority
         :param optional: optional mixin?
-        :param target_jumped_branch: see above
+        :param target_jumped_branch: if True, the jump will be ignored, if False, the jump will always be done
         """
-        raise NotImplementedError
+        self.bound_mixin_processors.setdefault(access_str, []).append(
+            (
+                RemoveFlowBranchProcessor(
+                    matcher,
+                    target_jumped_branch=target_jumped_branch,
+                ),
+                priority,
+                optional,
+                shared.CURRENT_EVENT_SUB,
+            )
+        )
+        return self
 
     def add_flow_branch(
         self,

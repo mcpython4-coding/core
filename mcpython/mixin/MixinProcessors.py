@@ -639,3 +639,50 @@ class MethodInlineProcessor(AbstractMixinProcessor):
                     pass
                 except:
                     logger.print_exception(f"during tracing source of {instr}")
+
+
+class RemoveFlowBranchProcessor(AbstractMixinProcessor):
+    def __init__(self, matcher: AbstractInstructionMatcher, target_jumped_branch=True):
+        self.matcher = matcher
+        self.target_jumped_branch = target_jumped_branch
+
+    def apply(
+        self,
+        handler,
+        target: FunctionPatcher,
+        helper: MixinPatchHelper,
+    ):
+        match = 0
+        index = -1
+        while index < len(helper.instruction_listing) - 1:
+            index += 1
+            for index, instr in list(helper.walk())[index:]:
+                if instr.opcode in {PyOpcodes.JUMP_IF_FALSE_OR_POP, PyOpcodes.JUMP_IF_TRUE_OR_POP}:
+                    if self.modifyAt(helper, index, match, pop=self.target_jumped_branch):
+                        match += 1
+                        break
+
+                elif instr.opcode in {PyOpcodes.POP_JUMP_IF_FALSE, PyOpcodes.POP_JUMP_IF_TRUE}:
+                    if self.modifyAt(helper, index, match):
+                        match += 1
+                        break
+            else:
+                break
+
+        helper.store()
+
+    def modifyAt(self, helper: MixinPatchHelper, index: int, match: int, pop=True):
+        instr = helper.instruction_listing[index]
+
+        if not self.matcher or self.matcher.matches(helper, index, match):
+            helper.instruction_listing[index] = createInstruction("POP_TOP" if pop else "NOP")
+
+            if self.target_jumped_branch:
+                if instr.opcode in dis.hasjabs:
+                    helper.insertRegion(index+1, [createInstruction("JUMP_ABSOLUTE", instr.arg+1)])
+                else:
+                    helper.insertRegion(index+1, [createInstruction("JUMP_RELATIVE", instr.arg)])
+
+            return True
+
+        return False

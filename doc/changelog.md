@@ -48,6 +48,10 @@ Mods previously broken as they are using that API as defined, will now work agai
         - implemented redstone repeater, redstone torch and pistons
         todo: re-add redstone block slab, stair and wall
 
+    Mixins:
+        - added mixin for removing conditional branches from code
+            (either defaulting to True or False)
+
     Fixed issues:
         - redstone wire was not using the API correctly
         - fixed two MAJOR issues with the tick handler and its interal schedule-in-x ticks 

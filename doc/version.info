@@ -2021,4 +2021,5 @@ IA* [uuk]: TickHandler's order of execution changed a little bit, moving the
            scheduled next tick events earlier, and fetching them each tick, and not each tick() invocation
 f   [uuk]: implemented redstone torch and piston (both not really functional)
 I   [uuk]: made item rendering a little bit more fail save
+f   [uuk]: mixins support now removing conditional branches
 

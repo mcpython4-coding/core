@@ -1447,3 +1447,87 @@ class TestMixinHandler(TestCase):
 
         self.assertIsNotNone(self.test_replace_attribute_with_constant_1)
         self.assertIsNotNone(target(self))
+
+    def test_branch_remover_1(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target(p):
+            if p:
+                return 0
+
+            return 1
+
+        self.assertEqual(target(True), 0)
+
+        handler.makeFunctionArrival("test", target)
+        handler.remove_flow_branch("test")
+        handler.applyMixins()
+
+        self.assertEqual(target(True), 1)
+
+    def test_branch_remover_2(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target(p):
+            if p:
+                return 0
+
+            return 1
+
+        self.assertEqual(target(False), 1)
+
+        handler.makeFunctionArrival("test", target)
+        handler.remove_flow_branch("test", target_jumped_branch=False)
+        handler.applyMixins()
+
+        self.assertEqual(target(False), 0)
+
+    def test_branch_remover_3(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target(p):
+            if p:
+                return 0
+
+            if not p:
+                return 2
+
+            return 1
+
+        self.assertEqual(target(False), 2)
+
+        handler.makeFunctionArrival("test", target)
+        handler.remove_flow_branch("test", target_jumped_branch=False)
+        handler.applyMixins()
+
+        dis.dis(target)
+
+        self.assertEqual(target(False), 0)
+
+    def test_branch_remover_4(self):
+        from mcpython.mixin.Mixin import MixinHandler
+
+        handler = MixinHandler()
+
+        def target(p):
+            if p:
+                return 0
+
+            if not p:
+                return 2
+
+            return 1
+
+        self.assertEqual(target(False), 2)
+
+        handler.makeFunctionArrival("test", target)
+        handler.remove_flow_branch("test", target_jumped_branch=False, matcher=CounterMatcher(1))
+        handler.applyMixins()
+
+        self.assertEqual(target(False), 2)
