@@ -94,6 +94,9 @@ POP_SINGLE_VALUE = {
     PyOpcodes.STORE_DEREF,
     PyOpcodes.STORE_GLOBAL,
     PyOpcodes.STORE_NAME,
+    PyOpcodes.PRINT_EXPR,
+    PyOpcodes.YIELD_VALUE,
+    PyOpcodes.YIELD_FROM,
 }
 POP_DOUBLE_VALUE = {
     PyOpcodes.STORE_ATTR,
@@ -101,10 +104,47 @@ POP_DOUBLE_VALUE = {
 }
 POP_DOUBLE_AND_PUSH_SINGLE = {
     PyOpcodes.STORE_SUBSCR,
+    PyOpcodes.DELETE_SUBSCR,
     PyOpcodes.STORE_ATTR,
+    PyOpcodes.BINARY_POWER,
+    PyOpcodes.BINARY_MULTIPLY,
+    PyOpcodes.BINARY_MATRIX_MULTIPLY,
+    PyOpcodes.BINARY_FLOOR_DIVIDE,
+    PyOpcodes.BINARY_TRUE_DIVIDE,
+    PyOpcodes.BINARY_MODULO,
+    PyOpcodes.BINARY_ADD,
+    PyOpcodes.BINARY_SUBTRACT,
+    PyOpcodes.BINARY_SUBSCR,
+    PyOpcodes.BINARY_LSHIFT,
+    PyOpcodes.BINARY_RSHIFT,
+    PyOpcodes.BINARY_AND,
+    PyOpcodes.BINARY_XOR,
+    PyOpcodes.BINARY_OR,
+    PyOpcodes.INPLACE_POWER,
+    PyOpcodes.INPLACE_MULTIPLY,
+    PyOpcodes.INPLACE_MATRIX_MULTIPLY,
+    PyOpcodes.INPLACE_FLOOR_DIVIDE,
+    PyOpcodes.INPLACE_TRUE_DIVIDE,
+    PyOpcodes.INPLACE_MODULO,
+    PyOpcodes.INPLACE_ADD,
+    PyOpcodes.INPLACE_SUBTRACT,
+    PyOpcodes.INPLACE_LSHIFT,
+    PyOpcodes.INPLACE_RSHIFT,
+    PyOpcodes.INPLACE_AND,
+    PyOpcodes.INPLACE_XOR,
+    PyOpcodes.INPLACE_OR,
 }
 POP_SINGLE_AND_PUSH_SINGLE = {
     PyOpcodes.LOAD_METHOD,
+    PyOpcodes.UNARY_POSITIVE,
+    PyOpcodes.UNARY_NEGATIVE,
+    PyOpcodes.UNARY_NOT,
+    PyOpcodes.UNARY_INVERT,
+    PyOpcodes.GET_ITER,
+    PyOpcodes.GET_YIELD_FROM_ITER,
+    PyOpcodes.GET_AWAITABLE,
+    PyOpcodes.GET_AITER,
+    PyOpcodes.GET_ANEXT,
 }
 
 
@@ -911,6 +951,38 @@ class MixinPatchHelper:
 
             elif instr.opcode == PyOpcodes.FOR_ITER:
                 raise ValueError
+
+            elif instr.opcode == PyOpcodes.ROT_TWO:
+                if offset == 0:
+                    offset = 1
+                elif offset == 1:
+                    offset = 0
+
+            elif instr.opcode == PyOpcodes.ROT_THREE:
+                if offset == 0:
+                    offset = 2
+                elif offset == 1:
+                    offset = 0
+                elif offset == 2:
+                    offset = 1
+
+            elif instr.opcode == PyOpcodes.ROT_FOUR:
+                if offset == 0:
+                    offset = 3
+                elif offset == 1:
+                    offset = 0
+                elif offset == 2:
+                    offset = 1
+                elif offset == 3:
+                    offset = 2
+
+            elif instr.opcode == PyOpcodes.DUP_TOP:
+                if offset > 0:
+                    offset -= 1
+
+            elif instr.opcode == PyOpcodes.DUP_TOP_TWO:
+                if offset > 1:
+                    offset -= 2
 
             else:
                 raise NotImplementedError(instr)
