@@ -445,11 +445,12 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
             if c and c.is_loaded() and not shared.IS_NETWORKING:
                 shared.tick_handler.schedule_once(
-                    shared.world.save_file.dump,
-                    None,
-                    "minecraft:chunk",
-                    dimension=self.active_dimension,
-                    chunk=chunk,
+                    shared.world.save_file.dump_async(
+                        None,
+                        "minecraft:chunk",
+                        dimension=self.active_dimension,
+                        chunk=chunk,
+                    )
                 )
 
         for chunk in after_set:

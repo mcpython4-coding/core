@@ -138,3 +138,9 @@ manager.register_implementation(OpenSimplexImplementation)
 manager.register_optional_implementation(
     "mcpython.server.worldgen.noise.PackageNoiseImplementation", "NoiseImplementation"
 )
+manager.register_optional_implementation(
+    "mcpython.server.worldgen.noise.PackageVNoise", "VNoiseImplementation"
+)
+manager.register_optional_implementation(
+    "mcpython.server.worldgen.noise.PackagePNoise", "PNoiseImplementation"
+)

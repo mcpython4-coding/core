@@ -524,7 +524,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         sector = mcpython.util.math.position_to_chunk(self.position)
 
         if not internal:
-            shared.world.change_chunks(sector, None, dimension=self.dimension)
+            await shared.world.change_chunks_async(sector, None, dimension=self.dimension)
 
         shared.tick_handler.schedule_once(self.reset_moving_slot)
         if (
