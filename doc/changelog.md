@@ -59,6 +59,8 @@ Mods previously broken as they are using that API as defined, will now work agai
         - redstone wire was not using the API correctly
         - fixed two MAJOR issues with the tick handler and its interal schedule-in-x ticks 
           breaking down when executing multiple ticks in one iteration due to a lag spike
+        - mixing inline processor was crashing when arguments had an default value which was accessed
+          (before writing a value into it)
 
 
 

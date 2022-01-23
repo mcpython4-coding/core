@@ -603,9 +603,11 @@ class MethodInlineProcessor(AbstractMixinProcessor):
         self,
         func_name: str,
         target_accessor: typing.Callable[[], typing.Callable] = None,
+        matcher: AbstractInstructionMatcher = None,
     ):
         self.func_name = func_name
         self.target_accessor = target_accessor
+        self.matcher = matcher
 
     def apply(
         self,
@@ -613,32 +615,71 @@ class MethodInlineProcessor(AbstractMixinProcessor):
         target: FunctionPatcher,
         helper: MixinPatchHelper,
     ):
-        for index, instr in helper.walk():
-            if instr.opname == "CALL_METHOD":
-                try:
+        matches = 0
+        index = -1
+        while index < len(helper.instruction_listing) - 1:
+            index += 1
+            for index, instr in list(helper.walk())[index:]:
+                if instr.opname == "CALL_METHOD" and self.func_name.startswith("%."):
+                    try:
+                        source = next(helper.findSourceOfStackIndex(index, instr.arg))
+
+                        # print(source, self.func_name)
+
+                        if source.opcode == PyOpcodes.LOAD_METHOD:
+                            if (
+                                source.argval == self.func_name.split(".")[-1]
+                            ):
+                                matches += 1
+                                if self.matcher and not self.matcher.matches(helper, index, matches):
+                                    continue
+
+                                if self.target_accessor is not None:
+                                    helper.deleteInstruction(instr)
+                                    index = helper.insertMethodAt(
+                                        index,
+                                        self.target_accessor(),
+                                        added_args=instr.arg,
+                                        discard_return_result=False,
+                                    ) - 1
+                                    break
+
+                    except ValueError:
+                        pass
+                    except:
+                        logger.print_exception(f"during tracing source of {instr}")
+
+                elif instr.opcode == PyOpcodes.CALL_FUNCTION:
+                    # print("lookup", index, instr)
+                    # helper.print_stats()
+
                     source = next(helper.findSourceOfStackIndex(index, instr.arg))
 
-                    print(source, self.func_name)
+                    # print(source, self.func_name, source.opcode == PyOpcodes.LOAD_DEREF, source.argval == self.func_name)
 
-                    if source.opcode == PyOpcodes.LOAD_METHOD:
-                        if (
-                            self.func_name.startswith("%.")
-                            and source.argval == self.func_name.split(".")[-1]
-                        ):
-                            if self.target_accessor is not None:
-                                helper.deleteInstruction(instr)
-                                helper.insertMethodAt(
-                                    index,
-                                    self.target_accessor(),
-                                    added_args=instr.arg,
-                                    discard_return_result=False,
-                                )
+                    if source.opcode == PyOpcodes.LOAD_DEREF and source.argval == self.func_name:
+                        matches += 1
+                        if self.matcher and not self.matcher.matches(helper, index, matches):
+                            continue
 
-                    print("source: ", source)
-                except ValueError:
-                    pass
-                except:
-                    logger.print_exception(f"during tracing source of {instr}")
+                        if self.target_accessor is not None:
+                            method = self.target_accessor()
+                            arg_count = instr.arg
+
+                            helper.deleteRegion(index, index+1)
+
+                            index = helper.insertMethodAt(
+                                index,
+                                method,
+                                added_args=arg_count,
+                                discard_return_result=False,
+                                inter_code=(createInstruction("POP_TOP"),)
+                            ) - 1
+                            break
+                else:
+                    break
+
+            helper.store()
 
 
 class RemoveFlowBranchProcessor(AbstractMixinProcessor):

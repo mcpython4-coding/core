@@ -283,10 +283,14 @@ class TestInsertMethod(TestCase):
             if a:
                 mixin_return(0)
 
+        dis.dis(test)
+
         helper = MixinPatchHelper(target)
         helper.insertMethodAt(0, test)
         helper.store()
         helper.patcher.applyPatches()
+
+        dis.dis(target)
 
         self.assertEqual(target(True), 0)
         self.assertEqual(target(False), 1)

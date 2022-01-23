@@ -12,6 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import dis
+import inspect
 import sys
 import types
 from types import CodeType, FunctionType
@@ -87,11 +88,32 @@ class FunctionPatcher:
 
         self.can_be_reattached = True
 
+        self.parameters = inspect.signature(target).parameters.values()
+        self.func_defaults = list(filter(lambda e: e != inspect._empty, map(lambda e: e.default, self.parameters)))
+
         if sys.version_info.minor >= 11:
             self.columntable = self.code.co_columntable
             self.exceptiontable = self.code.co_exceptiontable
             self.end_line_table = self.code.co_endlinetable
             self.qual_name = self.code.co_qualname
+
+    def create_default_write_opcodes(self, total_previous_args: int, ensure_target: "FunctionPatcher" = None) -> typing.Tuple[dis.Instruction]:
+        if ensure_target is None:
+            ensure_target = self
+
+        count = min(len(self.func_defaults), self.argument_count - total_previous_args)
+        head = len(self.func_defaults) - count
+
+        # print(count, head, self.func_defaults, self.target, ensure_target.target)
+        # print(self.variable_names[:self.argument_count][-count:])
+
+        return sum([
+            (
+                ensure_target.createLoadConst(e),
+                ensure_target.createStoreFast(name)
+            )
+            for e, name in zip(self.func_defaults[head:], self.variable_names[:self.argument_count][-count:])
+        ], tuple())
 
     if sys.version_info.minor == 10:
 
@@ -123,6 +145,7 @@ class FunctionPatcher:
                 tuple(self.free_vars),
                 tuple(self.cell_vars),
             )
+            self.target.func_defaults = self.func_defaults
 
     elif sys.version_info.minor == 11:
 
@@ -209,7 +232,10 @@ class FunctionPatcher:
         """
         Creates a copy of this object WITHOUT method binding
         """
-        return FunctionPatcher(null).overrideFrom(self)
+        obj = FunctionPatcher(self.target)
+        obj.overrideFrom(self)
+        obj.can_be_reattached = False
+        return obj
 
     def get_instruction_list(self) -> typing.List[dis.Instruction]:
         return dis._get_instructions_bytes(

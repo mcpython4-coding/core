@@ -90,6 +90,7 @@ LOAD_SINGLE_VALUE = {
     PyOpcodes.LOAD_CLASSDEREF,
 }
 POP_SINGLE_VALUE = {
+    PyOpcodes.POP_TOP,
     PyOpcodes.STORE_FAST,
     PyOpcodes.STORE_DEREF,
     PyOpcodes.STORE_GLOBAL,
@@ -358,7 +359,8 @@ class MixinPatchHelper:
         method: FunctionPatcher | types.MethodType,
         added_args=0,
         discard_return_result=True,
-    ):
+        inter_code=tuple(),
+    ) -> int:
         """
         Inserts a method body at the given position
         Does some magic for linking the code
@@ -378,6 +380,8 @@ class MixinPatchHelper:
         :param method: the method object ot inject
         :param added_args: how many positional args are added to the method call
         :param discard_return_result: if the return result should be deleted or not
+        :param inter_code: what code to insert between arg getting and function invoke
+        :return: the injstruction index at the TAIL of the code
         """
 
         if not isinstance(method, FunctionPatcher):
@@ -547,6 +551,7 @@ class MixinPatchHelper:
                         ):
                             # Delete the LOAD_GLOBAL instruction
                             helper.instruction_listing[index] = createInstruction("RETURN_VALUE")
+                            helper.deleteRegion(index + 1, index + 2, maps_invalid_to=index + 1)
                             helper.deleteRegion(index - 2, index - 1)
                             index -= 3
                             protect.add(index)
@@ -561,6 +566,7 @@ class MixinPatchHelper:
                         ):
                             helper.instruction_listing[index - 1] = self.patcher.createLoadConst(None)
                             helper.instruction_listing[index] = createInstruction("RETURN_VALUE")
+                            helper.deleteRegion(index + 1, index + 2, maps_invalid_to=index + 1)
                             helper.deleteRegion(index - 2, index - 1)
                             index -= 3
                             protect.add(index - 1)
@@ -598,13 +604,16 @@ class MixinPatchHelper:
         # todo: check for HEAD generator instruction
 
         bind_locals = [
-            self.patcher.createLoadFast(e)
-            for e in reversed(method.variable_names[:added_args])
-        ]
+            self.patcher.createStoreFast(e)
+            for e in reversed(target.variable_names[:added_args])
+        ] + list(helper.patcher.create_default_write_opcodes(added_args, ensure_target=self.patcher))
+
+        # print(self.patcher.target, helper.patcher.target, bind_locals)
 
         self.insertRegion(
             start,
             bind_locals
+            + list(inter_code)
             + helper.instruction_listing
             + [
                 self.patcher.createLoadConst("mixin:internal"),
@@ -612,6 +621,7 @@ class MixinPatchHelper:
             ],
         )
         self.patcher.max_stack_size += target.max_stack_size
+        self.patcher.number_of_locals += target.number_of_locals
 
         try:
             self.store()
@@ -637,6 +647,8 @@ class MixinPatchHelper:
                     instr,
                     tail_index,
                 )
+
+        return tail_index
 
     def insertMethodMultipleTimesAt(
         self,
@@ -914,6 +926,8 @@ class MixinPatchHelper:
         for instr in reversed(self.instruction_listing[:index]):
             if offset < 0:
                 raise RuntimeError
+
+            print(instr, offset)
 
             if offset == 0:  # Currently, at top
                 if instr.opcode in LOAD_SINGLE_VALUE:
