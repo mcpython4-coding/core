@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.mixin.PyBytecodeManipulator import FunctionPatcher
+from bytecodemanipulation.MutableCodeObject import MutableCodeObject
 
 
 def applyPillowPatches():
@@ -28,7 +28,7 @@ def applyPillowPatches():
     logger.println(
         "[MIXIN][INFO] applying mixin to default resize() value of PIL.Image.Image.resize()..."
     )
-    method = FunctionPatcher(PIL.Image.Image.resize)
+    method = MutableCodeObject(PIL.Image.Image.resize)
 
     # Security checks so mixin does only apply where it should
     assert method.code_string[26] == 116
@@ -41,7 +41,7 @@ def applyPillowPatches():
 def patchAsyncSystem():
     import asyncio.proactor_events
 
-    method = FunctionPatcher(asyncio.proactor_events.BaseProactorEventLoop.close)
+    method = MutableCodeObject(asyncio.proactor_events.BaseProactorEventLoop.close)
 
 
 def removeLaunchWrapperPyVersionCheck():
@@ -53,7 +53,7 @@ def removeLaunchWrapperPyVersionCheck():
     logger.println("[MIXIN][INFO] applying mixin to python version checker")
     import mcpython.LaunchWrapper
 
-    method = FunctionPatcher(mcpython.LaunchWrapper.LaunchWrapper.check_py_version)
+    method = MutableCodeObject(mcpython.LaunchWrapper.LaunchWrapper.check_py_version)
 
     method.code_string[0] = 100  # LOAD_CONST
     method.code_string[1] = 0  # None

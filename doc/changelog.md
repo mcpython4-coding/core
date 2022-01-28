@@ -49,8 +49,7 @@ Mods previously broken as they are using that API as defined, will now work agai
         todo: re-add redstone block slab, stair and wall
 
     Mixins:
-        - added mixin for removing conditional branches from code
-            (either defaulting to True or False)
+        - moved mixin code into separate library
 
     World generation:
         - added support for the vnoise and pnoise library as noise backends

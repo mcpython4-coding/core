@@ -2024,6 +2024,5 @@ I   [uuk]: made item rendering a little bit more fail save
 f   [uuk]: mixins support now removing conditional branches
 b   [uuk]: fixed not beeing able to override block item texture generation by adding your own item
 L   [uuk]: added support for the vnoise and pnoise library
-IAT [uuk]: improved mixin inlining; including now default parameters for non-set keys (previously crashing with
-           "UnboundLocalError: local variable ... referenced before assignment")
+FL  [uuk]: moved mixin library to separate package so we can independenly publish
 

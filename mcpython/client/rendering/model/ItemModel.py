@@ -19,7 +19,7 @@ from mcpython import shared
 from mcpython.client.rendering.model.api import IItemModelLoader
 from mcpython.client.texture import TextureAtlas
 from mcpython.engine import logger
-from mcpython.mixin.optimiser_annotations import try_optimise
+from bytecodemanipulation.OptimiserAnnotations import try_optimise
 
 from .BoxModel import BoxModel
 

@@ -15,7 +15,7 @@ import itertools
 import typing
 import weakref
 
-from mcpython.mixin.optimiser_annotations import try_optimise
+from bytecodemanipulation.OptimiserAnnotations import try_optimise
 from mcpython.util.math import rotate_point
 
 # This defines how cubes look; do not change!

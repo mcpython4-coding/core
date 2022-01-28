@@ -24,13 +24,13 @@ import mcpython.util.math
 import pyglet
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.mixin.optimiser_annotations import (
+from bytecodemanipulation.OptimiserAnnotations import (
     access_static,
     constant_arg,
     inline_call,
     access_once,
+    try_optimise,
 )
-from mcpython.mixin.optimiser_annotations import try_optimise
 
 if shared.IS_CLIENT:
     from mcpython.client.texture.AnimationManager import animation_manager
