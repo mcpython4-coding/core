@@ -28,6 +28,7 @@ from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.util.enums import BlockRemovalReason, BlockRotationType, EnumSide
+from bytecodemanipulation.OptimiserAnnotations import try_optimise, run_optimisations
 
 if shared.IS_CLIENT:
     import mcpython.client.rendering.model.api
@@ -151,6 +152,17 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             cls.BOUNDING_BOX = (
                 mcpython.engine.physics.AxisAlignedBoundingBox.EMPTY_BOUNDING_BOX
             )
+
+        # Apply some optimisations to this performance critical functions
+        try_optimise()(cls.__init__)
+        try_optimise()(cls.on_block_added)
+        try_optimise()(cls.on_block_remove)
+        try_optimise()(cls.on_block_update)
+        try_optimise()(cls.on_no_collision_collide)
+        try_optimise()(cls.on_random_update)
+        try_optimise()(cls.on_redstone_update)
+        try_optimise()(cls.get_model_state)
+        run_optimisations()
 
     def __init__(self):
         """

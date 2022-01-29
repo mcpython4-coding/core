@@ -30,6 +30,8 @@ from bytecodemanipulation.OptimiserAnnotations import (
     inline_call,
     access_once,
     try_optimise,
+    builtins_are_static,
+    object_method_is_protected,
 )
 
 if shared.IS_CLIENT:
@@ -63,6 +65,7 @@ class TickHandler:
     @access_static("shared.IS_CLIENT")
     @access_once("%.enable_tick_skipping")
     @inline_call("%._execute_tick", lambda: TickHandler._execute_tick)
+    @builtins_are_static()
     async def tick(self, dt: float):
         """
         Execute ticks
@@ -107,7 +110,7 @@ class TickHandler:
         if self.enable_random_ticks:
             await self.send_random_ticks(0)
 
-    @try_optimise()
+    @builtins_are_static()
     async def _execute_tick(self):
         if self.active_tick in self.tick_array:
             for ticket_id, function, args, kwargs, ticket_update in self.tick_array[
@@ -153,6 +156,7 @@ class TickHandler:
                     ),
                 )
 
+    @object_method_is_protected("append", lambda: list.append)
     def schedule_once(
         self, function: typing.Callable | typing.Coroutine, *args, **kwargs
     ):
@@ -165,6 +169,8 @@ class TickHandler:
 
     @constant_arg("args")
     @constant_arg("kwargs")
+    @object_method_is_protected("append", lambda: list.append)
+    @builtins_are_static()
     def bind(
         self,
         function: typing.Callable | typing.Coroutine,
@@ -204,10 +210,12 @@ class TickHandler:
         )
 
     @inline_call("%.bind", lambda: TickHandler.bind)
+    @object_method_is_protected("bind", lambda: TickHandler.bind)
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)
 
     @access_static("shared.IS_CLIENT")
+    @builtins_are_static()
     async def send_random_ticks(self, *args, **kwargs):
         # todo: when networking, only on server & walk over all players!
         if not shared.IS_CLIENT:

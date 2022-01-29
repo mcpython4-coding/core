@@ -2006,7 +2006,7 @@ f   [uuk]: added optimiser_annotations.py for annotations optimising code
 b   [uuk]: fixed insertRegion() instruction 'start' parameter
 G   [github]: released snapshot 22w03a
 
-G   [github]: started development for snapshot 22w05a
+G   [github]: started development for snapshot 22w06a
 F   [uuk]: implemented correct behaviour of redstone lamp and block
 b   [uuk]: fixed redstone wire's redstone API implementation not doing
            what it is supposed to do
@@ -2024,5 +2024,6 @@ I   [uuk]: made item rendering a little bit more fail save
 f   [uuk]: mixins support now removing conditional branches
 b   [uuk]: fixed not beeing able to override block item texture generation by adding your own item
 L   [uuk]: added support for the vnoise and pnoise library
-FL  [uuk]: moved mixin library to separate package so we can independenly publish
+FL  [uuk]: moved mixin library to separate package so we can independently publish
+IO  [uuk]: using now the optimisation system of bytecodemanipulation on our system
 
