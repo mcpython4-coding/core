@@ -29,13 +29,13 @@ Contains only some information, in ordered form, in a better form for the end us
 python ./tools/run_unit_tests.py
 ```
 
-Make sure that you are using python 3.10 or higher!
+Make sure that you are using python 3.10 (or higher)!
 
 ----
 
 
 # Changelog of snapshot <22w06a>
-Scheduled to be released on 09.02.2022
+Scheduled to be released on <09.02.2022>
 targeting <1.18.1>
 
 This snapshot fixes a big error in the TickHandler API regarding ticks being executed more than once 
@@ -46,10 +46,10 @@ Mods previously broken as they are using that API as defined, will now work agai
     Blocks
         - redstone block & redstone lamp have now their correct behaviour
         - implemented redstone repeater, redstone torch and pistons
-        todo: re-add redstone block slab, stair and wall
 
     Mixins:
-        - moved mixin code into separate library
+        - moved mixin code into separate library named bytecodemanipulation 
+            published on PyPI
 
     World generation:
         - added support for the vnoise and pnoise library as noise backends

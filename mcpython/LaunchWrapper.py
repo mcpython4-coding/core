@@ -57,6 +57,10 @@ class LaunchWrapper:
                 f"which is > 3.10, the currently recommended version (Issues may arise)"
             )
 
+        if sys.version_info.minor >= 12:
+            print("[VERSION DETECTOR][WARN] Detected python version >= 3.12, which may break at library level"
+                  " as a lot of libraries may not support that version!")
+
     def set_client(self):
         self.is_client = shared.IS_CLIENT = True
 

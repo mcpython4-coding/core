@@ -456,7 +456,7 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
         return 15 if self.lit and side != self.face else 0
 
     def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
-        return side != self.side
+        return side != self.facing
 
     async def on_block_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
