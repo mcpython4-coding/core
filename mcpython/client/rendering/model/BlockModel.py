@@ -15,6 +15,8 @@ import asyncio
 import typing
 
 import deprecation
+from pyglet.image import Texture
+
 import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.engine.ResourceLoader
@@ -26,6 +28,7 @@ from mcpython.client.texture.AnimationManager import animation_manager
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 from pyglet.graphics.vertexdomain import VertexList
+from bytecodemanipulation.OptimiserAnnotations import try_optimise, builtins_are_static, object_method_is_protected, inline_call, name_is_static, forced_arg_type
 
 
 class Model:
@@ -59,6 +62,11 @@ class Model:
         self.texture_atlas = None
         self.box_models = []
 
+    @builtins_are_static()
+    @inline_call("%.parse_parent_data", lambda: Model.parse_parent_data)
+    @inline_call("%.parse_texture", lambda: Model.parse_texture)
+    @object_method_is_protected("bake_textures", lambda: Model.bake_textures)
+    @object_method_is_protected("append", lambda: list.append)
     async def parse_from_data(self, data: dict):
         self.parent = data["parent"] if "parent" in data else None
 
@@ -91,14 +99,14 @@ class Model:
 
         return self
 
+    @builtins_are_static()
+    @object_method_is_protected("add_image_files", lambda: TextureAtlas.handler.add_image_files)
     async def bake_textures(self):
         """
         Informs the texture bake system about our new textures we want to be in there
         Prepares the texture_addresses attribute with the location of the texture
         """
-        to_add = []
-        for name in self.used_textures:
-            to_add.append((name, self.used_textures[name]))
+        to_add = {(name, self.used_textures[name]) for name in self.used_textures}
 
         add = await TextureAtlas.handler.add_image_files(
             [x[1] for x in to_add], self.modname
@@ -109,6 +117,8 @@ class Model:
 
             self.texture_atlas = add[i][1]
 
+    @builtins_are_static()
+    @object_method_is_protected("println", lambda: logger.println)
     async def parse_parent_data(self):
         if ":" not in self.parent:
             self.parent = "minecraft:" + self.parent
@@ -136,6 +146,8 @@ class Model:
             self.used_textures = self.parent.used_textures.copy()
             self.texture_names = self.parent.texture_names.copy()
 
+    @builtins_are_static()
+    @object_method_is_protected("println", lambda: logger.println)
     async def parse_texture(self, texture: str, name: str):
         if not isinstance(texture, str):
             logger.println("invalid texture", texture, name, self.name)
@@ -162,6 +174,8 @@ class Model:
             self.drawable = False
             self.texture_names[name] = texture
 
+    @builtins_are_static()
+    @object_method_is_protected("println", lambda: logger.println)
     def prepare_rendering_data_multi_face(
         self,
         instance: IBlockStateRenderingTarget,
@@ -220,6 +234,8 @@ class Model:
 
         return collected_data, self.box_models[0]
 
+    @builtins_are_static()
+    @inline_call("prepare_rendering_data_multi_face", lambda: Model.prepare_rendering_data_multi_face)
     def add_faces_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
@@ -251,6 +267,9 @@ class Model:
             box_model.add_prepared_data_to_batch(collected_data, batch)
         )
 
+    @builtins_are_static()
+    @name_is_static("EnumSide", lambda: EnumSide)
+    @inline_call("prepare_rendering_data_multi_face", lambda: Model.prepare_rendering_data_multi_face)
     def draw_face(
         self,
         instance,
@@ -265,6 +284,7 @@ class Model:
         """
         if isinstance(face, EnumSide):
             face = face.bitflag
+
         collected_data, box_model = self.prepare_rendering_data_multi_face(
             instance,
             position,
@@ -277,6 +297,8 @@ class Model:
 
         box_model.draw_prepared_data(collected_data)
 
+    @builtins_are_static()
+    @forced_arg_type("name", lambda: str, may_subclass=False)
     def get_texture_position(
         self, name: str
     ) -> typing.Optional[typing.Tuple[int, int]]:

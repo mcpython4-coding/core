@@ -20,6 +20,7 @@ from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import ItemDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
+from bytecodemanipulation.OptimiserAnnotations import try_optimise, run_optimisations
 
 
 class AbstractItem(
@@ -53,6 +54,13 @@ class AbstractItem(
         cls,
     ) -> str:  # WARNING: will be removed during item rendering update
         return "assets/{}/textures/item/{}.png".format(*cls.NAME.split(":"))
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        try_optimise()(cls.__init__)
+        try_optimise()(cls.draw_in_inventory)
+        try_optimise()(cls.on_block_broken_with)
+        run_optimisations()
 
     def __init__(self):
         super().__init__()

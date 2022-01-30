@@ -34,6 +34,7 @@ from mcpython.client.rendering.model.BoxModel import MutableRawBoxModel
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
+from bytecodemanipulation.OptimiserAnnotations import try_optimise, inline_call, builtins_are_static, forced_arg_type
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",
@@ -59,6 +60,7 @@ class MultiPartDecoder(IBlockStateDecoder):
     NAME = "minecraft:multipart_blockstate_loader"
 
     @classmethod
+    @forced_arg_type("data", lambda: dict, may_subclass=False)
     def is_valid(cls, data: dict) -> bool:
         return (
             "multipart" in data
@@ -71,8 +73,11 @@ class MultiPartDecoder(IBlockStateDecoder):
         self.parent = None
         self.model_alias = None
 
+    @builtins_are_static()
+    @forced_arg_type("data", lambda: dict, may_subclass=False)
     def parse_data(self, data: dict):
         self.data = data
+
         for entry in data["multipart"]:
             if type(entry["apply"]) == dict:
                 shared.model_handler.used_models.add(entry["apply"]["model"])
