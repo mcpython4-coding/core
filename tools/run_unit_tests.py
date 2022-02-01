@@ -31,4 +31,5 @@ result = subprocess.call(
     ],
     cwd=local,
 )
+print("exit code:", result)
 sys.exit(result)
