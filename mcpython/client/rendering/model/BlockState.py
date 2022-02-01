@@ -24,6 +24,12 @@ import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
+from bytecodemanipulation.OptimiserAnnotations import (
+    builtins_are_static,
+    forced_arg_type,
+    inline_call,
+    try_optimise,
+)
 from mcpython import shared
 from mcpython.client.rendering.model.api import (
     BlockStateNotNeeded,
@@ -34,7 +40,6 @@ from mcpython.client.rendering.model.BoxModel import MutableRawBoxModel
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
-from bytecodemanipulation.OptimiserAnnotations import try_optimise, inline_call, builtins_are_static, forced_arg_type
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",

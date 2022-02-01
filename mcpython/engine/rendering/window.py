@@ -477,8 +477,8 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         with process.oneshot():
             self.label3.text = "CPU usage: {}%; Memory usage: {}MB/{}MB ({}%)".format(
                 self.cpu_usage,
-                used_m // 2 ** 20,
-                total_m // 2 ** 20,
+                used_m // 2**20,
+                total_m // 2**20,
                 round(used_m / total_m * 10000) / 100,
             )
         self.label3.draw()

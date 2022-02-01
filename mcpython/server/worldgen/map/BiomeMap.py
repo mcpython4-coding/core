@@ -78,8 +78,8 @@ class BiomeMap(mcpython.server.worldgen.map.AbstractChunkInfoMap.AbstractMap):
                 seed = hash(biome)
                 biome2color[biome] = (
                     seed % 256,
-                    seed % (256 ** 2) // 256,
-                    seed % (256 ** 3) // (256 ** 2),
+                    seed % (256**2) // 256,
+                    seed % (256**3) // (256**2),
                     255,
                 )
 

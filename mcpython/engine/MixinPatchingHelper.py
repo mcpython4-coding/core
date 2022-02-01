@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import bytecodemanipulation
-
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -24,4 +23,3 @@ async def optimise_annotated():
 
 if not shared.IS_TEST_ENV:
     shared.mod_loader("minecraft", "stage:mixin:optimise_code")(optimise_annotated())
-

@@ -17,9 +17,14 @@ import traceback
 import typing
 
 import pyglet.app
+from bytecodemanipulation.OptimiserAnnotations import (
+    access_static,
+    builtins_are_static,
+    inline_call,
+    object_method_is_protected,
+)
 from mcpython import shared
 from mcpython.engine import logger
-from bytecodemanipulation.OptimiserAnnotations import builtins_are_static, access_static, inline_call, object_method_is_protected
 
 
 class CancelAbleEvent:
@@ -135,14 +140,20 @@ class EventBus:
         if not any_found:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
-    @inline_call("%._yield_awaitable_or_invoke", lambda: EventBus._yield_awaitable_or_invoke)
+    @inline_call(
+        "%._yield_awaitable_or_invoke", lambda: EventBus._yield_awaitable_or_invoke
+    )
     async def call_async(self, event_name: str, *args, **kwargs):
         if event_name not in self.event_subscriptions:
             return
 
-        await asyncio.gather(*self._yield_awaitable_or_invoke(event_name, *args, **kwargs))
+        await asyncio.gather(
+            *self._yield_awaitable_or_invoke(event_name, *args, **kwargs)
+        )
 
-    @inline_call("%._yield_awaitable_or_invoke", lambda: EventBus._yield_awaitable_or_invoke)
+    @inline_call(
+        "%._yield_awaitable_or_invoke", lambda: EventBus._yield_awaitable_or_invoke
+    )
     async def call_async_ordered(self, event_name: str, *args, **kwargs):
         if event_name not in self.event_subscriptions:
             return
@@ -159,7 +170,9 @@ class EventBus:
             if asyncio.iscoroutine(function):
                 yield function
             else:
-                yield create_optional_async(function, *args, *extra_args, **kwargs, **extra_kwargs)
+                yield create_optional_async(
+                    function, *args, *extra_args, **kwargs, **extra_kwargs
+                )
 
     def call(self, event_name: str, *args, **kwargs):
         asyncio.get_event_loop().run_until_complete(

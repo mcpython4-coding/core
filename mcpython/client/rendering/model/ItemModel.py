@@ -15,11 +15,11 @@ import mcpython.client.rendering.model.BoxModel
 import mcpython.common.item.ItemTextureAtlas
 import mcpython.engine.rendering.BatchHelper
 import mcpython.engine.ResourceLoader
+from bytecodemanipulation.OptimiserAnnotations import try_optimise
 from mcpython import shared
 from mcpython.client.rendering.model.api import IItemModelLoader
 from mcpython.client.texture import TextureAtlas
 from mcpython.engine import logger
-from bytecodemanipulation.OptimiserAnnotations import try_optimise
 
 from .BoxModel import BoxModel
 

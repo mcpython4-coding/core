@@ -506,7 +506,7 @@ class SaveFile:
         s = 0
         for i in range(len(v)):
             f = len(v) - i - 1
-            s += 100 ** f * abs(v[i] - t[i])
+            s += 100**f * abs(v[i] - t[i])
         return s
 
     @classmethod

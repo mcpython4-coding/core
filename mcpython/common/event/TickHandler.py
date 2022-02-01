@@ -22,17 +22,17 @@ import mcpython.common.data.DataPacks
 import mcpython.common.state.GameViewStatePart
 import mcpython.util.math
 import pyglet
-from mcpython import shared
-from mcpython.engine import logger
 from bytecodemanipulation.OptimiserAnnotations import (
+    access_once,
     access_static,
+    builtins_are_static,
     constant_arg,
     inline_call,
-    access_once,
-    try_optimise,
-    builtins_are_static,
     object_method_is_protected,
+    try_optimise,
 )
+from mcpython import shared
+from mcpython.engine import logger
 
 if shared.IS_CLIENT:
     from mcpython.client.texture.AnimationManager import animation_manager
@@ -236,7 +236,7 @@ class TickHandler:
             cx, cz = mcpython.util.math.position_to_chunk(player.position)
             for dx in range(-r, r + 1):
                 for dz in range(-r, r + 1):
-                    if dx ** 2 + dz ** 2 <= r ** 2:
+                    if dx**2 + dz**2 <= r**2:
                         x = cx + dx
                         z = cz + dz
                         for dy in range(16):

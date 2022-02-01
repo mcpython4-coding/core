@@ -28,7 +28,7 @@ class DefaultTopLayerLayer(ILayer):
     noise = mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
         NAME,
         dimensions=2,
-        scale=10 ** 3,
+        scale=10**3,
         octaves=5,
         merger=mcpython.server.worldgen.noise.INoiseImplementation.INNER_MERGE,
     )

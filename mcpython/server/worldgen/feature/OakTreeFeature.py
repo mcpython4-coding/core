@@ -39,7 +39,7 @@ class OakTreeNormalFeature(IFeature.IFeature):
             for dx in range(-3, 4):
                 for dz in range(-3, 4):
                     chunk = dimension.get_chunk_for_position((x + dx, y, z + dz))
-                    if (dx ** 2 + dz ** 2 + dy ** 2 / 4) ** (
+                    if (dx**2 + dz**2 + dy**2 / 4) ** (
                         1 / 2.25
                     ) < 3.5 and not chunk.is_position_blocked((x + dx, y + dy, z + dz)):
                         await chunk.add_block(
@@ -59,7 +59,7 @@ class OakTreeNormalFeature(IFeature.IFeature):
         for dy in range(height - 2, height + 1):
             for dx in range(-3, 4):
                 for dz in range(-3, 4):
-                    if (dx ** 2 + dz ** 2 + dy ** 2 / 4) ** (
+                    if (dx**2 + dz**2 + dy**2 / 4) ** (
                         1 / 2.25
                     ) < 3.5 and array.get_block((x + dx, y + dy, z + dz)) is None:
                         array.schedule_block_add(

@@ -22,7 +22,7 @@ def update_memory_usage_bar(bar: UIPartProgressBar.UIPartProgressBar):
         bar.progress = process.memory_info().rss
 
     bar.text = "Memory usage: {}MB/{}MB ({}%)".format(
-        bar.progress // 2 ** 20,
-        bar.progress_max // 2 ** 20,
+        bar.progress // 2**20,
+        bar.progress_max // 2**20,
         round(bar.progress / bar.progress_max * 10000) / 100,
     )

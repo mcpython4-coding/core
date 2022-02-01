@@ -18,11 +18,11 @@ from mcpython import shared
 from mcpython.util.enums import EnumSide
 from pyglet.window import key, mouse
 
+from ..container.ResourceStack import ItemStack
 from . import AbstractBlock
 from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from .PossibleBlockStateBuilder import PossibleBlockStateBuilder
-from ..container.ResourceStack import ItemStack
 
 states = "none", "up", "side"
 
@@ -181,7 +181,9 @@ class RedstoneBlock(AbstractBlock.AbstractBlock):
         return True
 
     # We don't need to implement this, as it will not change the internal state
-    def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int, call_update=True):
+    def inject_redstone_power(
+        self, side: mcpython.util.enums.EnumSide, level: int, call_update=True
+    ):
         pass
 
 
@@ -357,7 +359,9 @@ class RedstoneTorch(AbstractBlock.AbstractBlock):
 
     async def on_redstone_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        block = dimension.get_block(EnumSide.DOWN.relative_offset(self.position), none_if_str=True)
+        block = dimension.get_block(
+            EnumSide.DOWN.relative_offset(self.position), none_if_str=True
+        )
 
         should_be_active = not bool(max(block.injected_redstone_power))
 
@@ -371,9 +375,12 @@ class RedstoneTorch(AbstractBlock.AbstractBlock):
 
         dimension = shared.world.get_dimension_by_name(self.dimension)
         for face in EnumSide.iterate():
-            if face == EnumSide.DOWN: continue
+            if face == EnumSide.DOWN:
+                continue
 
-            block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+            block = dimension.get_block(
+                face.relative_offset(self.position), none_if_str=True
+            )
             if block is not None:
                 shared.tick_handler.schedule_once(block.on_redstone_update())
 
@@ -383,17 +390,21 @@ class RedstoneTorch(AbstractBlock.AbstractBlock):
             px, py, pz = self.position
             dx, dy, dz = sx - px, sy - py, sz - pz
 
-            if abs(dy) >= .5:
+            if abs(dy) >= 0.5:
                 return
 
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        block = await dimension.add_block(self.position, "minecraft:redstone_wall_torch", block_update=False)
+        block = await dimension.add_block(
+            self.position, "minecraft:redstone_wall_torch", block_update=False
+        )
         await block.set_creation_properties(set_to=self.set_to, real_hit=self.real_hit)
         await block.on_block_added()
 
     async def on_block_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        block = dimension.get_block(EnumSide.DOWN.relative_offset(self.position), none_if_str=True)
+        block = dimension.get_block(
+            EnumSide.DOWN.relative_offset(self.position), none_if_str=True
+        )
 
         if block is None or not block.is_face_solid(EnumSide.UP):
             await dimension.remove_block(self.position)
@@ -413,7 +424,12 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
     DEFAULT_FACE_SOLID = 0
     NO_ENTITY_COLLISION = True
 
-    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby_side_horizontal("facing").add_comby_bool("lit").build()
+    DEBUG_WORLD_BLOCK_STATES = (
+        PossibleBlockStateBuilder()
+        .add_comby_side_horizontal("facing")
+        .add_comby_bool("lit")
+        .build()
+    )
 
     def __init__(self):
         super().__init__()
@@ -432,7 +448,9 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
 
     async def on_redstone_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        block = dimension.get_block(self.face.relative_offset(self.position), none_if_str=True)
+        block = dimension.get_block(
+            self.face.relative_offset(self.position), none_if_str=True
+        )
 
         should_be_active = not bool(max(block.injected_redstone_power))
 
@@ -446,9 +464,12 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
 
         dimension = shared.world.get_dimension_by_name(self.dimension)
         for face in EnumSide.iterate():
-            if face == self.face: continue
+            if face == self.face:
+                continue
 
-            block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+            block = dimension.get_block(
+                face.relative_offset(self.position), none_if_str=True
+            )
             if block is not None:
                 shared.tick_handler.schedule_once(block.on_redstone_update())
 
@@ -460,7 +481,9 @@ class RedstoneWallTorch(IHorizontalOrientableBlock):
 
     async def on_block_update(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
-        block = dimension.get_block(self.face.relative_offset(self.position), none_if_str=True)
+        block = dimension.get_block(
+            self.face.relative_offset(self.position), none_if_str=True
+        )
 
         if block is None or not block.is_face_solid(self.face.invert()):
             await dimension.remove_block(self.position)
@@ -472,7 +495,12 @@ class Piston(IAllDirectionOrientableBlock):
 
     IS_SOLID = False
 
-    DEBUG_WORLD_BLOCK_STATES = PossibleBlockStateBuilder().add_comby_side("facing").add_comby_bool("extended").build()
+    DEBUG_WORLD_BLOCK_STATES = (
+        PossibleBlockStateBuilder()
+        .add_comby_side("facing")
+        .add_comby_bool("extended")
+        .build()
+    )
 
     def __init__(self):
         super().__init__()
@@ -493,7 +521,9 @@ class Piston(IAllDirectionOrientableBlock):
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
         for face in EnumSide.iterate():
-            block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+            block = dimension.get_block(
+                face.relative_offset(self.position), none_if_str=True
+            )
 
             if block is not None and block.get_redstone_output(face.invert()):
                 return True

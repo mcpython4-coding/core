@@ -34,7 +34,7 @@ def place_default(
     for dx in range(sx, sx + 1):
         for dy in range(sy, sy + 1):
             for dz in range(sz, sz + 1):
-                if dx ** 2 / sx ** 2 + dy ** 2 / sy ** 2 + dz ** 2 / sz ** 2 <= 1:
+                if dx**2 / sx**2 + dy**2 / sy**2 + dz**2 / sz**2 <= 1:
                     rx, ry, rz = dx + x, dy + y, dz + z
                     block = dimension.get_block((rx, ry, rz))
                     name = block.NAME if block else None

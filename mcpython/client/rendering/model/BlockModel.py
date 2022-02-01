@@ -15,20 +15,26 @@ import asyncio
 import typing
 
 import deprecation
-from pyglet.image import Texture
-
 import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
+from bytecodemanipulation.OptimiserAnnotations import (
+    builtins_are_static,
+    forced_arg_type,
+    inline_call,
+    name_is_static,
+    object_method_is_protected,
+    try_optimise,
+)
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.client.texture.AnimationManager import animation_manager
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 from pyglet.graphics.vertexdomain import VertexList
-from bytecodemanipulation.OptimiserAnnotations import try_optimise, builtins_are_static, object_method_is_protected, inline_call, name_is_static, forced_arg_type
+from pyglet.image import Texture
 
 
 class Model:
@@ -100,7 +106,9 @@ class Model:
         return self
 
     @builtins_are_static()
-    @object_method_is_protected("add_image_files", lambda: TextureAtlas.handler.add_image_files)
+    @object_method_is_protected(
+        "add_image_files", lambda: TextureAtlas.handler.add_image_files
+    )
     async def bake_textures(self):
         """
         Informs the texture bake system about our new textures we want to be in there
@@ -235,7 +243,10 @@ class Model:
         return collected_data, self.box_models[0]
 
     @builtins_are_static()
-    @inline_call("prepare_rendering_data_multi_face", lambda: Model.prepare_rendering_data_multi_face)
+    @inline_call(
+        "prepare_rendering_data_multi_face",
+        lambda: Model.prepare_rendering_data_multi_face,
+    )
     def add_faces_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
@@ -269,7 +280,10 @@ class Model:
 
     @builtins_are_static()
     @name_is_static("EnumSide", lambda: EnumSide)
-    @inline_call("prepare_rendering_data_multi_face", lambda: Model.prepare_rendering_data_multi_face)
+    @inline_call(
+        "prepare_rendering_data_multi_face",
+        lambda: Model.prepare_rendering_data_multi_face,
+    )
     def draw_face(
         self,
         instance,

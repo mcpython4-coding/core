@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -27,7 +27,9 @@ class VNoiseImplementation(INoiseImplementation):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.noises: typing.List[typing.Optional[vnoise.Noise]] = [vnoise.Noise() for _ in range(self.octaves)]
+        self.noises: typing.List[typing.Optional[vnoise.Noise]] = [
+            vnoise.Noise() for _ in range(self.octaves)
+        ]
 
     def set_seed(self, seed: int):
         super().set_seed(seed)
@@ -42,7 +44,9 @@ class VNoiseImplementation(INoiseImplementation):
             position,
             *[
                 # todo: using two merged noises is not optimal...
-                lambda p: n.noise3(*p, *(0,) * (3 - len(p))) if len(p) < 4 else n.noise3(*p[:2], n.noise3(*p[2:], 10000))
+                lambda p: n.noise3(*p, *(0,) * (3 - len(p)))
+                if len(p) < 4
+                else n.noise3(*p[:2], n.noise3(*p[2:], 10000))
                 for n in self.noises
             ]
         )

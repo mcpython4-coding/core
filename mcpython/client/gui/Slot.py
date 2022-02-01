@@ -318,14 +318,21 @@ class Slot(ISlot):
             )
             PYGLET_IMAGE_HOVERING.draw()
 
-        if not self.itemstack.is_empty() and (
-            self.itemstack.item.get_default_item_image_location()
-            != self.__last_item_file
-            or self.sprite is None
-        ) and shared.IS_CLIENT:
+        if (
+            not self.itemstack.is_empty()
+            and (
+                self.itemstack.item.get_default_item_image_location()
+                != self.__last_item_file
+                or self.sprite is None
+            )
+            and shared.IS_CLIENT
+        ):
             image = mcpython.common.item.ItemManager.items.item_index_table.setdefault(
                 self.itemstack.get_item_name(), {}
-            ).setdefault(self.itemstack.item.get_active_image_location(), to_pyglet_image(MISSING_TEXTURE.resize((32, 32))))
+            ).setdefault(
+                self.itemstack.item.get_active_image_location(),
+                to_pyglet_image(MISSING_TEXTURE.resize((32, 32))),
+            )
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
 
         elif self.itemstack.is_empty():

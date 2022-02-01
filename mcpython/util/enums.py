@@ -42,12 +42,12 @@ class EnumSide(enum.Enum):
     Also used for defining axis where it points in the direction
     """
 
-    TOP = UP = U = (0, 1, 0, "up", 0, 2 ** 0)
-    BOTTOM = DOWN = D = (0, -1, 0, "down", 1, 2 ** 1)
-    NORTH = N = (-1, 0, 0, "north", 2, 2 ** 2)
-    EAST = E = (0, 0, 1, "east", 3, 2 ** 3)
-    SOUTH = S = (1, 0, 0, "south", 4, 2 ** 4)
-    WEST = W = (0, 0, -1, "west", 5, 2 ** 5)
+    TOP = UP = U = (0, 1, 0, "up", 0, 2**0)
+    BOTTOM = DOWN = D = (0, -1, 0, "down", 1, 2**1)
+    NORTH = N = (-1, 0, 0, "north", 2, 2**2)
+    EAST = E = (0, 0, 1, "east", 3, 2**3)
+    SOUTH = S = (1, 0, 0, "south", 4, 2**4)
+    WEST = W = (0, 0, -1, "west", 5, 2**5)
 
     @classmethod
     def iterate(cls):

@@ -34,7 +34,7 @@ class Test(TestCase):
 
         await fill_area(world, (0, 0, 0), (4, 4, 4), "minecraft:test")
 
-        self.assertEqual(len(world.world), 5 ** 3)
+        self.assertEqual(len(world.world), 5**3)
         self.assertTrue(all(v == "minecraft:test" for v in world.world.values()))
 
     async def test_fill_area_replacing(self):
@@ -46,7 +46,7 @@ class Test(TestCase):
         await fill_area_replacing(
             world, (-1, -1, -1), (6, 25, 2), "minecraft:test2", "minecraft:test"
         )
-        self.assertEqual(len(world.world), 5 ** 3)
+        self.assertEqual(len(world.world), 5**3)
         # todo: test block count
 
     # todo: test more

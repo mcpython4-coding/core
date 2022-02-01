@@ -85,10 +85,7 @@ class ItemGroup(IBufferSerializeAble):
 
 
 class FilteredItemGroup(ItemGroup):
-    __slots__ = ItemGroup.__slots__ + [
-        "raw_filter",
-        "filter"
-    ]
+    __slots__ = ItemGroup.__slots__ + ["raw_filter", "filter"]
 
     def __init__(self):
         super().__init__()

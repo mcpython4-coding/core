@@ -16,11 +16,11 @@ from abc import ABC
 
 import mcpython.common.event.api
 import mcpython.common.event.Registry
+from bytecodemanipulation.OptimiserAnnotations import run_optimisations, try_optimise
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import ItemDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
-from bytecodemanipulation.OptimiserAnnotations import try_optimise, run_optimisations
 
 
 class AbstractItem(

@@ -11,9 +11,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from bytecodemanipulation.MutableCodeObject import MutableCodeObject
 from mcpython import shared
 from mcpython.engine import logger
-from bytecodemanipulation.MutableCodeObject import MutableCodeObject
 
 
 def applyPillowPatches():
@@ -34,14 +34,18 @@ def applyPillowPatches():
     assert method.code_string[26] == 116
     assert method.code_string[27] == 2
 
-    method.code_string[27] = method.ensureName("NEAREST")  # LOAD_GLOBAL BICUBIC -> NEAREST
+    method.code_string[27] = method.ensureName(
+        "NEAREST"
+    )  # LOAD_GLOBAL BICUBIC -> NEAREST
     method.applyPatches()
 
 
 def patchAsyncSystem():
     import asyncio.proactor_events
 
-    method = MutableCodeObject.from_function(asyncio.proactor_events.BaseProactorEventLoop.close)
+    method = MutableCodeObject.from_function(
+        asyncio.proactor_events.BaseProactorEventLoop.close
+    )
 
 
 def removeLaunchWrapperPyVersionCheck():
@@ -53,7 +57,9 @@ def removeLaunchWrapperPyVersionCheck():
     logger.println("[MIXIN][INFO] applying mixin to python version checker")
     import mcpython.LaunchWrapper
 
-    method = MutableCodeObject.from_function(mcpython.LaunchWrapper.LaunchWrapper.check_py_version)
+    method = MutableCodeObject.from_function(
+        mcpython.LaunchWrapper.LaunchWrapper.check_py_version
+    )
 
     method.code_string[0] = 100  # LOAD_CONST
     method.code_string[1] = 0  # None

@@ -496,7 +496,9 @@ def build_class_default_state(
             for function in configs["on_request_item_for_block"]:
                 await function(self, itemstack)
 
-        def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int, call_update=True):
+        def inject_redstone_power(
+            self, side: mcpython.util.enums.EnumSide, level: int, call_update=True
+        ):
             self.injected_redstone_power[side.index] = level
 
             if not is_super_base:

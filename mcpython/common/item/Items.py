@@ -250,14 +250,18 @@ async def load_item():
     ).finish()
     ItemFactory().set_name("minecraft:redstone_torch").set_has_block_flag(
         True
-    ).set_default_item_file("assets/minecraft/textures/block/redstone_torch.png").set_tool_tip_renderer(
+    ).set_default_item_file(
+        "assets/minecraft/textures/block/redstone_torch.png"
+    ).set_tool_tip_renderer(
         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
     ).finish()
     ItemFactory().set_name("minecraft:redstone_wall_torch").set_has_block_flag(
         True
     ).set_tool_tip_renderer(
         mcpython.client.gui.HoveringItemBox.DEFAULT_BLOCK_ITEM_TOOLTIP
-    ).set_default_item_file("assets/minecraft/textures/block/redstone_torch.png").finish()
+    ).set_default_item_file(
+        "assets/minecraft/textures/block/redstone_torch.png"
+    ).finish()
 
 
 async def createToolGroup(

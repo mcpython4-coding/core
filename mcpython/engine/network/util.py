@@ -36,7 +36,9 @@ async def _write_bin(buf: "WriteBuffer", data: bytes):
 
 
 class TableIndexedOffsetTable:
-    def __init__(self, data: typing.Dict[str, bytes] = None, handling: typing.Callable = _to_bin):
+    def __init__(
+        self, data: typing.Dict[str, bytes] = None, handling: typing.Callable = _to_bin
+    ):
         self.data = data if data is not None else dict()
         self.handling = handling
         self.override_data = {key: None for key in self.data.keys()}
@@ -52,7 +54,11 @@ class TableIndexedOffsetTable:
         self.override_data[name] = data
         return self
 
-    async def assemble(self, buffer: "WriteBuffer", dump_handler: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine]):
+    async def assemble(
+        self,
+        buffer: "WriteBuffer",
+        dump_handler: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine],
+    ):
         order = list(set(self.data.keys()) | set(self.override_data.keys()))
 
         async def dump(d):
@@ -64,7 +70,12 @@ class TableIndexedOffsetTable:
 
             return b.get_data()
 
-        data = [self.data[key] if self.override_data[key] is None else await dump(self.override_data[key]) for key in order]
+        data = [
+            self.data[key]
+            if self.override_data[key] is None
+            else await dump(self.override_data[key])
+            for key in order
+        ]
 
         head = [[key, 0, len(d)] for key, d in zip(order, data)]
 
@@ -73,7 +84,9 @@ class TableIndexedOffsetTable:
             e[1] = c
             c += e[2]
 
-        await buffer.write_list(head, lambda e: buffer.write_string(e[0]).write_uint(e[1]).write_uint(e[2]))
+        await buffer.write_list(
+            head, lambda e: buffer.write_string(e[0]).write_uint(e[1]).write_uint(e[2])
+        )
         for e in data:
             buffer.write_const_bytes(e)
 
@@ -83,7 +96,9 @@ class ReadBuffer:
 
     def __init__(self, stream: typing.Union[typing.BinaryIO, bytes]):
         assert stream is not None, "data must be non-null"
-        assert isinstance(stream, (io.BytesIO, bytes, bytearray)), f"ReadBuffer requires byte stream or bytes, got {type(stream)} ({stream})"
+        assert isinstance(
+            stream, (io.BytesIO, bytes, bytearray)
+        ), f"ReadBuffer requires byte stream or bytes, got {type(stream)} ({stream})"
 
         self.stream = (
             stream
@@ -151,7 +166,9 @@ class ReadBuffer:
     async def collect_list(self, handling: typing.Callable[[], typing.Any]):
         return [e async for e in self.read_list(handling)]
 
-    async def read_fixed_list(self, size: int, handling: typing.Callable[[], typing.Any]):
+    async def read_fixed_list(
+        self, size: int, handling: typing.Callable[[], typing.Any]
+    ):
         for _ in range(size):
             result = handling()
             if isinstance(result, typing.Awaitable):
@@ -159,7 +176,9 @@ class ReadBuffer:
             else:
                 yield result
 
-    async def collect_fixed_list(self, size: int, handling: typing.Callable[[], typing.Any]):
+    async def collect_fixed_list(
+        self, size: int, handling: typing.Callable[[], typing.Any]
+    ):
         return [e async for e in self.read_fixed_list(size, handling)]
 
     async def read_dict(
@@ -175,8 +194,7 @@ class ReadBuffer:
 
         size = self.read_uint()
         return {
-            await maybe_async(key()): await maybe_async(value())
-            for _ in range(size)
+            await maybe_async(key()): await maybe_async(value()) for _ in range(size)
         }
 
     def read_bytes(self, size_size=2):
@@ -190,7 +208,9 @@ class ReadBuffer:
         data = self.read_big_long()
         return uuid.UUID(int=data)
 
-    async def read_nullable_container(self, container_instance=None) -> typing.Optional["IBufferSerializeAble"]:
+    async def read_nullable_container(
+        self, container_instance=None
+    ) -> typing.Optional["IBufferSerializeAble"]:
         module = self.read_string()
         name = self.read_string()
 
@@ -239,14 +259,28 @@ class ReadBuffer:
 
         raise RuntimeError(tag)
 
-    async def read_named_offset_table(self, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine] = _to_bin) -> TableIndexedOffsetTable:
-        head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
+    async def read_named_offset_table(
+        self,
+        entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine] = _to_bin,
+    ) -> TableIndexedOffsetTable:
+        head = await self.collect_list(
+            lambda: (self.read_string(), self.read_uint(), self.read_uint())
+        )
         entries = [self.read_const_bytes(e[2]) for e in head]
 
-        return TableIndexedOffsetTable({e[0]: d for e, d in zip(head, entries)}, entry_handling)
+        return TableIndexedOffsetTable(
+            {e[0]: d for e, d in zip(head, entries)}, entry_handling
+        )
 
-    async def read_named_offset_table_entry(self, key: str, entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine], ignore_rest=False):
-        head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
+    async def read_named_offset_table_entry(
+        self,
+        key: str,
+        entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine],
+        ignore_rest=False,
+    ):
+        head = await self.collect_list(
+            lambda: (self.read_string(), self.read_uint(), self.read_uint())
+        )
 
         for e in head:
             if e[0] == key:
@@ -259,7 +293,7 @@ class ReadBuffer:
         data = self.read_const_bytes(info[2])
 
         if not ignore_rest:
-            self.read_const_bytes(e[1]+e[2]-info[1]-info[2])
+            self.read_const_bytes(e[1] + e[2] - info[1] - info[2])
 
         result = entry_handling(ReadBuffer(data))
         if isinstance(result, typing.Awaitable):
@@ -267,8 +301,15 @@ class ReadBuffer:
 
         return result
 
-    async def read_named_offset_table_multi_entry(self, keys: typing.Iterable[str], entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine], ignore_rest=False):
-        head = await self.collect_list(lambda: (self.read_string(), self.read_uint(), self.read_uint()))
+    async def read_named_offset_table_multi_entry(
+        self,
+        keys: typing.Iterable[str],
+        entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine],
+        ignore_rest=False,
+    ):
+        head = await self.collect_list(
+            lambda: (self.read_string(), self.read_uint(), self.read_uint())
+        )
         keys = set(keys)
 
         for e in head:
@@ -291,14 +332,29 @@ class ReadBuffer:
         if keys:
             raise KeyError(f"The following key(s) where not found: {', '.join(keys)}")
 
-    async def collect_read_named_offset_table_multi_entry(self, keys: typing.Iterable[str], entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine]) -> set:
-        return set([e async for e in self.read_named_offset_table_multi_entry(keys, entry_handling)])
+    async def collect_read_named_offset_table_multi_entry(
+        self,
+        keys: typing.Iterable[str],
+        entry_handling: typing.Callable[["ReadBuffer"], typing.Coroutine],
+    ) -> set:
+        return set(
+            [
+                e
+                async for e in self.read_named_offset_table_multi_entry(
+                    keys, entry_handling
+                )
+            ]
+        )
 
     def read_sub_buffer_dynamic_size(self, size_size=2) -> "ReadBuffer":
         return ReadBuffer(self.read_bytes(size_size=size_size))
 
     class SkipableIterator:
-        def __init__(self, handler: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any], parts: typing.List[bytes]):
+        def __init__(
+            self,
+            handler: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any],
+            parts: typing.List[bytes],
+        ):
             self.handler = handler
             self.parts = parts
             self.pointer = 0
@@ -343,19 +399,27 @@ class ReadBuffer:
         def __getitem__(self, item: int) -> typing.Coroutine:
             return self.get_element(item)
 
-    async def read_skipable_list(self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]) -> SkipableIterator:
+    async def read_skipable_list(
+        self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]
+    ) -> SkipableIterator:
         data = await self.collect_list(self.read_bytes)
         return self.SkipableIterator(decoder, data)
 
     class CachedLookupList(SkipableIterator):
         pass
 
-    async def read_equal_spaced_list(self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]) -> CachedLookupList:
+    async def read_equal_spaced_list(
+        self, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]
+    ) -> CachedLookupList:
         entry_size = self.read_uint()
         data = await self.collect_list(lambda: self.read_const_bytes(entry_size))
         return self.CachedLookupList(decoder, data)
 
-    async def read_single_element_from_equal_spaced_list(self, index: int, decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]):
+    async def read_single_element_from_equal_spaced_list(
+        self,
+        index: int,
+        decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any],
+    ):
         entry_size = self.read_uint()
         size = self.read_uint()
         self.read_const_bytes(entry_size * index)
@@ -367,7 +431,11 @@ class ReadBuffer:
             return await r
         return r
 
-    async def read_multi_element_from_equal_spaced_list(self, indices: typing.List[int], decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any]):
+    async def read_multi_element_from_equal_spaced_list(
+        self,
+        indices: typing.List[int],
+        decoder: typing.Callable[["ReadBuffer"], typing.Awaitable | typing.Any],
+    ):
         entry_size = self.read_uint()
         size = self.read_uint()
 
@@ -385,10 +453,7 @@ class ReadBuffer:
 
         sort = list(sorted(indices))
 
-        return [
-            data[sort.index(e)]
-            for e in indices
-        ]
+        return [data[sort.index(e)] for e in indices]
 
 
 class WriteBuffer:
@@ -398,7 +463,12 @@ class WriteBuffer:
         self.data: typing.List[bytes | typing.Callable[[], bytes]] = []
 
     def get_data(self) -> bytes:
-        return b"".join((e if not callable(e) else e()) if not isinstance(e, WriteBuffer) else e.get_data() for e in self.data)
+        return b"".join(
+            (e if not callable(e) else e())
+            if not isinstance(e, WriteBuffer)
+            else e.get_data()
+            for e in self.data
+        )
 
     def write_bool(self, state: bool):
         assert isinstance(state, bool)
@@ -408,7 +478,9 @@ class WriteBuffer:
         return self
 
     def write_bool_group(self, bools: typing.List[bool]):
-        assert isinstance(bools, (list, tuple)) and all(isinstance(e, bool) for e in bools), "data must be bool-array"
+        assert isinstance(bools, (list, tuple)) and all(
+            isinstance(e, bool) for e in bools
+        ), "data must be bool-array"
 
         for i in range(math.ceil(len(bools) / 8)):
             bits = list(bools[i * 8 : i * 8 + 8])
@@ -428,7 +500,9 @@ class WriteBuffer:
         return self.write_struct(BYTE, value)
 
     def write_int(self, value: int):
-        assert isinstance(value, int), f"Value must be int, but is {type(value)} ({value})"
+        assert isinstance(
+            value, int
+        ), f"Value must be int, but is {type(value)} ({value})"
 
         return self.write_struct(INT, value)
 
@@ -446,10 +520,12 @@ class WriteBuffer:
 
     def write_big_long(self, value: int, size_size=2):
         assert isinstance(value, int), "value must be int"
-        assert isinstance(size_size, int) and size_size > 0, "size size must be positive int"
+        assert (
+            isinstance(size_size, int) and size_size > 0
+        ), "size size must be positive int"
 
         # todo: can we optimize this calculation (one byte more is a lot bigger than we need!)?
-        length = max(math.ceil(math.log(abs(value), 2 ** 8)), 0) + 1
+        length = max(math.ceil(math.log(abs(value), 2**8)), 0) + 1
         data = value.to_bytes(length, "big", signed=True)
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
         self.data.append(data)
@@ -468,10 +544,12 @@ class WriteBuffer:
 
     def write_nullable_string(self, value: str, size_size=2, encoding="utf-8"):
         assert isinstance(value, str) or value is None, "value must be str"
-        assert isinstance(size_size, int) and size_size > 0, "size size must be positive int"
+        assert (
+            isinstance(size_size, int) and size_size > 0
+        ), "size size must be positive int"
 
         if value is None:
-            self.data.append(b"\xFF"*size_size)
+            self.data.append(b"\xFF" * size_size)
         else:
             data = value.encode(encoding)
             self.data.append(len(data).to_bytes(size_size, "big", signed=False))
@@ -518,8 +596,10 @@ class WriteBuffer:
                 await v
 
     def write_bytes(self, data: bytes, size_size=2):
-        assert len(data) < 256 ** size_size, "data must be in bounds"
-        assert isinstance(size_size, int) and size_size > 0, "size size must be positive int"
+        assert len(data) < 256**size_size, "data must be in bounds"
+        assert (
+            isinstance(size_size, int) and size_size > 0
+        ), "size size must be positive int"
 
         self.data.append(len(data).to_bytes(size_size, "big", signed=False))
         self.data.append(data)
@@ -533,7 +613,9 @@ class WriteBuffer:
         self.write_big_long(uid.int)
         return self
 
-    async def write_nullable_container(self, container: typing.Optional["IBufferSerializeAble"]):
+    async def write_nullable_container(
+        self, container: typing.Optional["IBufferSerializeAble"]
+    ):
         cls = container.__class__
 
         self.write_string(cls.__module__)
@@ -590,7 +672,13 @@ class WriteBuffer:
         else:
             raise ValueError(data)
 
-    async def write_named_offset_table(self, handler: TableIndexedOffsetTable, dump_handler: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine] = _write_bin):
+    async def write_named_offset_table(
+        self,
+        handler: TableIndexedOffsetTable,
+        dump_handler: typing.Callable[
+            ["WriteBuffer", typing.Any], typing.Coroutine
+        ] = _write_bin,
+    ):
         await handler.assemble(self, dump_handler)
         return self
 
@@ -602,11 +690,18 @@ class WriteBuffer:
         self.write_bytes(buffer.get_data(), size_size=size_size)
         return self
 
-    async def write_skipable_list(self, data: typing.Iterable, handling: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine | typing.Any]):
+    async def write_skipable_list(
+        self,
+        data: typing.Iterable,
+        handling: typing.Callable[
+            ["WriteBuffer", typing.Any], typing.Coroutine | typing.Any
+        ],
+    ):
         """
         Writes a container structure allowing to skip elements
         Internally creates a header for the table with indices
         """
+
         async def encode_obj(e):
             buffer = WriteBuffer()
             r = handling(buffer, e)
@@ -619,12 +714,20 @@ class WriteBuffer:
         await self.write_list(encoded, lambda e: self.write_bytes(e))
         return self
 
-    async def write_equal_spaced_list(self, data: typing.Iterable, handling: typing.Callable[["WriteBuffer", typing.Any], typing.Coroutine | typing.Any], entry_size: int = None):
+    async def write_equal_spaced_list(
+        self,
+        data: typing.Iterable,
+        handling: typing.Callable[
+            ["WriteBuffer", typing.Any], typing.Coroutine | typing.Any
+        ],
+        entry_size: int = None,
+    ):
         """
         Writes a list of arbitrary data of similar size (with padding)
         Optimal when storing multiple items of the same size, fast access times,
         lazy decoding and skip-able container when reading
         """
+
         async def encode_obj(e):
             buffer = WriteBuffer()
             r = handling(buffer, e)
@@ -639,7 +742,9 @@ class WriteBuffer:
             self.write_uint(entry_size)
         else:
             if entry_size < len(max(encoded, key=len)):
-                raise ValueError("encoded size of at least one element is bigger than specified entry size")
+                raise ValueError(
+                    "encoded size of at least one element is bigger than specified entry size"
+                )
             self.write_uint(entry_size)
 
         encoded = [e + b"\x00" * (entry_size - len(e)) for e in encoded]

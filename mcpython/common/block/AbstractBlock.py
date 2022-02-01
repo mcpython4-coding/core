@@ -22,13 +22,13 @@ import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
+from bytecodemanipulation.OptimiserAnnotations import run_optimisations, try_optimise
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
 from mcpython.util.enums import BlockRemovalReason, BlockRotationType, EnumSide
-from bytecodemanipulation.OptimiserAnnotations import try_optimise, run_optimisations
 
 if shared.IS_CLIENT:
     import mcpython.client.rendering.model.api
@@ -41,7 +41,6 @@ if shared.IS_CLIENT:
             super(
                 mcpython.client.rendering.model.api.IBlockStateRenderingTarget, self
             ).__init__()
-
 
 else:
     parent = mcpython.common.event.api.IRegistryContent
@@ -449,7 +448,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
     # Redstone API
 
-    def inject_redstone_power(self, side: mcpython.util.enums.EnumSide, level: int, call_update=True):
+    def inject_redstone_power(
+        self, side: mcpython.util.enums.EnumSide, level: int, call_update=True
+    ):
         """
         Used to inject a redstone value into the system
         :param side: the side from which the redstone value comes
@@ -457,7 +458,8 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         :param call_update: if to call a redstone update or not
         todo: do we want it to be async?
         """
-        if self.injected_redstone_power[side.index] == level: return
+        if self.injected_redstone_power[side.index] == level:
+            return
 
         self.injected_redstone_power[side.index] = level
 
@@ -467,7 +469,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             dimension = shared.world.get_dimension_by_name(self.dimension)
 
             for face in EnumSide.iterate():
-                block = dimension.get_block(face.relative_offset(self.position), none_if_str=True)
+                block = dimension.get_block(
+                    face.relative_offset(self.position), none_if_str=True
+                )
 
                 if block is not None:
                     shared.tick_handler.schedule_once(block.on_redstone_update())

@@ -31,13 +31,13 @@ class DefaultBiomeMapLayer(ILayer):
         mcpython.server.worldgen.noise.NoiseManager.INoiseImplementation
     ] = [
         mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-            NAME + "_1", dimensions=4, scale=10 ** 10
+            NAME + "_1", dimensions=4, scale=10**10
         ),
         mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-            NAME + "_2", dimensions=4, scale=10 ** 10
+            NAME + "_2", dimensions=4, scale=10**10
         ),
         mcpython.server.worldgen.noise.NoiseManager.manager.create_noise_instance(
-            NAME + "_3", dimensions=4, scale=10 ** 10
+            NAME + "_3", dimensions=4, scale=10**10
         ),
     ]
 
