@@ -18,7 +18,7 @@ import sys
 local = os.path.dirname(os.path.dirname(__file__))
 
 # This is the command to run all unit tests correctly
-subprocess.call(
+result = subprocess.call(
     [
         sys.executable,
         "-m",
@@ -28,5 +28,7 @@ subprocess.call(
         local + "/tests",
         "-t",
         local,
-    ]
+    ],
+    cwd=local,
 )
+sys.exit(result)
