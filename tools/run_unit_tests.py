@@ -17,6 +17,15 @@ import sys
 
 local = os.path.dirname(os.path.dirname(__file__))
 
+subprocess.call([
+    sys.executable,
+    "-m",
+    "pip",
+    "install",
+    "-r",
+    local+"/requirements.txt",
+])
+
 # This is the command to run all unit tests correctly
 result = subprocess.call(
     [
