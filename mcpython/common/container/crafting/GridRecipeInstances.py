@@ -14,11 +14,13 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.client.rendering.gui.CraftingGridRecipeRenderer
 import mcpython.common.container.crafting.IRecipe
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
+
+if shared.IS_CLIENT:
+    import mcpython.client.rendering.gui.CraftingGridRecipeRenderer
 
 
 def transform_to_item_stack(item, file: str) -> typing.List[typing.Tuple[str, int]]:

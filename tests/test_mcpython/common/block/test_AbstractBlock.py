@@ -12,8 +12,14 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython.util.enums import BlockRotationType, EnumSide
-from pyglet.window import mouse
 from tests.util import TestCase
+from unittest import skipUnless
+
+try:
+    from pyglet.window import mouse
+    SCREEN_ARRIVAL = True
+except ImportError:
+    SCREEN_ARRIVAL = False
 
 
 class TestAbstractBlock(TestCase):
@@ -82,6 +88,7 @@ class TestAbstractBlock(TestCase):
         self.assertIsInstance(b2, Block)
         self.assertTrue(b2.invoked)
 
+    @skipUnless(SCREEN_ARRIVAL, "only when rendering is arrival")
     async def test_on_player_interaction_default_result(self):
         import mcpython.common.block.AbstractBlock
 

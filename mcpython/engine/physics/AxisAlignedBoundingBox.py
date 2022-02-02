@@ -16,7 +16,11 @@ import typing
 from abc import ABC
 from functools import reduce
 
-import mcpython.engine.rendering.util
+from mcpython import shared
+
+if shared.IS_CLIENT:
+    import mcpython.engine.rendering.util
+
 import mcpython.util.math
 from mcpython.util.vertex import VertexProvider
 

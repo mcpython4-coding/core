@@ -15,10 +15,13 @@ import typing
 from abc import ABC
 
 import mcpython.common.item.AbstractItem
+from mcpython import shared
 from mcpython.client.gui.HoveringItemBox import DefaultHoveringItemBoxDefinition
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-from mcpython.util.opengl import draw_rectangle
+
+if shared.IS_CLIENT:
+    from mcpython.util.opengl import draw_rectangle
 
 
 class ToolTipRendererForDamage(DefaultHoveringItemBoxDefinition):

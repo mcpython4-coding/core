@@ -14,6 +14,13 @@ This project is not official by mojang and does not relate to it.
 from mcpython import shared
 from mcpython.util.enums import EnumSide
 from tests.util import TestCase
+from unittest import skipUnless
+
+try:
+    from pyglet.window import mouse
+    SCREEN_ARRIVAL = True
+except ImportError:
+    SCREEN_ARRIVAL = False
 
 shared.IS_CLIENT = True
 
@@ -22,6 +29,7 @@ class Weakable:
     pass
 
 
+@skipUnless(SCREEN_ARRIVAL, "only when rendering is arrival")
 class TestFaceInfo(TestCase):
     def test_module_import(self):
         import mcpython.common.block.FaceInfo

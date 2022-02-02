@@ -12,13 +12,19 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
-from pyglet.window import key, mouse
 from test_mcpython.fakeHelpers import (
     FakeCraftingHandler,
     FakeInventoryHandler,
     FakeWorld,
 )
 from tests.util import TestCase
+from unittest import skipUnless
+
+try:
+    from pyglet.window import key, mouse
+    SCREEN_ARRIVAL = True
+except ImportError:
+    SCREEN_ARRIVAL = False
 
 
 class TestChest(TestCase):
@@ -29,6 +35,7 @@ class TestChest(TestCase):
 
         self.assertEqual(mcpython.common.block.Chest.Chest.NAME, "minecraft:chest")
 
+    @skipUnless(SCREEN_ARRIVAL, "only when rendering is possible")
     async def test_on_player_interaction(self):
         shared.crafting_handler = FakeCraftingHandler()
 

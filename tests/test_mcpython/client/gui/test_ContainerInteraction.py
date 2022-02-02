@@ -11,21 +11,29 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
 from tests.util import TestCase
+from unittest import skipUnless
 
-shared.IS_CLIENT = False
-shared.IS_TEST_ENV = True
+try:
+    import pyglet.window
+    HAS_VISUAL = True
+except ImportError:
+    HAS_VISUAL = False
+else:
+    from mcpython import shared
 
-from mcpython.client.gui.ContainerRenderer import ContainerRenderer
-from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
-from mcpython.client.gui.Slot import Slot
-from mcpython.common.container.ResourceStack import ItemStack
-from mcpython.common.factory.ItemFactory import ItemFactory
-from pyglet.window import key, mouse
+    shared.IS_CLIENT = False
+    shared.IS_TEST_ENV = True
 
-test_item = ItemFactory().set_name("minecraft:test_item").finish()
-test_item_2 = ItemFactory().set_name("minecraft:test_item_2").finish()
+    from mcpython.client.gui.ContainerRenderer import ContainerRenderer
+    from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
+    from mcpython.client.gui.Slot import Slot
+    from mcpython.common.container.ResourceStack import ItemStack
+    from mcpython.common.factory.ItemFactory import ItemFactory
+    from pyglet.window import key, mouse
+
+    test_item = ItemFactory().set_name("minecraft:test_item").finish()
+    test_item_2 = ItemFactory().set_name("minecraft:test_item_2").finish()
 
 
 class FakeWindow:
@@ -42,6 +50,7 @@ class Inventory(ContainerRenderer):
         return self
 
 
+@skipUnless(HAS_VISUAL, "rendering backend is needed")
 class ContainerInteraction(TestCase):
     def setUp(self) -> None:
         self.interaction_manager = OpenedInventoryStatePart()
