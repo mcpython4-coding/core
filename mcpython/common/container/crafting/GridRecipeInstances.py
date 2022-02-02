@@ -67,7 +67,7 @@ class AbstractCraftingGridRecipe(
 
     RECIPE_VIEW = (
         mcpython.client.rendering.gui.CraftingGridRecipeRenderer.CraftingTableLikeRecipeViewRenderer()
-    )
+    ) if shared.IS_CLIENT else None
     CRAFTING_SUPPORT = ["minecraft:crafting_table"]
 
     def __init__(self):

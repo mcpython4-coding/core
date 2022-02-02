@@ -13,7 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-from test_mcpython.fakeHelpers import FakeWorld
+from tests.test_mcpython.fakeHelpers import FakeWorld
 from tests.util import TestCase
 
 shared.IS_TEST_ENV = True

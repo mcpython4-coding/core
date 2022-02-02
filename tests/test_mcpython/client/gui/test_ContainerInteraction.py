@@ -36,18 +36,18 @@ else:
     test_item_2 = ItemFactory().set_name("minecraft:test_item_2").finish()
 
 
-class FakeWindow:
-    mouse_position = 0, 0
+    class FakeWindow:
+        mouse_position = 0, 0
 
-    @classmethod
-    def get_size(cls):
-        return 100, 100
+        @classmethod
+        def get_size(cls):
+            return 100, 100
 
 
-class Inventory(ContainerRenderer):
-    def add_slot(self, slot: Slot):
-        self.slots.append(slot)
-        return self
+    class Inventory(ContainerRenderer):
+        def add_slot(self, slot: Slot):
+            self.slots.append(slot)
+            return self
 
 
 @skipUnless(HAS_VISUAL, "rendering backend is needed")
