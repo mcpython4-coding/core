@@ -262,5 +262,5 @@ class TextureAtlas:
 
 handler = TextureAtlasGenerator()
 
-if shared.IS_CLIENT:
+if shared.IS_CLIENT and shared.mod_loader is not None:
     shared.mod_loader("minecraft", "stage:textureatlas:on_bake")(handler.output())

@@ -130,7 +130,7 @@ class Slot(ISlot):
         on_shift_click: typing.Optional[typing.Callable] = None,
         on_button_press: typing.Optional[typing.Callable] = None,
         on_click_on_slot: typing.Optional[typing.Callable] = None,
-        empty_image: typing.Optional[pyglet.image.AbstractImage] = None,
+        empty_image: typing.Optional = None,
         enable_hovering_background=True,
         capacity: typing.Optional[int] = None,
         check_function=None,
@@ -159,7 +159,7 @@ class Slot(ISlot):
         )
 
         self.position = position
-        if self.__itemstack.item:
+        if self.__itemstack.item and shared.IS_CLIENT:
             pos, index = mcpython.common.item.ItemManager.items.item_index_table[
                 self.__itemstack.get_item_name()
             ][self.__itemstack.item.get_active_image_location()]
@@ -170,14 +170,17 @@ class Slot(ISlot):
         else:
             self.sprite = None
 
-        self.amount_label = pyglet.text.Label(
-            text=str(self.itemstack.amount), anchor_x="right"
-        )
-        self.__last_item_file = (
-            self.__itemstack.item.get_default_item_image_location()
-            if self.__itemstack.item
-            else None
-        )
+        if shared.IS_CLIENT:
+            self.amount_label = pyglet.text.Label(
+                text=str(self.itemstack.amount), anchor_x="right"
+            )
+            self.__last_item_file = (
+                self.__itemstack.item.get_default_item_image_location()
+                if self.__itemstack.item
+                else None
+            )
+            self.amount_label = pyglet.text.Label()
+
         # todo: make separated attributes
         self.interaction_mode = [
             allow_player_remove,
@@ -188,7 +191,6 @@ class Slot(ISlot):
         self.on_update = [on_update] if on_update else []
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
-        self.amount_label = pyglet.text.Label()
         self.children = []
         self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
         self.on_click_on_slot = on_click_on_slot

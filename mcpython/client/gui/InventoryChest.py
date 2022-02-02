@@ -54,7 +54,8 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
     def __init__(self, block=None):
         super().__init__()
         self.block = None
-        if self.custom_name is None and block is not None:
+
+        if self.custom_name is None and block is not None and shared.IS_CLIENT:
             self.custom_name = block.DEFAULT_DISPLAY_NAME
 
     async def on_activate(self):

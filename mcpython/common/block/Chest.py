@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 import asyncio
 from datetime import datetime
 
-import mcpython.client.rendering.blocks.ChestRenderer
 import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
 import pyglet
@@ -25,6 +24,12 @@ from pyglet.window import key, mouse
 from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
+if shared.IS_CLIENT:
+    from mcpython.client.rendering.blocks.ChestRenderer import IChestRendererSupport, ChestRenderer
+else:
+    class IChestRendererSupport:
+        pass
+
 # the bounding box of the chest
 BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
     (14 / 16, 14 / 16, 14 / 16), (1 / 16, 1 / 16, 1 / 16)
@@ -33,7 +38,7 @@ BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(
 
 class Chest(
     IHorizontalOrientableBlock,
-    mcpython.client.rendering.blocks.ChestRenderer.IChestRendererSupport,
+    IChestRendererSupport,
     SimpleInventoryWrappingContainer,
 ):
     """
