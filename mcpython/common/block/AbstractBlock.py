@@ -22,7 +22,7 @@ import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
-from bytecodemanipulation.OptimiserAnnotations import run_optimisations, try_optimise
+from bytecodemanipulation.OptimiserAnnotations import run_optimisations, try_optimise, builtins_are_static, object_method_is_protected, name_is_static
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
@@ -56,10 +56,12 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     todo: add custom properties to set_creation_properties() -> injected by add_block() call
     todo: cache somehow the block state for rendering here (-> also custom relinking)
     todo: optimise block state lookup by using a array internally & using integers for references
-    todo: add a util method to get the loots of the block
+    todo: add a util method to get the loots of the block HERE
     """
 
     @classmethod
+    @object_method_is_protected("__call__", lambda: shared.mod_loader.__call__)
+    @object_method_is_protected("split", lambda: str.split)
     def bind_block_item_to_creative_tab(cls, tab_getter: typing.Callable):
         """
         Util method for registering this block item to a specific CreativeTab
@@ -146,6 +148,8 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         """
 
     @classmethod
+    @name_is_static("try_optimise", lambda: try_optimise)
+    @name_is_static("run_optimisations", lambda: run_optimisations)
     def __init_subclass__(cls, **kwargs):
         if cls.NO_ENTITY_COLLISION:
             cls.BOUNDING_BOX = (
@@ -163,6 +167,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         try_optimise()(cls.get_model_state)
         run_optimisations()
 
+    @builtins_are_static()
     def __init__(self):
         """
         Creates a new Block-instance
@@ -200,9 +205,15 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         # The redstone power values
         self.injected_redstone_power = [0, 0, 0, 0, 0, 0]
 
+    @builtins_are_static()
     def is_face_solid(self, face: EnumSide) -> bool:
         return bool(self.face_solid & face.bitflag)
 
+    @builtins_are_static()
+    @object_method_is_protected("write_uint", lambda: WriteBuffer.write_uint)
+    @object_method_is_protected("write_int", lambda: WriteBuffer.write_int)
+    @object_method_is_protected("write_dict", lambda: WriteBuffer.write_dict)
+    @object_method_is_protected("write_string", lambda: WriteBuffer.write_string)
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.NETWORK_BUFFER_SERIALIZER_VERSION)
 
@@ -223,6 +234,10 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             else:
                 await buffer.write_dict(state, buffer.write_string, buffer.write_string)
 
+    @builtins_are_static()
+    @object_method_is_protected("write_int", lambda: WriteBuffer.write_int)
+    @object_method_is_protected("write_dict", lambda: WriteBuffer.write_dict)
+    @object_method_is_protected("write_string", lambda: WriteBuffer.write_string)
     async def write_internal_for_migration(self, buffer: WriteBuffer):
         await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
         state: dict = self.get_model_state()
@@ -240,6 +255,12 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             else:
                 await buffer.write_dict(state, buffer.write_string, buffer.write_string)
 
+    @builtins_are_static()
+    @object_method_is_protected("read_uint", lambda: ReadBuffer.read_uint)
+    @object_method_is_protected("read_dict", lambda: ReadBuffer.read_dict)
+    @object_method_is_protected("read_string", lambda: ReadBuffer.read_string)
+    @name_is_static("WriteBuffer", lambda: WriteBuffer)
+    @name_is_static("ReadBuffer", lambda: ReadBuffer)
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         version = buffer.read_uint()
         await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
@@ -274,12 +295,16 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         )
         await self.set_model_state(state)
 
+    @builtins_are_static()
+    @object_method_is_protected("read_dict", lambda: ReadBuffer.read_dict)
+    @object_method_is_protected("read_string", lambda: ReadBuffer.read_string)
     async def read_internal_for_migration(self, buffer: ReadBuffer):
         await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
 
         state = await buffer.read_dict(buffer.read_string, buffer.read_string)
         await self.set_model_state(state)
 
+    @name_is_static("shared", lambda: shared)
     async def schedule_network_update(self):
         if shared.IS_NETWORKING:
             from mcpython.common.network.packages.WorldDataExchangePackage import (

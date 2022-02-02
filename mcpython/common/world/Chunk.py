@@ -16,10 +16,14 @@ import datetime
 import typing
 import weakref
 
+import deprecation
+
+from bytecodemanipulation.OptimiserAnnotations import try_optimise, builtins_are_static, object_method_is_protected, name_is_static, returns_argument
 import mcpython.common.block.AbstractBlock as Block
 import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
+from mcpython.util.enums import EnumSide
 import mcpython.util.math
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
@@ -39,6 +43,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     now = datetime.datetime.now()  # when is now?
 
+    @builtins_are_static()
     def __init__(
         self,
         dimension: mcpython.engine.world.AbstractInterface.IDimension,
@@ -91,6 +96,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         await ChunkSerializer.read_from_buffer(buffer, self, immediate=immediate)
 
+    @name_is_static("tuple", lambda: tuple)
     def entity_iterator(self) -> typing.Iterable:
         return tuple(self.entities)
 
@@ -107,9 +113,11 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             self, "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
         )
 
+    @returns_argument()
     def as_shareable(self) -> mcpython.engine.world.AbstractInterface.IChunk:
         return self
 
+    @returns_argument()
     def mark_dirty(self):
         self.dirty = True
         return self
@@ -129,11 +137,13 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         :param x: the x coord
         :param z: the y coord
         :param default: the default value when no value is set
-        :return: the y value at that position
+        :return: the y value at that position, maybe negative
         """
         height_map = self.get_map("minecraft:height_map")
         return height_map.get_at_xz(x, z)[0][1] if (x, z) in height_map else default
 
+    @builtins_are_static()
+    @name_is_static("shared", lambda: shared)
     def draw(self):
         """
         Will draw the chunk with the content for it
@@ -163,6 +173,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     ALL_FACES_EXPOSED = {x: True for x in mcpython.util.enums.EnumSide.iterate()}
 
+    @builtins_are_static()
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Dict[str, bool]:
@@ -208,6 +219,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
+    @builtins_are_static()
     def exposed_faces_list(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.List[bool]:
@@ -248,6 +260,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
+    @builtins_are_static()
     def exposed_faces_flag(self, block) -> int:
 
         if block is None or type(block) == str:
@@ -284,6 +297,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
+    @builtins_are_static()
     def exposed_faces_iterator(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Iterator[mcpython.util.enums.EnumSide]:
@@ -334,11 +348,13 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             is not None
         )
 
+    @deprecation.deprecated()
     def add_block_unsafe(self, *args, **kwargs):
         return asyncio.get_event_loop().run_until_complete(
             self.add_block(*args, **kwargs)
         )
 
+    @builtins_are_static()
     async def add_block(
         self,
         position: tuple,
@@ -441,6 +457,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return block
 
+    @builtins_are_static()
+    @object_method_is_protected("append", lambda: list.append)
     async def on_block_updated(
         self, position: typing.Tuple[int, int, int], include_itself=True
     ):
@@ -465,6 +483,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         await asyncio.gather(*to_invoke)
 
+    @builtins_are_static()
     async def remove_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -511,6 +530,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         self.mark_position_dirty(position)
         self.mark_dirty()
 
+    @builtins_are_static()
+    @name_is_static("EnmSide", lambda: EnumSide)
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         """
         Check all blocks surrounding `position` and ensure their visual
@@ -524,7 +545,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             return
 
         # for each block touching, do...
-        for face in mcpython.util.enums.EnumSide.iterate():
+        for face in EnumSide.iterate():
             block = self.dimension.get_block(
                 face.relative_offset(position), none_if_str=True
             )
@@ -533,6 +554,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
             block.face_info.update(True)
 
+    @builtins_are_static()
+    @name_is_static("Block", lambda: Block)
     def show_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -562,6 +585,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         self.mark_dirty()
 
+    @builtins_are_static()
+    @name_is_static("Block", lambda: Block)
     def hide_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -590,6 +615,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         self.mark_dirty()
 
+    @name_is_static("shared", lambda: shared)
     def show(self, force=False):
         """
         will show the chunk
@@ -605,6 +631,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         self.update_visible()
         self.mark_dirty()
 
+    @name_is_static("shared", lambda: shared)
     def hide(self, force=False):
         """
         will hide the chunk
@@ -634,12 +661,14 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         elif hide:
             self.show_block(position)
 
+    @builtins_are_static()
     def exposed(self, position: typing.Tuple[int, int, int]) -> bool:
         return any(self.exposed_faces(position).values())
 
     def update_visible(self, hide=True, immediate=False):
         """
-        will update all visible of all blocks of the chunk
+        Will update all visible of all blocks of the chunk
+
         :param hide: if blocks should be hidden if needed
         :param immediate: if immediate call or not
         """
@@ -656,7 +685,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     def hide_all(self, immediate=True):
         """
-        will hide all blocks in the chunk
+        Will hide all blocks in the chunk
+
         :param immediate: if immediate or not
         """
         if not shared.IS_CLIENT:

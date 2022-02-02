@@ -2,6 +2,7 @@
 
 
 [![CodeFactor](https://www.codefactor.io/repository/github/mcpython4-coding/core/badge)](https://www.codefactor.io/repository/github/mcpython4-coding/core)
+[![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
 
 
 This is the revision of a minecraft-like, python-written game based on fogleman's code (https://github.com/fogleman/Minecraft).

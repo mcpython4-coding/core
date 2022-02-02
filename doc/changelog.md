@@ -42,6 +42,10 @@ This snapshot fixes a big error in the TickHandler API regarding ticks being exe
 when the game lags. Mods using that as a feature (Don't know how) will break with this snapshot. 
 Mods previously broken as they are using that API as defined, will now work again.
 
+Moved the mixin API into its own library, bytecodemanipulation.
+This includes a renaming of most of the code, and making it stand-alone.
+This breaks any mod using that API
+
 
     Blocks
         - redstone block & redstone lamp have now their correct behaviour
@@ -50,6 +54,8 @@ Mods previously broken as they are using that API as defined, will now work agai
     Mixins:
         - moved mixin code into separate library named bytecodemanipulation 
             published on PyPI
+        - using now the exposed optimisation framework of bytecodemanipulation for optimisation
+            of some of our code
 
     World generation:
         - added support for the vnoise and pnoise library as noise backends
