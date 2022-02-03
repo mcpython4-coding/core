@@ -3,6 +3,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/mcpython4-coding/core/badge)](https://www.codefactor.io/repository/github/mcpython4-coding/core)
 [![Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/ambv/black)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/mcpython4-coding/core.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/mcpython4-coding/core/alerts/)
 
 
 This is the revision of a minecraft-like, python-written game based on fogleman's code (https://github.com/fogleman/Minecraft).
