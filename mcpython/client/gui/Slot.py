@@ -20,13 +20,16 @@ from abc import ABC
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemManager
 import mcpython.engine.ResourceLoader
-import pyglet
 from mcpython import shared
-from mcpython.client.texture.TextureAtlas import MISSING_TEXTURE
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
-from mcpython.util.texture import to_pyglet_image
+
+if shared.IS_CLIENT:
+    import pyglet
+    from mcpython.client.texture.TextureAtlas import MISSING_TEXTURE
+    from mcpython.util.texture import to_pyglet_image
+
 
 SLOT_WIDTH = 32
 
@@ -192,7 +195,10 @@ class Slot(ISlot):
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
         self.children = []
-        self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
+
+        if shared.IS_CLIENT:
+            self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
+
         self.on_click_on_slot = on_click_on_slot
 
         self.allowed_item_tags = allowed_item_tags
@@ -444,7 +450,7 @@ class SlotCopy(ISlot):
         # todo: add options for item allowing
         self.master: Slot = master
         self.position = position
-        if self.master and self.get_itemstack().item:
+        if self.master and self.get_itemstack().item and shared.IS_CLIENT:
             pos, index = mcpython.common.item.ItemManager.items.item_index_table[
                 self.get_itemstack().get_item_name()
             ][self.get_itemstack().item.get_active_image_location()]
@@ -452,8 +458,10 @@ class SlotCopy(ISlot):
                 tuple(pos)
             ]
             self.sprite: pyglet.sprite.Sprite = pyglet.sprite.Sprite(image)
+
         else:
             self.sprite = None
+
         self.__last_item_file = (
             self.itemstack.item.get_default_item_image_location()
             if self.master and self.itemstack.item
@@ -468,10 +476,13 @@ class SlotCopy(ISlot):
         self.on_click_on_slot = on_click_on_slot
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
-        self.amount_label = pyglet.text.Label(
-            text=str(self.master.itemstack.amount) if self.master else "-",
-            anchor_x="right",
-        )
+
+        if shared.IS_CLIENT:
+            self.amount_label = pyglet.text.Label(
+                text=str(self.master.itemstack.amount) if self.master else "-",
+                anchor_x="right",
+            )
+
         self.on_button_press = on_button_press
         self.slot_position = 0, 0
 
@@ -570,10 +581,12 @@ class SlotCopyWithDynamicTarget(SlotCopy):
         self.on_click_on_slot = on_click_on_slot
         self.allow_half_getting = allow_half_getting
         self.on_shift_click = on_shift_click
-        self.amount_label = pyglet.text.Label(
-            text=str(self.master.get_itemstack().amount) if self.master else "-",
-            anchor_x="right",
-        )
+
+        if shared.IS_CLIENT:
+            self.amount_label = pyglet.text.Label(
+                text=str(self.master.get_itemstack().amount) if self.master else "-",
+                anchor_x="right",
+            )
         self.on_button_press = on_button_press
 
     def invalidate(self):

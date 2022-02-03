@@ -26,12 +26,7 @@ else:
     shared.IS_CLIENT = False
 
     from mcpython.client.gui.Slot import ISlot
-
-    shared.IS_CLIENT = True
     from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
-
-    shared.IS_CLIENT = False
-
     from mcpython.client.gui.ContainerRenderer import ContainerRenderer
     from mcpython.client.gui.Slot import Slot
     from mcpython.common.container.ResourceStack import ItemStack
@@ -82,6 +77,7 @@ class ContainerInteraction(TestCase):
             self.assertEqual(x, 2)
             self.assertEqual(y, 6)
 
+        shared.IS_CLIENT = False
         s = Slot()
         inventory.add_slot(s)
         s.on_button_press = test
@@ -104,6 +100,7 @@ class ContainerInteraction(TestCase):
 
             invoked = True
 
+        shared.IS_CLIENT = False
         s = Slot()
         inventory.add_slot(s)
         s.on_button_press = test
@@ -118,6 +115,8 @@ class ContainerInteraction(TestCase):
 
     async def test_left_pickup(self):
         inventory = Inventory()
+
+        shared.IS_CLIENT = False
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 8))
         inventory.add_slot(s)
@@ -143,6 +142,8 @@ class ContainerInteraction(TestCase):
 
     async def test_left_exchange(self):
         inventory = Inventory()
+
+        shared.IS_CLIENT = False
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 8))
         inventory.add_slot(s)
@@ -171,6 +172,8 @@ class ContainerInteraction(TestCase):
 
     async def test_right_pickup_half(self):
         inventory = Inventory()
+
+        shared.IS_CLIENT = False
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 4))
         inventory.add_slot(s)

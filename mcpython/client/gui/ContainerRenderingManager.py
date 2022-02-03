@@ -29,6 +29,8 @@ if shared.IS_CLIENT:
 
     from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
     from pyglet.window import key, mouse
+else:
+    from mcpython.engine.rendering import key
 
 
 class OpenedInventoryStatePart(
