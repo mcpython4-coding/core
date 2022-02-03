@@ -11,8 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.event.TickHandler
 from mcpython import shared
+shared.IS_CLIENT = False
+
+import mcpython.common.event.TickHandler
 from tests.util import TestCase
 
 
