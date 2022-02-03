@@ -191,7 +191,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         self.set_by = None  # optional player
 
         # Reference to the FaceInfo instance; Only present on server
-        self.face_info: mcpython.common.block.FaceInfo.FaceInfo = (
+        self.face_info = (
             mcpython.common.block.FaceInfo.FaceInfo(self) if shared.IS_CLIENT else None
         )
 

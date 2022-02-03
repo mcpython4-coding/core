@@ -31,6 +31,9 @@ class Weakable:
 
 @skipUnless(SCREEN_ARRIVAL, "only when rendering is arrival")
 class TestFaceInfo(TestCase):
+    def setUp(self) -> None:
+        shared.IS_CLIENT = True
+
     def test_module_import(self):
         import mcpython.common.block.FaceInfo
 
