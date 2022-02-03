@@ -26,7 +26,10 @@ from mcpython import shared
 from mcpython.common.network.packages.PlayerChatPackage import PlayerChatInputPackage
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
-from pyglet.window import key
+
+
+if shared.IS_CLIENT:
+    from pyglet.window import key
 
 
 @onlyInClient()
