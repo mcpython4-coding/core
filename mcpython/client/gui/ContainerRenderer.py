@@ -137,9 +137,10 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
             self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
             self.custom_name_label.anchor_y = "top"
 
-        shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
+        if shared.tick_handler is not None:
+            shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
+            shared.tick_handler.schedule_once(self.init())
 
-        shared.tick_handler.schedule_once(self.init())
         self.created_slots = False
 
     async def init(self):
