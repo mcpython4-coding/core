@@ -103,6 +103,8 @@ class CreativeItemTab(ICreativeView):
 
     @classmethod
     async def reload(cls):
+        if not shared.IS_CLIENT: return
+
         cls.bg_texture = texture_util.to_pyglet_image(
             mcpython.util.texture.to_pillow_image(
                 (
@@ -367,6 +369,8 @@ class CreativePlayerInventory(ICreativeView):
 
     @classmethod
     async def reload(cls):
+        if not shared.IS_CLIENT: return
+
         cls.TEXTURE = texture_util.resize_image_pyglet(
             (
                 await mcpython.engine.ResourceLoader.read_pyglet_image(
@@ -437,6 +441,8 @@ class CreativeTabManager:
 
     @classmethod
     async def reload(cls):
+        if not shared.IS_CLIENT: return
+
         cls.UPPER_TAB = texture_util.resize_image_pyglet(
             getTabTexture().get_region(0, 224, 28, 30), cls.TAB_SIZE
         )

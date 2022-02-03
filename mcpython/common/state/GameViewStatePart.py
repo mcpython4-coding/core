@@ -121,7 +121,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         active_hotkeys=None,
     ):
         super().__init__()
-        if active_hotkeys is None:
+        if active_hotkeys is None and shared.IS_CLIENT:
             active_hotkeys = ALL_KEY_COMBOS
 
         self.activate_physics = activate_physics

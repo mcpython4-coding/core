@@ -2028,4 +2028,5 @@ FL  [uuk]: moved mixin library to separate package so we can independently publi
 IO  [uuk]: using now the optimisation system of bytecodemanipulation on our system
 b   [uuk]: fixed redstone torch related crash
 b   [uuk]: fixed a few smaller issues in the code
+If  [uuk]: dedicated server are now more "dedicated", less dependency on client stuff
 

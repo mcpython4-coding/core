@@ -15,6 +15,10 @@ import asyncio
 import cProfile
 import time
 
+from bytecodemanipulation.OptimiserAnnotations import name_is_static
+
+import pyglet
+
 import mcpython.common.config
 import mcpython.common.event.TickHandler
 import mcpython.common.state.GameViewStatePart
@@ -25,17 +29,15 @@ import mcpython.engine.rendering.util
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import mcpython.util.texture
-import PIL.Image
 import psutil
-import pyglet
 from mcpython.common.config import *  # todo: remove
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.math import *  # todo: remove
 
 if shared.IS_CLIENT:
     from pyglet.gl import *
-
-from pyglet.window import key, mouse
+    from pyglet.window import key, mouse
+    import PIL.Image
 
 
 class NoWindow:
@@ -76,7 +78,7 @@ class NoWindow:
 
 
 @onlyInClient()
-class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
+class Window(pyglet.window.Window if not shared.NO_WINDOW and shared.IS_CLIENT else NoWindow):
     """
     Class representing the game window.
     Interacts with the pyglet backend.
@@ -105,64 +107,65 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         # Velocity in the y (upward) direction.
         self.dy = 0  # todo: move to player
 
-        # Convenience list of num keys, todo: move to config.py
-        self.num_keys = [
-            key._1,
-            key._2,
-            key._3,
-            key._4,
-            key._5,
-            key._6,
-            key._7,
-            key._8,
-            key._9,
-        ]
+        if shared.IS_CLIENT:
+            # Convenience list of num keys, todo: move to config.py
+            self.num_keys = [
+                key._1,
+                key._2,
+                key._3,
+                key._4,
+                key._5,
+                key._6,
+                key._7,
+                key._8,
+                key._9,
+            ]
+            self.keys = key.KeyStateHandler()  # key handler from pyglet
 
-        # The label that is displayed in the top left of the canvas.  todo: move to separated class
-        self.label = pyglet.text.Label(
-            "",
-            font_name="Arial",
-            font_size=10,
-            x=10,
-            y=self.height - 10,
-            anchor_x="left",
-            anchor_y="top",
-            color=(0, 0, 0, 255),
-        )
-        self.label2 = pyglet.text.Label(
-            "",
-            font_name="Arial",
-            font_size=10,
-            x=10,
-            y=self.height - 22,
-            anchor_x="left",
-            anchor_y="top",
-            color=(0, 0, 0, 255),
-        )
-        self.label3 = pyglet.text.Label(
-            "",
-            font_name="Arial",
-            font_size=10,
-            x=self.width - 10,
-            y=self.height - 34,
-            anchor_x="right",
-            anchor_y="top",
-            color=(0, 0, 0, 255),
-        )
+            # storing mouse information todo: use pyglet's mouse handler
+            self.mouse_pressing = {
+                mouse.LEFT: False,
+                mouse.RIGHT: False,
+                mouse.MIDDLE: False,
+            }
+            self.mouse_position = (0, 0)
+
+        if shared.IS_CLIENT:
+            # The label that is displayed in the top left of the canvas.  todo: move to separated class
+            self.label = pyglet.text.Label(
+                "",
+                font_name="Arial",
+                font_size=10,
+                x=10,
+                y=self.height - 10,
+                anchor_x="left",
+                anchor_y="top",
+                color=(0, 0, 0, 255),
+            )
+            self.label2 = pyglet.text.Label(
+                "",
+                font_name="Arial",
+                font_size=10,
+                x=10,
+                y=self.height - 22,
+                anchor_x="left",
+                anchor_y="top",
+                color=(0, 0, 0, 255),
+            )
+            self.label3 = pyglet.text.Label(
+                "",
+                font_name="Arial",
+                font_size=10,
+                x=self.width - 10,
+                y=self.height - 34,
+                anchor_x="right",
+                anchor_y="top",
+                color=(0, 0, 0, 255),
+            )
 
         # todo: move both to separated class
         self.cpu_usage = psutil.cpu_percent(interval=None)
         self.cpu_usage_timer = 0
-
-        # storing mouse information todo: use pyglet's mouse handler
-        self.mouse_pressing = {
-            mouse.LEFT: False,
-            mouse.RIGHT: False,
-            mouse.MIDDLE: False,
-        }
-        self.mouse_position = (0, 0)
-
-        self.keys = key.KeyStateHandler()  # key handler from pyglet
 
         # todo: move to separated class
         self.CROSSHAIRS_TEXTURE = None
@@ -175,12 +178,13 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         self.push_handlers(self.keys)
 
-        self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
-            asyncio.get_event_loop()
-            .run_until_complete(mcpython.engine.ResourceLoader.read_image("gui/icons"))
-            .crop((0, 0, 15, 15))
-            .resize((30, 30), PIL.Image.NEAREST)
-        )
+        if shared.IS_CLIENT:
+            self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
+                asyncio.get_event_loop()
+                .run_until_complete(mcpython.engine.ResourceLoader.read_image("gui/icons"))
+                .crop((0, 0, 15, 15))
+                .resize((30, 30), PIL.Image.NEAREST)
+            )
 
         mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
             "hotkey:game_crash", self.close
@@ -228,8 +232,6 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         """
         This method is scheduled to be called repeatedly by the pyglet clock.
         :param dt: The change in time since the last call.
-
-        todo: move to TickHandler
         """
 
         shared.event_handler.call("gameloop:tick:start", dt)
@@ -248,6 +250,8 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 + str(dt - 0.05)
                 + " seconds"
             )
+
+        # todo: move this to the respective state parts
         if any(
             type(x) == mcpython.common.state.GameViewStatePart.GameView
             for x in shared.state_handler.active_state.parts
@@ -258,6 +262,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
 
         shared.event_handler.call("tickhandler:general", dt)
 
+    @onlyInClient()
     def on_mouse_press(self, x: int, y: int, button: int, modifiers: int):
         """
         Called when a mouse button is pressed. See pyglet docs for button amd modifier mappings.
@@ -271,6 +276,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self.mouse_pressing[button] = True
         shared.event_handler.call("user:mouse:press", x, y, button, modifiers)
 
+    @onlyInClient()
     def on_mouse_release(self, x, y, button, modifiers):
         """
         Called when an button is released with the same argument as on_mouse_press
@@ -278,6 +284,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self.mouse_pressing[button] = False
         shared.event_handler.call("user:mouse:release", x, y, button, modifiers)
 
+    @onlyInClient()
     def on_mouse_drag(
         self, x: int, y: int, dx: int, dy: int, buttons: int, modifiers: int
     ):
@@ -295,6 +302,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         if self.exclusive:
             self.on_mouse_motion(x, y, dx, dy)
 
+    @onlyInClient()
     def on_mouse_scroll(self, x: int, y: int, scroll_x: int, scroll_y: int):
         """
         Called by pyglet when the mouse wheel is spun
@@ -305,6 +313,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         """
         shared.event_handler.call("user:mouse:scroll", x, y, scroll_x, scroll_y)
 
+    @onlyInClient()
     def on_mouse_motion(self, x: int, y: int, dx: float, dy: float):
         """
         Called when the player moves the mouse.
@@ -317,6 +326,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         shared.event_handler.call("user:mouse:motion", x, y, dx, dy)
         self.mouse_position = (x, y)
 
+    @onlyInClient()
     def on_key_press(self, symbol: int, modifiers: int):
         """
         Called when the player presses a key. See pyglet docs for key mappings.
@@ -339,6 +349,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 # shared.profiler.dump_stats(shared.build+"/profiles/"+str(time.time())+".txt")
                 shared.profiler = None
 
+    @onlyInClient()
     def on_key_release(self, symbol, modifiers):
         """
         Called when the player releases a key. See pyglet docs for key mappings.
@@ -347,6 +358,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         """
         shared.event_handler.call("user:keyboard:release", symbol, modifiers)
 
+    @onlyInClient()
     def on_resize(self, width: int, height: int):
         """
         Called when the window is resized to a new `width` and `height`.
@@ -358,45 +370,53 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
         self.label3.y = height - 34
         shared.event_handler.call("user:window:resize", width, height)
 
-    def set_2d(self):
-        # todo: move to RenderingHelper
-        width, height = self.get_size()
-        viewport = self.get_viewport_size()
-        mcpython.engine.rendering.util.set_2d(
-            (max(1, viewport[0]), max(1, viewport[1])), max(1, width), max(1, height)
-        )
-        pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
-
-    def set_3d(self, position=None, rotation=None):
-        # todo: move to RenderingHelper
-        if shared.world.get_active_player() is None:
-            return
-
-        if shared.rendering_helper.default_3d_stack is None:
-            shared.rendering_helper.default_3d_stack = (
-                shared.rendering_helper.get_dynamic_3d_matrix_stack()
+    if shared.IS_CLIENT:
+        @name_is_static("pyglet", lambda: pyglet)
+        @onlyInClient()
+        def set_2d(self):
+            # todo: move to RenderingHelper
+            width, height = self.get_size()
+            viewport = self.get_viewport_size()
+            mcpython.engine.rendering.util.set_2d(
+                (max(1, viewport[0]), max(1, viewport[1])), max(1, width), max(1, height)
             )
+            pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
-        shared.rendering_helper.default_3d_stack.apply()
-        pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
+        @name_is_static("pyglet", lambda: pyglet)
+        @onlyInClient()
+        def set_3d(self, position=None, rotation=None):
+            # todo: move to RenderingHelper
+            if shared.world.get_active_player() is None:
+                return
 
-    def on_draw(self):
-        """
-        Called by pyglet to draw the canvas.
-        todo: move to separated configurable rendering pipeline
-        """
-        shared.rendering_helper.deleteSavedStates()  # make sure that everything is cleared
-        # make sure that the state of the rendering helper is saved for later usage
-        state = shared.rendering_helper.save_status(False)
+            if shared.rendering_helper.default_3d_stack is None:
+                shared.rendering_helper.default_3d_stack = (
+                    shared.rendering_helper.get_dynamic_3d_matrix_stack()
+                )
 
-        self.clear()  # clear the screen
-        glClearColor(1, 1, 1, 1)
+            shared.rendering_helper.default_3d_stack.apply()
+            pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
-        mcpython.engine.rendering.RenderingLayerManager.manager.draw()
+        @name_is_static("pyglet", lambda: pyglet)
+        @onlyInClient()
+        def on_draw(self):
+            """
+            Called by pyglet to draw the canvas.
+            todo: move to separated configurable rendering pipeline
+            """
+            shared.rendering_helper.deleteSavedStates()  # make sure that everything is cleared
+            # make sure that the state of the rendering helper is saved for later usage
+            state = shared.rendering_helper.save_status(False)
 
-        shared.rendering_helper.apply(state)
-        shared.rendering_helper.deleteSavedStates()
+            self.clear()  # clear the screen
+            pyglet.gl.glClearColor(1, 1, 1, 1)
 
+            mcpython.engine.rendering.RenderingLayerManager.manager.draw()
+
+            shared.rendering_helper.apply(state)
+            shared.rendering_helper.deleteSavedStates()
+
+    @onlyInClient()
     def draw_focused_block(self):
         """
         Draw black edges around the block that is currently under the crosshairs.
@@ -412,6 +432,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 block.get_view_bbox().draw_outline(block.position)
                 return block
 
+    @onlyInClient()
     def draw_label(self):
         """
         Draw the label in the top left of the screen.
@@ -500,6 +521,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW else NoWindow):
                 blockname = blockname.NAME
             clipboard.copy(blockname)
 
+    @onlyInClient()
     def draw_reticle(self):
         """
         Draw the crosshairs in the center of the screen.
