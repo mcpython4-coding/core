@@ -30,7 +30,7 @@ from mcpython.engine.network.util import (
     ReadBuffer,
     TableIndexedOffsetTable,
     WriteBuffer,
-    _write_bin,
+    write_bin,
 )
 
 """
@@ -136,7 +136,7 @@ class RegionFileAccess:
     async def dump(self):
         # todo: add scheduler for dumping region files to storage for later
         buffer = WriteBuffer()
-        await self.table.assemble(buffer, _write_bin)
+        await self.table.assemble(buffer, write_bin)
 
         await self.save_file.dump_via_network_buffer(self.file, buffer)
 

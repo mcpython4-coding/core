@@ -2027,4 +2027,5 @@ L   [uuk]: added support for the vnoise and pnoise library
 FL  [uuk]: moved mixin library to separate package so we can independently publish
 IO  [uuk]: using now the optimisation system of bytecodemanipulation on our system
 b   [uuk]: fixed redstone torch related crash
+b   [uuk]: fixed a few smaller issues in the code
 

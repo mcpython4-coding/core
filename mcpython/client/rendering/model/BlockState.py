@@ -184,14 +184,14 @@ class MultiPartDecoder(IBlockStateDecoder):
         previous=None,
     ) -> typing.Iterable:
         state = instance.get_model_state()
+        box_model = None
         (
             prepared_vertex,
             prepared_texture,
             prepared_tint,
             prepare_vertex_elements,
-            box_model,
         ) = (
-            ([], [], [], [], None) if previous is None else (*previous, None)
+            ([], [], [], []) if previous is None else previous
         )
         box_model = self.prepare_rendering_data_multi_face(
             box_model,
@@ -747,9 +747,8 @@ class BlockStateContainer:
         else:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:model:blockstate_create",
-                cls.unsafe_from_data(name, data),
+                cls.unsafe_from_data(name, data, force=force),
                 info="loading block state '{}' from raw data".format(name),
-                force=force,
             )
 
     @classmethod

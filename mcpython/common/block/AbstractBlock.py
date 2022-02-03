@@ -239,7 +239,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     @object_method_is_protected("write_dict", lambda: WriteBuffer.write_dict)
     @object_method_is_protected("write_string", lambda: WriteBuffer.write_string)
     async def write_internal_for_migration(self, buffer: WriteBuffer):
-        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
         state: dict = self.get_model_state()
 
         if not state:
@@ -299,7 +299,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     @object_method_is_protected("read_dict", lambda: ReadBuffer.read_dict)
     @object_method_is_protected("read_string", lambda: ReadBuffer.read_string)
     async def read_internal_for_migration(self, buffer: ReadBuffer):
-        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
 
         state = await buffer.read_dict(buffer.read_string, buffer.read_string)
         await self.set_model_state(state)

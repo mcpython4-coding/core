@@ -302,7 +302,8 @@ class BoxModel(AbstractBoxModel):
                 batch[0] if self.model is not None and self.enable_alpha else batch[1]
             )
         else:
-            batch = batch
+            # batch = batch
+            pass
 
         enable_animated = previous and len(previous) == 4
 

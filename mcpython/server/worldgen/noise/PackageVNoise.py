@@ -17,6 +17,10 @@ import vnoise
 from mcpython.server.worldgen.noise.INoiseImplementation import INoiseImplementation
 
 
+def create_getter(n: vnoise.Noise):
+    return lambda p: n.noise3(*p, *(0,) * (3 - len(p))) if len(p) < 4 else n.noise3(*p[:2], n.noise3(*p[2:], 10000))
+
+
 class VNoiseImplementation(INoiseImplementation):
     """
     Noise implementation using the noise library
@@ -44,9 +48,7 @@ class VNoiseImplementation(INoiseImplementation):
             position,
             *[
                 # todo: using two merged noises is not optimal...
-                lambda p: n.noise3(*p, *(0,) * (3 - len(p)))
-                if len(p) < 4
-                else n.noise3(*p[:2], n.noise3(*p[2:], 10000))
+                create_getter(n)
                 for n in self.noises
             ]
         )

@@ -486,7 +486,7 @@ class EventBus:
                     )
 
                     if isinstance(r, typing.Awaitable):
-                        r = await r
+                        await r
 
             except (SystemExit, KeyboardInterrupt):
                 raise

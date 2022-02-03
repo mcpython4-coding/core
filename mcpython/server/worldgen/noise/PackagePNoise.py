@@ -17,6 +17,10 @@ import pnoise
 from mcpython.server.worldgen.noise.INoiseImplementation import INoiseImplementation
 
 
+def create_getter(n: pnoise.Noise):
+    return lambda p: n.perlin(*p, *(0,) * (3 - len(p))) if len(p) < 4 else n.perlin(*p[:2], n.perlin(*p[2:], 10000))
+
+
 class PNoiseImplementation(INoiseImplementation):
     """
     Noise implementation using the noise library
@@ -44,9 +48,7 @@ class PNoiseImplementation(INoiseImplementation):
             position,
             *[
                 # todo: using two merged noises is not optimal...
-                lambda p: n.perlin(*p, *(0,) * (3 - len(p)))
-                if len(p) < 4
-                else n.perlin(*p[:2], n.perlin(*p[2:], 10000))
+                create_getter(n)
                 for n in self.noises
             ]
         )
