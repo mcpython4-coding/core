@@ -23,11 +23,11 @@ import mcpython.common.state.AbstractStatePart
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
-from pyglet.window import key, mouse
 
 
 if shared.IS_CLIENT:
     from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
+    from pyglet.window import key, mouse
 
 
 class OpenedInventoryStatePart(

@@ -22,11 +22,17 @@ except ImportError:
 else:
     from mcpython import shared
 
-    shared.IS_CLIENT = False
     shared.IS_TEST_ENV = True
+    shared.IS_CLIENT = False
+
+    from mcpython.client.gui.Slot import ISlot
+
+    shared.IS_CLIENT = True
+    from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
+
+    shared.IS_CLIENT = False
 
     from mcpython.client.gui.ContainerRenderer import ContainerRenderer
-    from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
     from mcpython.client.gui.Slot import Slot
     from mcpython.common.container.ResourceStack import ItemStack
     from mcpython.common.factory.ItemFactory import ItemFactory
@@ -53,6 +59,8 @@ else:
 @skipUnless(HAS_VISUAL, "rendering backend is needed")
 class ContainerInteraction(TestCase):
     def setUp(self) -> None:
+        shared.IS_CLIENT = True
+
         self.interaction_manager = OpenedInventoryStatePart()
         shared.window = FakeWindow
 
