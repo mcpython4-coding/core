@@ -22,7 +22,9 @@ from mcpython.common.block.IBlockContainerExposer import (
 from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide
-from pyglet.window import key, mouse
+
+if shared.IS_CLIENT:
+    from pyglet.window import key, mouse
 
 
 class Furnace(IHorizontalOrientableBlock, SimpleInventoryWrappingContainer):
