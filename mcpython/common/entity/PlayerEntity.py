@@ -17,7 +17,6 @@ import typing
 
 import deprecation
 import mcpython.client.gui.Slot
-import mcpython.client.rendering.entities.EntityRenderer
 import mcpython.common.container.ResourceStack
 import mcpython.common.entity.AbstractEntity
 import mcpython.common.entity.DamageSource
@@ -38,7 +37,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     @classmethod
     def init_renderers(cls):
-        cls.RENDERER = mcpython.client.rendering.entities.EntityRenderer.EntityRenderer(
+        from mcpython.client.rendering.entities.EntityRenderer import EntityRenderer
+        cls.RENDERER = EntityRenderer(
             "minecraft:player"
         )
 
