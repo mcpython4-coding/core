@@ -23,8 +23,11 @@ import mcpython.common.state.AbstractStatePart
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
-from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from pyglet.window import key, mouse
+
+
+if shared.IS_CLIENT:
+    from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 
 
 class OpenedInventoryStatePart(
@@ -50,11 +53,13 @@ class OpenedInventoryStatePart(
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe(MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d)
         self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.eventbus.subscribe("user:mouse:release", self.on_mouse_release)
         self.eventbus.subscribe("user:mouse:drag", self.on_mouse_drag)
         self.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
+
+        if shared.IS_CLIENT:
+            self.eventbus.subscribe(MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d)
 
     async def on_key_press(self, symbol: int, modifiers: int):
         if symbol == key.ESCAPE:
