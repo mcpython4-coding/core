@@ -16,7 +16,6 @@ import itertools
 import typing
 
 import mcpython.client.gui.ContainerRenderer
-import mcpython.client.gui.HoveringItemBox
 import mcpython.client.gui.ShiftContainer
 import mcpython.client.gui.Slot
 import mcpython.common.state.AbstractStatePart
@@ -26,6 +25,8 @@ from mcpython.engine import logger
 
 
 if shared.IS_CLIENT:
+    import mcpython.client.gui.HoveringItemBox
+
     from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
     from pyglet.window import key, mouse
 
@@ -47,9 +48,11 @@ class OpenedInventoryStatePart(
         # The mode for dragging; Possible: 0 - None, 1: equal on all slots, 2: on every slot one more, 3: fill up slots
         self.mode = 0
         self.original_amount: typing.List[int] = []
-        self.tool_tip_renderer = (
-            mcpython.client.gui.HoveringItemBox.HoveringItemBoxProvider()
-        )
+
+        if shared.IS_CLIENT:
+            self.tool_tip_renderer = (
+                mcpython.client.gui.HoveringItemBox.HoveringItemBoxProvider()
+            )
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
