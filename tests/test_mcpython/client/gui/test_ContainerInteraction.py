@@ -22,11 +22,12 @@ except ImportError:
 else:
     from mcpython import shared
 
-    shared.IS_CLIENT = False
     shared.IS_TEST_ENV = True
+    shared.IS_CLIENT = False
 
-    from mcpython.client.gui.ContainerRenderer import ContainerRenderer
+    from mcpython.client.gui.Slot import ISlot
     from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
+    from mcpython.client.gui.ContainerRenderer import ContainerRenderer
     from mcpython.client.gui.Slot import Slot
     from mcpython.common.container.ResourceStack import ItemStack
     from mcpython.common.factory.ItemFactory import ItemFactory
@@ -53,6 +54,8 @@ else:
 @skipUnless(HAS_VISUAL, "rendering backend is needed")
 class ContainerInteraction(TestCase):
     def setUp(self) -> None:
+        shared.IS_CLIENT = True
+
         self.interaction_manager = OpenedInventoryStatePart()
         shared.window = FakeWindow
 
@@ -74,6 +77,7 @@ class ContainerInteraction(TestCase):
             self.assertEqual(x, 2)
             self.assertEqual(y, 6)
 
+        shared.IS_CLIENT = False
         s = Slot()
         inventory.add_slot(s)
         s.on_button_press = test
@@ -96,6 +100,7 @@ class ContainerInteraction(TestCase):
 
             invoked = True
 
+        shared.IS_CLIENT = False
         s = Slot()
         inventory.add_slot(s)
         s.on_button_press = test
@@ -110,6 +115,8 @@ class ContainerInteraction(TestCase):
 
     async def test_left_pickup(self):
         inventory = Inventory()
+
+        shared.IS_CLIENT = False
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 8))
         inventory.add_slot(s)
@@ -135,6 +142,8 @@ class ContainerInteraction(TestCase):
 
     async def test_left_exchange(self):
         inventory = Inventory()
+
+        shared.IS_CLIENT = False
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 8))
         inventory.add_slot(s)
@@ -163,6 +172,8 @@ class ContainerInteraction(TestCase):
 
     async def test_right_pickup_half(self):
         inventory = Inventory()
+
+        shared.IS_CLIENT = False
         s = Slot()
         s.set_itemstack(ItemStack(test_item(), 4))
         inventory.add_slot(s)

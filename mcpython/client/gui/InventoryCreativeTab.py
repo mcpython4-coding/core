@@ -19,20 +19,22 @@ from abc import ABC
 
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-import mcpython.client.rendering.ui.Buttons
-import mcpython.client.rendering.ui.SearchBar
 import mcpython.common.event.TickHandler
 import mcpython.engine.event.EventBus
 import mcpython.engine.ResourceLoader
-import mcpython.util.texture as texture_util
-import PIL.Image
-import pyglet
 from mcpython import shared
-from mcpython.client.gui.util import CreativeTabScrollbar, getTabTexture
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
 from mcpython.engine import logger
-from pyglet.window import key, mouse
+
+if shared.IS_CLIENT:
+    from pyglet.window import key, mouse
+    import mcpython.client.rendering.ui.Buttons
+    import mcpython.client.rendering.ui.SearchBar
+    from mcpython.client.gui.util import CreativeTabScrollbar, getTabTexture
+    import mcpython.util.texture as texture_util
+    import PIL.Image
+    import pyglet
 
 
 class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC):
@@ -97,7 +99,7 @@ class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC
 
 
 class CreativeItemTab(ICreativeView):
-    bg_texture: pyglet.image.AbstractImage = None
+    bg_texture = None
 
     @classmethod
     async def reload(cls):
@@ -131,7 +133,8 @@ class CreativeItemTab(ICreativeView):
                 self.load_from_tag
             )
 
-        self.scroll_bar = CreativeTabScrollbar(self.set_scrolling)
+        if shared.IS_CLIENT:
+            self.scroll_bar = CreativeTabScrollbar(self.set_scrolling)
 
     def set_scrolling(self, progress: int):
         self.scroll_offset = round(progress - 1)
@@ -315,14 +318,16 @@ class CreativeTabSearchBar(CreativeItemTab):
     ):
         super().__init__(name, icon, group, linked_tag)
         self.group: FilteredItemGroup = self.group.filtered()
-        self.search_bar = mcpython.client.rendering.ui.SearchBar.SearchBar(
-            change_callback=lambda text: self.group.apply_raw_filter(f"(.*){text}(.*)"),
-            enter_callback=lambda: self.search_bar.disable(),
-            exit_callback=lambda: self.search_bar.disable(),
-            enable_mouse_to_enter=True,
-        )
-        self.tab_icon = CreativeTabManager.UPPER_TAB
-        self.tab_icon_selected = CreativeTabManager.UPPER_TAB_SELECTED
+
+        if shared.IS_CLIENT:
+            self.search_bar = mcpython.client.rendering.ui.SearchBar.SearchBar(
+                change_callback=lambda text: self.group.apply_raw_filter(f"(.*){text}(.*)"),
+                enter_callback=lambda: self.search_bar.disable(),
+                exit_callback=lambda: self.search_bar.disable(),
+                enable_mouse_to_enter=True,
+            )
+            self.tab_icon = CreativeTabManager.UPPER_TAB
+            self.tab_icon_selected = CreativeTabManager.UPPER_TAB_SELECTED
 
         self.need_reload = True
 
@@ -462,21 +467,22 @@ class CreativeTabManager:
 
         self.hovering_tab = None
 
-        self.page_left = (
-            mcpython.client.rendering.ui.Buttons.arrow_button_left(
-                (0, 0), lambda: self.increase_page(-1)
+        if shared.IS_CLIENT:
+            self.page_left = (
+                mcpython.client.rendering.ui.Buttons.arrow_button_left(
+                    (0, 0), lambda: self.increase_page(-1)
+                )
+                if not shared.IS_TEST_ENV
+                else None
             )
-            if not shared.IS_TEST_ENV
-            else None
-        )
-        self.page_right = (
-            mcpython.client.rendering.ui.Buttons.arrow_button_right(
-                (0, 0), lambda: self.increase_page(1)
+            self.page_right = (
+                mcpython.client.rendering.ui.Buttons.arrow_button_right(
+                    (0, 0), lambda: self.increase_page(1)
+                )
+                if not shared.IS_TEST_ENV
+                else None
             )
-            if not shared.IS_TEST_ENV
-            else None
-        )
-        self.page_label = pyglet.text.Label(anchor_x="center", anchor_y="center")
+            self.page_label = pyglet.text.Label(anchor_x="center", anchor_y="center")
 
         self.lower_left_position = 0, 0
         self.container_size = 1, 1

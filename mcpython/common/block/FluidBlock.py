@@ -14,13 +14,15 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
+from mcpython import shared
+
 import mcpython.common.block.AbstractBlock
 import mcpython.common.fluid.AbstractFluid
-from mcpython import shared
-from mcpython.client.rendering.blocks.FluidRenderer import FluidRenderer
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.texture import hex_to_color
-from pyglet.window import mouse
+
+if shared.IS_CLIENT:
+    from pyglet.window import mouse
 
 
 class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
@@ -55,6 +57,7 @@ class IFluidBlock(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
             and not shared.IS_TEST_ENV
             and shared.IS_CLIENT
         ):
+            from mcpython.client.rendering.blocks.FluidRenderer import FluidRenderer
             cls.FLUID_RENDERER = FluidRenderer(
                 "{}:block/{}_still".format(*cls.NAME.split(":"))
             )

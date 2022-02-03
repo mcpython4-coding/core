@@ -19,16 +19,33 @@ import mcpython.util.enums
 import pyglet
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-from pyglet.window import key, mouse
 
 from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
 if shared.IS_CLIENT:
     from mcpython.client.rendering.blocks.ChestRenderer import IChestRendererSupport, ChestRenderer
+    from pyglet.window import key, mouse
 else:
     class IChestRendererSupport:
         pass
+
+    class key:
+        MOD_SHIFT = 1 << 0
+        MOD_CTRL = 1 << 1
+        MOD_ALT = 1 << 2
+        MOD_CAPSLOCK = 1 << 3
+        MOD_NUMLOCK = 1 << 4
+        MOD_WINDOWS = 1 << 5
+        MOD_COMMAND = 1 << 6
+        MOD_OPTION = 1 << 7
+        MOD_SCROLLLOCK = 1 << 8
+        MOD_FUNCTION = 1 << 9
+
+    class mouse:
+        LEFT = 1 << 0
+        MIDDLE = 1 << 1
+        RIGHT = 1 << 2
 
 # the bounding box of the chest
 BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(

@@ -130,13 +130,17 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.config = {}
 
         # asyncio.get_event_loop().run_until_complete(self.reload_config())
+
         self.custom_name = None  # the custom name; If set, rendered in the inventory
-        self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
-        self.custom_name_label.anchor_y = "top"
 
-        shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
+        if shared.IS_CLIENT:
+            self.custom_name_label = pyglet.text.Label(color=(255, 255, 255, 255))
+            self.custom_name_label.anchor_y = "top"
 
-        shared.tick_handler.schedule_once(self.init())
+        if shared.tick_handler is not None:
+            shared.tick_handler.schedule_once(shared.inventory_handler.add(self))
+            shared.tick_handler.schedule_once(self.init())
+
         self.created_slots = False
 
     async def init(self):
@@ -175,9 +179,10 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         self.active = buffer.read_bool()
 
         self.custom_name = buffer.read_string()
+
         if self.custom_name == "":
             self.custom_name = None
-        else:
+        elif shared.IS_CLIENT:
             self.custom_name_label.text = self.custom_name
 
         self.uuid = buffer.read_uuid()

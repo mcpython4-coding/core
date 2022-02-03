@@ -21,12 +21,15 @@ import mcpython.client.gui.ContainerRenderingManager
 import mcpython.client.gui.Slot
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
-import mcpython.util.opengl
-import mcpython.util.texture
-import PIL.Image
-import pyglet
 from mcpython import shared
 from mcpython.engine import logger
+
+
+if shared.IS_CLIENT:
+    import mcpython.util.opengl
+    import mcpython.util.texture
+    import PIL.Image
+    import pyglet
 
 
 class _TEXTURES:
@@ -177,12 +180,13 @@ class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRende
     def __init__(self, player):
         super().__init__()
         self.player = player
-        self.lable = pyglet.text.Label(color=(255, 255, 255, 255))
         self.last_index = 0
         self.last_item = None
         self.time_since_last_change = 0
 
-        self.xp_level_lable = pyglet.text.Label(color=(92, 133, 59), anchor_x="center")
+        if shared.IS_CLIENT:
+            self.xp_level_lable = pyglet.text.Label(color=(92, 133, 59), anchor_x="center")
+            self.lable = pyglet.text.Label(color=(255, 255, 255, 255))
 
     def free(self):
         InventoryPlayerHotbar.INSTANCES.append(self)

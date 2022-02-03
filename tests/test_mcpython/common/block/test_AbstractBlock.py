@@ -25,6 +25,9 @@ except ImportError:
 
 
 class TestAbstractBlock(TestCase):
+    def setUp(self) -> None:
+        shared.IS_CLIENT = False
+
     def test_module_import(self):
         import mcpython.common.block.AbstractBlock
 

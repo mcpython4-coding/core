@@ -18,7 +18,6 @@ import deprecation
 import mcpython.common.event.api
 import mcpython.util
 import mcpython.util.enums
-import pyglet
 from mcpython.util.annotation import onlyInClient
 
 
@@ -100,7 +99,7 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
     def add_face_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
-        batch: pyglet.graphics.Batch,
+        batch,
         face: mcpython.util.enums.EnumSide,
     ) -> typing.Iterable:
         return tuple()
@@ -108,7 +107,7 @@ class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):
     def add_faces_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
-        batch: pyglet.graphics.Batch,
+        batch,
         faces: int,
     ) -> typing.Iterable:
         raise NotImplementedError()

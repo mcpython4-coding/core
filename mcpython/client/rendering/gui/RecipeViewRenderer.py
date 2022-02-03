@@ -14,9 +14,7 @@ This project is not official by mojang and does not relate to it.
 import typing
 from abc import ABC
 
-import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.IRecipe
-import pyglet
 
 
 class NotEnoughItemsException(Exception):
@@ -40,7 +38,7 @@ class AbstractRecipeViewRenderer(ABC):
         raise NotImplementedError
 
     def add_to_batch(
-        self, position: typing.Tuple[int, int], batch: pyglet.graphics.Batch
+        self, position: typing.Tuple[int, int], batch
     ):
         raise NotImplementedError
 

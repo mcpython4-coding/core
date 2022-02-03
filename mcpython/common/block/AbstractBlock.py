@@ -16,7 +16,6 @@ import typing
 from abc import ABC
 
 import mcpython.client.gui.Slot
-import mcpython.common.block.FaceInfo
 import mcpython.common.container.ResourceStack
 import mcpython.common.event.api
 import mcpython.common.event.Registry
@@ -32,6 +31,7 @@ from mcpython.util.enums import BlockRemovalReason, BlockRotationType, EnumSide
 
 if shared.IS_CLIENT:
     import mcpython.client.rendering.model.api
+    import mcpython.common.block.FaceInfo
 
     class parent(
         mcpython.common.event.api.IRegistryContent,
@@ -191,7 +191,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         self.set_by = None  # optional player
 
         # Reference to the FaceInfo instance; Only present on server
-        self.face_info: mcpython.common.block.FaceInfo.FaceInfo = (
+        self.face_info = (
             mcpython.common.block.FaceInfo.FaceInfo(self) if shared.IS_CLIENT else None
         )
 

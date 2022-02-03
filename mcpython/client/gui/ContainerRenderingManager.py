@@ -16,15 +16,21 @@ import itertools
 import typing
 
 import mcpython.client.gui.ContainerRenderer
-import mcpython.client.gui.HoveringItemBox
 import mcpython.client.gui.ShiftContainer
 import mcpython.client.gui.Slot
 import mcpython.common.state.AbstractStatePart
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
-from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from pyglet.window import key, mouse
+
+
+if shared.IS_CLIENT:
+    import mcpython.client.gui.HoveringItemBox
+
+    from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
+    from pyglet.window import key, mouse
+else:
+    from mcpython.engine.rendering import key
 
 
 class OpenedInventoryStatePart(
@@ -44,17 +50,21 @@ class OpenedInventoryStatePart(
         # The mode for dragging; Possible: 0 - None, 1: equal on all slots, 2: on every slot one more, 3: fill up slots
         self.mode = 0
         self.original_amount: typing.List[int] = []
-        self.tool_tip_renderer = (
-            mcpython.client.gui.HoveringItemBox.HoveringItemBoxProvider()
-        )
+
+        if shared.IS_CLIENT:
+            self.tool_tip_renderer = (
+                mcpython.client.gui.HoveringItemBox.HoveringItemBoxProvider()
+            )
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe(MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d)
         self.eventbus.subscribe("user:mouse:press", self.on_mouse_press)
         self.eventbus.subscribe("user:mouse:release", self.on_mouse_release)
         self.eventbus.subscribe("user:mouse:drag", self.on_mouse_drag)
         self.eventbus.subscribe("user:mouse:scroll", self.on_mouse_scroll)
+
+        if shared.IS_CLIENT:
+            self.eventbus.subscribe(MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d)
 
     async def on_key_press(self, symbol: int, modifiers: int):
         if symbol == key.ESCAPE:
