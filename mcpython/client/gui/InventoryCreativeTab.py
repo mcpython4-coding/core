@@ -19,8 +19,6 @@ from abc import ABC
 
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.Slot
-import mcpython.client.rendering.ui.Buttons
-import mcpython.client.rendering.ui.SearchBar
 import mcpython.common.event.TickHandler
 import mcpython.engine.event.EventBus
 import mcpython.engine.ResourceLoader
@@ -28,11 +26,15 @@ import mcpython.util.texture as texture_util
 import PIL.Image
 import pyglet
 from mcpython import shared
-from mcpython.client.gui.util import CreativeTabScrollbar, getTabTexture
 from mcpython.common.container.ItemGroup import FilteredItemGroup, ItemGroup
 from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItemstack
 from mcpython.engine import logger
-from pyglet.window import key, mouse
+
+if shared.IS_CLIENT:
+    from pyglet.window import key, mouse
+    import mcpython.client.rendering.ui.Buttons
+    import mcpython.client.rendering.ui.SearchBar
+    from mcpython.client.gui.util import CreativeTabScrollbar, getTabTexture
 
 
 class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC):
