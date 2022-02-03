@@ -27,11 +27,11 @@ from mcpython.engine.physics.collision import collide
 from mcpython.util.annotation import onlyInClient
 
 from . import AbstractStatePart
-from .InGameHotKeysManager import ALL_KEY_COMBOS
 
 
 if shared.IS_CLIENT:
     from pyglet.window import key, mouse
+    from .InGameHotKeysManager import ALL_KEY_COMBOS
 
 else:
     class key:

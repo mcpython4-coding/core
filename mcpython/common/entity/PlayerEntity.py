@@ -114,7 +114,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
                 info="setting up player inventory",
             )
 
-        else:
+        elif shared.tick_handler is not None:
             shared.tick_handler.schedule_once(self.create_inventories())
 
         # todo: move to somewhere else! (Each player creation does a new one!)
