@@ -15,10 +15,6 @@ import asyncio
 import cProfile
 import time
 
-from bytecodemanipulation.OptimiserAnnotations import name_is_static
-
-import pyglet
-
 import mcpython.common.config
 import mcpython.common.event.TickHandler
 import mcpython.common.state.GameViewStatePart
@@ -30,14 +26,16 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.math
 import mcpython.util.texture
 import psutil
+import pyglet
+from bytecodemanipulation.OptimiserAnnotations import name_is_static
 from mcpython.common.config import *  # todo: remove
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.math import *  # todo: remove
 
 if shared.IS_CLIENT:
+    import PIL.Image
     from pyglet.gl import *
     from pyglet.window import key, mouse
-    import PIL.Image
 
 
 class NoWindow:
@@ -78,7 +76,9 @@ class NoWindow:
 
 
 @onlyInClient()
-class Window(pyglet.window.Window if not shared.NO_WINDOW and shared.IS_CLIENT else NoWindow):
+class Window(
+    pyglet.window.Window if not shared.NO_WINDOW and shared.IS_CLIENT else NoWindow
+):
     """
     Class representing the game window.
     Interacts with the pyglet backend.
@@ -181,7 +181,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW and shared.IS_CLIENT e
         if shared.IS_CLIENT:
             self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
                 asyncio.get_event_loop()
-                .run_until_complete(mcpython.engine.ResourceLoader.read_image("gui/icons"))
+                .run_until_complete(
+                    mcpython.engine.ResourceLoader.read_image("gui/icons")
+                )
                 .crop((0, 0, 15, 15))
                 .resize((30, 30), PIL.Image.NEAREST)
             )
@@ -371,6 +373,7 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW and shared.IS_CLIENT e
         shared.event_handler.call("user:window:resize", width, height)
 
     if shared.IS_CLIENT:
+
         @name_is_static("pyglet", lambda: pyglet)
         @onlyInClient()
         def set_2d(self):
@@ -378,7 +381,9 @@ class Window(pyglet.window.Window if not shared.NO_WINDOW and shared.IS_CLIENT e
             width, height = self.get_size()
             viewport = self.get_viewport_size()
             mcpython.engine.rendering.util.set_2d(
-                (max(1, viewport[0]), max(1, viewport[1])), max(1, width), max(1, height)
+                (max(1, viewport[0]), max(1, viewport[1])),
+                max(1, width),
+                max(1, height),
             )
             pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 

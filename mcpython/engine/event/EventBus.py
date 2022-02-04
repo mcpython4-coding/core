@@ -18,7 +18,6 @@ import typing
 
 import pyglet.app
 from bytecodemanipulation.OptimiserAnnotations import (
-    access_static,
     builtins_are_static,
     inline_call,
     object_method_is_protected,

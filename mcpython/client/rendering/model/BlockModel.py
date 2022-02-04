@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import typing
 
 import deprecation
@@ -26,7 +25,6 @@ from bytecodemanipulation.OptimiserAnnotations import (
     inline_call,
     name_is_static,
     object_method_is_protected,
-    try_optimise,
 )
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
@@ -34,7 +32,6 @@ from mcpython.client.texture.AnimationManager import animation_manager
 from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 from pyglet.graphics.vertexdomain import VertexList
-from pyglet.image import Texture
 
 
 class Model:

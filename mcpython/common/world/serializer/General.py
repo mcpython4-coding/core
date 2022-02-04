@@ -42,7 +42,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         if save_file.version != mcpython.common.world.SaveFile.LATEST_VERSION:
             return
 
-        version_id = read_buffer.read_ulong()
+        read_buffer.read_ulong()  # version id
         player_name = read_buffer.read_string()
 
         mods = await read_buffer.read_dict(
@@ -76,7 +76,7 @@ class General(mcpython.common.world.serializer.IDataSerializer.IDataSerializer):
         if shared.IS_CLIENT:
             await shared.world.join_dimension_async(current_dimension)
 
-        default_noise_implementation = read_buffer.read_string()
+        read_buffer.read_string()  # default noise implementation
         await shared.world_generation_handler.deserialize_chunk_generator_info(
             read_buffer
         )

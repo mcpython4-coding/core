@@ -111,7 +111,7 @@ async def download_skin(username: str, store: str):
         return
 
     with open(store, "wb") as f:
-        f.write(r.content)
+        f.write(r.content)  # lgtm [py/clear-text-storage-sensitive-data]
     image = PIL.Image.open(store)
     if image.size[0] != image.size[1:]:
         new_image = PIL.Image.new("RGBA", (image.size[0], image.size[0]), (0, 0, 0, 0))

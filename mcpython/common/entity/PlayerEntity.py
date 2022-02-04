@@ -38,9 +38,8 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
     @classmethod
     def init_renderers(cls):
         from mcpython.client.rendering.entities.EntityRenderer import EntityRenderer
-        cls.RENDERER = EntityRenderer(
-            "minecraft:player"
-        )
+
+        cls.RENDERER = EntityRenderer("minecraft:player")
 
     NAME = "minecraft:player"
     SUMMON_ABLE = False

@@ -1,3 +1,16 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
 # ----------------------------------------------------------------------------
 # pyglet
 # Copyright (c) 2006-2008 Alex Holkner
@@ -82,6 +95,7 @@ class KeyStateHandler(dict):
         False
 
     """
+
     def on_key_press(self, symbol, modifiers):
         self[symbol] = True
 
@@ -108,24 +122,24 @@ def modifiers_string(modifiers):
     """
     mod_names = []
     if modifiers & MOD_SHIFT:
-        mod_names.append('MOD_SHIFT')
+        mod_names.append("MOD_SHIFT")
     if modifiers & MOD_CTRL:
-        mod_names.append('MOD_CTRL')
+        mod_names.append("MOD_CTRL")
     if modifiers & MOD_ALT:
-        mod_names.append('MOD_ALT')
+        mod_names.append("MOD_ALT")
     if modifiers & MOD_CAPSLOCK:
-        mod_names.append('MOD_CAPSLOCK')
+        mod_names.append("MOD_CAPSLOCK")
     if modifiers & MOD_NUMLOCK:
-        mod_names.append('MOD_NUMLOCK')
+        mod_names.append("MOD_NUMLOCK")
     if modifiers & MOD_SCROLLLOCK:
-        mod_names.append('MOD_SCROLLLOCK')
+        mod_names.append("MOD_SCROLLLOCK")
     if modifiers & MOD_COMMAND:
-        mod_names.append('MOD_COMMAND')
+        mod_names.append("MOD_COMMAND")
     if modifiers & MOD_OPTION:
-        mod_names.append('MOD_OPTION')
+        mod_names.append("MOD_OPTION")
     if modifiers & MOD_FUNCTION:
-        mod_names.append('MOD_FUNCTION')
-    return '|'.join(mod_names)
+        mod_names.append("MOD_FUNCTION")
+    return "|".join(mod_names)
 
 
 def symbol_string(symbol):
@@ -145,7 +159,7 @@ def symbol_string(symbol):
     if symbol < 1 << 32:
         return _key_names.get(symbol, str(symbol))
     else:
-        return 'user_key(%x)' % (symbol >> 32)
+        return "user_key(%x)" % (symbol >> 32)
 
 
 def motion_string(motion):
@@ -178,244 +192,243 @@ def user_key(scancode):
     assert scancode > 0
     return scancode << 32
 
+
 # Modifier mask constants
-MOD_SHIFT       = 1 << 0
-MOD_CTRL        = 1 << 1
-MOD_ALT         = 1 << 2
-MOD_CAPSLOCK    = 1 << 3
-MOD_NUMLOCK     = 1 << 4
-MOD_WINDOWS     = 1 << 5
-MOD_COMMAND     = 1 << 6
-MOD_OPTION      = 1 << 7
-MOD_SCROLLLOCK  = 1 << 8
-MOD_FUNCTION    = 1 << 9
+MOD_SHIFT = 1 << 0
+MOD_CTRL = 1 << 1
+MOD_ALT = 1 << 2
+MOD_CAPSLOCK = 1 << 3
+MOD_NUMLOCK = 1 << 4
+MOD_WINDOWS = 1 << 5
+MOD_COMMAND = 1 << 6
+MOD_OPTION = 1 << 7
+MOD_SCROLLLOCK = 1 << 8
+MOD_FUNCTION = 1 << 9
 
 #: Accelerator modifier.  On Windows and Linux, this is ``MOD_CTRL``, on
 #: Mac OS X it's ``MOD_COMMAND``.
 MOD_ACCEL = MOD_CTRL
-if compat_platform == 'darwin':
+if compat_platform == "darwin":
     MOD_ACCEL = MOD_COMMAND
 
 
 # Key symbol constants
 
 # ASCII commands
-BACKSPACE     = 0xff08
-TAB           = 0xff09
-LINEFEED      = 0xff0a
-CLEAR         = 0xff0b
-RETURN        = 0xff0d
-ENTER         = 0xff0d      # synonym
-PAUSE         = 0xff13
-SCROLLLOCK    = 0xff14
-SYSREQ        = 0xff15
-ESCAPE        = 0xff1b
-SPACE         = 0xff20
+BACKSPACE = 0xFF08
+TAB = 0xFF09
+LINEFEED = 0xFF0A
+CLEAR = 0xFF0B
+RETURN = 0xFF0D
+ENTER = 0xFF0D  # synonym
+PAUSE = 0xFF13
+SCROLLLOCK = 0xFF14
+SYSREQ = 0xFF15
+ESCAPE = 0xFF1B
+SPACE = 0xFF20
 
 # Cursor control and motion
-HOME          = 0xff50
-LEFT          = 0xff51
-UP            = 0xff52
-RIGHT         = 0xff53
-DOWN          = 0xff54
-PAGEUP        = 0xff55
-PAGEDOWN      = 0xff56
-END           = 0xff57
-BEGIN         = 0xff58
+HOME = 0xFF50
+LEFT = 0xFF51
+UP = 0xFF52
+RIGHT = 0xFF53
+DOWN = 0xFF54
+PAGEUP = 0xFF55
+PAGEDOWN = 0xFF56
+END = 0xFF57
+BEGIN = 0xFF58
 
 # Misc functions
-DELETE        = 0xffff
-SELECT        = 0xff60
-PRINT         = 0xff61
-EXECUTE       = 0xff62
-INSERT        = 0xff63
-UNDO          = 0xff65
-REDO          = 0xff66
-MENU          = 0xff67
-FIND          = 0xff68
-CANCEL        = 0xff69
-HELP          = 0xff6a
-BREAK         = 0xff6b
-MODESWITCH    = 0xff7e
-SCRIPTSWITCH  = 0xff7e
-FUNCTION      = 0xffd2
+DELETE = 0xFFFF
+SELECT = 0xFF60
+PRINT = 0xFF61
+EXECUTE = 0xFF62
+INSERT = 0xFF63
+UNDO = 0xFF65
+REDO = 0xFF66
+MENU = 0xFF67
+FIND = 0xFF68
+CANCEL = 0xFF69
+HELP = 0xFF6A
+BREAK = 0xFF6B
+MODESWITCH = 0xFF7E
+SCRIPTSWITCH = 0xFF7E
+FUNCTION = 0xFFD2
 
 # Text motion constants: these are allowed to clash with key constants
-MOTION_UP                = UP
-MOTION_RIGHT             = RIGHT
-MOTION_DOWN              = DOWN
-MOTION_LEFT              = LEFT
-MOTION_NEXT_WORD         = 1
-MOTION_PREVIOUS_WORD     = 2
+MOTION_UP = UP
+MOTION_RIGHT = RIGHT
+MOTION_DOWN = DOWN
+MOTION_LEFT = LEFT
+MOTION_NEXT_WORD = 1
+MOTION_PREVIOUS_WORD = 2
 MOTION_BEGINNING_OF_LINE = 3
-MOTION_END_OF_LINE       = 4
-MOTION_NEXT_PAGE         = PAGEDOWN
-MOTION_PREVIOUS_PAGE     = PAGEUP
+MOTION_END_OF_LINE = 4
+MOTION_NEXT_PAGE = PAGEDOWN
+MOTION_PREVIOUS_PAGE = PAGEUP
 MOTION_BEGINNING_OF_FILE = 5
-MOTION_END_OF_FILE       = 6
-MOTION_BACKSPACE         = BACKSPACE
-MOTION_DELETE            = DELETE
+MOTION_END_OF_FILE = 6
+MOTION_BACKSPACE = BACKSPACE
+MOTION_DELETE = DELETE
 
 # Number pad
-NUMLOCK       = 0xff7f
-NUM_SPACE     = 0xff80
-NUM_TAB       = 0xff89
-NUM_ENTER     = 0xff8d
-NUM_F1        = 0xff91
-NUM_F2        = 0xff92
-NUM_F3        = 0xff93
-NUM_F4        = 0xff94
-NUM_HOME      = 0xff95
-NUM_LEFT      = 0xff96
-NUM_UP        = 0xff97
-NUM_RIGHT     = 0xff98
-NUM_DOWN      = 0xff99
-NUM_PRIOR     = 0xff9a
-NUM_PAGE_UP   = 0xff9a
-NUM_NEXT      = 0xff9b
-NUM_PAGE_DOWN = 0xff9b
-NUM_END       = 0xff9c
-NUM_BEGIN     = 0xff9d
-NUM_INSERT    = 0xff9e
-NUM_DELETE    = 0xff9f
-NUM_EQUAL     = 0xffbd
-NUM_MULTIPLY  = 0xffaa
-NUM_ADD       = 0xffab
-NUM_SEPARATOR = 0xffac
-NUM_SUBTRACT  = 0xffad
-NUM_DECIMAL   = 0xffae
-NUM_DIVIDE    = 0xffaf
+NUMLOCK = 0xFF7F
+NUM_SPACE = 0xFF80
+NUM_TAB = 0xFF89
+NUM_ENTER = 0xFF8D
+NUM_F1 = 0xFF91
+NUM_F2 = 0xFF92
+NUM_F3 = 0xFF93
+NUM_F4 = 0xFF94
+NUM_HOME = 0xFF95
+NUM_LEFT = 0xFF96
+NUM_UP = 0xFF97
+NUM_RIGHT = 0xFF98
+NUM_DOWN = 0xFF99
+NUM_PRIOR = 0xFF9A
+NUM_PAGE_UP = 0xFF9A
+NUM_NEXT = 0xFF9B
+NUM_PAGE_DOWN = 0xFF9B
+NUM_END = 0xFF9C
+NUM_BEGIN = 0xFF9D
+NUM_INSERT = 0xFF9E
+NUM_DELETE = 0xFF9F
+NUM_EQUAL = 0xFFBD
+NUM_MULTIPLY = 0xFFAA
+NUM_ADD = 0xFFAB
+NUM_SEPARATOR = 0xFFAC
+NUM_SUBTRACT = 0xFFAD
+NUM_DECIMAL = 0xFFAE
+NUM_DIVIDE = 0xFFAF
 
-NUM_0         = 0xffb0
-NUM_1         = 0xffb1
-NUM_2         = 0xffb2
-NUM_3         = 0xffb3
-NUM_4         = 0xffb4
-NUM_5         = 0xffb5
-NUM_6         = 0xffb6
-NUM_7         = 0xffb7
-NUM_8         = 0xffb8
-NUM_9         = 0xffb9
+NUM_0 = 0xFFB0
+NUM_1 = 0xFFB1
+NUM_2 = 0xFFB2
+NUM_3 = 0xFFB3
+NUM_4 = 0xFFB4
+NUM_5 = 0xFFB5
+NUM_6 = 0xFFB6
+NUM_7 = 0xFFB7
+NUM_8 = 0xFFB8
+NUM_9 = 0xFFB9
 
 # Function keys
-F1            = 0xffbe
-F2            = 0xffbf
-F3            = 0xffc0
-F4            = 0xffc1
-F5            = 0xffc2
-F6            = 0xffc3
-F7            = 0xffc4
-F8            = 0xffc5
-F9            = 0xffc6
-F10           = 0xffc7
-F11           = 0xffc8
-F12           = 0xffc9
-F13           = 0xffca
-F14           = 0xffcb
-F15           = 0xffcc
-F16           = 0xffcd
-F17           = 0xffce
-F18           = 0xffcf
-F19           = 0xffd0
-F20           = 0xffd1
+F1 = 0xFFBE
+F2 = 0xFFBF
+F3 = 0xFFC0
+F4 = 0xFFC1
+F5 = 0xFFC2
+F6 = 0xFFC3
+F7 = 0xFFC4
+F8 = 0xFFC5
+F9 = 0xFFC6
+F10 = 0xFFC7
+F11 = 0xFFC8
+F12 = 0xFFC9
+F13 = 0xFFCA
+F14 = 0xFFCB
+F15 = 0xFFCC
+F16 = 0xFFCD
+F17 = 0xFFCE
+F18 = 0xFFCF
+F19 = 0xFFD0
+F20 = 0xFFD1
 
 # Modifiers
-LSHIFT        = 0xffe1
-RSHIFT        = 0xffe2
-LCTRL         = 0xffe3
-RCTRL         = 0xffe4
-CAPSLOCK      = 0xffe5
-LMETA         = 0xffe7
-RMETA         = 0xffe8
-LALT          = 0xffe9
-RALT          = 0xffea
-LWINDOWS      = 0xffeb
-RWINDOWS      = 0xffec
-LCOMMAND      = 0xffed
-RCOMMAND      = 0xffee
-LOPTION       = 0xffef
-ROPTION       = 0xfff0
+LSHIFT = 0xFFE1
+RSHIFT = 0xFFE2
+LCTRL = 0xFFE3
+RCTRL = 0xFFE4
+CAPSLOCK = 0xFFE5
+LMETA = 0xFFE7
+RMETA = 0xFFE8
+LALT = 0xFFE9
+RALT = 0xFFEA
+LWINDOWS = 0xFFEB
+RWINDOWS = 0xFFEC
+LCOMMAND = 0xFFED
+RCOMMAND = 0xFFEE
+LOPTION = 0xFFEF
+ROPTION = 0xFFF0
 
 # Latin-1
-SPACE         = 0x020
-EXCLAMATION   = 0x021
-DOUBLEQUOTE   = 0x022
-HASH          = 0x023
-POUND         = 0x023  # synonym
-DOLLAR        = 0x024
-PERCENT       = 0x025
-AMPERSAND     = 0x026
-APOSTROPHE    = 0x027
-PARENLEFT     = 0x028
-PARENRIGHT    = 0x029
-ASTERISK      = 0x02a
-PLUS          = 0x02b
-COMMA         = 0x02c
-MINUS         = 0x02d
-PERIOD        = 0x02e
-SLASH         = 0x02f
-_0            = 0x030
-_1            = 0x031
-_2            = 0x032
-_3            = 0x033
-_4            = 0x034
-_5            = 0x035
-_6            = 0x036
-_7            = 0x037
-_8            = 0x038
-_9            = 0x039
-COLON         = 0x03a
-SEMICOLON     = 0x03b
-LESS          = 0x03c
-EQUAL         = 0x03d
-GREATER       = 0x03e
-QUESTION      = 0x03f
-AT            = 0x040
-BRACKETLEFT   = 0x05b
-BACKSLASH     = 0x05c
-BRACKETRIGHT  = 0x05d
-ASCIICIRCUM   = 0x05e
-UNDERSCORE    = 0x05f
-GRAVE         = 0x060
-QUOTELEFT     = 0x060
-A             = 0x061
-B             = 0x062
-C             = 0x063
-D             = 0x064
-E             = 0x065
-F             = 0x066
-G             = 0x067
-H             = 0x068
-I             = 0x069
-J             = 0x06a
-K             = 0x06b
-L             = 0x06c
-M             = 0x06d
-N             = 0x06e
-O             = 0x06f
-P             = 0x070
-Q             = 0x071
-R             = 0x072
-S             = 0x073
-T             = 0x074
-U             = 0x075
-V             = 0x076
-W             = 0x077
-X             = 0x078
-Y             = 0x079
-Z             = 0x07a
-BRACELEFT     = 0x07b
-BAR           = 0x07c
-BRACERIGHT    = 0x07d
-ASCIITILDE    = 0x07e
+SPACE = 0x020
+EXCLAMATION = 0x021
+DOUBLEQUOTE = 0x022
+HASH = 0x023
+POUND = 0x023  # synonym
+DOLLAR = 0x024
+PERCENT = 0x025
+AMPERSAND = 0x026
+APOSTROPHE = 0x027
+PARENLEFT = 0x028
+PARENRIGHT = 0x029
+ASTERISK = 0x02A
+PLUS = 0x02B
+COMMA = 0x02C
+MINUS = 0x02D
+PERIOD = 0x02E
+SLASH = 0x02F
+_0 = 0x030
+_1 = 0x031
+_2 = 0x032
+_3 = 0x033
+_4 = 0x034
+_5 = 0x035
+_6 = 0x036
+_7 = 0x037
+_8 = 0x038
+_9 = 0x039
+COLON = 0x03A
+SEMICOLON = 0x03B
+LESS = 0x03C
+EQUAL = 0x03D
+GREATER = 0x03E
+QUESTION = 0x03F
+AT = 0x040
+BRACKETLEFT = 0x05B
+BACKSLASH = 0x05C
+BRACKETRIGHT = 0x05D
+ASCIICIRCUM = 0x05E
+UNDERSCORE = 0x05F
+GRAVE = 0x060
+QUOTELEFT = 0x060
+A = 0x061
+B = 0x062
+C = 0x063
+D = 0x064
+E = 0x065
+F = 0x066
+G = 0x067
+H = 0x068
+I = 0x069
+J = 0x06A
+K = 0x06B
+L = 0x06C
+M = 0x06D
+N = 0x06E
+O = 0x06F
+P = 0x070
+Q = 0x071
+R = 0x072
+S = 0x073
+T = 0x074
+U = 0x075
+V = 0x076
+W = 0x077
+X = 0x078
+Y = 0x079
+Z = 0x07A
+BRACELEFT = 0x07B
+BAR = 0x07C
+BRACERIGHT = 0x07D
+ASCIITILDE = 0x07E
 
 _key_names = {}
 _motion_names = {}
 for _name, _value in locals().copy().items():
-    if _name[:2] != '__' and _name.upper() == _name and \
-       not _name.startswith('MOD_'):
-        if _name.startswith('MOTION_'):
+    if _name[:2] != "__" and _name.upper() == _name and not _name.startswith("MOD_"):
+        if _name.startswith("MOTION_"):
             _motion_names[_value] = _name
         else:
             _key_names[_value] = _name
-

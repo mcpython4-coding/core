@@ -149,7 +149,7 @@ class AbstractEntity(
                 try:
                     if await fixer.apply2stream(self, buffer, write) is True:
                         break
-                except:
+                except:  # lgtm [py/catch-base-exception]
                     logger.print_exception(
                         f"during applying data fixer to block {self.NAME}; discarding data"
                     )

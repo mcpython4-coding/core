@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import array
 import itertools
-import typing
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import PIL.Image

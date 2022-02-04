@@ -11,17 +11,16 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import enum
 import types
 import typing
-
-from mcpython import shared
 
 
 def onlyInClient() -> typing.Callable:
     """
     Marks an object to be only arrival on the client, not on the server
     """
+    from mcpython import shared
+
     if shared.IS_CLIENT:
         return lambda a: a
     else:

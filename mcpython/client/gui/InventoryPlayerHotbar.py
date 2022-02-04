@@ -24,7 +24,6 @@ import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.engine import logger
 
-
 if shared.IS_CLIENT:
     import mcpython.util.opengl
     import mcpython.util.texture
@@ -185,7 +184,9 @@ class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRende
         self.time_since_last_change = 0
 
         if shared.IS_CLIENT:
-            self.xp_level_lable = pyglet.text.Label(color=(92, 133, 59), anchor_x="center")
+            self.xp_level_lable = pyglet.text.Label(
+                color=(92, 133, 59), anchor_x="center"
+            )
             self.lable = pyglet.text.Label(color=(255, 255, 255, 255))
 
     def free(self):

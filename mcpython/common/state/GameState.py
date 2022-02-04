@@ -17,12 +17,14 @@ import time
 import mcpython.client.gui.ContainerRenderingManager
 import mcpython.common.event.TickHandler
 import mcpython.common.mod.ModMcpython
-import pyglet
 from mcpython import shared
-from mcpython.util.annotation import onlyInClient
-from pyglet.window import key, mouse
 
 from . import AbstractState, GameViewStatePart
+
+if shared.IS_CLIENT:
+    from pyglet.window import key, mouse
+else:
+    from mcpython.engine.rendering import key, mouse
 
 
 class Game(AbstractState.AbstractState):

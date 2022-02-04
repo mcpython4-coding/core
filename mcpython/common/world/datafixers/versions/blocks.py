@@ -12,9 +12,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from mcpython.common.block.AbstractBlock import AbstractBlock
-from mcpython.common.block.Furnace import Smoker
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
-from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 
 class Furnace0_1Fixer(BlockDataFixer):

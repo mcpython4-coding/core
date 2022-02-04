@@ -18,7 +18,6 @@ import sys
 import typing
 
 import aiofiles
-import deprecation
 import mcpython.common.event.Registry
 import mcpython.common.world.datafixers.IDataFixer
 import mcpython.common.world.serializer.IDataSerializer

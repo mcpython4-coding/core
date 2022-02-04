@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 from datetime import datetime
 
 import mcpython.engine.physics.AxisAlignedBoundingBox
@@ -24,9 +23,10 @@ from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
 if shared.IS_CLIENT:
-    from mcpython.client.rendering.blocks.ChestRenderer import IChestRendererSupport, ChestRenderer
+    from mcpython.client.rendering.blocks.ChestRenderer import IChestRendererSupport
     from pyglet.window import key, mouse
 else:
+
     class IChestRendererSupport:
         pass
 
@@ -46,6 +46,7 @@ else:
         LEFT = 1 << 0
         MIDDLE = 1 << 1
         RIGHT = 1 << 2
+
 
 # the bounding box of the chest
 BBOX = mcpython.engine.physics.AxisAlignedBoundingBox.AxisAlignedBoundingBox(

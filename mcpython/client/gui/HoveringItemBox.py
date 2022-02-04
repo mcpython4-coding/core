@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.container.ResourceStack
 import mcpython.common.data.Language
 import pyglet
 from mcpython import shared
@@ -29,9 +28,7 @@ class IHoveringItemBoxDefinitionPlugin:
     Please make sure that you look for changes before applying your changes (as you might interfere with stuff from another plugin)
     """
 
-    def manipulateShownText(
-        self, slot: mcpython.common.container.ResourceStack.ItemStack, text: list
-    ):
+    def manipulateShownText(self, slot: ItemStack, text: list):
         raise NotImplementedError()
 
 
@@ -49,9 +46,7 @@ class IHoveringItemBoxDefinition:
         """
         cls.PLUGINS = []
 
-    def getHoveringText(
-        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
-    ) -> list:
+    def getHoveringText(self, itemstack: ItemStack) -> list:
         raise NotImplementedError()
 
     @classmethod
@@ -79,9 +74,7 @@ class DefaultHoveringItemBoxDefinition(IHoveringItemBoxDefinition):
     def getAdditionalText(self, itemstack: ItemStack) -> typing.List[str]:
         return []
 
-    def getHoveringText(
-        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
-    ) -> typing.List[str]:
+    def getHoveringText(self, itemstack: ItemStack) -> typing.List[str]:
         if itemstack.is_empty():
             return []
 
@@ -165,9 +158,7 @@ class HoveringItemBoxProvider:
         self.label_batch = pyglet.graphics.Batch()
         self.bg_rectangle = pyglet.shapes.Rectangle(0, 0, 0, 0, (0, 0, 0))
 
-    def renderFor(
-        self, itemstack: mcpython.common.container.ResourceStack.ItemStack, position
-    ):
+    def renderFor(self, itemstack: ItemStack, position):
         """
         Will render the ItemBoxProvider for a given slot
         :param itemstack: the slot to render over

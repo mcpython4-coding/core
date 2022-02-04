@@ -13,15 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 import asyncio
 import sys
-import threading
 import traceback
 import typing
 
-import deprecation
 import pyglet.app
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.engine.event.EventBus import CancelAbleEvent
 
 
 class SingleInvokeAsyncEventBus:
@@ -101,7 +98,7 @@ class SingleInvokeAsyncEventBus:
             print("closing due to missing memory")
             sys.exit(-1)
 
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception()
             logger.println("Out of the above reasons, the game is being closed")
 

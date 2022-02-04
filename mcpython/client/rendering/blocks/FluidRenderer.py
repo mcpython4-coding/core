@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import typing
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
@@ -23,10 +22,12 @@ from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
 
 # Used to prevent z-fighting with neighbor blocks on transparent fluids
 from mcpython.engine import logger
+from mcpython.util.annotation import onlyInClient
 
 SOME_SMALL_VALUES = 1 / 1000
 
 
+@onlyInClient()
 class FluidRenderer(
     mcpython.client.rendering.blocks.ICustomBlockRenderer.ICustomBatchBlockRenderer
 ):

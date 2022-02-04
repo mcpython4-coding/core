@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
-import gc
 import random
 import sys
 import typing
@@ -29,7 +28,6 @@ from bytecodemanipulation.OptimiserAnnotations import (
     constant_arg,
     inline_call,
     object_method_is_protected,
-    try_optimise,
 )
 from mcpython import shared
 from mcpython.engine import logger

@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import html
 import time
 
@@ -26,7 +25,6 @@ from mcpython import shared
 from mcpython.common.network.packages.PlayerChatPackage import PlayerChatInputPackage
 from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
-
 
 if shared.IS_CLIENT:
     from pyglet.window import key

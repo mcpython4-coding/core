@@ -12,7 +12,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
-import datetime
 import os
 import shutil
 import time
@@ -27,32 +26,32 @@ import mcpython.common.world.SaveFile
 import mcpython.engine.rendering.RenderingGroups
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
-import mcpython.util.opengl
-import mcpython.util.texture
-import PIL.Image
-import pyglet
 from mcpython import shared
-from mcpython.util.annotation import onlyInClient
-from pyglet.window import key, mouse
+from mcpython.engine.network.util import ReadBuffer
 
-from ...engine.network.util import ReadBuffer
-from ...util import picklemagic
 from . import AbstractState
 from .ui import UIPartButton, UIPartScrollBar
 
-MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
-    asyncio.get_event_loop()
-    .run_until_complete(
-        mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
+if shared.IS_CLIENT:
+    import mcpython.util.opengl
+    import mcpython.util.texture
+    import PIL.Image
+    import pyglet
+    from pyglet.window import key, mouse
+
+    MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
+        asyncio.get_event_loop()
+        .run_until_complete(
+            mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
+        )
+        .resize((50, 50), PIL.Image.NEAREST)
     )
-    .resize((50, 50), PIL.Image.NEAREST)
-)
-WORLD_SELECTION = asyncio.get_event_loop().run_until_complete(
-    mcpython.engine.ResourceLoader.read_image("minecraft:gui/world_selection")
-)
-WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
-    WORLD_SELECTION.crop((0, 0, 32, 32))
-)
+    WORLD_SELECTION = asyncio.get_event_loop().run_until_complete(
+        mcpython.engine.ResourceLoader.read_image("minecraft:gui/world_selection")
+    )
+    WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(
+        WORLD_SELECTION.crop((0, 0, 32, 32))
+    )
 
 
 class WorldList(AbstractState.AbstractState):

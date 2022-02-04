@@ -11,6 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from unittest import skipUnless
+
 from mcpython import shared
 from tests.test_mcpython.fakeHelpers import (
     FakeCraftingHandler,
@@ -18,10 +20,10 @@ from tests.test_mcpython.fakeHelpers import (
     FakeWorld,
 )
 from tests.util import TestCase
-from unittest import skipUnless
 
 try:
     from pyglet.window import key, mouse
+
     SCREEN_ARRIVAL = True
 except ImportError:
     SCREEN_ARRIVAL = False

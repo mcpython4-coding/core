@@ -28,13 +28,13 @@ from mcpython.common.container.ResourceStack import ItemStack, LazyClassLoadItem
 from mcpython.engine import logger
 
 if shared.IS_CLIENT:
-    from pyglet.window import key, mouse
     import mcpython.client.rendering.ui.Buttons
     import mcpython.client.rendering.ui.SearchBar
-    from mcpython.client.gui.util import CreativeTabScrollbar, getTabTexture
     import mcpython.util.texture as texture_util
     import PIL.Image
     import pyglet
+    from mcpython.client.gui.util import CreativeTabScrollbar, getTabTexture
+    from pyglet.window import key, mouse
 
 
 class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC):
@@ -103,7 +103,8 @@ class CreativeItemTab(ICreativeView):
 
     @classmethod
     async def reload(cls):
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         cls.bg_texture = texture_util.to_pyglet_image(
             mcpython.util.texture.to_pillow_image(
@@ -323,7 +324,9 @@ class CreativeTabSearchBar(CreativeItemTab):
 
         if shared.IS_CLIENT:
             self.search_bar = mcpython.client.rendering.ui.SearchBar.SearchBar(
-                change_callback=lambda text: self.group.apply_raw_filter(f"(.*){text}(.*)"),
+                change_callback=lambda text: self.group.apply_raw_filter(
+                    f"(.*){text}(.*)"
+                ),
                 enter_callback=lambda: self.search_bar.disable(),
                 exit_callback=lambda: self.search_bar.disable(),
                 enable_mouse_to_enter=True,
@@ -369,7 +372,8 @@ class CreativePlayerInventory(ICreativeView):
 
     @classmethod
     async def reload(cls):
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         cls.TEXTURE = texture_util.resize_image_pyglet(
             (
@@ -441,7 +445,8 @@ class CreativeTabManager:
 
     @classmethod
     async def reload(cls):
-        if not shared.IS_CLIENT: return
+        if not shared.IS_CLIENT:
+            return
 
         cls.UPPER_TAB = texture_util.resize_image_pyglet(
             getTabTexture().get_region(0, 224, 28, 30), cls.TAB_SIZE

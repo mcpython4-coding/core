@@ -11,13 +11,15 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from unittest import skipUnless
+
 from mcpython import shared
 from mcpython.util.enums import BlockRotationType, EnumSide
 from tests.util import TestCase
-from unittest import skipUnless
 
 try:
     from pyglet.window import mouse
+
     SCREEN_ARRIVAL = True
 except ImportError:
     SCREEN_ARRIVAL = False

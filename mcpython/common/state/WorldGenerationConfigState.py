@@ -20,9 +20,7 @@ import mcpython.common.state.ConfigBackgroundPart
 import mcpython.common.state.WorldGenerationProgressState
 import mcpython.server.worldgen.noise.NoiseManager
 import mcpython.util.math
-import pyglet
 from mcpython import shared
-from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
 from . import AbstractState

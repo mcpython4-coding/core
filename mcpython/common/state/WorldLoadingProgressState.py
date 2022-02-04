@@ -120,9 +120,6 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         try:
             await shared.world.save_file.load_world_async()
 
-        except (SystemExit, KeyboardInterrupt, OSError):
-            raise
-
         except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
             logger.println(
                 "Failed to load world. data-fixer Failed with NoDataFixerFoundException"
@@ -130,6 +127,9 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             await shared.world.cleanup()
             await shared.state_handler.change_state("minecraft:start_menu")
             return
+
+        except (SystemExit, KeyboardInterrupt, OSError):
+            raise
 
         except:
             logger.print_exception("Failed to load world; Failed in inital loading")

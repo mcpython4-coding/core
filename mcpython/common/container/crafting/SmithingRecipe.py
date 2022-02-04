@@ -13,10 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
-import mcpython.common.container.crafting.GridRecipeInstances
 import mcpython.common.container.crafting.IRecipe
 from mcpython import shared
-from mcpython.common.container.ResourceStack import ItemStack
 
 from .GridRecipeInstances import transform_to_item_stack
 

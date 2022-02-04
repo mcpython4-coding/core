@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import math
 import time
 import typing
@@ -22,34 +21,18 @@ import mcpython.common.item.AbstractFoodItem as ItemFood
 import mcpython.common.item.AbstractToolItem as ItemTool
 import mcpython.util.math
 from mcpython import shared
-from mcpython.common.config import GRAVITY, JUMP_SPEED, TERMINAL_VELOCITY
+from mcpython.common.config import GRAVITY, TERMINAL_VELOCITY
 from mcpython.engine.physics.collision import collide
-from mcpython.util.annotation import onlyInClient
 
 from . import AbstractStatePart
 
-
 if shared.IS_CLIENT:
     from pyglet.window import key, mouse
+
     from .InGameHotKeysManager import ALL_KEY_COMBOS
 
 else:
-    class key:
-        MOD_SHIFT = 1 << 0
-        MOD_CTRL = 1 << 1
-        MOD_ALT = 1 << 2
-        MOD_CAPSLOCK = 1 << 3
-        MOD_NUMLOCK = 1 << 4
-        MOD_WINDOWS = 1 << 5
-        MOD_COMMAND = 1 << 6
-        MOD_OPTION = 1 << 7
-        MOD_SCROLLLOCK = 1 << 8
-        MOD_FUNCTION = 1 << 9
-
-    class mouse:
-        LEFT = 1 << 0
-        MIDDLE = 1 << 1
-        RIGHT = 1 << 2
+    from mcpython.engine.rendering import key, mouse
 
 
 def get_block_break_time(block, itemstack):

@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import copy
 import random
 import typing
@@ -27,8 +26,6 @@ import pyglet
 from bytecodemanipulation.OptimiserAnnotations import (
     builtins_are_static,
     forced_arg_type,
-    inline_call,
-    try_optimise,
 )
 from mcpython import shared
 from mcpython.client.rendering.model.api import (
@@ -36,10 +33,8 @@ from mcpython.client.rendering.model.api import (
     IBlockStateDecoder,
     IBlockStateRenderingTarget,
 )
-from mcpython.client.rendering.model.BoxModel import MutableRawBoxModel
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
-from mcpython.util.enums import EnumSide
 
 blockstate_decoder_registry = mcpython.common.event.Registry.Registry(
     "minecraft:blockstates",
@@ -156,8 +151,9 @@ class MultiPartDecoder(IBlockStateDecoder):
         previous=None,
     ):
         state = instance.get_model_state()
-        prepared_vertex, prepared_texture, prepared_tint, box_model = (
-            ([], [], [], None) if previous is None else (*previous, None)
+        box_model = None
+        prepared_vertex, prepared_texture, prepared_tint = (
+            ([], [], []) if previous is None else previous
         )
         box_model = self.prepare_rendering_data(
             box_model,
@@ -185,12 +181,7 @@ class MultiPartDecoder(IBlockStateDecoder):
     ) -> typing.Iterable:
         state = instance.get_model_state()
         box_model = None
-        (
-            prepared_vertex,
-            prepared_texture,
-            prepared_tint,
-            prepare_vertex_elements,
-        ) = (
+        (prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements,) = (
             ([], [], [], []) if previous is None else previous
         )
         box_model = self.prepare_rendering_data_multi_face(
@@ -602,7 +593,7 @@ class DefaultDecoder(IBlockStateDecoder):
     def add_raw_face_to_batch(
         self, instance: IBlockStateRenderingTarget, position, state, batches, face
     ):
-        state = state
+        # todo: optimise this somehow!
         for keymap, blockstate in self.states:
             if keymap == state:
                 return blockstate.add_raw_face_to_batch(
@@ -817,7 +808,7 @@ class BlockStateContainer:
                 self.loader: IBlockStateDecoder = loader(self)
                 try:
                     self.loader.parse_data(data)
-                except:
+                except:  # lgtm [py/catch-base-exception]
                     logger.print_exception(
                         f"block state loader {loader.NAME} failed to load block state {self.name}; continuing further search"
                     )

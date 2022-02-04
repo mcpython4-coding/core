@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import io
 import itertools
 import json
@@ -22,7 +21,8 @@ import zipfile
 from abc import ABC
 
 import aiofiles
-from aiofiles import os as aio_os
+
+# from aiofiles import os as aio_os
 from aiofiles import ospath as async_path
 
 # servers don't need textures, so pillow is not required

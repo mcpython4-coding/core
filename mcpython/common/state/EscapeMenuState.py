@@ -19,9 +19,7 @@ import mcpython.client.gui.ContainerRenderingManager
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.event.EventInfo
 import mcpython.util.callbacks
-import pyglet
 from mcpython import shared
-from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
 from . import AbstractState, GameViewStatePart

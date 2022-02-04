@@ -11,13 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import typing
 
 import mcpython.client.gui.ContainerRenderer
 import mcpython.client.gui.InventoryCreativeTab
 import mcpython.client.gui.Slot
-import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
 import mcpython.common.container.ResourceStack
 import mcpython.common.item.AbstractArmorItem

@@ -17,19 +17,23 @@ import typing
 import weakref
 
 import deprecation
-
-from bytecodemanipulation.OptimiserAnnotations import try_optimise, builtins_are_static, object_method_is_protected, name_is_static, returns_argument
 import mcpython.common.block.AbstractBlock as Block
 import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
-from mcpython.util.enums import EnumSide
 import mcpython.util.math
+from bytecodemanipulation.OptimiserAnnotations import (
+    builtins_are_static,
+    name_is_static,
+    object_method_is_protected,
+    returns_argument,
+)
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.common.entity.ItemEntity import ItemEntity
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
+from mcpython.util.enums import EnumSide
 
 
 class Chunk(mcpython.engine.world.AbstractInterface.IChunk):

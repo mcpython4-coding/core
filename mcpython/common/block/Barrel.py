@@ -21,10 +21,10 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from .IAllDirectionOrientableBlock import IAllDirectionOrientableBlock
 from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 
-
 if shared.IS_CLIENT:
     from pyglet.window import key, mouse
 else:
+
     class key:
         MOD_SHIFT = 1 << 0
         MOD_CTRL = 1 << 1

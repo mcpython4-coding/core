@@ -17,7 +17,6 @@ import asyncio
 import typing
 from abc import ABC
 
-import mcpython.common.container.ResourceStack
 import mcpython.common.item.ItemManager
 import mcpython.engine.ResourceLoader
 from mcpython import shared
@@ -66,12 +65,12 @@ class ISlot(IBufferSerializeAble, ABC):
     def get_capacity(self) -> int:
         raise NotImplementedError()
 
-    def get_itemstack(self) -> mcpython.common.container.ResourceStack.ItemStack:
+    def get_itemstack(self) -> ItemStack:
         raise NotImplementedError()
 
     def set_itemstack(
         self,
-        stack: mcpython.common.container.ResourceStack.ItemStack,
+        stack: ItemStack,
         update=True,
         player=False,
     ):
@@ -98,9 +97,7 @@ class ISlot(IBufferSerializeAble, ABC):
     def draw_label(self, x=None, y=None):
         pass
 
-    def is_item_allowed(
-        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
-    ) -> bool:
+    def is_item_allowed(self, itemstack: ItemStack) -> bool:
         raise NotImplementedError()
 
     def getParent(self) -> "ISlot":
@@ -155,11 +152,7 @@ class Slot(ISlot):
         """
         super().__init__()
 
-        self.__itemstack = (
-            itemstack
-            if itemstack
-            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
-        )
+        self.__itemstack = itemstack if itemstack else ItemStack.create_empty()
 
         self.position = position
         if self.__itemstack.item and shared.IS_CLIENT:
@@ -197,7 +190,9 @@ class Slot(ISlot):
         self.children = []
 
         if shared.IS_CLIENT:
-            self.empty_image = pyglet.sprite.Sprite(empty_image) if empty_image else None
+            self.empty_image = (
+                pyglet.sprite.Sprite(empty_image) if empty_image else None
+            )
 
         self.on_click_on_slot = on_click_on_slot
 
@@ -236,7 +231,7 @@ class Slot(ISlot):
             else (64 if self.itemstack.is_empty() else self.itemstack.item.STACK_SIZE)
         )
 
-    def get_itemstack(self) -> mcpython.common.container.ResourceStack.ItemStack:
+    def get_itemstack(self) -> ItemStack:
         return self.__itemstack
 
     def get_linked_itemstack_for_sift_clicking(self):
@@ -244,15 +239,11 @@ class Slot(ISlot):
 
     def set_itemstack(
         self,
-        stack: mcpython.common.container.ResourceStack.ItemStack,
+        stack: ItemStack,
         update=True,
         player=False,
     ):
-        self.__itemstack = (
-            stack
-            if stack is not None
-            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
-        )
+        self.__itemstack = stack if stack is not None else ItemStack.create_empty()
         if update:
             self.call_update(player=player)
 
@@ -273,7 +264,7 @@ class Slot(ISlot):
                 result = f(player=player)
                 if isinstance(result, typing.Awaitable):
                     await result
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(
                     "during invoking {} for slot-update of {}".format(f, self)
                 )
@@ -382,9 +373,7 @@ class Slot(ISlot):
             self.amount_label.y = self.sprite.y if y is None else y
             self.amount_label.draw()
 
-    def is_item_allowed(
-        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
-    ) -> bool:
+    def is_item_allowed(self, itemstack: ItemStack) -> bool:
         if callable(self.check_function):
             if not self.check_function(self, itemstack):
                 return False
@@ -665,9 +654,7 @@ class SlotInfiniteStack(Slot):
     def __str__(self):
         return repr(self)
 
-    def is_item_allowed(
-        self, itemstack: mcpython.common.container.ResourceStack.ItemStack
-    ) -> bool:
+    def is_item_allowed(self, itemstack: ItemStack) -> bool:
         return True
 
 
@@ -698,15 +685,11 @@ class SlotInfiniteStackExchangeable(Slot):
 
     def set_itemstack(
         self,
-        stack: mcpython.common.container.ResourceStack.ItemStack,
+        stack: ItemStack,
         update=True,
         player=False,
     ):
-        self.__itemstack = (
-            stack
-            if stack is not None
-            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
-        )
+        self.__itemstack = stack if stack is not None else ItemStack.create_empty()
         if not stack.is_empty():
             self.reference_stack = stack.copy()
         if update:
@@ -724,11 +707,7 @@ class SlotInfiniteStackExchangeable(Slot):
 
 class SlotTrashCan(Slot):
     def set_itemstack(self, stack, update=True, player=False):
-        self.__itemstack = (
-            stack
-            if stack
-            else mcpython.common.container.ResourceStack.ItemStack.create_empty()
-        )
+        self.__itemstack = stack if stack else ItemStack.create_empty()
         flag = True
         if update:
             flag = self.call_update(player=player)

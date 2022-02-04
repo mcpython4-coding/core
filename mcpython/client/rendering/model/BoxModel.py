@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import itertools
 import typing
 from functools import reduce
@@ -28,7 +27,6 @@ from mcpython.client.rendering.model.api import (
     IBlockStateRenderingTarget,
 )
 from mcpython.client.rendering.model.util import SIDE_ORDER, UV_INDICES, UV_ORDER
-from mcpython.engine import logger
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.enums import EnumSide
 from mcpython.util.vertex import VertexProvider

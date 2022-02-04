@@ -11,12 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import random
 
 from mcpython import shared
 from mcpython.common.network.connection import connectClient2Server
-from mcpython.util.annotation import onlyInClient
 
 from .AbstractState import AbstractState
 from .ConfigBackgroundPart import ConfigBackground

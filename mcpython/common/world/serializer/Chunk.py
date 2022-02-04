@@ -118,7 +118,7 @@ class Chunk(IDataSerializer.IDataSerializer):
 
             try:
                 await shared.entity_manager.registry[type_name].create_from_buffer(buf)
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(
                     f"cannot deserialize entity {type_name} in chunk {chunk} (dimension: {chunk_instance.get_dimension().get_name()})"
                 )

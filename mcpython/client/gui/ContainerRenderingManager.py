@@ -23,10 +23,8 @@ from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
 
-
 if shared.IS_CLIENT:
     import mcpython.client.gui.HoveringItemBox
-
     from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
     from pyglet.window import key, mouse
 else:
@@ -121,7 +119,7 @@ class OpenedInventoryStatePart(
             shared.rendering_helper.enableAlpha()  # make sure that it is enabled
             try:
                 inventory.draw(hovering_slot=hovering_slot)
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(f"during drawing inventory {inventory}")
                 shared.tick_handler.schedule_once(
                     shared.inventory_handler.hide(inventory)
@@ -132,7 +130,7 @@ class OpenedInventoryStatePart(
             shared.inventory_handler.moving_slot.draw(0, 0)
             shared.inventory_handler.moving_slot.draw_label()
 
-        # First, render tooltip for item attached to the mouse, and than for the over the mouse is
+        # First, render tooltip for item attached to the mouse, and then for the over the mouse is
         if (
             self.moving_itemstack is not None
             and not shared.inventory_handler.moving_slot.get_itemstack().is_empty()

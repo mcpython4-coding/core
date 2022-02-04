@@ -11,11 +11,13 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from tests.util import TestCase
 from unittest import skipUnless
+
+from tests.util import TestCase
 
 try:
     import pyglet.window
+
     HAS_VISUAL = True
 except ImportError:
     HAS_VISUAL = False
@@ -25,10 +27,9 @@ else:
     shared.IS_TEST_ENV = True
     shared.IS_CLIENT = False
 
-    from mcpython.client.gui.Slot import ISlot
-    from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
     from mcpython.client.gui.ContainerRenderer import ContainerRenderer
-    from mcpython.client.gui.Slot import Slot
+    from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
+    from mcpython.client.gui.Slot import ISlot, Slot
     from mcpython.common.container.ResourceStack import ItemStack
     from mcpython.common.factory.ItemFactory import ItemFactory
     from pyglet.window import key, mouse
@@ -36,14 +37,12 @@ else:
     test_item = ItemFactory().set_name("minecraft:test_item").finish()
     test_item_2 = ItemFactory().set_name("minecraft:test_item_2").finish()
 
-
     class FakeWindow:
         mouse_position = 0, 0
 
         @classmethod
         def get_size(cls):
             return 100, 100
-
 
     class Inventory(ContainerRenderer):
         def add_slot(self, slot: Slot):

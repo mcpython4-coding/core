@@ -21,7 +21,13 @@ import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
-from bytecodemanipulation.OptimiserAnnotations import run_optimisations, try_optimise, builtins_are_static, object_method_is_protected, name_is_static
+from bytecodemanipulation.OptimiserAnnotations import (
+    builtins_are_static,
+    name_is_static,
+    object_method_is_protected,
+    run_optimisations,
+    try_optimise,
+)
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
@@ -239,7 +245,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     @object_method_is_protected("write_dict", lambda: WriteBuffer.write_dict)
     @object_method_is_protected("write_string", lambda: WriteBuffer.write_string)
     async def write_internal_for_migration(self, buffer: WriteBuffer):
-        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
+        await super(ICapabilityContainer, self).write_to_network_buffer(
+            buffer
+        )  # lgtm [py/super-not-enclosing-class]
         state: dict = self.get_model_state()
 
         if not state:
@@ -263,7 +271,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     @name_is_static("ReadBuffer", lambda: ReadBuffer)
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         version = buffer.read_uint()
-        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        await super(ICapabilityContainer, self).read_from_network_buffer(
+            buffer
+        )  # lgtm [py/super-not-enclosing-class]
         original_buffer = buffer
 
         # Apply these fixers locally
@@ -278,7 +288,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
                 try:
                     if await fixer.apply2stream(self, buffer, write) is True:
                         break
-                except:
+                except:  # lgtm [py/catch-base-exception]
                     logger.print_exception(
                         f"during applying data fixer to block {self.NAME}; discarding data"
                     )
@@ -299,7 +309,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     @object_method_is_protected("read_dict", lambda: ReadBuffer.read_dict)
     @object_method_is_protected("read_string", lambda: ReadBuffer.read_string)
     async def read_internal_for_migration(self, buffer: ReadBuffer):
-        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
+        await super(ICapabilityContainer, self).read_from_network_buffer(
+            buffer
+        )  # lgtm [py/super-not-enclosing-class]
 
         state = await buffer.read_dict(buffer.read_string, buffer.read_string)
         await self.set_model_state(state)

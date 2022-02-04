@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.block.AbstractBlock
 import mcpython.util.enums
-from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 
 

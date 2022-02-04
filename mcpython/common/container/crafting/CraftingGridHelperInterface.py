@@ -22,10 +22,6 @@ import mcpython.common.container.ResourceStack
 from mcpython import shared
 from mcpython.client.gui.Slot import ISlot
 from mcpython.common.container.crafting import IRecipe
-from mcpython.common.container.crafting.GridRecipeInstances import (
-    AbstractCraftingGridRecipe,
-)
-from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger
 
 

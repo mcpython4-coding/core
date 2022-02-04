@@ -14,11 +14,9 @@ This project is not official by mojang and does not relate to it.
 import itertools
 import struct
 
-from mcpython.common.block.Furnace import Smoker
 from mcpython.common.world.datafixers.NetworkFixers import ChunkInfoMapFixer
 from mcpython.engine import logger
-from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
-from mcpython.server.worldgen.map.AbstractChunkInfoMap import AbstractMap
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.server.worldgen.map.BiomeMap import BiomeMap
 
 

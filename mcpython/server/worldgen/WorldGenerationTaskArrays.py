@@ -561,7 +561,8 @@ class OffProcessTaskHelper:
 
     def __init__(self, chunk):
         self.chunk = chunk
-        self.shared = OffProcessTaskHelper.OffProcessTaskHelperShared()
+        # todo: implement
+        self.shared = None  # OffProcessTaskHelper.OffProcessTaskHelperShared()
         self.process = multiprocessing.Process(target=self.shared.run)
         self.process.start()
         self.reference: typing.Optional[

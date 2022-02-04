@@ -469,7 +469,6 @@ class DocumentationStripper(AbstractBuildStage):
         result = []  # here we store the context
         in_multi_line_comment = 0
         for line_n, line in enumerate(data):
-            line = line
             multi_line_change = False
             index = None
             in_string = 0

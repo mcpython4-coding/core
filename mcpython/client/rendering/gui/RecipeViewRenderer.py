@@ -37,9 +37,7 @@ class AbstractRecipeViewRenderer(ABC):
     def draw(self, position: typing.Tuple[int, int], hovering_slot=None):
         raise NotImplementedError
 
-    def add_to_batch(
-        self, position: typing.Tuple[int, int], batch
-    ):
+    def add_to_batch(self, position: typing.Tuple[int, int], batch):
         raise NotImplementedError
 
     def get_rendering_size(self) -> typing.Tuple[int, int]:
