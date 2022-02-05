@@ -16,11 +16,11 @@ import typing
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
 from mcpython.common.container.crafting.IRecipeUser import IRecipeUser
+from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRecipe
+from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.util.enums import ToolType
 from pyglet.window import key, mouse
 
-from mcpython.common.container.crafting.StonecuttingRecipe import StoneCuttingRecipe
-from mcpython.common.container.ResourceStack import ItemStack
 from .IHorizontalOrientableBlock import IHorizontalOrientableBlock
 
 if shared.IS_CLIENT:

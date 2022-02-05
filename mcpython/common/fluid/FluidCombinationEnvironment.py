@@ -1,5 +1,5 @@
 """
-mcpython - a minecraft clone written in python licenced under the MIT-licence
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
 (https://github.com/mcpython4-coding/core)
 
 Contributors: uuk, xkcdjerry (inactive)
@@ -19,7 +19,9 @@ class FluidCombinationEnvironment:
         self.pressure = 1  # 1 atmosphere
         self.rmp = 0  # rotations per minute by some mixer
         self.rotation_force = 10  # Newton, how much force the mixer uses
-        self.rotation_direction = 0  # 0 clockwise, 1 anti-clockwise (viewed from "above")
+        self.rotation_direction = (
+            0  # 0 clockwise, 1 anti-clockwise (viewed from "above")
+        )
         self.container_type = "quartz_glass"
         self.container_volume = 1  # in Liter
 
@@ -42,4 +44,3 @@ class FluidCombinationEnvironment:
         env.is_vacuumed = self.is_vacuumed
 
         return env
-

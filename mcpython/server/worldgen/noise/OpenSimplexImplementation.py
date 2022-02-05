@@ -45,10 +45,5 @@ class OpenSimplexImplementation(INoiseImplementation):
 
         position = tuple([e / self.scale for e in position])
         return self.merger.pre_merge(
-            self,
-            position,
-            *[
-                create_getter(noise)
-                for noise in self.noises
-            ]
+            self, position, *[create_getter(noise) for noise in self.noises]
         )

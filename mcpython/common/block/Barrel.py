@@ -104,7 +104,7 @@ class Barrel(IAllDirectionOrientableBlock, SimpleInventoryWrappingContainer):
         await self.inventory.read_from_network_buffer(buffer)
 
     async def get_all_inventories(self) -> tuple:
-        return self.inventory,
+        return (self.inventory,)
 
     async def on_request_item_for_block(self, itemstack):
         if (

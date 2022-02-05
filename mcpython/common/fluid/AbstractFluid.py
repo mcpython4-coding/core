@@ -17,7 +17,9 @@ from abc import ABC
 import mcpython.common.event.api
 import mcpython.engine.world.AbstractInterface
 from mcpython import shared
-from mcpython.common.fluid.FluidCombinationEnvironment import FluidCombinationEnvironment
+from mcpython.common.fluid.FluidCombinationEnvironment import (
+    FluidCombinationEnvironment,
+)
 
 
 class AbstractFluid(mcpython.common.event.api.IRegistryContent, ABC):
@@ -119,7 +121,9 @@ class AbstractFluid(mcpython.common.event.api.IRegistryContent, ABC):
         """
 
     @classmethod
-    def mix_fluids(cls, this_stack, other_stacks: list, env: FluidCombinationEnvironment) -> typing.Tuple[list, FluidCombinationEnvironment]:
+    def mix_fluids(
+        cls, this_stack, other_stacks: list, env: FluidCombinationEnvironment
+    ) -> typing.Tuple[list, FluidCombinationEnvironment]:
         """
         Mixes the two given fluids, and returns what's left afterwards
 

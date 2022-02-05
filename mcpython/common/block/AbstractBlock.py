@@ -222,7 +222,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.NETWORK_BUFFER_SERIALIZER_VERSION)
 
-        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
+        await super(ICapabilityContainer, self).write_to_network_buffer(
+            buffer
+        )  # lgtm [py/super-not-enclosing-class]
         state: dict = self.get_model_state()
 
         if not state:
