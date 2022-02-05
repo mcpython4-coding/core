@@ -64,7 +64,13 @@ class ClientBackend:
     def work(self):
         self.socket.setblocking(True)
 
-        for package in self.scheduled_packages:
+        packages = self.scheduled_packages[:]
+        self.scheduled_packages.clear()
+
+        if packages:
+            print(f"Sending {len(packages)} package(s) to the server", [len(e) for e in packages])
+
+        for package in packages:
             try:
                 self.socket.send(package)
             except (KeyboardInterrupt, SystemExit):
@@ -78,8 +84,6 @@ class ClientBackend:
                     shared.state_handler.change_state("minecraft:start_menu")
                 )
                 return
-
-        self.scheduled_packages.clear()
 
         self.socket.setblocking(False)
 
@@ -230,9 +234,13 @@ class ServerBackend:
         try:
             while client_id not in self.pending_thread_stops:
                 self.client_locks[client_id].acquire()
-                for package in self.scheduled_packages_by_client.setdefault(
-                    client_id, []
-                ):
+
+                packages = self.scheduled_packages_by_client.setdefault(client_id, [])
+
+                if packages:
+                    print(f"Sending {len(packages)} package(s) to client {client_id}", [len(e) for e in packages])
+
+                for package in packages:
                     try:
                         conn.send(package)
                     except ConnectionResetError:
@@ -240,8 +248,9 @@ class ServerBackend:
                         self.disconnect_client(client_id)
                         return
 
-                self.scheduled_packages_by_client.clear()
+                self.scheduled_packages_by_client[client_id].clear()
                 self.client_locks[client_id].release()
+
         except (KeyboardInterrupt, SystemExit):
             raise
         except:

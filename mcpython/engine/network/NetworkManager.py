@@ -214,6 +214,9 @@ class NetworkManager:
         )
 
         if shared.IS_CLIENT:
+            if target != -1:
+                raise RuntimeError("cannot disconnect to a non-server at client side")
+
             shared.CLIENT_NETWORK_HANDLER.disconnect()
             await shared.state_handler.change_state("minecraft:start_menu")
         else:
@@ -575,6 +578,9 @@ class NetworkManager:
         buffer = ReadBuffer(io.BytesIO(package_data))
 
         package = self.package_types[package_type]()
+
+        print("handling package", package)
+
         await package.read_from_buffer(buffer)
 
         package.package_id = package_id

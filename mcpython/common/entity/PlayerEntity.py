@@ -229,20 +229,28 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             self.dimension = shared.world.get_dimension_by_name(package.dimension)
             self.active_inventory_slot = package.selected_slot
             self.gamemode = package.gamemode
+
         else:
             flag = package.update_flags
+
             if flag & 1:
                 self.position = package.position
+
             if flag & 2:
                 self.rotation = package.rotation
+
             if flag & 4:
                 self.nbt_data["motion"] = package.motion
+
             if flag & 8:
                 self.dimension = shared.world.get_dimension_by_name(package.dimension)
+
             if flag & 16:
                 await self.set_active_inventory_slot(package.selected_slot)
+
             if flag & 32:
                 self.set_gamemode(package.gamemode)
+
 
         return self
 

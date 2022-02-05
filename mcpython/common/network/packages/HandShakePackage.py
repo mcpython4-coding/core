@@ -88,8 +88,11 @@ class Client2ServerHandshake(AbstractPackage):
         logger.println(f"[HANDSHAKE] syncing up package id lists to {self.player_name}")
         await self.answer(PackageIDSync().setup())
 
+        logger.println(f"[HANDSHAKE] creating mod list for player {self.player_name}")
+        mod_list_package = await Server2ClientHandshake().setup_accept()
+
         logger.println(f"[HANDSHAKE] sending mod list to {self.player_name}")
-        await self.answer(await Server2ClientHandshake().setup_accept())
+        await self.answer(mod_list_package)
 
 
 class Server2ClientHandshake(AbstractPackage):

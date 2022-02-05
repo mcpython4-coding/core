@@ -56,6 +56,12 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         shared.world.setup_by_filename(name)
         await shared.state_handler.change_state("minecraft:world_loading")
 
+    def bind_to_eventbus(self):
+        super().bind_to_eventbus()
+        self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
+        self.eventbus.subscribe(MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d_post)
+        self.eventbus.subscribe("tickhandler:general", self.on_update)
+
     def create_state_parts(self) -> list:
         return [
             mcpython.common.state.ConfigBackgroundPart.ConfigBackground(),
@@ -152,18 +158,11 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             player = await shared.world.get_active_player_async()
             player.teleport(player.position, force_chunk_save_update=True)
 
-    def bind_to_eventbus(self):
-        super().bind_to_eventbus()
-        self.eventbus.subscribe("user:keyboard:press", self.on_key_press)
-        self.eventbus.subscribe(MIDDLE_GROUND.getRenderingEvent(), self.on_draw_2d_post)
-        self.eventbus.subscribe("tickhandler:general", self.on_update)
-
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
-            asyncio.get_event_loop().run_until_complete(
-                shared.state_handler.change_state("minecraft:start_menu")
-            )
-            asyncio.get_event_loop().run_until_complete(shared.world.cleanup())
+            await shared.state_handler.change_state("minecraft:start_menu")
+            await shared.world.cleanup()
+
             logger.println("interrupted world loading by user")
 
     def calculate_percentage_of_progress(self):

@@ -61,7 +61,9 @@ class AbstractFence(mcpython.common.block.AbstractBlock.AbstractBlock, ABC):
         }
 
     async def on_block_added(self):
-        if self.NAME in shared.model_handler.blockstates:
+        # On dedicated servers, we don't have the blockstate lookup
+        # todo: cache the lookup beforehand!
+        if not shared.IS_CLIENT or self.NAME in shared.model_handler.blockstates:
             await self.on_block_update()
 
     def get_model_state(self) -> dict:
