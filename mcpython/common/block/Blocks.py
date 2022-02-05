@@ -63,8 +63,8 @@ def large_plant(name: str):
     return plant(name).set_default_model_state("half=lower")
 
 
-async def wood(name: str, normal=True):
-    DEFERRED_PIPE.create_later(
+async def wood(name: str, normal=True, pipe=DEFERRED_PIPE):
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_button")
         .set_button()
@@ -74,7 +74,7 @@ async def wood(name: str, normal=True):
         .set_assigned_tools(ToolType.AXE)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_door")
         .set_default_model_state("facing=east,half=upper,hinge=left,open=false")
@@ -84,7 +84,7 @@ async def wood(name: str, normal=True):
         .set_assigned_tools(ToolType.AXE)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_fence")
         .set_fence()
@@ -92,7 +92,7 @@ async def wood(name: str, normal=True):
         .set_assigned_tools(ToolType.AXE)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_fence_gate")
         .set_fence_gate()
@@ -100,20 +100,20 @@ async def wood(name: str, normal=True):
         .set_assigned_tools(ToolType.AXE)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_planks")
         .set_strength(2)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_stairs")
         .set_strength(2)
         .set_assigned_tools(ToolType.AXE)
         .add_base_class(IStairs)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_pressure_plate")
         .set_default_model_state("powered=false")
@@ -122,7 +122,7 @@ async def wood(name: str, normal=True):
         .set_strength(0.5)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_slab")
         .set_slab()
@@ -131,7 +131,7 @@ async def wood(name: str, normal=True):
     )
 
     if normal:
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory()
             .set_name(f"minecraft:{name}_leaves")
             .set_solid(False)
@@ -140,51 +140,51 @@ async def wood(name: str, normal=True):
             .set_assigned_tools(ToolType.SHEAR)
             .add_base_class(IFoliageColoredBlock)
         )
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory()
             .set_name(f"minecraft:{name}_log")
             .set_log()
             .set_strength(2)
             .set_assigned_tools(ToolType.AXE)
         )
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory()
             .set_name(f"minecraft:stripped_{name}_log")
             .set_log()
             .set_strength(2)
             .set_assigned_tools(ToolType.AXE)
         )
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory().set_name(f"minecraft:{name}_wood").set_log().set_strength(2)
         )
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory()
             .set_name(f"minecraft:stripped_{name}_wood")
             .set_log()
             .set_strength(2)
             .set_assigned_tools(ToolType.AXE)
         )
-        DEFERRED_PIPE.create_later(plant(f"minecraft:{name}_sapling"))
-        DEFERRED_PIPE.create_later(plant(f"minecraft:potted_{name}_sapling"))
+        pipe.create_later(plant(f"minecraft:{name}_sapling"))
+        pipe.create_later(plant(f"minecraft:potted_{name}_sapling"))
     else:
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory().set_name(f"minecraft:{name}_stem").set_log().set_strength(2)
         )
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory()
             .set_name(f"minecraft:stripped_{name}_stem")
             .set_log()
             .set_strength(2)
             .set_assigned_tools(ToolType.AXE)
         )
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory()
             .set_name(f"minecraft:{name}_hyphae")
             .set_log()
             .set_strength(2)
             .set_assigned_tools(ToolType.AXE)
         )
-        DEFERRED_PIPE.create_later(
+        pipe.create_later(
             BlockFactory()
             .set_name(f"minecraft:stripped_{name}_hyphae")
             .set_log()
@@ -343,22 +343,22 @@ async def stone_like(
         pass
 
 
-async def colored(name: str):
-    DEFERRED_PIPE.create_later(
+async def colored(name: str, pipe=DEFERRED_PIPE):
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_banner")
         .set_solid(False)
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_bed")
         .set_solid(False)
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_candle")
         .add_base_class(ICandleGroup)
@@ -366,7 +366,7 @@ async def colored(name: str):
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_candle_cake")
         .add_base_class(ICandleCake)
@@ -374,7 +374,7 @@ async def colored(name: str):
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_carpet")
         .add_base_class(AbstractCarpet)
@@ -392,11 +392,11 @@ async def colored(name: str):
         existing_wall=False,
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name(f"minecraft:{name}_concrete_powder").set_fall_able()
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_glazed_terracotta")
         .set_default_model_state("facing=east")
@@ -410,13 +410,13 @@ async def colored(name: str):
         consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name(f"minecraft:{name}_stained_glass_pane").set_fence()
     )
 
-    DEFERRED_PIPE.create_later(BlockFactory().set_name(f"minecraft:{name}_terracotta"))
+    pipe.create_later(BlockFactory().set_name(f"minecraft:{name}_terracotta"))
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name(f"minecraft:{name}_wall_banner")
         .set_solid(False)
@@ -432,9 +432,9 @@ async def colored(name: str):
     )
 
 
-async def load_blocks():
+async def load_blocks(pipe=DEFERRED_PIPE):
     # Technical blocks
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:barrier")
         .set_break_able_flag(False)
@@ -447,7 +447,7 @@ async def load_blocks():
 
     # Stone based
     await stone_like("andesite", strength=(1.5, 6), tool=ToolType.PICKAXE)
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:basalt")
         .set_log()
@@ -464,7 +464,7 @@ async def load_blocks():
     )
 
     # Value blocks
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:ancient_debris")
         .set_assigned_tools(ToolType.PICKAXE)
@@ -476,7 +476,7 @@ async def load_blocks():
         tool=ToolType.PICKAXE,
         strength=1.5,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:amethyst_cluster")
         .set_solid(False)
@@ -487,9 +487,9 @@ async def load_blocks():
     )
 
     # Nature blocks
-    DEFERRED_PIPE.create_later(plant("minecraft:allium"))
-    DEFERRED_PIPE.create_later(plant("minecraft:azure_bluet"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:allium"))
+    pipe.create_later(plant("minecraft:azure_bluet"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:azalea_leaves")
         .set_solid(False)
@@ -497,7 +497,7 @@ async def load_blocks():
         .set_assigned_tools(ToolType.SHEAR)
         .set_strength(0.2)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:flowering_azalea_leaves")
         .set_solid(False)
@@ -506,7 +506,7 @@ async def load_blocks():
         .set_strength(0.2)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:big_dripleaf")
         .set_default_model_state("facing=east,tilt=none")
@@ -515,7 +515,7 @@ async def load_blocks():
         .set_strength(0.1)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:big_dripleaf_stem")
         .set_default_model_state("facing=south")
@@ -525,14 +525,14 @@ async def load_blocks():
         .set_assigned_tools(ToolType.AXE)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:beehive")
         .set_default_model_state("facing=east,honey_level=3")
         .set_strength(0.6)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:bee_nest")
         .set_default_model_state("facing=east,honey_level=2")
@@ -541,18 +541,18 @@ async def load_blocks():
     )
 
     # todo: implement growth
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small")
     )
-    DEFERRED_PIPE.create_later(plant("minecraft:bamboo_sapling"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:bamboo_sapling"))
+    pipe.create_later(
         plant("minecraft:beetroots").set_default_model_state("age=2")
     )
 
     # Unsorted
 
     # todo: implement UI
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:beacon")
         .set_all_side_solid(False)
@@ -560,7 +560,7 @@ async def load_blocks():
         .set_strength(3)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:bell")
         .set_default_model_state("attachment=ceiling,facing=north")
@@ -579,8 +579,8 @@ async def load_blocks():
         strength=2.8,
         tool=ToolType.PICKAXE,
     )
-    DEFERRED_PIPE.create_later(plant("minecraft:blue_orchid"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:blue_orchid"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:bone_block")
         .set_log()
@@ -588,13 +588,13 @@ async def load_blocks():
         .set_assigned_tools(ToolType.PICKAXE)
         .set_minimum_tool_level(1)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:bookshelf")
         .set_strength(1.5)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:brewing_stand")
         .set_default_model_state(
@@ -614,8 +614,8 @@ async def load_blocks():
         strength=(6, 2),
     )
     await colored("brown")
-    DEFERRED_PIPE.create_later(plant("minecraft:brown_mushroom"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:brown_mushroom"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:brown_mushroom_block")
         .set_default_model_state(
@@ -624,14 +624,14 @@ async def load_blocks():
         .set_strength(0.2)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:budding_amethyst")
         .set_strength(1.5)
         .set_assigned_tools(ToolType.PICKAXE)
     )
-    DEFERRED_PIPE.create_later(plant("minecraft:cactus").set_strength(0.4))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:cactus").set_strength(0.4))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:cake")
         .set_default_model_state("bites=5")
@@ -644,7 +644,7 @@ async def load_blocks():
         existing_wall=False,
         strength=0.75,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:campfire")
         .set_default_model_state("facing=west,lit=true")
@@ -653,18 +653,18 @@ async def load_blocks():
         .set_strength(2)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:candle").add_base_class(ICandleGroup)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:candle_cake").add_base_class(ICandleCake)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         plant("minecraft:carrots").set_default_model_state("age=3")
     )
 
     # todo: implement
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:cartography_table")
         .set_strength(2.5)
@@ -672,7 +672,7 @@ async def load_blocks():
     )
 
     # todo: emit light
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:carved_pumpkin")
         .set_horizontal_orientable()
@@ -680,7 +680,7 @@ async def load_blocks():
     )
 
     # todo: add functionality
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:cauldron")
         .set_solid(False)
@@ -690,10 +690,10 @@ async def load_blocks():
         .set_minimum_tool_level(1)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         plant("minecraft:cave_vines").set_default_model_state("berries=false")
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:chain")
         .set_log()
@@ -753,13 +753,13 @@ async def load_blocks():
     )
 
     # todo: implement
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         plant("minecraft:chorus_flower")
         .set_default_model_state("age=3")
         .set_strength(0.4)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         plant("minecraft:chorus_plant")
         .set_default_model_state(
             "north=false,south=false,east=false,west=false,up=false,down=false"
@@ -784,7 +784,7 @@ async def load_blocks():
         strength=(5, 6),
         tool=ToolType.PICKAXE,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:coal_ore")
         .set_strength(3)
@@ -817,7 +817,7 @@ async def load_blocks():
     )
 
     # todo: add reduced movement speed
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:cobweb")
         .set_solid(False)
@@ -827,7 +827,7 @@ async def load_blocks():
     )
 
     # todo: implement
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:cocoa")
         .set_default_model_state("age=2,facing=east")
@@ -836,7 +836,7 @@ async def load_blocks():
         .set_strength(0.2, 3)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:comparator")
         .set_default_model_state("facing=north,mode=compare,powered=true")
@@ -844,7 +844,7 @@ async def load_blocks():
         .set_all_side_solid(False)
         .set_strength(0)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:composter")
         .set_default_model_state("level=2")
@@ -853,7 +853,7 @@ async def load_blocks():
         .set_strength(0.6)
         .set_assigned_tools(ToolType.AXE)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:conduit")
         .set_solid(False)
@@ -869,14 +869,14 @@ async def load_blocks():
         existing_wall=False,
         strength=(3, 6),
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:copper_ore")
         .set_strength(3)
         .set_assigned_tools(ToolType.PICKAXE)
         .set_minimum_tool_level(2)
     )
-    DEFERRED_PIPE.create_later(plant("cornflower"))
+    pipe.create_later(plant("cornflower"))
     await stone_like(
         "cracked_deepslate_bricks",
         existing_slab=False,
@@ -944,7 +944,7 @@ async def load_blocks():
         strength=0.8,
     )
     await colored("cyan")
-    DEFERRED_PIPE.create_later(plant("dandelion"))
+    pipe.create_later(plant("dandelion"))
     await wood("dark_oak")
     await stone_like(
         "dark_prismarine",
@@ -955,7 +955,7 @@ async def load_blocks():
     )
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:daylight_detector")
         .set_default_model_state("inverted=false")
@@ -965,7 +965,7 @@ async def load_blocks():
         .set_assigned_tools(ToolType.AXE)
     )
 
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:deepslate").set_log())
+    pipe.create_later(BlockFactory().set_name("minecraft:deepslate").set_log())
     await stone_like(
         "deepslate_bricks",
         existing_slab=True,
@@ -982,28 +982,28 @@ async def load_blocks():
     )
 
     # todo: set tool properties
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_coal_ore").set_strength(4.5, 3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_copper_ore").set_strength(4.5, 3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_diamond_ore").set_strength(4.5, 3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_emerald_ore").set_strength(4.5, 3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_gold_ore").set_strength(4.5, 3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_iron_ore").set_strength(4.5, 3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_lapis_ore").set_strength(4.5, 3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:deepslate_redstone_ore").set_strength(4.5, 3)
     )
 
@@ -1014,7 +1014,7 @@ async def load_blocks():
         existing_wall=False,
         strength=(5, 6),
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:diamond_ore").set_strength(3, 3)
     )
     await stone_like(
@@ -1032,7 +1032,7 @@ async def load_blocks():
         strength=(0.5, 0.5),
         tool=ToolType.SHOVEL,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:dirt_path")
         .set_solid(False)
@@ -1042,11 +1042,11 @@ async def load_blocks():
     )
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:dispenser").set_all_direction_orientable()
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:dragon_egg")
         .set_solid(False)
@@ -1054,7 +1054,7 @@ async def load_blocks():
         .set_fall_able()
         .set_strength(3, 9)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:dried_kelp_block")
         .set_strength(0.5, 2.5)
@@ -1069,17 +1069,17 @@ async def load_blocks():
     )
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:dropper").set_all_direction_orientable()
     )
 
     await stone_like(
         "emerald_block", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:emerald_ore"))
+    pipe.create_later(BlockFactory().set_name("minecraft:emerald_ore"))
 
     # todo: implement
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:enchanting_table")
         .set_solid(False)
@@ -1088,7 +1088,7 @@ async def load_blocks():
         .set_assigned_tools(ToolType.PICKAXE)
         .set_minimum_tool_level(3)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:end_gateway")
         .set_solid(False)
@@ -1096,7 +1096,7 @@ async def load_blocks():
         .set_break_able_flag(False)
         .set_strength(-1, 3600000)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:end_portal")
         .set_solid(False)
@@ -1104,7 +1104,7 @@ async def load_blocks():
         .set_break_able_flag(False)
         .set_strength(-1, 3600000)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:end_portal_frame")
         .set_default_model_state("eye=false,facing=south")
@@ -1115,7 +1115,7 @@ async def load_blocks():
     )
 
     # todo: emit light
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:end_rod")
         .set_all_direction_orientable()
@@ -1143,7 +1143,7 @@ async def load_blocks():
     )
 
     # todo: implement crop interaction
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:farmland")
         .set_default_model_state("moisture=0")
@@ -1151,12 +1151,12 @@ async def load_blocks():
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         plant("minecraft:fern").add_base_class(IFoliageColoredBlock)
     )
 
     # todo: set player on fire
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:fire")
         .set_default_model_state("north=false,east=false,west=false,south=false")
@@ -1164,8 +1164,8 @@ async def load_blocks():
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:fletching_table"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:fletching_table"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:flowering_azalea")
         .set_solid(False)
@@ -1173,14 +1173,14 @@ async def load_blocks():
     )
 
     # todo: implement interaction
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:flower_pot")
         .set_solid(False)
         .set_all_side_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:frosted_ice")
         .set_default_model_state("age=1")
@@ -1200,7 +1200,7 @@ async def load_blocks():
         existing_wall=False,
         consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name(f"minecraft:glass_pane").set_fence()
     )
     await stone_like(
@@ -1209,19 +1209,19 @@ async def load_blocks():
     await stone_like(
         "gold_block", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:gold_ore"))
+    pipe.create_later(BlockFactory().set_name("minecraft:gold_ore"))
     await stone_like(
         "granite", existing_slab=True, existing_stairs=True, existing_wall=True
     )
-    DEFERRED_PIPE.create_later(plant("grass").add_base_class(IFoliageColoredBlock))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("grass").add_base_class(IFoliageColoredBlock))
+    pipe.create_later(
         BlockFactory().set_name("minecraft:gravel").set_fall_able()
     )
     await colored("gray")
     await colored("green")
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:grindstone")
         .set_all_side_solid(False)
@@ -1229,8 +1229,8 @@ async def load_blocks():
         .set_default_model_state("face=ceiling,facing=north")
     )
 
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:hanging_roots"))
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:hay_block").set_log())
+    pipe.create_later(BlockFactory().set_name("minecraft:hanging_roots"))
+    pipe.create_later(BlockFactory().set_name("minecraft:hay_block").set_log())
     await stone_like(
         "honeycomb_block",
         existing_slab=False,
@@ -1239,7 +1239,7 @@ async def load_blocks():
     )
 
     # todo: add properties
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:honey_block")
         .set_all_side_solid(False)
@@ -1247,7 +1247,7 @@ async def load_blocks():
     )
 
     # todo: create real block behaviour
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:hopper")
         .set_all_side_solid(False)
@@ -1280,7 +1280,7 @@ async def load_blocks():
         existing_stairs=False,
         existing_wall=False,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:infested_deepslate").set_log()
     )
     await stone_like(
@@ -1305,24 +1305,24 @@ async def load_blocks():
         existing_wall=False,
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:iron_bars").set_fence()
     )
     await stone_like("iron_block")
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:iron_ore"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:iron_ore"))
+    pipe.create_later(
         BlockFactory().set_name("minecraft:jack_o_lantern").set_horizontal_orientable()
     )
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:jukebox"))
+    pipe.create_later(BlockFactory().set_name("minecraft:jukebox"))
 
     await wood("jungle")
-    DEFERRED_PIPE.create_later(plant("minecraft:kelp"))
-    DEFERRED_PIPE.create_later(plant("minecraft:kelp_plant"))
+    pipe.create_later(plant("minecraft:kelp"))
+    pipe.create_later(plant("minecraft:kelp_plant"))
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:ladder")
         .set_horizontal_orientable()
@@ -1330,7 +1330,7 @@ async def load_blocks():
         .set_solid(False)
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:lantern")
         .set_default_model_state("hanging=false")
@@ -1340,31 +1340,31 @@ async def load_blocks():
     await stone_like(
         "lapis_block", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:lapis_ore"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:lapis_ore"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:large_amethyst_bud")
         .set_all_direction_orientable()
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         large_plant("minecraft:large_fern").add_base_class(IFoliageColoredBlock)
     )
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:lava_cauldron")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:lectern")
         .set_horizontal_orientable()
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:lever")
         .set_default_model_state("face=ceiling,facing=north,powered=false")
@@ -1373,7 +1373,7 @@ async def load_blocks():
     )
 
     # todo: lightning rod with lightning
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:lightning_rod")
         .set_default_model_state("facing=west,powered=false")
@@ -1383,14 +1383,14 @@ async def load_blocks():
 
     await colored("light_blue")
     await colored("light_gray")
-    DEFERRED_PIPE.create_later(large_plant("minecraft:lilac"))
-    DEFERRED_PIPE.create_later(plant("minecraft:lily_of_the_valley"))
-    DEFERRED_PIPE.create_later(plant("minecraft:lily_pad"))
+    pipe.create_later(large_plant("minecraft:lilac"))
+    pipe.create_later(plant("minecraft:lily_of_the_valley"))
+    pipe.create_later(plant("minecraft:lily_pad"))
     await colored("lime")
 
     # todo: implement
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:lodestone"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:lodestone"))
+    pipe.create_later(
         BlockFactory().set_name("minecraft:loom").set_horizontal_orientable()
     )
 
@@ -1405,13 +1405,13 @@ async def load_blocks():
         texture="minecraft:block/magma",
     )
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:medium_amethyst_bud")
         .set_all_direction_orientable()
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:melon"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:melon"))
+    pipe.create_later(
         plant("minecraft:melon_stem").set_default_model_state("age=7")
     )
     await stone_like(
@@ -1429,10 +1429,10 @@ async def load_blocks():
     await stone_like(
         "moss_block", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:moss_carpet").add_base_class(AbstractCarpet)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:mycelium")
         .set_default_model_state("snowy=false")
@@ -1449,10 +1449,10 @@ async def load_blocks():
     await stone_like(
         "nether_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:nether_gold_ore"))
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:nether_quartz_ore"))
-    DEFERRED_PIPE.create_later(plant("minecraft:nether_sprouts"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:nether_gold_ore"))
+    pipe.create_later(BlockFactory().set_name("minecraft:nether_quartz_ore"))
+    pipe.create_later(plant("minecraft:nether_sprouts"))
+    pipe.create_later(
         plant("minecraft:nether_wart").set_default_model_state("age=2")
     )
     await stone_like(
@@ -1463,10 +1463,10 @@ async def load_blocks():
     )
 
     # todo: make functional
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:note_block"))
+    pipe.create_later(BlockFactory().set_name("minecraft:note_block"))
 
     await wood("oak")
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:observerer")
         .set_default_model_state("facing=north,powered=false")
@@ -1475,7 +1475,7 @@ async def load_blocks():
         "obsidian", existing_slab=False, existing_stairs=False, existing_wall=False
     )
     await colored("orange")
-    DEFERRED_PIPE.create_later(plant("minecraft:oxeye_daisy"))
+    pipe.create_later(plant("minecraft:oxeye_daisy"))
     await stone_like(
         "oxidized_copper",
         existing_slab=False,
@@ -1491,18 +1491,18 @@ async def load_blocks():
     await stone_like(
         "packed_ice", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(large_plant("minecraft:peony"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(large_plant("minecraft:peony"))
+    pipe.create_later(
         BlockFactory().set_name("minecraft:petrified_oak_slab").set_slab()
     )
     await colored("pink")
-    DEFERRED_PIPE.create_later(plant("minecraft:pink_tulip"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:pink_tulip"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:podzol")
         .set_default_model_state("snowy=false")
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:pointed_dripstone")
         .set_default_model_state("thickness=middle,vertical_direction=up")
@@ -1513,7 +1513,7 @@ async def load_blocks():
         existing_stairs=True,
         existing_wall=False,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:polished_basalt").set_log()
     )
     await stone_like(
@@ -1548,40 +1548,40 @@ async def load_blocks():
         existing_stairs=True,
         existing_wall=False,
     )
-    DEFERRED_PIPE.create_later(plant("minecraft:poppy"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:poppy"))
+    pipe.create_later(
         plant("minecraft:potatoes").set_default_model_state("age=4")
     )
 
     # todo: some clever stuff with flower pot
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_allium"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_azalea_bush"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_azure_bluet"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_bamboo"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_blue_orchid"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_brown_mushroom"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_cactus"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_cornflower"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_crimson_fungus"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_crimson_roots"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_dandelion"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_dead_bush"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_fern"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_flowering_azalea_bush"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_lily_of_the_valley"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_orange_tulip"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_pink_tulip"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_oxeye_daisy"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_pink_tulip"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_poppy"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_red_mushroom"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_red_tulip"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_warped_fungus"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_warped_roots"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_white_tulip"))
-    DEFERRED_PIPE.create_later(plant("minecraft:potted_wither_rose"))
+    pipe.create_later(plant("minecraft:potted_allium"))
+    pipe.create_later(plant("minecraft:potted_azalea_bush"))
+    pipe.create_later(plant("minecraft:potted_azure_bluet"))
+    pipe.create_later(plant("minecraft:potted_bamboo"))
+    pipe.create_later(plant("minecraft:potted_blue_orchid"))
+    pipe.create_later(plant("minecraft:potted_brown_mushroom"))
+    pipe.create_later(plant("minecraft:potted_cactus"))
+    pipe.create_later(plant("minecraft:potted_cornflower"))
+    pipe.create_later(plant("minecraft:potted_crimson_fungus"))
+    pipe.create_later(plant("minecraft:potted_crimson_roots"))
+    pipe.create_later(plant("minecraft:potted_dandelion"))
+    pipe.create_later(plant("minecraft:potted_dead_bush"))
+    pipe.create_later(plant("minecraft:potted_fern"))
+    pipe.create_later(plant("minecraft:potted_flowering_azalea_bush"))
+    pipe.create_later(plant("minecraft:potted_lily_of_the_valley"))
+    pipe.create_later(plant("minecraft:potted_orange_tulip"))
+    pipe.create_later(plant("minecraft:potted_pink_tulip"))
+    pipe.create_later(plant("minecraft:potted_oxeye_daisy"))
+    pipe.create_later(plant("minecraft:potted_pink_tulip"))
+    pipe.create_later(plant("minecraft:potted_poppy"))
+    pipe.create_later(plant("minecraft:potted_red_mushroom"))
+    pipe.create_later(plant("minecraft:potted_red_tulip"))
+    pipe.create_later(plant("minecraft:potted_warped_fungus"))
+    pipe.create_later(plant("minecraft:potted_warped_roots"))
+    pipe.create_later(plant("minecraft:potted_white_tulip"))
+    pipe.create_later(plant("minecraft:potted_wither_rose"))
 
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:powder_snow_cauldron")
         .set_solid(False)
@@ -1597,8 +1597,8 @@ async def load_blocks():
         existing_stairs=True,
         existing_wall=False,
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:pumpkin"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:pumpkin"))
+    pipe.create_later(
         plant("minecraft:pumpkin_stem").set_default_model_state("age=2")
     )
     await colored("purple")
@@ -1609,27 +1609,27 @@ async def load_blocks():
         existing_wall=False,
         fname="purpur",
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:purpur_pillar").set_log()
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:quartz_block"))
+    pipe.create_later(BlockFactory().set_name("minecraft:quartz_block"))
     await stone_like(
         "quartz_bricks", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:quartz_pillar").set_log()
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:quartz_slab").set_slab()
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:quartz_stairs")
         .set_default_model_state("facing=east,half=bottom,shape=inner_left")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:rail")
         .set_default_model_state("shape=east_west")
@@ -1660,52 +1660,52 @@ async def load_blocks():
     #     existing_stairs=False,
     #     existing_wall=False,
     # )
-    # DEFERRED_PIPE.create_later(
+    # pipe.create_later(
     #     BlockFactory()
     #     .set_name("minecraft:redstone_lamp")
     #     .set_default_model_state("lit=false")
     # )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:redstone_ore"))
+    pipe.create_later(BlockFactory().set_name("minecraft:redstone_ore"))
     await colored("red")
-    DEFERRED_PIPE.create_later(plant("minecraft:red_mushroom"))
+    pipe.create_later(plant("minecraft:red_mushroom"))
     await stone_like(
         "red_nether_bricks",
         existing_slab=True,
         existing_stairs=True,
         existing_wall=True,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory().set_name("minecraft:red_sand").set_fall_able()
     )
     await stone_like(
         "red_sandstone", existing_slab=True, existing_stairs=True, existing_wall=True
     )
-    DEFERRED_PIPE.create_later(plant("minecraft:red_tulip"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:red_tulip"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:respawn_anchor")
         .set_default_model_state("charges=2")
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:rooted_dirt"))
-    DEFERRED_PIPE.create_later(large_plant("minecraft:rose_bush"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:rooted_dirt"))
+    pipe.create_later(large_plant("minecraft:rose_bush"))
+    pipe.create_later(
         BlockFactory().set_name("minecraft:sand").set_fall_able()
     )
     await stone_like(
         "sandstone", existing_slab=True, existing_stairs=True, existing_wall=True
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:sculk_sensor")
         .set_default_model_state("sculk_sensor_phase=inactive")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(plant("minecraft:seagrass"))
+    pipe.create_later(plant("minecraft:seagrass"))
     await stone_like(
         "sea_lantern", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         plant("minecraft:sea_pickle").set_default_model_state(
             "pickles=1,waterlogged=true"
         )
@@ -1713,25 +1713,25 @@ async def load_blocks():
     await stone_like(
         "shroomlight", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:slime_block")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:small_amethyst_bud")
         .set_all_direction_orientable()
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:small_dripleaf")
         .set_default_model_state("facing=north,half=upper")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:smithing_table"))
+    pipe.create_later(BlockFactory().set_name("minecraft:smithing_table"))
     await stone_like(
         "smooth_basalt", existing_slab=False, existing_stairs=False, existing_wall=False
     )
@@ -1759,29 +1759,29 @@ async def load_blocks():
     await stone_like(
         "smooth_stone", existing_slab=True, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:snow")
         .set_default_model_state("layers=7")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:snow_block"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:snow_block"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:soul_campfire")
         .set_default_model_state("facing=west,lit=true")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:soul_fire")
         .set_default_model_state("north=false,east=false,west=false,south=false")
         .set_solid(False)
         .set_all_side_solid(False)
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:soul_lantern")
         .set_default_model_state("hanging=false")
@@ -1794,8 +1794,8 @@ async def load_blocks():
     await stone_like(
         "soul_soil", existing_slab=False, existing_stairs=False, existing_wall=False
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:sponge"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:sponge"))
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:spore_blossom")
         .set_solid(False)
@@ -1813,16 +1813,16 @@ async def load_blocks():
     await stone_like(
         "stone_bricks", existing_slab=True, existing_stairs=True, existing_wall=True
     )
-    DEFERRED_PIPE.create_later(plant("minecraft:sugar_cane"))
-    DEFERRED_PIPE.create_later(large_plant("minecraft:sunflower"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(plant("minecraft:sugar_cane"))
+    pipe.create_later(large_plant("minecraft:sunflower"))
+    pipe.create_later(
         plant("minecraft:sweet_berry_bush").set_default_model_state("age=2")
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         large_plant("minecraft:tall_grass").add_base_class(IFoliageColoredBlock)
     )
-    DEFERRED_PIPE.create_later(large_plant("minecraft:tall_seagrass"))
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:target"))
+    pipe.create_later(large_plant("minecraft:tall_seagrass"))
+    pipe.create_later(BlockFactory().set_name("minecraft:target"))
     await stone_like(
         "terracotta", existing_slab=False, existing_stairs=False, existing_wall=False
     )
@@ -1833,7 +1833,7 @@ async def load_blocks():
         existing_wall=False,
         consumer=lambda _, factory: factory.set_solid(False).set_all_side_solid(False),
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:tnt"))
+    pipe.create_later(BlockFactory().set_name("minecraft:tnt"))
     await stone_like(
         "tuff",
         existing_slab=False,
@@ -1842,16 +1842,16 @@ async def load_blocks():
         consumer=lambda _, factory: factory.set_hardness(1.5, 6),
     )
     await wood("warped", normal=False)
-    DEFERRED_PIPE.create_later(plant("minecraft:warped_fungus"))
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:warped_nylium"))
-    DEFERRED_PIPE.create_later(plant("minecraft:warped_roots"))
+    pipe.create_later(plant("minecraft:warped_fungus"))
+    pipe.create_later(BlockFactory().set_name("minecraft:warped_nylium"))
+    pipe.create_later(plant("minecraft:warped_roots"))
     await stone_like(
         "warped_wart_block",
         existing_slab=False,
         existing_stairs=False,
         existing_wall=False,
     )
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(
         BlockFactory()
         .set_name("minecraft:water_cauldron")
         .set_default_model_state("level=2")
@@ -1926,11 +1926,11 @@ async def load_blocks():
         existing_stairs=True,
         existing_wall=False,
     )
-    DEFERRED_PIPE.create_later(BlockFactory().set_name("minecraft:wet_sponge"))
-    DEFERRED_PIPE.create_later(
+    pipe.create_later(BlockFactory().set_name("minecraft:wet_sponge"))
+    pipe.create_later(
         plant("minecraft:wheat").set_default_model_state("age=3")
     )
     await colored("white")
-    DEFERRED_PIPE.create_later(plant("minecraft:white_tulip"))
-    DEFERRED_PIPE.create_later(plant("minecraft:wither_rose"))
+    pipe.create_later(plant("minecraft:white_tulip"))
+    pipe.create_later(plant("minecraft:wither_rose"))
     await colored("yellow")

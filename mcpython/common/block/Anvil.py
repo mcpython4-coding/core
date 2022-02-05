@@ -86,6 +86,19 @@ class AbstractAnvil(IFallingBlock.IFallingBlock, SimpleInventoryWrappingContaine
 
             await self.schedule_network_update()
 
+    async def on_block_remove(self, reason):
+        return
+
+        if shared.world.gamerule_handler.table["doTileDrops"].status.status:
+            for slot in self.inventory.slots:
+                await shared.world.get_active_player().pick_up_item(
+                    slot.itemstack.copy()
+                )
+                slot.itemstack.clean()
+
+        await shared.inventory_handler.hide(self.inventory)
+        del self.inventory
+
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super().write_to_network_buffer(buffer)
 
@@ -99,6 +112,22 @@ class AbstractAnvil(IFallingBlock.IFallingBlock, SimpleInventoryWrappingContaine
         # await self.inventory.read_from_network_buffer(buffer)
         self.broken_count = buffer.read_int()
         self.facing = EnumSide.by_index(buffer.read_int()).normal_name
+
+    async def set_model_state(self, state: dict):
+        if "facing" in state:
+            face = state["facing"]
+
+            if type(face) == str:
+                self.facing = face
+            else:
+                self.facing = face.normal_name
+
+    def get_model_state(self) -> dict:
+        return {
+            "facing": self.facing.normal_name
+            if not isinstance(self.facing, str)
+            else self.facing,
+        }
 
     async def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack
@@ -120,22 +149,6 @@ class AbstractAnvil(IFallingBlock.IFallingBlock, SimpleInventoryWrappingContaine
     def get_provided_slot_lists(self, side):
         return self.inventory.slots, self.inventory.slots
 
-    async def set_model_state(self, state: dict):
-        if "facing" in state:
-            face = state["facing"]
-
-            if type(face) == str:
-                self.facing = face
-            else:
-                self.facing = face.normal_name
-
-    def get_model_state(self) -> dict:
-        return {
-            "facing": self.facing.normal_name
-            if not isinstance(self.facing, str)
-            else self.facing,
-        }
-
     @classmethod
     def set_block_data(cls, item, block):
         if hasattr(item, "inventory"):
@@ -148,19 +161,6 @@ class AbstractAnvil(IFallingBlock.IFallingBlock, SimpleInventoryWrappingContaine
             and shared.window.mouse_pressing[mouse.MIDDLE]
         ):
             itemstack.item.inventory = self.inventory.copy()
-
-    async def on_block_remove(self, reason):
-        return
-
-        if shared.world.gamerule_handler.table["doTileDrops"].status.status:
-            for slot in self.inventory.slots:
-                await shared.world.get_active_player().pick_up_item(
-                    slot.itemstack.copy()
-                )
-                slot.itemstack.clean()
-
-        await shared.inventory_handler.hide(self.inventory)
-        del self.inventory
 
 
 class Anvil(AbstractAnvil):
