@@ -19,7 +19,7 @@ from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide, ToolType
 from pyglet.window import key, mouse
 
-from . import AbstractBlock, IFallingBlock
+from . import IFallingBlock
 from .IBlockContainerExposer import SimpleInventoryWrappingContainer
 
 
@@ -89,15 +89,15 @@ class AbstractAnvil(IFallingBlock.IFallingBlock, SimpleInventoryWrappingContaine
     async def on_block_remove(self, reason):
         return
 
-        if shared.world.gamerule_handler.table["doTileDrops"].status.status:
-            for slot in self.inventory.slots:
-                await shared.world.get_active_player().pick_up_item(
-                    slot.itemstack.copy()
-                )
-                slot.itemstack.clean()
-
-        await shared.inventory_handler.hide(self.inventory)
-        del self.inventory
+        # if shared.world.gamerule_handler.table["doTileDrops"].status.status:
+        #     for slot in self.inventory.slots:
+        #         await shared.world.get_active_player().pick_up_item(
+        #             slot.itemstack.copy()
+        #         )
+        #         slot.itemstack.clean()
+        #
+        # await shared.inventory_handler.hide(self.inventory)
+        # del self.inventory
 
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         await super().write_to_network_buffer(buffer)

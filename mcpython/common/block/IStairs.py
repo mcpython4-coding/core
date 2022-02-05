@@ -16,7 +16,6 @@ import enum
 import mcpython.common.block.AbstractBlock
 import mcpython.common.block.PossibleBlockStateBuilder
 import mcpython.engine.physics.AxisAlignedBoundingBox
-import mcpython.util.enums
 from mcpython.common.block.IHorizontalOrientableBlock import IHorizontalOrientableBlock
 from mcpython.util.enums import EnumSide
 

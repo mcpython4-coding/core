@@ -175,7 +175,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
                 await instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
             instance.face_info.update(redraw_complete=True)
-        except:  # if the block is not working, use the next
+        except:  # if the block is not working, use the next  lgtm [py/catch-base-exception]
             self.block_index = 0
             logger.print_exception(
                 f"during adding first block to BlockItemGenerator (being {self.tasks[0]})"
@@ -302,7 +302,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
                     instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
                 )
             instance.face_info.update(redraw_complete=True)
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception(
                 "[BLOCK ITEM GENERATOR][ERROR] block '{}' can't be added to world. Failed with "
                 "following exception".format(self.tasks[self.block_index])

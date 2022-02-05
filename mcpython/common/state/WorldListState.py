@@ -235,9 +235,9 @@ class WorldList(AbstractState.AbstractState):
                     data = f.read()
 
                 read_buffer = ReadBuffer(data)
-                save_version = read_buffer.read_ulong()
+                read_buffer.read_ulong()  # save version
                 version_id = read_buffer.read_ulong()
-                player_name = read_buffer.read_string()
+                read_buffer.read_string()  # player name
                 mods = await read_buffer.read_dict(
                     read_buffer.read_string, read_buffer.read_any
                 )

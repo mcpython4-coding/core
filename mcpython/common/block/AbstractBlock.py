@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import enum
 import typing
 from abc import ABC
 
@@ -46,7 +45,7 @@ if shared.IS_CLIENT:
         def __init__(self):
             super(
                 mcpython.client.rendering.model.api.IBlockStateRenderingTarget, self
-            ).__init__()
+            ).__init__()  # lgtm [py/super-not-enclosing-class]
 
 else:
     parent = mcpython.common.event.api.IRegistryContent
@@ -186,7 +185,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             - setup attributes here
             - fill them with data in on_block_added, then player provided data is added
         """
-        super(parent, self).__init__()
+        super(parent, self).__init__()  # lgtm [py/super-not-enclosing-class]
         self.prepare_capability_container()
 
         self.position: typing.Optional[typing.Tuple[float, float, float]] = None
@@ -223,7 +222,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.NETWORK_BUFFER_SERIALIZER_VERSION)
 
-        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
         state: dict = self.get_model_state()
 
         if not state:
@@ -247,7 +246,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     async def write_internal_for_migration(self, buffer: WriteBuffer):
         await super(ICapabilityContainer, self).write_to_network_buffer(
             buffer
-        )  # lgtm [py/super-not-enclosing-class]
+        )  # lgtm [py/super-not-enclosing-class] [py/super-not-enclosing-class]
         state: dict = self.get_model_state()
 
         if not state:
@@ -273,7 +272,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         version = buffer.read_uint()
         await super(ICapabilityContainer, self).read_from_network_buffer(
             buffer
-        )  # lgtm [py/super-not-enclosing-class]
+        )  # lgtm [py/super-not-enclosing-class] [py/super-not-enclosing-class]
         original_buffer = buffer
 
         # Apply these fixers locally
@@ -311,7 +310,7 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     async def read_internal_for_migration(self, buffer: ReadBuffer):
         await super(ICapabilityContainer, self).read_from_network_buffer(
             buffer
-        )  # lgtm [py/super-not-enclosing-class]
+        )  # lgtm [py/super-not-enclosing-class] [py/super-not-enclosing-class]
 
         state = await buffer.read_dict(buffer.read_string, buffer.read_string)
         await self.set_model_state(state)

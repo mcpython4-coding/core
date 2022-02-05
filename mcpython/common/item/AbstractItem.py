@@ -97,7 +97,7 @@ class AbstractItem(
                 buffer = ReadBuffer(write.get_data())
                 version = fixer.AFTER_VERSION
 
-        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
         can_destroy_flag = buffer.read_bool()
         can_be_set_on_flag = buffer.read_bool()
 
@@ -123,7 +123,7 @@ class AbstractItem(
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.VERSION)
 
-        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
         can_destroy_flag = self.can_destroy is not None
         can_be_set_on_flag = self.can_be_set_on is not None
 

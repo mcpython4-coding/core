@@ -17,9 +17,14 @@ import opensimplex
 from mcpython.server.worldgen.noise.INoiseImplementation import INoiseImplementation
 
 
+def create_getter(noise: opensimplex.OpenSimplex):
+    return lambda p: noise.noise4(*p, *(0,) * (4 - len(p))) * 0.5 + 0.5
+
+
 class OpenSimplexImplementation(INoiseImplementation):
     """
     Default noise implementation.
+    todo: cache create_getter() results
     """
 
     NAME = "minecraft:open_simplex_noise"
@@ -43,7 +48,7 @@ class OpenSimplexImplementation(INoiseImplementation):
             self,
             position,
             *[
-                lambda p: noise.noise4(*p, *(0,) * (4 - len(p))) * 0.5 + 0.5
+                create_getter(noise)
                 for noise in self.noises
             ]
         )

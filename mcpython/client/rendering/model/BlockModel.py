@@ -17,7 +17,6 @@ import deprecation
 import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.engine.ResourceLoader
-import mcpython.util.enums
 import pyglet
 from bytecodemanipulation.OptimiserAnnotations import (
     builtins_are_static,
@@ -286,7 +285,7 @@ class Model:
         instance,
         position: typing.Tuple[float, float, float],
         config: dict,
-        face: mcpython.util.enums.EnumSide | int,
+        face: EnumSide | int,
         scale: float = 1,
     ):
         """
@@ -349,7 +348,7 @@ class Model:
         instance: IBlockStateRenderingTarget,
         position: typing.Tuple[float, float, float],
         config: dict,
-        face: mcpython.util.enums.EnumSide,
+        face: EnumSide,
         scale: float,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
         batch=None,
@@ -376,7 +375,7 @@ class Model:
         position: typing.Tuple[float, float, float],
         batch: pyglet.graphics.Batch,
         config: dict,
-        face: mcpython.util.enums.EnumSide,
+        face: EnumSide,
     ):
         collected_data, box_model = self.get_prepared_data_for(
             instance, position, config, face
@@ -392,7 +391,7 @@ class Model:
         instance: IBlockStateRenderingTarget,
         position: typing.Tuple[float, float, float],
         config: dict,
-        face: mcpython.util.enums.EnumSide,
+        face: EnumSide,
         previous: typing.Tuple[typing.List[float], typing.List[float]] = None,
         batch=None,
     ) -> typing.Tuple[
@@ -411,7 +410,7 @@ class Model:
         instance,
         position: typing.Tuple[float, float, float],
         config: dict,
-        face: mcpython.util.enums.EnumSide,
+        face: EnumSide,
         scale: float,
     ):
         self.draw_face(instance, position, config, face, scale=scale)

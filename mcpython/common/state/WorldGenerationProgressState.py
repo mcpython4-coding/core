@@ -11,7 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import asyncio
 import cProfile
 import os
 import random
@@ -33,7 +32,6 @@ import mcpython.util.math
 import mcpython.util.opengl
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
 from . import AbstractState

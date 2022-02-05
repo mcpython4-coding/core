@@ -70,7 +70,7 @@ class ItemEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         self.test_block.position = self.position
         try:
             shared.model_handler.draw_block_scaled(self.test_block, 0.2)
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception(
                 f"During render block-item {self.test_block} as {self}"
             )

@@ -223,7 +223,7 @@ class DictDataMapper(IDataMapper):
     def deserialize(cls, d: StringParsingPool):
         if d.get_line() != "D{":
             raise InvalidMapperData()
-        obj = cls()
+        obj = cls()  # lgtm [py/call-to-non-callable]
         d.pop_line()
         while True:
             l = d.pop_line()
@@ -299,7 +299,7 @@ class ListDataMapper(IDataMapper):
     def deserialize(cls, d: StringParsingPool):
         if d.get_line() != "L[":
             raise InvalidMapperData()
-        obj = cls()
+        obj = cls()  # lgtm [py/call-to-non-callable]
         d.pop_line()
         while True:
             line = d.get_line()

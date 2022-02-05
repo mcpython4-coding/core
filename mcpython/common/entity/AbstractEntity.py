@@ -160,7 +160,7 @@ class AbstractEntity(
 
             # Our fixed stream belongs now here...
 
-        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)
+        await super(ICapabilityContainer, self).read_from_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
         dim_name = buffer.read_string()
         self.dimension = shared.world.get_dimension_by_name(
             dim_name if dim_name != "" else "overworld"
@@ -183,7 +183,7 @@ class AbstractEntity(
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.VERSION)
 
-        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)
+        await super(ICapabilityContainer, self).write_to_network_buffer(buffer)  # lgtm [py/super-not-enclosing-class]
         buffer.write_string(
             self.dimension.get_name() if self.dimension is not None else ""
         )

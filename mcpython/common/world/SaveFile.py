@@ -666,7 +666,7 @@ class SaveFile:
                 await f.write(data)
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception("during dumping {} to '{}'".format(data, file))
 
     async def dump_raw_async(self, file: str, data: bytes):

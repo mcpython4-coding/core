@@ -253,7 +253,7 @@ class Slot(ISlot):
                 result = f(player=player)
                 if isinstance(result, typing.Awaitable):
                     shared.tick_handler.schedule_once(result)
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(
                     "during invoking {} for slot-update of {}".format(f, self)
                 )

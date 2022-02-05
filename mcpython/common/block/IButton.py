@@ -53,21 +53,21 @@ class IButton(IAllDirectionOrientableBlock):
 
     async def check_block_behind(self):
         return
-        x, y, z = self.position
-        dx, dy, dz = self.face.dx, self.face.dy, self.face.dz
-
-        dimension = shared.world.get_dimension(self.dimension)
-
-        block = dimension.get_block((x + dx, y + dy, z + dz), none_if_str=True)
-
-        if block is None or not block.face_solid & self.face.invert().bitflag:
-            await dimension.remove_block(self.position, block_update_self=False)
-
-            # todo: drop item into world
-            if shared.IS_CLIENT and shared.world.get_active_player().gamemode in (0, 2):
-                await shared.world.get_active_player().pick_up_item(
-                    ItemStack(self.NAME)
-                )
+        # x, y, z = self.position
+        # dx, dy, dz = self.face.dx, self.face.dy, self.face.dz
+        #
+        # dimension = shared.world.get_dimension(self.dimension)
+        #
+        # block = dimension.get_block((x + dx, y + dy, z + dz), none_if_str=True)
+        #
+        # if block is None or not block.face_solid & self.face.invert().bitflag:
+        #     await dimension.remove_block(self.position, block_update_self=False)
+        #
+        #     # todo: drop item into world
+        #     if shared.IS_CLIENT and shared.world.get_active_player().gamemode in (0, 2):
+        #         await shared.world.get_active_player().pick_up_item(
+        #             ItemStack(self.NAME)
+        #         )
 
     async def on_block_update(self):
         await self.check_block_behind()

@@ -2029,4 +2029,5 @@ IO  [uuk]: using now the optimisation system of bytecodemanipulation on our syst
 b   [uuk]: fixed redstone torch related crash
 b   [uuk]: fixed a few smaller issues in the code
 If  [uuk]: dedicated server are now more "dedicated", less dependency on client stuff
+B   [uuk]: fixed some mistakes in multi-layer noise calculation
 

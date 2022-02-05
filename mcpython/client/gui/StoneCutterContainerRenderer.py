@@ -18,7 +18,6 @@ import mcpython.client.gui.InventoryChest
 import mcpython.client.gui.Slot
 import mcpython.common.container.crafting.CraftingGridHelperInterface
 import mcpython.common.container.crafting.CraftingManager
-import mcpython.common.container.ResourceStack
 import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 import PIL

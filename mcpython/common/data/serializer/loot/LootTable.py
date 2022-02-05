@@ -375,7 +375,7 @@ class LootTable:
                 "[WARN][CORRUPTION] invalid or corrupted .json file: " + file
             )
             return
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception("during decoding loot table @" + file)
             return
 

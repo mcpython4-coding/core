@@ -20,7 +20,6 @@ from mcpython.client.rendering.blocks.ICustomBlockRenderer import (
     ICustomBatchBlockRenderer,
     ICustomBlockRenderer,
 )
-from mcpython.engine import logger
 from mcpython.engine.rendering.RenderingLayerManager import NORMAL_WORLD
 from mcpython.util.annotation import onlyInClient
 
