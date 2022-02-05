@@ -18,7 +18,10 @@ from mcpython.server.worldgen.noise.INoiseImplementation import INoiseImplementa
 
 
 def create_getter(seed: int):
-    return lambda p: noise.snoise2(noise.snoise4(*p, *(0,) * (4 - len(p))), seed) * 0.5 + 0.5
+    return (
+        lambda p: noise.snoise2(noise.snoise4(*p, *(0,) * (4 - len(p))), seed) * 0.5
+        + 0.5
+    )
 
 
 class NoiseImplementation(INoiseImplementation):

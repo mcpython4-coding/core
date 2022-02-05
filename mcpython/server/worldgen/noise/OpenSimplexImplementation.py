@@ -46,6 +46,4 @@ class OpenSimplexImplementation(INoiseImplementation):
         assert len(position) == self.dimensions, "dimensions must match"
 
         position = tuple([e / self.scale for e in position])
-        return self.merger.pre_merge(
-            self, position, *self.getters
-        )
+        return self.merger.pre_merge(self, position, *self.getters)
