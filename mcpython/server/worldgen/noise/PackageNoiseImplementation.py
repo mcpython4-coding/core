@@ -17,6 +17,10 @@ import noise
 from mcpython.server.worldgen.noise.INoiseImplementation import INoiseImplementation
 
 
+def create_getter(seed: int):
+    return lambda p: noise.snoise2(noise.snoise4(*p, *(0,) * (4 - len(p))), seed) * 0.5 + 0.5
+
+
 class NoiseImplementation(INoiseImplementation):
     """
     Noise implementation using the noise library
@@ -27,11 +31,13 @@ class NoiseImplementation(INoiseImplementation):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.noises: typing.List[typing.Optional[int]] = [None] * self.octaves
+        self.getters: typing.List[int | None] = [None] * self.octaves
 
     def set_seed(self, seed: int):
         super().set_seed(seed)
         for i in range(self.octaves):
             self.noises[i] = hash((seed, i))
+            self.getters[i] = create_getter(self.noises[i])
 
     def calculate_position(self, position) -> float:
         assert len(position) == self.dimensions, "dimensions must match"
@@ -39,11 +45,5 @@ class NoiseImplementation(INoiseImplementation):
         return self.merger.pre_merge(
             self,
             position,
-            *[
-                # todo: using two merged noises is not optimal...
-                lambda p: noise.snoise2(noise.snoise4(*p, *(0,) * (4 - len(p))), n)
-                * 0.5
-                + 0.5
-                for n in self.noises
-            ]
+            *self.getters,
         )

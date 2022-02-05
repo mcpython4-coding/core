@@ -34,16 +34,18 @@ class OpenSimplexImplementation(INoiseImplementation):
         self.noises: typing.List[typing.Optional[opensimplex.OpenSimplex]] = [
             None
         ] * self.octaves
+        self.getters: typing.List[typing.Callable | None] = [None] * self.octaves
 
     def set_seed(self, seed: int):
         super().set_seed(seed)
         for i in range(self.octaves):
             self.noises[i] = opensimplex.OpenSimplex(hash((seed, i)))
+            self.getters[i] = create_getter(self.noises[i])
 
     def calculate_position(self, position) -> float:
         assert len(position) == self.dimensions, "dimensions must match"
 
         position = tuple([e / self.scale for e in position])
         return self.merger.pre_merge(
-            self, position, *[create_getter(noise) for noise in self.noises]
+            self, position, *self.getters
         )

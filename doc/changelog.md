@@ -36,7 +36,7 @@ Make sure that you are using python 3.10 (or higher)!
 
 # Changelog of snapshot <22w06a>
 Scheduled to be released on <09.02.2022>
-targeting <1.18.1>
+targeting 1.18.1
 
 This snapshot fixes a big error in the TickHandler API regarding ticks being executed more than once 
 when the game lags. Mods using that as a feature (Don't know how) will break with this snapshot. 
@@ -59,6 +59,7 @@ This breaks any mod using that API
 
     World generation:
         - added support for the vnoise and pnoise library as noise backends
+        - fixed an issue with all noise implementations (see fixed issues)
 
     Fixed issues:
         - redstone wire was not using the API correctly
@@ -66,6 +67,8 @@ This breaks any mod using that API
           breaking down when executing multiple ticks in one iteration due to a lag spike
         - mixing inline processor was crashing when arguments had an default value which was accessed
           (before writing a value into it)
+        - world generation noise system was doing stuff not correctly, this leads to different world generation
+            than before
 
 
 

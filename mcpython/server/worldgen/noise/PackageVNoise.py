@@ -38,11 +38,13 @@ class VNoiseImplementation(INoiseImplementation):
         self.noises: typing.List[typing.Optional[vnoise.Noise]] = [
             vnoise.Noise() for _ in range(self.octaves)
         ]
+        self.getters: typing.List[typing.Callable | None] = [None] * self.octaves
 
     def set_seed(self, seed: int):
         super().set_seed(seed)
         for i in range(self.octaves):
             self.noises[i].seed(hash((seed, i)))
+            self.getters[i] = create_getter(self.noises[i])
 
     def calculate_position(self, position) -> float:
         assert len(position) == self.dimensions, "dimensions must match"
@@ -50,9 +52,5 @@ class VNoiseImplementation(INoiseImplementation):
         return self.merger.pre_merge(
             self,
             position,
-            *[
-                # todo: using two merged noises is not optimal...
-                create_getter(n)
-                for n in self.noises
-            ]
+            *self.getters,
         )
