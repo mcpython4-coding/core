@@ -13,14 +13,12 @@ This project is not official by mojang and does not relate to it.
 """
 from pyglet.window import key
 
-from mcpython.util.annotation import onlyInClient
-
 from .AbstractState import AbstractState
 from .ConfigBackgroundPart import ConfigBackground
 from .ui.UIPartLabel import UIPartLabel
 from mcpython.engine import logger
 from mcpython import shared
-from ..network.packages.DisconnectionPackage import DisconnectionInitPackage
+from mcpython.engine.network.packages.DisconnectionPackage import DisconnectionInitPackage
 
 
 class ConnectingToServerState(AbstractState):

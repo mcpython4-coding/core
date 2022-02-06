@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import itertools
 import time
-import traceback
 import typing
 
 from mcpython import shared

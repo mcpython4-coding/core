@@ -18,7 +18,6 @@ from functools import reduce
 import deprecation
 import mcpython.common.config
 import mcpython.engine.ResourceLoader
-import mcpython.util.enums
 import mcpython.util.math
 import pyglet
 from mcpython import shared
@@ -122,7 +121,7 @@ class BoxModel(AbstractBoxModel):
         )
         self.texture_region[:] = [UD, UD, NS, EW, NS, EW]
 
-        for face in mcpython.util.enums.EnumSide.iterate():
+        for face in EnumSide.iterate():
             name: str = face.normal_name
             if name in data["faces"]:
                 self._parse_face(data["faces"][name], face)
@@ -210,7 +209,7 @@ class BoxModel(AbstractBoxModel):
             [0]
             + [
                 face.bitflag
-                for i, face in enumerate(mcpython.util.enums.EnumSide.iterate())
+                for i, face in enumerate(EnumSide.iterate())
                 if data[i] in (None, (0, 0))
                 and self.animated_texture_coords[i] in (None, (0, 0))
             ],
@@ -309,7 +308,7 @@ class BoxModel(AbstractBoxModel):
             EnumSide.rotate_bitmap(faces, rotation), (0, -90, 0)
         )
 
-        for face in mcpython.util.enums.EnumSide.iterate():
+        for face in EnumSide.iterate():
             if uv_lock:
                 face = face.rotate(rotation)
 

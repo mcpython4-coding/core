@@ -62,5 +62,5 @@ class Lifecycle(pyglet.app.EventLoop):
             if ex is not None:
                 try:
                     raise ex
-                except:
+                except:  # lgtm [py/catch-base-exception]
                     logger.print_exception(f"During invoking task {task}")

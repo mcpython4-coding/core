@@ -277,7 +277,7 @@ class OpenedInventoryStatePart(
                     return True
             except (SystemExit, KeyboardInterrupt):
                 raise
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(
                     "during shift-clicking {}, the function {} crashed".format(
                         slot, slot.on_shift_click

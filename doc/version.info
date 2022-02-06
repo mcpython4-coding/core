@@ -2025,7 +2025,7 @@ f   [uuk]: mixins support now removing conditional branches
 b   [uuk]: fixed not beeing able to override block item texture generation by adding your own item
 L   [uuk]: added support for the vnoise and pnoise library
 FL  [uuk]: moved mixin library to separate package so we can independently publish
-IO  [uuk]: using now the optimisation system of bytecodemanipulation on our system
+IO  [uuk]: using now the optimisation system of bytecodemanipulation on our game
 b   [uuk]: fixed redstone torch related crash
 b   [uuk]: fixed a few smaller issues in the code
 If  [uuk]: dedicated server are now more "dedicated", less dependency on client stuff

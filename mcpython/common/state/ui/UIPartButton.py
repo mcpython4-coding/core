@@ -20,7 +20,6 @@ import mcpython.engine.ResourceLoader
 import mcpython.util.opengl
 import pyglet
 from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from mcpython.util.annotation import onlyInClient
 from mcpython.util.enums import ButtonMode
 from pyglet.window import mouse
 

@@ -379,7 +379,7 @@ class NetworkManager:
                 package = await self.fetch_package_from_buffer(buffer)
             except (SystemExit, KeyboardInterrupt):
                 raise
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception("during fetching package data @client")
                 await self.disconnect()
                 return
@@ -393,7 +393,7 @@ class NetworkManager:
                 await package.handle_inner()
             except (SystemExit, KeyboardInterrupt):
                 raise
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(f"during handling package {package} @client")
                 continue
 
@@ -424,7 +424,7 @@ class NetworkManager:
                     package = await self.fetch_package_from_buffer(buffer)
                 except (SystemExit, KeyboardInterrupt):
                     raise
-                except:
+                except:  # lgtm [py/catch-base-exception]
                     logger.print_exception(
                         f"during fetching data @server from @{client_id}"
                     )
@@ -440,7 +440,7 @@ class NetworkManager:
                     await package.handle_inner()
                 except (SystemExit, KeyboardInterrupt):
                     raise
-                except:
+                except:  # lgtm [py/catch-base-exception]
                     logger.print_exception(
                         f"during handling package {package} @server from @{client_id}"
                     )

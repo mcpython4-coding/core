@@ -225,7 +225,7 @@ PAUSE = 0xFF13
 SCROLLLOCK = 0xFF14
 SYSREQ = 0xFF15
 ESCAPE = 0xFF1B
-SPACE = 0xFF20
+# SPACE = 0xFF20
 
 # Cursor control and motion
 HOME = 0xFF50

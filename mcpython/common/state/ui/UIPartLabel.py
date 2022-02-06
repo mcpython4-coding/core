@@ -15,7 +15,6 @@ import mcpython.common.data.Language
 import mcpython.engine.event.EventInfo
 import pyglet
 from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
 
 from . import AbstractUIPart

@@ -15,7 +15,6 @@ import mcpython.util.opengl
 import pyglet
 import pyglet.gl
 from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from mcpython.util.annotation import onlyInClient
 
 from . import AbstractUIPart
 

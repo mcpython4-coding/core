@@ -32,7 +32,6 @@ from mcpython.common.block.IAllDirectionOrientableBlock import (
 )
 from mcpython.common.block.IButton import IButton
 from mcpython.common.factory.FactoryBuilder import FactoryBuilder
-from mcpython.util import picklemagic
 from mcpython.util.enums import EnumSide
 
 block_factory_builder = FactoryBuilder(

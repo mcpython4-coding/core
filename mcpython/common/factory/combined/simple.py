@@ -98,7 +98,7 @@ class CombinedFactoryInstance:
         return file
 
     async def create_full_block(
-        self, suffix=None, texture=None, color=None, **consumers
+        self, suffix: str = None, texture=None, color=None, **consumers
     ):
         """
         Creates a full block using the "minecraft:block/cube_all"-model
@@ -214,7 +214,7 @@ class CombinedFactoryInstance:
 
     async def generate_log_like(
         self,
-        suffix=None,
+        suffix: str = None,
         front_texture=None,
         side_texture=None,
         color=None,
@@ -277,7 +277,7 @@ class CombinedFactoryInstance:
         return self
 
     async def create_button_block(
-        self, suffix=None, texture=None, color=None, **consumers
+        self, suffix: str = None, texture=None, color=None, **consumers
     ):
         if texture is None:
             texture = self.default_texture
@@ -336,7 +336,7 @@ class CombinedFactoryInstance:
         return self
 
     async def create_slab_block(
-        self, suffix=None, texture=None, color=None, **consumers
+        self, suffix: str = None, texture=None, color=None, **consumers
     ):
         if texture is None:
             texture = self.default_texture
@@ -462,7 +462,7 @@ class CombinedFactoryInstance:
 
         return self
 
-    async def create_wall(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_wall(self, suffix: str = None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
 
@@ -561,7 +561,7 @@ class CombinedFactoryInstance:
         )
         return self
 
-    async def create_fence(self, suffix=None, texture=None, color=None, **consumers):
+    async def create_fence(self, suffix: str = None, texture=None, color=None, **consumers):
         if texture is None:
             texture = self.default_texture
         name = (

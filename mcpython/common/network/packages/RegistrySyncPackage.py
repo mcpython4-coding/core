@@ -11,8 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
-
 from mcpython import shared
 from mcpython.engine import logger
 from mcpython.engine.network.AbstractPackage import AbstractPackage

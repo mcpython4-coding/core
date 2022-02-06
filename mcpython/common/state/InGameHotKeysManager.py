@@ -15,7 +15,6 @@ import enum
 import time
 
 from mcpython import shared
-from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
 

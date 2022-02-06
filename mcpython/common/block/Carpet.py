@@ -14,7 +14,6 @@ This project is not official by mojang and does not relate to it.
 from abc import ABC
 
 import mcpython.common.block.AbstractBlock
-import mcpython.common.container.ResourceStack
 import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
 from mcpython import shared

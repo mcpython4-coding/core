@@ -97,9 +97,9 @@ class AbstractItem(
                 buffer = ReadBuffer(write.get_data())
                 version = fixer.AFTER_VERSION
 
-        await super(ICapabilityContainer, self).read_from_network_buffer(
+        await super(ICapabilityContainer, self).read_from_network_buffer(  # lgtm [py/super-not-enclosing-class]
             buffer
-        )  # lgtm [py/super-not-enclosing-class]
+        )
         can_destroy_flag = buffer.read_bool()
         can_be_set_on_flag = buffer.read_bool()
 
@@ -110,9 +110,9 @@ class AbstractItem(
             self.can_be_set_on = await buffer.collect_list(buffer.read_string)
 
     async def read_internal_for_migration(self, buffer: ReadBuffer):
-        await super(ICapabilityContainer, self).read_from_network_buffer(
+        await super(ICapabilityContainer, self).read_from_network_buffer(  # lgtm [py/super-not-enclosing-class]
             buffer
-        )  # lgtm [py/super-not-enclosing-class]
+        )
         can_destroy_flag = buffer.read_bool()
         can_be_set_on_flag = buffer.read_bool()
 
@@ -125,9 +125,9 @@ class AbstractItem(
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.VERSION)
 
-        await super(ICapabilityContainer, self).write_to_network_buffer(
+        await super(ICapabilityContainer, self).write_to_network_buffer(  # lgtm [py/super-not-enclosing-class]
             buffer
-        )  # lgtm [py/super-not-enclosing-class]
+        )
         can_destroy_flag = self.can_destroy is not None
         can_be_set_on_flag = self.can_be_set_on is not None
 
@@ -143,9 +143,9 @@ class AbstractItem(
             )
 
     async def write_internal_for_migration(self, buffer: WriteBuffer):
-        await super(ICapabilityContainer, self).write_to_network_buffer(
+        await super(ICapabilityContainer, self).write_to_network_buffer(  # lgtm [py/super-not-enclosing-class]
             buffer
-        )  # lgtm [py/super-not-enclosing-class]
+        )
         can_destroy_flag = self.can_destroy is not None
         can_be_set_on_flag = self.can_be_set_on is not None
 

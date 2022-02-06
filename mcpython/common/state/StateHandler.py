@@ -12,14 +12,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
-import sys
 import typing
 
 import mcpython.common.event.TickHandler
 import mcpython.common.state.ConfigStateFactory
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.util.annotation import onlyInClient
 
 from . import AbstractState
 

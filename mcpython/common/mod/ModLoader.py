@@ -208,9 +208,7 @@ class DefaultModJsonBasedLoader(AbstractModLoaderInstance):
                 if loader == "python:default":
                     if "version" not in entry:
                         shared.mod_loader.error_builder.println(
-                            "- invalid entry found in '{}' (mod: {]): missing 'version'-entry".format(
-                                self.container, modname
-                            )
+                            f"- invalid entry found in '{self.container}' (mod: {modname}): missing 'version'-entry"
                         )
                         continue
 
@@ -518,7 +516,7 @@ class ModLoader:
             self.current_container = container
             try:
                 await container.try_identify_mod_loader()
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(container)
                 containers.remove(container)
 
@@ -526,7 +524,7 @@ class ModLoader:
             try:
                 self.current_container = container
                 await container.load_meta_files()
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(container)
                 containers.remove(container)
 

@@ -20,7 +20,6 @@ import mcpython.util.opengl
 import pyglet
 import pyglet.window.key
 from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from mcpython.util.annotation import onlyInClient
 
 from . import AbstractUIPart
 

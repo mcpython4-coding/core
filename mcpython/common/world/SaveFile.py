@@ -140,6 +140,9 @@ class RegionFileAccess:
         await self.save_file.dump_via_network_buffer(self.file, buffer)
 
 
+class UnableToFixDataException(Exception): pass
+
+
 class SaveFile:
     """
     Interface to a stored file on the disk
@@ -220,7 +223,7 @@ class SaveFile:
                         await shared.state_handler.change_state("minecraft:start_menu")
                     else:
                         sys.exit(-1)
-                    return
+                    raise UnableToFixDataException("See log")
 
                 fixers = self.storage_version_fixers[self.version]
                 if len(fixers) > 1:
@@ -254,7 +257,7 @@ class SaveFile:
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
 
-        except:
+        except:  # lgtm [py/catch-base-exception]
             await shared.world.cleanup()
             await shared.state_handler.change_state("minecraft:start_menu")
             logger.print_exception(
@@ -330,7 +333,7 @@ class SaveFile:
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
 
-        except:
+        except:  # lgtm [py/catch-base-exception]
             if shared.IS_CLIENT:
                 logger.print_exception(
                     "Exception during saving world. Falling back to start menu"
@@ -370,7 +373,7 @@ class SaveFile:
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
 
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception(
                 "during data-fixing storage version '{}'".format(name)
             )
@@ -402,7 +405,7 @@ class SaveFile:
 
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception(
                 "During data-fixing group fixer '{}' (FATAL)".format(name)
             )
@@ -426,7 +429,7 @@ class SaveFile:
 
         try:
             await fixer.apply(self, *args, **kwargs)
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception("During data-fixing part '{}' (fatal)".format(name))
             await shared.world.cleanup()
             await shared.state_handler.change_state("minecraft:start_menu")
@@ -488,7 +491,7 @@ class SaveFile:
                 )
             except (SystemExit, KeyboardInterrupt, OSError):
                 raise
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.print_exception(
                     "during data-fixing mod {} from {} to {} (fatal)".format(
                         modname, fixer.FIXES_FROM, fixer.FIXES_TO

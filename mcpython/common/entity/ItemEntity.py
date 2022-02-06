@@ -12,7 +12,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import mcpython.common.entity.AbstractEntity
-import mcpython.util.math
+import mcpython.util.math  # lgtm [py/import-and-import-from]
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.engine import logger

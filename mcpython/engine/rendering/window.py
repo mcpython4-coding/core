@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import asyncio
 import cProfile
-import time
 
 import mcpython.common.config
 import mcpython.common.event.TickHandler

@@ -23,9 +23,9 @@ import mcpython.util.math
 import mcpython.util.opengl
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.util.annotation import onlyInClient
 from pyglet.window import key
 
+from ..world.SaveFile import UnableToFixDataException
 from ...engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from . import AbstractState
 
@@ -129,7 +129,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
         except (SystemExit, KeyboardInterrupt, OSError):
             raise
 
-        except IOError:  # todo: add own exception class as IOError may be raised somewhere else in the script
+        except UnableToFixDataException:  # todo: add own exception class as IOError may be raised somewhere else in the script
             logger.println(
                 "Failed to load world. data-fixer Failed with NoDataFixerFoundException"
             )
@@ -138,7 +138,7 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             return
 
         except:
-            logger.print_exception("Failed to load world; Failed in inital loading")
+            logger.print_exception("Failed to load world; Failed in initial loading")
             await shared.world.cleanup()
             await shared.state_handler.change_state("minecraft:start_menu")
             return

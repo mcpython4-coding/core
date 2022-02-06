@@ -145,7 +145,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if any(self.strafe):
             x, y, _ = shared.world.get_active_player().rotation
             strafe = math.degrees(math.atan2(*self.strafe))
-            y_angle = math.radians(y)
+            # y_angle = math.radians(y)
             x_angle = math.radians(x + strafe)
             dy = 0.0
             dx = math.cos(x_angle)

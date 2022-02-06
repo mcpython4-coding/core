@@ -14,13 +14,11 @@ This project is not official by mojang and does not relate to it.
 import asyncio
 import datetime
 import typing
-import weakref
 
 import deprecation
 import mcpython.common.block.AbstractBlock as Block
 import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
-import mcpython.util.enums
 import mcpython.util.math
 from bytecodemanipulation.OptimiserAnnotations import (
     builtins_are_static,
@@ -175,7 +173,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         for entity in self.entities:
             entity.draw()
 
-    ALL_FACES_EXPOSED = {x: True for x in mcpython.util.enums.EnumSide.iterate()}
+    ALL_FACES_EXPOSED = {x: True for x in EnumSide.iterate()}
 
     @builtins_are_static()
     def exposed_faces(
@@ -304,11 +302,11 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     @builtins_are_static()
     def exposed_faces_iterator(
         self, position: typing.Tuple[int, int, int]
-    ) -> typing.Iterator[mcpython.util.enums.EnumSide]:
+    ) -> typing.Iterator[EnumSide]:
         instance = self.get_block(position)
 
         if instance is None or type(instance) == str:
-            yield from mcpython.util.enums.EnumSide.iterate()
+            yield from EnumSide.iterate()
 
         for face in mcpython.util.enums.FACE_ORDER:
             pos = face.relative_offset(position)
@@ -525,7 +523,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
                 await self.on_block_updated(position, include_itself=block_update_self)
             except (KeyboardInterrupt, SystemExit):
                 raise
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 logger.println("during calling block update")
 
         if immediate:

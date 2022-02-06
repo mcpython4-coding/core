@@ -24,7 +24,6 @@ import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.ResourceLoader
-import mcpython.util.enums
 import mcpython.util.math
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
@@ -394,12 +393,12 @@ class ModelHandler:
         blockstate.draw_face_scaled(block, face, scale)
 
     def draw_block(self, block):
-        [self.draw_face(block, face) for face in mcpython.util.enums.EnumSide.iterate()]
+        [self.draw_face(block, face) for face in EnumSide.iterate()]
 
     def draw_block_scaled(self, block, scale: float):
         [
             self.draw_face_scaled(block, face, scale)
-            for face in mcpython.util.enums.EnumSide.iterate()
+            for face in EnumSide.iterate()
         ]
 
     def get_bbox(self, block):

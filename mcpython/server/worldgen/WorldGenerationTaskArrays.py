@@ -89,12 +89,12 @@ class WorldGenerationTaskHandler:
         :param args: the args to call with
         :param kwargs: the kwargs to call with
         """
-        if not issubclass(type(chunk), mcpython.engine.world.AbstractInterface.IChunk):
-            raise ValueError("chunk must be sub-class of Chunk, not {}".format(chunk))
+        if not isinstance(chunk, mcpython.engine.world.AbstractInterface.IChunk):
+            raise ValueError(f"chunk must be sub-class of Chunk, not {chunk}")
 
         if not callable(method) and not asyncio.iscoroutine(method):
             raise ValueError(
-                "method must be callable or awaitable in order to be invoked by WorldGenerationTaskHandler"
+                f"method must be callable or awaitable in order to be invoked by WorldGenerationTaskHandler, got {chunk}"
             )
 
         self.chunks.add(chunk)

@@ -21,7 +21,6 @@ import mcpython.engine.event.EventHandler
 import mcpython.engine.ResourceLoader
 from mcpython import shared
 from mcpython.engine import logger
-from mcpython.util.annotation import onlyInClient
 
 
 class IStateConfigEntry(mcpython.common.event.api.IRegistryContent):

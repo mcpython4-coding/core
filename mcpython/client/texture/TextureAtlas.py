@@ -97,7 +97,7 @@ class TextureAtlasGenerator:
         for i, image in enumerate(images):
             try:
                 images[i] = image.crop((0, 0, image.size[0], image.size[0]))
-            except:
+            except:  # lgtm [py/catch-base-exception]
                 images[i] = image.resize(
                     (image.size[0], image.size[0]), PIL.Image.NEAREST
                 )

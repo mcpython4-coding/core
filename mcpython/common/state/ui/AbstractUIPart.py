@@ -15,7 +15,6 @@ from abc import ABC
 
 import mcpython.common.state.AbstractStatePart
 from mcpython import shared
-from mcpython.util.annotation import onlyInClient
 
 
 class AbstractUIPart(mcpython.common.state.AbstractStatePart.AbstractStatePart, ABC):

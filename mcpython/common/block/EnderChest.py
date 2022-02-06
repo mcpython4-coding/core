@@ -18,7 +18,7 @@ from mcpython import shared
 from mcpython.common.block.Chest import BBOX
 from pyglet.window import key, mouse
 
-from . import AbstractBlock, IHorizontalOrientableBlock
+from . import IHorizontalOrientableBlock
 
 
 class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):

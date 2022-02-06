@@ -17,7 +17,6 @@ import typing
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.engine.ResourceLoader
 import pyglet
-from mcpython import shared
 from mcpython.client.rendering.model.BoxModel import RawBoxModel
 
 

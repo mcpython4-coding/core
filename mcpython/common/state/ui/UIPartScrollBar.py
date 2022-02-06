@@ -18,7 +18,6 @@ import mcpython.util.texture
 import PIL.Image
 import pyglet
 from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from mcpython.util.annotation import onlyInClient
 from pyglet.window import mouse
 
 from .AbstractUIPart import AbstractUIPart

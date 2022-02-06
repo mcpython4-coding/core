@@ -11,9 +11,6 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import typing
-
-import mcpython.util.enums
 from mcpython import shared
 from mcpython.common.item.AbstractToolItem import AbstractToolItem
 from mcpython.util.enums import ToolType
@@ -29,7 +26,7 @@ class GrassBlock(IFoliageColoredBlock.IFoliageColoredBlock):
     NAME = "minecraft:grass_block"
 
     HARDNESS = BLAST_RESISTANCE = 0.5
-    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.SHOVEL}
+    ASSIGNED_TOOLS = {ToolType.SHOVEL}
 
     ENABLE_RANDOM_TICKS = True
 

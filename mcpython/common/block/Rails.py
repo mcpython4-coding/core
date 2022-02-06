@@ -12,13 +12,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import math
-import time
 from abc import ABC
 
 import mcpython.common.block.PossibleBlockStateBuilder
 from mcpython import shared
 from mcpython.common.block.AbstractBlock import AbstractBlock
-from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 
 SHAPES = [

@@ -13,7 +13,6 @@ This project is not official by mojang and does not relate to it.
 """
 import sys
 
-import mcpython.engine.event.EventHandler
 from mcpython import shared
 from mcpython.server.command.Builder import Command, CommandNode, DefinedString
 

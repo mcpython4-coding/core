@@ -236,7 +236,6 @@ class EventBus:
                         function,
                         list(args) + list(extra_args),
                         {**kwargs, **extra_kwargs},
-                        sep="\n",
                     ),
                     "function info: '{}'".format(info) if info is not None else "",
                     "during event:",

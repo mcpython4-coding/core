@@ -830,7 +830,7 @@ class BlockStateContainer:
                 )
             else:
                 self.baked = True
-        except:
+        except:  # lgtm [py/catch-base-exception]
             logger.print_exception("during baking block state " + self.name)
             self.baked = True
 

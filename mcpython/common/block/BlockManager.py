@@ -95,7 +95,7 @@ async def load():
             StoneCutter,
             Walls,
         )
-    except:
+    except:  # lgtm [py/catch-base-exception]
         logger.print_exception()
         sys.exit(-1)
 

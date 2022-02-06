@@ -31,9 +31,8 @@ from mcpython.common.mod.ModMcpython import minecraft
 from mcpython.common.state.ModLoadingProgressState import mod_loading
 from mcpython.engine import logger
 from mcpython.engine.ResourceLoader import read_image
-from mcpython.util.annotation import onlyInClient
+from mcpython.engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 
-from ...engine.rendering.RenderingLayerManager import INTER_BACKGROUND
 from . import AbstractState, GameViewStatePart
 from .ui import UIPartProgressBar
 from .util import update_memory_usage_bar
