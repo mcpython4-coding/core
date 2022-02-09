@@ -2030,7 +2030,8 @@ b   [uuk]: fixed redstone torch related crash
 b   [uuk]: fixed a few smaller issues in the code
 If  [uuk]: dedicated server are now more "dedicated", less dependency on client stuff
 B   [uuk]: fixed some mistakes in multi-layer noise calculation
-b   [uuk]: fixed big mistake in server networking backend preventing multi-client connections
+b   [uuk]: fixed big mistake in server networking backend preventing multi-client connections from working correctly
 If  [uuk]: improved debug output for networking,
 b   [uuk]: fixed issue with fence blocks on the server not working correctly
+G   [github]: released snapshot 22w06a
 

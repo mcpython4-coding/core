@@ -30,8 +30,8 @@ from mcpython.common.factory.ItemFactory import ItemFactory
 from mcpython.common.mod.ModMcpython import minecraft
 from mcpython.common.state.ModLoadingProgressState import mod_loading
 from mcpython.engine import logger
-from mcpython.engine.ResourceLoader import read_image
 from mcpython.engine.rendering.RenderingLayerManager import INTER_BACKGROUND
+from mcpython.engine.ResourceLoader import read_image
 
 from . import AbstractState, GameViewStatePart
 from .ui import UIPartProgressBar

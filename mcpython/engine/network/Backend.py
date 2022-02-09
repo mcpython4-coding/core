@@ -68,7 +68,10 @@ class ClientBackend:
         self.scheduled_packages.clear()
 
         if packages:
-            print(f"Sending {len(packages)} package(s) to the server", [len(e) for e in packages])
+            print(
+                f"Sending {len(packages)} package(s) to the server",
+                [len(e) for e in packages],
+            )
 
         for package in packages:
             try:
@@ -238,7 +241,10 @@ class ServerBackend:
                 packages = self.scheduled_packages_by_client.setdefault(client_id, [])
 
                 if packages:
-                    print(f"Sending {len(packages)} package(s) to client {client_id}", [len(e) for e in packages])
+                    print(
+                        f"Sending {len(packages)} package(s) to client {client_id}",
+                        [len(e) for e in packages],
+                    )
 
                 for package in packages:
                     try:

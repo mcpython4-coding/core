@@ -34,8 +34,8 @@ Make sure that you are using python 3.10 (or higher)!
 ----
 
 
-# Changelog of snapshot <22w06a>
-Scheduled to be released on <09.02.2022>
+# Changelog of snapshot 22w06a
+Released on 09.02.2022
 targeting 1.18.1
 
 This snapshot fixes a big error in the TickHandler API regarding ticks being executed more than once 

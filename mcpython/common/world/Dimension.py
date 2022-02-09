@@ -20,6 +20,7 @@ import mcpython.engine.rendering.util
 import mcpython.engine.world.AbstractInterface
 import mcpython.util.math
 import pyglet
+from bytecodemanipulation.OptimiserAnnotations import forced_attribute_type
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.common.entity.ItemEntity import ItemEntity
@@ -128,6 +129,12 @@ if not shared.IS_TEST_ENV:
     )
 
 
+@forced_attribute_type("id", lambda: int)
+@forced_attribute_type("chunks", lambda: dict)
+@forced_attribute_type("name", lambda: str)
+@forced_attribute_type("world_generation_config_objects", lambda: dict)
+@forced_attribute_type("batches", lambda: list)
+@forced_attribute_type("height_range", lambda: tuple)
 class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     """
     Class holding a whole dimension

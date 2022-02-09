@@ -19,9 +19,9 @@ import time
 import typing
 import weakref
 
-import mcpython.engine.world.AbstractInterface
 from mcpython import shared
 from mcpython.engine import logger
+from mcpython.engine.world.AbstractInterface import IChunk
 
 
 class WorldGenerationTaskHandler:
@@ -32,9 +32,7 @@ class WorldGenerationTaskHandler:
     """
 
     def __init__(self):
-        self.chunks: weakref.WeakSet[
-            mcpython.engine.world.AbstractInterface.IChunk
-        ] = weakref.WeakSet()
+        self.chunks: weakref.WeakSet[IChunk] = weakref.WeakSet()
         self.data_maps = [{}, {}, {}]  # invoke, world_changes, shown_updates
 
     def get_total_task_stats(self) -> list:
@@ -48,48 +46,52 @@ class WorldGenerationTaskHandler:
                 for chunk in dim.values():
                     count += len(chunk)
             stats.append(count)
+
         return stats
 
-    def get_task_count_for_chunk(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
-    ) -> int:
+    def get_task_count_for_chunk(self, chunk: IChunk) -> int:
         """
-        Gets the total count of tasks for an given chunk as an int
-        :param chunk:
-        :return:
+        Gets the total count of tasks for a given chunk as an int
+
+        :param chunk: the chunk instance to get the task count for
         """
         dim = chunk.get_dimension().get_dimension_id()
         p = chunk.get_position()
         count = 0
+
         try:
             count += len(self.data_maps[0][dim][p])
         except (IndexError, KeyError):
             pass
+
         try:
             count += len(self.data_maps[1][dim][p])
         except (IndexError, KeyError):
             pass
+
         try:
             count += len(self.data_maps[2][dim][p])
         except (IndexError, KeyError):
             pass
+
         return count
 
     def schedule_invoke(
         self,
-        chunk: mcpython.engine.world.AbstractInterface.IChunk,
+        chunk: IChunk,
         method: typing.Callable | typing.Awaitable,
         *args,
         **kwargs,
     ):
         """
-        Schedules a callable-invoke for the future or an await on such a task
+        Schedules a callable-invoke for the future or an 'await' on a coroutine
+
         :param chunk: the chunk to link to
         :param method: the method to call
         :param args: the args to call with
         :param kwargs: the kwargs to call with
         """
-        if not isinstance(chunk, mcpython.engine.world.AbstractInterface.IChunk):
+        if not isinstance(chunk, IChunk):
             raise ValueError(f"chunk must be sub-class of Chunk, not {chunk}")
 
         if not callable(method) and not asyncio.iscoroutine(method):
@@ -104,20 +106,21 @@ class WorldGenerationTaskHandler:
 
     def schedule_block_add(
         self,
-        chunk: mcpython.engine.world.AbstractInterface.IChunk,
-        position: tuple,
+        chunk: IChunk,
+        position: typing.Tuple[int, int, int],
         name: str,
         *args,
         on_add=None,
         **kwargs,
     ):
         """
-        Schedules an addition of an block
+        Schedules an addition of a block
+
         :param chunk: the chunk the block is linked to
         :param position: the position of the block
         :param name: the name of the block
         :param args: the args to send to the add_block-method
-        :param on_add: an callable called together with the block instance when the block is added
+        :param on_add: a callable called together with the block instance when the block is added
         :param kwargs: the kwargs send to the add_block-method
         """
         if "immediate" not in kwargs or kwargs["immediate"]:
@@ -131,18 +134,19 @@ class WorldGenerationTaskHandler:
 
     def schedule_block_remove(
         self,
-        chunk: mcpython.engine.world.AbstractInterface.IChunk,
-        position: tuple,
+        chunk: IChunk,
+        position: typing.Tuple[int, int, int],
         *args,
         on_remove=None,
         **kwargs,
     ):
         """
-        Schedules an removal of an block
+        Schedules the removal of a block
+
         :param chunk: the chunk the block is linked to
         :param position: the position of the block
         :param args: the args to call the remove_block-function with
-        :param on_remove: an callable to call when the block gets removed, with None as an parameter
+        :param on_remove: a callable to call when the block gets removed, with None as a parameter
         :param kwargs: the kwargs to call the remove_block-function with
         """
         self.data_maps[1].setdefault(
@@ -155,11 +159,10 @@ class WorldGenerationTaskHandler:
         )
         self.chunks.add(chunk)
 
-    def schedule_block_show(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
-    ):
+    def schedule_block_show(self, chunk: IChunk, position: tuple):
         """
-        schedules an show of an block
+        Schedules a show of a block
+
         :param chunk: the chunk
         :param position: the position of the block
         """
@@ -168,11 +171,10 @@ class WorldGenerationTaskHandler:
         ).setdefault(chunk.get_position(), {})[position] = 1
         self.chunks.add(chunk)
 
-    def schedule_block_hide(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
-    ):
+    def schedule_block_hide(self, chunk: IChunk, position: tuple):
         """
         Schedules hiding a block
+
         :param chunk: the chunk
         :param position: the position of the block
         """
@@ -181,11 +183,10 @@ class WorldGenerationTaskHandler:
         ).setdefault(chunk.get_position(), {})[position] = 0
         self.chunks.add(chunk)
 
-    def schedule_visual_update(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, position: tuple
-    ):
+    def schedule_visual_update(self, chunk: IChunk, position: tuple):
         """
         Schedules a visual update of a block (-> show/hide as needed)
+
         :param chunk: the chunk
         :param position: the position of the block
         """
@@ -194,21 +195,24 @@ class WorldGenerationTaskHandler:
         ).setdefault(chunk.get_position(), {})[position] = 2
         self.chunks.add(chunk)
 
-    def process_one_task(self, chunk=None, log_msg=False) -> int:
+    def process_one_task(self, chunk: IChunk = None, log_msg=False) -> int:
         """
         Processes one task from a semi-random chunk or a given one
+
         :param chunk: the chunk or None to select one
         :param log_msg: if messages for extra info should be logged
+        :return: a return status for the task; 1 when no tasks are arrival, 2 or 3 otherwise
         """
         start = time.time()
         if chunk is None:
             if len(self.chunks) == 0:
                 return 1
+
             chunk = self.chunks.pop()
             self.chunks.add(chunk)
 
         if log_msg:
-            logger.println("[WORLD][HANDLER] processing chunk {}".format(chunk))
+            logger.println("[WORLD][HANDLER] processing chunk '{}'".format(chunk))
 
         if (
             self.unsafe_process_0_array(chunk)
@@ -217,8 +221,11 @@ class WorldGenerationTaskHandler:
         ):
             if log_msg:
                 logger.println(
-                    "executing took {}s in chunk {}".format(time.time() - start, chunk)
+                    "executing took {}s in chunk '{}'".format(
+                        round((time.time() - start) * 10) / 10, chunk
+                    )
                 )
+
             return 2
 
         if self.get_task_count_for_chunk(chunk) == 0:
@@ -233,8 +240,9 @@ class WorldGenerationTaskHandler:
         """
         Process tasks in chunks [default to all scheduled chunks] until more time than timer is left behind
             [Defaults to no limit]
+
         :param chunks: if given, an iterable of chunks to generate
-        :param timer: if given, an float in seconds to determine how far to generate
+        :param timer: if given, a float in seconds to determine how far to generate
         todo: add some better sorting function!
         """
         start = time.time()
@@ -255,9 +263,7 @@ class WorldGenerationTaskHandler:
             for chunk in chunks:
                 await self.process_chunk(chunk)
 
-    async def process_chunk(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk, timer=None
-    ):
+    async def process_chunk(self, chunk: IChunk, timer=None):
         start = time.time()
         flag = True
         while flag:
@@ -278,14 +284,13 @@ class WorldGenerationTaskHandler:
             chunk.finished = True
             chunk.loaded = True
 
-    async def _process_0_array(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
-    ) -> bool:
+    async def _process_0_array(self, chunk: IChunk) -> bool:
         dimension = chunk.get_dimension().get_dimension_id()
         if dimension in self.data_maps[0]:
             dim_map = self.data_maps[0][dimension]
             if chunk.get_position() in dim_map:
                 return await self.unsafe_process_0_array(chunk, dim_map=dim_map)
+
         return False
 
     async def unsafe_process_0_array(self, chunk, dim_map: dict = None) -> bool:
@@ -310,11 +315,10 @@ class WorldGenerationTaskHandler:
                     *data
                 )
             )
+
         return True
 
-    async def _process_1_array(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
-    ) -> bool:
+    async def _process_1_array(self, chunk: IChunk) -> bool:
         # todo: can we optimize this?
         if chunk.get_dimension().get_dimension_id() in self.data_maps[1]:
             dim_map = self.data_maps[1][chunk.get_dimension().get_dimension_id()]
@@ -338,16 +342,16 @@ class WorldGenerationTaskHandler:
 
         return False
 
-    async def _process_2_array(
-        self, chunk: mcpython.engine.world.AbstractInterface.IChunk
-    ) -> bool:
+    async def _process_2_array(self, chunk: IChunk) -> bool:
         # todo: can we optimize this?
         if chunk.get_dimension().get_dimension_id() in self.data_maps[2]:
             dim_map = self.data_maps[2][chunk.get_dimension().get_dimension_id()]
+
             if chunk.get_position() in dim_map:
                 m: dict = dim_map[chunk.get_position()]
                 if len(m) == 0:
                     return False
+
                 position, data = m.popitem()
                 block = chunk.get_block(position)
 
@@ -370,9 +374,7 @@ class WorldGenerationTaskHandler:
 
         return False
 
-    def get_block(
-        self, position: tuple, chunk: mcpython.engine.world.AbstractInterface.IChunk
-    ):
+    def get_block(self, position: tuple, chunk: IChunk):
         """
         Gets an generated block from the array
         :param position: the position of the block
@@ -387,7 +389,7 @@ class WorldGenerationTaskHandler:
         except (KeyError, AttributeError):
             pass
 
-    def clear_chunk(self, chunk: mcpython.engine.world.AbstractInterface.IChunk):
+    def clear_chunk(self, chunk: IChunk):
         """
         Will remove all scheduled tasks from an given chunk
         :param chunk: the chunk
@@ -508,7 +510,7 @@ class WorldGenerationTaskHandlerReference(IWorldGenerationTaskHandlerReference):
     def __init__(
         self,
         handler: WorldGenerationTaskHandler,
-        chunk: mcpython.engine.world.AbstractInterface.IChunk,
+        chunk: IChunk,
     ):
         self.handler = handler
         self.chunk = chunk
@@ -634,14 +636,14 @@ class RemoteTaskHandlerManager:
 
     def create(
         self,
-        chunk: mcpython.engine.world.AbstractInterface.IChunk,
+        chunk: IChunk,
         default: WorldGenerationTaskHandlerReference,
     ) -> typing.Tuple[
         "ProcessSeparatedWorldGenerationTaskHandlerReference", OffProcessTaskHelper
     ]:
         helper_instance = OffProcessTaskHelper(chunk)
         array_instance = ProcessSeparatedWorldGenerationTaskHandlerReference(
-            helper_instance.shared, chunk.as_shareable()
+            helper_instance.shared, chunk
         )
         helper_instance.reference = array_instance
         self.references.append((helper_instance, array_instance, default))
@@ -667,7 +669,7 @@ class ProcessSeparatedWorldGenerationTaskHandlerReference(
     def __init__(
         self,
         shared_helper: OffProcessTaskHelper.OffProcessTaskHelperShared,
-        chunk: mcpython.engine.world.AbstractInterface.IChunk,
+        chunk: IChunk,
     ):
         self.shared_helper = shared_helper
         self.chunk = chunk

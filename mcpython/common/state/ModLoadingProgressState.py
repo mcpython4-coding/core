@@ -14,8 +14,8 @@ This project is not official by mojang and does not relate to it.
 import psutil
 import pyglet
 from mcpython import shared
-
 from mcpython.engine.rendering.RenderingLayerManager import INTER_BACKGROUND
+
 from . import AbstractState
 from .ui import UIPartProgressBar
 from .util import update_memory_usage_bar

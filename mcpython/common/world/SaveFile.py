@@ -140,7 +140,8 @@ class RegionFileAccess:
         await self.save_file.dump_via_network_buffer(self.file, buffer)
 
 
-class UnableToFixDataException(Exception): pass
+class UnableToFixDataException(Exception):
+    pass
 
 
 class SaveFile:

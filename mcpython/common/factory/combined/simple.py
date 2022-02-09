@@ -462,7 +462,9 @@ class CombinedFactoryInstance:
 
         return self
 
-    async def create_wall(self, suffix: str = None, texture=None, color=None, **consumers):
+    async def create_wall(
+        self, suffix: str = None, texture=None, color=None, **consumers
+    ):
         if texture is None:
             texture = self.default_texture
 
@@ -561,7 +563,9 @@ class CombinedFactoryInstance:
         )
         return self
 
-    async def create_fence(self, suffix: str = None, texture=None, color=None, **consumers):
+    async def create_fence(
+        self, suffix: str = None, texture=None, color=None, **consumers
+    ):
         if texture is None:
             texture = self.default_texture
         name = (

@@ -22,6 +22,8 @@ import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.math
 from bytecodemanipulation.OptimiserAnnotations import (
     builtins_are_static,
+    constant_operation,
+    forced_attribute_type,
     name_is_static,
     object_method_is_protected,
     returns_argument,
@@ -32,8 +34,15 @@ from mcpython.common.entity.ItemEntity import ItemEntity
 from mcpython.engine import logger
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from mcpython.util.enums import EnumSide
+from mcpython.util.math import normalize, position_to_chunk
 
 
+@forced_attribute_type("position", lambda: tuple)
+@forced_attribute_type("is_ready", lambda: bool)
+@forced_attribute_type("visible", lambda: bool)
+@forced_attribute_type("loaded", lambda: bool)
+@forced_attribute_type("generated", lambda: bool)
+@forced_attribute_type("dirty", lambda: bool)
 class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     """
     Default representation of a chunk in the world
@@ -98,7 +107,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         await ChunkSerializer.read_from_buffer(buffer, self, immediate=immediate)
 
-    @name_is_static("tuple", lambda: tuple)
+    @builtins_are_static()
     def entity_iterator(self) -> typing.Iterable:
         return tuple(self.entities)
 
@@ -116,17 +125,15 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         )
 
     @returns_argument()
-    def as_shareable(self) -> mcpython.engine.world.AbstractInterface.IChunk:
-        return self
-
-    @returns_argument()
     def mark_dirty(self):
         self.dirty = True
         return self
 
+    @constant_operation()
     def get_dimension(self) -> mcpython.engine.world.AbstractInterface.IDimension:
         return self.dimension
 
+    @constant_operation()
     def get_position(self) -> typing.Tuple[int, int]:
         return self.position
 
@@ -136,6 +143,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         """
         Helper function for getting the y height at the given xz generation based on the generation code, by looking
             up the internal map
+
         :param x: the x coord
         :param z: the y coord
         :param default: the default value when no value is set
@@ -154,6 +162,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         Will schedule a chunk load from saves when needed
         """
+        # todo: can we cache this somehow?
         if not self.is_ready or not self.visible:
             return
 
@@ -175,25 +184,29 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     ALL_FACES_EXPOSED = {x: True for x in EnumSide.iterate()}
 
+    @deprecation.deprecated()
     @builtins_are_static()
+    @name_is_static("EnumSide", lambda: EnumSide)
+    @name_is_static("position_to_chunk", lambda: position_to_chunk)
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Dict[str, bool]:
         """
-        Returns an dict of the exposed status of every face of the given block
+        Returns a dict of the exposed status of every face of the given block
+
         :param position: the position to check
         :return: the dict for the status
         """
-        instance = self.get_block(position)
+        instance = self.get_block(position, none_if_str=True)
 
-        if instance is None or type(instance) == str:
+        if instance is None:
             return self.ALL_FACES_EXPOSED.copy()
 
         faces = {}
 
-        for face in mcpython.util.enums.FACE_ORDER:
+        for face in EnumSide.iterate():
             pos = face.relative_offset(position)
-            chunk_position = mcpython.util.math.position_to_chunk(pos)
+            chunk_position = position_to_chunk(pos)
 
             if chunk_position != self.position:
                 chunk = self.dimension.get_chunk(chunk_position, generate=False)
@@ -221,20 +234,23 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
+    @deprecation.deprecated()
     @builtins_are_static()
+    @name_is_static("EnumSide", lambda: EnumSide)
+    @name_is_static("position_to_chunk", lambda: position_to_chunk)
     def exposed_faces_list(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.List[bool]:
-        instance = self.get_block(position)
+        instance = self.get_block(position, none_if_str=True)
 
-        if instance is None or type(instance) == str:
+        if instance is None:
             return [True] * 6
 
         faces = [False] * 6
 
-        for face in mcpython.util.enums.FACE_ORDER:
+        for face in EnumSide.iterate():
             pos = face.relative_offset(position)
-            chunk_position = mcpython.util.math.position_to_chunk(pos)
+            chunk_position = position_to_chunk(pos)
 
             if chunk_position != self.position:
                 chunk = self.dimension.get_chunk(chunk_position, generate=False)
@@ -263,16 +279,18 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         return faces
 
     @builtins_are_static()
-    def exposed_faces_flag(self, block) -> int:
+    @name_is_static("EnumSide", lambda: EnumSide)
+    @name_is_static("position_to_chunk", lambda: position_to_chunk)
+    def exposed_faces_flag(self, block: str | Block.AbstractBlock | None) -> int:
 
-        if block is None or type(block) == str:
+        if block is None or isinstance(block, str):
             return 0b111111
 
         faces = 0
 
-        for face in mcpython.util.enums.FACE_ORDER:
+        for face in EnumSide.iterate():
             pos = face.relative_offset(block.position)
-            chunk_position = mcpython.util.math.position_to_chunk(pos)
+            chunk_position = position_to_chunk(pos)
 
             if chunk_position != self.position:
                 chunk = self.dimension.get_chunk(chunk_position, generate=False)
@@ -300,15 +318,17 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         return faces
 
     @builtins_are_static()
+    @name_is_static("EnumSide", lambda: EnumSide)
     def exposed_faces_iterator(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Iterator[EnumSide]:
-        instance = self.get_block(position)
+        instance = self.get_block(position, none_if_str=True)
 
-        if instance is None or type(instance) == str:
+        if instance is None:
             yield from EnumSide.iterate()
+            return
 
-        for face in mcpython.util.enums.FACE_ORDER:
+        for face in EnumSide.iterate():
             pos = face.relative_offset(position)
             chunk_position = mcpython.util.math.position_to_chunk(pos)
 
@@ -357,6 +377,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         )
 
     @builtins_are_static()
+    @name_is_static("normalize", lambda: normalize)
     async def add_block(
         self,
         position: tuple,
@@ -371,7 +392,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         network_sync=True,
     ):
         """
-        Adds a block to the given position
+        Adds a block (given by name or a block instance) to the given position in this chunk
+
         :param position: the position to add
         :param block_name: the name of the block or an instance of it
         :param immediate: if the block should be shown if needed
@@ -389,7 +411,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         if check_build_range and (position[1] < r[0] or position[1] > r[1]):
             return
 
-        if position != mcpython.util.math.normalize(position):
+        if position != normalize(position):
             raise ValueError(
                 "position '{}' is no valid block position".format(position)
             )
@@ -409,7 +431,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         if block_name in [None, "air", "minecraft:air"]:
             return
 
-        if issubclass(type(block_name), Block.AbstractBlock):
+        if isinstance(block_name, Block.AbstractBlock):
             block = block_name
             block.position = position
             block.dimension = self.dimension.get_name()
@@ -424,6 +446,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         # Create the block instance from the registry
         else:
+            # todo: do we want to give a warning in the log?
             if not self.BLOCK_REGISTRY.is_valid_key(block_name):
                 return
 
@@ -461,31 +484,34 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     @builtins_are_static()
     @object_method_is_protected("append", lambda: list.append)
+    @name_is_static("EnumSide", lambda: EnumSide)
     async def on_block_updated(
         self, position: typing.Tuple[int, int, int], include_itself=True
     ):
         """
-        Will call to the neighbor blocks an block update
+        Will call to the neighbor blocks a block update
+
         :param position: the position in the center
-        :param include_itself: if the block itself should be updated
+        :param include_itself: if the block itself (the block at 'position') should be updated
         """
         to_invoke = []
         x, y, z = position
-        for dx in range(-1, 2):
-            for dy in range(-1, 2):
-                for dz in range(-1, 2):
-                    if [dx, dy, dz].count(0) >= 2 and not (
-                        not include_itself and dx == dy == dz == 0
-                    ):
-                        b: Block.AbstractBlock = self.dimension.get_block(
-                            (x + dx, y + dy, z + dz)
-                        )
-                        if b and type(b) != str:
-                            to_invoke.append(b.on_block_update())
+        for face in EnumSide.iterate():
+            b: Block.AbstractBlock = self.dimension.get_block(
+                (x + face.dx, y + face.dy, z + face.dz), none_if_str=True
+            )
+            if b:
+                to_invoke.append(b.on_block_update())
+
+        if include_itself:
+            b = self.get_block(position)
+            if b:
+                to_invoke.append(b.on_block_update())
 
         await asyncio.gather(*to_invoke)
 
     @builtins_are_static()
+    @object_method_is_protected("Block", lambda: Block)
     async def remove_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -497,6 +523,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     ):
         """
         Remove the block at the given position. When no block is there, nothing happens
+
         :param position: The (x, y, z) position of the block to remove, or the block instance
         :param immediate: Whether or not to immediately remove block from canvas.
         :param block_update: Whether an block-update should be called or not
@@ -534,12 +561,14 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     @builtins_are_static()
     @name_is_static("EnmSide", lambda: EnumSide)
+    @name_is_static("shared", lambda: shared)
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         """
         Check all blocks surrounding `position` and ensure their visual
         state is current. This means hiding blocks that are not exposed and
         ensuring that all exposed blocks are shown. Usually used after a block
         is added or removed.
+
         :param position: the position as the center
         """
         # Only do this on the client
@@ -558,6 +587,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     @builtins_are_static()
     @name_is_static("Block", lambda: Block)
+    @name_is_static("shared", lambda: shared)
     def show_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -566,8 +596,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         """
         Show the block at the given `position`. This method assumes the
         block has already been added with add_block()
+
         :param position: The (x, y, z) position of the block to show.
-        :param immediate: Whether or not to show the block immediately.
+        :param immediate: Whether to show the block immediately or not
         """
         if not shared.IS_CLIENT:
             return
@@ -589,6 +620,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     @builtins_are_static()
     @name_is_static("Block", lambda: Block)
+    @name_is_static("shared", lambda: shared)
     def hide_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -597,8 +629,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         """
         Hide the block at the given `position`. Hiding does not remove the
         block from the world.
+
         :param position: The (x, y, z) position of the block to hide.
-        :param immediate: Whether or not to immediately remove the block from the canvas.
+        :param immediate: Whether to immediately remove the block from the canvas or not.
         """
         if not shared.IS_CLIENT:
             return
@@ -620,7 +653,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     @name_is_static("shared", lambda: shared)
     def show(self, force=False):
         """
-        will show the chunk
+        Will show the chunk
+
         :param force: if the chunk show should be forced or not
         """
         if not shared.IS_CLIENT:
@@ -649,9 +683,11 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         self.hide_all()
         self.mark_dirty()
 
+    @name_is_static("shared", lambda: shared)
     def is_visible(self) -> bool:
         return self.visible and shared.IS_CLIENT
 
+    @name_is_static("shared", lambda: shared)
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
         if not shared.IS_CLIENT:
             return
@@ -667,6 +703,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     def exposed(self, position: typing.Tuple[int, int, int]) -> bool:
         return any(self.exposed_faces(position).values())
 
+    @object_method_is_protected("keys", lambda: dict.keys)
+    @name_is_static("shared", lambda: shared)
     def update_visible(self, hide=True, immediate=False):
         """
         Will update all visible of all blocks of the chunk
@@ -677,14 +715,17 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         if not shared.IS_CLIENT:
             return
 
-        for position in self._world.keys():
-            if immediate:
+        if immediate:
+            for position in self._world.keys():
                 shared.world_generation_handler.task_handler.schedule_visual_update(
                     self, position
                 )
-            else:
+
+        else:
+            for position in self._world.keys():
                 self.update_visible_block(position, hide=hide)
 
+    @name_is_static("shared", lambda: shared)
     def hide_all(self, immediate=True):
         """
         Will hide all blocks in the chunk
@@ -698,14 +739,16 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             self.hide_block(position, immediate=immediate)
 
     def get_block(
-        self, position: typing.Tuple[int, int, int], none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=True
     ) -> typing.Union[Block.AbstractBlock, str, None]:
         """
-        will get the block at an given position
+        Will get the block at an given position
+
         :param position: the position to check for, must be normalized
-        :param none_if_str: if none if the block instance is str
+        :param none_if_str: if none if the block instance is str, defaults to True
         :return: None if no block, str if scheduled and Block.Block if created
-        todo: split up into get_block_generated and get_block_un_generated
+
+        todo: split up into get_block[_generated] and get_block_un_generated
         """
         return (
             self._world[position]
@@ -733,6 +776,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     def get_entities(self):
         return self.entities
 
+    @object_method_is_protected("format", lambda: str.format)
+    @object_method_is_protected("values", lambda: dict.values)
     def dump_debug_maps(self, file_formatter: str):
         for m in self.data_maps.values():
             m.dump_debug_info(file_formatter.format(m.NAME.replace(":", "_")))

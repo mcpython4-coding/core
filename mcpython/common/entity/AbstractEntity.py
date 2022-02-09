@@ -160,7 +160,9 @@ class AbstractEntity(
 
             # Our fixed stream belongs now here...
 
-        await super(ICapabilityContainer, self).read_from_network_buffer(  # lgtm [py/super-not-enclosing-class]
+        await super(
+            ICapabilityContainer, self
+        ).read_from_network_buffer(  # lgtm [py/super-not-enclosing-class]
             buffer
         )
         dim_name = buffer.read_string()
@@ -185,7 +187,9 @@ class AbstractEntity(
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.VERSION)
 
-        await super(ICapabilityContainer, self).write_to_network_buffer(  # lgtm [py/super-not-enclosing-class]
+        await super(
+            ICapabilityContainer, self
+        ).write_to_network_buffer(  # lgtm [py/super-not-enclosing-class]
             buffer
         )
         buffer.write_string(

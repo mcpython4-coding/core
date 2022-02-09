@@ -18,7 +18,9 @@ from abc import ABC
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
+from bytecodemanipulation.OptimiserAnnotations import forced_attribute_type
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer
+from mcpython.util.annotation import onlyInClient
 
 
 class ChunkLoadTicketType(enum.Enum):
@@ -87,6 +89,11 @@ class ISupportWorldInterface(ABC):
         raise NotImplementedError
 
 
+@forced_attribute_type("_world", lambda: dict)
+@forced_attribute_type("_positions_updated_since_last_save", lambda: set)
+@forced_attribute_type("entity", lambda: set)
+@forced_attribute_type("chunk_loaded_list", lambda: tuple)
+@forced_attribute_type("data_maps", lambda: dict)
 class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
     """
     Abstract class for chunks
@@ -396,24 +403,24 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
         raise NotImplementedError
 
     def get_block(
-        self, position: typing.Tuple[int, int, int], none_if_str=False
+        self, position: typing.Tuple[int, int, int], none_if_str=True
     ) -> typing.Union[typing.Any, str, None]:
         """
-        Getter function for a block
+        Getter method for a block
         :param position: the position
-        :param none_if_str: if the block instance would be a str, replace it by None?
+        :param none_if_str: if the block instance would be a str, replace it by None, defaults to True
         :return: the block instance, a str representing a block (e.g. for scheduled during generation) or None
             if there is no block
         """
         raise NotImplementedError
 
-    def as_shareable(self) -> "IChunk":
-        """
-        Creates a reference to this chunk which can be linked across threads / processes
-        :return: this chunk instance
-        INFO: currently not in use
-        """
-        raise NotImplementedError
+    @onlyInClient()
+    def show_block(self, position):
+        pass
+
+    @onlyInClient()
+    def hide_block(self, position):
+        pass
 
     def mark_dirty(self):
         raise NotImplementedError
@@ -456,6 +463,8 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
         return hash((self.get_dimension().get_name(), self.get_position()))
 
 
+@forced_attribute_type("chunks", lambda: dict)
+@forced_attribute_type("loaded", lambda: bool)
 class IDimension(ISupportWorldInterface, ABC):
     def __init__(self):
         self.chunks = {}

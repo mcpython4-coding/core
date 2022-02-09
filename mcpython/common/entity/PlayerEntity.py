@@ -251,7 +251,6 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
             if flag & 32:
                 self.set_gamemode(package.gamemode)
 
-
         return self
 
     async def send_update_package_when_client(self):

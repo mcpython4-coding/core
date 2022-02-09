@@ -25,6 +25,12 @@ import mcpython.client.rendering.model.BlockState
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
+from bytecodemanipulation.OptimiserAnnotations import (
+    forced_attribute_type,
+    name_is_static,
+    object_method_is_protected,
+    try_optimise,
+)
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
@@ -33,6 +39,15 @@ from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 
 
+# @forced_attribute_type("models", lambda: dict)
+# @forced_attribute_type("used_models", lambda: set)
+# @forced_attribute_type("found_models", lambda: dict)
+# @forced_attribute_type("blockstates", lambda: dict)
+# @forced_attribute_type("lookup_locations", lambda: set)
+# @forced_attribute_type("dependence_list", lambda: list)
+# @forced_attribute_type("hide_blockstate_errors", lambda: bool)
+# @forced_attribute_type("raw_models", list)
+# @forced_attribute_type("break_stages", list)
 class ModelHandler:
     def __init__(self):
         self.models: typing.Dict[str, typing.Any] = {}
@@ -396,14 +411,13 @@ class ModelHandler:
         [self.draw_face(block, face) for face in EnumSide.iterate()]
 
     def draw_block_scaled(self, block, scale: float):
-        [
-            self.draw_face_scaled(block, face, scale)
-            for face in EnumSide.iterate()
-        ]
+        [self.draw_face_scaled(block, face, scale) for face in EnumSide.iterate()]
 
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)
 
+    @try_optimise()
+    @name_is_static("logger", lambda: logger)
     async def reload_models(self):
         logger.println("deleting content of models...")
 

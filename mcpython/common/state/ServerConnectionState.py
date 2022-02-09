@@ -11,14 +11,16 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+from mcpython import shared
+from mcpython.common.network.packages.DisconnectionPackage import (
+    DisconnectionInitPackage,
+)
+from mcpython.engine import logger
 from pyglet.window import key
 
 from .AbstractState import AbstractState
 from .ConfigBackgroundPart import ConfigBackground
 from .ui.UIPartLabel import UIPartLabel
-from mcpython.engine import logger
-from mcpython import shared
-from mcpython.engine.network.packages.DisconnectionPackage import DisconnectionInitPackage
 
 
 class ConnectingToServerState(AbstractState):
@@ -50,7 +52,9 @@ class ConnectingToServerState(AbstractState):
     async def on_key_press(self, symbol, modifiers):
         if symbol == key.ESCAPE:
             await shared.world.cleanup()
-            await shared.NETWORK_MANAGER.send_package(DisconnectionInitPackage().set_reason("User interrupted"))
+            await shared.NETWORK_MANAGER.send_package(
+                DisconnectionInitPackage().set_reason("User interrupted")
+            )
             await shared.NETWORK_MANAGER.fetch_as_client()
             await shared.NETWORK_MANAGER.disconnect()
 
