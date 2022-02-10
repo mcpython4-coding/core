@@ -2035,3 +2035,5 @@ If  [uuk]: improved debug output for networking,
 b   [uuk]: fixed issue with fence blocks on the server not working correctly
 G   [github]: released snapshot 22w06a
 
+G   [github]: started development cycle for snapshot <22w10a>
+

@@ -34,6 +34,11 @@ Make sure that you are using python 3.10 (or higher)!
 ----
 
 
+# changelog of snapshot <22w10a>
+Scheduled to be released on <10.03.2022>
+targeting <1.18.2>
+
+
 # Changelog of snapshot 22w06a
 Released on 09.02.2022
 targeting 1.18.1

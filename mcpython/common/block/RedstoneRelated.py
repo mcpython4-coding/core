@@ -35,6 +35,15 @@ redstone_wire_bbox = (
 
 
 class RedstoneWire(AbstractBlock.AbstractBlock):
+    """
+    Class for the redstone wire
+
+    todo: add a drain bit flag indicating where our current power level is from, so we we
+        do not need to update if it is not the drain which updated
+    todo: use this if all drains are 0-ed set self to 0 and update all adjusted blocks, and schedule a self
+        update later
+    """
+
     NAME: str = "minecraft:redstone_wire"
 
     HARDNESS = BLAST_RESISTANCE = 0
