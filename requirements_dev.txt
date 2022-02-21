@@ -1,4 +1,4 @@
 black==22.1.0
 isort==5.10.1
-gitpython==3.1.26
+gitpython==3.1.27
 python-minifier==2.5.0
