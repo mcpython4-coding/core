@@ -15,13 +15,13 @@ import itertools
 import typing
 import weakref
 
-from bytecodemanipulation.OptimiserAnnotations import try_optimise
+from bytecodemanipulation.OptimiserAnnotations import try_optimise, builtins_are_static
 from mcpython.util.math import rotate_point
 
 # This defines how cubes look; do not change!
 CORNER_SIGNS = tuple(itertools.product((-1, 1), repeat=3))
 CUBE_MAP = (
-    (3, 7, 6, 2),  # UP
+    (6, 2, 3, 7),  # UP
     (5, 1, 0, 4),  # DOWN
     (0, 1, 3, 2),  # LEFT
     (5, 4, 6, 7),  # RIGHT
@@ -31,6 +31,7 @@ CUBE_MAP = (
 
 
 @try_optimise()
+@builtins_are_static()
 def calculate_default(size: typing.Tuple[float, float, float]):
     size = tuple(e / 2 for e in size)
 
@@ -40,11 +41,13 @@ def calculate_default(size: typing.Tuple[float, float, float]):
 
 
 @try_optimise()
+@builtins_are_static()
 def offset_data(data, offset: typing.Tuple[float, float, float]):
     return ((tuple(e[i] + offset[i] for i in range(3)) for e in x) for x in data)
 
 
 @try_optimise()
+@builtins_are_static()
 def rotate_data(
     data,
     origin: typing.Tuple[float, float, float],
@@ -54,6 +57,7 @@ def rotate_data(
 
 
 @try_optimise()
+@builtins_are_static()
 def scale_data(data, scale: float):
     return ((tuple(e * scale for e in x) for x in y) for y in data)
 
@@ -77,6 +81,7 @@ class VertexProvider:
     SHARED = weakref.WeakValueDictionary()
 
     @classmethod
+    @builtins_are_static()
     def create(
         cls,
         offset: typing.Tuple[float, float, float],
@@ -98,6 +103,7 @@ class VertexProvider:
             key, cls(offset, size, base_rotation_center, base_rotation)
         )
 
+    @builtins_are_static()
     def __init__(
         self,
         offset: typing.Tuple[float, float, float],

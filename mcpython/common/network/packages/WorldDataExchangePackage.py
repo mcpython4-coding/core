@@ -15,6 +15,8 @@ import itertools
 import time
 import typing
 
+import asyncio
+
 from mcpython import shared
 from mcpython.common.world.NetworkSyncedImplementation import NetworkSyncedDimension
 from mcpython.engine import logger
@@ -268,11 +270,12 @@ class ChunkDataPackage(AbstractPackage):
         )
 
         if chunk.loaded and not self.force:
-            logger.println("-> skipping as chunk exists in game")
+            logger.println("-> skipping as chunk exists in game and is loaded")
             return
 
         dx, dz = self.position
 
+        targets = []
         i = 0
         for x, y, z in itertools.product(
             range(dx * 16, dx * 16 + 16), range(256), range(dz * 16, dz * 16 + 16)
@@ -280,15 +283,17 @@ class ChunkDataPackage(AbstractPackage):
             block = self.blocks[i]
 
             if block is not None:
-                await chunk.add_block(
+                targets.append(chunk.add_block(
                     (x, y, z),
                     block[0],
                     immediate=False,
                     block_update=False,
                     network_sync=False,
-                )
+                ))
 
             i += 1
+
+        await asyncio.gather(*targets)
 
         chunk.update_all_rendering()
 
@@ -312,7 +317,8 @@ class ChunkBlockChangePackage(AbstractPackage):
         self, position: typing.Tuple[int, int, int], block, update_only=False
     ):
         """
-        Updates the block data at a given position
+        Updates the block data at a given position in the given dimension
+
         :param position: the position
         :param block: the block instance
         :param update_only: if to only update the block, not add a new one
@@ -376,7 +382,9 @@ class ChunkBlockChangePackage(AbstractPackage):
     async def handle_inner(self):
         dimension = shared.world.get_dimension_by_name(self.dimension)
 
+        targets = []
         for position, block, update_only in self.data:
-            await dimension.add_block(
+            targets.append(dimension.add_block(
                 position, block, network_sync=False, block_update=False
-            )
+            ))
+        await asyncio.gather(*targets)

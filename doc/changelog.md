@@ -29,14 +29,14 @@ Contains only some information, in ordered form, in a better form for the end us
 python ./tools/run_unit_tests.py
 ```
 
-Make sure that you are using python 3.10 (or higher)!
+Make sure that you are using python 3.10 (or higher; still WIP)!
 
 ----
 
 
-# changelog of snapshot <22w10a>
-Scheduled to be released on <10.03.2022>
-targeting <1.18.2>
+# Changelog of snapshot <22w??a>
+Scheduled to be released on <??.??.2022>
+targeting <1.??.??> (currently: 1.18.1)
 
 
 # Changelog of snapshot 22w06a
