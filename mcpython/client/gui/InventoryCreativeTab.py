@@ -263,11 +263,11 @@ class CreativeItemTab(ICreativeView):
 
     async def on_deactivate(self):
         await super().on_deactivate()
-        self.scroll_bar.deactivate()
+        await self.scroll_bar.deactivate()
 
     async def on_activate(self):
         await super().on_activate()
-        self.scroll_bar.activate()
+        await self.scroll_bar.activate()
         self.update_rendering(True)
 
     def on_mouse_button_press(
@@ -469,27 +469,32 @@ class CreativeTabManager:
 
         self.hovering_tab = None
 
+        self.page_left = self.page_right = self.page_label = None
+
         if shared.IS_CLIENT:
-            self.page_left = (
-                mcpython.client.rendering.ui.Buttons.arrow_button_left(
-                    (0, 0), lambda: self.increase_page(-1)
-                )
-                if not shared.IS_TEST_ENV
-                else None
-            )
-            self.page_right = (
-                mcpython.client.rendering.ui.Buttons.arrow_button_right(
-                    (0, 0), lambda: self.increase_page(1)
-                )
-                if not shared.IS_TEST_ENV
-                else None
-            )
-            self.page_label = pyglet.text.Label(anchor_x="center", anchor_y="center")
+            shared.tick_handler.schedule_once(self.on_reload())
 
         self.lower_left_position = 0, 0
         self.container_size = 1, 1
 
         self.current_tab: typing.Optional[ICreativeView] = None
+
+    async def on_reload(self):
+        self.page_left = (
+            mcpython.client.rendering.ui.Buttons.arrow_button_left(
+                (0, 0), lambda: self.increase_page(-1)
+            )
+            if not shared.IS_TEST_ENV
+            else None
+        )
+        self.page_right = (
+            mcpython.client.rendering.ui.Buttons.arrow_button_right(
+                (0, 0), lambda: self.increase_page(1)
+            )
+            if not shared.IS_TEST_ENV
+            else None
+        )
+        self.page_label = pyglet.text.Label(anchor_x="center", anchor_y="center")
 
     def is_multi_page(self):
         return len(self.pages) > 1
@@ -672,13 +677,11 @@ class CreativeTabManager:
         else:
             await shared.inventory_handler.show(self.current_tab)
 
-    def increase_page(self, count: int):
+    async def increase_page(self, count: int):
         previous = self.current_page
         self.current_page = max(0, min(self.current_page + count, len(self.pages) - 1))
         if previous != self.current_page:
-            asyncio.get_event_loop().run_until_complete(
-                self.switch_to_tab(self.pages[self.current_page][0])
-            )
+            await self.switch_to_tab(self.pages[self.current_page][0])
 
     async def switch_to_tab(self, tab: ICreativeView):
         if self.current_tab is not None:

@@ -32,6 +32,8 @@ class ImageOverlayButtonRenderer:
         on_press: typing.Callable,
         icon_offset=(0, 0),
     ):
+        assert icon is not None, "icon cannot be None!"
+
         self.backgrounds = None, None, None
         self.icon = icon
         self.icon_offset = icon_offset
@@ -57,21 +59,21 @@ class ImageOverlayButtonRenderer:
             getDefaultTexture().get_pyglet_texture(*self.size, ButtonState.DISABLED),
         )
 
-    def on_mouse_move(self, x, y, dx, dy):
+    async def on_mouse_move(self, x, y, dx, dy):
         self.hovering = self.over_button(x, y)
 
-    def on_key_press(self, button, mod):
+    async def on_key_press(self, button, mod):
         x, y = shared.window.mouse_position
 
         if self.over_button(x, y) and button == key.ENTER:
-            self.press_button()
+            await self.press_button()
 
-    def on_mouse_press(self, x, y, button, mod):
+    async def on_mouse_press(self, x, y, button, mod):
         if self.over_button(x, y) and button == mouse.LEFT:
-            self.press_button()
+            await self.press_button()
 
-    def press_button(self):
-        self.on_press()
+    async def press_button(self):
+        await self.on_press()
 
     def over_button(self, x: int, y: int):
         return (
@@ -105,9 +107,9 @@ RIGHT_ARROW = None
 LEFT_ARROW = None
 
 
-# todo: add to reload handler
 async def reload():
     global ARROW_TEXTURE_SHEET, RIGHT_ARROW, LEFT_ARROW
+
     ARROW_TEXTURE_SHEET = await mcpython.engine.ResourceLoader.read_pyglet_image(
         "minecraft:gui/recipe_book"
     )

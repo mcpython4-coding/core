@@ -421,6 +421,10 @@ class ModLoader:
 
         self.error_builder = logger.TableBuilder()
 
+    def create_mod(self, name: str, version=(0, 0, 0)) -> mcpython.common.mod.Mod.Mod:
+        instance = mcpython.common.mod.Mod.Mod(name, version)
+        return instance
+
     def __call__(
         self, modname: str, event_name: str, *args, **kwargs
     ) -> typing.Callable[

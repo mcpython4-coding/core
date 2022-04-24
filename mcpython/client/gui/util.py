@@ -147,12 +147,12 @@ class CreativeTabScrollbar:
         self.scrollbar_sprite.position = self.get_scrollbar_position()
         self.scrollbar_sprite.draw()
 
-    def activate(self):
+    async def activate(self):
         self.underlying_event_bus.activate()
         self.is_hovered = False
-        self.on_mouse_move(*shared.window.mouse_position, 0, 0)
+        await self.on_mouse_move(*shared.window.mouse_position, 0, 0)
 
-    def deactivate(self):
+    async def deactivate(self):
         self.underlying_event_bus.deactivate()
         self.is_hovered = False
 
