@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 # util functions from manipulating image data and converting between different formats
 import typing
 
+import deprecation
 import PIL.Image
 from mcpython import shared
 
@@ -111,5 +112,6 @@ def int_hex_to_color(color: int) -> typing.Tuple[int, int, int]:
     return hex_to_color("0" * (6 - len(v)) + v)
 
 
+@deprecation.deprecated()
 def resize_image_pyglet(image, size: typing.Tuple[int, int]):
     return to_pyglet_image(to_pillow_image(image).resize(size, PIL.Image.NEAREST))

@@ -12,8 +12,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 from bytecodemanipulation.MutableCodeObject import MutableCodeObject
+from bytecodemanipulation.util import Opcodes
 from mcpython import shared
 from mcpython.engine import logger
+import opcode
 
 
 def applyPillowPatches():
@@ -31,10 +33,10 @@ def applyPillowPatches():
     method = MutableCodeObject.from_function(PIL.Image.Image.resize)
 
     # Security checks so mixin does only apply where it should
-    assert method.code_string[26] == 116
-    assert method.code_string[27] == 2
+    assert method.code_string[30] == Opcodes.LOAD_ATTR, opcode.opname[method.code_string[30]]
+    assert method.code_string[31] == 3, method.code_string[31]
 
-    method.code_string[27] = method.ensureName(
+    method.code_string[31] = method.ensureName(
         "NEAREST"
     )  # LOAD_GLOBAL BICUBIC -> NEAREST
     method.applyPatches()
