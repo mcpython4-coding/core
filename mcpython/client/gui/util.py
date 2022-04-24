@@ -14,14 +14,17 @@ This project is not official by mojang and does not relate to it.
 import math
 import typing
 
+import pyglet
+
 import mcpython.engine
 import mcpython.engine.event.EventBus
 import mcpython.engine.ResourceLoader
 from mcpython import shared
+from mcpython.common.state.WorldListState import MISSING_TEXTURE
 from mcpython.util import texture as texture_util
 from pyglet.window import key, mouse
 
-TAB_TEXTURE = None
+TAB_TEXTURE: typing.Optional[pyglet.image.AbstractImage] = None
 
 
 def getTabTexture():
@@ -48,6 +51,7 @@ class CreativeTabScrollbar:
     """
 
     SCROLLBAR_SIZE = 24, 30
+    SCROLLBAR_SCALE = 2
 
     NON_SELECTED_SCROLLBAR = None
     SELECTED_SCROLLBAR = None
@@ -55,12 +59,8 @@ class CreativeTabScrollbar:
     # todo: bind to reload handler
     @classmethod
     async def reload(cls):
-        cls.NON_SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
-            TAB_TEXTURE.get_region(232, 241, 12, 15), cls.SCROLLBAR_SIZE
-        )
-        cls.SELECTED_SCROLLBAR = texture_util.resize_image_pyglet(
-            TAB_TEXTURE.get_region(244, 241, 12, 15), cls.SCROLLBAR_SIZE
-        )
+        cls.NON_SELECTED_SCROLLBAR = TAB_TEXTURE.get_region(232, 241, 12, 15)
+        cls.SELECTED_SCROLLBAR = TAB_TEXTURE.get_region(244, 241, 12, 15)
 
     def __init__(self, callback: typing.Callable[[int], None], scroll_until: int = 1):
         self.callback = callback
@@ -80,16 +80,18 @@ class CreativeTabScrollbar:
 
         self.is_hovered = False
 
-    def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
+        self.scrollbar_sprite = pyglet.sprite.Sprite(MISSING_TEXTURE)
+        self.scrollbar_sprite.scale = self.SCROLLBAR_SCALE
+
+    async def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
         if buttons & mouse.LEFT:
-            cx, cy = self.get_scrollbar_position()
             if self.is_hovered:
                 # todo: something better here!
-                self.on_mouse_scroll(0, 0, 0, dy)
+                await self.on_mouse_scroll(0, 0, 0, dy)
 
-        self.on_mouse_move(x, y, dx, dy)
+        await self.on_mouse_move(x, y, dx, dy)
 
-    def on_mouse_move(self, x, y, dx, dy):
+    async def on_mouse_move(self, x, y, dx, dy):
         cx, cy = self.get_scrollbar_position()
         if (
             0 <= x - cx <= self.SCROLLBAR_SIZE[0]
@@ -99,31 +101,31 @@ class CreativeTabScrollbar:
         else:
             self.is_hovered = False
 
-    def on_mouse_scroll(self, x, y, sx, sy):
+    async def on_mouse_scroll(self, x, y, sx, sy):
         self.currently_scrolling = max(
             1, min(self.currently_scrolling - math.copysign(1, sy), self.scroll_until)
         )
         self.callback(self.currently_scrolling)
 
-    def on_key_press(self, symbol, modifiers):
+    async def on_key_press(self, symbol, modifiers):
         # todo: while pressing, scroll further
 
         if shared.state_handler.global_key_bind_toggle:
             return
 
         if symbol == key.UP:
-            self.on_mouse_scroll(0, 0, 0, -1)
+            await self.on_mouse_scroll(0, 0, 0, -1)
 
         elif symbol == key.DOWN:
-            self.on_mouse_scroll(0, 0, 0, 1)
+            await self.on_mouse_scroll(0, 0, 0, 1)
 
         elif symbol == key.PAGEUP:
             for _ in range(5):
-                self.on_mouse_scroll(0, 0, 0, -1)
+                await self.on_mouse_scroll(0, 0, 0, -1)
 
         elif symbol == key.PAGEDOWN:
             for _ in range(5):
-                self.on_mouse_scroll(0, 0, 0, 1)
+                await self.on_mouse_scroll(0, 0, 0, 1)
 
     def get_scrollbar_position(self):
         x, y = self.position
@@ -140,9 +142,10 @@ class CreativeTabScrollbar:
         self.position = lower_left
         self.height = height
 
-        (
-            self.NON_SELECTED_SCROLLBAR if self.is_hovered else self.SELECTED_SCROLLBAR
-        ).blit(*self.get_scrollbar_position())
+        # todo: don't update each draw call
+        self.scrollbar_sprite.image = self.NON_SELECTED_SCROLLBAR if self.is_hovered else self.SELECTED_SCROLLBAR
+        self.scrollbar_sprite.position = self.get_scrollbar_position()
+        self.scrollbar_sprite.draw()
 
     def activate(self):
         self.underlying_event_bus.activate()

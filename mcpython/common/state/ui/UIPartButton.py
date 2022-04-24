@@ -50,7 +50,10 @@ async def load_images():
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", load_images
 )
-asyncio.get_event_loop().run_until_complete(load_images())
+try:
+    asyncio.get_event_loop().run_until_complete(load_images())
+except RuntimeError:
+    pass
 
 
 def draw_button(position, size, mode):

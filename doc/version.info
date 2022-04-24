@@ -2036,4 +2036,6 @@ b   [uuk]: fixed issue with fence blocks on the server not working correctly
 G   [github]: released snapshot 22w06a
 
 G   [github]: started development cycle for snapshot <22w??a>
+L   [uuk]: upgraded most of the libraries
+IB  [uuk]: improved internal drawing system in some places
 
