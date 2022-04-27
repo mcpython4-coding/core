@@ -46,6 +46,50 @@ DEFAULT_GENERATION_CONFIG: typing.Dict[str, typing.Any] = {
 }
 
 
+async def spawn_empty_world(player_name="unknown"):
+    if player_name not in shared.world.players:
+        await shared.world.add_player(player_name, dimension=0)
+
+    # setup skin
+    try:
+        await mcpython.util.getskin.download_skin(
+            player_name, shared.build + "/skin.png"
+        )
+    except ValueError:
+        logger.print_exception(
+            "[ERROR] failed to receive skin for '{}'. Falling back to default".format(
+                player_name
+            )
+        )
+        try:
+            (
+                await mcpython.engine.ResourceLoader.read_image(
+                    "assets/minecraft/textures/entity/steve.png"
+                )
+            ).save(shared.build + "/skin.png")
+        except:
+            logger.print_exception(
+                "[FATAL] failed to load fallback skin. This is an serious issue!"
+            )
+            sys.exit(-1)
+
+    await mcpython.common.entity.PlayerEntity.PlayerEntity.RENDERER.reload()
+
+    shared.world.local_player = player_name
+    shared.world.get_player_by_name(player_name).position = 0, 0, 0
+    shared.world.get_player_by_name(player_name).set_gamemode(3)
+    shared.world.config["enable_auto_gen"] = False
+    shared.world.config["enable_world_barrier"] = False
+
+    await shared.world.change_chunks_async(
+        None,
+        mcpython.util.math.position_to_chunk(
+            shared.world.get_player_by_name(player_name).position
+        ),
+        dimension=shared.world.get_dimension(0),
+    )
+
+
 class WorldGenerationProgress(AbstractState.AbstractState):
     NAME = "minecraft:world_generation"
 

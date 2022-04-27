@@ -1,5 +1,5 @@
 from game_tests.runtime.api import Stages
-from mcpython.common.entity.PlayerEntity import PlayerEntity
+from mcpython.engine.rendering import key
 from mcpython.engine.world.AbstractInterface import IDimension
 from mcpython import shared
 
@@ -16,14 +16,22 @@ async def prepare_loading_bindings(mod_name: str):
         tab = CreativeItemTab("Test", ItemStack("minecraft:barrier"))
         CT_MANAGER.add_tab(tab)
 
+    @Stages.bind_for_stage("ingame_setup", mod_name)
+    async def setup_ingame(dimension: IDimension, player):
+        player.set_gamemode(1)
 
-@Stages.bind_for_stage("ingame_setup")
-async def setup_ingame(dimension: IDimension, player: PlayerEntity):
-    player.set_gamemode(1)
+    @Stages.bind_for_stage("ingame_test", mod_name)
+    async def run(dimension: IDimension, player):
+        from mcpython.client.gui.InventoryCreativeTab import CT_MANAGER
 
+        # Simulate an inventory open action
+        await shared.event_handler.call_async("user:keyboard:press", key.E, 0)
 
-@Stages.bind_for_stage("ingame_test")
-async def run(dimension: IDimension, player: PlayerEntity):
-    from mcpython.client.gui.InventoryCreativeTab import CT_MANAGER
-    CT_MANAGER.activate()
+        Stages.Asserts.equal(CT_MANAGER.pages[0][0].name, "Building Blocks")
+        await CT_MANAGER.page_right.press_button()
+
+        Stages.Asserts.equal(CT_MANAGER.current_page, 1)
+        Stages.Asserts.equal(CT_MANAGER.pages[1][0].name, "Test")
+
+        CT_MANAGER.switch_to_tab(CT_MANAGER.pages[1][0])
 

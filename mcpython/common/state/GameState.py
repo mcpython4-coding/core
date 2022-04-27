@@ -80,6 +80,7 @@ class Game(AbstractState.AbstractState):
         elif symbol == key.R:
             await shared.inventory_handler.reload_config()
 
+        # todo: move impl to player
         elif symbol == key.E:
             if (
                 not shared.world.get_active_player().inventory_main

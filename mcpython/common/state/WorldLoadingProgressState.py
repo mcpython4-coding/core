@@ -25,8 +25,8 @@ from mcpython import shared
 from mcpython.engine import logger
 from pyglet.window import key
 
-from ...engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from ..world.SaveFile import UnableToFixDataException
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
+from mcpython.common.world.SaveFile import UnableToFixDataException
 from . import AbstractState
 
 

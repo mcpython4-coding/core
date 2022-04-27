@@ -462,7 +462,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             c = dimension.get_chunk(*chunk, generate=False)
             pyglet.clock.schedule_once(wrap_method(dimension.show_chunk, c), 0.1)
 
-            if not shared.IS_NETWORKING:
+            if not shared.IS_NETWORKING and shared.world.save_file:
                 if not load_immediate:
                     pyglet.clock.schedule_once(
                         lambda _: shared.world.save_file.read(

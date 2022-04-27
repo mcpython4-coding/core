@@ -54,9 +54,7 @@ class EscapeMenu(AbstractState.AbstractState):
                 (0, 150),
                 anchor_window="MM",
                 anchor_button="MM",
-                on_press=lambda *_: asyncio.get_event_loop().run_until_complete(
-                    shared.state_handler.change_state("minecraft:game", immediate=False)
-                ),
+                on_press=self.on_return_to_game_press,
             ),
             UIPartButton.UIPartButton(
                 (250, 25),
@@ -76,6 +74,9 @@ class EscapeMenu(AbstractState.AbstractState):
             ),
             mcpython.client.gui.ContainerRenderingManager.inventory_part,
         ]
+
+    async def on_return_to_game_press(self):
+        await shared.state_handler.change_state("minecraft:game", immediate=False)
 
     def bind_to_eventbus(self):
         self.eventbus.subscribe("user:keyboard:press", self.on_key_press)

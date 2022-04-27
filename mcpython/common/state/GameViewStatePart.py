@@ -198,7 +198,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
         dt = min(dt, 0.2)
 
         if shared.IS_CLIENT:
-            player = shared.world.get_active_player()
+            player = await shared.world.get_active_player_async()
 
             for _ in range(m):
                 await self.physics_update_internal(dt / m, player)
@@ -352,7 +352,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                         self.mouse_press_time = 0
 
     async def on_middle_click_interaction_update(self, dt: float):
-        player = shared.world.get_active_player()
+        player = await shared.world.get_active_player_async()
         if (
             shared.window.exclusive
             and shared.window.mouse_pressing[mouse.MIDDLE]
