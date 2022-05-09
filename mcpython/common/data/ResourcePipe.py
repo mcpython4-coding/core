@@ -21,8 +21,9 @@ import mcpython.common.data.DataPacks
 import mcpython.engine.rendering.util
 from mcpython import shared
 
-from ...engine import logger
+from mcpython.engine import logger
 from .abstract import AbstractReloadListener
+from ...engine.ResourceManagement import LazyResource
 
 
 async def recipe_mapper(modname: str, pathname: str):
@@ -180,11 +181,13 @@ class ResourcePipeHandler:
             await shared.event_handler.call_async("minecraft:data:shuffle:all")
 
         if shared.IS_CLIENT:
-            await shared.inventory_handler.reload_config()  # reloads inventory configuration
+            # await shared.inventory_handler.reload_config()  # reloads inventory configuration
             await shared.model_handler.reload_models()
             mcpython.engine.rendering.util.setup()
 
             # todo: regenerate block item images, regenerate item atlases
+
+        await LazyResource.mark_all_dirty()
 
         # reload entity model files
         await asyncio.gather(
@@ -214,7 +217,7 @@ class ResourcePipeHandler:
             *filter(lambda e: e is not None, map(lambda e: e.on_bake(), self.listeners))
         )
 
-        await shared.inventory_handler.reload_config()
+        # await shared.inventory_handler.reload_config()
 
         await shared.event_handler.call_async("data:reload:work")
 

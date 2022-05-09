@@ -27,6 +27,7 @@ from mcpython.common.container.AbstractContainer import AbstractContainer
 from mcpython.common.world.datafixers.NetworkFixers import ContainerDataFixer
 from mcpython.engine import logger
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer, WriteBuffer
+from mcpython.engine.ResourceManagement import LazyResource
 from mcpython.util.annotation import onlyInClient
 
 
@@ -142,6 +143,11 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
 
         self.created_slots = False
 
+        if self.get_config_file() is not None:
+            self.__config_cache = LazyResource(self.get_config_file(), cache=True, check_for_changes_on_reload=True, callback_on_change=self.reload_config)
+        else:
+            self.__config_cache = None
+
     async def init(self):
         if self.created_slots:
             return
@@ -217,11 +223,9 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         if shared.IS_TEST_ENV:
             return
 
-        if self.get_config_file() is not None:
+        if self.__config_cache is not None:
             try:
-                self.config = await mcpython.engine.ResourceLoader.read_json(
-                    self.get_config_file()
-                )
+                self.config = await self.__config_cache.read_json()
             except:
                 logger.print_exception(
                     "[FATAL] failed to load inventory config file '{}' for inventory {}".format(

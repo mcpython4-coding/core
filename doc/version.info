@@ -2027,4 +2027,6 @@ G   [github]: released snapshot 22w06a
 G   [github]: started development cycle for snapshot <22w??a>
 L   [uuk]: upgraded most of the libraries
 IB  [uuk]: improved internal drawing system in some places
+FI  [uuk]: added new system for caching and reloading resources automatically
+b   [uuk]: fixed inventory reload being invoked twice on client
 

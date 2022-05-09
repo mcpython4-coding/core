@@ -19,6 +19,7 @@ import mcpython.common.mod.ModMcpython
 from mcpython import shared
 
 from . import AbstractState, GameViewStatePart
+from ...engine.ResourceManagement import LazyResource
 
 if shared.IS_CLIENT:
     from pyglet.window import key, mouse
@@ -78,7 +79,7 @@ class Game(AbstractState.AbstractState):
             await shared.state_handler.change_state("minecraft:escape_menu")
 
         elif symbol == key.R:
-            await shared.inventory_handler.reload_config()
+            await LazyResource.mark_all_dirty()
 
         # todo: move impl to player
         elif symbol == key.E:
@@ -100,9 +101,11 @@ class Game(AbstractState.AbstractState):
                     shared.world.get_active_player().inventory_main
                 )
 
+        # todo: make configureable via key configs
         elif symbol == key.T and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.schedule_once(self.open_chat())
 
+        # todo: use the on_text() for this, as the tastatur layout might be different
         elif symbol == key._7 and modifiers & key.MOD_SHIFT and shared.window.exclusive:
             mcpython.common.event.TickHandler.handler.bind(
                 self.open_chat, 2, args=["/"]
