@@ -1,12 +1,25 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
+import asyncio
+import importlib
+
 # todo: somehow, disable user input (and bind ESC to close the window?)
 import json
 import os
-import importlib
-import asyncio
-
 
 local = os.path.dirname(__file__)
-index_file = local+"/runtime/index.json"
+index_file = local + "/runtime/index.json"
 
 with open(index_file, mode="r") as f:
     index = json.load(f)
@@ -18,8 +31,8 @@ from mcpython import shared
 
 
 async def prepare():
-    from mcpython.common.state.WorldGenerationProgressState import spawn_empty_world
     from mcpython.common.data import ResourcePipe
+    from mcpython.common.state.WorldGenerationProgressState import spawn_empty_world
 
     await ResourcePipe.handler.reload_content()
 
@@ -54,19 +67,20 @@ async def cancel_start_menu(handle):
     handle.cancel()
 
 
-mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("stage_handler:loading2main_menu", cancel_start_menu)
+mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+    "stage_handler:loading2main_menu", cancel_start_menu
+)
 
 
 for module in index:
-    importlib.import_module("game_tests.runtime."+module)
+    importlib.import_module("game_tests.runtime." + module)
 
 
 asyncio.get_event_loop().run_until_complete(game_tests.runtime.api.Stages.init_tests())
 
 import mcpython.LaunchWrapper
+
 launch = mcpython.LaunchWrapper.LaunchWrapper()
 
 if __name__ == "__main__":
     launch.full_launch()
-
-

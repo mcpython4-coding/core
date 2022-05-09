@@ -14,11 +14,10 @@ This project is not official by mojang and does not relate to it.
 import math
 import typing
 
-import pyglet
-
 import mcpython.engine
 import mcpython.engine.event.EventBus
 import mcpython.engine.ResourceLoader
+import pyglet
 from mcpython import shared
 from mcpython.common.state.WorldListState import MISSING_TEXTURE
 from mcpython.util import texture as texture_util
@@ -143,7 +142,9 @@ class CreativeTabScrollbar:
         self.height = height
 
         # todo: don't update each draw call
-        self.scrollbar_sprite.image = self.NON_SELECTED_SCROLLBAR if self.is_hovered else self.SELECTED_SCROLLBAR
+        self.scrollbar_sprite.image = (
+            self.NON_SELECTED_SCROLLBAR if self.is_hovered else self.SELECTED_SCROLLBAR
+        )
         self.scrollbar_sprite.position = self.get_scrollbar_position()
         self.scrollbar_sprite.draw()
 

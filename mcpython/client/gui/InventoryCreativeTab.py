@@ -32,8 +32,8 @@ if shared.IS_CLIENT:
     import mcpython.client.rendering.ui.SearchBar
     import pyglet
     from mcpython.client.gui.util import CreativeTabScrollbar, getTabTexture
-    from pyglet.window import key, mouse
     from mcpython.common.state.WorldListState import MISSING_TEXTURE
+    from pyglet.window import key, mouse
 
 
 class ICreativeView(mcpython.client.gui.ContainerRenderer.ContainerRenderer, ABC):
@@ -109,9 +109,11 @@ class CreativeItemTab(ICreativeView):
         if not shared.IS_CLIENT:
             return
 
-        cls.BG_TEXTURE = (await mcpython.engine.ResourceLoader.read_pyglet_image(
-            "minecraft:gui/container/creative_inventory/tab_items"
-        )).get_region(0, 120, 194, 255 - 120)
+        cls.BG_TEXTURE = (
+            await mcpython.engine.ResourceLoader.read_pyglet_image(
+                "minecraft:gui/container/creative_inventory/tab_items"
+            )
+        ).get_region(0, 120, 194, 255 - 120)
 
     def __init__(
         self, name: str, icon: ItemStack, group: ItemGroup = None, linked_tag=None

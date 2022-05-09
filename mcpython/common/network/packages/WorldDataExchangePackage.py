@@ -11,11 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
 import itertools
 import time
 import typing
-
-import asyncio
 
 from mcpython import shared
 from mcpython.common.world.NetworkSyncedImplementation import NetworkSyncedDimension
@@ -283,13 +282,15 @@ class ChunkDataPackage(AbstractPackage):
             block = self.blocks[i]
 
             if block is not None:
-                targets.append(chunk.add_block(
-                    (x, y, z),
-                    block[0],
-                    immediate=False,
-                    block_update=False,
-                    network_sync=False,
-                ))
+                targets.append(
+                    chunk.add_block(
+                        (x, y, z),
+                        block[0],
+                        immediate=False,
+                        block_update=False,
+                        network_sync=False,
+                    )
+                )
 
             i += 1
 
@@ -384,7 +385,9 @@ class ChunkBlockChangePackage(AbstractPackage):
 
         targets = []
         for position, block, update_only in self.data:
-            targets.append(dimension.add_block(
-                position, block, network_sync=False, block_update=False
-            ))
+            targets.append(
+                dimension.add_block(
+                    position, block, network_sync=False, block_update=False
+                )
+            )
         await asyncio.gather(*targets)

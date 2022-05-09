@@ -11,8 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython.common.container.ResourceStack import ItemStack
 from game_tests.util import TestCase
+from mcpython.common.container.ResourceStack import ItemStack
 
 
 class TestAbstractCraftingGridRecipe(TestCase):

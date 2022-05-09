@@ -11,10 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from mcpython import shared
-from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 from game_tests.test_mcpython.fakeHelpers import FakeWorld
 from game_tests.util import TestCase
+from mcpython import shared
+from mcpython.engine.network.util import ReadBuffer, WriteBuffer
 
 shared.IS_TEST_ENV = True
 

@@ -14,9 +14,9 @@ This project is not official by mojang and does not relate to it.
 import random
 import typing
 
+from game_tests.util import TestCase
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
-from game_tests.util import TestCase
 
 shared.IS_TEST_ENV = True
 

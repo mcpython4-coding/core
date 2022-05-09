@@ -13,9 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import skipUnless
 
+from game_tests.util import TestCase
 from mcpython import shared
 from mcpython.util.enums import EnumSide
-from game_tests.util import TestCase
 
 try:
     from pyglet.window import mouse

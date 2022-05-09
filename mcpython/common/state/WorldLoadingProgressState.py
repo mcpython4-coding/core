@@ -22,11 +22,11 @@ import mcpython.common.state.ui.UIPartLabel
 import mcpython.util.math
 import mcpython.util.opengl
 from mcpython import shared
+from mcpython.common.world.SaveFile import UnableToFixDataException
 from mcpython.engine import logger
+from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
 from pyglet.window import key
 
-from mcpython.engine.rendering.RenderingLayerManager import MIDDLE_GROUND
-from mcpython.common.world.SaveFile import UnableToFixDataException
 from . import AbstractState
 
 

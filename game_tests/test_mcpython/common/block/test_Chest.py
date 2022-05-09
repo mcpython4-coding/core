@@ -13,13 +13,13 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import skipUnless
 
-from mcpython import shared
 from game_tests.test_mcpython.fakeHelpers import (
     FakeCraftingHandler,
     FakeInventoryHandler,
     FakeWorld,
 )
 from game_tests.util import TestCase
+from mcpython import shared
 
 try:
     from pyglet.window import key, mouse

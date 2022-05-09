@@ -1,10 +1,22 @@
+"""
+mcpython - a minecraft clone written in python licenced under the MIT-licence 
+(https://github.com/mcpython4-coding/core)
+
+Contributors: uuk, xkcdjerry (inactive)
+
+Based on the game of fogleman (https://github.com/fogleman/Minecraft), licenced under the MIT-licence
+Original game "minecraft" by Mojang Studios (www.minecraft.net), licenced under the EULA
+(https://account.mojang.com/documents/minecraft_eula)
+Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/MinecraftForge) and similar
+
+This project is not official by mojang and does not relate to it.
+"""
+import asyncio
 import sys
 import typing
 
-import asyncio
 import pyglet
 from mcpython import shared
-
 
 GENERAL_BOUND = {"loading_binds"}
 
@@ -36,7 +48,17 @@ class StageManager:
         player = await shared.world.get_active_player_async()
         dimension = shared.world.get_active_dimension()
 
-        await asyncio.gather(*filter(lambda e: e is not None, [e(dimension, player) for e in self.test_bound.setdefault(mod_name, {}).setdefault(stage, [])]))
+        await asyncio.gather(
+            *filter(
+                lambda e: e is not None,
+                [
+                    e(dimension, player)
+                    for e in self.test_bound.setdefault(mod_name, {}).setdefault(
+                        stage, []
+                    )
+                ],
+            )
+        )
 
     def pause_test(self):
         self.halting = True
@@ -54,23 +76,27 @@ class StageManager:
 MANAGER = StageManager()
 
 
-def bind_for_stage(stage_name: str, mod_name: str = None) -> typing.Callable[[typing.Callable], typing.Callable]:
+def bind_for_stage(
+    stage_name: str, mod_name: str = None
+) -> typing.Callable[[typing.Callable], typing.Callable]:
     def annotate(func):
         if stage_name in GENERAL_BOUND:
             MANAGER.bound.setdefault(stage_name, []).append(func)
         else:
-            MANAGER.test_bound.setdefault(mod_name, {}).setdefault(stage_name, []).append(func)
+            MANAGER.test_bound.setdefault(mod_name, {}).setdefault(
+                stage_name, []
+            ).append(func)
         return func
-    
+
     return annotate
 
 
 async def init_tests():
     from mcpython import shared
     from mcpython.common.mod import ModLoader
-    
+
     for i, e in enumerate(MANAGER.bound.setdefault("loading_binds", [])):
-        mod_name = "test_mod_"+str(i+1)
+        mod_name = "test_mod_" + str(i + 1)
         shared.mod_loader.create_mod(mod_name)
         MANAGER.pending_tests.add(mod_name)
 

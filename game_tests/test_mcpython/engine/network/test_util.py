@@ -17,9 +17,10 @@ import string
 import typing
 import uuid
 
+from game_tests.util import TestCase
+
 # These is a list of tests that we can execute on buffers, used for the multi test
 from mcpython.engine.network.util import IBufferSerializeAble
-from game_tests.util import TestCase
 
 MULTI_TEST_POOL: typing.List[
     typing.Tuple[typing.Callable, typing.Callable, typing.Callable]
