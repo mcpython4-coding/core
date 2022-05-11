@@ -25,7 +25,7 @@ result = subprocess.call(
         "unittest",
         "discover",
         "-s",
-        local + "/tests",
+        local + "/game_tests",
         "-t",
         local,
     ],
