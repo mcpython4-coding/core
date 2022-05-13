@@ -1,6 +1,6 @@
 psutil==5.9.0
 Pillow==9.1.0
-pyglet==1.5.23
+pyglet==1.5.24
 opensimplex==0.4.2
 clipboard==0.0.4
 toml==0.10.2
