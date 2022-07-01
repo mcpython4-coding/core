@@ -11,7 +11,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import dis
 import typing
+
+from bytecodemanipulation.Emulator import CURRENT
 
 import mcpython.common.data.serializer.tags.ITagTarget
 import mcpython.engine.event.EventHandler
@@ -63,9 +66,8 @@ class Registry(AbstractRegistry):
         if register_to_shared_registry:
             shared.registry.registries[name] = self
 
-        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "mod_loader:load_finished", self.lock
-        )
+        if not shared.IS_TEST_ENV:
+            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe("mod_loader:load_finished", self.lock)
 
     def __contains__(self, item):
         return item in self.full_entries

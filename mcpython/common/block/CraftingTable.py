@@ -11,8 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import mcpython.common.item.AbstractToolItem
-import mcpython.util.enums
+from mcpython.util.enums import ToolType
 from mcpython import shared
 from pyglet.window import key, mouse
 
@@ -26,7 +25,7 @@ class CraftingTable(AbstractBlock.AbstractBlock):
 
     NAME: str = "minecraft:crafting_table"
     HARDNESS = BLAST_RESISTANCE = 2.5
-    ASSIGNED_TOOLS = {mcpython.util.enums.ToolType.AXE}
+    ASSIGNED_TOOLS = {ToolType.AXE}
 
     async def on_player_interaction(
         self, player, button: int, modifiers: int, hit_position: tuple, itemstack

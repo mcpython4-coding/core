@@ -2002,8 +2002,6 @@ b   [uuk]: fixed redstone wire's redstone API implementation not doing
 F   [uuk]: added functional redstone repeater
 B** [uuk]: fixed TickHandler badly misbehaving when skipping ticks with scheduled functions
            leading into multiple invocations and a incorrect tick counter
-f   [uuk]: added capture_local_static() for forcing a stack local value capture instead of
-           an dynamic linked local
 fI  [uuk]: EventHandler's call_async() is now calling the events really async
 A   [uuk]: EventHandler contains a variant for still invoking subscribers in-order
 IA* [uuk]: TickHandler's order of execution changed a little bit, moving the

@@ -43,6 +43,9 @@ class IBlockStateRenderingTarget:
     ) -> typing.Tuple[float, float, float, float]:
         return 1, 1, 1, 1
 
+    def get_offset(self) -> typing.Tuple[float, float, float]:
+        return 0, 0, 0
+
 
 @onlyInClient()
 class IBlockStateDecoder(mcpython.common.event.api.IRegistryContent, ABC):

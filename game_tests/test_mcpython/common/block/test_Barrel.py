@@ -30,6 +30,9 @@ except ImportError:
 
 
 class TestBarrel(TestCase):
+    def setUp(self) -> None:
+        shared.IS_TEST_ENV = True
+
     def test_module_import(self):
         shared.crafting_handler = FakeCraftingHandler()
 

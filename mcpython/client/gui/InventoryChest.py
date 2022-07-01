@@ -103,6 +103,7 @@ class InventoryChest(mcpython.client.gui.ContainerRenderer.ContainerRenderer):
         shared.inventory_handler.shift_container_handler.container_B = self.slots
 
 
-mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "data:reload:work", InventoryChest.update_texture
-)
+if not shared.IS_TEST_ENV:
+    mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+        "data:reload:work", InventoryChest.update_texture
+    )

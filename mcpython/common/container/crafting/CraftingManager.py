@@ -52,9 +52,10 @@ class CraftingManager:
         self.prepare_for_loading_lock = asyncio.Lock()
         # todo: add locks for other stuff
 
-        mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-            "minecraft:data:shuffle:all", self.shuffle_data
-        )
+        if not shared.IS_TEST_ENV:
+            mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
+                "minecraft:data:shuffle:all", self.shuffle_data
+            )
 
     def shuffle_data(self):
         recipe_groups = {}

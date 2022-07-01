@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import random
 import typing
 from abc import ABC
 
@@ -138,6 +139,10 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     # todo: add a manager for it like mc
     DEBUG_WORLD_BLOCK_STATES: typing.List[dict] = [{}]
 
+    # The range for random offsets, in block units
+    # todo: make arrival to BlockFactory
+    RANDOM_OFFSET_RANGE = 0
+
     DEFAULT_FACE_SOLID = 255
 
     # per default, every block is full
@@ -209,6 +214,14 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
 
         # The redstone power values
         self.injected_redstone_power = [0, 0, 0, 0, 0, 0]
+
+        if self.RANDOM_OFFSET_RANGE > 0:
+            self.offset = (random.random() - .5) * self.RANDOM_OFFSET_RANGE * 2, 0, (random.random() - .5) * self.RANDOM_OFFSET_RANGE * 2
+        else:
+            self.offset = 0, 0, 0
+
+    def get_offset(self) -> typing.Tuple[float, float, float]:
+        return self.offset
 
     @builtins_are_static()
     def is_face_solid(self, face: EnumSide) -> bool:

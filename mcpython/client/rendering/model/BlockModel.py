@@ -32,6 +32,8 @@ from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 from pyglet.graphics.vertexdomain import VertexList
 
+from mcpython.util.math import vector_offset
+
 
 class Model:
     """
@@ -259,9 +261,11 @@ class Model:
         if not isinstance(faces, int):
             raise ValueError(faces)
 
+        offset = instance.get_offset()
+
         collected_data, box_model = self.prepare_rendering_data_multi_face(
             instance,
-            position,
+            vector_offset(position, offset),
             config,
             faces,
             batch=batch,

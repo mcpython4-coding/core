@@ -29,6 +29,7 @@ except ImportError:
 class TestAbstractBlock(TestCase):
     def setUp(self) -> None:
         shared.IS_CLIENT = False
+        shared.IS_TEST_ENV = True
 
     def test_module_import(self):
         import mcpython.common.block.AbstractBlock
@@ -58,8 +59,11 @@ class TestAbstractBlock(TestCase):
         block = TestBlock()
         await block.write_to_network_buffer(buffer)
 
+        data = buffer.get_data()
+        print(data)
+
         block = TestBlock()
-        await block.read_from_network_buffer(ReadBuffer(buffer.get_data()))
+        await block.read_from_network_buffer(ReadBuffer(data))
 
         self.assertTrue(TestBlock.model_state_set)
 
