@@ -17,11 +17,7 @@ import traceback
 import typing
 
 import pyglet.app
-from bytecodemanipulation.OptimiserAnnotations import (
-    builtins_are_static,
-    inline_call,
-    object_method_is_protected,
-)
+from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -86,9 +82,7 @@ class EventBus:
 
         self.sub_buses = []
 
-    @object_method_is_protected("subscribe", lambda: EventBus.subscribe)
-    @object_method_is_protected("setdefault", lambda: dict.setdefault)
-    @object_method_is_protected("append", lambda: list.append)
+    @guarantee_builtin_names_are_protected()
     def subscribe(
         self,
         event_name: str,
@@ -116,8 +110,7 @@ class EventBus:
             (function, args, kwargs, info)
         )
 
-    @object_method_is_protected("remove", lambda: list.remove)
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def unsubscribe(
         self, event_name: str, function: typing.Callable | typing.Awaitable
     ):
@@ -139,9 +132,7 @@ class EventBus:
         if not any_found:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
-    @inline_call(
-        "%._yield_awaitable_or_invoke", lambda: EventBus._yield_awaitable_or_invoke
-    )
+    @guarantee_builtin_names_are_protected()
     async def call_async(self, event_name: str, *args, **kwargs):
         if event_name not in self.event_subscriptions:
             return
@@ -150,9 +141,7 @@ class EventBus:
             *self._yield_awaitable_or_invoke(event_name, *args, **kwargs)
         )
 
-    @inline_call(
-        "%._yield_awaitable_or_invoke", lambda: EventBus._yield_awaitable_or_invoke
-    )
+    @guarantee_builtin_names_are_protected()
     async def call_async_ordered(self, event_name: str, *args, **kwargs):
         if event_name not in self.event_subscriptions:
             return
@@ -160,8 +149,7 @@ class EventBus:
         for target in self._yield_awaitable_or_invoke(event_name, *args, **kwargs):
             await target
 
-    @inline_call("create_optional_async", lambda: create_optional_async)
-    @object_method_is_protected("iscoroutine", lambda: asyncio.iscoroutine)
+    @guarantee_builtin_names_are_protected()
     def _yield_awaitable_or_invoke(self, event_name: str, *args, **kwargs):
         for function, extra_args, extra_kwargs, info in self.event_subscriptions[
             event_name
@@ -190,8 +178,7 @@ class EventBus:
             self.call_cancelable_async(event_name, *args, **kwargs)
         )
 
-    @builtins_are_static()
-    @object_method_is_protected("iscoroutine", lambda: asyncio.iscoroutine)
+    @guarantee_builtin_names_are_protected()
     async def call_until_async(
         self,
         event_name: str,
@@ -275,7 +262,7 @@ class EventBus:
         self.sub_buses.append(bus)
         return bus
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def call_as_stack(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):
@@ -337,7 +324,7 @@ class EventBus:
 
         return result
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def call_as_stack_no_result(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):
@@ -387,7 +374,7 @@ class EventBus:
             except:
                 raise
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     async def call_as_stack_async(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):
@@ -448,7 +435,7 @@ class EventBus:
 
         return result
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     async def call_as_stack_no_result_async(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):

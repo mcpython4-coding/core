@@ -12,8 +12,10 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import opcode
-from bytecodemanipulation.MutableCodeObject import MutableCodeObject
-from bytecodemanipulation.util import Opcodes
+
+from bytecodemanipulation.MutableFunction import Instruction
+from bytecodemanipulation.MutableFunction import MutableFunction
+from bytecodemanipulation.Opcodes import Opcodes
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -30,24 +32,19 @@ def applyPillowPatches():
     logger.println(
         "[MIXIN][INFO] applying mixin to default resize() value of PIL.Image.Image.resize()..."
     )
-    method = MutableCodeObject.from_function(PIL.Image.Image.resize)
+    method = MutableFunction(PIL.Image.Image.resize)
 
     # Security checks so mixin does only apply where it should
-    assert method.code_string[30] == Opcodes.LOAD_ATTR, opcode.opname[
-        method.code_string[30]
-    ]
-    assert method.code_string[31] == 3, method.code_string[31]
+    assert method.instructions[15] == Instruction(method, 15, Opcodes.LOAD_ATTR, "BICUBIC"), method.instructions[15]
 
-    method.code_string[31] = method.ensureName(
-        "NEAREST"
-    )  # LOAD_GLOBAL BICUBIC -> NEAREST
-    method.applyPatches()
+    method.instructions[15].change_arg_value("NEAREST")
+    method.reassign_to_function()
 
 
 def patchAsyncSystem():
     import asyncio.proactor_events
 
-    method = MutableCodeObject.from_function(
+    method = MutableFunction(
         asyncio.proactor_events.BaseProactorEventLoop.close
     )
 
@@ -61,16 +58,14 @@ def removeLaunchWrapperPyVersionCheck():
     logger.println("[MIXIN][INFO] applying mixin to python version checker")
     import mcpython.LaunchWrapper
 
-    method = MutableCodeObject.from_function(
+    method = MutableFunction(
         mcpython.LaunchWrapper.LaunchWrapper.check_py_version
     )
 
-    method.code_string[0] = 100  # LOAD_CONST
-    method.code_string[1] = 0  # None
-    method.code_string[2] = 83  # return value
-    method.code_string[3] = 0
+    method.instructions[0] = Instruction(method, 0, Opcodes.LOAD_CONST, None)
+    method.instructions[1] = Instruction(method, 1, Opcodes.RETURN_VALUE, None)
 
-    method.applyPatches()
+    method.reassign_to_function()
 
 
 patchAsyncSystem()

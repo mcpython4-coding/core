@@ -16,7 +16,7 @@ from abc import ABC
 
 import mcpython.common.event.api
 import mcpython.common.event.Registry
-from bytecodemanipulation.OptimiserAnnotations import run_optimisations, try_optimise
+from bytecodemanipulation.Optimiser import _OptimisationContainer, apply_now
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import ItemDataFixer
 from mcpython.engine import logger
@@ -57,10 +57,11 @@ class AbstractItem(
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
-        try_optimise()(cls.__init__)
-        try_optimise()(cls.draw_in_inventory)
-        try_optimise()(cls.on_block_broken_with)
-        run_optimisations()
+        apply_now()(cls.__init__)
+        apply_now()(cls.__init__)
+        apply_now()(cls.draw_in_inventory)
+        apply_now()(cls.on_block_broken_with)
+        _OptimisationContainer.apply_all()
 
     def __init__(self):
         super().__init__()

@@ -11,6 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import itertools
 import os
 import typing
 
@@ -20,7 +21,9 @@ import mcpython.engine.rendering.util
 import mcpython.engine.world.AbstractInterface
 import mcpython.util.math
 import pyglet
-from bytecodemanipulation.OptimiserAnnotations import forced_attribute_type
+
+from bytecodemanipulation.Optimiser import cache_global_name
+from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
 from mcpython.common.entity.ItemEntity import ItemEntity
@@ -129,12 +132,6 @@ if not shared.IS_TEST_ENV:
     )
 
 
-@forced_attribute_type("id", lambda: int)
-@forced_attribute_type("chunks", lambda: dict)
-@forced_attribute_type("name", lambda: str)
-@forced_attribute_type("world_generation_config_objects", lambda: dict)
-@forced_attribute_type("batches", lambda: list)
-@forced_attribute_type("height_range", lambda: tuple)
 class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     """
     Class holding a whole dimension
@@ -148,6 +145,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     # normal, alpha; mods are free to add more; todo: add better API
     BATCH_COUNT = 2
 
+    @guarantee_builtin_names_are_protected()
     def __init__(
         self,
         world_in: mcpython.engine.world.AbstractInterface.IWorld,
@@ -182,6 +180,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
 
         self.height_range = (0, 255)
 
+    @guarantee_builtin_names_are_protected()
     def show_chunk(
         self,
         chunk: typing.Union[
@@ -201,6 +200,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
 
         chunk.show()
 
+    @guarantee_builtin_names_are_protected()
     def hide_chunk(
         self,
         chunk: typing.Union[
@@ -251,6 +251,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     def get_dimension_id(self):
         return self.id
 
+    @guarantee_builtin_names_are_protected()
     def get_chunk(
         self,
         cx: typing.Union[int, typing.Tuple[int, int]],
@@ -286,6 +287,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
 
         return self.chunks[(cx, cz)]
 
+    @guarantee_builtin_names_are_protected()
     def get_chunk_for_position(
         self,
         position: typing.Union[
@@ -370,6 +372,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     def hide_block(self, position, immediate=True):
         self.get_chunk_for_position(position).hide_block(position, immediate=immediate)
 
+    @guarantee_builtin_names_are_protected()
     def draw(self):
         self.batches[0].draw()
 
@@ -380,14 +383,14 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
             shared.world.get_active_player().position
         )
         pad = 4
-        for dx in range(-pad, pad + 1):
-            for dz in range(-pad, pad + 1):
-                cx, cz = x + dx, z + dz
-                chunk = self.get_chunk(cx, cz, create=False)
-                if chunk is not None and isinstance(
-                    chunk, mcpython.common.world.Chunk.Chunk
-                ):
-                    chunk.draw()
+
+        for dx, dz in itertools.product(range(-pad, pad + 1), repeat=2):
+            cx, cz = x + dx, z + dz
+            chunk = self.get_chunk(cx, cz, create=False)
+            if chunk is not None and isinstance(
+                chunk, mcpython.common.world.Chunk.Chunk
+            ):
+                chunk.draw()
 
         shared.rendering_helper.disableAlpha()
 
@@ -416,6 +419,7 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     def get_name(self) -> str:
         return self.name
 
+    @cache_global_name("os", lambda: os)
     def dump_debug_maps_all_chunks(self, file_formatter: str):
         os.makedirs(os.path.dirname(file_formatter.format("test")), exist_ok=True)
         for pos, chunk in self.chunks.items():
@@ -424,6 +428,8 @@ class Dimension(mcpython.engine.world.AbstractInterface.IDimension):
     def chunk_iterator(self):
         return self.chunks.values()
 
+    @cache_global_name("shared", lambda: shared)
+    @cache_global_name("ItemEntity", lambda: ItemEntity)
     def spawn_itemstack_in_world(
         self,
         itemstack: ItemStack,

@@ -19,6 +19,8 @@ import sys
 import types
 import typing
 
+import bytecodemanipulation.MutableFunction
+
 import mcpython.engine.world.AbstractInterface
 import mcpython.util
 import mcpython.util.enums

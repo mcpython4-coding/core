@@ -18,7 +18,6 @@ from abc import ABC
 
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.enums
-from bytecodemanipulation.OptimiserAnnotations import forced_attribute_type
 from mcpython.engine.network.util import IBufferSerializeAble, ReadBuffer
 from mcpython.util.annotation import onlyInClient
 
@@ -89,11 +88,6 @@ class ISupportWorldInterface(ABC):
         raise NotImplementedError
 
 
-@forced_attribute_type("_world", lambda: dict)
-@forced_attribute_type("_positions_updated_since_last_save", lambda: set)
-@forced_attribute_type("entity", lambda: set)
-@forced_attribute_type("chunk_loaded_list", lambda: tuple)
-@forced_attribute_type("data_maps", lambda: dict)
 class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
     """
     Abstract class for chunks
@@ -463,8 +457,6 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
         return hash((self.get_dimension().get_name(), self.get_position()))
 
 
-@forced_attribute_type("chunks", lambda: dict)
-@forced_attribute_type("loaded", lambda: bool)
 class IDimension(ISupportWorldInterface, ABC):
     def __init__(self):
         self.chunks = {}

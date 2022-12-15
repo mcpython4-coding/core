@@ -18,12 +18,9 @@ import mcpython.client.rendering.model.BoxModel
 import mcpython.client.texture.TextureAtlas as TextureAtlas
 import mcpython.engine.ResourceLoader
 import pyglet
-from bytecodemanipulation.OptimiserAnnotations import (
-    builtins_are_static,
-    forced_arg_type,
-    inline_call,
-    name_is_static,
-    object_method_is_protected,
+from bytecodemanipulation.Optimiser import (
+    guarantee_builtin_names_are_protected,
+    cache_global_name,
 )
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
@@ -66,11 +63,7 @@ class Model:
         self.texture_atlas = None
         self.box_models = []
 
-    @builtins_are_static()
-    @inline_call("%.parse_parent_data", lambda: Model.parse_parent_data)
-    @inline_call("%.parse_texture", lambda: Model.parse_texture)
-    @object_method_is_protected("bake_textures", lambda: Model.bake_textures)
-    @object_method_is_protected("append", lambda: list.append)
+    @guarantee_builtin_names_are_protected()
     async def parse_from_data(self, data: dict):
         self.parent = data["parent"] if "parent" in data else None
 
@@ -103,10 +96,7 @@ class Model:
 
         return self
 
-    @builtins_are_static()
-    @object_method_is_protected(
-        "add_image_files", lambda: TextureAtlas.handler.add_image_files
-    )
+    @guarantee_builtin_names_are_protected()
     async def bake_textures(self):
         """
         Informs the texture bake system about our new textures we want to be in there
@@ -123,8 +113,8 @@ class Model:
 
             self.texture_atlas = add[i][1]
 
-    @builtins_are_static()
-    @object_method_is_protected("println", lambda: logger.println)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("logger", lambda: logger)
     async def parse_parent_data(self):
         if ":" not in self.parent:
             self.parent = "minecraft:" + self.parent
@@ -152,8 +142,8 @@ class Model:
             self.used_textures = self.parent.used_textures.copy()
             self.texture_names = self.parent.texture_names.copy()
 
-    @builtins_are_static()
-    @object_method_is_protected("println", lambda: logger.println)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("logger", lambda: logger)
     async def parse_texture(self, texture: str, name: str):
         if not isinstance(texture, str):
             logger.println("invalid texture", texture, name, self.name)
@@ -180,8 +170,8 @@ class Model:
             self.drawable = False
             self.texture_names[name] = texture
 
-    @builtins_are_static()
-    @object_method_is_protected("println", lambda: logger.println)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("logger", lambda: logger)
     def prepare_rendering_data_multi_face(
         self,
         instance: IBlockStateRenderingTarget,
@@ -199,6 +189,7 @@ class Model:
     ]:
         """
         Collects the vertex and texture data for a block at the given position with given configuration
+
         :param instance: the instance to draw
         :param position: the offset position
         :param config: the configuration
@@ -240,11 +231,7 @@ class Model:
 
         return collected_data, self.box_models[0]
 
-    @builtins_are_static()
-    @inline_call(
-        "prepare_rendering_data_multi_face",
-        lambda: Model.prepare_rendering_data_multi_face,
-    )
+    @guarantee_builtin_names_are_protected()
     def add_faces_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
@@ -265,7 +252,7 @@ class Model:
 
         collected_data, box_model = self.prepare_rendering_data_multi_face(
             instance,
-            vector_offset(position, offset),
+            typing.cast(typing.Tuple[float, float, float], vector_offset(position, offset)),
             config,
             faces,
             batch=batch,
@@ -278,12 +265,8 @@ class Model:
             box_model.add_prepared_data_to_batch(collected_data, batch)
         )
 
-    @builtins_are_static()
-    @name_is_static("EnumSide", lambda: EnumSide)
-    @inline_call(
-        "prepare_rendering_data_multi_face",
-        lambda: Model.prepare_rendering_data_multi_face,
-    )
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("EnumSide", lambda: EnumSide)
     def draw_face(
         self,
         instance,
@@ -311,13 +294,13 @@ class Model:
 
         box_model.draw_prepared_data(collected_data)
 
-    @builtins_are_static()
-    @forced_arg_type("name", lambda: str, may_subclass=False)
+    @guarantee_builtin_names_are_protected()
     def get_texture_position(
         self, name: str
     ) -> typing.Optional[typing.Tuple[int, int]]:
         """
         Helper method resolving a texture name to texture coords
+
         :param name: the name of the texture
         :return: a tuple of x, y of the texture location, defaults to 0, 0 in case of an error
         """

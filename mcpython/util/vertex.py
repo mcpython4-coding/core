@@ -15,7 +15,7 @@ import itertools
 import typing
 import weakref
 
-from bytecodemanipulation.OptimiserAnnotations import builtins_are_static, try_optimise
+from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
 from mcpython.util.math import rotate_point
 
 # This defines how cubes look; do not change!
@@ -30,8 +30,7 @@ CUBE_MAP = (
 )
 
 
-@try_optimise()
-@builtins_are_static()
+@guarantee_builtin_names_are_protected()
 def calculate_default(size: typing.Tuple[float, float, float]):
     size = tuple(e / 2 for e in size)
 
@@ -40,14 +39,12 @@ def calculate_default(size: typing.Tuple[float, float, float]):
     return (tuple(CORNERS[i] for i in e) for e in CUBE_MAP)
 
 
-@try_optimise()
-@builtins_are_static()
+@guarantee_builtin_names_are_protected()
 def offset_data(data, offset: typing.Tuple[float, float, float]):
     return ((tuple(e[i] + offset[i] for i in range(3)) for e in x) for x in data)
 
 
-@try_optimise()
-@builtins_are_static()
+@guarantee_builtin_names_are_protected()
 def rotate_data(
     data,
     origin: typing.Tuple[float, float, float],
@@ -56,8 +53,7 @@ def rotate_data(
     return ((rotate_point(e, origin, rotation) for e in x) for x in data)
 
 
-@try_optimise()
-@builtins_are_static()
+@guarantee_builtin_names_are_protected()
 def scale_data(data, scale: float):
     return ((tuple(e * scale for e in x) for x in y) for y in data)
 
@@ -81,7 +77,7 @@ class VertexProvider:
     SHARED = weakref.WeakValueDictionary()
 
     @classmethod
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def create(
         cls,
         offset: typing.Tuple[float, float, float],
@@ -103,7 +99,7 @@ class VertexProvider:
             key, cls(offset, size, base_rotation_center, base_rotation)
         )
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def __init__(
         self,
         offset: typing.Tuple[float, float, float],
@@ -135,7 +131,7 @@ class VertexProvider:
             typing.Iterable,
         ] = {}
 
-    @try_optimise()
+    @guarantee_builtin_names_are_protected()
     def get_vertex_data(
         self,
         element_position: typing.Tuple[float, float, float],
@@ -154,7 +150,7 @@ class VertexProvider:
             )
         )
 
-    @try_optimise()
+    @guarantee_builtin_names_are_protected()
     def ensure_prepared_rotation(
         self,
         rotation: typing.Tuple[float, float, float],

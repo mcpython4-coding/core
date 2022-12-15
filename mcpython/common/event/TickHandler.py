@@ -21,13 +21,9 @@ import mcpython.common.data.DataPacks
 import mcpython.common.state.GameViewStatePart
 import mcpython.util.math
 import pyglet
-from bytecodemanipulation.OptimiserAnnotations import (
-    access_once,
-    access_static,
-    builtins_are_static,
-    constant_arg,
-    inline_call,
-    object_method_is_protected,
+from bytecodemanipulation.Optimiser import (
+    guarantee_builtin_names_are_protected,
+    cache_global_name,
 )
 from mcpython import shared
 from mcpython.engine import logger
@@ -60,10 +56,8 @@ class TickHandler:
     def schedule_tick(self, dt: float):
         asyncio.get_event_loop().run_until_complete(self.tick(dt))
 
-    @access_static("shared.IS_CLIENT")
-    @access_once("%.enable_tick_skipping")
-    @inline_call("%._execute_tick", lambda: TickHandler._execute_tick)
-    @builtins_are_static()
+    @cache_global_name("shared")
+    @guarantee_builtin_names_are_protected()
     async def tick(self, dt: float):
         """
         Execute ticks
@@ -108,7 +102,7 @@ class TickHandler:
         if self.enable_random_ticks:
             await self.send_random_ticks(0)
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     async def _execute_tick(self):
         if self.active_tick in self.tick_array:
             for ticket_id, function, args, kwargs, ticket_update in self.tick_array[
@@ -154,7 +148,6 @@ class TickHandler:
                     ),
                 )
 
-    @object_method_is_protected("append", lambda: list.append)
     def schedule_once(
         self, function: typing.Callable | typing.Coroutine, *args, **kwargs
     ):
@@ -165,10 +158,8 @@ class TickHandler:
         """
         self.execute_array.append((function, args, kwargs))
 
-    @constant_arg("args")
-    @constant_arg("kwargs")
-    @object_method_is_protected("append", lambda: list.append)
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
+    @typing.final
     def bind(
         self,
         function: typing.Callable | typing.Coroutine,
@@ -207,13 +198,11 @@ class TickHandler:
             (ticket_id, function, args, kwargs, ticket_function)
         )
 
-    @inline_call("%.bind", lambda: TickHandler.bind)
-    @object_method_is_protected("bind", lambda: TickHandler.bind)
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)
 
-    @access_static("shared.IS_CLIENT")
-    @builtins_are_static()
+    @cache_global_name("shared", lambda: shared)
+    @guarantee_builtin_names_are_protected()
     async def send_random_ticks(self, *args, **kwargs):
         # todo: when networking, only on server & walk over all players!
         if not shared.IS_CLIENT:

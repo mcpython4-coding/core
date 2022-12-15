@@ -11,10 +11,8 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import dis
 import typing
 
-from bytecodemanipulation.Emulator import CURRENT
 
 import mcpython.common.data.serializer.tags.ITagTarget
 import mcpython.engine.event.EventHandler

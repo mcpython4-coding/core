@@ -20,13 +20,10 @@ import mcpython.common.block.AbstractBlock as Block
 import mcpython.engine.world.AbstractInterface
 import mcpython.server.worldgen.map.AbstractChunkInfoMap
 import mcpython.util.math
-from bytecodemanipulation.OptimiserAnnotations import (
-    builtins_are_static,
-    constant_operation,
-    forced_attribute_type,
-    name_is_static,
-    object_method_is_protected,
-    returns_argument,
+from bytecodemanipulation.Optimiser import apply_now
+from bytecodemanipulation.Optimiser import (
+    guarantee_builtin_names_are_protected,
+    cache_global_name,
 )
 from mcpython import shared
 from mcpython.common.container.ResourceStack import ItemStack
@@ -37,12 +34,6 @@ from mcpython.util.enums import EnumSide
 from mcpython.util.math import normalize, position_to_chunk
 
 
-@forced_attribute_type("position", lambda: tuple)
-@forced_attribute_type("is_ready", lambda: bool)
-@forced_attribute_type("visible", lambda: bool)
-@forced_attribute_type("loaded", lambda: bool)
-@forced_attribute_type("generated", lambda: bool)
-@forced_attribute_type("dirty", lambda: bool)
 class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     """
     Default representation of a chunk in the world
@@ -54,7 +45,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     now = datetime.datetime.now()  # when is now?
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def __init__(
         self,
         dimension: mcpython.engine.world.AbstractInterface.IDimension,
@@ -107,7 +98,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         await ChunkSerializer.read_from_buffer(buffer, self, immediate=immediate)
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def entity_iterator(self) -> typing.Iterable:
         return tuple(self.entities)
 
@@ -124,18 +115,16 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             self, "minecraft:chunk", dimension=self.get_dimension(), chunk=self.position
         )
 
-    @returns_argument()
     def mark_dirty(self):
         self.dirty = True
         return self
 
-    @constant_operation()
     def get_dimension(self) -> mcpython.engine.world.AbstractInterface.IDimension:
         return self.dimension
 
-    @constant_operation()
+    @apply_now()
     def get_position(self) -> typing.Tuple[int, int]:
-        return self.position
+        return typing.cast(typing.Tuple[int, int], self.position)
 
     def get_maximum_y_coordinate_from_generation(
         self, x: int, z: int, default=None
@@ -152,8 +141,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         height_map = self.get_map("minecraft:height_map")
         return height_map.get_at_xz(x, z)[0][1] if (x, z) in height_map else default
 
-    @builtins_are_static()
-    @name_is_static("shared", lambda: shared)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("shared", lambda: shared)
     def draw(self):
         """
         Will draw the chunk with the content for it
@@ -185,9 +174,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     ALL_FACES_EXPOSED = {x: True for x in EnumSide.iterate()}
 
     @deprecation.deprecated()
-    @builtins_are_static()
-    @name_is_static("EnumSide", lambda: EnumSide)
-    @name_is_static("position_to_chunk", lambda: position_to_chunk)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("EnumSide", lambda: EnumSide)
+    @cache_global_name("position_to_chunk", lambda: position_to_chunk)
     def exposed_faces(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Dict[str, bool]:
@@ -235,9 +224,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         return faces
 
     @deprecation.deprecated()
-    @builtins_are_static()
-    @name_is_static("EnumSide", lambda: EnumSide)
-    @name_is_static("position_to_chunk", lambda: position_to_chunk)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("EnumSide", lambda: EnumSide)
+    @cache_global_name("position_to_chunk", lambda: position_to_chunk)
     def exposed_faces_list(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.List[bool]:
@@ -278,9 +267,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
-    @builtins_are_static()
-    @name_is_static("EnumSide", lambda: EnumSide)
-    @name_is_static("position_to_chunk", lambda: position_to_chunk)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("EnumSide", lambda: EnumSide)
+    @cache_global_name("position_to_chunk", lambda: position_to_chunk)
     def exposed_faces_flag(self, block: str | Block.AbstractBlock | None) -> int:
 
         if block is None or isinstance(block, str):
@@ -317,8 +306,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return faces
 
-    @builtins_are_static()
-    @name_is_static("EnumSide", lambda: EnumSide)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("EnumSide", lambda: EnumSide)
     def exposed_faces_iterator(
         self, position: typing.Tuple[int, int, int]
     ) -> typing.Iterator[EnumSide]:
@@ -376,8 +365,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             self.add_block(*args, **kwargs)
         )
 
-    @builtins_are_static()
-    @name_is_static("normalize", lambda: normalize)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("normalize", lambda: normalize)
     async def add_block(
         self,
         position: tuple,
@@ -482,9 +471,8 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         return block
 
-    @builtins_are_static()
-    @object_method_is_protected("append", lambda: list.append)
-    @name_is_static("EnumSide", lambda: EnumSide)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("EnumSide", lambda: EnumSide)
     async def on_block_updated(
         self, position: typing.Tuple[int, int, int], include_itself=True
     ):
@@ -510,8 +498,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         await asyncio.gather(*to_invoke)
 
-    @builtins_are_static()
-    @object_method_is_protected("Block", lambda: Block)
+    @guarantee_builtin_names_are_protected()
     async def remove_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -559,9 +546,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         self.mark_position_dirty(position)
         self.mark_dirty()
 
-    @builtins_are_static()
-    @name_is_static("EnmSide", lambda: EnumSide)
-    @name_is_static("shared", lambda: shared)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("EnmSide", lambda: EnumSide)
+    @cache_global_name("shared", lambda: shared)
     def check_neighbors(self, position: typing.Tuple[int, int, int]):
         """
         Check all blocks surrounding `position` and ensure their visual
@@ -585,9 +572,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
             block.face_info.update(True)
 
-    @builtins_are_static()
-    @name_is_static("Block", lambda: Block)
-    @name_is_static("shared", lambda: shared)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("Block", lambda: Block)
+    @cache_global_name("shared", lambda: shared)
     def show_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -618,9 +605,9 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         self.mark_dirty()
 
-    @builtins_are_static()
-    @name_is_static("Block", lambda: Block)
-    @name_is_static("shared", lambda: shared)
+    @guarantee_builtin_names_are_protected()
+    @cache_global_name("Block", lambda: Block)
+    @cache_global_name("shared", lambda: shared)
     def hide_block(
         self,
         position: typing.Union[typing.Tuple[int, int, int], Block.AbstractBlock],
@@ -650,7 +637,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
         self.mark_dirty()
 
-    @name_is_static("shared", lambda: shared)
+    @cache_global_name("shared", lambda: shared)
     def show(self, force=False):
         """
         Will show the chunk
@@ -667,7 +654,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         self.update_visible()
         self.mark_dirty()
 
-    @name_is_static("shared", lambda: shared)
+    @cache_global_name("shared", lambda: shared)
     def hide(self, force=False):
         """
         will hide the chunk
@@ -683,11 +670,11 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         self.hide_all()
         self.mark_dirty()
 
-    @name_is_static("shared", lambda: shared)
+    @cache_global_name("shared", lambda: shared)
     def is_visible(self) -> bool:
         return self.visible and shared.IS_CLIENT
 
-    @name_is_static("shared", lambda: shared)
+    @cache_global_name("shared", lambda: shared)
     def update_visible_block(self, position: typing.Tuple[int, int, int], hide=True):
         if not shared.IS_CLIENT:
             return
@@ -699,12 +686,11 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
         elif hide:
             self.show_block(position)
 
-    @builtins_are_static()
+    @guarantee_builtin_names_are_protected()
     def exposed(self, position: typing.Tuple[int, int, int]) -> bool:
         return any(self.exposed_faces(position).values())
 
-    @object_method_is_protected("keys", lambda: dict.keys)
-    @name_is_static("shared", lambda: shared)
+    @cache_global_name("shared", lambda: shared)
     def update_visible(self, hide=True, immediate=False):
         """
         Will update all visible of all blocks of the chunk
@@ -725,7 +711,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
             for position in self._world.keys():
                 self.update_visible_block(position, hide=hide)
 
-    @name_is_static("shared", lambda: shared)
+    @cache_global_name("shared", lambda: shared)
     def hide_all(self, immediate=True):
         """
         Will hide all blocks in the chunk
@@ -776,8 +762,6 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
     def get_entities(self):
         return self.entities
 
-    @object_method_is_protected("format", lambda: str.format)
-    @object_method_is_protected("values", lambda: dict.values)
     def dump_debug_maps(self, file_formatter: str):
         for m in self.data_maps.values():
             m.dump_debug_info(file_formatter.format(m.NAME.replace(":", "_")))

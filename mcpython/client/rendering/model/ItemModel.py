@@ -15,7 +15,8 @@ import mcpython.client.rendering.model.BoxModel
 import mcpython.common.item.ItemTextureAtlas
 import mcpython.engine.rendering.BatchHelper
 import mcpython.engine.ResourceLoader
-from bytecodemanipulation.OptimiserAnnotations import try_optimise
+from bytecodemanipulation.Optimiser import apply_now
+from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
 from mcpython import shared
 from mcpython.client.rendering.model.api import IItemModelLoader
 from mcpython.client.texture import TextureAtlas
@@ -164,11 +165,12 @@ class ItemModel:
         self.overrides.append((predicate, replacement))
         return self
 
-    @try_optimise()
+    @guarantee_builtin_names_are_protected()
     async def bake(self, helper: "ItemModelHandler"):
         for i, texture in enumerate(self.layers):
             if texture is None:
                 continue
+
             helper.atlas.add_file("{}#:{}".format(self.name, i), texture)
 
     def add_to_batch(
@@ -213,9 +215,10 @@ class ItemModelHandler:
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])
             self.models[item] = await ItemModel.from_file(file, item)
 
-    @try_optimise()
+    @guarantee_builtin_names_are_protected()
     async def bake(self):
         self.atlas.load()
+
         for model in self.models.values():
             try:
                 await model.bake(self)

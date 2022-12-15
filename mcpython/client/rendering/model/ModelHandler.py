@@ -25,11 +25,9 @@ import mcpython.client.rendering.model.BlockState
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
-from bytecodemanipulation.OptimiserAnnotations import (
-    forced_attribute_type,
-    name_is_static,
-    object_method_is_protected,
-    try_optimise,
+from bytecodemanipulation.Optimiser import (
+    guarantee_builtin_names_are_protected,
+    cache_global_name,
 )
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
@@ -156,10 +154,12 @@ class ModelHandler:
             self.raw_models.append((data, name))
 
     async def build(self, immediate=False):
-        [
-            await self.let_subscribe_to_build(model, immediate=immediate)
-            for model in self.used_models
-        ]
+        await asyncio.gather(
+            *(
+                self.let_subscribe_to_build(model, immediate=immediate)
+                for model in self.used_models
+            )
+        )
 
     async def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
@@ -222,13 +222,17 @@ class ModelHandler:
     async def process_models(self, immediate=False):
         try:
             sorted_models = mcpython.util.math.topological_sort(self.dependence_list)
+
             if "minecraft:block/block" in sorted_models:
                 sorted_models.remove("minecraft:block/block")
+
             if "block/block" in sorted_models:
                 sorted_models.remove("block/block")
+
         except:
             logger.println(self.found_models, "\n", self.dependence_list)
             logger.print_exception("top-sort error during sorting models")
+
             import mcpython.common.state.LoadingExceptionViewState as StateLoadingException
             from mcpython.common.mod.util import LoadingInterruptException
 
@@ -239,7 +243,12 @@ class ModelHandler:
 
         self.dependence_list.clear()  # decrease memory usage
 
-        await asyncio.gather(*(self.load_model(x) for x in sorted_models))
+        await asyncio.gather(
+            *(
+                self.load_model(x)
+                for x in sorted_models
+            )
+        )
 
     async def load_model(self, name: str):
         if ":" not in name:
@@ -416,8 +425,7 @@ class ModelHandler:
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)
 
-    @try_optimise()
-    @name_is_static("logger", lambda: logger)
+    @cache_global_name("logger", lambda: logger)
     async def reload_models(self):
         logger.println("deleting content of models...")
 

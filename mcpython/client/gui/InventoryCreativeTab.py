@@ -138,7 +138,7 @@ class CreativeItemTab(ICreativeView):
         if shared.IS_CLIENT:
             self.scroll_bar = CreativeTabScrollbar(self.set_scrolling)
 
-            self.bg_sprite = pyglet.sprite.Sprite(self.BG_TEXTURE)
+            self.bg_sprite = pyglet.sprite.Sprite(self.BG_TEXTURE if self.BG_TEXTURE else MISSING_TEXTURE)
             self.bg_sprite.scale = self.BG_SCALE
 
     def set_scrolling(self, progress: int):

@@ -23,9 +23,9 @@ import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
-from bytecodemanipulation.OptimiserAnnotations import (
-    builtins_are_static,
-    forced_arg_type,
+from bytecodemanipulation.Optimiser import (
+    guarantee_builtin_names_are_protected,
+    cache_global_name,
 )
 from mcpython import shared
 from mcpython.client.rendering.model.api import (
@@ -60,7 +60,6 @@ class MultiPartDecoder(IBlockStateDecoder):
     NAME = "minecraft:multipart_blockstate_loader"
 
     @classmethod
-    @forced_arg_type("data", lambda: dict, may_subclass=False)
     def is_valid(cls, data: dict) -> bool:
         return (
             "multipart" in data
@@ -73,8 +72,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         self.parent = None
         self.model_alias = None
 
-    @builtins_are_static()
-    @forced_arg_type("data", lambda: dict, may_subclass=False)
+    @guarantee_builtin_names_are_protected()
     def parse_data(self, data: dict):
         self.data = data
 
