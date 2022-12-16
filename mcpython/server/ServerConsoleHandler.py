@@ -26,7 +26,7 @@ class ServerConsoleHandler:
         while self.running:
             command = input(">>> ")
             if command.startswith("/"):
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     shared.command_parser.run(command)
                 )
             else:

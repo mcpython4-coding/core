@@ -155,7 +155,7 @@ class Chest(
         ):
             if self.loot_table_link:
                 self.inventory.insert_items(
-                    shared.loot_table_handler.roll(
+                    await shared.loot_table_handler.roll(
                         self.loot_table_link, block=self, position=self.position
                     ),
                     random_check_order=True,

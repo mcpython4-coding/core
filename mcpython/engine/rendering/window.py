@@ -179,8 +179,7 @@ class Window(
 
         if shared.IS_CLIENT:
             self.CROSSHAIRS_TEXTURE = mcpython.util.texture.to_pyglet_image(
-                asyncio.get_event_loop()
-                .run_until_complete(
+                asyncio.run(
                     mcpython.engine.ResourceLoader.read_image("gui/icons")
                 )
                 .crop((0, 0, 15, 15))
@@ -257,7 +256,7 @@ class Window(
             type(x) == mcpython.common.state.GameViewStatePart.GameView
             for x in shared.state_handler.active_state.parts
         ):
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 shared.world_generation_handler.task_handler.process_tasks(timer=0.02)
             )
 
@@ -555,18 +554,18 @@ class Window(
 
         if shared.world.world_loaded:
             # have we a world which should be saved?
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 shared.world.get_active_player().inventory_main.remove_items_from_crafting()
             )
 
             if shared.IS_NETWORKING:
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     shared.NETWORK_MANAGER.disconnect()
                 )
             else:
                 # make sure that file size is as small as possible
                 try:
-                    asyncio.get_event_loop().run_until_complete(
+                    asyncio.run(
                         shared.world.save_file.save_world_async(override=True)
                     )
                 except KeyboardInterrupt:

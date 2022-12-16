@@ -76,7 +76,7 @@ for module in index:
     importlib.import_module("game_tests.runtime." + module)
 
 
-asyncio.get_event_loop().run_until_complete(game_tests.runtime.api.Stages.init_tests())
+asyncio.run(game_tests.runtime.api.Stages.init_tests())
 
 import mcpython.LaunchWrapper
 

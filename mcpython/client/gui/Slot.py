@@ -34,7 +34,7 @@ SLOT_WIDTH = 32
 
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
     PYGLET_IMAGE_HOVERING = pyglet.sprite.Sprite(
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             mcpython.engine.ResourceLoader.read_pyglet_image(
                 "assets/minecraft/textures/gui/hotbar_selected.png"
             )

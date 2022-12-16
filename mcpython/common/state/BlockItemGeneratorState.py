@@ -117,6 +117,8 @@ class BlockItemGenerator(AbstractState.AbstractState):
     async def activate(self):
         await super().activate()
 
+        logger.println("[BLOCK ITEM GENERATOR] starting up...")
+
         pyglet.clock.schedule_interval(self.tick, 1 / 400)
 
         world = shared.world
@@ -146,8 +148,11 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         # Have we nothing to do -> We can stop here
         if len(self.tasks) == 0:
+            logger.println("[BLOCK ITEM GENERATOR] exiting, everything up-to-date")
             await self.close()
             return
+
+        logger.println(f"[BLOCK ITEM GENERATOR] found {len(self.tasks)} block targets")
 
         # We want to hide this error messages
         # todo: add command line option to disable
@@ -166,6 +171,8 @@ class BlockItemGenerator(AbstractState.AbstractState):
 
         # Which block we are currently working on
         self.block_index = -1
+
+        logger.println(f"[BLOCK ITEM GENERATOR] setting up initial target")
 
         try:
             instance = await world.get_active_dimension().add_block(
@@ -224,6 +231,8 @@ class BlockItemGenerator(AbstractState.AbstractState):
     async def deactivate(self):
         await super().deactivate()
 
+        logger.println("[BLOCK ITEM GENERATOR] closing Block Item Generator")
+
         pyglet.clock.unschedule(self.tick)
 
         # We want to enable this again
@@ -236,7 +245,9 @@ class BlockItemGenerator(AbstractState.AbstractState):
         with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(self.table, f)
 
+        logger.println("[BLOCK ITEM GENERATOR] baking items...")
         await self.bake_items()
+        logger.println("[BLOCK ITEM GENERATOR] finished!")
 
         logger.println("[BLOCK ITEM GENERATOR] finished!")
 
@@ -260,8 +271,11 @@ class BlockItemGenerator(AbstractState.AbstractState):
         item_registry.lock()
 
     async def bake_items(self):
+        logger.println("[ITEM ENGINE] build()-ing ItemManager")
         await ItemManager.build()
+        logger.println("[ITEM ENGINE] loading item atlas")
         ItemManager.ITEM_ATLAS.load()
+        logger.println("[ITEM ENGINE] builtin item models")
         await ItemModel.handler.bake()
 
     async def close(self):
@@ -281,7 +295,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
         self.block_index += 1
 
         if self.block_index >= len(self.tasks):
-            asyncio.get_event_loop().run_until_complete(self.close())
+            asyncio.run(self.close())
             return
 
         dimension = shared.world.get_active_dimension()
@@ -291,13 +305,13 @@ class BlockItemGenerator(AbstractState.AbstractState):
             block.face_info.hide_all()
 
         try:
-            instance = asyncio.get_event_loop().run_until_complete(
+            instance = asyncio.run(
                 dimension.add_block(
                     (0, 0, 0), self.tasks[self.block_index], block_update=False
                 )
             )
             if instance.BLOCK_ITEM_GENERATOR_STATE is not None:
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     instance.set_model_state(instance.BLOCK_ITEM_GENERATOR_STATE)
                 )
             instance.face_info.update(redraw_complete=True)
@@ -339,7 +353,7 @@ class BlockItemGenerator(AbstractState.AbstractState):
             pyglet.clock.schedule_once(self.add_new_screen, self.SETUP_TIME / 20)
             return
 
-        image: PIL.Image.Image = asyncio.get_event_loop().run_until_complete(
+        image: PIL.Image.Image = asyncio.run(
             read_image(file)
         )
 

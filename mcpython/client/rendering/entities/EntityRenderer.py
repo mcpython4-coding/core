@@ -31,7 +31,7 @@ class EntityRenderer:
         self.box_models = {}
         self.states = {}
         self.texture_size = None
-        asyncio.get_event_loop().run_until_complete(self.reload())
+        asyncio.run(self.reload())
         RENDERERS.append(self)
 
     async def reload(self):

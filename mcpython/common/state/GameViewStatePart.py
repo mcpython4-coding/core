@@ -257,7 +257,7 @@ class GameView(AbstractStatePart.AbstractStatePart):
                         if shared.world.gamerule_handler.table[
                             "doTileDrops"
                         ].status.status:
-                            items = shared.loot_table_handler.get_drop_for_block(
+                            items = await shared.loot_table_handler.get_drop_for_block(
                                 block, player=player
                             )
                             [

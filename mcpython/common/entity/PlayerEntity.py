@@ -477,7 +477,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         Gets the slot of the selected slot
         """
         if self.inventory_hotbar is None:
-            asyncio.get_event_loop().run_until_complete(self.create_inventories())
+            asyncio.run(self.create_inventories())
 
         return self.inventory_hotbar.slots[self.active_inventory_slot]
 
@@ -558,7 +558,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if shared.IS_CLIENT:
             shared.window.dy = 0
             shared.chat.close()
-            shared.inventory_handler.close_all_inventories()
+            await shared.inventory_handler.close_all_inventories()
 
         # todo: drop parts of the xp
         self.xp = 0
@@ -645,7 +645,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
 
     def tell(self, msg: str):
         if not shared.IS_CLIENT:
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
             )
             return
@@ -653,7 +653,7 @@ class PlayerEntity(mcpython.common.entity.AbstractEntity.AbstractEntity):
         if self == shared.world.get_active_player():
             shared.chat.print_ln(msg)
         else:
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 shared.NETWORK_MANAGER.send_to_player_chat(self.name, msg)
             )
 

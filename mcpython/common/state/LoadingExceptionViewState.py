@@ -76,7 +76,7 @@ class LoadingExceptionView(AbstractState.AbstractState):
             "[MOD LOADER][EXCEPTION MANAGER][WARN] The game might be in an invalid state, errors down the road may be caused by above!"
         )
 
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             shared.state_handler.change_state("minecraft:mod_loading")
         )
 

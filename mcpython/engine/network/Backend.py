@@ -83,7 +83,7 @@ class ClientBackend:
                     "force-disconnecting from server, sever seems to have closed without noticing us"
                 )
                 self.disconnect()
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     shared.state_handler.change_state("minecraft:start_menu")
                 )
                 return
@@ -102,7 +102,7 @@ class ClientBackend:
                     "force-disconnecting from server, sever seems to have closed without noticing us"
                 )
                 self.disconnect()
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     shared.state_handler.change_state("minecraft:start_menu")
                 )
                 return

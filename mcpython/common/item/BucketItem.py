@@ -73,7 +73,7 @@ class BucketItem(AbstractFluidContainer):
 
             if itemstack.amount > 1:
                 itemstack.add_amount(-1)
-                asyncio.get_event_loop().run_until_complete(player.pick_up_item(bucket))
+                asyncio.run(player.pick_up_item(bucket))
             else:
                 itemstack.copy_from(bucket)
 

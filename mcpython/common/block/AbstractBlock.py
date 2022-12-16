@@ -539,6 +539,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     def is_connecting_to_redstone(self, side: mcpython.util.enums.EnumSide) -> bool:
         return False  # todo: do we want it to be async?
 
+    async def get_all_inventories(self) -> tuple:
+        return tuple()
+
     # Debug methods
 
     def __repr__(self):

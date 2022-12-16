@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import asyncio
 import queue
 import time
+import typing
 
 import pyglet.app
 from mcpython.engine import logger
@@ -55,12 +56,18 @@ class Lifecycle(pyglet.app.EventLoop):
 
         # todo: make time configurable
         while time.time() - start < 1 / 60 and not ASYNC_INVOKE_QUEUE.empty():
-            task: asyncio.Task = ASYNC_INVOKE_QUEUE.get()
-            asyncio.get_event_loop().run_until_complete(task)
+            task: asyncio.Task | typing.Coroutine = ASYNC_INVOKE_QUEUE.get()
 
-            ex = task.exception()
-            if ex is not None:
-                try:
-                    raise ex
-                except:  # lgtm [py/catch-base-exception]
-                    logger.print_exception(f"During invoking task {task}")
+            try:
+                asyncio.run(task)
+            except:  # lgtm [py/catch-base-exception]
+                logger.print_exception(f"During invoking task {task}")
+                continue
+
+            if isinstance(task, asyncio.Task):
+                ex = task.exception()
+                if ex is not None:
+                    try:
+                        raise ex
+                    except:  # lgtm [py/catch-base-exception]
+                        logger.print_exception(f"During invoking task {task}")

@@ -11,6 +11,11 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+import asyncio
+import typing
+
+from bytecodemanipulation.Optimiser import cache_global_name
+
 import mcpython.client.rendering.model.BoxModel
 import mcpython.common.item.ItemTextureAtlas
 import mcpython.engine.rendering.BatchHelper
@@ -205,29 +210,33 @@ class ItemModelHandler:
     async def load():
         await handler.from_folder("assets/minecraft/models/item", "minecraft")
 
-    def from_data(self, data: dict, name: str):
+    @cache_global_name("ItemModel", lambda: ItemModel)
+    def from_data(self, data: dict, name: str) -> ItemModel:
         self.models[name] = ItemModel.from_data(data, name)
+        return self.models[name]
 
+    @cache_global_name("ItemModel", lambda: ItemModel)
     async def from_folder(self, folder: str, modname: str):
         for file in await mcpython.engine.ResourceLoader.get_all_entries(folder):
             if file.endswith("/"):
                 continue
+
             item = "{}:{}".format(modname, file.split("/")[-1].split(".")[0])
             self.models[item] = await ItemModel.from_file(file, item)
 
+        return self
+
     @guarantee_builtin_names_are_protected()
+    @cache_global_name("asyncio", lambda: asyncio)
     async def bake(self):
         self.atlas.load()
 
-        for model in self.models.values():
-            try:
-                await model.bake(self)
-            except (SystemExit, KeyboardInterrupt):
-                raise
-            except:
-                logger.print_exception(
-                    "error during baking item model for '{}'".format(model.item)
-                )
+        await asyncio.gather(
+            *(
+                model.bake(self)
+                for model in self.models.values()
+            )
+        )
 
         await self.atlas.build()
         self.atlas.dump()

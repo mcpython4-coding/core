@@ -87,7 +87,7 @@ class LootTableHandler:
             item = self.relink_table[item]
         return self.loot_tables[item]
 
-    def roll(self, name: str, *args, relink=True, **kwargs) -> list:
+    async def roll(self, name: str, *args, relink=True, **kwargs) -> list:
         """
         will roll the loot table
         :param name: the name of the loot table
@@ -109,14 +109,14 @@ class LootTableHandler:
         if name not in self.loot_tables:
             logger.println("loot table not found: '{}'".format(name))
             return []
-        return self[name].roll(*args, **kwargs)
+        return await self[name].roll(*args, **kwargs)
 
-    def get_drop_for_block(self, block, player=None, relink=True):
+    async def get_drop_for_block(self, block, player=None, relink=True):
         table_name = "{}:blocks/{}".format(*block.NAME.split(":"))
         if relink and table_name in self.relink_table:
             table_name = self.relink_table[table_name]
         if table_name in self.loot_tables:
-            return self.loot_tables[table_name].roll(block=block, player=player)
+            return await self.loot_tables[table_name].roll(block=block, player=player)
         # todo: add option to print an warning here
         return [mcpython.common.container.ResourceStack.ItemStack(block.NAME)]
 
@@ -236,7 +236,7 @@ class LootTablePoolEntry:
         self.weight = 1
         self.quality = 0
 
-    def roll(self, *args, **kwargs):
+    async def roll(self, *args, **kwargs):
         if self.entry_type == LootTablePoolEntryType.UNSET:
             raise ValueError("type not set")
 
@@ -263,11 +263,11 @@ class LootTablePoolEntry:
                 ]
 
         elif self.entry_type == LootTablePoolEntryType.LOOT_TABLE:
-            items += handler.roll(self.name, *args, **kwargs)
+            items += await handler.roll(self.name, *args, **kwargs)
 
         elif self.entry_type == LootTablePoolEntryType.GROUP:
             [
-                items.extend(e.roll(*args, **kwargs))
+                items.extend(await e.roll(*args, **kwargs))
                 for e in self.children
                 if e is not None
             ]
@@ -276,7 +276,7 @@ class LootTablePoolEntry:
             for entry in self.children:
                 if entry is None:
                     continue
-                item = entry.roll(*args, **kwargs)
+                item = await entry.roll(*args, **kwargs)
                 if item is None:
                     continue
                 items += item
@@ -286,7 +286,7 @@ class LootTablePoolEntry:
             for entry in self.children:
                 if entry is None:
                     continue
-                item = entry.roll(*args, **kwargs)
+                item = await entry.roll(*args, **kwargs)
                 if item is None:
                     break
                 items += item
@@ -294,7 +294,9 @@ class LootTablePoolEntry:
         elif self.entry_type == LootTablePoolEntryType.DYNAMIC:
             raise NotImplementedError()
 
-        [func.apply(items, *args, **kwargs) for func in self.functions]
+        for func in self.functions:
+            await func.apply(items, *args, **kwargs)
+
         return items
 
 
@@ -334,7 +336,7 @@ class LootTablePool:
         self.entry_weights = []
         self.table = None
 
-    def roll(self, *args, **kwargs):
+    async def roll(self, *args, **kwargs):
         if not all(
             [condition.check(self, *args, **kwargs) for condition in self.conditions]
         ):
@@ -345,7 +347,7 @@ class LootTablePool:
         # todo: add bonus rolls
         while i > 0:
             entry = random.choices(self.entries, weights=self.entry_weights)[0]
-            item = entry.roll(*args, **kwargs)
+            item = await entry.roll(*args, **kwargs)
             if item is not None:
                 items += item
                 i -= 1
@@ -354,7 +356,10 @@ class LootTablePool:
                     done.append(entry)
                 elif len(done) == len(self.entries):
                     break
-        [func.apply(items) for func in self.functions]
+
+        for func in self.functions:
+            await func.apply(items, *args, **kwargs)
+
         return items
 
 
@@ -415,8 +420,8 @@ class LootTable:
         self.table_type = table_type
         self.pools = []
 
-    def roll(self, *args, **kwargs):
+    async def roll(self, *args, **kwargs):
         data = []
         for pool in self.pools:
-            data += pool.roll(*args, **kwargs)
+            data += await pool.roll(*args, **kwargs)
         return data

@@ -129,7 +129,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
         # todo: add special class holding this information with serializer for it
         self.config = {}
 
-        # asyncio.get_event_loop().run_until_complete(self.reload_config())
+        # asyncio.run(self.reload_config())
 
         self.custom_name = None  # the custom name; If set, rendered in the inventory
 

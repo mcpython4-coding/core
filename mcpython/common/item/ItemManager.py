@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import json
 import os
 
+import asyncio
+
 import mcpython.client.gui.HoveringItemBox
 import mcpython.common.data.serializer.tags.TagTargetHolder
 import mcpython.common.event.Registry
@@ -36,14 +38,30 @@ else:
     ITEM_ATLAS = None
 
 
+def _create_build_async(cls, i, file):
+    async def target():
+        items.item_index_table[cls.NAME][
+            file
+        ] = await ITEM_ATLAS.get_texture_info_or_add(cls.NAME + "#?" + str(i), file)
+
+    return target
+
+
 async def build():
     await ITEM_ATLAS.build()
     ITEM_ATLAS.dump()
-    for cls in COLLECTED_ITEMS:
-        for i, file in enumerate(cls.get_used_texture_files()):
-            items.item_index_table[cls.NAME][
-                file
-            ] = await ITEM_ATLAS.get_texture_info_or_add(cls.NAME + "#?" + str(i), file)
+
+    await asyncio.gather(
+        *(
+            asyncio.gather(
+                *(
+                    _create_build_async(cls, i, file)()
+                    for i, file in enumerate(cls.get_used_texture_files())
+                )
+            )
+            for cls in COLLECTED_ITEMS
+        )
+    )
 
 
 async def load_data():

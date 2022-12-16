@@ -99,7 +99,7 @@ class ModContainer:
                 mcpython.engine.ResourceLoader.SimulatedResourceLoader()
             )
             self.assigned_mod_loader = PyFileModLoader(self)
-            asyncio.get_event_loop().run_until_complete(
+            asyncio.run(
                 self.assigned_mod_loader.on_select()
             )
 

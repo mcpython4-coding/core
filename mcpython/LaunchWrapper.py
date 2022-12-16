@@ -102,11 +102,11 @@ class LaunchWrapper:
         import mcpython.engine.MixinPatchingHelper
 
         shared.mod_loader.look_for_mod_files()
-        asyncio.get_event_loop().run_until_complete(shared.mod_loader.parse_mod_files())
+        asyncio.run(shared.mod_loader.parse_mod_files())
 
         shared.mod_loader.check_errors()
 
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             shared.mod_loader.load_missing_mods()
         )
 
@@ -280,7 +280,7 @@ class LaunchWrapper:
 
         import mcpython.common.data.Language
 
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             mcpython.common.data.Language.load()
         )
 
@@ -336,7 +336,7 @@ class LaunchWrapper:
 
         if os.path.exists(shared.build):  # copy default skin to make it start correctly
             try:
-                asyncio.get_event_loop().run_until_complete(
+                asyncio.run(
                     mcpython.engine.ResourceLoader.read_image(
                         "assets/minecraft/textures/entity/steve.png"
                     )
@@ -373,12 +373,12 @@ class LaunchWrapper:
 
                 # todo: sometimes, this does not work correctly
                 shared.window.set_icon(
-                    asyncio.get_event_loop().run_until_complete(
+                    asyncio.run(
                         mcpython.engine.ResourceLoader.read_pyglet_image(
                             "icon_16x16.png"
                         )
                     ),
-                    asyncio.get_event_loop().run_until_complete(
+                    asyncio.run(
                         mcpython.engine.ResourceLoader.read_pyglet_image(
                             "icon_32x32.png"
                         )

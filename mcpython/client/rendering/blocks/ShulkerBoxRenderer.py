@@ -33,7 +33,7 @@ class ShulkerBoxRenderer(
         super().__init__()
 
         self.texture_location = texture_location
-        self.texture = asyncio.get_event_loop().run_until_complete(
+        self.texture = asyncio.run(
             mcpython.engine.ResourceLoader.read_pyglet_image(texture_location)
         )
         self.group = pyglet.graphics.TextureGroup(self.texture.get_texture())

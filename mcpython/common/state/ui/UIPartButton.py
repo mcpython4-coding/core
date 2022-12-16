@@ -51,7 +51,7 @@ mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "data:reload:work", load_images
 )
 try:
-    asyncio.get_event_loop().run_until_complete(load_images())
+    asyncio.run(load_images())
 except RuntimeError:
     pass
 

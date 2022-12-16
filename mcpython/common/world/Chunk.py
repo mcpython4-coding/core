@@ -361,7 +361,7 @@ class Chunk(mcpython.engine.world.AbstractInterface.IChunk):
 
     @deprecation.deprecated()
     def add_block_unsafe(self, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(
+        return asyncio.run(
             self.add_block(*args, **kwargs)
         )
 

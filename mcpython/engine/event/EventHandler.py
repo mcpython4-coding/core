@@ -42,12 +42,12 @@ class EventHandler:
         self.active_buses.remove(bus)
 
     def call(self, event_name, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(
+        return asyncio.run(
             self.call_async(event_name, *args, **kwargs)
         )
 
     def call_ordered(self, event_name, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(
+        return asyncio.run(
             self.call_ordered_async(event_name, *args, **kwargs)
         )
 
@@ -61,7 +61,7 @@ class EventHandler:
             await bus.call_async_ordered(event_name, *args, **kwargs)
 
     def call_cancelable(self, event_name, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(
+        return asyncio.run(
             self.call_cancelable_async(event_name, *args, **kwargs)
         )
 

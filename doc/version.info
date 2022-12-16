@@ -2028,4 +2028,6 @@ IB  [uuk]: improved internal drawing system in some places
 FI  [uuk]: added new system for caching and reloading resources automatically
 b   [uuk]: fixed inventory reload being invoked twice on client
 L   [uuk]: upgraded libraries, changed to second iteration of bytecodemanipulation, 1.2.0
+IA  [uuk]: LootTables roll now async
+b   [uuk]: fixed InventoryHandler.close_all_inventories() not closing any inventory (missing await)
 

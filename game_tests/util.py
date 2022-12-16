@@ -26,19 +26,19 @@ class TestCase(unittest.TestCase):
         result = method()
 
         if isinstance(result, typing.Awaitable):
-            asyncio.get_event_loop().run_until_complete(result)
+            asyncio.run(result)
 
     def _callSetUp(self):
         result = self.setUp()
 
         if isinstance(result, typing.Awaitable):
-            asyncio.get_event_loop().run_until_complete(result)
+            asyncio.run(result)
 
     def _callTearDown(self):
         result = self.tearDown()
 
         if isinstance(result, typing.Awaitable):
-            asyncio.get_event_loop().run_until_complete(result)
+            asyncio.run(result)
 
     async def assertRaisesAsync(self, exception, test_awaitable, msg: str = ""):
         try:

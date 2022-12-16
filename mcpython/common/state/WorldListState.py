@@ -40,13 +40,12 @@ if shared.IS_CLIENT:
     from pyglet.window import key, mouse
 
     MISSING_TEXTURE = mcpython.util.texture.to_pyglet_image(
-        asyncio.get_event_loop()
-        .run_until_complete(
+        asyncio.run(
             mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
         )
         .resize((50, 50), PIL.Image.NEAREST)
     )
-    WORLD_SELECTION = asyncio.get_event_loop().run_until_complete(
+    WORLD_SELECTION = asyncio.run(
         mcpython.engine.ResourceLoader.read_image("minecraft:gui/world_selection")
     )
     WORLD_SELECTION_SELECT = mcpython.util.texture.to_pyglet_image(

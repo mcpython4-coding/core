@@ -667,7 +667,7 @@ class InventoryHandler:
                 await self.hide(inventory)
                 return inventory
 
-    def close_all_inventories(self):
+    async def close_all_inventories(self):
         """
         Close all inventories currently open, excluding inventories marked for always being open
         """
@@ -675,7 +675,7 @@ class InventoryHandler:
             if inventory in self.always_open_containers:
                 continue
 
-            self.hide(inventory)
+            await self.hide(inventory)
 
 
 shared.inventory_handler = InventoryHandler()

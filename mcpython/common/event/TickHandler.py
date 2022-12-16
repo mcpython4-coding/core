@@ -54,7 +54,7 @@ class TickHandler:
         pyglet.clock.schedule_interval(self.schedule_tick, 1 / 20)
 
     def schedule_tick(self, dt: float):
-        asyncio.get_event_loop().run_until_complete(self.tick(dt))
+        asyncio.run(self.tick(dt))
 
     @cache_global_name("shared")
     @guarantee_builtin_names_are_protected()

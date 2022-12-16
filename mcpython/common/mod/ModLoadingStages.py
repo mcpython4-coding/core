@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import graphlib
 import typing
 
+from bytecodemanipulation.Optimiser import cache_global_name
+
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -110,7 +112,7 @@ class LoadingStage:
     def finished(self):
         return not (self.order.is_active() or len(self.event_scheduled))
 
-    def add_event_stage(self, event_name: str, *inner_depends: str):
+    def add_event_stage(self, event_name: str, *inner_depends: str, allow_parallel=False):
         self.events[event_name] = set(inner_depends)
         self.dirty = True
         return self
@@ -146,21 +148,7 @@ class LoadingStage:
         new_stage: LoadingStage = manager.get_stage()
 
         if not manager.order.is_active():
-            logger.println(
-                "[INFO] locking registries..."
-            )  # ... and do similar stuff :-)
-            await shared.event_handler.call_async("mod_loader:load_finished")
-
-            if shared.IS_CLIENT:
-                await shared.state_handler.change_state(
-                    "minecraft:block_item_generator"
-                )
-            else:
-                await shared.state_handler.states[
-                    "minecraft:world_loading"
-                ].load_or_generate("server_world")
-
-            shared.mod_loader.finished = True
+            await cls.finish_mod_loading()
             return True
 
         if (
@@ -176,6 +164,27 @@ class LoadingStage:
             )
         else:
             astate.parts[2].progress_max = 0
+
+    @classmethod
+    @cache_global_name("logger", lambda: logger)
+    @cache_global_name("shared", lambda: shared)
+    async def finish_mod_loading(cls):
+        logger.println("calling load finished event")
+        await shared.event_handler.call_async("mod_loader:load_finished")
+
+        logger.println("setting up initial game state")
+
+        if shared.IS_CLIENT:
+            await shared.state_handler.change_state(
+                "minecraft:block_item_generator"
+            )
+        else:
+            await shared.state_handler.states[
+                "minecraft:world_loading"
+            ].load_or_generate("server_world")
+
+        logger.println("[MOD LOADER] finished mod loading!")
+        shared.mod_loader.finished = True
 
     async def prepare_next_stage(self, astate):
         self.active_mod_index = 0
@@ -195,71 +204,62 @@ class LoadingStage:
         astate.parts[2].progress_max = self.max_progress
         astate.parts[2].progress = 0
 
+    @cache_global_name("shared", lambda: shared)
     async def call_one(self, astate):
         """
         Will call one event from the stack
         :param astate: the state to use
-
-        todo: split into smaller parts!
         """
         if self.active_event is None:
             await self.finish(astate)
             return
 
-        # todo: modloader needs a constant for the count of loaded mods
         if (
             self.active_mod_index >= len(shared.mod_loader.mods)
             or self.active_event is None
         ):
             await self.prepare_next_stage(astate)
 
-        # print(self.active_event)
-
         modname = shared.mod_loader.mod_loading_order[self.active_mod_index]
         mod_instance = shared.mod_loader.mods[modname]
 
         try:
-            # todo: can we load really parallel
-            await mod_instance.eventbus.call_as_stack(self.active_event)  # , amount=4))
-
+            await mod_instance.eventbus.call(self.active_event)
         except RuntimeError:  # when we are empty
-            self.active_mod_index += 1
-
-            if self.active_mod_index >= len(shared.mod_loader.mods):
-                if self.finished():
-                    return self.finish(astate)
-
-                self.next_event()
-
-                self.active_mod_index = 0
-                mod_instance = shared.mod_loader.mods[
-                    shared.mod_loader.mod_loading_order[self.active_mod_index]
-                ]
-                if self.active_event in mod_instance.eventbus.event_subscriptions:
-                    self.max_progress = len(
-                        mod_instance.eventbus.event_subscriptions[self.active_event]
-                    )
-                else:
-                    self.max_progress = 0
-                astate.parts[2].progress_max = self.max_progress
-                astate.parts[2].progress = 0
-                return
-
-            mod_instance = shared.mod_loader.mods[
-                shared.mod_loader.mod_loading_order[self.active_mod_index]
-            ]
-            if self.active_event in mod_instance.eventbus.event_subscriptions:
-                self.max_progress = len(
-                    mod_instance.eventbus.event_subscriptions[self.active_event]
-                )
-            else:
-                self.max_progress = 0
-
-            astate.parts[2].progress_max = self.max_progress
-            astate.parts[2].progress = 0
-            return
+            return self.check_next_state(astate)
 
         astate.parts[2].progress += 1  # todo: this is not good, can we optimize it?
+
+    @cache_global_name("shared", lambda: shared)
+    def check_next_state(self, astate):
+        self.active_mod_index += 1
+
+        if self.active_mod_index >= len(shared.mod_loader.mods):
+            if self.finished():
+                return self.finish(astate)
+
+            self.next_event()
+
+            self.active_mod_index = 0
+            self.update_progress_bars(astate)
+            return
+
+        self.update_progress_bars(astate)
+
+    @cache_global_name("shared", lambda: shared)
+    def update_progress_bars(self, astate):
+        mod_instance = shared.mod_loader.mods[
+            shared.mod_loader.mod_loading_order[self.active_mod_index]
+        ]
+        if self.active_event in mod_instance.eventbus.event_subscriptions:
+            self.max_progress = len(
+                mod_instance.eventbus.event_subscriptions[self.active_event]
+            )
+        else:
+            self.max_progress = 0
+
+        astate.parts[2].progress_max = self.max_progress
+        astate.parts[2].progress = 0
 
 
 manager = LoadingStageManager()

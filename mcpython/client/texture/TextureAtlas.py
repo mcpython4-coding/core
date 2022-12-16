@@ -28,8 +28,7 @@ from mcpython.util.annotation import onlyInClient
 # We need the missing texture image only on the client, the server will never need this
 if shared.IS_CLIENT and not shared.IS_TEST_ENV:
     MISSING_TEXTURE = (
-        asyncio.get_event_loop()
-        .run_until_complete(
+        asyncio.run(
             mcpython.engine.ResourceLoader.read_image("assets/missing_texture.png")
         )
         .resize((16, 16), PIL.Image.NEAREST)

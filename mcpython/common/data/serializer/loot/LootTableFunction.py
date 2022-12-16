@@ -25,7 +25,7 @@ class ILootTableFunction(mcpython.common.event.api.IRegistryContent):
     def __init__(self, data: dict):
         self.data = data
 
-    def apply(self, items: list, *args, **kwargs):
+    async def apply(self, items: list, *args, **kwargs):
         pass
 
 
@@ -46,7 +46,7 @@ class ApplyBonus(ILootTableFunction):
         self.formula = data["formula"]
         self.parameters = data["parameters"] if "parameters" in data else {}
 
-    def apply(self, items: list, *args, **kwargs):
+    async def apply(self, items: list, *args, **kwargs):
         pass
 
 
@@ -58,12 +58,12 @@ class CopyName(ILootTableFunction):
         super().__init__(data)
         self.source = data["source"]
 
-    def apply(self, items: list, *args, **kwargs):
+    async def apply(self, items: list, *args, **kwargs):
         if self.source == "block_entity":
             if "block" in kwargs:
                 block = kwargs["block"]
                 for item in items:
-                    item.display_name = block.get_inventories()[0].custom_name
+                    item.display_name = (await block.get_all_inventories())[0].custom_name
 
 
 @shared.registry
@@ -106,7 +106,7 @@ class ExplosionDecay(ILootTableFunction):
 class FurnaceSmelt(ILootTableFunction):
     NAME = "minecraft:furnace_smelt"
 
-    def apply(self, items: list, *args, **kwargs):
+    async def apply(self, items: list, *args, **kwargs):
         for i, itemstack in enumerate(items.copy()):
             item_name: str = itemstack.get_item_name()
             if item_name is None:
@@ -158,7 +158,7 @@ class SetContents(ILootTableFunction):
 class SetCount(ILootTableFunction):
     NAME = "minecraft:set_count"
 
-    def apply(self, items: list, *args, **kwargs):
+    async def apply(self, items: list, *args, **kwargs):
         for itemstack in items:
             # todo: parse data in advance
             if "count" in self.data:

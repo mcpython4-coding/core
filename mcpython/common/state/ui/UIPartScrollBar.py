@@ -23,7 +23,7 @@ from pyglet.window import mouse
 from .AbstractUIPart import AbstractUIPart
 
 try:
-    IMAGE = asyncio.get_event_loop().run_until_complete(
+    IMAGE = asyncio.run(
         mcpython.engine.ResourceLoader.read_image(
             "assets/minecraft/textures/gui/container/creative_inventory/tabs.png"
         )

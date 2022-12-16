@@ -17,6 +17,8 @@ import traceback
 import typing
 
 import pyglet.app
+from bytecodemanipulation.Optimiser import cache_global_name
+
 from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
 from mcpython import shared
 from mcpython.engine import logger
@@ -162,7 +164,7 @@ class EventBus:
                 )
 
     def call(self, event_name: str, *args, **kwargs):
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             self.call_async(event_name, *args, **kwargs)
         )
 
@@ -174,10 +176,14 @@ class EventBus:
         return handler
 
     def call_cancelable(self, event_name: str, *args, **kwargs):
-        return asyncio.get_event_loop().run_until_complete(
+        return asyncio.run(
             self.call_cancelable_async(event_name, *args, **kwargs)
         )
 
+    @cache_global_name("asyncio", lambda: asyncio)
+    @cache_global_name("pyglet", lambda: pyglet)
+    @cache_global_name("shared", lambda: shared)
+    @cache_global_name("logger", lambda: logger)
     @guarantee_builtin_names_are_protected()
     async def call_until_async(
         self,
@@ -237,7 +243,7 @@ class EventBus:
         *args,
         **kwargs,
     ):
-        return asyncio.get_event_loop().run_until_complete(
+        return asyncio.run(
             self.call_until_async(event_name, check_function, *args, **kwargs)
         )
 
@@ -263,6 +269,7 @@ class EventBus:
         return bus
 
     @guarantee_builtin_names_are_protected()
+    @cache_global_name("asyncio", lambda: asyncio)
     def call_as_stack(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):
@@ -292,7 +299,7 @@ class EventBus:
             try:
                 if asyncio.iscoroutine(function):
                     function = asyncio.get_event_loop().create_task(function)
-                    asyncio.get_event_loop().run_until_complete(function)
+                    asyncio.run(function)
 
                     ex = function.exception()
                     if ex:
@@ -352,14 +359,14 @@ class EventBus:
 
             try:
                 if asyncio.iscoroutine(function):
-                    asyncio.get_event_loop().run_until_complete(function)
+                    asyncio.run(function)
                 else:
                     result = function(
                         *list(args) + list(extra_args),
                         **{**kwargs, **extra_kwargs},
                     )
                     if isinstance(result, typing.Awaitable):
-                        asyncio.get_event_loop().run_until_complete(result)
+                        asyncio.run(result)
 
             except (SystemExit, KeyboardInterrupt):
                 raise

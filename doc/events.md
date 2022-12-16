@@ -16,7 +16,7 @@ takes awaitable stuff, the default EventBus accepts coroutine returning function
 
 Calling events should use the async variant whenever possible, 
 invoking the non-async variant from an async context will crash,
-as it is only a wrapper with asyncio.get_event_loop().run_until_complete(...)
+as it is only a wrapper with asyncio.run(...)
 around the async variant, and asyncio.get_event_loop() will crash in async contexts
 
 You may schedule coroutines for later execution via shared.tick_handler.schedule_once(coroutine).

@@ -17,6 +17,10 @@ import traceback
 import typing
 
 import pyglet.app
+from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
+
+from bytecodemanipulation.Optimiser import cache_global_name
+
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -52,6 +56,7 @@ class SingleInvokeAsyncEventBus:
 
         self.sub_buses = []
 
+    @guarantee_builtin_names_are_protected()
     def subscribe(
         self,
         event_name: str,
@@ -73,6 +78,9 @@ class SingleInvokeAsyncEventBus:
         self.event_subscriptions.setdefault(event_name, []).append((function, info))
         return self
 
+    @cache_global_name("asyncio", lambda: asyncio)
+    @cache_global_name("traceback", lambda: traceback)
+    @guarantee_builtin_names_are_protected()
     async def call(self, event_name: str):
         """
         Call an event on this event bus. Also works when deactivated
@@ -114,61 +122,6 @@ class SingleInvokeAsyncEventBus:
                 return
 
             raise RuntimeError
-
-    # This code is currently not used
-    # async def call_cancelable(self, event_name: str):
-    #     """
-    #     Will call a cancel able event.
-    #     Works the same way as call, but will use call_until() with an CancelAbleEvent as first parameter which is checked after each call
-    #     :param event_name: the name to call
-    #     :return: if it was canceled or not
-    #     """
-    #     handler = CancelAbleEvent()
-    #     await self.call_until(event_name, lambda _: handler.canceled)
-    #     return handler
-    #
-    # async def call_until(
-    #     self,
-    #     event_name: str,
-    #     check_function: typing.Callable[[typing.Any], bool],
-    # ):
-    #     """
-    #     Will call the event stack until an check_function returns True or all subscriptions where done
-    #     :param event_name: the name of the event
-    #     :param check_function: the check function to call with
-    #     :return: the result in the moment of True or None
-    #     """
-    #     if event_name not in self.event_subscriptions:
-    #         return
-    #
-    #     for function, info in self.event_subscriptions[event_name]:
-    #         try:
-    #             result = await function
-    #
-    #             if check_function(result):
-    #                 return result
-    #
-    #         except MemoryError:
-    #             shared.window.close()
-    #             pyglet.app.exit()
-    #             print("closing due to missing memory")
-    #             sys.exit(-1)
-    #
-    #         except (SystemExit, KeyboardInterrupt):
-    #             raise
-    #
-    #         except:
-    #             logger.print_exception(
-    #                 "during calling coroutine: {}".format(
-    #                     function,
-    #                     sep="\n",
-    #                 ),
-    #                 "function info: '{}'".format(info) if info is not None else "",
-    #                 "during event:",
-    #                 event_name,
-    #             )
-    #             raise
-
     def activate(self):
         shared.event_handler.activate_bus(self)
 
@@ -181,6 +134,7 @@ class SingleInvokeAsyncEventBus:
         for eventbus in self.sub_buses:
             eventbus.deactivate()
 
+    @cache_global_name("SingleInvokeAsyncEventBus", lambda: SingleInvokeAsyncEventBus)
     def create_sub_bus(self, *args, activate=True, **kwargs):
         bus = SingleInvokeAsyncEventBus(*args, **kwargs)
 
@@ -190,8 +144,10 @@ class SingleInvokeAsyncEventBus:
         self.sub_buses.append(bus)
         return bus
 
-    async def call_as_stack(self, event_name: str, amount=1):
-        result = []
+    @cache_global_name("asyncio", lambda: asyncio)
+    @cache_global_name("traceback", lambda: traceback)
+    @guarantee_builtin_names_are_protected()
+    async def call(self, event_name: str, amount=1):
         if event_name not in self.event_subscriptions:
             raise RuntimeError(
                 "event bus has no notation for the '{}' event".format(event_name)
@@ -227,8 +183,6 @@ class SingleInvokeAsyncEventBus:
                 self.event_subscriptions[event_name][:amount]
             )
             del self.event_subscriptions[event_name][:amount]
-
-        return result
 
     def reset_event_stack(self, event_name: str):
         """

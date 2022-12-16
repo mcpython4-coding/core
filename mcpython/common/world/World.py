@@ -70,7 +70,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
             mcpython.common.world.GameRule.GameRuleHandler, None
         ] = None
 
-        asyncio.get_event_loop().run_until_complete(
+        asyncio.run(
             self.reset_config()
         )  # will reset the config
 
@@ -153,7 +153,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
         return (
             self.players[self.local_player]
             if self.local_player in self.players
-            else asyncio.get_event_loop().run_until_complete(
+            else asyncio.run(
                 self.add_player(self.local_player)
             )
         )
@@ -180,7 +180,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
     def get_player_by_name(self, name: str):
         if name not in self.players:
-            asyncio.get_event_loop().run_until_complete(self.add_player(name))
+            asyncio.run(self.add_player(name))
 
         return self.players[name]
 
@@ -254,7 +254,7 @@ class World(mcpython.engine.world.AbstractInterface.IWorld):
 
     @deprecation.deprecated()
     def join_dimension(self, dim_id: int):
-        return asyncio.get_event_loop().run_until_complete(
+        return asyncio.run(
             self.join_dimension_async(dim_id)
         )
 
