@@ -895,12 +895,9 @@ class BlockState:
     __slots__ = ("data", "models")
 
     def __init__(self):
-        self.data = None
         self.models = []  # (model, config, weight)
 
     def parse_data(self, data: dict | None):
-        self.data = data
-
         if isinstance(data, dict):
             if "model" in data:
                 self.models.append(decode_entry(data))

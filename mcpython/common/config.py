@@ -34,8 +34,9 @@ if shared.dev_environment:
         repo = git.Repo(shared.local)
         sha = repo.head.object.hexsha
 
-        VERSION_NAME = f"{repo.active_branch} - {str(sha)[:10]}"
-        VERSION_TYPE = "dev-version"
+        VERSION_NAME = f"branch '{repo.active_branch}' - {str(sha)[:10]}"
+        VERSION_TYPE = "development"
+
     except (ModuleNotFoundError, ImportError):
         traceback.print_exc()
 
