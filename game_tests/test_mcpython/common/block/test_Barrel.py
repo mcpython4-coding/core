@@ -20,6 +20,7 @@ from game_tests.test_mcpython.fakeHelpers import (
 )
 from game_tests.util import TestCase
 from mcpython import shared
+import bytecodemanipulation.MutableFunction
 
 try:
     from pyglet.window import key, mouse

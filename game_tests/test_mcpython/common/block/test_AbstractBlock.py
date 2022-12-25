@@ -17,6 +17,8 @@ from game_tests.util import TestCase
 from mcpython import shared
 from mcpython.util.enums import BlockRotationType, EnumSide
 
+import bytecodemanipulation.MutableFunction
+
 try:
     from pyglet.window import mouse
 
