@@ -2033,4 +2033,5 @@ b   [uuk]: fixed InventoryHandler.close_all_inventories() not closing any invent
 b   [uuk]: fixed 2 "... was never awaited" warnings
 R   [uuk]: refactored some bits from the block model system
 b   [uuk]: fixed unit tests not running correctly
+L   [uuk]: targetting now 1.19.3 as asset source
 

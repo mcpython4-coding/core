@@ -36,10 +36,12 @@ Make sure that you are using python 3.10 (or higher; still WIP)!
 
 # Changelog of snapshot <23w??a>
 Scheduled to be released on <??.??.2023>
-targeting <1.??.??> (currently: 1.18.1)
+targeting <1.??.??> (currently: 1.19.3)
 
     Rendering:
         - Refactored stuff for block rendering
+
+todo: creative tab fixing
 
 
 # Changelog of snapshot 22w06a

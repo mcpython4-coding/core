@@ -488,6 +488,9 @@ class IWorldGenerationTaskHandlerReference:
                                     (x, y, z), outer_block, **outer_config
                                 )
 
+    def place_structure(self, position: typing.Tuple[int, int, int], name_or_instance: str | typing.Any):
+        raise RuntimeError()
+
     def replace_air_and_liquid_downwards(self, block, x, y, z, delta, liquids):
         for dy in range(delta, 0, -1):
             b = self.get_block((x, y - dy, z))

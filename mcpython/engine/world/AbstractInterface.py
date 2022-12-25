@@ -456,6 +456,9 @@ class IChunk(ISupportWorldInterface, IBufferSerializeAble, ABC):
     def __hash__(self):
         return hash((self.get_dimension().get_name(), self.get_position()))
 
+    def get_value(self, name: str):
+        pass
+
 
 class IDimension(ISupportWorldInterface, ABC):
     def __init__(self):

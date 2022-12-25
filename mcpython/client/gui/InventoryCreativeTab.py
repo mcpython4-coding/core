@@ -449,10 +449,10 @@ class CreativeTabManager:
         if not shared.IS_CLIENT:
             return
 
-        cls.UPPER_TAB = getTabTexture().get_region(0, 224, 28, 30)
-        cls.UPPER_TAB_SELECTED = getTabTexture().get_region(0, 224 - 30, 28, 30)
-        cls.LOWER_TAB = getTabTexture().get_region(0, 164, 28, 30)
-        cls.LOWER_TAB_SELECTED = getTabTexture().get_region(0, 128, 28, 30)
+        cls.UPPER_TAB = getTabTexture().get_region(0, 224, 26, 30)
+        cls.UPPER_TAB_SELECTED = getTabTexture().get_region(0, 224 - 30, 26, 30)
+        cls.LOWER_TAB = getTabTexture().get_region(0, 164, 26, 30)
+        cls.LOWER_TAB_SELECTED = getTabTexture().get_region(0, 128, 26, 30)
 
     def __init__(self):
         self.pages: typing.List[typing.List[ICreativeView]] = [[]]
