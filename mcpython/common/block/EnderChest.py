@@ -28,7 +28,7 @@ class EnderChest(IHorizontalOrientableBlock.IHorizontalOrientableBlock):
     todo: fix renderer
     """
 
-    NAME = "minecraft:enderchest"
+    NAME = "minecraft:ender_chest"
     DEFAULT_DISPLAY_NAME = "Ender Chest"
     MODEL_FACE_NAME = "side"
 

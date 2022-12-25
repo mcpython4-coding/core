@@ -140,5 +140,13 @@ data = (
             )
             .on_execution(lambda env, d: impl.print_block_missing())
         )
+        .than(
+            CommandNode(DefinedString("items"))
+            .of_name("items")
+            .info(
+                "Displays a list of all items found item model files for, but no item instance"
+            )
+            .on_execution(lambda env, d: impl.print_item_missing())
+        )
     )
 )

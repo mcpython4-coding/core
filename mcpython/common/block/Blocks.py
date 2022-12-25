@@ -545,6 +545,7 @@ async def load_blocks(pipe=DEFERRED_PIPE):
         plant("minecraft:bamboo").set_default_model_state("age=0,leaves=small")
     )
     pipe.create_later(plant("minecraft:bamboo_sapling"))
+    await wood("bamboo", pipe=pipe)
     pipe.create_later(plant("minecraft:beetroots").set_default_model_state("age=2"))
 
     # Unsorted
@@ -1391,6 +1392,8 @@ async def load_blocks(pipe=DEFERRED_PIPE):
         texture="minecraft:block/magma",
     )
 
+    await wood("mangrove", pipe=pipe)
+
     pipe.create_later(
         BlockFactory()
         .set_name("minecraft:medium_amethyst_bud")
@@ -1416,6 +1419,10 @@ async def load_blocks(pipe=DEFERRED_PIPE):
     pipe.create_later(
         BlockFactory().set_name("minecraft:moss_carpet").add_base_class(AbstractCarpet)
     )
+
+    await stone_like("mud", existing_slab=False, existing_stairs=False, existing_wall=False)
+    await stone_like("mud_bricks")
+
     pipe.create_later(
         BlockFactory()
         .set_name("minecraft:mycelium")
@@ -1473,6 +1480,7 @@ async def load_blocks(pipe=DEFERRED_PIPE):
     await stone_like(
         "packed_ice", existing_slab=False, existing_stairs=False, existing_wall=False
     )
+    await stone_like("packed_mud", existing_slab=False, existing_stairs=False, existing_wall=False)
     pipe.create_later(large_plant("minecraft:peony"))
     pipe.create_later(
         BlockFactory().set_name("minecraft:petrified_oak_slab").set_slab()
