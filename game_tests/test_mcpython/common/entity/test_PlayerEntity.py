@@ -11,7 +11,7 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-from game_tests.test_mcpython.fakeHelpers import FakeWorld
+from game_tests.test_mcpython.mockups import WorldMockup
 from game_tests.util import TestCase
 from mcpython import shared
 from mcpython.engine.network.util import ReadBuffer, WriteBuffer
@@ -52,7 +52,7 @@ class TestPlayerEntity(TestCase):
     def setUp(self) -> None:
         from mcpython import shared
 
-        shared.world = FakeWorld()
+        shared.world = WorldMockup()
 
     def tearDown(self) -> None:
         from mcpython import shared

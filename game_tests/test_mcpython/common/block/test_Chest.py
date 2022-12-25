@@ -13,10 +13,10 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import skipUnless
 
-from game_tests.test_mcpython.fakeHelpers import (
-    FakeCraftingHandler,
-    FakeInventoryHandler,
-    FakeWorld,
+from game_tests.test_mcpython.mockups import (
+    CraftingHandlerMockup,
+    InventoryHandlerMockup,
+    WorldMockup,
 )
 from game_tests.util import TestCase
 from mcpython import shared
@@ -32,7 +32,7 @@ except ImportError:
 
 class TestChest(TestCase):
     def test_module_import(self):
-        shared.crafting_handler = FakeCraftingHandler()
+        shared.crafting_handler = CraftingHandlerMockup()
 
         import mcpython.common.block.Chest
 
@@ -40,33 +40,33 @@ class TestChest(TestCase):
 
     @skipUnless(SCREEN_ARRIVAL, "only when rendering is possible")
     async def test_on_player_interaction(self):
-        shared.crafting_handler = FakeCraftingHandler()
+        shared.crafting_handler = CraftingHandlerMockup()
 
         import mcpython.common.block.Chest
 
-        shared.inventory_handler = FakeInventoryHandler
-        FakeInventoryHandler.SHOWN = False
+        shared.inventory_handler = InventoryHandlerMockup
+        InventoryHandlerMockup.SHOWN = False
 
         instance = mcpython.common.block.Chest.Chest()
 
         await instance.on_player_interaction(None, mouse.RIGHT, 0, None, None)
 
-        self.assertTrue(FakeInventoryHandler.SHOWN)
+        self.assertTrue(InventoryHandlerMockup.SHOWN)
 
-        FakeInventoryHandler.SHOWN = False
+        InventoryHandlerMockup.SHOWN = False
 
         await instance.on_player_interaction(
             None, mouse.RIGHT, key.MOD_SHIFT, None, None
         )
 
-        self.assertFalse(FakeInventoryHandler.SHOWN)
+        self.assertFalse(InventoryHandlerMockup.SHOWN)
 
     async def test_model_state_serialization(self):
-        shared.crafting_handler = FakeCraftingHandler()
+        shared.crafting_handler = CraftingHandlerMockup()
 
         import mcpython.common.block.Chest
 
-        shared.inventory_handler = FakeInventoryHandler
+        shared.inventory_handler = InventoryHandlerMockup
 
         instance = mcpython.common.block.Chest.Chest()
         state = instance.get_model_state()
@@ -87,12 +87,12 @@ class TestChest(TestCase):
         class TestItem(AbstractItem):
             NAME = "minecraft:test_item"
 
-        shared.crafting_handler = FakeCraftingHandler()
+        shared.crafting_handler = CraftingHandlerMockup()
 
         import mcpython.common.block.Chest
 
-        shared.inventory_handler = FakeInventoryHandler
-        FakeInventoryHandler.SHOWN = False
+        shared.inventory_handler = InventoryHandlerMockup
+        InventoryHandlerMockup.SHOWN = False
 
         instance = mcpython.common.block.Chest.Chest()
         await instance.inventory.init()
