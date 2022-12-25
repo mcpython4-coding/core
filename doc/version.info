@@ -2022,7 +2022,7 @@ If  [uuk]: improved debug output for networking,
 b   [uuk]: fixed issue with fence blocks on the server not working correctly
 G   [github]: released snapshot 22w06a
 
-G   [github]: started development cycle for snapshot <22w??a>
+G   [github]: started development cycle for snapshot <23w??a>
 L   [uuk]: upgraded most of the libraries
 IB  [uuk]: improved internal drawing system in some places
 FI  [uuk]: added new system for caching and reloading resources automatically
@@ -2032,4 +2032,5 @@ IA  [uuk]: LootTables roll now async
 b   [uuk]: fixed InventoryHandler.close_all_inventories() not closing any inventory (missing await)
 b   [uuk]: fixed 2 "... was never awaited" warnings
 R   [uuk]: refactored some bits from the block model system
+b   [uuk]: fixed unit tests not running correctly
 

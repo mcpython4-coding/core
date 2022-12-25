@@ -34,9 +34,12 @@ Make sure that you are using python 3.10 (or higher; still WIP)!
 ----
 
 
-# Changelog of snapshot <22w??a>
-Scheduled to be released on <??.??.2022>
+# Changelog of snapshot <23w??a>
+Scheduled to be released on <??.??.2023>
 targeting <1.??.??> (currently: 1.18.1)
+
+    Rendering:
+        - Refactored stuff for block rendering
 
 
 # Changelog of snapshot 22w06a

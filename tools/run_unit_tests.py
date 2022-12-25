@@ -30,6 +30,7 @@ result = subprocess.call(
         local,
     ],
     cwd=local,
+    env=os.environ | {"DISABLE_OPTIMISATION_APPLY": "1"},
 )
 print("exit code:", result)
 sys.exit(result)

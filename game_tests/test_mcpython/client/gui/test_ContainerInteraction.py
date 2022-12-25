@@ -27,6 +27,7 @@ else:
     shared.IS_TEST_ENV = True
     shared.IS_CLIENT = False
 
+    import bytecodemanipulation.MutableFunction
     from mcpython.client.gui.ContainerRenderer import ContainerRenderer
     from mcpython.client.gui.ContainerRenderingManager import OpenedInventoryStatePart
     from mcpython.client.gui.Slot import ISlot, Slot
