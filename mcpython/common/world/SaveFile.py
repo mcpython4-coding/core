@@ -75,12 +75,14 @@ History of save versions:
     - removed some sanity checks for backwards compatibility
 - 11: introduced: 26.10.2021, outdated since: 29.12.2021, not loadable since: 29.12.2021
     - chunk block data is now serialized via the network API, not the old storage API
-- 12: introduced: 29.12.2021, outdated since: -, not loadable since: -
+- 12: introduced: 29.12.2021, outdated since: 25.12.2022, not loadable since: 25.12.2022
     - containers & data maps contain now their version
+- 13: introduced: 25.12.2022, outdated since: -, not loadable since: -
+    - changed according to new 1.19.3 stuff
 """
 
 # the latest version, used for upgrading
-shared.STORAGE_VERSION = LATEST_VERSION = 12
+shared.STORAGE_VERSION = LATEST_VERSION = 13
 
 # where the stuff should be saved
 SAVE_DIRECTORY = (
