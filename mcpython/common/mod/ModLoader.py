@@ -435,7 +435,7 @@ class ModLoader:
         :param modname: the mod name
         :param event_name: the event name
         :param info: the info, as shown by EventBus during errors
-        :return: a callable, used for regisering
+        :return: a callable, used for registering
 
         Example:
         @shared.mod_loader("minecraft", "stage:mod:init")
@@ -453,6 +453,8 @@ class ModLoader:
                     if isinstance(result, typing.Awaitable):
                         result = await result
                     return result
+
+                wrap.__name__ = modname + "#" + event_name
 
                 self.mods[modname].eventbus.subscribe(
                     event_name, wrap(), *args, **kwargs

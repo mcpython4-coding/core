@@ -2030,4 +2030,6 @@ b   [uuk]: fixed inventory reload being invoked twice on client
 L   [uuk]: upgraded libraries, changed to second iteration of bytecodemanipulation, 1.2.0
 IA  [uuk]: LootTables roll now async
 b   [uuk]: fixed InventoryHandler.close_all_inventories() not closing any inventory (missing await)
+b   [uuk]: fixed 2 "... was never awaited" warnings
+R   [uuk]: refactored some bits from the block model system
 

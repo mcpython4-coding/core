@@ -38,7 +38,7 @@ mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
     "hotkey:chunk_reload", reload_chunks
 )
 mcpython.engine.event.EventHandler.PUBLIC_EVENT_BUS.subscribe(
-    "hotkey:reload_textures", reload_func()
+    "hotkey:reload_textures", reload_func
 )
 
 

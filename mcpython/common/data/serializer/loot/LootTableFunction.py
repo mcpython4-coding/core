@@ -62,8 +62,9 @@ class CopyName(ILootTableFunction):
         if self.source == "block_entity":
             if "block" in kwargs:
                 block = kwargs["block"]
+                name = (await block.get_all_inventories())[0].custom_name
                 for item in items:
-                    item.display_name = (await block.get_all_inventories())[0].custom_name
+                    item.display_name = name
 
 
 @shared.registry

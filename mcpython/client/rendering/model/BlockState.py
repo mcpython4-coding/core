@@ -16,10 +16,13 @@ import random
 import typing
 
 import deprecation
+from pyglet.graphics.vertexdomain import VertexList
+
 import mcpython.client.rendering.model.api
 import mcpython.common.event.Registry
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.physics.AxisAlignedBoundingBox
+from mcpython.engine.physics.AxisAlignedBoundingBox import (BoundingArea, AxisAlignedBoundingBox)
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
@@ -33,6 +36,7 @@ from mcpython.client.rendering.model.api import (
     IBlockStateDecoder,
     IBlockStateRenderingTarget,
 )
+from mcpython.client.rendering.model.BlockModel import Model
 from mcpython.client.rendering.model.util import decode_entry, get_model_choice
 from mcpython.engine import logger
 
@@ -99,8 +103,10 @@ class MultiPartDecoder(IBlockStateDecoder):
                 parent: BlockStateContainer = await BlockStateContainer.get_or_load(
                     self.parent
                 )
+
             except FileNotFoundError:
                 self.parent = None
+
             else:
                 if parent is None:
                     self.parent = None
@@ -147,7 +153,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         batch: pyglet.graphics.Batch,
         face: mcpython.util.enums.EnumSide,
         previous=None,
-    ):
+    ) -> typing.Iterable[VertexList]:
         state = instance.get_model_state()
         box_model = None
         prepared_vertex, prepared_texture, prepared_tint = (
@@ -162,6 +168,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             prepared_tint,
             state,
         )
+
         return (
             tuple()
             if box_model is None
@@ -176,7 +183,7 @@ class MultiPartDecoder(IBlockStateDecoder):
         batch: pyglet.graphics.Batch,
         faces: int,
         previous=None,
-    ) -> typing.Iterable:
+    ) -> typing.Iterable[VertexList]:
         state = instance.get_model_state()
         box_model = None
         (prepared_vertex, prepared_texture, prepared_tint, prepare_vertex_elements,) = (
@@ -193,6 +200,7 @@ class MultiPartDecoder(IBlockStateDecoder):
             state,
             batch=batch,
         )
+
         return (
             tuple()
             if box_model is None
@@ -203,6 +211,8 @@ class MultiPartDecoder(IBlockStateDecoder):
 
     @classmethod
     def _test_for(cls, state, part, use_or=False):
+        # todo: checks can be made in advance (OOP tree!)
+
         for key in part:
             if use_or:
                 if key == "OR":
@@ -212,14 +222,17 @@ class MultiPartDecoder(IBlockStateDecoder):
                             for i in range(len(part[key]))
                         ]
                     )
+
                 else:
                     condition = key in state and (
                         (state[key] not in part[key].split("|"))
                         if type(part[key]) == str
                         else (state[key] == part[key])
                     )
+
                 if condition:
                     return True
+
             else:
                 if key == "OR":
                     condition = not any(
@@ -228,21 +241,25 @@ class MultiPartDecoder(IBlockStateDecoder):
                             for i in range(len(part[key]))
                         ]
                     )
+
                 else:
                     condition = key not in state or (
                         state[key] not in part[key].split("|")
                         if type(part[key]) == str
                         else state[key] == part[key]
                     )
+
                 if condition:
                     return False
+
         return not use_or
 
     def transform_to_bounding_box(
         self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
     ):
         state = instance.get_model_state()
-        bbox = mcpython.engine.physics.BoundingBox.BoundingArea()
+        bbox = BoundingArea()
+
         for entry in self.data["multipart"]:
             if "when" not in entry or self._test_for(state, entry["when"]):
                 data = entry["apply"]
@@ -251,23 +268,25 @@ class MultiPartDecoder(IBlockStateDecoder):
                     model = shared.model_handler.models[model]
                     for box_model in model.box_models:
                         bbox.bounding_boxes.append(
-                            mcpython.engine.physics.BoundingBox.AxisAlignedBoundingBox(
+                            AxisAlignedBoundingBox(
                                 box_model.box_size,
                                 box_model.box_position,
-                                rotation=config["rotation"],
+                                # rotation=config["rotation"],  # todo: do we need this?
                             )
                         )
+
                 else:
                     config, model = get_model_choice(data, instance)
                     model = shared.model_handler.models[model]
                     for box_model in model.box_models:
                         bbox.bounding_boxes.append(
-                            mcpython.engine.physics.BoundingBox.AxisAlignedBoundingBox(
+                            AxisAlignedBoundingBox(
                                 box_model.box_size,
                                 box_model.box_position,
-                                rotation=config["rotation"],
+                                # rotation=config["rotation"],  # todo: do we need this?
                             )
                         )
+
         return bbox
 
     def draw_face(
@@ -441,6 +460,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         scale,
                         previous=(prepared_vertex, prepared_texture, prepared_tint),
                     )
+
                 else:
                     config, model = get_model_choice(data, instance)
                     _, box_model = shared.model_handler.models[
@@ -453,6 +473,7 @@ class MultiPartDecoder(IBlockStateDecoder):
                         scale,
                         previous=(prepared_vertex, prepared_texture, prepared_tint),
                     )
+
         return box_model
 
 
@@ -483,7 +504,7 @@ class DefaultDecoder(IBlockStateDecoder):
         super().__init__(block_state)
         self.parent = None
         self.model_alias = None
-        self.states = []
+        self.states: typing.List[typing.Tuple[dict, BlockState]] = []
 
     def parse_data(self, data: dict):
         self.data = data
@@ -547,73 +568,49 @@ class DefaultDecoder(IBlockStateDecoder):
 
         return True
 
-    @deprecation.deprecated()
-    def add_face_to_batch(
-        self,
-        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
-        batch: pyglet.graphics.Batch,
-        face: mcpython.util.enums.EnumSide,
-    ):
+    def get_blockstate_for_instance(self, instance: IBlockStateRenderingTarget) -> typing.Optional["BlockState"]:
         data = instance.get_model_state()
         for keymap, blockstate in self.states:
             if keymap == data:
-                return blockstate.add_face_to_batch(instance, batch, face)
+                return blockstate
 
         if not shared.model_handler.hide_blockstate_errors:
             logger.println(
                 "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {})".format(
-                    instance, data, [e[0] for e in self.states]
+                    instance, instance.get_model_state(), [e[0] for e in self.states]
                 )
             )
-
-        return tuple()
 
     def add_faces_to_batch(
         self,
         instance: IBlockStateRenderingTarget,
         batch: pyglet.graphics.Batch,
         faces: int,
-    ) -> typing.Iterable:
-        data = instance.get_model_state()
-        for keymap, blockstate in self.states:
-            if keymap == data:
-                return blockstate.add_faces_to_batch(instance, batch, faces)
+    ) -> typing.Iterable[VertexList]:
+        blockstate = self.get_blockstate_for_instance(instance)
 
-        if not shared.model_handler.hide_blockstate_errors:
-            logger.println(
-                "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {})".format(
-                    instance, data, [e[0] for e in self.states]
-                )
-            )
+        if blockstate is None:
+            return tuple()
 
-        return tuple()
+        return blockstate.add_faces_to_batch(instance, batch, faces)
 
     def add_raw_face_to_batch(
         self, instance: IBlockStateRenderingTarget, position, state, batches, face
-    ):
-        # todo: optimise this somehow!
-        for keymap, blockstate in self.states:
-            if keymap == state:
-                return blockstate.add_raw_face_to_batch(
-                    instance, position, batches, face
-                )
+    ) -> typing.Iterable[VertexList]:
+        blockstate = self.get_blockstate_for_instance(instance)
 
-        if not shared.model_handler.hide_blockstate_errors:
-            logger.println(
-                "[WARN][INVALID] invalid state mapping for block {}: {} (possible: {}".format(
-                    position, state, [e[0] for e in self.states]
-                )
-            )
+        if blockstate is None:
+            return tuple()
 
-        return tuple()
+        return blockstate.add_raw_face_to_batch(instance, position, batches, face)
 
     def transform_to_bounding_box(
-        self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget
+        self, instance: IBlockStateRenderingTarget
     ):
         if instance.block_state is None:
             instance.block_state = 0
         data = instance.get_model_state()
-        bbox = mcpython.engine.physics.BoundingBox.BoundingArea()
+        bbox = BoundingArea()
 
         for keymap, blockstate in self.states:
             if keymap == data:
@@ -622,10 +619,10 @@ class DefaultDecoder(IBlockStateDecoder):
                 for box_model in model.box_models:
                     rotation = config["rotation"]
                     bbox.bounding_boxes.append(
-                        mcpython.engine.physics.BoundingBox.AxisAlignedBoundingBox(
+                        AxisAlignedBoundingBox(
                             box_model.box_size,
                             box_model.box_position,
-                            rotation=rotation,
+                            # rotation=rotation,  # todo: do we need this here?
                         )
                     )
 
@@ -689,28 +686,32 @@ class BlockStateContainer:
         cls.LOOKUP_DIRECTORIES.add((directory, modname))
 
     @classmethod
-    async def from_file(cls, file: str, modname: str, immediate=False):
+    async def from_file(cls, file: str, modname: str, immediate=False) -> typing.Optional["BlockStateContainer"]:
         # todo: check for correct process
         if immediate:
-            await cls.unsafe_from_file(file)
+            cls.TO_CREATE.add(file)
+            return await cls.unsafe_from_file(file)
         else:
             shared.mod_loader.mods[modname].eventbus.subscribe(
                 "stage:model:blockstate_create",
                 cls.unsafe_from_file(file),
                 info="loading block state file '{}'".format(file),
             )
-        cls.TO_CREATE.add(file)
+
+            cls.TO_CREATE.add(file)
 
     @classmethod
-    async def unsafe_from_file(cls, file: str):
+    async def unsafe_from_file(cls, file: str) -> typing.Optional["BlockStateContainer"]:
         try:
             s = file.split("/")
             modname = s[s.index("blockstates") - 1]
             return await cls("{}:{}".format(modname, s[-1].split(".")[0])).parse_data(
                 await mcpython.engine.ResourceLoader.read_json(file)
             )
+
         except BlockStateNotNeeded:
             pass
+
         except:
             logger.print_exception(
                 "error during loading model from file '{}'".format(file)
@@ -724,7 +725,7 @@ class BlockStateContainer:
         immediate=False,
         store=True,
         force=False,
-    ):
+    ) -> typing.Optional["BlockStateContainer"]:
         assert isinstance(name, str), "name must be str"
 
         # todo: check for correct process
@@ -732,7 +733,8 @@ class BlockStateContainer:
             cls.RAW_DATA.append((name, data, force))
 
         if immediate:
-            await cls.unsafe_from_data(name, data, force=force)
+            return await cls.unsafe_from_data(name, data, force=force)
+
         else:
             mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
                 "stage:model:blockstate_create",
@@ -743,16 +745,21 @@ class BlockStateContainer:
     @classmethod
     async def unsafe_from_data(
         cls, name: str, data: typing.Dict[str, typing.Any], immediate=False, force=False
-    ):
+    ) -> typing.Optional["BlockStateContainer"]:
         assert isinstance(name, str), "name must be str"
+
         try:
             instance = await cls(name, immediate=immediate, force=force).parse_data(
                 data
             )
+
             await instance.bake()
+
             return instance
+
         except BlockStateNotNeeded:
             pass  # do we need this model?
+
         except:
             logger.print_exception(
                 "error during loading model for '{}' from data {}".format(name, data)
@@ -784,6 +791,7 @@ class BlockStateContainer:
             and name != "minecraft:missing_texture"
             and not force
         ):
+            # todo: this check does not belong here!
             raise BlockStateNotNeeded()
 
         shared.model_handler.blockstates[name] = self
@@ -792,11 +800,13 @@ class BlockStateContainer:
         self.baked = False
 
         if not immediate and not shared.mod_loader.finished:
+            # todo: add better check here!
             shared.mod_loader.mods[name.split(":")[0]].eventbus.subscribe(
                 "stage:model:blockstate_bake",
                 self.bake(),
                 info="baking block state {}".format(name),
             )
+
         else:
             shared.tick_handler.schedule_once(self.bake())
 
@@ -804,6 +814,7 @@ class BlockStateContainer:
         for loader in blockstate_decoder_registry.entries.values():
             if loader.is_valid(data):
                 self.loader: IBlockStateDecoder = loader(self)
+
                 try:
                     self.loader.parse_data(data)
                 except:  # lgtm [py/catch-base-exception]
@@ -811,10 +822,12 @@ class BlockStateContainer:
                         f"block state loader {loader.NAME} failed to load block state {self.name}; continuing further search"
                     )
                 break
+
         else:
             logger.println(
-                "can't find matching loader for block state {}".format(self.name)
+                f"can't find matching loader for block state {self.name}; inserting empty data"
             )
+            self.loader = DefaultDecoder(self)
 
         return self
 
@@ -828,6 +841,7 @@ class BlockStateContainer:
                 )
             else:
                 self.baked = True
+
         except:  # lgtm [py/catch-base-exception]
             logger.print_exception("during baking block state " + self.name)
             self.baked = True
@@ -884,15 +898,15 @@ class BlockState:
         self.data = None
         self.models = []  # (model, config, weight)
 
-    def parse_data(self, data: dict):
+    def parse_data(self, data: dict | None):
         self.data = data
 
-        if type(data) == dict:
+        if isinstance(data, dict):
             if "model" in data:
                 self.models.append(decode_entry(data))
                 shared.model_handler.used_models.add(data["model"])
 
-        elif type(data) == list:
+        elif isinstance(data, list):
             models = [decode_entry(x) for x in data]
             self.models += models
             shared.model_handler.used_models |= set([x[0] for x in models])
@@ -900,32 +914,24 @@ class BlockState:
         return self
 
     def copy(self):
-        return BlockState().parse_data(copy.deepcopy(self.data))
+        instance = type(self)()
+        # todo: is this enough, or do we need to create also model-copies?
+        instance.models = self.models.copy()
+        return self
 
-    @deprecation.deprecated()
-    def add_face_to_batch(
-        self,
-        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
-        batch: pyglet.graphics.Batch,
-        face: mcpython.util.enums.EnumSide,
-    ):
-        return self.add_faces_to_batch(instance, batch, face.bitflag)
+    def get_model_for_block(self, instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget) -> typing.Tuple[Model | None, dict | None]:
+        if not self.models:
+            return None, None
 
-    def add_faces_to_batch(
-        self,
-        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
-        batch: pyglet.graphics.Batch,
-        faces: int,
-    ):
         if (
             instance.block_state is None
             or instance.block_state < 0
             or instance.block_state > len(self.models)
         ):
             instance.block_state = self.models.index(
-                random.choices(self.models, [e[2] for e in self.models])[0]
+                random.choices(self.models, [e[2] for e in self.models], k=1)[0]
             )
-
+        
         model, config, _ = self.models[instance.block_state]
         if model not in shared.model_handler.models:
             if not shared.model_handler.hide_blockstate_errors:
@@ -934,56 +940,42 @@ class BlockState:
                         model, instance.position
                     )
                 )
+            
+            return None, None
+        
+        return shared.model_handler.models[model], config
 
+    def add_faces_to_batch(
+        self,
+        instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
+        batch: pyglet.graphics.Batch,
+        faces: int,
+    ) -> typing.Iterable[VertexList]:
+        model, config = self.get_model_for_block(instance)
+        if model is None:
             return tuple()
 
-        m = shared.model_handler.models[model]
-
-        if m is None:
-            return tuple()
-
-        result = m.add_faces_to_batch(instance, instance.position, batch, config, faces)
-        return result
+        return model.add_faces_to_batch(instance, instance.position, batch, config, faces)
 
     def add_raw_face_to_batch(
         self, instance: IBlockStateRenderingTarget, position, batches, face
-    ):
-        block_state = self.models.index(
-            random.choices(self.models, [e[2] for e in self.models])[0]
-        )
-        model, config, _ = self.models[block_state]
-        if model not in shared.model_handler.models:
-            if not shared.model_handler.hide_blockstate_errors:
-                logger.println(
-                    "can't find model named '{}' to add at {}".format(model, position)
-                )
+    ) -> typing.Iterable[VertexList]:
+        model, config = self.get_model_for_block(instance)
+        if model is None:
             return tuple()
-        result = shared.model_handler.models[model].add_face_to_batch(
-            instance, position, batches, config, face
-        )
-        return result
+        
+        return model.add_face_to_batch(instance, position, batches, config, face)
 
     def draw_face(
         self,
         instance: mcpython.client.rendering.model.api.IBlockStateRenderingTarget,
         face: mcpython.util.enums.EnumSide,
     ):
-        if instance.block_state is None:
-            instance.block_state = self.models.index(
-                random.choices(self.models, [e[2] for e in self.models])[0]
-            )
-        model, config, _ = self.models[instance.block_state]
-        if model not in shared.model_handler.models:
-            if not shared.model_handler.hide_blockstate_errors:
-                logger.println(
-                    "can't find model named '{}' to add at {}".format(
-                        model, instance.position
-                    )
-                )
+        model, config = self.get_model_for_block(instance)
+        if model is None:
             return
-        shared.model_handler.models[model].draw_face(
-            instance, instance.position, config, face
-        )
+
+        model.draw_face(instance, instance.position, config, face)
 
     def draw_face_scaled(
         self,
@@ -991,20 +983,11 @@ class BlockState:
         face: mcpython.util.enums.EnumSide,
         scale: float,
     ):
-        if instance.block_state is None:
-            instance.block_state = self.models.index(
-                random.choices(self.models, [e[2] for e in self.models])[0]
-            )
-        model, config, _ = self.models[instance.block_state]
-        if model not in shared.model_handler.models:
-            if not shared.model_handler.hide_blockstate_errors:
-                logger.println(
-                    "can't find model named '{}' to add at {}".format(
-                        model, instance.position
-                    )
-                )
+        model, config = self.get_model_for_block(instance)
+        if model is None:
             return
-        shared.model_handler.models[model].draw_face_scaled(
+        
+        model.draw_face_scaled(
             instance,
             instance.position,
             config,
