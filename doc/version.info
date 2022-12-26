@@ -2036,6 +2036,7 @@ b   [uuk]: fixed unit tests not running correctly
 L   [uuk]: targetting now 1.19.3 as asset source
 L   [uuk]: upgraded to pyglet 2.0
 I   [uuk]: upgraded eventloop replacement to reflect pyglet's changes
+A*  [uuk]: MatrixStack system returns now Mat4's
 
 
 todo: rewrite fog

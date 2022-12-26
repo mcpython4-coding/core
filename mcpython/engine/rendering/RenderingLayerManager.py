@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 import typing
 
+from pyglet.math import Mat4
+
 from mcpython import shared
 from pyglet.gl import *
 
@@ -81,7 +83,9 @@ class RenderingLayer:
         elif self.rendering_mode == "3d":
             shared.window.set_3d()
         else:
-            glLoadIdentity()
+            width, height = shared.window.get_size()
+            glViewport(0, 0, *shared.window.get_framebuffer_size())
+            shared.window.projection = Mat4.orthogonal_projection(0, width, 0, height, -255, 255)
 
     def draw(self):
         if self.event_name is not None:
@@ -91,7 +95,9 @@ class RenderingLayer:
             sub()
 
     def resetEnv(self):
-        glLoadIdentity()
+        width, height = shared.window.get_size()
+        glViewport(0, 0, *shared.window.get_framebuffer_size())
+        shared.window.projection = Mat4.orthogonal_projection(0, width, 0, height, -255, 255)
 
 
 class RenderingLayerManager:

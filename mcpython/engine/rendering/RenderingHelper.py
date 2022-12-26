@@ -153,11 +153,11 @@ class RenderingHelper:
             lambda: (
                 0,
                 0,
-                max(1, shared.window.get_viewport_size()[0]),
-                max(1, shared.window.get_viewport_size()[1]),
+                max(1, shared.window.get_size()[0]),
+                max(1, shared.window.get_size()[1]),
             )
         )
-        base.addMatrixMode(_gl.GL_PROJECTION)
+        # base.addMatrixMode(_gl.GL_PROJECTION)
         base.addLoadIdentity()
         base.addGluPerspective(
             lambda: (
@@ -167,7 +167,7 @@ class RenderingHelper:
                 60.0,
             )
         )
-        base.addMatrixMode(_gl.GL_MODELVIEW)
+        # base.addMatrixMode(_gl.GL_MODELVIEW)
         base.addLoadIdentity()
         base.addRotate3d(
             lambda: (shared.world.get_active_player().rotation[0], 0, 1, 0)

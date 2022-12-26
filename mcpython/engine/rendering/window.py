@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import asyncio
 import cProfile
 
+from pyglet.math import Mat4
+
 import mcpython.common.config
 import mcpython.common.event.TickHandler
 import mcpython.common.state.GameViewStatePart
@@ -99,9 +101,6 @@ class Window(
 
         # Whether the window exclusively captures the mouse.
         self.exclusive = False
-
-        # Which sector the player is currently in.
-        self.sector = None  # todo: move to player
 
         # Velocity in the y (upward) direction.
         self.dy = 0  # todo: move to player
@@ -363,6 +362,8 @@ class Window(
         """
         Called when the window is resized to a new `width` and `height`.
         """
+        super().on_resize(width, height)
+
         # labels todo: move to separated class
         self.label.y = height - 10
         self.label2.y = height - 22
@@ -375,14 +376,9 @@ class Window(
         @cache_global_name("pyglet", lambda: pyglet)
         @onlyInClient()
         def set_2d(self):
-            # todo: move to RenderingHelper
             width, height = self.get_size()
-            viewport = self.get_viewport_size()
-            mcpython.engine.rendering.util.set_2d(
-                (max(1, viewport[0]), max(1, viewport[1])),
-                max(1, width),
-                max(1, height),
-            )
+            gl.glViewport(0, 0, *self.get_framebuffer_size())
+            self.projection = Mat4.orthogonal_projection(0, width, 0, height, -255, 255)
             pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
         @cache_global_name("pyglet", lambda: pyglet)
@@ -397,7 +393,7 @@ class Window(
                     shared.rendering_helper.get_dynamic_3d_matrix_stack()
                 )
 
-            shared.rendering_helper.default_3d_stack.apply()
+            self.projection = shared.rendering_helper.default_3d_stack.get_matrix()
             pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
         @cache_global_name("pyglet", lambda: pyglet)
