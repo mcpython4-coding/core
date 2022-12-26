@@ -36,8 +36,8 @@ class GameViewRenderer(AbstractStateRenderer):
             shared.window.draw_reticle()
 
     def draw_3d(self):
-        pyglet.gl.glClearColor(*self.assigned_state.clear_color)
-        pyglet.gl.glColor3d(*self.assigned_state.color_3d)
+        # pyglet.gl.glClearColor(*self.assigned_state.clear_color)
+        # pyglet.gl.glColor3d(*self.assigned_state.color_3d)
 
         if self.assigned_state.activate_3d_draw:
             shared.world.get_active_dimension().draw()

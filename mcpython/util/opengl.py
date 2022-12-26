@@ -25,7 +25,7 @@ except ImportError:
     gl = None
 
 
-@deprecation.deprecated()
+@deprecation.deprecated(details="Use pyglet's shapes module!")
 def draw_rectangle(position, size, color=(0.0, 0.0, 0.0, 1.0)):
     assert len(color) == 4
 
@@ -49,28 +49,14 @@ def draw_rectangle(position, size, color=(0.0, 0.0, 0.0, 1.0)):
         )
     )
 
-    # if len(color) == 3:
-    #     gl.glColor3d(*color)
-    # else:
-    #     gl.glColor4d(*color)
-    # gl.glBegin(gl.GL_TRIANGLES)
-    # gl.glVertex2f(x, y + dy)
-    # gl.glVertex2f(x, y)
-    # gl.glVertex2f(x + dx, y + dy)
-    # gl.glVertex2f(x + dx, y + dy)
-    # gl.glVertex2f(x, y)
-    # gl.glVertex2f(x + dx, y)
-    # gl.glEnd()
-    # gl.glColor3d(1, 1, 1)
 
-
-@deprecation.deprecated()
+@deprecation.deprecated(details="Use pyglet's shapes module!")
 def draw_line(f, t, color=(0.0, 0.0, 0.0, 1.0)):
     assert len(color) == 4
     pyglet.graphics.draw(2, gl.GL_LINES, colors=("f", color*2), position=("f", f+(0,)+t+(0,)))
 
 
-@deprecation.deprecated()
+@deprecation.deprecated(details="Use pyglet's shapes module!")
 def draw_line_rectangle(position, size, color=(0.0, 0.0, 0.0, 1.0)):
     assert len(color) == 4
     x, y = position

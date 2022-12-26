@@ -526,7 +526,6 @@ class Window(
         Draw the crosshairs in the center of the screen.
         todo: move to special helper class
         """
-        pyglet.gl.glColor3d(255, 255, 255)
         wx, wy = self.get_size()
         self.CROSSHAIRS_TEXTURE.blit(
             wx // 2 - self.CROSSHAIRS_TEXTURE.width // 2,

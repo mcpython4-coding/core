@@ -19,6 +19,8 @@ import traceback
 import typing
 
 import deprecation
+import tqdm.asyncio
+
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
@@ -154,12 +156,11 @@ class ModelHandler:
             self.raw_models.append((data, name))
 
     async def build(self, immediate=False):
-        await asyncio.gather(
-            *(
-                self.let_subscribe_to_build(model, immediate=immediate)
-                for model in self.used_models
-            )
-        )
+        for f in tqdm.asyncio.tqdm.as_completed([
+            self.let_subscribe_to_build(model, immediate=immediate)
+            for model in self.used_models
+        ], desc="Preparing Models"):
+            await f
 
     async def let_subscribe_to_build(self, model, immediate=False):
         modname = model.split(":")[0] if model.count(":") == 1 else "minecraft"
@@ -243,12 +244,11 @@ class ModelHandler:
 
         self.dependence_list.clear()  # decrease memory usage
 
-        await asyncio.gather(
-            *(
-                self.load_model(x)
-                for x in sorted_models
-            )
-        )
+        for f in tqdm.asyncio.tqdm.as_completed([
+            self.load_model(x)
+            for x in sorted_models
+        ], desc="Loading Models..."):
+            await f
 
     async def load_model(self, name: str):
         if ":" not in name:

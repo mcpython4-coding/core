@@ -241,7 +241,6 @@ class InventoryPlayerHotbar(mcpython.client.gui.ContainerRenderer.ContainerRende
             self.last_index = shared.world.get_active_player().active_inventory_slot
             self.last_item = selected_slot.get_itemstack().get_item_name()
 
-        pyglet.gl.glColor3d(1.0, 1.0, 1.0)
         if shared.world.get_active_player().gamemode in (0, 2):
             x, y = self.get_position()
             y += 40

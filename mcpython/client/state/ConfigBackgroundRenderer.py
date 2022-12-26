@@ -36,7 +36,7 @@ class ConfigBackgroundRenderer(AbstractStateRenderer):
         )
         self.background_image = mcpython.util.texture.to_pyglet_image(
             background_raw.resize((32, 32), PIL.Image.NEAREST)
-        )
+        ).get_texture()
 
     def recreate(self, wx, wy):
         [obj.delete() for obj in self.objects]
@@ -45,7 +45,7 @@ class ConfigBackgroundRenderer(AbstractStateRenderer):
         for x in range(wx // 32 + 1):
             for y in range(wy // 32 + 1):
                 obj = pyglet.sprite.Sprite(self.background_image, batch=self.batch)
-                obj.position = (x * 32, y * 32)
+                obj.position = (x * 32, y * 32, 0)
                 self.objects.append(obj)
 
     def on_activate(self):

@@ -10,3 +10,5 @@ simplejson==3.18.0
 Python-NBT==1.2.0
 aiofiles==22.1.0
 bytecodemanipulation==0.2.2
+asyncio==3.4.3
+tqdm==4.64.1
