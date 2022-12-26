@@ -73,12 +73,12 @@ class AbstractDamageBarItem(mcpython.common.item.AbstractItem.AbstractItem, ABC)
 
         progress, color = d
         draw_rectangle(
-            (position[0] + 2, position[1] + 2), (round(width), round(height)), (0, 0, 0)
+            (position[0] + 2, position[1] + 2), (round(width), round(height)), (0, 0, 0, 1)
         )
         draw_rectangle(
             (position[0] + 2, position[1] + 2),
             (round(width * progress), round(height)),
-            color,
+            color + (1,),
         )
 
 

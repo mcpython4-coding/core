@@ -90,7 +90,7 @@ class UIPartTextInput(AbstractUIPart.AbstractUIPart):
         sx, sy = self.bounding_box_size
         mcpython.util.opengl.draw_rectangle((x, y), (sx, sy))
         mcpython.util.opengl.draw_line_rectangle(
-            (x + 2, y + 1), (sx - 3, sy - 3), color=(1.0, 1.0, 1.0)
+            (x + 2, y + 1), (sx - 3, sy - 3), color=(1.0, 1.0, 1.0, 1.0)
         )
         self.lable.draw()
 

@@ -19,6 +19,7 @@ import traceback
 import typing
 
 import deprecation
+import tqdm
 import tqdm.asyncio
 
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
@@ -443,33 +444,32 @@ class ModelHandler:
         mcpython.client.rendering.model.BlockState.BlockStateContainer.TO_CREATE.clear()
         mcpython.client.rendering.model.BlockState.BlockStateContainer.NEEDED.clear()
 
-        logger.println("walking across block states...")
-        await asyncio.gather(
-            *(
+        for f in tqdm.asyncio.tqdm_asyncio(
+            [
                 mcpython.client.rendering.model.BlockState.BlockStateContainer.from_directory(
                     directory, modname, immediate=True
                 )
                 for (directory, modname,) in (
                     mcpython.client.rendering.model.BlockState.BlockStateContainer.LOOKUP_DIRECTORIES
                 )
-            )
-        )
+            ], desc="Walking across block states"
+        ):
+            await f
 
-        logger.println("walking across located block states...")
-        await asyncio.gather(
-            *(
+        for f in tqdm.asyncio.tqdm_asyncio(
+            [
                 mcpython.client.rendering.model.BlockState.BlockStateContainer.unsafe_from_data(
                     name, data, immediate=True, force=force
                 )
                 for name, data, force in mcpython.client.rendering.model.BlockState.BlockStateContainer.RAW_DATA
-            )
-        )
+            ], desc="walking across located block state"
+        ):
+            await f
 
         await shared.event_handler.call_async(
             "minecraft:data:blockstates:custom_injection", self
         )
 
-        logger.println("walking across requested models...")
         await self.build(immediate=True)
         await self.process_models(immediate=True)
         await animation_manager.bake()
@@ -495,18 +495,18 @@ mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
     shared.model_handler.add_from_mod("minecraft"),
     info="searching for block models for minecraft",
 )
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_create",
-    shared.model_handler.search(),
-    info="loading found models",
-)
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_bake_prepare",
-    shared.model_handler.build(),
-    info="filtering models",
-)
-mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
-    "stage:model:model_bake:prepare",
-    shared.model_handler.process_models(),
-    info="preparing model data",
-)
+# mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+#     "stage:model:model_create",
+#     shared.model_handler.search(),
+#     info="loading found models",
+# )
+# mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+#     "stage:model:model_bake_prepare",
+#     shared.model_handler.build(),
+#     info="filtering models",
+# )
+# mcpython.common.mod.ModMcpython.mcpython.eventbus.subscribe(
+#     "stage:model:model_bake:prepare",
+#     shared.model_handler.process_models(),
+#     info="preparing model data",
+# )

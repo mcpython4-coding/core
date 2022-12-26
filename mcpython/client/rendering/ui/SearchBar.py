@@ -98,7 +98,7 @@ class SearchBar:
         self.label.position = (self.position[0] + 2, self.position[1] + 2)
         self.label.draw()
 
-        opengl.draw_line_rectangle(self.position, self.entry_size, (1, 0, 0))
+        opengl.draw_line_rectangle(self.position, self.entry_size, (1, 0, 0, 1))
 
     def is_position_in_field(self, x: int, y: int):
         return (

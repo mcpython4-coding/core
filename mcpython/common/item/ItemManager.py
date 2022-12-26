@@ -83,7 +83,7 @@ async def load_data():
                 "They are removed from the system",
             ]
         )
-        for entry in tqdm.tqdm(list(map(tuple, data)), desc="Loading item data...", ncols=100):
+        for entry in tqdm.tqdm(list(map(tuple, data)), desc="Loading item data", ncols=100):
             name = entry[0]
             table = shared.registry.get_by_name("minecraft:block").entries
             if name in table:
@@ -109,6 +109,8 @@ async def load_data():
             else:
                 builder.println("-'{}'".format(entry))
                 data.remove(entry)
+                # todo: remove texture file from cache!
+
         builder.finish()
         with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(data, f)

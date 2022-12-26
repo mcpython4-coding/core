@@ -187,11 +187,11 @@ class WorldLoadingProgress(AbstractState.AbstractState):
             status = self.status_table[(cx, cz)]
             if 0 <= status <= 1:
                 factor = status * 255
-                color = (factor, factor, factor)
+                color = (factor, factor, factor, 255)
             elif status == -1:
-                color = (0, 255, 0)
+                color = (0, 255, 0, 255)
             else:
-                color = (136, 0, 255)
+                color = (136, 0, 255, 255)
             mcpython.util.opengl.draw_rectangle(
                 (mx + cx * 10, my + cz * 10), (10, 10), color
             )
