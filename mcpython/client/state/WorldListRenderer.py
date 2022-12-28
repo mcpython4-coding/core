@@ -30,8 +30,9 @@ class WorldListRenderer(AbstractStateRenderer):
                 label.draw()
             if i == self.assigned_state.selected_world:
                 x, y = icon.position
-                draw_line_rectangle((x - 2, y - 2), (wx - 130, 54), (1, 1, 1))
-            px, py = icon.position
+                draw_line_rectangle((x - 2, y - 2), (wx - 130, 54), (1, 1, 1, 1))
+
+            px, py, _ = icon.position
             if 0 <= x - px <= wx and 0 <= y - py <= 50:
                 if 0 <= x - px <= 50:
                     self.assigned_state.selection_sprite.position = (
@@ -40,4 +41,4 @@ class WorldListRenderer(AbstractStateRenderer):
                     )
                     self.assigned_state.selection_sprite.draw()
         self.assigned_state.scissor_group.unset_state()
-        draw_line_rectangle((45, 100), (wx - 90, wy - 160), (1, 1, 1))
+        draw_line_rectangle((45, 100), (wx - 90, wy - 160), (1, 1, 1, 1))

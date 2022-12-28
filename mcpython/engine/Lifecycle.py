@@ -32,13 +32,32 @@ ASYNC_INVOKE_QUEUE = queue.SimpleQueue()
 
 
 class Lifecycle(pyglet.app.EventLoop):
-    def run(self):
+    def run(self, interval=1 / 60):
+        """Begin processing events, scheduled functions and window updates.
+
+        This method returns when :py:attr:`has_exit` is set to True.
+
+        Developers are discouraged from overriding this method, as the
+        implementation is platform-specific.
+        """
+        if not interval:
+            self.clock.schedule(self._redraw_windows)
+        else:
+            self.clock.schedule_interval(self._redraw_windows, interval)
+
         self.has_exit = False
-        self._legacy_setup()
+
+        from pyglet.window import Window
+        Window._enable_event_queue = False
+
+        # Dispatch pending events
+        for window in pyglet.app.windows:
+            window.switch_to()
+            window.dispatch_pending_events()
 
         platform_event_loop = pyglet.app.platform_event_loop
         platform_event_loop.start()
-        self.dispatch_event("on_enter")
+        self.dispatch_event('on_enter')
         self.is_running = True
 
         while not self.has_exit:
@@ -48,7 +67,7 @@ class Lifecycle(pyglet.app.EventLoop):
             self.handle_some_async()
 
         self.is_running = False
-        self.dispatch_event("on_exit")
+        self.dispatch_event('on_exit')
         platform_event_loop.stop()
 
     def handle_some_async(self):

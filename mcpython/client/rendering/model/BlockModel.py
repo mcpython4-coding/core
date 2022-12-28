@@ -54,7 +54,7 @@ class Model:
     def __init__(self, name: str, modname: str = None):
         self.name = name
         self.modname = modname or name.split(":")[-1]
-        self.parent = None
+        self.parent: str | "Model" | None = None
         self.used_textures = {}
         self.animated_textures = {}
         self.texture_addresses = {}
@@ -117,7 +117,7 @@ class Model:
     @cache_global_name("logger", lambda: logger)
     async def parse_parent_data(self):
         if ":" not in self.parent:
-            self.parent = "minecraft:" + self.parent
+            self.parent: str = "minecraft:" + self.parent
 
             if "minecraft" not in self.name and ":" in self.name:
                 logger.println(
@@ -136,7 +136,7 @@ class Model:
             )
             return
 
-        self.parent = shared.model_handler.models[self.parent]
+        self.parent: "Model" = shared.model_handler.models[self.parent]
 
         if self.parent is not None:
             self.used_textures = self.parent.used_textures.copy()

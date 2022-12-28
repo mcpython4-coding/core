@@ -24,7 +24,7 @@ class UIPartProgressBar(AbstractUIPart.AbstractUIPart):
         self,
         position,
         size,
-        color=(1.0, 0.0, 0.0),
+        color=(1.0, 0.0, 0.0, 1.0),
         progress_items=None,
         status=0,
         text="",
@@ -43,6 +43,8 @@ class UIPartProgressBar(AbstractUIPart.AbstractUIPart):
         :param anchor_pgb: the anchor on the progress bar
         :param anchor_window: the anchor on the window
         """
+        assert len(color) == 4
+
         super().__init__(
             position, size, anchor_element=anchor_pgb, anchor_window=anchor_window
         )

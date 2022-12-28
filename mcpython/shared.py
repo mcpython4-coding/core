@@ -14,6 +14,7 @@ This project is not official by mojang and does not relate to it.
 import os
 import sys
 import tempfile
+import traceback
 
 launch_wrapper = None
 
@@ -93,10 +94,12 @@ mod_loader = None  # the mod loader instance
 try:
     # todo: move to separated file
     # todo: do this only on the client!
+    import pyglet.gl as __gl
     import mcpython.engine.rendering.RenderingHelper as _helper
 
     rendering_helper = _helper.RenderingHelper()
-except ImportError:
+except:
+    traceback.print_exc()
     rendering_helper = None
 
 NEXT_EVENT_BUS_ID = 0

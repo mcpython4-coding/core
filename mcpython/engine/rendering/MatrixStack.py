@@ -12,6 +12,9 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import pyglet.gl as _gl
+from pyglet.math import Mat4
+from pyglet.math import Vec3
+
 from mcpython.util.annotation import onlyInClient
 
 
@@ -100,26 +103,45 @@ class MatrixStack:
         """
         self.operation_stack = self.template_stack.pop(0).operation_stack.copy()
 
-    def apply(self):
-        """
-        will apply the configuration onto the system. Will reset all present transformations
-        """
-        _gl.glLoadIdentity()
+    def get_matrix(self) -> Mat4:
+        matrix = Mat4()
+
         for opcode, *d in self.operation_stack:
-            if opcode == 0:
-                _gl.glTranslated(*d)
+            if opcode == 0:  # translate
+                matrix @= Mat4.from_translation(d)
             elif opcode == 1:
-                _gl.glRotated(*d)
+                matrix @= Mat4.from_rotation(d[0], d[1:])
             elif opcode == 2:
-                _gl.glScaled(*d)
+                matrix @= Mat4.from_scale(d)
             elif opcode == 3:
-                _gl.glViewport(*d[0])
+                pass  # todo: what to do here?
             elif opcode == 4:
-                _gl.glMatrixMode(d[0])
+                pass  # todo: what to do here?
             elif opcode == 5:
-                _gl.glLoadIdentity()
+                matrix = Mat4()
             elif opcode == 6:
-                _gl.gluPerspective(*d[0])
+                matrix @= Mat4.perspective_projection(*d[0])
+
+        return matrix
+
+    def apply(self):
+        raise RuntimeError("pyglet 2.0 does NOT support this anymore, use get_matrix() instead")
+        # _gl.glLoadIdentity()
+        # for opcode, *d in self.operation_stack:
+        #     if opcode == 0:
+        #         _gl.glTranslated(*d)
+        #     elif opcode == 1:
+        #         _gl.glRotated(*d)
+        #     elif opcode == 2:
+        #         _gl.glScaled(*d)
+        #     elif opcode == 3:
+        #         _gl.glViewport(*d[0])
+        #     elif opcode == 4:
+        #         _gl.glMatrixMode(d[0])
+        #     elif opcode == 5:
+        #         _gl.glLoadIdentity()
+        #     elif opcode == 6:
+        #         _gl.gluPerspective(*d[0])
 
 
 @onlyInClient()
@@ -133,6 +155,7 @@ class LinkedMatrixStack(MatrixStack):
         return len(self.operation_stack) - 1
 
     def addRotate3d(self, *args) -> int:
+        assert len(args) == 1 or len(args) == 3
         self.operation_stack.append((1,) + args)
         return len(self.operation_stack) - 1
 
@@ -140,53 +163,85 @@ class LinkedMatrixStack(MatrixStack):
         self.operation_stack.append((2,) + args)
         return len(self.operation_stack) - 1
 
-    def apply(self):
-        """
-        Will apply the configuration onto the system. Will reset all present transformations
-        """
-        _gl.glLoadIdentity()
+    def get_matrix(self) -> Mat4:
+        matrix = Mat4()
+
         for opcode, *d in self.operation_stack:
-            if opcode == 0:
-                _gl.glTranslated(
-                    *(
-                        [e if not callable(e) else e() for e in d]
-                        if not callable(d[0]) or len(d) != 1
-                        else d[0]()
-                    )
-                )
-
+            if opcode == 0:  # translate
+                matrix @= Mat4.from_translation((
+                    [e if not callable(e) else e() for e in d]
+                    if not callable(d[0]) or len(d) != 1
+                    else d[0]()
+                ))
             elif opcode == 1:
-                _gl.glRotated(
-                    *(
-                        [e if not callable(e) else e() for e in d]
-                        if not callable(d[0]) or len(d) != 1
-                        else d[0]()
-                    )
+                d = (
+                    [e if not callable(e) else e() for e in d]
+                    if not callable(d[0]) or len(d) != 1
+                    else d[0]()
                 )
-
+                matrix @= Mat4.from_rotation(d[0], d[1:])
             elif opcode == 2:
-                _gl.glScaled(*[e if not callable(e) else e() for e in d])
-
+                matrix @= Mat4.from_scale(Vec3(*[e if not callable(e) else e() for e in d]))
             elif opcode == 3:
-                _gl.glViewport(
-                    *(
-                        [e if not callable(e) else e() for e in d]
-                        if not callable(d[0]) or len(d) != 1
-                        else d[0]()
-                    )
-                )
-
+                pass  # todo: what to do here?
             elif opcode == 4:
-                _gl.glMatrixMode(d[0] if not callable(d[0]) else d[0]())
-
+                pass  # todo: what to do here?
             elif opcode == 5:
-                _gl.glLoadIdentity()
-
+                matrix = Mat4()
             elif opcode == 6:
-                _gl.gluPerspective(
-                    *(
-                        [e if not callable(e) else e() for e in d]
-                        if not callable(d[0]) or len(d) != 1
-                        else d[0]()
-                    )
-                )
+                matrix @= Mat4.perspective_projection(*(
+                    [e if not callable(e) else e() for e in d]
+                    if not callable(d[0]) or len(d) != 1
+                    else d[0]()
+                ))
+
+        return matrix
+
+    def apply(self):
+        raise RuntimeError("pyglet 2.0 does NOT support this anymore, use get_matrix() instead")
+        # _gl.glLoadIdentity()
+        # for opcode, *d in self.operation_stack:
+        #     if opcode == 0:
+        #         _gl.glTranslated(
+        #             *(
+        #                 [e if not callable(e) else e() for e in d]
+        #                 if not callable(d[0]) or len(d) != 1
+        #                 else d[0]()
+        #             )
+        #         )
+        #
+        #     elif opcode == 1:
+        #         _gl.glRotated(
+        #             *(
+        #                 [e if not callable(e) else e() for e in d]
+        #                 if not callable(d[0]) or len(d) != 1
+        #                 else d[0]()
+        #             )
+        #         )
+        #
+        #     elif opcode == 2:
+        #         _gl.glScaled(*[e if not callable(e) else e() for e in d])
+        #
+        #     elif opcode == 3:
+        #         _gl.glViewport(
+        #             *(
+        #                 [e if not callable(e) else e() for e in d]
+        #                 if not callable(d[0]) or len(d) != 1
+        #                 else d[0]()
+        #             )
+        #         )
+        #
+        #     elif opcode == 4:
+        #         _gl.glMatrixMode(d[0] if not callable(d[0]) else d[0]())
+        #
+        #     elif opcode == 5:
+        #         _gl.glLoadIdentity()
+        #
+        #     elif opcode == 6:
+        #         _gl.gluPerspective(
+        #             *(
+        #                 [e if not callable(e) else e() for e in d]
+        #                 if not callable(d[0]) or len(d) != 1
+        #                 else d[0]()
+        #             )
+        #         )

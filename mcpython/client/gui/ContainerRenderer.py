@@ -252,20 +252,23 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
                 )
                 continue
 
+            slot = self.slots[slot_id]
+
             if "position" in entry:
                 x, y = tuple(entry["position"])
-                self.slots[slot_id].position = x, y
+                slot.position = x, y
 
-            if "allow_player_insert" in entry:
-                self.slots[slot_id].interaction_mode[1] = entry["allow_player_insert"]
+            if hasattr(slot, "interaction_mode"):
+                if "allow_player_insert" in entry:
+                    slot.interaction_mode[1] = entry["allow_player_insert"]
 
-            if "allow_player_remove" in entry:
-                self.slots[slot_id].interaction_mode[0] = entry["allow_player_remove"]
+                if "allow_player_remove" in entry:
+                    slot.interaction_mode[0] = entry["allow_player_remove"]
 
-            if "allow_player_add_to_free_place" in entry:
-                self.slots[slot_id].interaction_mode[2] = entry[
-                    "allow_player_add_to_free_place"
-                ]
+                if "allow_player_add_to_free_place" in entry:
+                    slot.interaction_mode[2] = entry[
+                        "allow_player_add_to_free_place"
+                    ]
 
             if "empty_slot_image" in entry:
                 try:
@@ -275,7 +278,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
                     image = mcpython.util.texture.to_pyglet_image(
                         image.resize((32, 32), PIL.Image.NEAREST)
                     )
-                    self.slots[slot_id].empty_image = pyglet.sprite.Sprite(image)
+                    slot.empty_image = pyglet.sprite.Sprite(image)
                 except:
                     logger.print_exception(
                         "[FATAL] failed to load empty slot image from {}".format(
@@ -284,7 +287,7 @@ class ContainerRenderer(IBufferSerializeAble, ABC):
                     )
 
             if "allowed_tags" in entry:
-                self.slots[slot_id].allowed_item_tags = entry["allowed_tags"]
+                slot.allowed_item_tags = entry["allowed_tags"]
 
         if "image_size" in self.config:
             self.bg_image_size = tuple(self.config["image_size"])

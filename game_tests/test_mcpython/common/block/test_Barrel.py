@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import skipUnless
 
+from pyglet.canvas.xlib import NoSuchDisplayException
+
 from game_tests.test_mcpython.mockups import (
     CraftingHandlerMockup,
     InventoryHandlerMockup,
@@ -26,7 +28,7 @@ try:
     from pyglet.window import key, mouse
 
     SCREEN_ARRIVAL = True
-except ImportError:
+except (ImportError, NoSuchDisplayException):
     SCREEN_ARRIVAL = False
 
 

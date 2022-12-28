@@ -2034,4 +2034,12 @@ b   [uuk]: fixed 2 "... was never awaited" warnings
 R   [uuk]: refactored some bits from the block model system
 b   [uuk]: fixed unit tests not running correctly
 L   [uuk]: targetting now 1.19.3 as asset source
+L   [uuk]: upgraded to pyglet 2.0
+I   [uuk]: upgraded eventloop replacement to reflect pyglet's changes
+A*  [uuk]: MatrixStack system returns now Mat4's
+L   [uuk]: now including tqdm for progress bars
+I   [uuk]: model loading is now no longer part of the mod loading stages, but only the ModelHandler reload stage
+
+
+todo: rewrite fog
 

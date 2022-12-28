@@ -13,6 +13,8 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import skipUnless
 
+from pyglet.canvas.xlib import NoSuchDisplayException
+
 from game_tests.util import TestCase
 from mcpython import shared
 from mcpython.util.enums import BlockRotationType, EnumSide
@@ -23,7 +25,7 @@ try:
     from pyglet.window import mouse
 
     SCREEN_ARRIVAL = True
-except ImportError:
+except (ImportError, NoSuchDisplayException):
     SCREEN_ARRIVAL = False
     shared.IS_CLIENT = False
 

@@ -62,7 +62,6 @@ def draw_button(position, size, mode):
     source_image: pyglet.image.AbstractImage = IMAGES[mode]
     w = size[0] // source_image.width
     h = size[1] // source_image.height
-    pyglet.gl.glColor3d(255, 255, 255)
 
     for x in range(w + 1):
         i = (
@@ -89,7 +88,7 @@ def draw_button(position, size, mode):
                 pass
 
     mcpython.util.opengl.draw_line_rectangle(
-        position, size, (0, 0, 0) if mode != ButtonMode.HOVERING else (255, 255, 255)
+        position, size, (0, 0, 0, 0) if mode != ButtonMode.HOVERING else (1.0, 1.0, 1.0, 1.0)
     )
 
 

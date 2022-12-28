@@ -14,6 +14,8 @@ This project is not official by mojang and does not relate to it.
 import asyncio
 import typing
 
+import tqdm
+
 from bytecodemanipulation.Optimiser import cache_global_name
 
 import mcpython.client.rendering.model.BoxModel
@@ -217,7 +219,7 @@ class ItemModelHandler:
 
     @cache_global_name("ItemModel", lambda: ItemModel)
     async def from_folder(self, folder: str, modname: str):
-        for file in await mcpython.engine.ResourceLoader.get_all_entries(folder):
+        for file in tqdm.tqdm(list(await mcpython.engine.ResourceLoader.get_all_entries(folder)), desc=f"Walking across folder {folder} for mod {modname}"):
             if file.endswith("/"):
                 continue
 

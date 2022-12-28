@@ -16,6 +16,9 @@ import os
 
 import asyncio
 
+import tqdm
+import tqdm.asyncio
+
 import mcpython.client.gui.HoveringItemBox
 import mcpython.common.data.serializer.tags.TagTargetHolder
 import mcpython.common.event.Registry
@@ -51,17 +54,16 @@ async def build():
     await ITEM_ATLAS.build()
     ITEM_ATLAS.dump()
 
-    await asyncio.gather(
-        *(
-            asyncio.gather(
-                *(
-                    _create_build_async(cls, i, file)()
-                    for i, file in enumerate(cls.get_used_texture_files())
-                )
-            )
+    for f in tqdm.asyncio.tqdm.as_completed(
+        sum([
+            [
+                _create_build_async(cls, i, file)()
+                for i, file in enumerate(cls.get_used_texture_files())
+            ]
             for cls in COLLECTED_ITEMS
-        )
-    )
+        ], list()), desc="Building Item Atlas entries"
+    ):
+        await f
 
 
 async def load_data():
@@ -81,7 +83,7 @@ async def load_data():
                 "They are removed from the system",
             ]
         )
-        for entry in data[:]:
+        for entry in tqdm.tqdm(list(map(tuple, data)), desc="Loading item data", ncols=100):
             name = entry[0]
             table = shared.registry.get_by_name("minecraft:block").entries
             if name in table:
@@ -107,6 +109,8 @@ async def load_data():
             else:
                 builder.println("-'{}'".format(entry))
                 data.remove(entry)
+                # todo: remove texture file from cache!
+
         builder.finish()
         with open(shared.build + "/item_block_factory.json", mode="w") as f:
             json.dump(data, f)

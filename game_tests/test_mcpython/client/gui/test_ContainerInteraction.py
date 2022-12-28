@@ -13,13 +13,15 @@ This project is not official by mojang and does not relate to it.
 """
 from unittest import skipUnless
 
+from pyglet.canvas.xlib import NoSuchDisplayException
+
 from game_tests.util import TestCase
 
 try:
     import pyglet.window
 
     HAS_VISUAL = True
-except ImportError:
+except (ImportError, NoSuchDisplayException):
     HAS_VISUAL = False
 else:
     from mcpython import shared

@@ -41,7 +41,7 @@ class ServerSelectionState(AbstractState):
             (-180, 30),
             anchor_window="MD",
             anchor_button="MD",
-            on_press=shared.state_handler.change_state("minecraft:start_menu"),
+            on_press=lambda: shared.state_handler.change_state("minecraft:start_menu"),
         )
         self.join_button = UIPartButton(
             (300, 20),

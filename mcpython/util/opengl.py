@@ -13,6 +13,7 @@ This project is not official by mojang and does not relate to it.
 """
 import math
 
+import deprecation
 import pyglet
 
 try:
@@ -24,38 +25,43 @@ except ImportError:
     gl = None
 
 
-def draw_rectangle(position, size, color=(0.0, 0.0, 0.0)):
+@deprecation.deprecated(details="Use pyglet's shapes module!")
+def draw_rectangle(position, size, color=(0.0, 0.0, 0.0, 1.0)):
+    assert len(color) == 4
+
     x, y = position
     dx, dy = size
-    if len(color) == 3:
-        gl.glColor3d(*color)
-    else:
-        gl.glColor4d(*color)
-    gl.glBegin(gl.GL_TRIANGLES)
-    gl.glVertex2f(x, y + dy)
-    gl.glVertex2f(x, y)
-    gl.glVertex2f(x + dx, y + dy)
-    gl.glVertex2f(x + dx, y + dy)
-    gl.glVertex2f(x, y)
-    gl.glVertex2f(x + dx, y)
-    gl.glEnd()
-    gl.glColor3d(1, 1, 1)
+
+    pyglet.graphics.draw(
+        6,
+        gl.GL_TRIANGLES,
+        colors=("f", color * 6),
+        position=(
+            "f",
+            (
+                x, y + dy, 0,
+                x, y, 0,
+                x + dx, y + dy, 0,
+                x + dx, y + dy, 0,
+                x, y, 0,
+                x + dx, y, 0,
+            )
+        )
+    )
 
 
-def draw_line(f, t, color=(0.0, 0.0, 0.0)):
-    gl.glColor3d(*color)
-    gl.glBegin(gl.GL_LINES)
-    gl.glVertex2f(*f)
-    gl.glVertex2f(*t)
-    gl.glEnd()
-    gl.glColor3d(1, 1, 1)
+@deprecation.deprecated(details="Use pyglet's shapes module!")
+def draw_line(f, t, color=(0.0, 0.0, 0.0, 1.0)):
+    assert len(color) == 4
+    pyglet.graphics.draw(2, gl.GL_LINES, colors=("f", color*2), position=("f", f+(0,)+t+(0,)))
 
 
-def draw_line_rectangle(position, size, color=(0.0, 0.0, 0.0)):
+@deprecation.deprecated(details="Use pyglet's shapes module!")
+def draw_line_rectangle(position, size, color=(0.0, 0.0, 0.0, 1.0)):
+    assert len(color) == 4
     x, y = position
     sx, sy = size
     draw_line((x, y), (x, y + sy + 1), color=color)
     draw_line((x, y), (x + sx, y), color=color)
     draw_line((x + sx, y), (x + sx, y + sy), color=color)
     draw_line((x, y + sy), (x + sx, y + sy), color=color)
-    gl.glColor3d(1, 1, 1)

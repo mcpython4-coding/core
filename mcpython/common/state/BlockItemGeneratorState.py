@@ -249,8 +249,6 @@ class BlockItemGenerator(AbstractState.AbstractState):
         await self.bake_items()
         logger.println("[BLOCK ITEM GENERATOR] finished!")
 
-        logger.println("[BLOCK ITEM GENERATOR] finished!")
-
         # only here for making resizing possible again
         window = shared.window
         window.set_minimum_size(1, 1)

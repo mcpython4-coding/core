@@ -34,19 +34,19 @@ class ModLoadingProgress(AbstractState.AbstractState):
 
     def create_state_parts(self) -> list:
         self.stage_bar = UIPartProgressBar.UIPartProgressBar(
-            (20, 10), (20, 20), status=1, color=(1.0, 0.0, 0.0)
+            (20, 10), (20, 20), status=1, color=(1.0, 0.0, 0.0, 1.0)
         )
         self.mod_bar = UIPartProgressBar.UIPartProgressBar(
-            (20, 40), (20, 20), status=1, color=(0.0, 0.0, 1.0)
+            (20, 40), (20, 20), status=1, color=(0.0, 0.0, 1.0, 1.0)
         )
         self.item_bar = UIPartProgressBar.UIPartProgressBar(
-            (20, 70), (20, 20), status=1, color=(0.0, 1.0, 0.0)
+            (20, 70), (20, 20), status=1, color=(0.0, 1.0, 0.0, 1.0)
         )
         self.memory_bar = UIPartProgressBar.UIPartProgressBar(
             (20, 10),
             (20, 20),
             status=1,
-            color=(1.0, 0.0, 0.0),
+            color=(1.0, 0.0, 0.0, 1.0),
             progress_items=psutil.virtual_memory().total,
         )
 
