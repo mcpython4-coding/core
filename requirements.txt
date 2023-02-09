@@ -4,7 +4,7 @@ pyglet==1.5.27  # keep for now pyglet 1.5.X
 opensimplex==0.4.4
 clipboard==0.0.4
 toml==0.10.2
-requests==2.28.1
+requests==2.28.2
 deprecation==2.1.0
 simplejson==3.18.3
 Python-NBT==1.2.0
