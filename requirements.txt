@@ -1,5 +1,5 @@
 psutil==5.9.4
-Pillow==9.4.0
+Pillow==9.5.0
 pyglet==1.5.27  # keep for now pyglet 1.5.X
 opensimplex==0.4.4
 clipboard==0.0.4
