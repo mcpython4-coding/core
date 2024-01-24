@@ -1,4 +1,4 @@
-psutil==5.9.4
+psutil==5.9.8
 Pillow==10.2.0
 pyglet==1.5.27  # keep for now pyglet 1.5.X
 opensimplex==0.4.4
