@@ -15,9 +15,10 @@ This project is not official by mojang and does not relate to it.
 # launches up only the server stuff
 
 import sys
-
-# the LaunchWrapper which launches all stuff
+import os
 import traceback
+
+os.environ['DISABLE_OPTIMISATION_APPLY'] = '1'
 
 import mcpython.LaunchWrapper
 
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     wrapper.apply_mixins()
     wrapper.check_py_version()
 
-    print(
+    mcpython.engine.logger.println(
         "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     )
     import mcpython.engine.logger
@@ -38,9 +39,6 @@ if __name__ == "__main__":
         "[EXPERIMENTAL][WARN] launching experimental dedicated mcpython server"
     )
     mcpython.engine.logger.println(
-        "[EXPERIMENTAL][WARN] see version.info and git diffs for recent changes"
-    )
-    print(
         "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     )
 

@@ -13,6 +13,9 @@ This project is not official by mojang and does not relate to it.
 """
 import sys
 import traceback
+import os
+
+os.environ['DISABLE_OPTIMISATION_APPLY'] = '1'
 
 # LaunchWrapper is the system for launching the game
 import mcpython.LaunchWrapper

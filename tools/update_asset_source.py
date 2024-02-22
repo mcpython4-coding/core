@@ -11,22 +11,22 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
+
+
 import os
-import shutil
 import sys
-import zipfile
 
 import requests
 
 home = os.path.dirname(__file__).replace("\\", "/").removesuffix("/")
-target = home if not os.path.exists(home + "/tools") else home + "/tools"
+target = f"{home}/tools" if os.path.exists(f"{home}/tools") else home
 url = input("url to source: ") if len(sys.argv) == 1 else sys.argv[1]
 
 root = os.path.dirname(home)
 
 
-print("downloading assets zipfile to {}...".format(root + "/source.zip"))
+print(f"downloading assets zipfile to {root}/source.zip...")
 # todo: with progress bar
 r = requests.get(url)
-with open(root + "/source.zip", "wb") as f:
+with open(f"{root}/source.zip", "wb") as f:
     f.write(r.content)
