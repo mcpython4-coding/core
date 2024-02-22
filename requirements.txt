@@ -1,12 +1,12 @@
-psutil==5.9.4
+psutil==5.9.8
 Pillow==10.2.0
 pyglet==1.5.27  # keep for now pyglet 1.5.X
-opensimplex==0.4.4
+opensimplex==0.4.5
 clipboard==0.0.4
 toml==0.10.2
-requests==2.30.0
+requests==2.31.0
 deprecation==2.1.0
-simplejson==3.19.1
+simplejson==3.19.2
 Python-NBT==1.2.0
-aiofiles==23.1.0
+aiofiles==23.2.1
 bytecodemanipulation==0.2.2

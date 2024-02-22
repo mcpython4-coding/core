@@ -68,6 +68,9 @@ Dedicated server (Unstable, NOT recommended currently, currently only local serv
 python launch_server.py
 ```
 
+You may want to set the environment flag DISABLE_OPTIMISATION_APPLY to 1 while we are working
+in the background with bytecodemanipulation, and stuff is not fully working.
+
 Flags
 -----------------------------------------------------------------------------------------------------
 

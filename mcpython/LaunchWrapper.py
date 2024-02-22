@@ -145,7 +145,9 @@ class LaunchWrapper:
             # todo: get server ip from argv
             shared.SERVER_NETWORK_HANDLER.connect()
 
-        self.setup()
+        if not self.setup():
+            return
+
         self.launch()
 
     def parse_argv(self):
@@ -199,7 +201,7 @@ class LaunchWrapper:
     def get_flag_status(self, flag: str, default=None):
         return default if flag not in self.launch_config else self.launch_config[flag]
 
-    def setup(self):
+    def setup(self) -> bool:
         """
         Setup general stuff which does not take long to complete
         Loads first modules into memory and launches registry setup
@@ -208,7 +210,11 @@ class LaunchWrapper:
         import mcpython.engine.ResourceLoader
         import mcpython.engine.event.EventHandler
 
-        mcpython.engine.ResourceLoader.load_resource_packs()
+        try:
+            mcpython.engine.ResourceLoader.load_resource_packs()
+        except:
+            logger.print_exception("[LAUNCH][FATAL] failed to load basic resource packs")
+            return False
 
         self.setup_files()
 
@@ -221,7 +227,7 @@ class LaunchWrapper:
 
         shared.event_handler.call("minecraft:game:startup")
 
-        return self
+        return True
 
     def setup_registries(self):
         """
@@ -450,7 +456,9 @@ class LaunchWrapper:
         """
         import mcpython.engine.ResourceLoader
 
-        shared.world.world_generation_process.stop()
+        if shared.world:
+            shared.world.world_generation_process.stop()
+
         import mcpython.engine.ResourceLoader
 
         mcpython.engine.ResourceLoader.close_all_resources()

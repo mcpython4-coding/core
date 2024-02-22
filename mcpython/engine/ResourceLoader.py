@@ -154,6 +154,9 @@ class ResourceZipFile(IResourceLoader):
         return zipfile.is_zipfile(path)
 
     def __init__(self, path: str, close_when_scheduled=True):
+        if not os.path.exists(path):
+            raise FileNotFoundError(f"cannot open ResourceSource {path}; file does not exist!")
+        
         self.archive = zipfile.ZipFile(path)
         self.path = path
         self.namelist_cache = self.archive.namelist()
@@ -398,12 +401,16 @@ def load_resource_packs():
         # only in dev-environment we need these special folders
         # todo: strip when building
         # todo: use the .jar file for source resources instead of extracting them
-        RESOURCE_LOCATIONS.append(ResourceDirectory(shared.local + "/resources/main"))
+        RESOURCE_LOCATIONS.append(ResourceDirectory(f"{shared.local}/resources/main"))
         RESOURCE_LOCATIONS.append(
             ResourceDirectory(shared.local + "/resources/generated")
         )
 
-    RESOURCE_LOCATIONS.append(ResourceZipFile(shared.local + "/source.zip"))
+    try:
+        RESOURCE_LOCATIONS.append(ResourceZipFile(shared.local + "/source.zip"))
+    except FileNotFoundError:
+        logger.println("[ResourceLocator][ERROR] source.zip not found! did you run 'tools/installer.py'?")
+        raise
 
     shared.event_handler.call("resources:load")
 
