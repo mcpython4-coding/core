@@ -26,7 +26,6 @@ import mcpython.util.math
 import mcpython.util.texture
 import psutil
 import pyglet
-from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected, cache_global_name
 from mcpython.common.config import *  # todo: remove
 from mcpython.util.annotation import onlyInClient
 from mcpython.util.math import *  # todo: remove
@@ -371,8 +370,6 @@ class Window(
         shared.event_handler.call("user:window:resize", width, height)
 
     if shared.IS_CLIENT:
-
-        @cache_global_name("pyglet", lambda: pyglet)
         @onlyInClient()
         def set_2d(self):
             # todo: move to RenderingHelper
@@ -385,7 +382,6 @@ class Window(
             )
             pyglet.gl.glDisable(pyglet.gl.GL_DEPTH_TEST)
 
-        @cache_global_name("pyglet", lambda: pyglet)
         @onlyInClient()
         def set_3d(self, position=None, rotation=None):
             # todo: move to RenderingHelper
@@ -400,7 +396,6 @@ class Window(
             shared.rendering_helper.default_3d_stack.apply()
             pyglet.gl.glEnable(pyglet.gl.GL_DEPTH_TEST)
 
-        @cache_global_name("pyglet", lambda: pyglet)
         @onlyInClient()
         def on_draw(self):
             """

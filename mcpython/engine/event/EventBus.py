@@ -17,9 +17,6 @@ import traceback
 import typing
 
 import pyglet.app
-from bytecodemanipulation.Optimiser import cache_global_name
-
-from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -84,7 +81,6 @@ class EventBus:
 
         self.sub_buses = []
 
-    @guarantee_builtin_names_are_protected()
     def subscribe(
         self,
         event_name: str,
@@ -112,7 +108,6 @@ class EventBus:
             (function, args, kwargs, info)
         )
 
-    @guarantee_builtin_names_are_protected()
     def unsubscribe(
         self, event_name: str, function: typing.Callable | typing.Awaitable
     ):
@@ -134,7 +129,6 @@ class EventBus:
         if not any_found:
             raise ValueError(f"cannot find function {function} in event {event_name}")
 
-    @guarantee_builtin_names_are_protected()
     async def call_async(self, event_name: str, *args, **kwargs):
         if event_name not in self.event_subscriptions:
             return
@@ -143,7 +137,6 @@ class EventBus:
             *self._yield_awaitable_or_invoke(event_name, *args, **kwargs)
         )
 
-    @guarantee_builtin_names_are_protected()
     async def call_async_ordered(self, event_name: str, *args, **kwargs):
         if event_name not in self.event_subscriptions:
             return
@@ -151,7 +144,6 @@ class EventBus:
         for target in self._yield_awaitable_or_invoke(event_name, *args, **kwargs):
             await target
 
-    @guarantee_builtin_names_are_protected()
     def _yield_awaitable_or_invoke(self, event_name: str, *args, **kwargs):
         for function, extra_args, extra_kwargs, info in self.event_subscriptions[
             event_name
@@ -180,11 +172,6 @@ class EventBus:
             self.call_cancelable_async(event_name, *args, **kwargs)
         )
 
-    @cache_global_name("asyncio", lambda: asyncio)
-    @cache_global_name("pyglet", lambda: pyglet)
-    @cache_global_name("shared", lambda: shared)
-    @cache_global_name("logger", lambda: logger)
-    @guarantee_builtin_names_are_protected()
     async def call_until_async(
         self,
         event_name: str,
@@ -268,8 +255,6 @@ class EventBus:
         self.sub_buses.append(bus)
         return bus
 
-    @guarantee_builtin_names_are_protected()
-    @cache_global_name("asyncio", lambda: asyncio)
     def call_as_stack(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):
@@ -331,7 +316,6 @@ class EventBus:
 
         return result
 
-    @guarantee_builtin_names_are_protected()
     def call_as_stack_no_result(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):
@@ -381,7 +365,6 @@ class EventBus:
             except:
                 raise
 
-    @guarantee_builtin_names_are_protected()
     async def call_as_stack_async(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):
@@ -442,7 +425,6 @@ class EventBus:
 
         return result
 
-    @guarantee_builtin_names_are_protected()
     async def call_as_stack_no_result_async(
         self, event_name: str, *args, amount=1, store_stuff=True, **kwargs
     ):

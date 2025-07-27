@@ -26,10 +26,6 @@ from mcpython.engine.physics.AxisAlignedBoundingBox import (BoundingArea, AxisAl
 import mcpython.engine.ResourceLoader
 import mcpython.util.enums
 import pyglet
-from bytecodemanipulation.Optimiser import (
-    guarantee_builtin_names_are_protected,
-    cache_global_name,
-)
 from mcpython import shared
 from mcpython.client.rendering.model.api import (
     BlockStateNotNeeded,
@@ -76,7 +72,6 @@ class MultiPartDecoder(IBlockStateDecoder):
         self.parent = None
         self.model_alias = None
 
-    @guarantee_builtin_names_are_protected()
     def parse_data(self, data: dict):
         self.data = data
 

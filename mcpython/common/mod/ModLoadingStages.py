@@ -14,8 +14,6 @@ This project is not official by mojang and does not relate to it.
 import graphlib
 import typing
 
-from bytecodemanipulation.Optimiser import cache_global_name
-
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -166,8 +164,6 @@ class LoadingStage:
             astate.parts[2].progress_max = 0
 
     @classmethod
-    @cache_global_name("logger", lambda: logger)
-    @cache_global_name("shared", lambda: shared)
     async def finish_mod_loading(cls):
         logger.println("calling load finished event")
         await shared.event_handler.call_async("mod_loader:load_finished")
@@ -204,7 +200,6 @@ class LoadingStage:
         astate.parts[2].progress_max = self.max_progress
         astate.parts[2].progress = 0
 
-    @cache_global_name("shared", lambda: shared)
     async def call_one(self, astate):
         """
         Will call one event from the stack
@@ -230,7 +225,6 @@ class LoadingStage:
 
         astate.parts[2].progress += 1  # todo: this is not good, can we optimize it?
 
-    @cache_global_name("shared", lambda: shared)
     def check_next_state(self, astate):
         self.active_mod_index += 1
 
@@ -246,7 +240,6 @@ class LoadingStage:
 
         self.update_progress_bars(astate)
 
-    @cache_global_name("shared", lambda: shared)
     def update_progress_bars(self, astate):
         mod_instance = shared.mod_loader.mods[
             shared.mod_loader.mod_loading_order[self.active_mod_index]

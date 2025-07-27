@@ -21,12 +21,6 @@ import mcpython.common.event.api
 import mcpython.common.event.Registry
 import mcpython.engine.physics.AxisAlignedBoundingBox
 import mcpython.util.enums
-from bytecodemanipulation.Optimiser import (
-    guarantee_builtin_names_are_protected,
-    cache_global_name,
-    _OptimisationContainer,
-    apply_now,
-)
 from mcpython import shared
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import BlockDataFixer
@@ -65,7 +59,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     """
 
     @classmethod
-    @cache_global_name("shared", lambda: shared)
     def bind_block_item_to_creative_tab(cls, tab_getter: typing.Callable):
         """
         Util method for registering this block item to a specific CreativeTab
@@ -162,10 +155,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
                 mcpython.engine.physics.AxisAlignedBoundingBox.EMPTY_BOUNDING_BOX
             )
 
-        # Apply some optimisations to this performance critical functions
-        _OptimisationContainer(cls).run_optimisers()
-
-    @guarantee_builtin_names_are_protected()
     def __init__(self):
         """
         Creates a new Block-instance
@@ -211,11 +200,9 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
     def get_offset(self) -> typing.Tuple[float, float, float]:
         return self.offset
 
-    @guarantee_builtin_names_are_protected()
     def is_face_solid(self, face: EnumSide) -> bool:
         return bool(self.face_solid & face.bitflag)
 
-    @guarantee_builtin_names_are_protected()
     async def write_to_network_buffer(self, buffer: WriteBuffer):
         buffer.write_uint(self.NETWORK_BUFFER_SERIALIZER_VERSION)
 
@@ -240,7 +227,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             else:
                 await buffer.write_dict(state, buffer.write_string, buffer.write_string)
 
-    @guarantee_builtin_names_are_protected()
     async def write_internal_for_migration(self, buffer: WriteBuffer):
         await super(
             ICapabilityContainer, self
@@ -262,9 +248,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
             else:
                 await buffer.write_dict(state, buffer.write_string, buffer.write_string)
 
-    @guarantee_builtin_names_are_protected()
-    @cache_global_name("WriteBuffer", lambda: WriteBuffer)
-    @cache_global_name("ReadBuffer", lambda: ReadBuffer)
     async def read_from_network_buffer(self, buffer: ReadBuffer):
         version = buffer.read_uint()
         await super(
@@ -303,7 +286,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         )
         await self.set_model_state(state)
 
-    @guarantee_builtin_names_are_protected()
     async def read_internal_for_migration(self, buffer: ReadBuffer):
         await super(
             ICapabilityContainer, self
@@ -314,7 +296,6 @@ class AbstractBlock(parent, ICapabilityContainer, IBufferSerializeAble, ABC):
         state = await buffer.read_dict(buffer.read_string, buffer.read_string)
         await self.set_model_state(state)
 
-    @cache_global_name("shared", lambda: shared)
     async def schedule_network_update(self):
         if shared.IS_NETWORKING:
             from mcpython.common.network.packages.WorldDataExchangePackage import (

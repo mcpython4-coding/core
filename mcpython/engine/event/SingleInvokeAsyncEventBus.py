@@ -17,9 +17,6 @@ import traceback
 import typing
 
 import pyglet.app
-from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
-
-from bytecodemanipulation.Optimiser import cache_global_name
 
 from mcpython import shared
 from mcpython.engine import logger
@@ -55,8 +52,7 @@ class SingleInvokeAsyncEventBus:
         self.close_on_error = True
 
         self.sub_buses = []
-
-    @guarantee_builtin_names_are_protected()
+    
     def subscribe(
         self,
         event_name: str,
@@ -78,9 +74,6 @@ class SingleInvokeAsyncEventBus:
         self.event_subscriptions.setdefault(event_name, []).append((function, info))
         return self
 
-    @cache_global_name("asyncio", lambda: asyncio)
-    @cache_global_name("traceback", lambda: traceback)
-    @guarantee_builtin_names_are_protected()
     async def call(self, event_name: str):
         """
         Call an event on this event bus. Also works when deactivated
@@ -134,7 +127,6 @@ class SingleInvokeAsyncEventBus:
         for eventbus in self.sub_buses:
             eventbus.deactivate()
 
-    @cache_global_name("SingleInvokeAsyncEventBus", lambda: SingleInvokeAsyncEventBus)
     def create_sub_bus(self, *args, activate=True, **kwargs):
         bus = SingleInvokeAsyncEventBus(*args, **kwargs)
 
@@ -144,9 +136,6 @@ class SingleInvokeAsyncEventBus:
         self.sub_buses.append(bus)
         return bus
 
-    @cache_global_name("asyncio", lambda: asyncio)
-    @cache_global_name("traceback", lambda: traceback)
-    @guarantee_builtin_names_are_protected()
     async def call(self, event_name: str, amount=1):
         if event_name not in self.event_subscriptions:
             raise RuntimeError(

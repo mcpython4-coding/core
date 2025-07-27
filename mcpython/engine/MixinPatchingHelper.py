@@ -11,14 +11,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 
 This project is not official by mojang and does not relate to it.
 """
-import bytecodemanipulation.Optimiser
 from mcpython import shared
 from mcpython.engine import logger
 
 
 async def optimise_annotated():
-    logger.println("running code optimisations...")
-    bytecodemanipulation.Optimiser._OptimisationContainer.apply_all()
+    pass
 
 
 if not shared.IS_TEST_ENV:

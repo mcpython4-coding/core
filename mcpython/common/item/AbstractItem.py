@@ -16,7 +16,6 @@ from abc import ABC
 
 import mcpython.common.event.api
 import mcpython.common.event.Registry
-from bytecodemanipulation.Optimiser import _OptimisationContainer, apply_now
 from mcpython.common.capability.ICapabilityContainer import ICapabilityContainer
 from mcpython.common.world.datafixers.NetworkFixers import ItemDataFixer
 from mcpython.engine import logger
@@ -54,14 +53,6 @@ class AbstractItem(
         cls,
     ) -> str:  # WARNING: will be removed during item rendering update
         return "assets/{}/textures/item/{}.png".format(*cls.NAME.split(":"))
-
-    @classmethod
-    def __init_subclass__(cls, **kwargs):
-        apply_now()(cls.__init__)
-        apply_now()(cls.__init__)
-        apply_now()(cls.draw_in_inventory)
-        apply_now()(cls.on_block_broken_with)
-        _OptimisationContainer.apply_all()
 
     def __init__(self):
         super().__init__()

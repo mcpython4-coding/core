@@ -19,16 +19,14 @@ import traceback
 import typing
 
 import deprecation
+import tqdm.asyncio
+
 import mcpython.client.rendering.blocks.ICustomBlockRenderer
 import mcpython.client.rendering.model.BlockModel
 import mcpython.client.rendering.model.BlockState
 import mcpython.common.mod.ModMcpython
 import mcpython.engine.ResourceLoader
 import mcpython.util.math
-from bytecodemanipulation.Optimiser import (
-    guarantee_builtin_names_are_protected,
-    cache_global_name,
-)
 from mcpython import shared
 from mcpython.client.rendering.model.api import IBlockStateRenderingTarget
 from mcpython.client.rendering.model.BoxModel import ColoredRawBoxModel
@@ -37,15 +35,6 @@ from mcpython.engine import logger
 from mcpython.util.enums import EnumSide
 
 
-# @forced_attribute_type("models", lambda: dict)
-# @forced_attribute_type("used_models", lambda: set)
-# @forced_attribute_type("found_models", lambda: dict)
-# @forced_attribute_type("blockstates", lambda: dict)
-# @forced_attribute_type("lookup_locations", lambda: set)
-# @forced_attribute_type("dependence_list", lambda: list)
-# @forced_attribute_type("hide_blockstate_errors", lambda: bool)
-# @forced_attribute_type("raw_models", list)
-# @forced_attribute_type("break_stages", list)
 class ModelHandler:
     def __init__(self):
         self.models: typing.Dict[str, typing.Any] = {}
@@ -154,7 +143,7 @@ class ModelHandler:
             self.raw_models.append((data, name))
 
     async def build(self, immediate=False):
-        await asyncio.gather(
+        await tqdm.asyncio.tqdm.gather(
             *(
                 self.let_subscribe_to_build(model, immediate=immediate)
                 for model in self.used_models
@@ -243,7 +232,7 @@ class ModelHandler:
 
         self.dependence_list.clear()  # decrease memory usage
 
-        await asyncio.gather(
+        await tqdm.asyncio.tqdm.gather(
             *(
                 self.load_model(x)
                 for x in sorted_models
@@ -425,7 +414,6 @@ class ModelHandler:
     def get_bbox(self, block):
         return self.blockstates[block.NAME].loader.transform_to_bounding_box(block)
 
-    @cache_global_name("logger", lambda: logger)
     async def reload_models(self):
         logger.println("deleting content of models...")
 

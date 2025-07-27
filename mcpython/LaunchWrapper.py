@@ -70,7 +70,7 @@ class LaunchWrapper:
         self.is_client = shared.IS_CLIENT = False
 
     def apply_mixins(self):
-        import mcpython.util.libmodifiers
+        pass
 
     def full_launch(self):
         """

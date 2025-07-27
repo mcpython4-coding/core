@@ -18,7 +18,6 @@ import math
 import typing
 
 import deprecation
-from bytecodemanipulation.Optimiser import cache_global_name
 
 from mcpython.engine import logger
 
@@ -265,7 +264,6 @@ def topological_sort(items):
     return list(generator.static_order())
 
 
-@cache_global_name("math", lambda: math)
 def rotate_point(point, origin, rotation):
     """
     Helper function for rotating an point around another one

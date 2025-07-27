@@ -21,10 +21,6 @@ import mcpython.common.data.DataPacks
 import mcpython.common.state.GameViewStatePart
 import mcpython.util.math
 import pyglet
-from bytecodemanipulation.Optimiser import (
-    guarantee_builtin_names_are_protected,
-    cache_global_name,
-)
 from mcpython import shared
 from mcpython.engine import logger
 
@@ -56,8 +52,6 @@ class TickHandler:
     def schedule_tick(self, dt: float):
         asyncio.run(self.tick(dt))
 
-    @cache_global_name("shared")
-    @guarantee_builtin_names_are_protected()
     async def tick(self, dt: float):
         """
         Execute ticks
@@ -102,7 +96,6 @@ class TickHandler:
         if self.enable_random_ticks:
             await self.send_random_ticks(0)
 
-    @guarantee_builtin_names_are_protected()
     async def _execute_tick(self):
         if self.active_tick in self.tick_array:
             for ticket_id, function, args, kwargs, ticket_update in self.tick_array[
@@ -158,7 +151,6 @@ class TickHandler:
         """
         self.execute_array.append((function, args, kwargs))
 
-    @guarantee_builtin_names_are_protected()
     @typing.final
     def bind(
         self,
@@ -201,8 +193,6 @@ class TickHandler:
     def bind_redstone_tick(self, function, tick, *args, **kwargs):
         self.bind(function, tick * 2, *args, **kwargs)
 
-    @cache_global_name("shared", lambda: shared)
-    @guarantee_builtin_names_are_protected()
     async def send_random_ticks(self, *args, **kwargs):
         # todo: when networking, only on server & walk over all players!
         if not shared.IS_CLIENT:

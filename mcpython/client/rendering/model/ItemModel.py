@@ -12,16 +12,12 @@ Mod loader inspired by "Minecraft Forge" (https://github.com/MinecraftForge/Mine
 This project is not official by mojang and does not relate to it.
 """
 import asyncio
-import typing
 
-from bytecodemanipulation.Optimiser import cache_global_name
 
 import mcpython.client.rendering.model.BoxModel
 import mcpython.common.item.ItemTextureAtlas
 import mcpython.engine.rendering.BatchHelper
 import mcpython.engine.ResourceLoader
-from bytecodemanipulation.Optimiser import apply_now
-from bytecodemanipulation.Optimiser import guarantee_builtin_names_are_protected
 from mcpython import shared
 from mcpython.client.rendering.model.api import IItemModelLoader
 from mcpython.client.texture import TextureAtlas
@@ -170,7 +166,6 @@ class ItemModel:
         self.overrides.append((predicate, replacement))
         return self
 
-    @guarantee_builtin_names_are_protected()
     async def bake(self, helper: "ItemModelHandler"):
         for i, texture in enumerate(self.layers):
             if texture is None:
@@ -210,12 +205,10 @@ class ItemModelHandler:
     async def load():
         await handler.from_folder("assets/minecraft/models/item", "minecraft")
 
-    @cache_global_name("ItemModel", lambda: ItemModel)
     def from_data(self, data: dict, name: str) -> ItemModel:
         self.models[name] = ItemModel.from_data(data, name)
         return self.models[name]
 
-    @cache_global_name("ItemModel", lambda: ItemModel)
     async def from_folder(self, folder: str, modname: str):
         for file in await mcpython.engine.ResourceLoader.get_all_entries(folder):
             if file.endswith("/"):
@@ -226,8 +219,6 @@ class ItemModelHandler:
 
         return self
 
-    @guarantee_builtin_names_are_protected()
-    @cache_global_name("asyncio", lambda: asyncio)
     async def bake(self):
         self.atlas.load()
 
